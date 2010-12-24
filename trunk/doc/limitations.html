@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<TITLE>Limitations</TITLE>
+</HEAD>
+<BODY>
+    <H1>Limitations</H1>
+    <P>
+        <BR>
+    </P>
+    <P>
+        In this stage of the development there are several important limitations:
+    </P>
+    <P>
+        <BR>
+    </P>
+    <UL>
+        <LI>
+            <P>
+                only the RELAX NG native datatypes are supported
+            </P>
+        <LI>
+            <P>
+                DTD compatibility is not supported
+            </P>
+        <LI>
+            <P>
+                overlapping name classes in attributes or elements in the
+                context of a <CODE>group</CODE> that has multiple cardinality and is
+                in the context of an <CODE>interleave</CODE> are not supported.
+                Example:
+            </P>
+    <PRE> 
+    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;grammar xmlns=&quot;http://relaxng.org/ns/structure/1.0&quot;&gt;
+     &lt;start&gt;
+       &lt;element name = &quot;root&quot;&gt;
+         &lt;interleave&gt;
+           &lt;oneOrMore&gt;
+               &lt;element name = &quot;aa&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+               &lt;element name = &quot;bb&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+               &lt;element name = &quot;aa&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+           &lt;/oneOrMore&gt;
+           &lt;element name = &quot;cc&quot;&gt;
+             &lt;empty/&gt;
+           &lt;/element&gt;
+         &lt;/interleave&gt;
+       &lt;/element&gt;
+     &lt;/start&gt;
+   &lt;/grammar&gt;
+   </PRE>
+           <P>
+                Attempting to use such a schema configuration would result in an
+                error message similar to those issued when a restriction rule is
+                violated.
+            </P>
+        <LI>
+            <P>
+                <CODE>group</CODE> or <CODE>interleave</CODE> with multiple
+                cardinality in the context of an <CODE>interleave</CODE> with
+                multiple cardinality are not supported. Example:
+            </P>
+    <PRE> 
+    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;grammar xmlns=&quot;http://relaxng.org/ns/structure/1.0&quot;&gt;
+     &lt;start&gt;
+       &lt;element name = &quot;root&quot;&gt;
+         &lt;oneOrMore&gt;
+           &lt;interleave&gt;
+             &lt;oneOrMore&gt;
+               &lt;element name = &quot;aa&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+               &lt;element name = &quot;bb&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+             &lt;/oneOrMore&gt;
+             &lt;element name = &quot;cc&quot;&gt;
+               &lt;empty/&gt;
+             &lt;/element&gt;
+           &lt;/interleave&gt;
+         &lt;/oneOrMore&gt;
+       &lt;/element&gt;
+     &lt;/start&gt;
+   &lt;/grammar&gt;
+   </PRE>
+           <P>
+                Attempting to use such a schema configuration would result in an
+                error message similar to those issued when a restriction rule is
+                violated.
+            </P>
+        <LI>
+            <P>
+                <CODE>empty</CODE> in the context of <CODE>attribute</CODE>
+                is not supported. Example:
+            </P>
+    <PRE> 
+    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;grammar xmlns=&quot;http://relaxng.org/ns/structure/1.0&quot;&gt;
+     &lt;start&gt;
+       &lt;element name = &quot;root&quot;&gt;         
+         &lt;attribute name = &quot;attribute&quot;&gt;
+           &lt;empty/&gt;
+         &lt;/attribute&gt;
+       &lt;/element&gt;
+     &lt;/start&gt;
+   &lt;/grammar&gt;
+   </PRE>
+           <P>
+            Attempting to use such a schema configuration would result in an
+            error message similar to those issued when a restriction rule is
+            violated.
+            </P>
+        <LI>
+            <P>
+                compact syntax is not supported.
+            </P>
+    </UL>
+    <P>
+        <BR><BR>        
+    </P>
+    <HR>
+    <P>
+        Copyright &copy; 2010 Radu Cernuta
+    </P>
+    <HR>
+</BODY>
+</HTML>

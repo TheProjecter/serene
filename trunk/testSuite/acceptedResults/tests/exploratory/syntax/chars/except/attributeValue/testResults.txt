@@ -1,0 +1,11 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\syntax\chars\except\attributeValue\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/except/attributeValue/document1.xml:21:24 Syntax error. Element <root> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/except/attributeValue/schema.rng:23:16 contains errors: 
+Excepted attribute value
+Value of attribute attribute at file:///C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/except/attributeValue/document1.xml:21:24 matches a value excepted by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/except/attributeValue/schema.rng:26:28.

@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<TITLE>Samples</TITLE>
+</HEAD>
+<BODY>
+    <H1>Samples</H1>
+    <P>
+        <BR>
+    </P>
+    <P>
+        All the source code for the samples can be found in the
+        samples/src directory grouped in the somehow eclectic package
+        sereneSamples. All sample class files are archived in the samples.jar
+        file from the samples/lib directory. The schema and xml example files
+        are in the samples/data directory in directories with suggestive
+        names. A build.xml file for building the samples with Apache Ant tool
+        is included.
+    </P>
+    <P>
+        To run a sample you must place the jar file in the classpath and
+        invoke the class containing the main method. These classes are:
+    </P>
+    <UL>
+        <LI>
+            <P>
+                <CODE>sereneSamples.SourceValidation</CODE> demonstrating the
+                use of a <CODE>javax.xml.validation.Validator</CODE> for RELAX NG
+                through <B>Serene 0.5</B> with various implementations of 
+                <CODE>javax.xml.transform.Source</CODE>
+            </P>
+        <LI>
+            <P>
+                <CODE>sereneSamples.XmlnsAugmentingValidation</CODE>
+                demonstrating the <CODE>http://xml.org/sax/features/namespace-prefixes</CODE>
+                feature
+            </P>
+        <LI>
+            <P>
+                <CODE>sereneSamples.MissingDatatypeLibraryValidation</CODE>
+                demonstrating the 
+                <CODE>http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary</CODE>
+                feature
+            </P>
+    </UL>
+    <P>
+        Example:
+    </P>
+    <P>
+        <CODE>$ java -cp lib/samples.jar sereneSamples.MissingDatatypeLibraryValidation
+        data/missingDatatype/schema.rng data/missingDatatype/document1.xml</CODE>
+    </P>
+    <P>
+        If the relative path to serene.jar is changed, this must also be
+        added explicitly to the class path.
+    </P>
+    <P>
+        The sample implementation of a custom datatype library does not
+        have a class containing a main method. In order to run this sample
+        you can use the <CODE>serene.Driver</CODE>. Example:
+    </P>
+    <P>
+        <CODE>java -cp ../lib/serene.jar;lib/samples.jar serene.Driver
+        data/customDatatype/schema.rng data/customDatatype/document1.xml
+        data/customDatatype/document2.xml</CODE>
+    </P>
+    <P>
+        <BR><BR>
+    </P>
+    <HR>
+    <P>
+        Copyright &copy; 2010 Radu Cernuta
+    </P>
+<HR>
+</BODY>
+</HTML>

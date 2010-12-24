@@ -1,0 +1,11 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\syntax\chars\value\charContent\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/value/charContent/document1.xml:21:17 Syntax error. Element <root> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/value/charContent/schema.rng:23:16 contains errors: 
+Illegal value.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/value/charContent/document1.xml:21:12 does not match the value required by schema definition <rng:value> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/value/charContent/schema.rng:25:15.

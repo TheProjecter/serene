@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<sdef:root xmlns:sdef="www.example.com/schemaDefault" 
+		xmlns:spref="www.example.com/schemaPrefixed"
+		xmlns:ldec="www.example.com/localDecl"
+		xmlns:ldef="www.example.com/localDefault"
+		attributeAA="foo"
+		spref:attributeBB="foo"
+		ldef:attributeCC="foo"
+		ldec:attributeDD="foo"
+		xml:lang="en">
+		<sdef:aa/>
+		<spref:bb/>
+		<ldef:cc/>
+		<ldec:dd/>
+</sdef:root>

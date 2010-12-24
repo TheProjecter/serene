@@ -1,0 +1,8 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\restrictions\dataExcept714\schema.rng
+
+null:-1:-1 Restrictions 7.1.4 error. Forbiden path: 
+	<rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/dataExcept714/schema.rng:25:27
+	<rng:except> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/dataExcept714/schema.rng:26:17
+	<rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/dataExcept714/schema.rng:27:31

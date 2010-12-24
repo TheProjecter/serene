@@ -1,0 +1,7 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\unit\deactivateBranch\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
