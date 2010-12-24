@@ -1,0 +1,91 @@
+#summary Description of main limitations
+#labels Featured
+
+= Limitations =
+
+
+
+In this stage of the development there are several important limitations:
+
+ * only the RELAX NG native datatypes are supported 
+
+ * DTD compatibility is not supported 
+
+ * overlapping name classes in attributes or elements in the context of a group that has multiple cardinality and is in the context of an interleave are not supported. Example: 
+
+{{{
+    <?xml version="1.0" encoding="UTF-8"?>
+    <grammar xmlns="http://relaxng.org/ns/structure/1.0">
+     <start>
+       <element name = "root">
+         <interleave>
+           <oneOrMore>
+               <element name = "aa">
+                 <empty/>
+               </element>
+               <element name = "bb">
+                 <empty/>
+               </element>
+               <element name = "aa">
+                 <empty/>
+               </element>
+           </oneOrMore>
+           <element name = "cc">
+             <empty/>
+           </element>
+         </interleave>
+       </element>
+     </start>
+   </grammar>
+}}}
+
+Attempting to use such a schema configuration would result in an error message similar to those issued when a restriction rule is violated. 
+
+ * group or interleave with multiple cardinality in the context of an interleave with multiple cardinality are not supported. Example: 
+
+{{{
+    <?xml version="1.0" encoding="UTF-8"?>
+    <grammar xmlns="http://relaxng.org/ns/structure/1.0">
+     <start>
+       <element name = "root">
+         <oneOrMore>
+           <interleave>
+             <oneOrMore>
+               <element name = "aa">
+                 <empty/>
+               </element>
+               <element name = "bb">
+                 <empty/>
+               </element>
+             </oneOrMore>
+             <element name = "cc">
+               <empty/>
+             </element>
+           </interleave>
+         </oneOrMore>
+       </element>
+     </start>
+   </grammar>
+}}}
+
+Attempting to use such a schema configuration would result in an error message similar to those issued when a restriction rule is violated. 
+
+ * empty in the context of attribute  is not supported. Example: 
+
+{{{
+     <?xml version="1.0" encoding="UTF-8"?>
+    <grammar xmlns="http://relaxng.org/ns/structure/1.0">
+     <start>
+       <element name = "root">         
+         <attribute name = "attribute">
+           <empty/>
+         </attribute>
+       </element>
+     </start>
+   </grammar>
+}}}
+
+Attempting to use such a schema configuration would result in an error message similar to those issued when a restriction rule is violated. 
+
+ * compact syntax is not supported. 
+   
