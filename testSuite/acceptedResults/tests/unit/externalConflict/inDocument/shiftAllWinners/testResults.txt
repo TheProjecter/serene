@@ -1,0 +1,13 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\unit\externalConflict\inDocument\shiftAllWinners\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/shiftAllWinners/document1.xml:27:8 Syntax error. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/shiftAllWinners/schema.rng:23:26 contains errors: 
+Ambiguous content.
+Element <aa> at file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/shiftAllWinners/document1.xml:22:6 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/shiftAllWinners/schema.rng:25:26
+<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/shiftAllWinners/schema.rng:28:26.

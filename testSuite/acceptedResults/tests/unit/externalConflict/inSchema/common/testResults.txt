@@ -1,0 +1,7 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\unit\externalConflict\inSchema\common\schema.rng
+
+file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inSchema/common/schema.rng:27:43 Syntax error. 
+Unexpected element.
+Element <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inSchema/common/schema.rng:27:31corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: value is not part of the parent's content model.

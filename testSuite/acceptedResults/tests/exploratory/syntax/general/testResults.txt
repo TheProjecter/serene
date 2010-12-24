@@ -1,0 +1,80 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\syntax\general\schema.rng
+
+file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:28:21 Syntax error. 
+Unknown element in content.
+Element <rng:ef> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:26:33 is not known in this context.
+
+file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:32:21 Syntax error. 
+Unknown element in content.
+Element <rng:ef> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:30:33 is not known in this context.
+
+file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:36:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
+Unresolved by content.
+Validation  of candidate definitions resulted in errors:
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
+	file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:36:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
+	Order error.
+	Misplaced elements in the document structure starting at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:25:20, corresponding to definition <group name class, patterns> at RELAXNG Specification 3.Full Syntax:
+	rng:interleave at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:25:20
+	rng:interleave at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:29:20, corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax.
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute first error: 
+	file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:36:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
+	Unknown element in content.
+	Element <rng:name> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:33:38 is not known in this context.
+
+file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:36:17 Syntax error. 
+Unknown element in content.
+Element <rng:ef> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:24:32 is not known in this context.
+
+file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:39:14 Syntax error. Element <rng:start> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: start contains errors: 
+Excessive content.
+In the document structure starting at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:23:16, corresponding to definition <interleave pattern and foreign elements> at RELAXNG Specification 3.Full Syntax,  expected one occurrence corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax, found 3: 
+<rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:23:16
+<rng:ref> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:37:30
+<rng:ref> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:38:30.
+
+file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:39:14 Warning. Element <rng:start> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: start generates warning: 
+Ambiguous content.
+Element <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:23:16 cannot be resolved by in context validation, possible definitions: 
+<element> at RELAXNG Specification 3.Full Syntax: element with name class child
+<element> at RELAXNG Specification 3.Full Syntax: element with name attribute.
+
+file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:48:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
+Unresolved by content.
+Validation  of candidate definitions resulted in errors:
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
+	file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:48:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
+	Unknown attribute in content.
+	Attribute name at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:42:27 is not known in the vocabulary described by the schema.
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute first error: 
+	file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:46:17  Element <rng:choice> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: choice in pattern context contains errors: 
+	Unexpected character content.
+	Character content at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:44:5 is not allowed by the element's schema definition <element> at RELAXNG Specification 3.Full Syntax: choice in pattern context.
+
+file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:49:15 Warning. Element <rng:define> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: define generates warning: 
+Ambiguous content.
+Element <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:42:27 cannot be resolved by in context validation, possible definitions: 
+<element> at RELAXNG Specification 3.Full Syntax: element with name class child
+<element> at RELAXNG Specification 3.Full Syntax: element with name attribute.
+
+file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:66:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
+Unresolved by content.
+Validation  of candidate definitions resulted in errors:
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
+	file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:66:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
+	Unknown attribute in content.
+	Attribute name at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:59:29 is not known in the vocabulary described by the schema.
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute first error: 
+	file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:66:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
+	Unknown element in content.
+	Element <rng:name> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:60:38 is not known in this context.
+
+file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:68:15 Warning. Element <rng:define> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: define generates warning: 
+Ambiguous content.
+Element <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:59:29 cannot be resolved by in context validation, possible definitions: 
+<element> at RELAXNG Specification 3.Full Syntax: element with name class child
+<element> at RELAXNG Specification 3.Full Syntax: element with name attribute.
+
+null:-1:-1 Restrictions 7.1.5 error. Element <group added by define simplification> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:51:34 is not expected as start of the schema.
