@@ -1,7 +1,7 @@
 #summary The areas Serene concentrates on.
 
 = Special Characteristics =
-
+<br>
 There are two areas Serene is mainly concentrating on: the ambiguity and conflicts handling, and the validation messages.
 
 
