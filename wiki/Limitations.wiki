@@ -2,7 +2,7 @@
 #labels Featured
 
 = Limitations =
-
+<br>
 
 
 In this stage of the development there are several important limitations:
