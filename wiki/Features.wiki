@@ -3,7 +3,7 @@
 
 = Features =
 
-
+<br>
 The features implemented by Serene 0.5 are:
 
 *{{{http://xml.org/sax/features/namespace-prefixes}}}*
