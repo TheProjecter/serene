@@ -2,7 +2,7 @@
 #labels Featured
 
 = Participation Guidelines =
-
+<br>
 == Issue reporting ==
 
 
