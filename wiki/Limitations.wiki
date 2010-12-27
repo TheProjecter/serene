@@ -11,7 +11,7 @@ In this stage of the development there are several important limitations:
 
  * DTD compatibility is not supported 
 
- * overlapping name classes in attributes or elements in the context of a group that has multiple cardinality and is in the context of an interleave are not supported. Example: 
+ * overlapping name classes in {{{attribute}}}s or {{{element}}}s in the context of a {{{group}}} that has multiple cardinality and is in the context of an {{{interleave}}} are not supported. Example: 
 
 {{{
     <?xml version="1.0" encoding="UTF-8"?>
@@ -41,7 +41,7 @@ In this stage of the development there are several important limitations:
 
 Attempting to use such a schema configuration would result in an error message similar to those issued when a restriction rule is violated. 
 
- * group or interleave with multiple cardinality in the context of an interleave with multiple cardinality are not supported. Example: 
+ * {{{group}}} or {{{interleave}}} with multiple cardinality in the context of an {{{interleave}}} with multiple cardinality are not supported. Example: 
 
 {{{
     <?xml version="1.0" encoding="UTF-8"?>
@@ -70,7 +70,7 @@ Attempting to use such a schema configuration would result in an error message s
 
 Attempting to use such a schema configuration would result in an error message similar to those issued when a restriction rule is violated. 
 
- * empty in the context of attribute  is not supported. Example: 
+ * {{{empty}}} in the context of {{{attribute}}}  is not supported. Example: 
 
 {{{
      <?xml version="1.0" encoding="UTF-8"?>
