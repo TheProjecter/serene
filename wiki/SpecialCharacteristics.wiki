@@ -2,7 +2,7 @@
 
 = Special Characteristics =
 <br>
-There are two areas Serene is mainly concentrating on: the ambiguity and conflicts handling, and the validation messages.
+There are two areas *Serene* is mainly concentrating on: the ambiguity and conflicts handling, and the validation messages.
 
 
 
@@ -13,7 +13,7 @@ There are three stages in the resolving of the different components of an xml do
 
     * *initial matching* consists of the matching of an input element or attribute's name to the name class corresponding to one of the definitions allowed by the schema in the respective context. Since characters definition patterns (text, data, value, list) do not have a name, in this stage, all the characters patterns defined within a context are considered a match.
 
-    * *pattern matching* consists of matching of a schema pattern to the corresponding occurrence in the document based on the content, this is done at the level of element definition pattern, attribute definition pattern, characters definition pattern (in Serene characters strings are considered to have a structure since some patterns may contain group, oneOrMore etc)
+    * *pattern matching* consists of matching of a schema pattern to the corresponding occurrence in the document based on the content, this is done at the level of element definition pattern, attribute definition pattern, characters definition pattern (in *Serene* characters strings are considered to have a structure since some patterns may contain group, oneOrMore etc)
 
     * *in context handling* consists of handling of an occurrence as part of the parent's context
 
@@ -28,7 +28,7 @@ In case the number of candidates is 0 an error message is always issued. The pro
 ==Messages==
 
 
-Serene attempts to deliver good, meaningful messages. In the same time it attempts to handle all messages, including error and warning messages resulted from the ambiguity and conflict handling, in a uniform and transparent way. Also the syntax validation for the schema documents and the validation of document syntax are handled transparently using exactly the same algorithm.
+*Serene* attempts to deliver good, meaningful messages. In the same time it attempts to handle all messages, including error and warning messages resulted from the ambiguity and conflict handling, in a uniform and transparent way. Also the syntax validation for the schema documents and the validation of document syntax are handled transparently using exactly the same algorithm.
 
 In order to achieve all this transparency, an approach was chosen where a distinction is made between the detection, interpretation and reporting of errors. This approach allows to group the messages produced by the disqualifying errors of different candidates during conflict handling and report them in the ambiguity error message, or ambiguity warning message. Another consequence of this approach is the fact that errors produced in an element content, corresponding to a content model, are reported when the end of that element is processed. This means that the location information passed to the SAXParseException is that of the end tag of the element in whose context the error took place. Location information regarding the exact place where the error occurred is provided in the content of the message in a meaningful way.
 
