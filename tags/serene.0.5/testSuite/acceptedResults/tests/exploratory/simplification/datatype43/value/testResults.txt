@@ -1,0 +1,5 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\simplification\datatype43\value\schema.rng
+
+null:-1:-1 Simplification 4.3 error. Attribute datatypeLibrary of element <rng:value> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/simplification/datatype43/value/schema.rng:25:48 specifies an unknown or unsupported datatype library.

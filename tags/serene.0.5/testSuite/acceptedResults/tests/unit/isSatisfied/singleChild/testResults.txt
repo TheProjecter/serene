@@ -1,0 +1,15 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\unit\isSatisfied\singleChild\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///C:/works/serene.0.5/testSuite/tests/unit/isSatisfied/singleChild/document1.xml:27:8 Syntax error. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/isSatisfied/singleChild/schema.rng:23:26 contains errors: 
+Missing content.
+In the document structure starting at file:///C:/works/serene.0.5/testSuite/tests/unit/isSatisfied/singleChild/document1.xml:25:7, corresponding to definition <group> at file:/C:/works/serene.0.5/testSuite/tests/unit/isSatisfied/singleChild/schema.rng:41:10, expected one or more occurrences corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/isSatisfied/singleChild/schema.rng:46:24, found 0.
+Missing content.
+In the document structure starting at file:///C:/works/serene.0.5/testSuite/tests/unit/isSatisfied/singleChild/document1.xml:26:7, corresponding to definition <group> at file:/C:/works/serene.0.5/testSuite/tests/unit/isSatisfied/singleChild/schema.rng:25:11, expected one occurrence corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/isSatisfied/singleChild/schema.rng:29:24, found 0.
+Missing content.
+In the document structure starting at file:///C:/works/serene.0.5/testSuite/tests/unit/isSatisfied/singleChild/document1.xml:26:7, corresponding to definition <group> at file:/C:/works/serene.0.5/testSuite/tests/unit/isSatisfied/singleChild/schema.rng:25:11, expected one or more occurrences corresponding to definition <ref> at file:/C:/works/serene.0.5/testSuite/tests/unit/isSatisfied/singleChild/schema.rng:33:25, found 0.

@@ -1,0 +1,31 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\restrictions\naming73\attribute\schema.rng
+
+null:-1:-1 Restrictions 7.3 error. In the context of <rng:group> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:25:15 overlaping name classes in attributes: 
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:26:31
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:39:21.
+
+null:-1:-1 Restrictions 7.3 error. In the context of <rng:group> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:25:15 overlaping name classes in attributes: 
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:27:31
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:39:21.
+
+null:-1:-1 Restrictions 7.3 error. In the context of <rng:group> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:25:15 overlaping name classes in attributes: 
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:28:31
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:39:21.
+
+null:-1:-1 Restrictions 7.3 error. In the context of <rng:group> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:25:15 overlaping name classes in attributes: 
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:30:21
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:39:21.
+
+null:-1:-1 Restrictions 7.3 error. In the context of <rng:group> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:25:15 overlaping name classes in attributes: 
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:30:21
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:48:21.
+
+null:-1:-1 Restrictions 7.3 error. In the context of <rng:group> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:25:15 overlaping name classes in attributes: 
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:30:21
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:53:21.
+
+null:-1:-1 Restrictions 7.3 error. In the context of <rng:group> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:25:15 overlaping name classes in attributes: 
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:39:21
+	<rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/naming73/attribute/schema.rng:53:21.

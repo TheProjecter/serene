@@ -1,0 +1,9 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\simplification\combine417\otherCombine\schema.rng
+
+null:-1:-1 Simplification 4.17 error. start elements with different combine attribute: 
+	"choice"
+	<rng:start> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/simplification/combine417/otherCombine/testExternalRef.rng:23:30
+	"interleave"
+	<rng:start> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/simplification/combine417/otherCombine/testInclude.rng:23:34.

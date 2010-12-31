@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rng:grammar xmlns:rng="http://relaxng.org/ns/structure/1.0" 
+				ns="www.example.com/schemaDefault" 
+				xmlns:pref="www.example.com/schemaPrefixed">	
+	<rng:start>
+		<rng:element>
+			<rng:name> root </rng:name>		
+			<rng:attribute name="attributeAA">
+				<rng:data type="token"/>
+			</rng:attribute>
+			<rng:attribute name="pref:attributeBB">
+				<rng:data type="token"/>
+			</rng:attribute>
+			<rng:attribute ns="www.example.com/localDefault">
+				<rng:name>attributeCC</rng:name>
+				<rng:data type="token"/>
+			</rng:attribute>
+			<rng:attribute>
+				<rng:name ns="www.example.com/localDecl">attributeDD</rng:name>
+				<rng:data type="token"/>
+			</rng:attribute>
+			<rng:attribute>
+				<rng:name>xml:lang</rng:name>
+				<rng:data type="token"/>
+			</rng:attribute>
+			<rng:element name="aa">
+				<rng:empty/>
+			</rng:element>
+			<rng:element name="pref:bb">
+				<rng:empty/>
+			</rng:element>
+			<rng:element ns="www.example.com/localDefault">
+				<rng:name>cc</rng:name>
+				<rng:empty/>
+			</rng:element>
+			<rng:element>
+				<rng:name ns="www.example.com/localDecl">dd</rng:name>
+				<rng:empty/>
+			</rng:element>
+		</rng:element>
+	</rng:start>	
+</rng:grammar>

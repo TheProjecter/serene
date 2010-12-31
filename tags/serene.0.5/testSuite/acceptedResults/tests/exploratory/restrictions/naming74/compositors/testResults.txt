@@ -1,0 +1,3 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\restrictions\naming74\compositors\schema.rng
