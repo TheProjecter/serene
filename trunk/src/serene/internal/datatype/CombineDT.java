@@ -32,8 +32,8 @@ class CombineDT implements Datatype{
 	
 
 	public void checkValid(String str, ValidationContext vc) throws DatatypeException {
-		if(!isValid(str, vc))
-			throw new DatatypeException("TODO invalid combine value message");
+		if(!isValid(str, vc))			
+            throw new DatatypeException(" Allowed values: \"choice\", \"interleave\".");        
 	}
 
 	public Object createValue(String str, ValidationContext vc) {
