@@ -41,6 +41,10 @@ Element <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/s
 <element> at RELAXNG Specification 3.Full Syntax: element with name class child
 <element> at RELAXNG Specification 3.Full Syntax: element with name attribute.
 
+file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:47:35 Syntax error. Element <rng:ref> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: ref contains errors: 
+Illegal datatype.
+Value of attribute name at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:47:35 does not match the datatype required by schema definition <attribute> at RELAXNG Specification 3.Full Syntax: name attribute. Code point(hex) 3a ':' is not a valid name character.
+
 file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:48:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
 Unresolved by content.
 Validation  of candidate definitions resulted in errors:
@@ -59,6 +63,18 @@ Element <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/s
 <element> at RELAXNG Specification 3.Full Syntax: element with name class child
 <element> at RELAXNG Specification 3.Full Syntax: element with name attribute.
 
+file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:57:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
+Unresolved by content.
+Validation  of candidate definitions resulted in errors:
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
+	file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:57:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
+	Unknown attribute in content.
+	Attribute name at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:52:34 is not known in the vocabulary described by the schema.
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute first error: 
+	file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:57:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
+	Illegal datatype.
+	Value of attribute name at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:52:34 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: name attribute. Several colons.
+
 file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:66:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
 Unresolved by content.
 Validation  of candidate definitions resulted in errors:
@@ -72,6 +88,10 @@ Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element w
 	Element <rng:name> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:60:38 is not known in this context.
 
 file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:68:15 Warning. Element <rng:define> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: define generates warning: 
+Ambiguous content.
+Element <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:52:34 cannot be resolved by in context validation, possible definitions: 
+<element> at RELAXNG Specification 3.Full Syntax: element with name class child
+<element> at RELAXNG Specification 3.Full Syntax: element with name attribute.
 Ambiguous content.
 Element <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:59:29 cannot be resolved by in context validation, possible definitions: 
 <element> at RELAXNG Specification 3.Full Syntax: element with name class child
