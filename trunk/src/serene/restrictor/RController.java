@@ -23,6 +23,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import serene.util.IntList;
+import serene.util.ObjectIntHashMap;
 import serene.util.SereneArrayList;
 
 import serene.validation.schema.simplified.components.SPattern;
@@ -80,7 +81,7 @@ public class RController implements RestrictingVisitor{
 	int definitionCount;
 		
 	IntList handledDefinitions;
-	
+	ObjectIntHashMap definitionsContentTypes;//7.2 SRef contentTypes
 
 	boolean attributeContext;//7.1.1
 	Stack<SAttribute> attributesPath;
@@ -126,7 +127,8 @@ public class RController implements RestrictingVisitor{
 		this.debugWriter = debugWriter;
 				
 		handledDefinitions = new IntList();
-		
+		definitionsContentTypes = new ObjectIntHashMap(debugWriter);
+        
 		pool = new ControllerPool(errorDispatcher, debugWriter);
 		
 		attributesPath = new Stack<SAttribute>();
@@ -154,6 +156,7 @@ public class RController implements RestrictingVisitor{
 		definitionCount = definitionTopPatterns.length;
 		
 		handledDefinitions.clear();
+        definitionsContentTypes.clear();
 
 		attributeContext = false;
 		attributesPath.clear();
@@ -1130,9 +1133,13 @@ public class RController implements RestrictingVisitor{
 	//  !!! subclass !!!
 	public void visit(SRef ref)throws SAXException{
 		int index = ref.getDefinitionIndex();
-		if(handledDefinitions.contains(index))return;
+		if(handledDefinitions.contains(index)){
+            contentType = definitionsContentTypes.get(definitionTopPatterns[index]);
+            return;
+        }
 		definitionTopPatterns[index].accept(this);		
 		handledDefinitions.add(index);
+        definitionsContentTypes.put(definitionTopPatterns[index], contentType);
 	}	
 	//  !!! subclass !!!
 	//------------------

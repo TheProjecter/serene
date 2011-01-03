@@ -428,7 +428,10 @@ public class RRController extends RController{
 	
 	public void visit(SRef ref)throws SAXException{		
 		int index = ref.getDefinitionIndex();
-		if(handledDefinitions.contains(index))return;
+		if(handledDefinitions.contains(index)){
+            contentType = definitionsContentTypes.get(definitionTopPatterns[index]);
+            return;
+        }
 		if(recursionModel.isRecursiveDefinition(index)){			
 			if(recursionModel.isRecursiveReference(ref)){
 				if(isBlindBranch(index)){					
@@ -439,6 +442,7 @@ public class RRController extends RController{
 					}
 					b.add(ref);
 					handledDefinitions.add(index);
+                    definitionsContentTypes.put(definitionTopPatterns[index], contentType);
 					return;
 				}
 				if(isRequiredBranch(index)){
@@ -453,6 +457,7 @@ public class RRController extends RController{
 						i.add(ref);						
 					}		
 					handledDefinitions.add(index);
+                    definitionsContentTypes.put(definitionTopPatterns[index], contentType);
 					return;
 				}
 			}else{
@@ -478,11 +483,13 @@ public class RRController extends RController{
 				loopChoice.set(index, null);
 				
 				handledDefinitions.add(index);
+                definitionsContentTypes.put(definitionTopPatterns[index], contentType);
 				return;
 			}
 		}else{
 			definitionTopPatterns[index].accept(this);
 			handledDefinitions.add(index);
+            definitionsContentTypes.put(definitionTopPatterns[index], contentType);
 			return;
 		}		
 	}
