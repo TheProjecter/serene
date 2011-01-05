@@ -36,6 +36,11 @@ class QNameDT implements Datatype{
 	public boolean isValid(String str, ValidationContext vc) {		
 		try{
 			// TODO xml version from ValidationContext
+            int colon = str.indexOf(':');                        
+            if(colon > 0){
+                String prefix = str.substring(0, colon);
+                if(vc.resolveNamespacePrefix(prefix) == null) return false;
+            }
 			nameHandler.handleQName(str);
 			return true;			
 		}catch(NameInvalidException nie){
@@ -48,6 +53,11 @@ class QNameDT implements Datatype{
 	public void checkValid(String str, ValidationContext vc) throws DatatypeException {
 		try{
 			// TODO xml version from ValidationContext
+            int colon = str.indexOf(':');                        
+            if(colon > 0){
+                String prefix = str.substring(0, colon);
+                if(vc.resolveNamespacePrefix(prefix) == null) throw new DatatypeException("Prefix was not declared.");
+            }
 			nameHandler.handleQName(str);						
 		}catch(NameInvalidException nie){
 			throw new DatatypeException(nie.getMessage()); 

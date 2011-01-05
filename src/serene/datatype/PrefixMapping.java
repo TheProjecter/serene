@@ -18,7 +18,10 @@ package serene.datatype;
 
 import java.util.HashMap;
 
+import javax.xml.XMLConstants;
+
 import sereneWrite.MessageWriter;
+
 class PrefixMapping{
 	HashMap<String, String> mapping;
 	PrefixMapping parent;
@@ -26,12 +29,14 @@ class PrefixMapping{
 	PrefixMapping(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;		
 		mapping = new HashMap<String, String>();
+        mapping.put(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
 	}
 	
 	PrefixMapping(PrefixMapping parent, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;	
 		this.parent = parent;
 		mapping = new HashMap<String, String>();
+        mapping.put(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
 	}
 	
 	PrefixMapping startMapping(String prefix, String uri){
@@ -52,7 +57,7 @@ class PrefixMapping{
 	
 	String getURI(String prefix){
 		String uri = mapping.get(prefix);
-		if(uri == null) return uri;
+		if(uri != null) return uri;
 		if(parent != null) return parent.getURI(prefix);
 		return null;
 	}
