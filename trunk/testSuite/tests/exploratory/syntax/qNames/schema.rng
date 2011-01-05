@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<rng:grammar xmlns:rng="http://relaxng.org/ns/structure/1.0">	
+	<rng:start>
+		<rng:element>
+			<rng:name> pref:root </rng:name>
+                                          <rng:attribute name="xml:lang"/>
+		</rng:element>
+	</rng:start>	
+</rng:grammar>
