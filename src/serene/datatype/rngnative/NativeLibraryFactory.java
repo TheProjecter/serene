@@ -19,13 +19,10 @@ package serene.datatype.rngnative;
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.DatatypeLibraryFactory;
 
-import serene.internal.datatype.InternalLibrary;
-
 import sereneWrite.MessageWriter;
 
-// This class should be made private when it is prepared for the jar
 public class NativeLibraryFactory implements DatatypeLibraryFactory{			
-	String NATIVE_LIBRARY = "";	
+	final String NATIVE_LIBRARY = "";	
 	MessageWriter debugWriter;
 	public NativeLibraryFactory(){}
 	public NativeLibraryFactory(MessageWriter debugWriter){
