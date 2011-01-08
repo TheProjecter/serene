@@ -19,13 +19,10 @@ package serene.internal.datatype;
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.DatatypeLibraryFactory;
 
-import serene.internal.datatype.InternalLibrary;
-
 import sereneWrite.MessageWriter;
 
-// This class should be made private when it is prepared for the jar
 public class InternalLibraryFactory implements DatatypeLibraryFactory{	
-	String INTERNAL_LIBRARY = "http://serenerng.org/datatype/internal";
+	final String INTERNAL_LIBRARY = "http://serenerng.org/datatype/internal";
 	MessageWriter debugWriter;
 	public InternalLibraryFactory(){}
 	public InternalLibraryFactory(MessageWriter debugWriter){

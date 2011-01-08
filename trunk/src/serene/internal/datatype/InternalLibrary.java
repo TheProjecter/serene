@@ -16,8 +16,6 @@ limitations under the License.
 
 package serene.internal.datatype;
 
-//import java.util.HashMap;
-
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.DatatypeBuilder;
@@ -26,34 +24,41 @@ import org.relaxng.datatype.DatatypeException;
 import serene.datatype.util.StringNormalizer;
 
 import sereneWrite.MessageWriter;
-
-// TODO 
-// must not be public when jarred 
-public class InternalLibrary implements DatatypeLibrary{
-	//HashMap datatypes; there's no way yet
-	StringNormalizer stringNormalizer; 
+ 
+class InternalLibrary implements DatatypeLibrary{    
+    Datatype qNameDT;
+    Datatype ncNameDT;
+    Datatype hrefURIDT;
+    Datatype datatypeLibraryURIDT;
+    Datatype combineDT;    
+    
 	MessageWriter debugWriter;
 	
 	public InternalLibrary(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
-		stringNormalizer = new StringNormalizer(debugWriter);
+        
+        qNameDT = new QNameDT();
+        ncNameDT = new NCNameDT();
+        hrefURIDT = new HrefURIDT();
+        datatypeLibraryURIDT = new DatatypeLibraryURIDT();
+        combineDT = new CombineDT();
 	}
 	
 	public Datatype createDatatype(String typeLocalName) throws DatatypeException{
 		if(typeLocalName.equals("QName")){
-			return new QNameDT();
+			return qNameDT;
 		}else if(typeLocalName.equals("NCName")){
-			return new NCNameDT();
+			return ncNameDT;
 		}else if(typeLocalName.equals("hrefURI")){
-			return new HrefURIDT();
+			return hrefURIDT;
 		}else if(typeLocalName.equals("datatypeLibraryURI")){
-			return new DatatypeLibraryURIDT();
+			return datatypeLibraryURIDT;
 		}else if(typeLocalName.equals("combine")){
-			return new CombineDT();
+			return combineDT;
 		}else throw new DatatypeException("Unsupported type: " + typeLocalName);
 	}
 	
 	public DatatypeBuilder createDatatypeBuilder(String baseTypeLocalName) throws DatatypeException{
-		throw new IllegalStateException("Not needed");
+		throw new DatatypeException("Not needed.");
 	}
 }

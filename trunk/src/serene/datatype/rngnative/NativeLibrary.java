@@ -16,8 +16,6 @@ limitations under the License.
 
 package serene.datatype.rngnative;
 
-//import java.util.HashMap;
-
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.DatatypeBuilder;
@@ -28,25 +26,41 @@ import serene.datatype.util.StringNormalizer;
 import sereneWrite.MessageWriter;
 
 class NativeLibrary implements DatatypeLibrary{
-	//HashMap datatypes; there's no way yet
-	StringNormalizer stringNormalizer; 
+	Datatype tokenDT;
+    Datatype stringDT;
+    
+    DatatypeBuilder tokenBuilder;
+    DatatypeBuilder stringBuilder;
+    
+	StringNormalizer stringNormalizer;    
+    
 	MessageWriter debugWriter;
 	
 	NativeLibrary(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
-		stringNormalizer = new StringNormalizer(debugWriter);
+        stringNormalizer = new StringNormalizer(debugWriter);
+        
+        stringDT = new StringDT();
+        tokenDT = new TokenDT(stringNormalizer, debugWriter);
+        
+        tokenBuilder = new NativeBuilder(stringDT);
+        stringBuilder = new NativeBuilder(tokenDT);
 	}
 	
 	public Datatype createDatatype(String typeLocalName) throws DatatypeException{
 		//System.out.println(typeLocalName);
-		if(typeLocalName.equals("string")){
-			return new StringDT();
-		}else if(typeLocalName.equals("token")){
-			return new TokenDT(stringNormalizer, debugWriter);
-		}else throw new DatatypeException("Unsupported type: " + typeLocalName);
+        if(typeLocalName.equals("string")){            
+            return stringDT;
+        }else if(typeLocalName.equals("token")){            
+            return tokenDT;
+        }else throw new DatatypeException("Unsupported type: " + typeLocalName);        
 	}
 	
 	public DatatypeBuilder createDatatypeBuilder(String baseTypeLocalName) throws DatatypeException{
-		throw new IllegalStateException("Not needed");
+		if(baseTypeLocalName.equals("string")){
+			return stringBuilder;
+		}else if(baseTypeLocalName.equals("token")){
+			return tokenBuilder;
+		}else throw new DatatypeException("Unsupported type: " + baseTypeLocalName+".");
 	}
 }
