@@ -18,6 +18,8 @@ package serene.validation.schema.simplified.components;
 
 import org.xml.sax.SAXException;
 
+import org.relaxng.datatype.Datatype;
+
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
@@ -25,32 +27,26 @@ import sereneWrite.MessageWriter;
 
 public class SValue extends AbstractNoChildrenPattern{
 	String ns;
-	String datatypeLibrary;
-	String type;
+    Datatype datatype;
 	String charContent;
 	
 	public SValue(String ns, 
-				String datatypeLibrary, 
-				String type,
+				Datatype datatype,
 				String charContent,
 				String qName, 
 				String location, 
 				MessageWriter debugWriter){
 		super(qName, location, debugWriter);
 		this.ns = ns;		
-		this.datatypeLibrary = datatypeLibrary;
-		this.type = type;
+		this.datatype = datatype;
 		this.charContent = charContent;
 	}
 
 	public String getNamespaceURI(){
 		return ns;
 	}
-	public String getDatatypeLibrary(){
-		return datatypeLibrary;
-	}
-	public String getType(){
-		return type;
+	public Datatype getDatatype(){
+		return datatype;
 	}
 	public String getCharContent(){
 		return charContent;
@@ -62,6 +58,6 @@ public class SValue extends AbstractNoChildrenPattern{
 		v.visit(this);
 	}
 	public String toString(){
-		return "SValue type "+type+" charContent "+charContent;
+		return "SValue datatype "+datatype+" charContent "+charContent;
 	}
 }

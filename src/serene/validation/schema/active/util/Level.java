@@ -20,7 +20,6 @@ import java.util.Arrays;
 
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ANameClass;
-import serene.validation.schema.active.components.AParam;
 import serene.validation.schema.active.components.AExceptNameClass;
 import serene.validation.schema.active.components.AExceptPattern;
 
@@ -36,11 +35,7 @@ public abstract class Level{
 	APattern[] patterns;
 	int ptIndex;
 	int ptSize;
-	
-	AParam[] params;
-	int prIndex;
-	int prSize;
-	
+		
 	AExceptNameClass exceptNameClass;
 	
 	AExceptPattern exceptPattern;
@@ -57,11 +52,7 @@ public abstract class Level{
 		
 		ncIndex = -1;
 		ncSize = 1;
-		nameClasses = new ANameClass[ncSize];
-		
-		prIndex = -1;
-		prSize = 1;
-		params = new AParam[prSize];
+		nameClasses = new ANameClass[ncSize];		
 	}
 		
 	public static Level getTopInstance(MessageWriter debugWriter){
@@ -144,41 +135,7 @@ public abstract class Level{
 		Arrays.fill(nameClasses, null);
 	}
 	
-	
-	
-	public void add(AParam p){
-		if(++prIndex == prSize){			
-			AParam[] increased = new AParam[++prSize];
-			System.arraycopy(params, 0, increased, 0, prIndex);
-			params = increased;
-		}
-		params[prIndex] = p;
-	}
-	public void add(AParam[] p){		
-		int length = p.length;
-		if(prIndex + length >= prSize){
-			prSize += length;
-			AParam[] increased = new AParam[prSize];
-			System.arraycopy(params, 0, increased, 0, prIndex+1);
-			params = increased;
-		}
-		System.arraycopy(p, 0, params, prIndex+1, length);
-	}
-	public AParam[] getParams(){
-		if(prIndex == -1)return null;
-		return Arrays.copyOf(params, prIndex+1);
-	}
-	public AParam getLastParam(){
-		if(prIndex < 0) return null;
-		return params[prIndex];
-	}
-	public int getParamsCount(){
-		return prIndex+1;
-	}	
-	void clearParams(){
-		prIndex = -1;
-		Arrays.fill(params, null);
-	}
+
 			
 	
 	public void add(AExceptNameClass enc){
@@ -206,7 +163,6 @@ public abstract class Level{
 	public void clear(){
 		if(ptIndex>=0)clearPatterns();
 		if(ncIndex>=0)clearNameClasses();
-		if(prIndex>=0)clearParams();
 		exceptPattern = null;
 		exceptNameClass = null;		
 	}
@@ -221,7 +177,6 @@ public abstract class Level{
 	protected String componentsToString(){
 		return "nameClasses "+ncIndex+" "+Arrays.toString( nameClasses)
 		+"patterns"+ptIndex+" "+ Arrays.toString(patterns)	
-		+"params"+prIndex+" "+ Arrays.toString(params)
 		+ exceptNameClass
 		+ exceptPattern;
 	} 

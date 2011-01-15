@@ -18,7 +18,6 @@ package sereneWrite;
 
 import serene.validation.schema.active.ActiveComponent;
 
-import serene.validation.schema.active.components.AParam;
 import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.AExceptNameClass;
 
@@ -61,11 +60,7 @@ public class ActiveComponentWriter extends AbstractActiveComponentVisitor{
 		}
 		return s;
 	}
-	public void visit(AParam param){
-		tab++;
-		debugWriter.write(getTabString() + param.toString());
-		tab--;
-	}
+
 		
 	public void visit(AExceptPattern exceptPattern){
 		tab++;
@@ -186,8 +181,6 @@ public class ActiveComponentWriter extends AbstractActiveComponentVisitor{
 	public void visit(AData data){
 		tab++;
 		debugWriter.write(getTabString() + data.toString());
-		ActiveComponent[] param = data.getParam();
-		if(param != null) next(param);
 		ActiveComponent exceptPattern = data.getExceptPattern();
 		if(exceptPattern != null) exceptPattern.accept(this);
 		tab--;

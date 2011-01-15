@@ -141,7 +141,6 @@ public class RNGSimplifier extends Simplifier{
 		SimplifiedModel simplifiedModel = new SimplifiedModel(sTopPattern, 
 											definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]),
 											recursionModel,
-											asciiDlDatatypeLibrary,
 											debugWriter);
 		return simplifiedModel;
 	}

@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import org.relaxng.datatype.Datatype;
+
 import serene.validation.schema.active.ActiveGrammarModel;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
@@ -33,30 +35,16 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 import sereneWrite.MessageWriter;
 
 public class AData extends DatatypedCharsAPattern{	
-	AParam[] param;
 	AExceptPattern exceptPattern; 			
-	public AData(String datatypeLibrary,
-				String type, 
-				AParam[] param, 
+	public AData(Datatype datatype, 
 				AExceptPattern exceptPattern,
 				ActiveGrammarModel grammarModel,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
 				String qName, String location, 
 				MessageWriter debugWriter){
-		super(datatypeLibrary, type, grammarModel, ruleHandlerPool, qName, location, debugWriter);
-		asParent(param);
+		super(datatype, grammarModel, ruleHandlerPool, qName, location, debugWriter);
 		asParent(exceptPattern);
 	}
-	
-	protected void asParent(AParam[] param){
-		this.param = param;
-		if(param != null){		
-			for(int i = 0; i< param.length; i++){
-				param[i].setParent(this);
-				param[i].setChildIndex(i);
-			}
-		}
-	}	
 	
 	protected void asParent(AExceptPattern exceptPattern){		
 		this.exceptPattern = exceptPattern;
@@ -65,16 +53,7 @@ public class AData extends DatatypedCharsAPattern{
 			exceptPattern.setChildIndex(0);
 		}
 	}	
-	
-	public AParam[] getParam(){
-		return param;
-	}
-	
-	public AParam getParam(int childIndex){
-		if(param == null || param.length == 0)return null;
-		return param[childIndex];
-	}
-	
+		
 	public AExceptPattern getExceptPattern(){
 		return exceptPattern;
 	}
@@ -102,6 +81,6 @@ public class AData extends DatatypedCharsAPattern{
 	
 	public String toString(){
 		//return "AData type "+type+ " min "+minOccurs+" max "+maxOccurs+"  "+hashCode();
-		return "AData type "+type+ " min "+minOccurs+" max "+maxOccurs+"  ";
+		return "AData datatype "+datatype+ " min "+minOccurs+" max "+maxOccurs+"  ";
 	}
 }

@@ -29,7 +29,6 @@ import serene.util.SereneArrayList;
 import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SNameClass;
 
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
@@ -204,7 +203,6 @@ public class RController implements RestrictingVisitor{
 		attributeLimitationNamingController.recycle();		
 	}	
 	
-	public void visit(SParam param){}	
 	public void visit(SExceptPattern exceptPattern)throws SAXException{
 		boolean oldExceptPatternContext = exceptPatternContext; 
 		exceptPatternContext = true;
@@ -1168,8 +1166,6 @@ public class RController implements RestrictingVisitor{
 		
 		dataPath.push(data);
 		
-		SimplifiedComponent[] param = data.getParam();
-		if(param != null) next(param);
 		SimplifiedComponent[] exceptPattern = data.getExceptPattern();
 		if(exceptPattern != null) next(exceptPattern);
 		

@@ -21,7 +21,6 @@ import java.util.Arrays;
 
 import serene.validation.schema.active.Rule;
 
-import serene.validation.schema.active.components.AParam;
 import serene.validation.schema.active.components.AExceptPattern;
 
 import serene.validation.schema.active.components.ActiveTypeItem;
@@ -101,9 +100,6 @@ public class ConflictPathMaker implements RuleVisitor{
 	public void visit(AAttribute rule){}
 	public void visit(AListPattern rule){}
 	
-	public void visit(AParam rule){
-		throw new IllegalStateException();
-	}
 		
 	public void visit(AChoicePattern rule){
 		next(rule);

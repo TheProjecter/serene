@@ -40,7 +40,7 @@ public class Param extends AbstractParsedComponent{
 	}
 	
 	public void accept(SimplifyingVisitor v)throws SAXException{
-		v.visit(this);
+		throw new IllegalStateException();
 	}
 	
 	public String getName(){

@@ -16,7 +16,6 @@ limitations under the License.
 
 package serene.validation.schema.parsed;
 
-import serene.validation.schema.parsed.components.Param;
 import serene.validation.schema.parsed.components.Include;
 import serene.validation.schema.parsed.components.ExceptPattern;
 import serene.validation.schema.parsed.components.ExceptNameClass;
@@ -57,8 +56,7 @@ import serene.validation.schema.parsed.components.Start;
 import org.xml.sax.SAXException;
 
 public interface SimplifyingVisitor{
-	
-	void visit(Param component) throws SAXException;
+
 	void visit(Include component) throws SAXException;
 	void visit(ExceptPattern component) throws SAXException;
 	void visit(ExceptNameClass component) throws SAXException;

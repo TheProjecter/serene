@@ -35,7 +35,6 @@ import serene.validation.schema.active.components.ANsName;
 import serene.validation.schema.active.components.AChoiceNameClass;
 
 
-import serene.validation.schema.active.components.AParam;
 import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.AExceptNameClass;
 
@@ -243,9 +242,6 @@ public class ContextCacheMaker extends AbstractActiveComponentVisitor{
 		refs[refIndex++] = ref;
 	}
 	
-	public void visit(AParam param){
-		throw new IllegalStateException();
-	}	
 	public void visit(AExceptPattern exceptAPattern){
 		throw new IllegalStateException();
 	}

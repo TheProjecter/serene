@@ -17,7 +17,6 @@ limitations under the License.
 package serene.validation.schema.simplified.util;
 
 
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
@@ -48,8 +47,7 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 public abstract class AbstractSimplifiedComponentVisitor implements SimplifiedComponentVisitor{
-
-	public void visit(SParam param){}	
+	
 	public void visit(SExceptPattern exceptPattern){
 		SimplifiedComponent child = exceptPattern.getChild();
 		if(child != null) child.accept(this);
@@ -123,9 +121,7 @@ public abstract class AbstractSimplifiedComponentVisitor implements SimplifiedCo
 	public void visit(SNotAllowed notAllowed){}
 	public void visit(SRef ref){}
 	public void visit(SValue value){}
-	public void visit(SData data){	
-		SimplifiedComponent[] param = data.getParam();
-		if(param != null) next(param);
+	public void visit(SData data){
 		SimplifiedComponent[] exceptPattern = data.getExceptPattern();
 		if(exceptPattern != null) next(exceptPattern);
 	}	

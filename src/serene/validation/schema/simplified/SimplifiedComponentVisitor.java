@@ -16,7 +16,6 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
@@ -47,8 +46,7 @@ import serene.validation.schema.simplified.components.SNsName;
 import serene.validation.schema.simplified.components.SChoiceNameClass;
 
 public interface SimplifiedComponentVisitor{
-	
-	void visit(SParam component);
+
 	void visit(SExceptPattern component);
 	void visit(SExceptNameClass component);
 	

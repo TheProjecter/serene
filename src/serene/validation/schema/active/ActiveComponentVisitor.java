@@ -16,7 +16,6 @@ limitations under the License.
 
 package serene.validation.schema.active;
 
-import serene.validation.schema.active.components.AParam;
 import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.AExceptNameClass;
 
@@ -43,7 +42,6 @@ import serene.validation.schema.active.components.AChoiceNameClass;
 
 public interface ActiveComponentVisitor{
 	
-	void visit(AParam component);
 	void visit(AExceptPattern component);
 	void visit(AExceptNameClass component);
 	

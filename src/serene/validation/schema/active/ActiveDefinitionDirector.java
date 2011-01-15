@@ -17,7 +17,6 @@ limitations under the License.
 package serene.validation.schema.active;
 
 import serene.validation.schema.simplified.components.SPattern;
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
@@ -56,7 +55,6 @@ import serene.validation.schema.active.util.ContextCacheMaker;
 import serene.util.ObjectIntHashMap;
 
 import sereneWrite.MessageWriter;
-//import sereneWrite.ActiveComponentWriter;
 
 class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
 	
@@ -65,12 +63,10 @@ class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
 	ActiveComponentBuilder builder;
 	ActiveGrammarModel grammarModel;
 	
-	//ActiveComponentWriter acw;
 	MessageWriter debugWriter;
 	
 	ActiveDefinitionDirector(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
-		//acw = new ActiveComponentWriter();
 		cacheMaker = new ContextCacheMaker(debugWriter);
 	}
 	
@@ -103,9 +99,6 @@ class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
 	}
 	
 	
-	public void visit(SParam param){
-		builder.buildParam(param.getName(), param.getCharContent(), param.getQName(), param.getLocation());
-	}	
 	public void visit(SExceptPattern exceptPattern){		
 		builder.buildExceptPattern(grammarModel.getIndex(exceptPattern), grammarModel, exceptPattern.getQName(), exceptPattern.getLocation());
 	}
@@ -195,14 +188,12 @@ class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
 		builder.buildRef(ref.getDefinitionIndex(), grammarModel, ref.getQName(), ref.getLocation());
 	}
 	public void visit(SValue value){
-		builder.buildValue(value.getNamespaceURI(), value.getDatatypeLibrary(), value.getType(), value.getCharContent(), grammarModel, value.getQName(), value.getLocation());	
+		builder.buildValue(value.getNamespaceURI(), value.getDatatype(), value.getCharContent(), grammarModel, value.getQName(), value.getLocation());	
 	}
 	public void visit(SData data){	
-		SimplifiedComponent[] param = data.getParam();
-		if(param != null) nextLevel(param);
 		SimplifiedComponent[] exceptPattern = data.getExceptPattern();
 		if(exceptPattern != null) nextLevel(exceptPattern);
-		builder.buildData(data.getDatatypeLibrary(), data.getType(),  grammarModel, data.getQName(), data.getLocation());
+		builder.buildData(data.getDatatype(), grammarModel, data.getQName(), data.getLocation());
 	}	
 	public void visit(SGrammar grammar){
 		SimplifiedComponent child = grammar.getChild();

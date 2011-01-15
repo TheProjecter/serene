@@ -16,6 +16,7 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.ValidationContext;
 
 import serene.validation.schema.active.ActiveGrammarModel;
@@ -39,14 +40,13 @@ public class AValue extends DatatypedCharsAPattern{
 	String charContent;
 	
 	public AValue(String ns, 					
-					String datatypeLibrary, 
-					String type,
+					Datatype datatype,
 					String charContent,
 					ActiveGrammarModel grammarModel, 					
 					ActiveModelRuleHandlerPool ruleHandlerPool,
 					String qName, String location, 
 					MessageWriter debugWriter){
-		super(datatypeLibrary, type, grammarModel, ruleHandlerPool, qName, location, debugWriter);
+		super(datatype, grammarModel, ruleHandlerPool, qName, location, debugWriter);
 		this.ns = ns;
 		this.charContent = charContent;
 	}
@@ -80,6 +80,6 @@ public class AValue extends DatatypedCharsAPattern{
 	}
 	
 	public String toString(){
-		return "AValue type "+type+" charContent "+charContent + " min "+minOccurs+" max "+maxOccurs;
+		return "AValue datatype "+datatype+" charContent "+charContent + " min "+minOccurs+" max "+maxOccurs;
 	}
 }

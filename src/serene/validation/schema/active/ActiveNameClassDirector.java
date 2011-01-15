@@ -19,7 +19,6 @@ package serene.validation.schema.active;
 import serene.validation.schema.active.components.ANameClass;
 
 import serene.validation.schema.simplified.components.SPattern;
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
@@ -102,10 +101,7 @@ class ActiveNameClassDirector implements SimplifiedComponentVisitor{
 		componentBuilder.buildChoiceNameClass(choice.getQName(), choice.getLocation());
 	}	
 	
-	
-	public void visit(SParam param){
-		throw new IllegalStateException();
-	}	
+	    
 	public void visit(SExceptPattern exceptPattern){		
 		throw new IllegalStateException();
 	}

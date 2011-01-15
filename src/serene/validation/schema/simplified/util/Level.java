@@ -20,7 +20,6 @@ import java.util.Arrays;
 
 import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 import serene.validation.schema.simplified.components.SExceptPattern;
 
@@ -38,9 +37,6 @@ public abstract class Level{
 	int ptIndex;
 	int ptSize;
 	
-	SParam[] params;
-	int prIndex;
-	int prSize;
 	
 	SExceptNameClass exceptNameClass;
 	
@@ -60,12 +56,8 @@ public abstract class Level{
 		ncIndex = -1;
 		ncSize = 1;
 		nameClasses = new SNameClass[ncSize];
-		
-		prIndex = -1;
-		prSize = 1;
-		params = new SParam[prSize];	
-		
-		epIndex = -1;
+	
+        epIndex = -1;
 		epSize = 1;
 		exceptPatterns = new SExceptPattern[epSize];	
 	}
@@ -155,41 +147,6 @@ public abstract class Level{
 		Arrays.fill(nameClasses, null);
 	}
 	
-	
-	public void add(SParam p){
-		if(++prIndex == prSize){			
-			SParam[] increased = new SParam[++prSize];
-			System.arraycopy(params, 0, increased, 0, prIndex);
-			params = increased;
-		}
-		params[prIndex] = p;
-	}
-	public void add(SParam[] p){		
-		int length = p.length;
-		if(prIndex + length >= prSize){
-			prSize += length;
-			SParam[] increased = new SParam[prSize];
-			System.arraycopy(params, 0, increased, 0, prIndex+1);
-			params = increased;
-		}
-		System.arraycopy(p, 0, params, prIndex+1, length);
-		prIndex += length;
-	}
-	public SParam[] getParams(){
-		if(prIndex < 0) return null;
-		return Arrays.copyOf(params, prIndex+1);
-	}		
-	public SParam getLastParam(){
-		if(prIndex < 0) return null;
-		return params[prIndex];
-	}
-	public int getParamsCount(){
-		return prIndex+1;
-	}
-	public void clearParams(){
-		prIndex = -1;
-		Arrays.fill(params, null);
-	}
 		
 	
 	public void add(SExceptNameClass enc){
@@ -241,7 +198,6 @@ public abstract class Level{
 	public void clear(){
 		clearPatterns();
 		clearNameClasses();
-		clearParams();
 		clearExceptPatterns();
 		exceptNameClass = null;
 	}

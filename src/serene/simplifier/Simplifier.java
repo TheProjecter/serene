@@ -159,9 +159,6 @@ abstract class Simplifier implements SimplifyingVisitor{
 	
 	public abstract void setReplaceMissingDatatypeLibrary(boolean value);
 	
-	public void visit(Param param){
-		builder.buildParam(param.getName().trim(), param.getCharacterContent(), param.getQName(), param.getLocation());
-	}
 	public void visit(Include include){
 		throw new IllegalStateException();
 	}
@@ -236,7 +233,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 	}
 	/*
 	4.16 errors should be reported at the top of the context, so that the faultive 
-	SAnyName or SNsName is not built and does not take part in name class overlap
+	SAnyName or SNsName is not built and doesn't take part in name class overlap
 	handling during restrictions check.
 	*/
 	public void visit(Name name) throws SAXException{
@@ -530,11 +527,11 @@ abstract class Simplifier implements SimplifyingVisitor{
 			return;
 		}
 		// This builds a dummy SValue that will produce an StackOverfloError when
-		// validation is attempted for this any value of this attribute.
+		// validation is attempted for any value of this attribute.
 		if(emptyChild){
 			String ns  = namespaceInheritanceHandler.getNsURI(attribute);
 			if(ns == null) ns = "";
-			builder.buildValue(ns, "-1", null, null, "value", attribute.getLocation());
+			builder.buildValue(ns, null, null, "value", attribute.getLocation());
 		}				
 		builder.endLevel();
 		builder.buildAttribute(attribute.getQName(), attribute.getLocation());
@@ -1198,18 +1195,18 @@ abstract class Simplifier implements SimplifyingVisitor{
 	}	
 	private void handleValueBuild(Value value, String ns, String asciiDL, String type) throws SAXException{
 		DatatypeLibrary datatypeLibrary = asciiDlDatatypeLibrary.get(asciiDL);
+        Datatype datatype = null;
 		if(datatypeLibrary == null){
 			if(replaceMissingDatatypeLibrary){
-				asciiDL = NATIVE_DATATYPE_LIBRARY;
-				handleValueBuild(value, ns, asciiDL, TOKEN_DT);
-				return;
+                type = TOKEN_DT;				
+                datatypeLibrary = asciiDlDatatypeLibrary.get(NATIVE_DATATYPE_LIBRARY);
 			}else{
-				builder.buildValue(ns, asciiDL, type, value.getCharacterContent(), value.getQName(), value.getLocation());
+				builder.buildValue(ns, null, value.getCharacterContent(), value.getQName(), value.getLocation());
 				return;
 			}
 		}
 		try{
-			Datatype datatype = datatypeLibrary.createDatatype(type);
+			datatype = datatypeLibrary.createDatatype(type);
 			if(datatype == null){
 				// error 4.16				
 				String message = "Simplification 4.16 error. "
@@ -1225,7 +1222,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 				+de.getMessage();
 				errorDispatcher.error(new SAXParseException(message, null));
 		}		
-		builder.buildValue(ns, asciiDL, type, value.getCharacterContent(), value.getQName(), value.getLocation());
+		builder.buildValue(ns, datatype, value.getCharacterContent(), value.getQName(), value.getLocation());
 	}
 	
 	public void visit(Data data)  throws SAXException{		
@@ -1233,7 +1230,6 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] exceptPattern = data.getExceptPattern();
 		
 		builder.startLevel();
-		if(param != null) next(param);
 		if(exceptPattern != null) next(exceptPattern);
 		builder.endLevel();
 				
@@ -1250,18 +1246,18 @@ abstract class Simplifier implements SimplifyingVisitor{
 	}	
 	private void handleDataBuild(Data data, String asciiDL, String type) throws SAXException{
 		DatatypeLibrary datatypeLibrary = asciiDlDatatypeLibrary.get(asciiDL);
+        Datatype datatype = null;
 		if(datatypeLibrary == null){
 			if(replaceMissingDatatypeLibrary){
-				asciiDL = NATIVE_DATATYPE_LIBRARY;
-				handleDataBuild(data, asciiDL, TOKEN_DT);
-				return;
+				type = TOKEN_DT;
+				datatypeLibrary = asciiDlDatatypeLibrary.get(NATIVE_DATATYPE_LIBRARY);
 			}else{
-				builder.buildData(asciiDL, type, data.getQName(), data.getLocation());
+				builder.buildData(null, data.getQName(), data.getLocation());
 				return;
 			}
 		}		
 		try{
-			Datatype datatype = datatypeLibrary.createDatatype(type);
+			datatype = datatypeLibrary.createDatatype(type);
 			if(datatype == null){
 				String message = "Simplification 4.16 error. "
 				+"For element <"+data.getQName()+"> at "+data.getLocation()
@@ -1276,7 +1272,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 				+de.getMessage();
 				errorDispatcher.error(new SAXParseException(message, null));
 		}
-		builder.buildData(asciiDL, type, data.getQName(), data.getLocation());
+		builder.buildData(datatype, data.getQName(), data.getLocation());
 	}
 	
 	public void visit(Grammar grammar) throws SAXException{		

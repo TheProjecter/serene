@@ -16,7 +16,6 @@ limitations under the License.
 
 package serene.validation.schema.active;
 
-import serene.validation.schema.active.components.AParam;
 import serene.validation.schema.active.components.AExceptPattern;
 
 
@@ -37,7 +36,6 @@ import serene.validation.schema.active.components.AGrammar;
 
 public interface RuleVisitor{
 	
-	void visit(AParam rule);
 	void visit(AExceptPattern rule);
 	
 	void visit(AElement rule);

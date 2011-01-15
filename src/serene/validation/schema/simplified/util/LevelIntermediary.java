@@ -20,7 +20,6 @@ import java.util.Arrays;
 
 import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
@@ -41,9 +40,6 @@ class LevelIntermediary extends Level{
 						int ptIndex,
 						int ptSize,
 						SPattern[] patterns,
-						int prIndex,
-						int prSize,
-						SParam[] params,
 						SExceptNameClass exceptNameClass,
 						SExceptPattern[] exceptPatterns, 
 						Level parent,
@@ -56,9 +52,6 @@ class LevelIntermediary extends Level{
 		this.ptIndex = ptIndex;
 		this.ptSize = ptSize;	
 		this.patterns = patterns;
-		this.prIndex = prIndex;
-		this.prSize = prSize;	
-		this.params = params;
 		this.exceptNameClass  = exceptNameClass;
 		this.exceptPatterns = exceptPatterns;
 		child = new LevelBottom(this, debugWriter);
