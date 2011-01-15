@@ -24,20 +24,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
-// import java.net.MalformedURLException;
 
 import java.util.Stack;
-//import java.util.ResourceBundle;
-// 
-//import java.text.MessageFormat;
-// import java.text.ChoiceFormat;
-// import java.text.Format;
-
-
 
 import javax.xml.XMLConstants;
 
-//import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.ValidatorHandler;
@@ -70,8 +61,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Attr;
 
+import org.relaxng.datatype.DatatypeException;
+
 import sereneWrite.MessageWriter;
-import sereneWrite.ParsedComponentWriter;
 
 import serene.internal.InternalRNGFactory;
 import serene.internal.InternalRNGSchema;
@@ -119,9 +111,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 
 	private boolean replaceMissingDatatypeLibrary;
 	private boolean parsedModelSchema;
-	
-	
-	
+		
 	
 	// for DOM
 	/**
@@ -162,8 +152,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 	
 	ErrorDispatcher errorDispatcher;
 
-	MessageWriter debugWriter;	
-	ParsedComponentWriter pcw;
+	MessageWriter debugWriter;
 	
 	public RNGSchemaFactory(){		
 		errorDispatcher = new ErrorDispatcher(null);
@@ -171,11 +160,13 @@ public class RNGSchemaFactory extends SchemaFactory{
 		initDefaultFeatures();
 		initDefaultProperties();	
 				
-		createParser();
+		try{
+		    createParser();
+        }catch(DatatypeException e){
+            throw new IllegalStateException(e.getMessage());
+        }
 		createSimplifier();
 		createRestrictionController();
-		
-		pcw = new ParsedComponentWriter();
 	}
 	
 	public RNGSchemaFactory(MessageWriter debugWriter){
@@ -186,11 +177,13 @@ public class RNGSchemaFactory extends SchemaFactory{
 		initDefaultFeatures();
 		initDefaultProperties();	
 				
-		createParser();
+		try{
+		    createParser();
+        }catch(DatatypeException e){
+            throw new IllegalStateException(e.getMessage());
+        }
 		createSimplifier();
-		createRestrictionController();
-		
-		pcw = new ParsedComponentWriter();
+		createRestrictionController();		
 	}
 	
 	private void initDefaultFeatures(){
@@ -202,7 +195,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 	}
 	
 		
-	private void createParser(){
+	private void createParser()  throws DatatypeException{
 		internalRNGFactory = InternalRNGFactory.getInstance(debugWriter);
 		
 		parsedComponentBuilder = new ParsedComponentBuilder(debugWriter);

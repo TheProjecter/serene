@@ -18,7 +18,6 @@ package serene.validation.handlers.stack.util;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AParam;
 import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.AExceptNameClass;
 import serene.validation.schema.active.components.AElement;
@@ -82,7 +81,6 @@ public class PathHandler implements ActiveComponentVisitor{
 		return expectedOrderHandlingCount;
 	}	
 	
-	public void visit(AParam component){}
 	
 	// TODO	
 	public void visit(AExceptPattern except){

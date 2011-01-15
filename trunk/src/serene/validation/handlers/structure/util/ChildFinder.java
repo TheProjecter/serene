@@ -18,7 +18,6 @@ package serene.validation.handlers.structure.util;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AParam;
 import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.AExceptNameClass;
 import serene.validation.schema.active.components.AElement;
@@ -64,8 +63,6 @@ public class ChildFinder implements ActiveComponentVisitor{
 		return child;
 	}
 	
-	
-	public void visit(AParam component){}
 	
 	// TODO	
 	public void visit(AExceptPattern except){

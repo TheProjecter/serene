@@ -25,6 +25,8 @@ import javax.xml.transform.Source;
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 
+import org.relaxng.datatype.DatatypeException;
+
 import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.SimplifiedModel;
 
@@ -54,7 +56,7 @@ public class InternalRNGFactory{
 	
 	MessageWriter debugWriter;
 	
-	private InternalRNGFactory(MessageWriter debugWriter){		
+	private InternalRNGFactory(MessageWriter debugWriter) throws DatatypeException{		
 		super();		
 		this.debugWriter = debugWriter;		
 		builder = new SimplifiedComponentBuilder(debugWriter);
@@ -72,7 +74,7 @@ public class InternalRNGFactory{
 		startPool = new StartLevelPool(debugWriter);
 	}
     
-	public static InternalRNGFactory getInstance(MessageWriter debugWriter){
+	public static InternalRNGFactory getInstance(MessageWriter debugWriter)  throws DatatypeException{
 		if(instance == null){
 			synchronized(InternalRNGFactory.class){
 				if(instance == null){

@@ -168,23 +168,6 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		if(topPattern !=null)//to catch situations when href uris were faultive
 			topPattern.accept(this);
 	}
-	
-	public void visit(Param param) throws SAXException{	
-		/*String dla = param.getDatatypeLibraryAttribute();
-		String oldDla = null;
-		if(dla != null){
-			oldDla = currentDatatypeLibrary;
-			currentDatatypeLibrary = handleDatatypeLibraryAttribute(dla);
-			mapDatatypeLibrary(param);			
-		}
-		
-		String name = param.getName();
-		if(name != null)name = name.trim();
-		
-		if(oldDla != null){
-			currentDatatypeLibrary = oldDla;
-		}*/
-	}
 
 	public void visit(Include include) throws SAXException{
 		String dla = include.getDatatypeLibraryAttribute();
@@ -959,8 +942,6 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			resolve(xmlBase, data);
 		}
 		
-		ParsedComponent[] param = data.getParam();
-		if(param != null) next(param);
 		ParsedComponent[] exceptPattern = data.getExceptPattern();
 		if(exceptPattern != null) next(exceptPattern);
 		

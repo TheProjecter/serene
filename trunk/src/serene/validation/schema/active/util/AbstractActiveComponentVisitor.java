@@ -17,7 +17,6 @@ limitations under the License.
 package serene.validation.schema.active.util;
 
 
-import serene.validation.schema.active.components.AParam;
 import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.AExceptNameClass;
 
@@ -45,7 +44,6 @@ import serene.validation.schema.active.ActiveComponentVisitor;
 
 public abstract class AbstractActiveComponentVisitor implements ActiveComponentVisitor{
 
-	public void visit(AParam param){}	
 	public void visit(AExceptPattern exceptAPattern){
 		ActiveComponent child = exceptAPattern.getChild();
 		if(child != null) child.accept(this);
@@ -103,9 +101,7 @@ public abstract class AbstractActiveComponentVisitor implements ActiveComponentV
 	public void visit(ANotAllowed notAllowed){}
 	public void visit(ARef ref){}
 	public void visit(AValue value){}
-	public void visit(AData data){	
-		ActiveComponent[] param = data.getParam();
-		if(param != null) next(param);
+	public void visit(AData data){
 		ActiveComponent exceptAPattern = data.getExceptPattern();
 		if(exceptAPattern != null) exceptAPattern.accept(this);
 	}	

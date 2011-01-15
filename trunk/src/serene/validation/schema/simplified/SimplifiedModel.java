@@ -16,8 +16,6 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
-import java.util.Map;
-
 import org.relaxng.datatype.DatatypeLibrary;
 
 import serene.validation.schema.simplified.components.SPattern;
@@ -32,27 +30,19 @@ public class SimplifiedModel{
 
 	RecursionModel recursionModel;
 	
-	Map<String, DatatypeLibrary> datatypeLibraries;
-	
 	MessageWriter debugWriter;
 	SimplifiedComponentWriter writer;
 	
 	public SimplifiedModel(SPattern[] startTopPattern,
 								SPattern[] refDefinitionTopPattern,
 								RecursionModel recursionModel,
-								Map<String, DatatypeLibrary> datatypeLibraries,
 								MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		this.startTopPattern = startTopPattern;
 		this.refDefinitionTopPattern = refDefinitionTopPattern;
 		this.recursionModel = recursionModel;
-		this.datatypeLibraries = datatypeLibraries;
 		
 		writer = new SimplifiedComponentWriter();
-	}
-	
-	public Map<String, DatatypeLibrary> getDatatypeLibraries(){
-		return datatypeLibraries;
 	}
 	
 	public SPattern[] getStartTopPattern(){

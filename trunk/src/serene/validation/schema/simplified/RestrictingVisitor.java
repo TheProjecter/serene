@@ -18,7 +18,6 @@ package serene.validation.schema.simplified;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
@@ -50,7 +49,6 @@ import serene.validation.schema.simplified.components.SChoiceNameClass;
 
 public interface RestrictingVisitor{
 	
-	void visit(SParam component) throws SAXException;
 	void visit(SExceptPattern component) throws SAXException;
 	void visit(SExceptNameClass component) throws SAXException;
 	

@@ -30,26 +30,21 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 import sereneWrite.MessageWriter;
 
 public abstract class DatatypedCharsAPattern extends CharsAPattern implements DatatypedActiveTypeItem{
-	protected String datatypeLibrary;
-	protected String type;	
+	Datatype datatype;	
 	ActiveGrammarModel grammarModel;
-	DatatypedCharsAPattern(String datatypeLibrary,
-				String type,
+	DatatypedCharsAPattern(Datatype datatype,
 				ActiveGrammarModel grammarModel,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
 				String qName, String location, 
 				MessageWriter debugWriter){		
 		super(ruleHandlerPool, qName, location, debugWriter);
-		this.datatypeLibrary = datatypeLibrary;
-		this.type = type;
+		this.datatype = datatype;
 		this.grammarModel = grammarModel;
 	}
 		
 	//DatatypedActiveTypeItem
 	//--------------------------------------------------------------------------
-	public void datatypeMatches(String value, ValidationContext validationContext) throws DatatypeException{				
-		Datatype datatype = grammarModel.getDatatype(datatypeLibrary, type);
-		if(datatype == null) throw new IllegalStateException();		
+	public void datatypeMatches(String value, ValidationContext validationContext) throws DatatypeException{		
 		datatype.checkValid(value, validationContext);
 	}
 	public void datatypeMatches(char[] chars, ValidationContext validationContext) throws DatatypeException{

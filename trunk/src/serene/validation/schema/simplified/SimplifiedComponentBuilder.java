@@ -16,9 +16,10 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import org.relaxng.datatype.Datatype;
+
 import serene.validation.schema.ComponentBuilder;
 
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 import serene.validation.schema.simplified.components.SPattern;
@@ -150,35 +151,8 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		Level contentLevel = level.getLevelDown();
 		return contentLevel.getLastNameClass();
 	}
-	
 		
-	
-	public void addToCurrentLevel(SParam p){
-		level.add(p);
-	}
-	public SParam[] getAllCurrentParams(){
-		return level.getParams();
-	}	
-	public SParam getCurrentParam(){
-		return level.getLastParam();
-	}
-	public int getCurrentParamsCount(){				
-		return level.getParamsCount();
-	}
-	public int getContentParamsCount(){
-		Level contentLevel = level.getLevelDown();		
-		return contentLevel.getParamsCount();
-	}
-	public SParam[] getContentParams(){
-		if(level.isBottomLevel())return null;
-		Level contentLevel = level.getLevelDown();	
-		return contentLevel.getParams();
-	}	
-	public SParam getLastContentParam(){		
-		if(level.isBottomLevel())return null;
-		Level contentLevel = level.getLevelDown();
-		return contentLevel.getLastParam();
-	}	
+		
 	
 	
 	public void addToCurrentLevel(SExceptPattern ep){
@@ -289,12 +263,12 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		SText t = new SText(qName, location, debugWriter);
 		addToCurrentLevel(t);
 	}
-	public void buildValue(String ns, String datatypeLibrary, String type, String charContent, String qName, String location){
-		SValue v = new SValue(ns, datatypeLibrary, type, charContent, qName, location, debugWriter);
+	public void buildValue(String ns, Datatype datatype, String charContent, String qName, String location){
+		SValue v = new SValue(ns, datatype, charContent, qName, location, debugWriter);
 		addToCurrentLevel(v);
 	}
-	public void buildData(String datatypeLibrary, String type, String qName, String location){
-		SData d = new SData(datatypeLibrary, type, getContentParams(), getContentExceptPatterns(), qName, location, debugWriter);
+	public void buildData(Datatype datatype, String qName, String location){
+		SData d = new SData(datatype, getContentExceptPatterns(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(d);
 	}		
@@ -337,11 +311,6 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	//END NAME CLASS BUILDING **************************************************
 	//**************************************************************************
-	public void buildParam(String name, String charContent, String qName, String location){
-		SParam p = new SParam(name, charContent, qName, location, debugWriter);
-		addToCurrentLevel(p);
-	}
-
 	public void buildExceptNameClass(String qName, String location){
 		SExceptNameClass enc = new SExceptNameClass(getLastContentNameClass(), qName, location, debugWriter);
 		clearContent();

@@ -24,7 +24,6 @@ import java.util.HashMap;
 import serene.util.BooleanStack;
 import serene.util.IntList;
 
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
@@ -105,9 +104,7 @@ class AlternativeSeeker implements SimplifiedComponentVisitor{
 			!definitionOpenAlternatives.get(testIndex).isEmpty())return true;
 		return false;
 	}
-	public void visit(SParam param){
-		isFiniteAlternative = true;
-	}	
+
 	public void visit(SExceptPattern exceptPattern){
 		SimplifiedComponent child = exceptPattern.getChild();
 		if(child != null) child.accept(this);
@@ -224,12 +221,11 @@ class AlternativeSeeker implements SimplifiedComponentVisitor{
 	public void visit(SValue value){
 		isFiniteAlternative = true;
 	}
-	public void visit(SData data){	
-		SimplifiedComponent[] param = data.getParam();
-		if(param != null) next(param);
+	public void visit(SData data){
 		SimplifiedComponent[] exceptPattern = data.getExceptPattern();
 		if(exceptPattern != null) next(exceptPattern);
-		if(param == null && exceptPattern == null)isFiniteAlternative = true;
+		if(exceptPattern == null)isFiniteAlternative = true;
+        // TODO review, it might be finite alternatie even if it has an exceptPattern
 	}	
 	public void visit(SGrammar grammar){
 		SimplifiedComponent child = grammar.getChild();

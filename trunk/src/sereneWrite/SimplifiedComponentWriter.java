@@ -18,7 +18,6 @@ package sereneWrite;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
@@ -65,13 +64,7 @@ public class SimplifiedComponentWriter extends AbstractSimplifiedComponentVisito
 			s+="\t";
 		}
 		return s;
-	}
-	public void visit(SParam param){
-		tab++;
-		debugWriter.write(getTabString() + param.toString());
-		tab--;
-	}
-		
+	}	
 	public void visit(SExceptPattern exceptPattern){
 		tab++;
 		debugWriter.write(getTabString() + exceptPattern.toString());
@@ -217,8 +210,6 @@ public class SimplifiedComponentWriter extends AbstractSimplifiedComponentVisito
 	public void visit(SData data){
 		tab++;
 		debugWriter.write(getTabString() + data.toString());
-		SimplifiedComponent[] param = data.getParam();
-		if(param != null) next(param);
 		SimplifiedComponent[] exceptPattern = data.getExceptPattern();
 		if(exceptPattern != null) next(exceptPattern);
 		tab--;

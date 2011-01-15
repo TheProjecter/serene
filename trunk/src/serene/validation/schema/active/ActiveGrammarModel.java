@@ -56,13 +56,10 @@ public class ActiveGrammarModel{
 	ObjectIntHashMap sexceptPatternIndexMap;
 	ActiveDefinitionPool[] exceptPatternDefinitionPool;
 	
-	Map<String, DatatypeLibrary> datatypeLibraries;
-	
 	MessageWriter debugWriter;
 	
-	ActiveGrammarModel(Map<String, DatatypeLibrary> datatypeLibraries, MessageWriter debugWriter){
-		this.debugWriter  = debugWriter;		
-		this.datatypeLibraries = datatypeLibraries;
+	ActiveGrammarModel(MessageWriter debugWriter){
+		this.debugWriter  = debugWriter;
 	}
 	
 	void init(AElement startElement,
@@ -149,21 +146,5 @@ public class ActiveGrammarModel{
 		// a reference to the original SimplifiedPatterns upon which the Pointer
 		// is based and checking against the originalTopPattern of the definition
 		return exceptPatternDefinitionPool[index].getActiveDefinition();
-	}	
-	
-	public Datatype getDatatype(String datatypeLibraryNamespace, String type){		
-		try{
-			DatatypeLibrary datatypeLibrary = datatypeLibraries.get(datatypeLibraryNamespace);
-			if(datatypeLibrary == null){
-				// TODO 
-				// feature !!!				
-				return getDatatype("", "token");
-			}
-			Datatype datatype = datatypeLibrary.createDatatype(type);
-			return datatype;
-		}catch(DatatypeException de){
-			// TODO
-			return null;			
-		}
 	}
 }

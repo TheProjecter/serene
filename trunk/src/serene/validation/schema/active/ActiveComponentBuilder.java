@@ -16,11 +16,12 @@ limitations under the License.
 
 package serene.validation.schema.active;
 
+import org.relaxng.datatype.Datatype;
+
 import serene.validation.schema.ComponentBuilder;
 
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ANameClass;
-import serene.validation.schema.active.components.AParam;
 import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.AExceptNameClass;
 
@@ -154,31 +155,7 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 		Level contentLevel = level.getLevelDown();		
 		return contentLevel.getLastNameClass();
 	}
-		
-	
-	void addToCurrentLevel(AParam p){
-		level.add(p);
-	}	
-	AParam[] getAllCurrentParams(){
-		return level.getParams();
-	}	
-	AParam getCurrentParam(){
-		return level.getLastParam();
-	}	
-	int getNumberOfChildParams(){
-		Level contentLevel = level.getLevelDown();		
-		return contentLevel.getParamsCount();
-	}
-	AParam[] getContentParams(){
-		if(level.isBottomLevel())return null;
-		Level contentLevel = level.getLevelDown();	
-		return contentLevel.getParams();
-	}	
-	AParam getLastContentParam(){
-		if(level.isBottomLevel())return null;		
-		Level contentLevel = level.getLevelDown();
-		return contentLevel.getLastParam();
-	}	
+			
 		
 	
 	protected void addToCurrentLevel(AExceptPattern ep){
@@ -251,12 +228,12 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 		AText t = new AText(ruleHandlerPool, qName, location, debugWriter);
 		addToCurrentLevel(t);
 	}
-	public void buildValue(String ns, String datatypeLibrary, String type, String charContent, ActiveGrammarModel model, String qName, String location){
-		AValue v = new AValue(ns, datatypeLibrary, type, charContent, model, ruleHandlerPool, qName, location, debugWriter);
+	public void buildValue(String ns, Datatype datatype, String charContent, ActiveGrammarModel model, String qName, String location){
+		AValue v = new AValue(ns, datatype, charContent, model, ruleHandlerPool, qName, location, debugWriter);
 		addToCurrentLevel(v);
 	}
-	public void buildData(String datatypeLibrary, String type, ActiveGrammarModel model, String qName, String location){
-		AData d = new AData(datatypeLibrary, type, getContentParams(), getContentExceptPattern(),  model, ruleHandlerPool, qName, location, debugWriter);
+	public void buildData(Datatype datatype, ActiveGrammarModel model, String qName, String location){
+		AData d = new AData(datatype, getContentExceptPattern(),  model, ruleHandlerPool, qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(d);
 	}		
@@ -300,11 +277,6 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 	//END NAME CLASS BUILDING **************************************************
 	//**************************************************************************
 	
-	
-	public void buildParam(String name, String charContent, String qName, String location){
-		AParam p = new AParam(name, charContent, ruleHandlerPool, qName, location, debugWriter);
-		addToCurrentLevel(p);
-	}
 
 	public void buildExceptNameClass(String qName, String location){
 		AExceptNameClass enc = new AExceptNameClass(getLastContentNameClass(), qName, location, debugWriter);

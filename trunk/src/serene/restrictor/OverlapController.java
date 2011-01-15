@@ -18,7 +18,6 @@ package serene.restrictor;
 
 import serene.validation.schema.simplified.components.SNameClass;
 
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
@@ -118,9 +117,6 @@ class OverlapController implements SimplifiedComponentVisitor, Reusable{
 	}	
 		
 	
-	public void visit(SParam param){
-		throw new IllegalStateException();
-	}	
 	public void visit(SExceptPattern exceptPattern){
 		throw new IllegalStateException();
 	}

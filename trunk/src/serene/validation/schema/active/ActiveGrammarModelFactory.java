@@ -24,7 +24,6 @@ import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
@@ -112,7 +111,7 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 		SPattern start = simplifiedModel.getStartTopPattern()[0];
 		SPattern[] refDefTops = simplifiedModel.getRefDefinitionTopPattern();
 				
-		model = new ActiveGrammarModel(simplifiedModel.getDatatypeLibraries(), debugWriter);
+		model = new ActiveGrammarModel(debugWriter);
 		
 		init(stackHandlerPool, ruleHandlerPool);
 		
@@ -264,9 +263,7 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 		if(children != null) children[0].accept(this);
 	}		
 	
-	public void visit(SParam param){
-		throw new IllegalStateException();
-	}	
+	
 	public void visit(SExceptPattern exceptPattern){
 		createRecord(exceptPattern);
 		SimplifiedComponent child = exceptPattern.getChild();

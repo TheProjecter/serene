@@ -18,45 +18,27 @@ package serene.validation.schema.simplified.components;
 
 import org.xml.sax.SAXException;
 
+import org.relaxng.datatype.Datatype;
+
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
-
-import serene.validation.schema.simplified.components.SPattern;
-import serene.validation.schema.simplified.components.SExceptPattern;
-import serene.validation.schema.simplified.components.SParam;
 
 import sereneWrite.MessageWriter;
 
 public class SData extends SPattern{
-	String datatypeLibrary;
-	String type;	
-	SParam[] param;
+    Datatype datatype;
 	SExceptPattern[] exceptPattern; 	
 		
-	public SData(String datatypeLibrary, String type, SParam[] param, SExceptPattern[] exceptPattern, String qName, String location, MessageWriter debugWriter){
+	public SData(Datatype datatype, SExceptPattern[] exceptPattern, String qName, String location, MessageWriter debugWriter){
 		super(qName, location, debugWriter);
-		this.datatypeLibrary = datatypeLibrary;
-		this.type = type; 
-		asParent(param);
+		this.datatype = datatype;
 		asParent(exceptPattern);
 	}
 	
-	public String getDatatypeLibrary(){
-		return datatypeLibrary;
+	public Datatype getDatatype(){
+		return datatype;
 	}
-	public String getType(){
-		return type;
-	}
-	protected void asParent(SParam[] param){
-		this.param = param;
-		if(param != null){		
-			for(int i = 0; i< param.length; i++){
-				param[i].setParent(this);
-				param[i].setChildIndex(i);
-			}
-		}
-	}	
-	
+    
 	protected void asParent(SExceptPattern[] exceptPattern){		
 		this.exceptPattern = exceptPattern;
 		if(exceptPattern != null){		
@@ -66,15 +48,6 @@ public class SData extends SPattern{
 			}
 		}
 	}	
-	
-	public SParam[] getParam(){
-		return param;
-	}
-	
-	public SParam getParam(int childIndex){
-		if(param == null || param.length == 0)return null;
-		return param[childIndex];
-	}
 	
 	public SExceptPattern[] getExceptPattern(){
 		return exceptPattern;
@@ -92,6 +65,6 @@ public class SData extends SPattern{
 		v.visit(this);
 	}
 	public String toString(){
-		return "SData type "+type;
+		return "SData datatype "+datatype;
 	}
 }

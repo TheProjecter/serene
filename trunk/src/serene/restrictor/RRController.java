@@ -30,7 +30,6 @@ import serene.util.BooleanStack;
 
 import serene.validation.schema.simplified.components.SNameClass;
 import serene.validation.schema.simplified.components.SPattern;
-import serene.validation.schema.simplified.components.SParam;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
