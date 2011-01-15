@@ -126,7 +126,7 @@ class Analyser{
 				File standard = getCorrespondingFile(testDirs[i], standardContent);
 				if(standard == null){
 					debugWriter.write("No corresponding directory in acceptedResults.");
-					System.out.println("TESTED DIRECTORY "+sourceDir);
+					System.out.println("TESTED DIRECTORY "+testDirs[i]);
 					System.out.println("No corresponding directory in acceptedResults.");
 				}else{
 					analyse(testDirs[i], standard);
@@ -184,7 +184,7 @@ class Analyser{
 				File standard = getCorrespondingFile(testDirs[i], standardContent);
 				if(standard == null){
 					debugWriter.write("No corresponding directory in acceptedResults.");
-					System.out.println("TESTED DIRECTORY "+sourceDir);
+					System.out.println("TESTED DIRECTORY "+testDirs[i]);
 					System.out.println("No corresponding directory in acceptedResults.");
 				}else{
 					analyse(testDirs[i], standard);
@@ -203,7 +203,7 @@ class Analyser{
 		int k = 0;
 		for(int i = 0; i <standardContent.length; i++){
 			test:{
-			if(standardContent[i] != null){
+			if(standardContent[i] != null && !standardContent[i].getName().equals(".svn")){
 				for(int j = 0; j < testContent.length; j++){
 					if(testContent[j] != null){
 						if(standardContent[i].getName().equals(testContent[j].getName())){
