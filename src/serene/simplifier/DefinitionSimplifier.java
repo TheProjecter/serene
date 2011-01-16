@@ -34,6 +34,7 @@ import serene.util.IntList;
 import serene.util.IntStack;
 import serene.util.BooleanList;
 
+import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.parsed.ParsedComponent;
 
 import serene.validation.schema.parsed.components.Pattern;
@@ -79,7 +80,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 	
 	void init(Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,	
 			Map<ExternalRef, URI> externalRefs,
-			Map<URI, Pattern> docTopPatterns,
+			Map<URI, ParsedModel> docParsedModels,
 			ArrayList<SPattern> definitionTopPatterns,
 			NamespaceInheritanceHandler namespaceInheritanceHandler,	
 			Map<ParsedComponent, String> componentAsciiDL,
@@ -90,10 +91,11 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 			BooleanList definitionNotAllowedChild,	
 			RecursionModel recursionModel,			
 			Grammar currentGrammar,
-			Stack<Grammar> previousGrammars){
+			Stack<Grammar> previousGrammars,
+            SimplificationEventContext simplificationContext){
 		this.grammarDefinitions = grammarDefinitions;	
 		this.externalRefs = externalRefs;
-		this.docTopPatterns = docTopPatterns;	
+		this.docParsedModels = docParsedModels;	
 		
 		this.definitionTopPatterns = definitionTopPatterns;
 		
@@ -108,13 +110,15 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		this.recursionModel = recursionModel;
 	
 		this.currentGrammar = currentGrammar;
-		this.previousGrammars = previousGrammars;	
+		this.previousGrammars = previousGrammars;
+        
+        this.simplificationContext = simplificationContext;
 	}
 	
 	public void recycle(){
 		grammarDefinitions = null;	
 		externalRefs = null;
-		docTopPatterns = null;	
+		docParsedModels = null;	
 		namespaceInheritanceHandler = null;		
 		builder = null;
 		

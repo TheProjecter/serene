@@ -14,33 +14,41 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package serene.datatype;
+package serene.validation;
 
 import java.util.HashMap;
 
 import javax.xml.XMLConstants;
 
 import sereneWrite.MessageWriter;
-
-class PrefixMapping{
+public class PrefixMapping{
 	HashMap<String, String> mapping;
 	PrefixMapping parent;
 	MessageWriter debugWriter;	
-	PrefixMapping(MessageWriter debugWriter){
+    
+	public PrefixMapping(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;		
 		mapping = new HashMap<String, String>();
         mapping.put(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
 	}
 	
-	PrefixMapping(PrefixMapping parent, MessageWriter debugWriter){
+	public PrefixMapping(PrefixMapping parent, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;	
 		this.parent = parent;
 		mapping = new HashMap<String, String>();
         mapping.put(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
 	}
 	
-	PrefixMapping startMapping(String prefix, String uri){
+    public PrefixMapping reset(){
+        if(parent != null) return parent.reset();
+        mapping.clear();
+        mapping.put(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
+        return this;
+    }
+    
+	public PrefixMapping startMapping(String prefix, String uri){
 		if(mapping.containsKey(prefix)){
+            if(prefix.equals(XMLConstants.XML_NS_PREFIX)) return this;
 			PrefixMapping newMapping = new PrefixMapping(this, debugWriter);
 			newMapping.startMapping(prefix, uri);
 			return newMapping;
@@ -49,16 +57,22 @@ class PrefixMapping{
 		return this;
 	}
 		
-	PrefixMapping endMapping(String prefix){
+	public PrefixMapping endMapping(String prefix){
 		mapping.remove(prefix);
-		if(mapping.isEmpty())return parent;
+		if(mapping.size() == 1 && parent != null){
+            return parent;
+        }
 		return this;
 	}
 	
-	String getURI(String prefix){
+	public String getURI(String prefix){
 		String uri = mapping.get(prefix);
 		if(uri != null) return uri;
 		if(parent != null) return parent.getURI(prefix);
 		return null;
 	}
+    
+    public String toString(){
+        return " MAPPING "+mapping+" PARENT "+parent;
+    }
 }

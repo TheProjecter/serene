@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import serene.validation.schema.parsed.ParsedComponent;
+import serene.validation.schema.parsed.components.Definition;
 
 import sereneWrite.MessageWriter;
 
@@ -28,7 +29,9 @@ class NamespaceInheritanceHandler{
 	Map<ParsedComponent, ParsedComponent> descendanceMap;
 	
 	NsInheritanceHandler nsInheritanceHandler;
-	XmlnsInheritanceHandler xmlnsInheritanceHandler;
+    
+	DefinitionStartXmlnsContextHandler definitionStartXmlnsContextHandler;
+    DefinitionEndXmlnsContextHandler definitionEndXmlnsContextHandler;
 	
 	MessageWriter debugWriter;
 	
@@ -37,7 +40,9 @@ class NamespaceInheritanceHandler{
 		descendanceMap = new HashMap<ParsedComponent, ParsedComponent>();
 		
 		nsInheritanceHandler = new NsInheritanceHandler(descendanceMap, debugWriter);
-		xmlnsInheritanceHandler = new XmlnsInheritanceHandler(descendanceMap, debugWriter);
+        
+        definitionStartXmlnsContextHandler = new DefinitionStartXmlnsContextHandler(descendanceMap, debugWriter);
+        definitionEndXmlnsContextHandler = new DefinitionEndXmlnsContextHandler(descendanceMap, debugWriter);
 	}
 	
 	void put(ParsedComponent descendant, ParsedComponent ancestor){//key inherits from value
@@ -48,7 +53,11 @@ class NamespaceInheritanceHandler{
 		return nsInheritanceHandler.getURI(component);
 	}
 	
-	String getXmlnsURI(String prefix, ParsedComponent component){				
-		return xmlnsInheritanceHandler.getURI(prefix, component);
+	void startXmlnsContext(SimplificationEventContext simplificationContext, Definition definition){				
+		definitionStartXmlnsContextHandler.handle(simplificationContext, definition);
+	}
+    
+    void endXmlnsContext(SimplificationEventContext simplificationContext, Definition definition){				
+		definitionEndXmlnsContextHandler.handle(simplificationContext, definition);
 	}
 }

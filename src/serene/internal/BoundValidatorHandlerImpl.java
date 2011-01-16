@@ -58,7 +58,11 @@ import serene.bind.XmlnsBinder;
 
 import sereneWrite.MessageWriter;
 
+// Only for internal use, passing events to ContentHandler not implemented.
 class BoundValidatorHandlerImpl extends ValidatorHandler{
+    String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
+    String DTD_MAPPING_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdMapping";
+    
 	ContentHandler contentHandler;	
 	LSResourceResolver lsResourceResolver;
 	TypeInfoProvider typeInfoProvider;
@@ -115,7 +119,8 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		errorHandlerPool.fill(errorDispatcher);
 		eventHandlerPool.fill(spaceHandler, matchHandler, validationItemLocator, errorHandlerPool);
 		
-		
+		validationEventContext = new ValidationEventContext(debugWriter);
+        eventHandlerPool.setValidationContext(validationEventContext);
 		
 		this.bindingModel = bindingModel;
 		this.queuePool = queuePool;		
@@ -162,13 +167,10 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	}
 	
 	public void processingInstruction(String target, String date){} 
-	public void skippedEntity(String name){
-		validationEventContext.addUnparsedEntity(name);
-	}	
+	public void skippedEntity(String name){}	
 	public void ignorableWhitespace(char[] ch, int start, int len){}
 	public void startDocument(){
-		validationEventContext = new ValidationEventContext(locator.getSystemId(), validationEventContext, debugWriter);
-		eventHandlerPool.setValidationContext(validationEventContext);
+		validationEventContext.reset();
 		validationItemLocator.clear();
 		activeModel = activeModelPool.getActiveModel(validationItemLocator, 
 													errorDispatcher);
@@ -243,9 +245,34 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler.recycle();
 		elementHandler = null;
 		activeModel.recycle();
-		activeModel = null;
-		
-		validationEventContext = validationEventContext.getParent();
-		eventHandlerPool.setValidationContext(validationEventContext);
-	}	
+		activeModel = null;		
+	}
+
+    public void setProperty(String name, Object object)
+        throws SAXNotRecognizedException, SAXNotSupportedException {
+
+        if (name == null) {
+            throw new NullPointerException();
+        }else if(name.equals(DTD_HANDLER_PROPERTY)){
+            // recognized but not set, only for retrieval
+        }else if(name.equals(DTD_MAPPING_PROPERTY)){
+            // recognized but not set, only for retrieval
+        }
+
+        throw new SAXNotRecognizedException(name);
+    }
+   
+    public Object getProperty(String name)
+        throws SAXNotRecognizedException, SAXNotSupportedException {
+
+        if (name == null) {
+            throw new NullPointerException();
+        }else if(name.equals(DTD_HANDLER_PROPERTY)){
+            return validationEventContext;
+        }else if(name.equals(DTD_MAPPING_PROPERTY)){
+            return validationEventContext.getDTDMapping();
+        }
+
+        throw new SAXNotRecognizedException(name);
+    }	
 }

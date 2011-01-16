@@ -18,10 +18,15 @@ package serene.validation.jaxp;
 
 import org.w3c.dom.ls.LSResourceResolver;
 import org.w3c.dom.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Entity;
+import org.w3c.dom.Notation;
+import org.w3c.dom.DocumentType;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Attr;
 
 import org.xml.sax.ErrorHandler;
+import org.xml.sax.DTDHandler;
 import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -66,6 +71,8 @@ import sereneWrite.MessageWriter;
 
 
 class ValidatorImpl extends Validator{
+    String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
+    
 	LSResourceResolver lsResourceResolver;
 	
 	ErrorDispatcher errorDispatcher;
@@ -201,6 +208,8 @@ class ValidatorImpl extends Validator{
 		InputSource inputSource = source.getInputSource();
 		
 		xmlReader.setContentHandler(validatorHandler);
+        DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+        xmlReader.setDTDHandler(dtdHandler);
 		xmlReader.setErrorHandler(errorDispatcher);
 		validatorHandler.setErrorHandler(errorDispatcher);
 		xmlReader.parse(inputSource);
@@ -250,6 +259,8 @@ class ValidatorImpl extends Validator{
 		if(validatorHandler == null) validatorHandler = schema.newValidatorHandler();
 		
 		xmlReader.setContentHandler(validatorHandler);
+        DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+        xmlReader.setDTDHandler(dtdHandler);
 		xmlReader.setErrorHandler(errorDispatcher);
 		validatorHandler.setErrorHandler(errorDispatcher);
 		xmlReader.parse(inputSource);
@@ -290,6 +301,8 @@ class ValidatorImpl extends Validator{
 		if(validatorHandler == null) validatorHandler = schema.newValidatorHandler();
 		
 		xmlReader.setContentHandler(validatorHandler);
+        DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+        xmlReader.setDTDHandler(dtdHandler);
 		xmlReader.setErrorHandler(errorDispatcher);
 		validatorHandler.setErrorHandler(errorDispatcher);
 		xmlReader.parse(inputSource);
@@ -316,10 +329,38 @@ class ValidatorImpl extends Validator{
 			if(prefixesCount == null) prefixesCount = new IntStack();
 			else prefixesCount.clear();
 			
+            try{
+                handleDTDContext((Document)node, (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY));
+            }catch(ClassCastException e){}
 			validate(node);
 		}
 	}
 		
+    private void handleDTDContext(Document document, DTDHandler dtdHandler) throws SAXException{
+        DocumentType doctype = document.getDoctype();
+        NamedNodeMap entities = doctype.getEntities();
+        for(int i = 0; i < entities.getLength(); i++){
+            Entity entity = null;
+            try{
+                entity = (Entity)entities.item(i);
+            }catch(ClassCastException e){}
+            String notationName = entity.getNotationName(); 
+            if(notationName != null){ // unparsed entity
+                dtdHandler.unparsedEntityDecl(entity.getNodeName(), entity.getPublicId(), entity.getSystemId(), notationName);
+            }
+        }
+        
+        NamedNodeMap notations = doctype.getNotations();
+        for(int i = 0; i < notations.getLength(); i++){
+            Notation notation = null;
+            try{
+                notation = (Notation)notations.item(i);
+            }catch(ClassCastException e){}
+            dtdHandler.notationDecl(notation.getNodeName(), notation.getPublicId(), notation.getSystemId());            
+        }
+        
+    }
+    
 	private void validate(Node node) throws SAXException{
 		validatorHandler.startDocument();
 		
@@ -391,11 +432,11 @@ class ValidatorImpl extends Validator{
             Attr attr = (Attr) attrMap.item(i);
 			
 			String namespaceURI = attr.getNamespaceURI();
-			if(namespaceURI == null) namespaceURI = XMLConstants.NULL_NS_URI;
+			if(namespaceURI == null) namespaceURI = "";
 			
 			String qName = attr.getNodeName();
 			if(qName == null) qName = "";
-			            
+			
 			String localName = attr.getLocalName();
 			if(localName == null){
 				int j = qName.indexOf(':');
@@ -406,12 +447,12 @@ class ValidatorImpl extends Validator{
             String value = attr.getValue();
             if (value == null) value = "";
 			
-            if (namespaceURI == XMLConstants.XMLNS_ATTRIBUTE_NS_URI) {                
+            if (namespaceURI == XMLConstants.XML_NS_URI) {
 				prefixCount++;
                 							
                 if (localName.equals(XMLConstants.XMLNS_ATTRIBUTE)) {
-                    validatorHandler.startPrefixMapping(XMLConstants.NULL_NS_URI, value);
-					prefixes.push(XMLConstants.NULL_NS_URI);
+                    validatorHandler.startPrefixMapping("", value);
+					prefixes.push("");
                 }
                 else {
                     validatorHandler.startPrefixMapping(localName, value);

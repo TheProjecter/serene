@@ -23,9 +23,11 @@ import java.io.IOException;
 import javax.xml.validation.ValidatorHandler;
 
 import org.xml.sax.XMLReader;
+import org.xml.sax.DTDHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 
 import serene.internal.InternalRNGFactory;
@@ -38,6 +40,10 @@ import serene.bind.ElementTask;
 import serene.bind.BindingPool;
 import serene.bind.BindingModel;
 
+import serene.validation.DTDMapping;
+
+import serene.validation.schema.parsed.ParsedModel;
+
 import serene.validation.schema.parsed.ParsedComponentBuilder;
 import serene.validation.schema.parsed.components.Pattern;
 
@@ -48,6 +54,9 @@ import sereneWrite.MessageWriter;
 import sereneWrite.ParsedComponentWriter;
 
 class ExternalRefParser{
+    String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
+    String DTD_MAPPING_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdMapping";
+    
 	XMLReader xmlReader;
 	
 	ValidatorHandler validatorHandler;		
@@ -98,8 +107,17 @@ class ExternalRefParser{
 		pcw = new ParsedComponentWriter();
 	}
 	
-	Pattern parse(URI uri){	
+	ParsedModel parse(URI uri){	
 		xmlReader.setContentHandler(validatorHandler);
+        try{
+            DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+            xmlReader.setDTDHandler(dtdHandler);
+        }catch(SAXNotRecognizedException e){
+            e.printStackTrace();
+        }catch(SAXNotSupportedException e){
+            e.printStackTrace();
+        }
+        
 		try{
 			xmlReader.parse(uri.toString());			
 		}catch(IOException e){
@@ -112,6 +130,16 @@ class ExternalRefParser{
 		parsedComponentBuilder.startBuild();
 		queue.executeAll();
 		Pattern top = parsedComponentBuilder.getCurrentPattern();
-		return top;
+		DTDMapping dtdMapping = null;
+        
+        try{
+            dtdMapping = (DTDMapping)validatorHandler.getProperty(DTD_MAPPING_PROPERTY);
+        }catch(SAXNotRecognizedException e){
+            e.printStackTrace();
+        }catch(SAXNotSupportedException e){
+            e.printStackTrace();
+        }
+        
+		return new ParsedModel(dtdMapping, top, debugWriter);
 	}	
 }

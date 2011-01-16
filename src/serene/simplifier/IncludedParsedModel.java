@@ -1,5 +1,5 @@
 /*
-Copyright 2010 Radu Cernuta 
+Copyright 2011 Radu Cernuta 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,32 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package serene.validation.schema.parsed;
+package serene.simplifier;
 
 import serene.validation.DTDMapping;
+
+import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.parsed.components.Pattern;
+import serene.validation.schema.parsed.components.Grammar;
 
 import sereneWrite.MessageWriter;
  
-public class ParsedModel{
-	Pattern topPattern;
-	
-    DTDMapping dtdMapping;
-    
-	MessageWriter debugWriter;
-	public ParsedModel(DTDMapping dtdMapping, Pattern topPattern, MessageWriter debugWriter){		
-		this.debugWriter = debugWriter;
-        this.dtdMapping = dtdMapping;
-        this.topPattern = topPattern;
+class IncludedParsedModel extends ParsedModel{
+	Grammar grammar;
+	IncludedParsedModel(DTDMapping dtdMapping, Grammar topPattern, MessageWriter debugWriter){		
+		super(dtdMapping, topPattern, debugWriter);
+        this.grammar = topPattern;
 	}
     
-    public Pattern getTopPattern(){
-        return topPattern;
-    }
-    
-    public DTDMapping getDTDMapping(){
-        return dtdMapping;
-    }
-    
-	public void write(){}
+    public Grammar getTopPattern(){
+        return grammar;
+    }    
 }

@@ -32,6 +32,7 @@ import org.relaxng.datatype.DatatypeLibraryFactory;
 
 import serene.internal.InternalRNGFactory;
 
+import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.parsed.ParsedComponent;
 import serene.validation.schema.parsed.components.Pattern;
 import serene.validation.schema.parsed.components.Definition;
@@ -90,15 +91,16 @@ class Mapper{
 			Pattern topPattern,
 			Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,	
 			Map<ExternalRef, URI> externalRefs,
-			Map<URI, Pattern> docTopPatterns,
+			Map<URI, ParsedModel> docParsedModels,
 			Stack<URI> inclusionPath,
 			Map<ParsedComponent, String> componentAsciiDL,
-			Map<String, DatatypeLibrary> asciiDlDatatypeLibrary) throws SAXException{
+			Map<String, DatatypeLibrary> asciiDlDatatypeLibrary,
+            SimplificationEventContext simplificationContext) throws SAXException{
 		
 		
 		definitionExternalRefs.clear();
 		
-		grammarDefinitionsMapper.map(base, topPattern, grammarDefinitions, definitionExternalRefs, inclusionPath, componentAsciiDL, asciiDlDatatypeLibrary);
+		grammarDefinitionsMapper.map(base, topPattern, grammarDefinitions, definitionExternalRefs, inclusionPath, componentAsciiDL, asciiDlDatatypeLibrary, simplificationContext);
 				
 		if(definitionExternalRefs.isEmpty())return;
 			
@@ -112,18 +114,20 @@ class Mapper{
 			for(ExternalRef eRef : eRefs){
 				URI uri = externalRefURIs.get(eRef);
 				externalRefs.put(eRef, uri);
-				if(!docTopPatterns.containsKey(uri)){
-					Pattern docTopPattern = externalRefParser.parse(uri);
-					docTopPatterns.put(uri, docTopPattern);
+				if(!docParsedModels.containsKey(uri)){
+					ParsedModel refModel = externalRefParser.parse(uri);;
+					docParsedModels.put(uri, refModel);
+                    Pattern docTopPattern = refModel.getTopPattern();
 					namespaceInheritanceHandler.put(docTopPattern, eRef);
 					mapper.map(uri,
 						docTopPattern,
 						grammarDefinitions,	
 						externalRefs,
-						docTopPatterns,
+						docParsedModels,
 						inclusionPath,
 						componentAsciiDL,
-						asciiDlDatatypeLibrary);
+						asciiDlDatatypeLibrary,
+                        simplificationContext);
 				}
 			}
 		} 	

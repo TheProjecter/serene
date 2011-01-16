@@ -23,9 +23,11 @@ import java.io.IOException;
 import javax.xml.validation.ValidatorHandler;
 
 import org.xml.sax.XMLReader;
+import org.xml.sax.DTDHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 import serene.internal.InternalRNGFactory;
 import serene.internal.InternalRNGSchema;
@@ -37,6 +39,8 @@ import serene.bind.ElementTask;
 import serene.bind.BindingPool;
 import serene.bind.BindingModel;
 
+import serene.validation.DTDMapping;
+
 import serene.validation.schema.parsed.ParsedComponentBuilder;
 import serene.validation.schema.parsed.components.Grammar;
 
@@ -46,6 +50,9 @@ import sereneWrite.MessageWriter;
 import sereneWrite.ParsedComponentWriter;
 
 class IncludeParser{
+    String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
+    String DTD_MAPPING_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdMapping";
+    
 	XMLReader xmlReader;		
 	
 	ValidatorHandler validatorHandler;		
@@ -95,8 +102,17 @@ class IncludeParser{
 		pcw = new ParsedComponentWriter();
 	}
 	
-	Grammar parse(URI uri){		
+	IncludedParsedModel parse(URI uri){		
 		xmlReader.setContentHandler(validatorHandler);
+        try{
+            DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+            xmlReader.setDTDHandler(dtdHandler);
+        }catch(SAXNotRecognizedException e){
+            e.printStackTrace();
+        }catch(SAXNotSupportedException e){
+            e.printStackTrace();
+        }
+        
 		try{					
 			xmlReader.parse(uri.toString());			
 		}catch(IOException e){
@@ -110,13 +126,26 @@ class IncludeParser{
 		queue.executeAll();
 		Grammar g = null;
 		try{
-			g = (Grammar)parsedComponentBuilder.getCurrentPattern();
+            g = (Grammar)parsedComponentBuilder.getCurrentPattern();
 		}catch(ClassCastException cce){
 			// TODO
 			// the included document was not valid, 
 			// you should have aborted earlier
 			// see about that
+            // SEEN , but needs review
+            return null;
 		}
-		return g;
+        
+        DTDMapping dtdMapping = null;
+        
+        try{
+            dtdMapping = (DTDMapping)validatorHandler.getProperty(DTD_MAPPING_PROPERTY);
+        }catch(SAXNotRecognizedException e){
+            e.printStackTrace();
+        }catch(SAXNotSupportedException e){
+            e.printStackTrace();
+        }
+        
+		return new IncludedParsedModel(dtdMapping, g, debugWriter); 
 	}	
 }

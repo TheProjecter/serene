@@ -32,9 +32,13 @@ import org.xml.sax.SAXParseException;
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.DatatypeLibraryFactory;
 
-import serene.datatype.MissingLibraryException;
+import serene.SereneRecoverableException;
 
 import serene.internal.InternalRNGFactory;
+
+import serene.validation.DTDMapping;
+
+import serene.datatype.MissingLibraryException;
 
 import serene.validation.schema.parsed.ParsedComponent;
 import serene.validation.schema.parsed.SimplifyingVisitor;
@@ -110,6 +114,8 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	String currentDatatypeLibrary;
 	
 	boolean replaceMissingDatatypeLibrary;
+    
+    SimplificationEventContext simplificationContext;
 	
 	ErrorDispatcher errorDispatcher;
 	
@@ -141,12 +147,14 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			Map<Definition, Map<ExternalRef, URI>> definitionExternalRefs,
 			Stack<URI> inclusionPath,
 			Map<ParsedComponent, String> componentAsciiDL,
-			Map<String, DatatypeLibrary> asciiDlDatatypeLibrary) throws SAXException{
+			Map<String, DatatypeLibrary> asciiDlDatatypeLibrary,
+            SimplificationEventContext simplificationContext) throws SAXException{
 		this.grammarDefinitions = grammarDefinitions;	
 		this.definitionExternalRefs = definitionExternalRefs;	
 		this.inclusionPath = inclusionPath;
 		this.componentAsciiDL = componentAsciiDL;
 		this.asciiDlDatatypeLibrary = asciiDlDatatypeLibrary;
+        this.simplificationContext = simplificationContext;
 		
 		this.xmlBaseUri = xmlBaseUri;
 		currentGrammar = null;
@@ -168,7 +176,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		if(topPattern !=null)//to catch situations when href uris were faultive
 			topPattern.accept(this);
 	}
-
+	
 	public void visit(Include include) throws SAXException{
 		String dla = include.getDatatypeLibraryAttribute();
 		String oldDla = null;
@@ -224,8 +232,13 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			return; 
 		}
 		
-		Grammar includedGrammar = parse(hrefURI);
-		if(includedGrammar == null) return;		
+        IncludedParsedModel includedModel = parse(hrefURI); 
+		Grammar includedGrammar = includedModel.getTopPattern();
+            
+		if(includedGrammar == null) return;
+
+        DTDMapping dtdMapping = includedModel.getDTDMapping();
+        if(dtdMapping != null) simplificationContext.merge(dtdMapping);	
 		
 		Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions = new HashMap<Grammar, Map<String, ArrayList<Definition>>>();
 		// Maps Definitions to the Grammars embeded in them.
@@ -233,7 +246,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		// overriden to be taken over in this.grammarDefinitions.
 		// The top grammar(includedGrammar) is not recorded here.(no null key)		
 		Map<Definition, ArrayList<Grammar>> definitionGrammars = new HashMap<Definition, ArrayList<Grammar>>();
-		inclusionPath.push(hrefURI);
+		inclusionPath.push(hrefURI);        
 		map(hrefURI, includedGrammar, grammarDefinitions, definitionGrammars);
 		inclusionPath.pop();
 		
@@ -270,7 +283,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		return hrefURI;
 	}
 	
-	private Grammar parse(URI hrefURI){
+	private IncludedParsedModel parse(URI hrefURI){
 		if(includeParser == null)includeParser = new IncludeParser(xmlReader, internalRNGFactory, errorDispatcher, debugWriter);
 		return includeParser.parse(hrefURI);		
 	}
@@ -279,7 +292,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 					Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions, 
 					Map<Definition, ArrayList<Grammar>> definitionGrammars) throws SAXException{				
 		if(includedGrammarDefinitionsMapper == null)includedGrammarDefinitionsMapper = new IncludedGrammarDefinitionsMapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory, debugWriter);
-		includedGrammarDefinitionsMapper.map(base, includedGrammar, grammarDefinitions, definitionExternalRefs, definitionGrammars, inclusionPath, componentAsciiDL, asciiDlDatatypeLibrary);		
+		includedGrammarDefinitionsMapper.map(base, includedGrammar, grammarDefinitions, definitionExternalRefs, definitionGrammars, inclusionPath, componentAsciiDL, asciiDlDatatypeLibrary, simplificationContext);		
 	}
 	private void doReplacements(Include include,
 								Grammar includedGrammar,
@@ -942,6 +955,8 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			resolve(xmlBase, data);
 		}
 		
+		/*ParsedComponent[] param = data.getParam();
+		if(param != null) next(param);*/
 		ParsedComponent[] exceptPattern = data.getExceptPattern();
 		if(exceptPattern != null) next(exceptPattern);
 		

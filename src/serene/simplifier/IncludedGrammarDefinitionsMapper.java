@@ -64,9 +64,10 @@ class IncludedGrammarDefinitionsMapper extends GrammarDefinitionsMapper{
 			Map<Definition, ArrayList<Grammar>> definitionGrammars, 
 			Stack<URI> inclusionPath,
 			Map<ParsedComponent, String> componentAsciiDL,
-			Map<String, DatatypeLibrary> asciiDlDatatypeLibrary) throws SAXException{
+			Map<String, DatatypeLibrary> asciiDlDatatypeLibrary,
+            SimplificationEventContext simplificationContext) throws SAXException{
 		this.definitionGrammars = definitionGrammars;
-		map(base, topPattern, grammarDefinitions, definitionExternalRefs, inclusionPath, componentAsciiDL, asciiDlDatatypeLibrary);
+		map(base, topPattern, grammarDefinitions, definitionExternalRefs, inclusionPath, componentAsciiDL, asciiDlDatatypeLibrary, simplificationContext);
 	}	
 	
 	public void visit(Grammar grammar) throws SAXException{	

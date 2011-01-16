@@ -22,8 +22,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Stack;
-import java.util.Set;
-import java.util.HashSet;
 
 import javax.xml.XMLConstants;
 
@@ -37,6 +35,7 @@ import serene.util.BooleanList;
 import serene.util.IntStack;
 
 import serene.validation.schema.parsed.ParsedComponent;
+import serene.validation.schema.parsed.ParsedModel;
 
 import serene.validation.schema.parsed.components.Pattern;
 import serene.validation.schema.parsed.components.Definition;
@@ -70,7 +69,7 @@ public class RNGSimplifier extends Simplifier{
 				
 		grammarDefinitions = new HashMap<Grammar, Map<String, ArrayList<Definition>>>();		
 		externalRefs = new HashMap<ExternalRef, URI>();			
-		docTopPatterns = new HashMap<URI, Pattern>();
+		docParsedModels = new HashMap<URI, ParsedModel>();
 		namespaceInheritanceHandler = new NamespaceInheritanceHandler(debugWriter);
 		pool = new DefinitionSimplifierPool(errorDispatcher, debugWriter);
 		
@@ -91,7 +90,9 @@ public class RNGSimplifier extends Simplifier{
 		
 		
 		inclusionPath = new Stack<URI>();
-		mapper = new Mapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, debugWriter);				
+		mapper = new Mapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, debugWriter);
+        
+        simplificationContext = new SimplificationEventContext(debugWriter);
 	}
 	
 	public void setReplaceMissingDatatypeLibrary(boolean value){
@@ -99,33 +100,39 @@ public class RNGSimplifier extends Simplifier{
 		mapper.setReplaceMissingDatatypeLibrary(value);
 	}
 	
-	public SimplifiedModel simplify(URI base, Pattern topPattern)  throws SAXException{
+	public SimplifiedModel simplify(URI base, ParsedModel parsedModel)  throws SAXException{
+        if(parsedModel == null) return null;
+        
+        Pattern topPattern = parsedModel.getTopPattern();        
 		if(topPattern == null) return null;
 					
 		grammarDefinitions.clear();
 		externalRefs.clear();
-		docTopPatterns.clear();
+		docParsedModels.clear();
 		inclusionPath.clear();
 		
 		componentAsciiDL.clear();
 		asciiDlDatatypeLibrary.clear();
+        
+        simplificationContext.reset();
 		
 		this.topPattern = topPattern;
 		inclusionPath.push(base);
-		docTopPatterns.put(base, topPattern);
+		docParsedModels.put(base, parsedModel);
 		
 		mapper.map(base,
 					topPattern,
 					grammarDefinitions,
 					externalRefs,
-					docTopPatterns,
+					docParsedModels,
 					inclusionPath,
 					componentAsciiDL,
-					asciiDlDatatypeLibrary);
+					asciiDlDatatypeLibrary,
+                    simplificationContext);
 		
 		//System.out.println("grammarDefinitions "+grammarDefinitions);
 		//System.out.println("externalRefs "+externalRefs);
-		//System.out.println("docTopPatterns "+docTopPatterns);
+		//System.out.println("docParsedModels "+docParsedModels);
 		//System.out.println("**************************************");
 		
 		recursionModel = new RecursionModel(debugWriter);

@@ -1,5 +1,5 @@
 /*
-Copyright 2010 Radu Cernuta 
+Copyright 2011 Radu Cernuta 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,17 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package serene.datatype;
 
-import org.xml.sax.DTDHandler;
+package serene.simplifier;
+
 import org.relaxng.datatype.ValidationContext;
 
 import serene.validation.PrefixMapping;
 import serene.validation.DTDMapping;
+import serene.validation.NotationDeclaration;
+import serene.validation.EntityDeclaration;
 
 import sereneWrite.MessageWriter;
 
-public class ValidationEventContext implements  ValidationContext, DTDHandler{
+class SimplificationEventContext implements  ValidationContext{
     
 	boolean isBaseURISet; 
 	String baseURI;
@@ -34,46 +36,45 @@ public class ValidationEventContext implements  ValidationContext, DTDHandler{
     
 	MessageWriter debugWriter;	
 	
-    public ValidationEventContext(MessageWriter debugWriter){
+    SimplificationEventContext(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		isBaseURISet = false;
         
         prefixMapping = new PrefixMapping(debugWriter);
-        dtdMapping = new DTDMapping(debugWriter);		
 	}
     	
     public void reset(){
         isBaseURISet = false;
         baseURI = null;
-              
-        prefixMapping = prefixMapping.reset();
-        dtdMapping.reset();
+                
+        prefixMapping = prefixMapping.reset();//only needed when revious topPattern was not grammar, the rest are clean
+        if(dtdMapping != null) dtdMapping.reset();
     }
         
-    // start DTDHandler
-    public void unparsedEntityDecl(String entityName, String publicId, String systemId, String notationName){
-		dtdMapping.unparsedEntityDecl(entityName, publicId, systemId, notationName);
-	}
-	
-    public void notationDecl(String notationName, String publicId, String systemId){
-		dtdMapping.notationDecl(notationName, publicId, systemId);
-	} 
-    // end DTDHandler
+    void setDTDMapping(DTDMapping dtdMapping){
+        this.dtdMapping = dtdMapping;
+    }
     
-	public PrefixMapping getPrefixMapping(){
+    DTDMapping getDTDMapping(){
+        return dtdMapping;
+    }
+    
+    void merge(DTDMapping dtdMapping){
+        if(this.dtdMapping == null) this.dtdMapping = dtdMapping; 
+        this.dtdMapping.merge(dtdMapping);
+    }
+    
+	PrefixMapping getPrefixMapping(){
 		return prefixMapping;
 	}
 	
-	public DTDMapping getDTDMapping(){
-		return dtdMapping;
-	}
-    
+	
 	public void startPrefixMapping(String prefix, String uri){
-		prefixMapping = prefixMapping.startMapping(prefix, uri);	
+		prefixMapping = prefixMapping.startMapping(prefix, uri);
 	}
 	
-	public void endPrefixMapping(String prefix){
-		prefixMapping = prefixMapping.endMapping(prefix);	
+	public void endPrefixMapping(String prefix){        
+		prefixMapping = prefixMapping.endMapping(prefix);
 	}
 	
 	public void setBaseURI(String baseURI){
@@ -101,6 +102,6 @@ public class ValidationEventContext implements  ValidationContext, DTDHandler{
 	} 
     
     public String toString(){
-        return"ValidationEventContext ";
+        return"SimplificationEventContext ";
     }
 }
