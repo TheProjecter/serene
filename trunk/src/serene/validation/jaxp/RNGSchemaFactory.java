@@ -48,6 +48,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ErrorHandler;
+import org.xml.sax.DTDHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXNotRecognizedException;
@@ -58,6 +59,10 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import org.w3c.dom.ls.LSResourceResolver;
 import org.w3c.dom.Node;
+import org.w3c.dom.Document;
+import org.w3c.dom.Entity;
+import org.w3c.dom.Notation;
+import org.w3c.dom.DocumentType;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Attr;
 
@@ -78,6 +83,8 @@ import serene.bind.BindingModel;
 import serene.simplifier.RNGSimplifier;
 import serene.restrictor.RestrictionController;
 
+import serene.validation.DTDMapping;
+
 import serene.validation.schema.parsed.ParsedComponentBuilder;
 import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.parsed.components.Pattern;
@@ -96,7 +103,9 @@ import serene.util.IntStack;
 *
 *
 */
-public class RNGSchemaFactory extends SchemaFactory{	
+public class RNGSchemaFactory extends SchemaFactory{
+    String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
+    String DTD_MAPPING_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdMapping";	
 	
 	private LSResourceResolver resourceResolver;
 	
@@ -410,6 +419,8 @@ public class RNGSchemaFactory extends SchemaFactory{
 		
 		//read schema
 		xmlReader.setContentHandler(validatorHandler);
+        DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+        xmlReader.setDTDHandler(dtdHandler);
 		try{
 			xmlReader.parse(inputSource);
 		}catch(IOException e){			
@@ -423,21 +434,20 @@ public class RNGSchemaFactory extends SchemaFactory{
 		if(p == null) {
 			// !!! MUST always return a non-null Schema object, meaningfull or not.
 			return new RNGSchema(null, null, debugWriter);
-		}
-		
-		ParsedModel pm = null;
-		if(parsedModelSchema) pm = new ParsedModel(p, debugWriter);
-		
+		}		
+        DTDMapping dtdMapping = (DTDMapping)validatorHandler.getProperty(DTD_MAPPING_PROPERTY);        
+		ParsedModel pm = new ParsedModel(dtdMapping, p, debugWriter);
+        
 		//build simplified model
 		SimplifiedModel sm = null;		
 		if(systemId != null){
 			try{
-				sm = simplifier.simplify(new URI(systemId), p);
+				sm = simplifier.simplify(new URI(systemId), pm);
 			}catch(URISyntaxException use){
 				throw new SAXException(use.getMessage());
 			}
 		}else{
-			sm = simplifier.simplify(null, p);
+			sm = simplifier.simplify(null, pm);
 		}
 		
 		//apply restrictions
@@ -471,6 +481,9 @@ public class RNGSchemaFactory extends SchemaFactory{
 			if(prefixesCount == null) prefixesCount = new IntStack();
 			else prefixesCount.clear();
 			
+            try{
+                handleDTDContext((Document)node, (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY));
+            }catch(ClassCastException e){}
 			validate(node);
 		}
 		
@@ -484,19 +497,19 @@ public class RNGSchemaFactory extends SchemaFactory{
 			return new RNGSchema(null, null, debugWriter);
 		}
 		
-		ParsedModel pm = null;
-		if(parsedModelSchema) pm = new ParsedModel(p, debugWriter);
+		DTDMapping dtdMapping = (DTDMapping)validatorHandler.getProperty(DTD_MAPPING_PROPERTY);        
+		ParsedModel pm = new ParsedModel(dtdMapping, p, debugWriter);
 		
 		//build simplified model
 		SimplifiedModel sm = null;		
 		if(systemId != null){
 			try{
-				sm = simplifier.simplify(new URI(systemId), p);
+				sm = simplifier.simplify(new URI(systemId), pm);
 			}catch(URISyntaxException use){
 				throw new SAXException(use.getMessage());
 			}
 		}else{
-			sm = simplifier.simplify(null, p);
+			sm = simplifier.simplify(null, pm);
 		}
 		
 		//apply restrictions
@@ -509,6 +522,31 @@ public class RNGSchemaFactory extends SchemaFactory{
 		return schema;
 	}
 		
+    private void handleDTDContext(Document document, DTDHandler dtdHandler) throws SAXException{
+        DocumentType doctype = document.getDoctype();
+        NamedNodeMap entities = doctype.getEntities();
+        for(int i = 0; i < entities.getLength(); i++){
+            Entity entity = null;
+            try{
+                entity = (Entity)entities.item(i);
+            }catch(ClassCastException e){}
+            String notationName = entity.getNotationName(); 
+            if(notationName != null){ // unparsed entity
+                dtdHandler.unparsedEntityDecl(entity.getNodeName(), entity.getPublicId(), entity.getSystemId(), notationName);
+            }
+        }
+        
+        NamedNodeMap notations = doctype.getNotations();
+        for(int i = 0; i < notations.getLength(); i++){
+            Notation notation = null;
+            try{
+                notation = (Notation)notations.item(i);
+            }catch(ClassCastException e){}
+            dtdHandler.notationDecl(notation.getNodeName(), notation.getPublicId(), notation.getSystemId());            
+        }
+        
+    }
+    
 	private void validate(Node node) throws SAXException{
 		validatorHandler.startDocument();
 		

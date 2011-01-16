@@ -16,7 +16,6 @@ limitations under the License.
 
 package serene.validation.jaxp;
 
-//import java.util.Arrays;
 import java.util.Stack;
 import java.util.Map;
 import java.util.HashMap;
@@ -66,6 +65,8 @@ import serene.util.SpaceCharsHandler;
 import sereneWrite.MessageWriter;
 
 class ValidatorHandlerImpl extends ValidatorHandler{
+    String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
+    String DTD_MAPPING_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdMapping";
 
 	ContentHandler contentHandler;	
 	LSResourceResolver lsResourceResolver;
@@ -118,7 +119,8 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 		namespacePrefixes = false;
 		prefixNamespaces = new HashMap<String, String>();
 
-		//default recognizeOutOfContext is true
+        validationEventContext = new ValidationEventContext(debugWriter);
+        eventHandlerPool.setValidationContext(validationEventContext);
 	}
 	
 	protected void finalize(){		
@@ -170,16 +172,12 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 	public void processingInstruction(String target, String date) throws SAXException{
 		if(contentHandler != null) contentHandler.processingInstruction(target, date);
 	} 
-	public void skippedEntity(String name) throws SAXException{
-		validationEventContext.addUnparsedEntity(name);
-		if(contentHandler != null) contentHandler.skippedEntity(name);
-	}	
+	public void skippedEntity(String name) throws SAXException{}	
 	public void ignorableWhitespace(char[] ch, int start, int len) throws SAXException{
 		if(contentHandler != null) contentHandler.ignorableWhitespace(ch, start, len);
 	}
 	public void startDocument() throws SAXException{
-		validationEventContext = new ValidationEventContext(locator.getSystemId(), validationEventContext, debugWriter);
-		eventHandlerPool.setValidationContext(validationEventContext);
+		validationEventContext.reset();
 		validationItemLocator.clear();
 		activeModel = activeModelPool.getActiveModel(validationItemLocator, 
 														errorDispatcher);
@@ -282,8 +280,6 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler = null;
 		activeModel.recycle();
 		activeModel = null;
-		validationEventContext = validationEventContext.getParent();
-		eventHandlerPool.setValidationContext(validationEventContext);
 		if(contentHandler != null) contentHandler.endDocument();
 	}
 		
@@ -305,6 +301,34 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 
         if (name == null) {
             throw new NullPointerException();
+        }
+
+        throw new SAXNotRecognizedException(name);
+    }
+    
+    public void setProperty(String name, Object object)
+        throws SAXNotRecognizedException, SAXNotSupportedException {
+
+        if (name == null) {
+            throw new NullPointerException();
+        }else if(name.equals(DTD_HANDLER_PROPERTY)){
+            // recognized but not set, only for retrieval
+        }else if(name.equals(DTD_MAPPING_PROPERTY)){
+            // recognized but not set, only for retrieval
+        }
+
+        throw new SAXNotRecognizedException(name);
+    }
+   
+    public Object getProperty(String name)
+        throws SAXNotRecognizedException, SAXNotSupportedException {
+
+        if (name == null) {
+            throw new NullPointerException();
+        }else if(name.equals(DTD_HANDLER_PROPERTY)){
+            return validationEventContext;
+        }else if(name.equals(DTD_MAPPING_PROPERTY)){
+            return validationEventContext.getDTDMapping();
         }
 
         throw new SAXNotRecognizedException(name);
