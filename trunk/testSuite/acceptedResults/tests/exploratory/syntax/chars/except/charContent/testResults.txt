@@ -8,4 +8,4 @@ TESTED DOCUMENT document1.xml
 
 file:///C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/except/charContent/document1.xml:21:17 Syntax error. Element <root> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/except/charContent/schema.rng:23:16 contains errors: 
 Excepted character content.
-Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/except/charContent/document1.xml:21:12 matches a value excepted by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/except/charContent/schema.rng:25:27.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/except/charContent/document1.xml:21:10 matches a value excepted by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/except/charContent/schema.rng:25:27.

@@ -55,7 +55,7 @@ Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element w
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute first error: 
 	file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:46:17  Element <rng:choice> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: choice in pattern context contains errors: 
 	Unexpected character content.
-	Character content at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:44:5 is not allowed by the element's schema definition <element> at RELAXNG Specification 3.Full Syntax: choice in pattern context.
+	Character content at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:43:25 is not allowed by the element's schema definition <element> at RELAXNG Specification 3.Full Syntax: choice in pattern context.
 
 file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/general/schema.rng:49:15 Warning. Element <rng:define> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: define generates warning: 
 Ambiguous content.

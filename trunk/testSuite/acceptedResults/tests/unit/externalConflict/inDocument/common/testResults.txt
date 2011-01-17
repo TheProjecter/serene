@@ -18,7 +18,7 @@ TESTED DOCUMENT document2.xml
 
 file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/common/document2.xml:25:9 Syntax error. Element <cc> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/common/schema.rng:37:25 contains errors: 
 Unexpected character content.
-Character content at file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/common/document2.xml:25:4 is not allowed by the element's schema definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/common/schema.rng:37:25.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/common/document2.xml:24:14 is not allowed by the element's schema definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/common/schema.rng:37:25.
 
 file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/common/document2.xml:28:8 Syntax error. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/common/schema.rng:23:26 contains errors: 
 Ambiguous content.
