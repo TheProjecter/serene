@@ -22,6 +22,11 @@ limitations under the License.
     <property name="buildClasses.dir" value="./build/classes"/>
     <property name="buildPack.dir" value="./build/pack"/>    
     <property name="lib.dir" value="./lib"/>
+    <property name="intLib.dir" value="./lib/int"/>
+    <property name="extLib.dir" value="./lib/ext"/>
+    <property name="xercesJar.file" value="./lib/ext/xercesImpl.jar"/>
+    <property name="rngDatatypeJar.file" value="./lib/ext/relaxngDatatype.jar"/>
+    
  
 
     <!--
@@ -29,52 +34,26 @@ limitations under the License.
     * COMMON
     ****************************************************************************
     -->
-	<target name="clean" description="Delete the ${build.dir} and ${lib.dir}.">
+	<target name="clean" description="Delete the ${build.dir} and ${intLib.dir}.">
 		<echo>Cleaning all...</echo>
 		<delete dir="${build.dir}"/>
-		<delete dir="${lib.dir}"/>
+		<delete dir="${intLib.dir}"/>
 	</target>
     
-    <target name="prepare" depends="clean" description="Create the ${build.dir} and ${lib.dir}.">
+    <target name="prepare" depends="clean" description="Create the ${build.dir} and ${intLib.dir}.">
         <echo>Preparing all...</echo>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${buildClasses.dir}"/>
-        <mkdir dir="${lib.dir}"/>
+        <mkdir dir="${intLib.dir}"/>
     </target>
     
     <target name="compile" depends="prepare" description="Compile ${source.dir} into ${buildClasses.dir}.">
         <echo>Compiling all...</echo>
-        <javac srcdir="${source.dir}" destdir="${buildClasses.dir}" includeAntRuntime="false">
-            <compilerarg value="-Xlint"/>
+        <javac srcdir="${source.dir}" destdir="${buildClasses.dir}" classpath="${xercesJar.file};${rngDatatypeJar.file}" includeAntRuntime="false">
+           <!-- <compilerarg value="-Xlint"/>-->
         </javac>
     </target>
-    
-    <!--
-    ****************************************************************************
-    * RELAX NG DATATYPE
-    ****************************************************************************
-    -->
-    <target name="cleanForDatatype" depends="compile" description="Delete the ${buildPack.dir}.">
-		<echo>Cleaning for datatype...</echo>
-		<delete dir="${buildPack.dir}"/>
-	</target>
-    
-    <target name="prepareForDatatype" depends="cleanForDatatype" description="Create the ${buildPack.dir} and copy ${buildClasses.dir}/org to it.">
-        <echo>Preparing for datatype...</echo>
-        <mkdir dir="${buildPack.dir}"/>
-        <copy todir="${buildPack.dir}">
-            <fileset dir="${buildClasses.dir}">
-                <include name="org/**/*.class"/>
-            </fileset>
-        </copy>
-    </target>
-    
-    <target name="packDatatype" depends="prepareForDatatype" description="Create jar file ${lib.dir}/relaxngDatatype.jar">
-        <echo>Packing relaxngDatatype...</echo>
-        <jar destfile="${lib.dir}/relaxngDatatype.jar" basedir="${buildPack.dir}">
-        </jar>
-    </target>
-    
+      
     <!--
     ****************************************************************************
     * SERENE WRITE
@@ -95,9 +74,9 @@ limitations under the License.
         </copy>
     </target>
     
-    <target name="packSereneWrite" depends="prepareForSereneWrite" description="Create jar file ${lib.dir}/sereneWrite.jar">
+    <target name="packSereneWrite" depends="prepareForSereneWrite" description="Create jar file ${intLib.dir}/sereneWrite.jar">
         <echo>Packing sereneWrite...</echo>
-        <jar destfile="${lib.dir}/sereneWrite.jar" basedir="${buildPack.dir}">
+        <jar destfile="${intLib.dir}/sereneWrite.jar" basedir="${buildPack.dir}">
         </jar>
     </target>
     
@@ -130,14 +109,16 @@ limitations under the License.
                     files="org.relaxng.datatype.DatatypeLibraryFactory"/>
            <filelist dir="${source.dir}/serene/datatype/rngnative"
                     files="org.relaxng.datatype.DatatypeLibraryFactory"/>
+           <filelist dir="${source.dir}/serene/datatype/xsd"
+                    files="org.relaxng.datatype.DatatypeLibraryFactory"/>
         </concat>
     </target>
     
-    <target name="packSerene" depends="prepareForSerene" description="Create jar file ${lib.dir}/serene.jar">
+    <target name="packSerene" depends="prepareForSerene" description="Create jar file ${intLib.dir}/serene.jar">
         <echo>Packing serene...</echo>
-        <jar destfile="${lib.dir}/serene.jar" basedir="${buildPack.dir}">
+        <jar destfile="${intLib.dir}/serene.jar" basedir="${buildPack.dir}">
             <manifest>
-                <attribute name="Class-Path" value="relaxngDatatype.jar sereneWrite.jar"/>
+                <attribute name="Class-Path" value="../../${xercesJar.file} ../../${rngDatatypeJar.file} sereneWrite.jar"/>
                 <attribute name="Main-Class" value="serene.Driver"/>
             </manifest>
         </jar>
@@ -163,11 +144,11 @@ limitations under the License.
         </copy>
     </target>
     
-    <target name="packSereneTest" depends="prepareForSereneTest" description="Create jar file ${lib.dir}/sereneTest.jar">
+    <target name="packSereneTest" depends="prepareForSereneTest" description="Create jar file ${intLib.dir}/sereneTest.jar">
         <echo>Packing sereneTest...</echo>
-        <jar destfile="${lib.dir}/sereneTest.jar" basedir="${buildPack.dir}">
+        <jar destfile="${intLib.dir}/sereneTest.jar" basedir="${buildPack.dir}">
             <manifest>
-                <attribute name="Class-Path" value="relaxngDatatype.jar sereneWrite.jar serene.jar"/>
+                <attribute name="Class-Path" value="../../${xercesJar.file} ../../${rngDatatypeJar.file} sereneWrite.jar serene.jar"/>
                 <attribute name="Main-Class" value="sereneTest.Driver"/>
             </manifest>
         </jar>
@@ -179,21 +160,21 @@ limitations under the License.
     * TOP TARGETS
     ****************************************************************************
     -->
-    <target name="restricted" depends="packDatatype, packSereneWrite, packSerene" description="Builds only the serene implementation and the libraries it depends on, without the test tool.">        
+    <target name="restricted" depends="packSereneWrite, packSerene" description="Builds only the serene implementation and the libraries it depends on, without the test tool.">        
         <delete dir="${build.dir}"/>
         <echo>This was the restricted build.</echo>
     </target>
     
-    <target name="default" depends="packDatatype, packSereneWrite, packSerene, packSereneTest" description="Builds the entire project, including the test tool.">        
+    <target name="default" depends="packSereneWrite, packSerene, packSereneTest" description="Builds the entire project, including the test tool.">        
         <delete dir="${build.dir}"/>
         <echo>This was the default build.</echo>
     </target>
     
-    <target name="test" depends="packDatatype, packSereneWrite, packSerene, packSereneTest" description="Builds the entire project and runs the sereneTest.Driver on the testSuite/ with the regression analysis option on.">        
+    <target name="test" depends="packSereneWrite, packSerene, packSereneTest" description="Builds the entire project and runs the sereneTest.Driver on the testSuite/ with the regression analysis option on.">        
         <delete dir="${build.dir}"/>
         <echo>This was the test build.</echo>
         <echo>Running the test.</echo>
-        <java jar="lib/sereneTest.jar" fork="true">
+        <java jar="${intLib.dir}/sereneTest.jar" fork="true">
             <arg value="a"/>
             <arg value="testSuite"/>
         </java>
