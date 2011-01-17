@@ -1429,7 +1429,8 @@ abstract class Simplifier implements SimplifyingVisitor{
 			type = type.trim();
 			asciiDL = componentAsciiDL.get(data);
 		}
-        handleDataBuild(data, asciiDL, type);
+        if(param != null) handleDataBuild(data, asciiDL, type, param);
+		else handleDataBuild(data, asciiDL, type);
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}	
 	private void handleDataBuild(Data data, String asciiDL, String type) throws SAXException{
@@ -1462,7 +1463,85 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}
 		builder.buildData(datatype, data.getQName(), data.getLocation());
 	}
-    
+    private void handleDataBuild(Data data, String asciiDL, String type, Param[] params) throws SAXException{
+		DatatypeLibrary datatypeLibrary = asciiDlDatatypeLibrary.get(asciiDL);
+        DatatypeBuilder datatypeBuilder = null;
+        Datatype datatype = null;
+		if(datatypeLibrary == null){
+			if(replaceMissingDatatypeLibrary){
+				type = TOKEN_DT;
+				datatypeLibrary = asciiDlDatatypeLibrary.get(NATIVE_DATATYPE_LIBRARY);
+			}else{
+				builder.buildData(null, data.getQName(), data.getLocation());
+				return;
+			}
+		}       
+		try{
+            datatypeBuilder = datatypeLibrary.createDatatypeBuilder(type);            		
+			if(datatypeBuilder == null){
+				String message = "Simplification 4.16 error. "
+				+"For element <"+data.getQName()+"> at "+data.getLocation()
+				+"the datatype specified by type attribute, \""+type+"\", is not known "
+				+"in the corresponding datatype library \""+data.getDatatypeLibrary()+"\".";
+				errorDispatcher.error(new SAXParseException(message, null));
+			}
+		}catch(DatatypeException de){
+			String message = "Simplification 4.16 error. "
+				+"Datatype error for element <"+data.getQName()+"> at "+data.getLocation()
+				+", datatype library \""+data.getDatatypeLibrary()+"\". "
+				+de.getMessage();
+				errorDispatcher.error(new SAXParseException(message, null));
+		}
+        
+        String ns = namespaceInheritanceHandler.getNsURI(data);
+        if(ns == null)ns = "";
+        try{
+            datatypeBuilder.addParameter(TARGET_NAMESPACE_NAME, ns, simplificationContext);
+        }catch(DatatypeException de){
+            //throw new IllegalStateException();
+            // Exceptions are thrown for every parameter when the type allows no
+            // params at all. Here just do nothing and errors will be reported
+            // when processing actual param. This will certainly happen, otherwise 
+            // you'd be in another method.
+        }
+        for(Param param : params){
+            String paramNs = param.getNsAttribute();
+            boolean localNs = false;
+            if(paramNs != null){
+                localNs = true;
+                try{
+                    datatypeBuilder.addParameter(TARGET_NAMESPACE_NAME, paramNs, simplificationContext);
+                }catch(DatatypeException de){
+                    //throw new IllegalStateException();
+                }
+            }
+            try{
+                datatypeBuilder.addParameter(param.getName(), param.getCharacterContent(), simplificationContext);
+            }catch(DatatypeException de){
+                String message = "Simplification 4.16 error. "
+                    +"Parameter with the name \""+param.getName()+"\" at "+param.getLocation()
+                    +", is not allowed in this context. "
+                    +de.getMessage();
+                    errorDispatcher.error(new SAXParseException(message, null));
+            }
+            
+            if(localNs){
+                try{
+                    datatypeBuilder.addParameter(TARGET_NAMESPACE_NAME, ns, simplificationContext);
+                }catch(DatatypeException de){
+                    //throw new IllegalStateException();
+                }
+            }
+        }
+        
+        try{
+            datatype = datatypeBuilder.createDatatype();
+        }catch(DatatypeException de){
+            throw new IllegalStateException();
+        }
+		builder.buildData(datatype, data.getQName(), data.getLocation());
+	}
+	
 	
 	public void visit(Grammar grammar) throws SAXException{		
 		ArrayList<Definition> start = getStart(grammar);		
