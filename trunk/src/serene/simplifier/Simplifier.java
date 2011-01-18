@@ -1493,54 +1493,56 @@ abstract class Simplifier implements SimplifyingVisitor{
 				errorDispatcher.error(new SAXParseException(message, null));
 		}
         
-        String ns = namespaceInheritanceHandler.getNsURI(data);
-        if(ns == null)ns = "";
-        try{
-            datatypeBuilder.addParameter(TARGET_NAMESPACE_NAME, ns, simplificationContext);
-        }catch(DatatypeException de){
-            //throw new IllegalStateException();
-            // Exceptions are thrown for every parameter when the type allows no
-            // params at all. Here just do nothing and errors will be reported
-            // when processing actual param. This will certainly happen, otherwise 
-            // you'd be in another method.
-        }
-        for(Param param : params){
-            String paramNs = param.getNsAttribute();
-            boolean localNs = false;
-            if(paramNs != null){
-                localNs = true;
+        if(datatypeBuilder != null){
+            String ns = namespaceInheritanceHandler.getNsURI(data);
+            if(ns == null)ns = "";
+            try{
+                datatypeBuilder.addParameter(TARGET_NAMESPACE_NAME, ns, simplificationContext);
+            }catch(DatatypeException de){
+                //throw new IllegalStateException();
+                // Exceptions are thrown for every parameter when the type allows no
+                // params at all. Here just do nothing and errors will be reported
+                // when processing actual param. This will certainly happen, otherwise 
+                // you'd be in another method.
+            }
+            for(Param param : params){
+                String paramNs = param.getNsAttribute();
+                boolean localNs = false;
+                if(paramNs != null){
+                    localNs = true;
+                    try{
+                        datatypeBuilder.addParameter(TARGET_NAMESPACE_NAME, paramNs, simplificationContext);
+                    }catch(DatatypeException de){
+                        //throw new IllegalStateException();
+                    }
+                }
                 try{
-                    datatypeBuilder.addParameter(TARGET_NAMESPACE_NAME, paramNs, simplificationContext);
+                    datatypeBuilder.addParameter(param.getName(), param.getCharacterContent(), simplificationContext);
                 }catch(DatatypeException de){
-                    //throw new IllegalStateException();
+                    String message = "Simplification 4.16 error. "
+                        +"Parameter with the name \""+param.getName()+"\" at "+param.getLocation()
+                        +", is not allowed in this context. "
+                        +de.getMessage();
+                        errorDispatcher.error(new SAXParseException(message, null));
+                }
+                
+                if(localNs){
+                    try{
+                        datatypeBuilder.addParameter(TARGET_NAMESPACE_NAME, ns, simplificationContext);
+                    }catch(DatatypeException de){
+                        //throw new IllegalStateException();
+                    }
                 }
             }
+        
             try{
-                datatypeBuilder.addParameter(param.getName(), param.getCharacterContent(), simplificationContext);
+                datatype = datatypeBuilder.createDatatype();
             }catch(DatatypeException de){
                 String message = "Simplification 4.16 error. "
-                    +"Parameter with the name \""+param.getName()+"\" at "+param.getLocation()
-                    +", is not allowed in this context. "
+                    +"Illegal datatype definition. "
                     +de.getMessage();
                     errorDispatcher.error(new SAXParseException(message, null));
             }
-            
-            if(localNs){
-                try{
-                    datatypeBuilder.addParameter(TARGET_NAMESPACE_NAME, ns, simplificationContext);
-                }catch(DatatypeException de){
-                    //throw new IllegalStateException();
-                }
-            }
-        }
-        
-        try{
-            datatype = datatypeBuilder.createDatatype();
-        }catch(DatatypeException de){
-            String message = "Simplification 4.16 error. "
-                +"Illegal datatype definition. "
-                +de.getMessage();
-                errorDispatcher.error(new SAXParseException(message, null));
         }
 		builder.buildData(datatype, data.getQName(), data.getLocation());
 	}
