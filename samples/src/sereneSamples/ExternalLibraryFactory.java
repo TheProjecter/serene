@@ -3,8 +3,6 @@ package sereneSamples;
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.DatatypeLibraryFactory;
 
-import serene.internal.datatype.InternalLibrary;
-
 import sereneWrite.MessageWriter;
 
 // This class should be made private when it is prepared for the jar

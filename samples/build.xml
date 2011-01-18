@@ -23,7 +23,12 @@
     
      <target name="compile" depends="prepare" description="Compile ${source.dir} into ${build.dir}.">
         <echo>Compiling...</echo>
-        <javac srcdir="${source.dir}" destdir="${build.dir}" classpath="../lib/relaxngDatatype.jar;../lib/serene.jar" includeAntRuntime="false">
+        <javac srcdir="${source.dir}" 
+               destdir="${build.dir}" 
+               classpath="../lib/ext/relaxngDatatype.jar;../lib/int/serene.jar" 
+               includeAntRuntime="false"
+               debug="true"
+               debugLevel="lines, vars, source">
             <compilerarg value="-Xlint"/>
         </javac>
     </target>
@@ -32,7 +37,7 @@
         <echo>Packing samples...</echo>
         <jar destfile="${lib.dir}/samples.jar" basedir="${build.dir}">
             <manifest>
-                <attribute name="Class-Path" value="../../lib/relaxngDatatype.jar ../../lib/serene.jar "/>
+                <attribute name="Class-Path" value="../../lib/ext/relaxngDatatype.jar ../../lib/int/serene.jar "/>
             </manifest>
         </jar>
         <delete dir="${build.dir}"/>

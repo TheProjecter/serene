@@ -1,3 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root>555</root>
+
+<root>
+    <integer>5</integer>
+    <similarToken>gumbo</similarToken>
+    <similarToken>gambo</similarToken>
+    <similarToken>Gumbo</similarToken>
+</root>

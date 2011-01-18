@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<element name = "root" xmlns="http://relaxng.org/ns/structure/1.0">			
-	<data type="integer" datatypeLibrary="http://example.com/datatype/external"/>
+<element name = "root" xmlns="http://relaxng.org/ns/structure/1.0">	
+    <oneOrMore>
+        <element name="integer">
+            <data type="integer" datatypeLibrary="http://example.com/datatype/external"/>
+        </element>
+    </oneOrMore>
+    <oneOrMore>
+        <element name="similarToken">
+            <data type="similarToken" datatypeLibrary="http://example.com/datatype/external">
+                <param name="comparisonBase">gumbo</param>
+                <param name="distance">2</param>
+            </data>
+        </element>
+    </oneOrMore>
 </element>

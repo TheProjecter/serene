@@ -25,10 +25,16 @@ class ExternalLibrary implements DatatypeLibrary{
 		//System.out.println(typeLocalName);
 		if(typeLocalName.equals("integer")){
 			return new IntegerDT();
+		}else if(typeLocalName.equals("similarToken")){
+			return new SimilarTokenDT();
 		}else throw new DatatypeException("Unsupported type: " + typeLocalName);
 	}
 	
 	public DatatypeBuilder createDatatypeBuilder(String baseTypeLocalName) throws DatatypeException{
-		throw new IllegalStateException("Not needed");
+		if(baseTypeLocalName.equals("integer")){
+			return new DefaultBuilder(new IntegerDT());
+		}else if(baseTypeLocalName.equals("similarToken")){
+			return new SimilarTokenBuilder();
+		}else throw new DatatypeException("Unsupported type: " + baseTypeLocalName);
 	}
 }
