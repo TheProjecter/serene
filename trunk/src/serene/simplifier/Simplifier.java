@@ -1537,7 +1537,10 @@ abstract class Simplifier implements SimplifyingVisitor{
         try{
             datatype = datatypeBuilder.createDatatype();
         }catch(DatatypeException de){
-            throw new IllegalStateException();
+            String message = "Simplification 4.16 error. "
+                +"Illegal datatype definition. "
+                +de.getMessage();
+                errorDispatcher.error(new SAXParseException(message, null));
         }
 		builder.buildData(datatype, data.getQName(), data.getLocation());
 	}
