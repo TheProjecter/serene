@@ -12,13 +12,14 @@ import serene.datatype.util.StringNormalizer;
 import sereneWrite.MessageWriter;
 
 class ExternalLibrary implements DatatypeLibrary{
-	//HashMap datatypes; there's no way yet
 	StringNormalizer stringNormalizer; 
 	MessageWriter debugWriter;
+    SimilarTokenBuilder similarTokenBuilder;
 	
 	ExternalLibrary(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		stringNormalizer = new StringNormalizer(debugWriter);
+        similarTokenBuilder  = new SimilarTokenBuilder();
 	}
 	
 	public Datatype createDatatype(String typeLocalName) throws DatatypeException{
@@ -26,7 +27,7 @@ class ExternalLibrary implements DatatypeLibrary{
 		if(typeLocalName.equals("integer")){
 			return new IntegerDT();
 		}else if(typeLocalName.equals("similarToken")){
-			return new SimilarTokenDT();
+			return similarTokenBuilder.createDatatype();//called when no params were present, will throw an error            
 		}else throw new DatatypeException("Unsupported type: " + typeLocalName);
 	}
 	
