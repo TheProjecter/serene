@@ -1,4 +1,4 @@
-#summary Release information.
+#summary General release information.
 #labels Featured
 
 = Release Information =
