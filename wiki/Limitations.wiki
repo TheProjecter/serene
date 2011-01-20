@@ -4,10 +4,9 @@
 = Limitations =
 <br>
 
+==Serene 0.5.1==
 
-In this stage of the development there are several important limitations:
-
- * only the RELAX NG native datatypes are supported 
+In this stage of the development there are still several important limitations:
 
  * DTD compatibility is not supported 
 
@@ -89,3 +88,7 @@ Attempting to use such a schema configuration would result in an error message s
 
  * compact syntax is not supported. 
    
+==Serene 0.5==
+
+All of the above plus:
+ * only the RELAX NG native datatypes are supported 
