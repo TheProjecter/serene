@@ -87,6 +87,18 @@ Attempting to use such a schema configuration would result in an error message s
 Attempting to use such a schema configuration would result in an error message similar to those issued when a restriction rule is violated. 
 
  * compact syntax is not supported. 
+
+===Note on XML Schema Datatypes Implementation===
+
+The XML Schema datatypes are implemented by wrapping Apache Xerces2 Java. It comes with version 2.10.0 which has the following limitations:
+
+ * length, minLength, and maxLength facets are limited to the value 2147483647. Items larger than this limit will not be validated correctly.
+ * The values of minimum and maximum quantifiers in the pattern regular expressions are limited to the value 2147483647. Items larger than this limit will not be validated correctly.
+ * The absolute values of the fraction portion of the second values in date/time datatypes are limited to the value 2147483647. Items larger than this limit will not be validated correctly. i.e. 11.2147483648 is not supported as a second value.
+ * Leap seconds are not supported in the values of date/time datatypes.
+
+Also in the original XML Schema recommendation, the lexical space of the simple type gMonth is --MM--. An erratum E2-12 changed that to --MM. For compatibility reasons, Xerces currently supports both forms. To align with the recommendation, the old form is deprecated, and support for that form is planed to be discontinued in a future release. 
+
    
 ==Serene 0.5==
 
