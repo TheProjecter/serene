@@ -1,0 +1,5 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\simplification\recursion\blind\schema.rng
+
+null:-1:-1 Simplification 4.19 error. No element definition in recursion loop path for element <rng:ref> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/simplification/recursion/blind/schema.rng:42:30.

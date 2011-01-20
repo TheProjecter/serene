@@ -1,0 +1,5 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\restrictions\start715\schema.rng
+
+null:-1:-1 Restrictions 7.1.5 error. Element <rng:attribute> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/start715/schema.rng:23:18 is not expected as start of the schema.

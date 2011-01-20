@@ -1,0 +1,35 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\unit\externalConflict\inDocument\concurrentCommon\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document1.xml:27:8 Syntax error. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:23:26 contains errors: 
+Ambiguous content.
+Element <aa> at file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document1.xml:22:6 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:25:26
+<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:28:26.
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:27:7 Syntax error.  Element aa could not be resolved to a single schema definition:
+Unresolved by content.
+Validation  of candidate definitions resulted in errors:
+Candidate definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:25:26 first error: 
+	file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:27:7  Element <aa> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:25:26 contains errors: 
+	Unexpected character content.
+	Character content at file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:22:12 is not allowed by the element's schema definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:25:26.
+Candidate definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:28:26 first error: 
+	file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:27:7  Element <aa> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:28:26 contains errors: 
+	Unexpected character content.
+	Character content at file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:22:12 is not allowed by the element's schema definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:28:26.
+
+file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:28:8 Syntax error. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:23:26 contains errors: 
+Ambiguous content.
+Element <aa> at file:///C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:22:6 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:25:26
+<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:28:26.

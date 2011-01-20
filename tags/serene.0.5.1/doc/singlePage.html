@@ -1,0 +1,835 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<TITLE>Serene 0.5.1 Documentation</TITLE>
+</HEAD>
+<BODY>
+    <H1 CLASS="western">Serene 0.5.1</H1>
+    <P>
+        <BR>
+    </P>
+    <P>
+        This is the first version of the <B>Serene</B> validation
+        engine for RELAX NG, so it contains several important limitations, 
+        but in the same time it attempts to offer a validator that is functional 
+        enough to illustrate the approach to validation messages and ambiguity 
+        handling. It is primarily intended to be used as a library through the 
+        JAXP 1.3 Validation Framework API, but it can also work as a command line
+        tool.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2>Contents</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <A HREF="#systemRequirements">System Requirements</A>
+        <BR>
+        <A HREF="#installationInstructions">Installation Instructions</A>
+    </P>
+    <P>
+        <A HREF="#releaseInformation">Release Information</A>
+        <BR>
+        <A HREF="#noteOnXmlSchemaDatatypesImplementation">Note on XML Schema Datatypes Implementation</A> 
+        <BR>
+        <A HREF="#limitations">Limitations</A> 
+        <BR>
+        <A HREF="#features">Features</A>
+        <BR>       
+        <A HREF="#customDatatypeLibraries">Custom Datatype Libraries</A>
+        <BR>
+        <A HREF="#specialCharacteristics">Special Characteristics</A>
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#ambiguityAndConflictsHandling">Ambiguity and Conflicts Handling</A> 
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#messages">Messages</A>
+    </P>
+    <P>
+        <A HREF="#commandLineUsage">Command Line Usage</A> 
+        <BR>
+        <A HREF="#testing">Testing</A>
+        <BR>
+        <A HREF="#buildingTheSourceCode">Building the Source Code</A>
+        <BR>
+        <A HREF="#participating">Participating</A> 
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#mailingLists">Mailing Lists</A> 
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#issueReporting">Issue Reporting</A> 
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#sourceCode">Source Code</A>
+    </P>
+    <P>
+        <A HREF="#samples">Samples</A> 
+    </P>
+    <P>
+        <A HREF="#licenseInformation">License Information</A> 
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="systemRequirements"/>System Requirements</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene 0.5.1</B> was developed and tested using Java 5.0, and this 
+        is the recommended JRE (Java Runtime Environment). Previous versions would 
+        not work, later should be fine.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="installationInstructions"/>Installation Instructions</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene 0.5.1</B> is packaged as a ZIP
+        file, you can extract the ZIP files using the Java jar tool to unpack
+        the distribution. 
+    </P>
+    <P>
+        Contents of the package:
+    </P>
+    <P>
+    <TABLE WIDTH=100% BORDER=2 BORDERCOLOR="#000000" CELLPADDING=5 CELLSPACING=0>
+        <COL WIDTH=128*>
+        <COL WIDTH=128*>
+        <TR VALIGN=TOP>
+            <TD WIDTH=50%>
+                <P>LICENSE</P>
+            </TD>
+            <TD WIDTH=50%>
+                <P>License for Serene</P>
+            </TD>
+        </TR>
+        <TR VALIGN=TOP>
+            <TD WIDTH=50%>
+                <P>LICENSE.jaxp.txt</P>
+            </TD>
+            <TD WIDTH=50%>
+                <P>License for the JAXP 1.3 class used 
+                </P>
+            </TD>
+        </TR>
+        <TR VALIGN=TOP>
+            <TD WIDTH=50%>
+                <P>NOTICE.relaxng.datatype.txt</P>
+            </TD>
+            <TD WIDTH=50%>
+                <P>Copyright notice for the org.relaxng.datatype and
+                org.relaxng.datatype.helpers packages</P>
+            </TD>
+        </TR>
+        <TR VALIGN=TOP>
+            <TD WIDTH=50%>
+                <P>LICENSE.xercesImpl.txt</P>
+            </TD>
+            <TD WIDTH=50%>
+                <P>License the xercesImpl.jar file used 
+                </P>
+            </TD>
+        </TR>
+        <TR VALIGN=TOP>
+            <TD WIDTH=50%>
+                <P>NOTICE.xercesImpl.txt</P>
+            </TD>
+            <TD WIDTH=50%>
+                <P>Notice for the xercesImpl.jar file used</P>
+            </TD>
+        </TR>        
+        <TR VALIGN=TOP>
+            <TD WIDTH=50%>
+                <P>readme.html</P>
+            </TD>
+            <TD WIDTH=50%>
+                <P>HTML file containing a short description of the Serene project
+                and links to further documentation</P>
+            </TD>
+        </TR>
+        <TR VALIGN=TOP>
+            <TD WIDTH=50%>
+                <P>lib/</P>
+            </TD>
+            <TD WIDTH=50%>
+                <P>Directory containing the jar files.</P>
+            </TD>
+        </TR>
+        <TR VALIGN=TOP>
+            <TD WIDTH=50%>
+                <P>doc/</P>
+            </TD>
+            <TD WIDTH=50%>
+                <P>Directory containing the documentation files.</P>
+            </TD>
+        </TR>
+        <TR VALIGN=TOP>
+            <TD WIDTH=50%>
+                <P>src/</P>
+            </TD>
+            <TD WIDTH=50%>
+                <P>Directory containing the source files for Serene 0.5.1 validation
+                engine, testing tool and the org.relaxng.datatype API.</P>
+            </TD>
+        </TR>
+        <TR VALIGN=TOP>
+            <TD WIDTH=50%>
+                <P>testSuite/</P>
+            </TD>
+            <TD WIDTH=50%>
+                <P>Directory containing the test cases used for testing the
+                validation engine and the currently accepted error messages.</P>
+            </TD>
+        </TR>
+        <TR VALIGN=TOP>
+            <TD WIDTH=50%>
+                <P>samples/</P>
+            </TD>
+            <TD WIDTH=50%>
+                <P>Directory containing some samples.</P>
+            </TD>
+        </TR>
+        <TR VALIGN=TOP>
+            <TD WIDTH=50%>
+                <P>build.xml</P>
+            </TD>
+            <TD WIDTH=50%>
+                <P>Apache Ant build file.</P>
+            </TD>
+        </TR>
+    </TABLE>
+    </P>
+    <P>
+        In order to use <B>Serene 0.5.1</B> through the JAXP 1.3 Validation
+        Framework API you must place the serene.jar file in your class path
+        and preserve the original file tree structure. If any of them has been 
+        moved, you must also explicitly add it to the class path.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="releaseInformation"/>Release Information</H2>
+    <P>
+        <BR>
+    </P>
+        <B>Serene 0.5.1</B> sports several bug fixes and introduces support 
+        for XML Schema datatypes.
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="noteOnXmlSchemaDatatypesImplementation"/>Note on XML Schema Datatypes Implementation</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        This release implements the XML Schema datatypes by wrapping Apache Xerces2 
+        Java. It comes with version 2.10.0 which has the following limitations:
+    </P>
+    <P>       
+        <UL>
+            <LI> 
+                length, minLength, and maxLength facets are limited to the value 
+                2147483647. Items larger than this limit will not be validated 
+                correctly.
+            </LI>
+
+            <LI> 
+                The values of minimum and maximum quantifiers in the pattern
+                regular expressions are limited to the value 2147483647.
+                Items larger than this limit will not be validated correctly.
+            </LI>
+            <LI>
+                The absolute values of the fraction portion of the second values
+                in date/time datatypes are limited to the value 2147483647.
+                Items larger than this limit will not be validated correctly.
+                i.e. 11.2147483648 is not supported as a second value. 
+            </LI>
+            <LI> 
+                Leap seconds are not supported in the values of date/time datatypes.
+            </LI>
+        </UL>
+    </P>
+    <P>
+        Also in the original XML Schema recommendation, the lexical space of the 
+        simple type gMonth is --MM--. An erratum E2-12 changed that to --MM. For 
+        compatibility reasons, Xerces currently supports both forms. To align with 
+        the recommendation, the old form is deprecated, and support for that form 
+        is planed to be discontinued in a future release. 
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="limitations"/>Limitations</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        In this stage of the development there are still several important limitations:
+    </P>
+    <P>
+        <BR>
+    </P>
+    <UL>
+        <LI>
+            <P>
+                DTD compatibility is not supported
+            </P>
+        <LI>
+            <P>
+                overlapping name classes in attributes or elements in the
+                context of a <CODE>group</CODE> that has multiple cardinality and is
+                in the context of an <CODE>interleave</CODE> are not supported.
+                Example:
+            </P>
+    <PRE> 
+    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;grammar xmlns=&quot;http://relaxng.org/ns/structure/1.0&quot;&gt;
+     &lt;start&gt;
+       &lt;element name = &quot;root&quot;&gt;
+         &lt;interleave&gt;
+           &lt;oneOrMore&gt;
+               &lt;element name = &quot;aa&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+               &lt;element name = &quot;bb&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+               &lt;element name = &quot;aa&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+           &lt;/oneOrMore&gt;
+           &lt;element name = &quot;cc&quot;&gt;
+             &lt;empty/&gt;
+           &lt;/element&gt;
+         &lt;/interleave&gt;
+       &lt;/element&gt;
+     &lt;/start&gt;
+   &lt;/grammar&gt;
+   </PRE>
+           <P>
+                Attempting to use such a schema configuration would result in an
+                error message similar to those issued when a restriction rule is
+                violated.
+            </P>
+        <LI>
+            <P>
+                <CODE>group</CODE> or <CODE>interleave</CODE> with multiple
+                cardinality in the context of an <CODE>interleave</CODE> with
+                multiple cardinality are not supported. Example:
+            </P>
+    <PRE> 
+    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;grammar xmlns=&quot;http://relaxng.org/ns/structure/1.0&quot;&gt;
+     &lt;start&gt;
+       &lt;element name = &quot;root&quot;&gt;
+         &lt;oneOrMore&gt;
+           &lt;interleave&gt;
+             &lt;oneOrMore&gt;
+               &lt;element name = &quot;aa&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+               &lt;element name = &quot;bb&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+             &lt;/oneOrMore&gt;
+             &lt;element name = &quot;cc&quot;&gt;
+               &lt;empty/&gt;
+             &lt;/element&gt;
+           &lt;/interleave&gt;
+         &lt;/oneOrMore&gt;
+       &lt;/element&gt;
+     &lt;/start&gt;
+   &lt;/grammar&gt;
+   </PRE>
+           <P>
+                Attempting to use such a schema configuration would result in an
+                error message similar to those issued when a restriction rule is
+                violated.
+            </P>
+        <LI>
+            <P>
+                <CODE>empty</CODE> in the context of <CODE>attribute</CODE>
+                is not supported. Example:
+            </P>
+    <PRE> 
+    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;grammar xmlns=&quot;http://relaxng.org/ns/structure/1.0&quot;&gt;
+     &lt;start&gt;
+       &lt;element name = &quot;root&quot;&gt;         
+         &lt;attribute name = &quot;attribute&quot;&gt;
+           &lt;empty/&gt;
+         &lt;/attribute&gt;
+       &lt;/element&gt;
+     &lt;/start&gt;
+   &lt;/grammar&gt;
+   </PRE>
+           <P>
+            Attempting to use such a schema configuration would result in an
+            error message similar to those issued when a restriction rule is
+            violated.
+            </P>
+        <LI>
+            <P>
+                compact syntax is not supported.
+            </P>        
+    </UL>
+    <P>
+        <BR>
+    </P>        
+    <H2><A NAME="features"/>Features</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        The features implemented by <B>Serene 0.5.1</B> are:
+    </P>
+    <P>
+        <CODE><B>http://xml.org/sax/features/namespace-prefixes</B></CODE>
+    </P>
+    <P>
+        As per <CODE>javax.xml.validation.ValidatorHandler</CODE>
+        contract, this feature controls how a ValidatorHandler introduces
+        namespace bindings that were not present in the original SAX event
+        stream. When this feature is set to <CODE>true</CODE>, it must make
+        sure that the user's <CODE>ContentHandler</CODE> will see the
+        corresponding <CODE>xmlns*</CODE> attribute in the <CODE>Attributes</CODE>
+        object of the <CODE>ContentHandler.startElement(String,String,String,Attributes)</CODE>
+        callback. Otherwise, <CODE>xmlns*</CODE> attributes must not be added
+        to <CODE>Attributes</CODE> that's passed to the user-specified
+        <CODE>ContentHandler</CODE>. By default it is set to <CODE>false</CODE>.
+        See <A HREF="#samples">samples</A> for an example.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
+        which, when set to <CODE>true</CODE>, makes sure that any unrecognized or 
+        unsupported datatype library is replaced with the RELAX NG native datatype 
+        library and any datatype from that library is replaced with the <CODE>
+        token</CODE> datatype. By default it is set to <CODE>true</CODE>.    
+    </P>
+    <P>
+        Since <CODE>javax.xml.validation.SchemaFactory</CODE> specification requires 
+        that a non-null <CODE>javax.xml.validation.Schema</CODE> object must be 
+        returned every time regardless whether errors occurred or not during parsing, 
+        and it is the client's responsibility to make sure the returned schema object
+        is usable, <B>Serene</B> uses the abstract class 
+        <CODE>serene.SereneRecoverableException</CODE> which extends
+        <CODE>org.xml.sax.SAXParseException</CODE> to signal the client when an error
+        was recovered from and the schema object returned is meaningful. In
+        this case the implementing class is <CODE>serene.datatype.MissingLibraryException</CODE>.
+        See <A HREF="#samples">samples</A> for an example.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="customDatatypeLibraries"/>Custom Datatype Libraries</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene 0.5.1 </B>supports the vendor independent API for RELAX NG datatype 
+        libraries developed by James Clark and Kohsuke Kawaguchi, 
+        <CODE>org.relaxng.datatypes</CODE>, so you can create your own libraries, 
+        pack them as jar files adding the necessary 
+        <CODE>META-INF/services/org.relaxng.datatype.DatatypeLibraryFactory</CODE>
+        file containing the names of your service providers for the 
+        <CODE>org.relaxng.datatype.DatatypeLibraryFactory</CODE> service, add them 
+        in the classpath, and they will be found dynamically at runtime.        
+        See <A HREF="#samples">samples</A> for an example.
+    </P>
+    <P>
+        External datatypes may use <CODE>param</CODE> elements, but it is their 
+        responsibility to implement the 
+        <A HREF="http://www.oasis/open.org/committees/relax-ng/spec-20011203.html#constraints">
+        Relax NG Simplification 4.16.Constraints</A> rule. 
+        See <A HREF="#samples">samples</A> source code for an example.   
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="specialCharacteristics"/>Special Characteristics</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        There are two areas <B>Serene</B> is mainly concentrating on: the 
+        ambiguity and conflicts handling, and the validation messages.</P>
+    <P>
+        <BR>
+    </P>
+    <H3><A NAME="ambiguityAndConflictsHandling"/>Ambiguity and Conflicts Handling</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        There are three stages in the resolving of the different components of an 
+        xml document with respect to the corresponding RELAX NG schema patterns:
+        <BR>
+        <UL>
+            <LI>
+                <P>
+                    <B>initial matching</B> consists of the matching of an input element
+                    or attribute's name to the name class corresponding to one of the 
+                    definitions allowed by the schema in the respective context. Since 
+                    characters definition patterns (text, data, value, list) do not 
+                    have a name, in this stage, all the characters patterns defined 
+                    within a context are considered a match.
+                </P>
+            <LI>
+                <P>
+                    <B>pattern matching</B> consists of matching of a schema pattern 
+                    to the corresponding occurrence in the document based on the 
+                    content, this is done at the level of element definition pattern, 
+                    attribute definition pattern, characters definition pattern 
+                    (in <B>Serene</B> characters strings are considered to have a 
+                    structure since some patterns may contain <CODE>group</CODE>,
+                    <CODE>oneOrMore</CODE> etc) 
+                </P>
+            <LI>
+                <P>
+                    <B>in context handling</B> consists of handling of an
+                    occurrence as part of the parent's context
+                </P>
+        </UL>
+    </P>
+    <P>
+        After every one of these stages we can
+        end up with 0, 1, or several candidate definition patterns matching
+        the input. 
+    </P>
+    <P>
+        In case the result is 1 the processing
+        goes on normally, with no need for ambiguity handling.
+    </P>
+    <P>
+        In case the result consists of several patterns in the next stage those 
+        will be processed in parallel handlers. Every candidate handler where the 
+        processing results in a disqualifying error, that is an error that is not 
+        common to all candidates, is disqualified. A new assessment is done at the 
+        end of every stage and the processing goes on according to the number of
+        remaining candidates(0, 1, or several). If we find ourselves in this case 
+        after the <B>in context handling</B> a warning message is issued stating 
+        that the concerned document component could not be resolved to a single 
+        definition pattern and informing the user about the remaining candidates.
+    </P>
+    <P>
+        In case the number of candidates is 0 an error message is always issued. 
+        The processing in this case is different according to the stage. After 
+        the <B>initial matching</B> no further processing is done. After <B>pattern 
+        matching</B> all candidates go to the next stage in an attempt to see if 
+        this stage can result in a resolution to one definition. The <B>in context
+        handling</B> is last, so there is no processing after it.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H3><A NAME="messages"/>Messages</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene</B> attempts to deliver good, meaningful messages. In
+        the same time it attempts to handle all messages, including error and
+        warning messages resulted from the ambiguity and conflict handling,
+        in a uniform and transparent way. Also the syntax validation for the
+        schema documents and the validation of document syntax are handled
+        transparently using exactly the same algorithm. 
+    </P>
+    <P>
+        In order to achieve all this transparency, an approach was chosen
+        where a distinction is made between the detection, interpretation and
+        reporting of errors. This approach allows to group the messages
+        produced by the disqualifying errors of different candidates during
+        conflict handling and report them in the ambiguity error message, or
+        ambiguity warning message. Another consequence of this approach is
+        the fact that errors produced in an element content, corresponding to
+        a content model, are reported when the end of that element is
+        processed. This means that the location information passed to the
+        SAXParseException is that of the end tag of the element in whose
+        context the error took place. Location information regarding the
+        exact place where the error occurred is provided in the content of
+        the message in a meaningful way.
+    </P>
+    <P>
+        Using exactly the same algorithm for the syntax validation of both
+        schemas and documents and, in the same time, trying to be meaningful
+        means that the messages are always pointing to the rule that has been
+        broken; that is a rule from the RELAX NG syntax specification in the
+        case of schemas, and a pattern from the concerned schema in the case
+        of documents.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="commandLineUsage"/>Command Line Usage</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene 0.5.1</B>can be used as
+        a command line tool either directly by using serene.jar and the -jar
+        option
+    </P>
+    <P>
+        <CODE>$ java -jar <I>path</I>/serene.jar
+        <I>path</I>/schema.rng <I>path</I>/document1.xml
+        <I>path</I>/document2.xml ...</CODE>
+    </P>
+    <P>
+        or by using the <CODE>serene.Driver</CODE> class which contains the main 
+        method
+    </P>
+    <P>
+        <CODE>$ java -cp <I>path</I>/serene.jar
+        serene.Driver <I>path</I>/schema.rng
+        <I>path</I>/document1.xml
+        <I>path</I>/document2.xml ...</CODE>
+    </P>
+    <P>
+        You can see the usage instructions and
+        the list of available options by invoking the tool without any
+        arguments. 
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="testing"/>Testing</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        For this release the testing was limited. The test cases used can
+        be found in the testSuite/ directory which contains the actual
+        schemas and documents used for testing as well as plain text files
+        containing the error messages that have been accepted as correct,
+        which can be used for regression testing. 
+    </P>
+    <P>
+        <B>Serene 0.5.1 </B>includes a command line tool that allows you to
+        run the tests yourself either directly by using sereneTest.jar and
+        the -jar option
+    </P>
+    <P>
+        <CODE>$ java -jar <I>path</I>/sereneTest.jar <I>path</I>/testSuite/tests</CODE>
+    </P>
+    <P>
+        or by using the <CODE>sereneTest.Driver</CODE> class which contains the 
+        main method
+    </P>
+    <P>
+        <CODE>$ java -cp <I>path</I>/sereneTest.jar sereneTest.Driver 
+        <I>path</I>/testSuite/tests</CODE>
+    </P>
+    <P>
+        You can see the usage instructions and
+        the list of available options by invoking the tool without any
+        arguments. 
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="buildingTheSourceCode"/>Building the Source Code</H2>
+    <P>
+    <BR>
+    </P>
+    <P>
+        To build the source code you need the JDK (Java Development Kit) 
+        1.5 installed on your machine. You can use the <CODE>build.xml</CODE> 
+        file and the Apache Ant tool from the command line:
+    </P>
+    <P><CODE>$ ant restricted</CODE></P>
+    <P>
+        creates only the jar files needed for the validation engine to
+        run, without the test tool;
+    </P>
+    <P><CODE>$ ant default</CODE></P>
+    <P>or</P>
+    <P><CODE>$ ant</CODE></P>
+    <P>creates all the jar files, including the test tool;</P>
+    <P><CODE>$ ant test</CODE></P>
+    <P>
+        creates all the jar files, including the test tool and runs a test
+        of the entire test suite with the regression analysis option on.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="participating"/>Participating</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        There are many ways you can get involved: joining the mailing
+        lists and taking part in the discussions, reporting issues,
+        submitting new tests, reviewing or contributing source code. 
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H3><A NAME="mailingLists"/>Mailing lists</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        There are two mailing lists for the project and everyone is
+        welcome:
+    </P>
+    <UL>
+        <LI>
+            <P>
+                <A HREF="http://groups.google.com/group/serene-users">user list</A>
+            </P>
+        <LI>
+            <P>
+                <A HREF="http://groups.google.com/group/serene-developers">developer list</A>
+            </P>
+    </UL>
+    <P>
+        <BR>
+    </P>
+    <H3><A NAME="issueReporting"/>Issue reporting</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        Please feel welcome to report any issue that might arise, it is
+        one of the most valuable contributions to the development. Before
+        reporting please try to make sure that the issue is really a new
+        issue by checking the Issue Tracker, if you are still not sure start
+        a discussion on the user mailing list. 
+    </P>
+    <P>
+        For effective reporting please make sure the <B>Summary</B> 
+        is short but precise and descriptive, and the <B>Description</B>
+        provides a detailed image of the problem. If the issue is a bug, the 
+        description should contain enough information to allow the reproduction 
+        of the bug. If the issue is recorded after a mailing list discussion,
+        please include a pointer to the discussion in the description. If you 
+        are interested in seeing a particular issue resolved please star it. 
+        Use comments only for providing additional information.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H3><A NAME="sourceCode"/>Source Code</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        There are two ways you can help with the source code: reviewing
+        existing code and sending new patches. The Google Code Review Tool is
+        set to allow anybody to add review comments to the code. Sending
+        patches can by done by email using the developer list. If there are
+        any questions, please ask them on the developer list. No effort will
+        be spared to answer them and all contributions will be appreciated.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="samples"/>Samples</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        All the source code for the samples can be found in the
+        samples/src directory grouped in the somehow eclectic package
+        sereneSamples. All sample class files are archived in the samples.jar
+        file from the samples/lib directory. The schema and xml example files
+        are in the samples/data directory in directories with suggestive
+        names. A build.xml file for building the samples with Apache Ant tool
+        is included.
+    </P>
+    <P>
+        To run a sample you must place the jar file in the classpath and
+        invoke the class containing the main method. These classes are:
+    </P>
+    <UL>
+        <LI>
+            <P>
+                <CODE>sereneSamples.SourceValidation</CODE> demonstrating the
+                use of a <CODE>javax.xml.validation.Validator</CODE> for RELAX NG
+                through <B>Serene 0.5.1</B> with various implementations of 
+                <CODE>javax.xml.transform.Source</CODE>
+            </P> 
+        <LI>
+            <P>
+                <CODE>sereneSamples.XmlnsAugmentingValidation</CODE>
+                demonstrating the <CODE>http://xml.org/sax/features/namespace-prefixes</CODE>
+                feature
+            </P>
+        <LI>
+            <P>
+                <CODE>sereneSamples.MissingDatatypeLibraryValidation</CODE>
+                demonstrating the 
+                <CODE>http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary</CODE>
+                feature
+           </P>
+    </UL>
+    <P>
+        Example:
+    </P>
+    <P>
+        <CODE>$ java -cp lib/samples.jar sereneSamples.MissingDatatypeLibraryValidation
+        data/missingDatatype/schema.rng data/missingDatatype/document1.xml</CODE>
+    </P>
+    <P>
+        If the relative path to serene.jar is changed, this must also be
+        added explicitly to the class path.
+    </P>
+    <P>
+        The sample implementation of a custom datatype library does not
+        have a class containing a main method. In order to run this sample
+        you can use the <CODE>serene.Driver</CODE>. Example:
+    </P>
+    <P>
+        <CODE>java -cp lib/samples.jar;../lib/int/serene.jar serene.Driver
+        data/customDatatype/schema.rng data/customDatatype/document1.xml
+        data/customDatatype/document2.xml</CODE>
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="licenseInformation"/>License Information</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene</B> is distributed under the Apache Software License version 2.0. 
+        A copy of the license can be found at 
+        <A HREF="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</A>.
+    </P>
+    <P>
+        This release uses the <CODE>org.relaxng.datatype</CODE> package created by 
+        James Clark and Kohsuke Kawaguchi, copyright notice included.
+    </P>
+    <P>
+        This release contains the <CODE>SecuritySupport</CODE> class created by 
+        Jeff Suttor, copyright 2006 Sun Microsystems, Inc. All Rights Reserved, 
+        published under the Common Development and Distribution License (CDDL) 
+        version 1.0. A copy of the license can be found at
+        <A HREF="https://jaxp.dev.java.net/CDDLv1.0.html">https://jaxp.dev.java.net/CDDLv1.0.html</A>.
+    </P>
+    <P>
+        This release uses Apache Xerces2 Java version 2.10.0 distributed under 
+        the Apache Software License version 2.0, license and notice are included 
+        in the <B>Serene</B> distribution. A copy of the license can be found at 
+        <A HREF="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</A>.
+    </P>
+    <P>
+        <BR><BR>
+    </P>
+    <HR>
+    <P>Copyright &copy; 2010 Radu Cernuta</P>
+    <HR>
+</BODY>
+</HTML>
