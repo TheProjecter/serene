@@ -7,7 +7,7 @@
 
 This release supports the vendor independent API for RELAX NG datatype libraries developed by James Clark and Kohsuke Kawaguchi, {{{org.relaxng.datatypes}}}, so you can create your own libraries, pack them as jar files adding the necessary {{{META-INF/services/org.relaxng.datatype.DatatypeLibraryFactory}}}  file containing the names of your service providers for the {{{org.relaxng.datatype.DatatypeLibraryFactory}}} service, add them in the classpath, and they will be found dynamically at runtime. See samples for an example. 
 
-External datatypes may use param elements, but it is their responsibility to implement the [http://www.oasis/open.org/committees/relax-ng/spec-20011203.html#constraints Relax NG Simplification 4.16.Constraints] rule. See samples source code for an example. 
+External datatypes may use param elements, but it is their responsibility to implement the [http://www.oasis-open.org/committees/relax-ng/spec-20011203.html#constraints Relax NG Simplification 4.16.Constraints] rule. See samples source code for an example. 
 
 
 ==Serene 0.5==
