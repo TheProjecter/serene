@@ -2,9 +2,16 @@
 #labels Featured
 
 = Features =
-
 <br>
-The features implemented by *Serene 0.5* are:
+
+==Serene 0.5.1==
+
+This release does not add new features.
+
+
+==Serene 0.5==
+
+The features implemented by this release are:
 
 *{{{http://xml.org/sax/features/namespace-prefixes}}}*
 
