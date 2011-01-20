@@ -1,4 +1,5 @@
 #summary Release information.
+#labels Featured
 
 = Release Information =
 <br>
