@@ -4,6 +4,8 @@
 = Release Information =
 <br>
 
+This page contains general release information. See additional wiki pages for details.
+
 ==Serene 0.5.1==
 
 This release sports several bug fixes and introduces support for XML Schema datatypes. The XML Schema datatypes are implemented by wrapping Apache Xerces2 Java, version 2.10.0 is used in the distribution.
