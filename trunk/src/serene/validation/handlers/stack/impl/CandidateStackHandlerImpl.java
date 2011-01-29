@@ -200,8 +200,15 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	
 	private void setCurrent(Rule currentRule){
 		currentHandler = topHandler;
-		if(currentRule != null)pathHandler.activatePath(currentHandler, currentRule);
-		currentHandler = pathHandler.getBottomHandler();
+		if(currentRule != null){
+            pathHandler.activatePath(currentHandler, currentRule);
+            StructureHandler result = pathHandler.getBottomHandler();
+            if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
+                setCurrent(currentRule);
+                return;
+            }
+            currentHandler = result;
+        }
 	}
 	
 	public void shift(AElement element){		
@@ -489,7 +496,12 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 			}			
 		}
 		pathHandler.activatePath(currentHandler, parent);
-		currentHandler = pathHandler.getBottomHandler();
+		StructureHandler result = pathHandler.getBottomHandler();
+        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
+            setCurrentHandler(item, innerPath, resolver);
+            return;
+        }
+        currentHandler = result;
 		currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);
 		expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();				
 	}
@@ -515,7 +527,12 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 			}			
 		}
 		pathHandler.activatePath(currentHandler, parent);
-		currentHandler = pathHandler.getBottomHandler();
+		StructureHandler result = pathHandler.getBottomHandler();
+        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
+            setCurrentHandler(item, innerPath, resolver);
+            return;
+        }
+        currentHandler = result;
 		currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);
 		expectedOrderHandlingCount = 0;				
 	}	
@@ -541,7 +558,12 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 			}			
 		}
 		pathHandler.activatePath(currentHandler, parent);
-		currentHandler = pathHandler.getBottomHandler();
+		StructureHandler result = pathHandler.getBottomHandler();
+        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
+            setCurrentHandler(item, innerPath, resolver);
+            return;
+        }
+        currentHandler = result;
 		currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);
 		expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();				
 	}
@@ -557,7 +579,12 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		// System.out.println(topHandler);		
 		Rule parent  = pattern.getParent();
 		pathHandler.activatePath(currentHandler, parent);
-		currentHandler = pathHandler.getBottomHandler();		
+		StructureHandler result = pathHandler.getBottomHandler();
+        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
+            setCurrentHandler(pattern, innerPath, resolver);
+            return;
+        }
+        currentHandler = result;
 		for(int i = 0; i < innerPath.length; i++){
 			if(innerPath[i] == parent){
 				currentHandler.setConflict(i, innerPath, stackConflictsHandler, resolver);

@@ -276,7 +276,12 @@ public class ContextStackHandler  implements  StackHandler{
 			}			
 		}
 		pathHandler.activatePath(currentHandler, parent);
-		currentHandler = pathHandler.getBottomHandler();
+		StructureHandler result = pathHandler.getBottomHandler();
+        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
+            setCurrentHandler(item);
+            return;
+        }
+        currentHandler = result;
 		expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();
 	}
 
@@ -308,7 +313,12 @@ public class ContextStackHandler  implements  StackHandler{
 			}			
 		}
 		pathHandler.activatePath(currentHandler, parent);
-		currentHandler = pathHandler.getBottomHandler();
+		StructureHandler result = pathHandler.getBottomHandler();
+        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
+            setCurrentHandler(item);
+            return;
+        }
+        currentHandler = result;
 		expectedOrderHandlingCount = 0;
 	}	
 	
@@ -339,7 +349,12 @@ public class ContextStackHandler  implements  StackHandler{
 			}			
 		}
 		pathHandler.activatePath(currentHandler, parent);
-		currentHandler = pathHandler.getBottomHandler();
+		StructureHandler result = pathHandler.getBottomHandler();
+        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
+            setCurrentHandler(item);
+            return;
+        }
+        currentHandler = result;
 		expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();
 	}
 	
@@ -353,7 +368,12 @@ public class ContextStackHandler  implements  StackHandler{
 		// System.out.println(topHandler);		
 		Rule parent  = pattern.getParent();
 		pathHandler.activatePath(currentHandler, parent);
-		currentHandler = pathHandler.getBottomHandler();
+		StructureHandler result = pathHandler.getBottomHandler();
+        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
+            setCurrentHandler(pattern);
+            return;
+        }
+        currentHandler = result;
 	}	
 	
 	
