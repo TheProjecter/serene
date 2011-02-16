@@ -28,16 +28,17 @@ public class ExceptPatternPool extends RNGParseEndElementTaskPool{
 	
 	public ExceptPatternPool(SAttribute ns,
 						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new ExceptPatternTask[taskPoolSize];
 	}
 	
 	public ExceptPatternTask getTask(){
 		if(taskFree == 0){			
-			return new ExceptPatternTask(ns, datatypeLibrary, this, debugWriter);			
+			return new ExceptPatternTask(ns, datatypeLibrary, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

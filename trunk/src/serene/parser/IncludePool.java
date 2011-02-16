@@ -31,17 +31,18 @@ public class IncludePool extends RNGParseEndElementTaskPool{
 	public IncludePool(SAttribute ns,
 						SAttribute datatypeLibrary,
 						SAttribute href,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.href = href;
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new IncludeTask[taskPoolSize];
 	}
 	
 	public IncludeTask getTask(){
 		if(taskFree == 0){			
-			return new IncludeTask(ns, datatypeLibrary, href, this, debugWriter);			
+			return new IncludeTask(ns, datatypeLibrary, href, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

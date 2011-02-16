@@ -33,18 +33,19 @@ public class DefinePool extends RNGParseEndElementTaskPool{
 						SAttribute datatypeLibrary,
 						SAttribute name,
 						SAttribute combine,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.name = name;
 		this.combine = combine;
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new DefineTask[taskPoolSize];
 	}
 	
 	public DefineTask getTask(){
 		if(taskFree == 0){			
-			return new DefineTask(ns, datatypeLibrary, name, combine, this, debugWriter);			
+			return new DefineTask(ns, datatypeLibrary, name, combine, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

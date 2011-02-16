@@ -28,16 +28,17 @@ public class OneOrMorePool extends RNGParseEndElementTaskPool{
 	
 	public OneOrMorePool(SAttribute ns,
 						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new OneOrMoreTask[taskPoolSize];
 	}
 	
 	public OneOrMoreTask getTask(){
 		if(taskFree == 0){			
-			return new OneOrMoreTask(ns, datatypeLibrary, this, debugWriter);			
+			return new OneOrMoreTask(ns, datatypeLibrary, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

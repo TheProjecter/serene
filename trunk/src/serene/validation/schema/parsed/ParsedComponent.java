@@ -14,36 +14,129 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.validation.schema.parsed;
 
 import java.util.Map;
 
 import org.xml.sax.SAXException;
 
+import serene.util.AttributeInfo;
+
 import serene.validation.schema.Component;
 
-public interface ParsedComponent extends Component{
-	ParsedComponent getParent();
+import sereneWrite.MessageWriter;
+
+public abstract class ParsedComponent implements Component{
+	int childIndex;	
+	ParsedComponent parent;
+			
+	String ns;
+	String datatypeLibrary;
 	
-	void accept(ParsedComponentVisitor v);
-	void accept(SimplifyingVisitor v) throws SAXException;
+	Map<String, String> prefixMapping; 
+	String xmlBase;
+									
+	String qName;
+	String location;
 	
-	String getNs();
-	String getNsAttribute();
+    AttributeInfo[] foreignAttributes;
+	MessageWriter debugWriter;	
 	
-	String getDatatypeLibrary();
-	String getDatatypeLibraryAttribute();
+	ParsedComponent(Map<String, String> prefixMapping, 
+									String xmlBase, 
+									String ns, 
+									String datatypeLibrary,
+                                    AttributeInfo[] foreignAttributes,
+									String qName,
+									String location,
+									MessageWriter debugWriter){		
+		this.debugWriter = debugWriter;
+		this.prefixMapping = prefixMapping; 
+		this.xmlBase = xmlBase;		
+		this.ns = ns;
+		this.datatypeLibrary = datatypeLibrary;
+        this.foreignAttributes = foreignAttributes;
+		this.qName = qName;
+		this.location = location;
+		
+		childIndex = -1;
+	}
+    
+    // START Component
+    public int getChildIndex(){
+		return childIndex;
+	}
+    
+    public ParsedComponent getParent(){
+		return parent;
+	}
+    // END Component
 	
-	String getNamespaceURI(String prefix);
-	String getNamespaceURIAttribute(String prefix);
-	Map<String, String> getXmlns();
+	abstract public void accept(ParsedComponentVisitor v);
+	abstract public void accept(SimplifyingVisitor v) throws SAXException;
+	
+	public String getNs(){
+		if(ns == null && parent != null) return parent.getNs();
+		return ns;
+	}
+	public String getNsAttribute(){		
+		return ns;
+	}
+	
+	public String getDatatypeLibrary(){
+		if(datatypeLibrary == null && parent != null) return parent.getDatatypeLibrary();
+		if(datatypeLibrary == null) return "";
+		return datatypeLibrary;
+	}
+	public String getDatatypeLibraryAttribute(){
+		return datatypeLibrary;
+	}
+	
+	public String getNamespaceURI(String prefix){
+		String uri = null;
+		if(prefixMapping != null){
+			uri = prefixMapping.get(prefix);
+			if(uri!= null)return uri;
+		}
+		if(parent != null)return parent.getNamespaceURI(prefix);
+		return null;
+	}
+	public String getNamespaceURIAttribute(String prefix){
+		if(prefixMapping != null) return prefixMapping.get(prefix);
+		return null;
+	}
+	public Map<String, String> getXmlns(){
+		return prefixMapping;
+	}
 	
 	/**
 	* Returns the value of the xml:base attribute if any was present in the
 	* corresponding element.
 	*/
-	String getXmlBaseAttribute();
+	public String getXmlBaseAttribute(){
+		return xmlBase;
+	}
 	
-	String getQName();
-	String getLocation();
-}
+    public AttributeInfo[] getForeignAttributes(){
+        return foreignAttributes;
+    }
+    
+	public String getQName(){
+		return qName;
+	}
+	
+	public String getLocation(){
+		return location;
+	}
+    
+
+	void setParent(ParsedComponent parent){		 
+		this.parent = parent;
+	}
+	
+	
+	void setChildIndex(int childIndex){			
+		this.childIndex = childIndex;
+	}
+}	

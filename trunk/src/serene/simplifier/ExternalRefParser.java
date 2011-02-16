@@ -45,18 +45,17 @@ import serene.validation.DTDMapping;
 import serene.validation.schema.parsed.ParsedModel;
 
 import serene.validation.schema.parsed.ParsedComponentBuilder;
-import serene.validation.schema.parsed.components.Pattern;
+import serene.validation.schema.parsed.Pattern;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
+import serene.Constants;
+
 import sereneWrite.MessageWriter;
 import sereneWrite.ParsedComponentWriter;
 
-class ExternalRefParser{
-    String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
-    String DTD_MAPPING_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdMapping";
-    
+class ExternalRefParser{    
 	XMLReader xmlReader;
 	
 	ValidatorHandler validatorHandler;		
@@ -110,7 +109,7 @@ class ExternalRefParser{
 	ParsedModel parse(URI uri){	
 		xmlReader.setContentHandler(validatorHandler);
         try{
-            DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+            DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(Constants.DTD_HANDLER_PROPERTY);
             xmlReader.setDTDHandler(dtdHandler);
         }catch(SAXNotRecognizedException e){
             e.printStackTrace();
@@ -129,11 +128,16 @@ class ExternalRefParser{
 		}		
 		parsedComponentBuilder.startBuild();
 		queue.executeAll();
-		Pattern top = parsedComponentBuilder.getCurrentPattern();
+        Pattern top = null;
+		try{
+            top = (Pattern)parsedComponentBuilder.getCurrentParsedComponent();
+        }catch(ClassCastException c){
+            //syntax error, already handled
+        }
 		DTDMapping dtdMapping = null;
         
         try{
-            dtdMapping = (DTDMapping)validatorHandler.getProperty(DTD_MAPPING_PROPERTY);
+            dtdMapping = (DTDMapping)validatorHandler.getProperty(Constants.DTD_MAPPING_PROPERTY);
         }catch(SAXNotRecognizedException e){
             e.printStackTrace();
         }catch(SAXNotSupportedException e){

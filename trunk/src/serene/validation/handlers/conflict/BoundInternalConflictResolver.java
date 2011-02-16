@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.validation.handlers.conflict;
 
 import java.util.BitSet;
@@ -62,7 +63,10 @@ public class BoundInternalConflictResolver extends InternalConflictResolver{
 		state = boundElementConflict;
 	}
 	
-	void init(String value, 
+	void init(String namespaceURI, 
+            String localName,
+            String qName,
+            String value, 
 			Queue queue, 
 			int entry, 
 			Map<AAttribute, AttributeBinder> attributeBinders){		
@@ -70,7 +74,10 @@ public class BoundInternalConflictResolver extends InternalConflictResolver{
 		this.targetQueue = queue;
 		this.targetEntry = entry;
 		boundAttributeConflict.setBinders(attributeBinders);
-		boundAttributeConflict.setValue(value);
+		boundAttributeConflict.setAttributeData(namespaceURI,
+                    localName,
+                    qName,
+                    value);
 		state = boundAttributeConflict;
 	}
 
@@ -116,13 +123,19 @@ public class BoundInternalConflictResolver extends InternalConflictResolver{
 	}
 	
 	class BoundAttributeConflict extends AttributeConflict{
+        String namespaceURI;
+        String localName;
+        String qName;
 		String value;
 		Map<AAttribute, AttributeBinder> attributeBinders;
 		
 		void setBinders(Map<AAttribute, AttributeBinder> attributeBinders){
 			this.attributeBinders = attributeBinders;
 		}
-		void setValue(String value){
+		void setAttributeData(String namespaceURI, String localName, String qName, String value){
+            this.namespaceURI = namespaceURI;
+            this.localName = localName;
+            this.qName = qName;
 			this.value = value;
 		}
 		void reset(){
@@ -139,7 +152,9 @@ public class BoundInternalConflictResolver extends InternalConflictResolver{
 				AAttribute attribute = candidateDefinitions.get(qual);
 				int definitionIndex = attribute.getDefinitionIndex();
 				AttributeBinder binder = attributeBinders.get(attribute);
-				if(binder != null)binder.bind(targetQueue, targetEntry, definitionIndex, value);				
+				if(binder != null){
+                    binder.bindAttribute(targetQueue, targetEntry, definitionIndex, namespaceURI, localName, qName, value);
+                }
 			}else{		
 				int j = 0;
 				for(int i = 0; i < candidateDefinitions.size(); i++){			

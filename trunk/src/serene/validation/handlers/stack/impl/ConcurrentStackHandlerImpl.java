@@ -718,7 +718,13 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		InternalConflictResolver resolver = conflictHandlerPool.getBoundInternalConflictResolver(value, targetQueue, targetEntry, attributeBinders);
+		InternalConflictResolver resolver = conflictHandlerPool.getBoundInternalConflictResolver(validationItemLocator.getNamespaceURI(),
+                                                                                 validationItemLocator.getLocalName(),
+                                                                                 validationItemLocator.getQName(),
+                                                                                 value, 
+                                                                                 targetQueue, 
+                                                                                 targetEntry, 
+                                                                                 attributeBinders);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
@@ -888,7 +894,13 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		InternalConflictResolver resolver = conflictHandlerPool.getBoundInternalConflictResolver(value, targetQueue, targetEntry, attributeBinders);
+		InternalConflictResolver resolver = conflictHandlerPool.getBoundInternalConflictResolver(validationItemLocator.getNamespaceURI(),
+                                                                                 validationItemLocator.getLocalName(),
+                                                                                 validationItemLocator.getQName(),
+                                                                                 value, 
+                                                                                 targetQueue, 
+                                                                                 targetEntry, 
+                                                                                 attributeBinders);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);

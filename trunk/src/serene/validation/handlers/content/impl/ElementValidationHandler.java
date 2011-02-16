@@ -156,7 +156,7 @@ class ElementValidationHandler extends ValidatingEEH
 			String attributeNamespace = attributes.getURI(i); 
 			String attributeName = attributes.getLocalName(i);
 			String attributeValue = attributes.getValue(i);
-			validationItemLocator.newAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeQName);
+			validationItemLocator.newAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);
 			handleAttribute(attributeQName, attributeNamespace, attributeName, attributeValue);
 			validationItemLocator.closeAttribute();
 		}		

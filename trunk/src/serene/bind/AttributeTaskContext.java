@@ -14,10 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.bind;
 
-
+import serene.util.AttributeInfo;
+/**
+* The context of the current attribute task. Used when executing the queued 
+* tasks, so it assumes that the order is known and no arguments are passed to 
+* the getter methods. The methods return arrays of strings corresponding to all
+* attribute instances that correspond to a certain definition (name class may 
+* use wild cards) in the order they have been queued, may differ from the order
+* they appeared in the document.
+*/
 public interface AttributeTaskContext{
-	String getAttributeQName();
-	String getAttributeValue();
+    AttributeInfo[] getAttributeInfo();
 }

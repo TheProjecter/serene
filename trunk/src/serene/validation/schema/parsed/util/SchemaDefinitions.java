@@ -14,12 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.validation.schema.parsed.util;
 
 import java.util.Map;
 import java.util.HashMap;
 
-import serene.validation.schema.parsed.components.Grammar;
+import serene.validation.schema.parsed.Grammar;
 
 import sereneWrite.MessageWriter;
 

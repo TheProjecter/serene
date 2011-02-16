@@ -28,16 +28,17 @@ public class TextPool extends RNGParseEndElementTaskPool{
 	
 	public TextPool(SAttribute ns,
 						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new TextTask[taskPoolSize];
 	}
 	
 	public TextTask getTask(){
 		if(taskFree == 0){			
-			return new TextTask(ns, datatypeLibrary, this, debugWriter);			
+			return new TextTask(ns, datatypeLibrary, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

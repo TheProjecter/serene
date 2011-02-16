@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.validation.schema.parsed.util;
 
 import java.util.Arrays;
@@ -50,16 +51,13 @@ class LevelTop extends Level{
 	}
 	
 	public String toString(){
-		return "0 TOP nameClasses "+Arrays.toString(nameClasses)
-				+"  patterns "+Arrays.toString(patterns)
-				+" exceptPatterns "+Arrays.toString(exceptPatterns)
+		return "0 TOP parsedComponents "+Arrays.toString(parsedComponents)
 				+child.toString(1);		
 	}
 	
 	String toString(int i){
-		return i+" TOP nameClasses "+Arrays.toString(nameClasses)
-				+"  patterns "+Arrays.toString(patterns)
-				+" exceptPatterns "+Arrays.toString(exceptPatterns)
+		return i+" TOP parsedComponents "+Arrays.toString(parsedComponents)
 				+child.toString(i+1);		
 	}
 }
+

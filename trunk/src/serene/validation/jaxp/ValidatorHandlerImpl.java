@@ -62,6 +62,8 @@ import serene.datatype.ValidationEventContext;
 import serene.util.CharsBuffer;
 import serene.util.SpaceCharsHandler;
 
+import serene.Constants;
+
 import sereneWrite.MessageWriter;
 
 class ValidatorHandlerImpl extends ValidatorHandler{
@@ -225,7 +227,7 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 			elementHandler.handleCharacters(charContent);		
 			validationItemLocator.closeCharsContent();
 		}
-		validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), qName);
+		validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), namespaceURI, localName, qName);
 		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName);
 		elementHandler.handleAttributes(attributes, locator);
 		

@@ -27,15 +27,15 @@ public class DummyPool extends RNGParseEndElementTaskPool{
 	int taskFree, taskPoolSize;
 	
 	public DummyPool(MessageWriter debugWriter){
-		super(null, null, debugWriter);
+		super(null, null, null, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new DummyTask[taskPoolSize];
 	}
 	
 	public DummyTask getTask(){
 		if(taskFree == 0){			
-			return new DummyTask(null, null, this, debugWriter);			
+			return new DummyTask(null, null, null, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

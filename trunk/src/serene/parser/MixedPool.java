@@ -28,16 +28,17 @@ public class MixedPool extends RNGParseEndElementTaskPool{
 	
 	public MixedPool(SAttribute ns,
 						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new MixedTask[taskPoolSize];
 	}
 	
 	public MixedTask getTask(){
 		if(taskFree == 0){			
-			return new MixedTask(ns, datatypeLibrary, this, debugWriter);			
+			return new MixedTask(ns, datatypeLibrary, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

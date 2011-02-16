@@ -28,16 +28,17 @@ public class DivIncludeContentPool extends RNGParseEndElementTaskPool{
 	
 	public DivIncludeContentPool(SAttribute ns,
 						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new DivIncludeContentTask[taskPoolSize];
 	}
 	
 	public DivIncludeContentTask getTask(){
 		if(taskFree == 0){			
-			return new DivIncludeContentTask(ns, datatypeLibrary, this, debugWriter);			
+			return new DivIncludeContentTask(ns, datatypeLibrary, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

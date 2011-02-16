@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import serene.validation.schema.parsed.ParsedComponent;
-import serene.validation.schema.parsed.components.Definition;
+import serene.validation.schema.parsed.Definition;
 
 import sereneWrite.MessageWriter;
 

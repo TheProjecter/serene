@@ -31,17 +31,18 @@ public class ValuePool extends RNGParseEndElementTaskPool{
 	public ValuePool(SAttribute ns,
 						SAttribute datatypeLibrary,
 						SAttribute type,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.type = type;
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new ValueTask[taskPoolSize];
 	}
 	
 	public ValueTask getTask(){
 		if(taskFree == 0){			
-			return new ValueTask(ns, datatypeLibrary, type, this, debugWriter);			
+			return new ValueTask(ns, datatypeLibrary, type, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

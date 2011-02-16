@@ -28,7 +28,7 @@ public class StartLevelPool extends RNGParseElementTaskPool{
 		super(debugWriter);
 		
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new StartLevelTask[taskPoolSize];
 	}
 	

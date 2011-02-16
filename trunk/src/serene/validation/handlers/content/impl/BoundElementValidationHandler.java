@@ -85,7 +85,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	public void qNameBinding(){
 		int definitionIndex = element.getDefinitionIndex();
 		ElementBinder binder = bindingModel.getElementBinder(definitionIndex);
-		if(binder != null)binder.bindQName(queue, queueStartEntry, validationItemLocator.getQName());
+		if(binder != null)binder.bindName(queue, queueStartEntry, validationItemLocator.getNamespaceURI(), validationItemLocator.getLocalName(),validationItemLocator.getQName());
 	}
 	
 	public void startLocationBinding(){

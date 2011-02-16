@@ -1,19 +1,3 @@
-/*
-Copyright 2010 Radu Cernuta 
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package serene.validation.handlers.content.util;
 
 import org.xml.sax.Locator;
@@ -37,6 +21,8 @@ public class ValidationItemLocator implements Locator{
 	
 	int[] context;
 	String[] qName;
+    String[] localName;
+    String[] namespaceURI;
 	String[] systemId;
 	String[] publicId;
 	int[] lineNumber;
@@ -53,6 +39,8 @@ public class ValidationItemLocator implements Locator{
 		
 		context = new int[maxDepth];
 		qName = new String[maxDepth];
+        localName = new String[maxDepth]; 
+        namespaceURI = new String[maxDepth];
 		systemId = new String[maxDepth];
 		publicId = new String[maxDepth];
 		lineNumber = new int[maxDepth];
@@ -72,6 +60,8 @@ public class ValidationItemLocator implements Locator{
 		
 		context = new int[maxDepth];
 		qName = new String[maxDepth];
+        localName = new String[maxDepth]; 
+        namespaceURI = new String[maxDepth];
 		systemId = new String[maxDepth];
 		publicId = new String[maxDepth];
 		lineNumber = new int[maxDepth];
@@ -85,13 +75,15 @@ public class ValidationItemLocator implements Locator{
 		columnNumber[depth] = 0;
 	}
 	
-	public void newElement(String si, String pi, int ln, int cn, String qn){
+	public void newElement(String si, String pi, int ln, int cn, String uri, String lN, String qn){
 		depth++;
 		if(depth == maxDepth){				
 			increaseSize(10);
 		}		
 		context[depth] = ELEMENT;
 		qName[depth] = qn;
+        localName[depth] = lN; 
+        namespaceURI[depth] = uri;
 		systemId[depth] = si;
 		publicId[depth]  = pi;
 		lineNumber[depth] = ln;
@@ -100,18 +92,22 @@ public class ValidationItemLocator implements Locator{
 	
 	public void closeElement(){
 		qName[depth] = null;
+        localName[depth] = null; 
+        namespaceURI[depth] = null;
 		systemId[depth] = null;
 		publicId[depth]  = null;
 		depth--;
 	}
 	
-	public void newAttribute(String si, String pi, int ln, int cn, String qn){
+	public void newAttribute(String si, String pi, int ln, int cn, String uri, String lN, String qn){
 		depth++;
 		if(depth == maxDepth){				
 			increaseSize(10);
 		}
 		context[depth] = ATTRIBUTE;		
 		qName[depth] = qn;
+        localName[depth] = lN; 
+        namespaceURI[depth] = uri;
 		systemId[depth] = si;
 		publicId[depth]  = pi;
 		lineNumber[depth] = ln;
@@ -120,6 +116,8 @@ public class ValidationItemLocator implements Locator{
 	
 	public void closeAttribute(){
 		qName[depth] = null;
+        localName[depth] = null; 
+        namespaceURI[depth] = null;
 		systemId[depth] = null;
 		publicId[depth]  = null;
 		depth--;
@@ -159,7 +157,15 @@ public class ValidationItemLocator implements Locator{
 		String[] increasedQName = new String[maxDepth];
 		System.arraycopy(qName, 0, increasedQName, 0, depth);
 		qName = increasedQName;
-		
+        
+        String[] increasedLocalName = new String[maxDepth];
+		System.arraycopy(localName, 0, increasedLocalName, 0, depth);
+		localName = increasedLocalName;
+        
+		String[] increasedNsURI = new String[maxDepth];
+		System.arraycopy(namespaceURI, 0, increasedNsURI, 0, depth);
+		namespaceURI = increasedNsURI;
+        
 		String[] increasedSystemId = new String[maxDepth];
 		System.arraycopy(systemId, 0, increasedSystemId, 0, depth);
 		systemId = increasedSystemId;
@@ -183,6 +189,14 @@ public class ValidationItemLocator implements Locator{
 	
 	public String getQName(){
 		return qName[depth];
+	}
+    
+    public String getNamespaceURI(){
+		return namespaceURI[depth];
+	}
+    
+    public String getLocalName(){
+		return localName[depth];
 	}
 	
 	public String getSystemId(){

@@ -25,10 +25,11 @@ class EmptyTask extends RNGParseEndElementTask{
 	EmptyPool pool;
 	
 	EmptyTask(SAttribute ns,
-						SAttribute datatypeLibrary, 
+						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						EmptyPool pool, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.pool = pool;
 	}
 	
@@ -38,6 +39,6 @@ class EmptyTask extends RNGParseEndElementTask{
 		pool.recycle(this);
 	}
 	public void execute(){
-		builder.buildEmpty(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getQName(), getLocation());
+		builder.buildEmpty(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getOtherAttributes(), getQName(), getLocation());
 	}
 }

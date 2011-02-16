@@ -28,16 +28,17 @@ public class ExceptNameClassPool extends RNGParseEndElementTaskPool{
 	
 	public ExceptNameClassPool(SAttribute ns,
 						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new ExceptNameClassTask[taskPoolSize];
 	}
 	
 	public ExceptNameClassTask getTask(){
 		if(taskFree == 0){			
-			return new ExceptNameClassTask(ns, datatypeLibrary, this, debugWriter);			
+			return new ExceptNameClassTask(ns, datatypeLibrary, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

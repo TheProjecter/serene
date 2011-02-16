@@ -14,57 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.validation.schema.parsed;
 
 import java.util.Map;
 
+import serene.util.AttributeInfo;
+
 import serene.validation.schema.ComponentBuilder;
 
-
-import serene.validation.schema.parsed.components.Pattern;
-import serene.validation.schema.parsed.components.NameClass;
-import serene.validation.schema.parsed.components.Param;
-import serene.validation.schema.parsed.components.Include;
-import serene.validation.schema.parsed.components.IncludeContent;
-import serene.validation.schema.parsed.components.GrammarContent;
-import serene.validation.schema.parsed.components.ExceptPattern;
-import serene.validation.schema.parsed.components.ExceptNameClass;
-import serene.validation.schema.parsed.components.DivGrammarContent;
-import serene.validation.schema.parsed.components.DivIncludeContent;
-
-import serene.validation.schema.parsed.components.ElementWithNameClass;
-import serene.validation.schema.parsed.components.ElementWithNameInstance;
-import serene.validation.schema.parsed.components.AttributeWithNameClass;
-import serene.validation.schema.parsed.components.AttributeWithNameInstance;
-import serene.validation.schema.parsed.components.ChoicePattern;
-import serene.validation.schema.parsed.components.Interleave;
-import serene.validation.schema.parsed.components.Group;
-import serene.validation.schema.parsed.components.ZeroOrMore;
-import serene.validation.schema.parsed.components.OneOrMore;
-import serene.validation.schema.parsed.components.Optional;
-import serene.validation.schema.parsed.components.ListPattern;
-import serene.validation.schema.parsed.components.Mixed;
-import serene.validation.schema.parsed.components.Empty;
-import serene.validation.schema.parsed.components.Text;
-import serene.validation.schema.parsed.components.NotAllowed;
-import serene.validation.schema.parsed.components.ExternalRef;
-import serene.validation.schema.parsed.components.Ref;
-import serene.validation.schema.parsed.components.ParentRef;
-import serene.validation.schema.parsed.components.Data;
-import serene.validation.schema.parsed.components.Value;
-import serene.validation.schema.parsed.components.Grammar;
-import serene.validation.schema.parsed.components.Dummy;
-
-import serene.validation.schema.parsed.components.Name;
-import serene.validation.schema.parsed.components.AnyName;
-import serene.validation.schema.parsed.components.NsName;
-import serene.validation.schema.parsed.components.ChoiceNameClass;
-
-import serene.validation.schema.parsed.components.Define;
-import serene.validation.schema.parsed.components.Start;
-
 import sereneWrite.MessageWriter;
-
 
 import serene.validation.schema.parsed.util.Level;
 
@@ -101,283 +60,184 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		content.clear();
 	}
 	
-	void addToCurrentLevel(Pattern p){
-		level.add(p);
+	void addToCurrentLevel(ParsedComponent pc ){
+		level.add(pc);
 	}
-	Pattern[] getAllCurrentPatterns(){
-		return level.getPatterns();
+	ParsedComponent[] getAllCurrentParsedComponents(){
+		return level.getParsedComponents();
 	}	
-	public Pattern getCurrentPattern(){
-		return level.getLastPattern();
+	public ParsedComponent getCurrentParsedComponent(){
+		return level.getLastParsedComponent();
 	}
 	
-	int getNumberOfChildPatterns(){
+	int getNumberOfChildParsedComponents(){
 		Level contentLevel = level.getLevelDown();		
-		return contentLevel.getPatternsCount();
+		return contentLevel.getParsedComponentsCount();
 	}
-	Pattern[] getContentPatterns(){
+	ParsedComponent[] getContentParsedComponents(){
 		if(level.isBottomLevel())return null;
 		Level contentLevel = level.getLevelDown();	
-		return contentLevel.getPatterns();
+		return contentLevel.getParsedComponents();
 	}	
 	
-	Pattern getLastContentPattern(){
+	ParsedComponent getLastContentParsedComponent(){
 		if(level.isBottomLevel())return null;		
 		Level contentLevel = level.getLevelDown();
-		return contentLevel.getLastPattern();
+		return contentLevel.getLastParsedComponent();
 	}	
 	
 	
-	void addToCurrentLevel(NameClass nc){
-		level.add(nc);
+	void writeLevels(){
 	}
-	NameClass[] getAllCurrentNameClasses(){
-		return level.getNameClasses();
-	}		
-	public NameClass getCurrentNameClass(){		
-		return level.getLastNameClass();
-	}
-	
-	int getNumberOfChildNameClasses(){
-		Level contentLevel = level.getLevelDown();
-		return contentLevel.getNameClassesCount();
-	}		
-	NameClass[] getContentNameClasses(){
-		if(level.isBottomLevel())return null;
-		Level contentLevel = level.getLevelDown();
-		return contentLevel.getNameClasses();
-	}		
-	NameClass getLastContentNameClass(){
-		if(level.isBottomLevel())return null;
-		Level contentLevel = level.getLevelDown();
-		return contentLevel.getLastNameClass();
-	}	
-	
-	void addToCurrentLevel(Param p){
-		level.add(p);
-	}
-	Param[] getAllCurrentParams(){
-		return level.getParams();
-	}	
-	public Param getCurrentParam(){
-		return level.getLastParam();
-	}
-	
-	int getNumberOfChildParams(){
-		Level contentLevel = level.getLevelDown();		
-		return contentLevel.getParamsCount();
-	}
-	Param[] getContentParams(){
-		if(level.isBottomLevel())return null;
-		Level contentLevel = level.getLevelDown();	
-		return contentLevel.getParams();
-	}	
-	
-	Param getLastContentParam(){
-		if(level.isBottomLevel())return null;		
-		Level contentLevel = level.getLevelDown();
-		return contentLevel.getLastParam();
-	}
-	
-	void addToCurrentLevel(Define d){
-		level.add(d);
-	}
-	void addToCurrentLevel(Start s){
-		level.add(s);
-	}
-	
-	void addToCurrentLevel(IncludeContent ic){
-		level.add(ic);
-	}
-	IncludeContent[] getAllCurrentIncludeContent(){
-		return level.getIncludeContent();
-	}	
-	public IncludeContent getCurrentIncludeContent(){
-		return level.getLastIncludeContent();
-	}
-	
-	int getNumberOfChildIncludeContent(){
-		Level contentLevel = level.getLevelDown();		
-		return contentLevel.getIncludeContentCount();
-	}
-	IncludeContent[] getContentIncludeContent(){
-		if(level.isBottomLevel())return null;
-		Level contentLevel = level.getLevelDown();	
-		return contentLevel.getIncludeContent();
-	}	
-	
-	IncludeContent getLastContentIncludeContent(){
-		if(level.isBottomLevel())return null;		
-		Level contentLevel = level.getLevelDown();
-		return contentLevel.getLastIncludeContent();
-	}
-	
-	void addToCurrentLevel(GrammarContent ic){
-		level.add(ic);
-	}
-	GrammarContent[] getAllCurrentGrammarContent(){
-		return level.getGrammarContent();
-	}	
-	public GrammarContent getCurrentGrammarContent(){
-		return level.getLastGrammarContent();
-	}
-	
-	int getNumberOfChildGrammarContent(){
-		Level contentLevel = level.getLevelDown();		
-		return contentLevel.getGrammarContentCount();
-	}
-	GrammarContent[] getContentGrammarContent(){
-		if(level.isBottomLevel())return null;
-		Level contentLevel = level.getLevelDown();	
-		return contentLevel.getGrammarContent();
-	}	
-	
-	GrammarContent getLastContentGrammarContent(){
-		if(level.isBottomLevel())return null;		
-		Level contentLevel = level.getLevelDown();
-		return contentLevel.getLastGrammarContent();
-	}
-	
-	void addToCurrentLevel(ExceptPattern ep){
-		level.add(ep);
-	}
-	ExceptPattern[] getAllCurrentExceptPatterns(){
-		return level.getExceptPatterns();
-	}	
-	public ExceptPattern getCurrentExceptPattern(){
-		return level.getLastExceptPattern();
-	}
-	
-	int getNumberOfChildExceptPatterns(){
-		Level contentLevel = level.getLevelDown();		
-		return contentLevel.getExceptPatternsCount();
-	}
-	ExceptPattern[] getContentExceptPatterns(){
-		if(level.isBottomLevel())return null;
-		Level contentLevel = level.getLevelDown();	
-		return contentLevel.getExceptPatterns();
-	}	
-	
-	ExceptPattern getLastContentExceptPattern(){
-		if(level.isBottomLevel())return null;		
-		Level contentLevel = level.getLevelDown();
-		return contentLevel.getLastExceptPattern();
-	}
-	
-	
-	void addToCurrentLevel(ExceptNameClass enc){
-		level.add(enc);
-	}
-	ExceptNameClass getCurrentExceptNameClass(){
-		return level.getExceptNameClass();
-	}		
-	ExceptNameClass getContentExceptNameClass(){
-		if(level.isBottomLevel())return null;
-		Level contentLevel = level.getLevelDown();	
-		return contentLevel.getExceptNameClass();
-	}
-	
 	
 	//**************************************************************************
 	//START PATTERN BUILDING ***************************************************
 	//**************************************************************************
-	public void buildElementWithNameClass(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		ElementWithNameClass ewnc = new ElementWithNameClass(prefixMapping, xmlBase, ns, datatypeLibrary, getLastContentNameClass(), getContentPatterns(), qName, location, debugWriter);
+	public void buildElementWithNameClass(Map<String, String> prefixMapping, 
+                                            String xmlBase, 
+                                            String ns,
+                                            String datatypeLibrary,
+                                            AttributeInfo[] foreignAttributes,
+                                            String qName, 
+                                            String location){
+		writeLevels();	
+		ElementWithNameClass ewnc = new ElementWithNameClass(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(ewnc);
+		writeLevels();
 	}
-	public void buildElementWithNameInstance(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, String qName, String location){
-		ElementWithNameInstance ewni = new ElementWithNameInstance(prefixMapping, xmlBase, ns, datatypeLibrary, name, getContentPatterns(), qName, location, debugWriter);
+	public void buildElementWithNameInstance(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		ElementWithNameInstance ewni = new ElementWithNameInstance(prefixMapping, xmlBase, ns, datatypeLibrary, name, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(ewni);
+		writeLevels();
 	}
-	public void buildAttributeWithNameClass(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		AttributeWithNameClass awnc = new AttributeWithNameClass(prefixMapping, xmlBase, ns, datatypeLibrary, getLastContentNameClass(), getContentPatterns(), qName, location, debugWriter);
+	public void buildAttributeWithNameClass(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		AttributeWithNameClass awnc = new AttributeWithNameClass(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(awnc);
+		writeLevels();
 	}
-	public void buildAttributeWithNameInstance(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, String qName, String location){
-		AttributeWithNameInstance awni = new AttributeWithNameInstance(prefixMapping, xmlBase, ns, datatypeLibrary, name, getContentPatterns(), qName, location, debugWriter);
+	public void buildAttributeWithNameInstance(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		AttributeWithNameInstance awni = new AttributeWithNameInstance(prefixMapping, xmlBase, ns, datatypeLibrary, name, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(awni);
+		writeLevels();
 	}	
-	public void buildGroup(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		Group g = new Group(prefixMapping, xmlBase, ns, datatypeLibrary, getContentPatterns(), qName, location, debugWriter);
-		clearContent();
-		addToCurrentLevel(g);	
-	}		
-	public void buildInterleave(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		Interleave i = new Interleave(prefixMapping, xmlBase, ns, datatypeLibrary, getContentPatterns(), qName, location, debugWriter);
-		clearContent();
-		addToCurrentLevel(i);	
-	}
-	public void buildChoicePattern(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		ChoicePattern cp = new ChoicePattern(prefixMapping, xmlBase, ns, datatypeLibrary, getContentPatterns(), qName, location, debugWriter);
-		clearContent();
-		addToCurrentLevel(cp);
-	}
-	public void buildOptional(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		Optional o = new Optional(prefixMapping, xmlBase, ns, datatypeLibrary, getContentPatterns(), qName, location, debugWriter);
-		clearContent();
-		addToCurrentLevel(o);	
-	}
-	public void buildZeroOrMore(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		ZeroOrMore zom = new ZeroOrMore(prefixMapping, xmlBase, ns, datatypeLibrary, getContentPatterns(), qName, location, debugWriter);
-		clearContent();
-		addToCurrentLevel(zom);
-	}
-	public void buildOneOrMore(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		OneOrMore oom = new OneOrMore(prefixMapping, xmlBase, ns, datatypeLibrary, getContentPatterns(), qName, location, debugWriter);
-		clearContent();
-		addToCurrentLevel(oom);
-	}
-	public void buildListPattern(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		ListPattern lp = new ListPattern(prefixMapping, xmlBase, ns, datatypeLibrary, getContentPatterns(), qName, location, debugWriter);
-		clearContent();
-		addToCurrentLevel(lp);
-	}
-	public void buildMixed(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		Mixed m = new Mixed(prefixMapping, xmlBase, ns, datatypeLibrary, getContentPatterns(), qName, location, debugWriter);
-		clearContent();
-		addToCurrentLevel(m);
-	}
-	public void buildRef(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, String qName, String location){
-		Ref r = new Ref(prefixMapping, xmlBase, ns, datatypeLibrary, name, qName, location, debugWriter);
-		addToCurrentLevel(r);
-	}
-	public void buildParentRef(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, String qName, String location){
-		ParentRef r = new ParentRef(prefixMapping, xmlBase, ns, datatypeLibrary, name, qName, location, debugWriter);
-		addToCurrentLevel(r);
-	}
-	public void buildEmpty(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		Empty e = new Empty(prefixMapping, xmlBase, ns, datatypeLibrary, qName, location, debugWriter);
-		addToCurrentLevel(e);
-	}
-	public void buildText(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		Text t = new Text(prefixMapping, xmlBase, ns, datatypeLibrary, qName, location, debugWriter);
-		addToCurrentLevel(t);
-	}	
-	public void buildValue(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String type, String charContent, String qName, String location){
-		Value v = new Value(prefixMapping, xmlBase, ns, datatypeLibrary, type, charContent, qName, location, debugWriter);
-		addToCurrentLevel(v);
-	}
-	public void buildData(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String type, String qName, String location){
-		Data d = new Data(prefixMapping, xmlBase, ns, datatypeLibrary, type, getContentParams(), getContentExceptPatterns(), qName, location, debugWriter);		
-		clearContent();
-		addToCurrentLevel(d);
-	}		
-	public void buildNotAllowed(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		NotAllowed na = new NotAllowed(prefixMapping, xmlBase, ns, datatypeLibrary, qName, location, debugWriter);
-		addToCurrentLevel(na);
-	}			
-	public void buildExternalRef(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String href, String qName, String location){
-		ExternalRef er = new ExternalRef(prefixMapping, xmlBase, ns, datatypeLibrary, href, qName, location, debugWriter);
-		addToCurrentLevel(er);
-	}
-	public void buildGrammar(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		Grammar g = new Grammar(prefixMapping, xmlBase, ns, datatypeLibrary, getContentGrammarContent(), qName, location, debugWriter);
+	public void buildGroup(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		Group g = new Group(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(g);
+		writeLevels();	
+	}		
+	public void buildInterleave(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();
+		Interleave i = new Interleave(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		clearContent();
+		addToCurrentLevel(i);
+		writeLevels();	
+	}
+	public void buildChoicePattern(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		ChoicePattern cp = new ChoicePattern(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		clearContent();
+		addToCurrentLevel(cp);
+		writeLevels();
+	}
+	public void buildOptional(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		Optional o = new Optional(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		clearContent();
+		addToCurrentLevel(o);
+		writeLevels();	
+	}
+	public void buildZeroOrMore(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		ZeroOrMore zom = new ZeroOrMore(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		clearContent();
+		addToCurrentLevel(zom);
+		writeLevels();
+	}
+	public void buildOneOrMore(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		OneOrMore oom = new OneOrMore(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		clearContent();
+		addToCurrentLevel(oom);
+		writeLevels();
+	}
+	public void buildListPattern(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		ListPattern lp = new ListPattern(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		clearContent();
+		addToCurrentLevel(lp);
+		writeLevels();
+	}
+	public void buildMixed(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		Mixed m = new Mixed(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		clearContent();
+		addToCurrentLevel(m);
+		writeLevels();
+	}
+	public void buildRef(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		Ref r = new Ref(prefixMapping, xmlBase, ns, datatypeLibrary, name, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		addToCurrentLevel(r);
+		writeLevels();
+	}
+	public void buildParentRef(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		ParentRef r = new ParentRef(prefixMapping, xmlBase, ns, datatypeLibrary, name, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		addToCurrentLevel(r);
+		writeLevels();
+	}
+	public void buildEmpty(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		Empty e = new Empty(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		addToCurrentLevel(e);
+		writeLevels();
+	}
+	public void buildText(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		Text t = new Text(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		addToCurrentLevel(t);
+		writeLevels();
+	}	
+	public void buildValue(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String type, AttributeInfo[] foreignAttributes, String charContent, String qName, String location){
+		writeLevels();		
+		Value v = new Value(prefixMapping, xmlBase, ns, datatypeLibrary, type, foreignAttributes, charContent, qName, location, debugWriter);
+		addToCurrentLevel(v);
+		writeLevels();
+	}
+	public void buildData(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String type, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		Data d = new Data(prefixMapping, xmlBase, ns, datatypeLibrary, type, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);		
+		clearContent();
+		addToCurrentLevel(d);
+		writeLevels();
+	}		
+	public void buildNotAllowed(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		NotAllowed na = new NotAllowed(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		addToCurrentLevel(na);
+		writeLevels();
+	}			
+	public void buildExternalRef(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String href, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		ExternalRef er = new ExternalRef(prefixMapping, xmlBase, ns, datatypeLibrary, href, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		addToCurrentLevel(er);
+		writeLevels();
+	}
+	public void buildGrammar(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		Grammar g = new Grammar(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		clearContent();
+		addToCurrentLevel(g);
+		writeLevels();
 	}
 	//**************************************************************************
 	//END PATTERN BUILDING *****************************************************
@@ -387,24 +247,32 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	//START NAME CLASS BUILDING ************************************************
 	//**************************************************************************	
-	public void buildName(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String characterContent, String qName, String location){
-		Name n = new Name(prefixMapping, xmlBase, ns, datatypeLibrary, characterContent, qName, location, debugWriter);
+	public void buildName(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String characterContent, String qName, String location){
+		writeLevels();		
+		Name n = new Name(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, characterContent, qName, location, debugWriter);
 		addToCurrentLevel(n);
+		writeLevels();
 	}
-	public void buildAnyName(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		AnyName an = new AnyName(prefixMapping, xmlBase, ns, datatypeLibrary, getContentExceptNameClass(), qName, location, debugWriter);
+	public void buildAnyName(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		AnyName an = new AnyName(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(an);
+		writeLevels();
 	}
-	public void buildNsName(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		NsName nn = new NsName(prefixMapping, xmlBase, ns, datatypeLibrary, getContentExceptNameClass(), qName, location, debugWriter);		
+	public void buildNsName(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		NsName nn = new NsName(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);		
 		clearContent();
 		addToCurrentLevel(nn);
+		writeLevels();
 	}
-	public void buildChoiceNameClass(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		ChoiceNameClass cnc = new ChoiceNameClass(prefixMapping, xmlBase, ns, datatypeLibrary, getContentNameClasses(), qName, location, debugWriter);
+	public void buildChoiceNameClass(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		ChoiceNameClass cnc = new ChoiceNameClass(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(cnc);
+		writeLevels();
 	}	
 	//**************************************************************************
 	//END NAME CLASS BUILDING **************************************************
@@ -414,56 +282,97 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	//START DEFINITION BUILDING ************************************************
 	//**************************************************************************	
-	public void buildDefine(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, String combine, String qName, String location){
-		Define d = new Define(prefixMapping, xmlBase, ns, datatypeLibrary, name, combine, getContentPatterns(), qName, location, debugWriter);
+	public void buildDefine(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, String combine, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		Define d = new Define(prefixMapping, xmlBase, ns, datatypeLibrary, name, combine, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(d);
+		writeLevels();
 	}
-	public void buildStart(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String combine, String qName, String location){
-		Start s = new Start(prefixMapping, xmlBase, ns, datatypeLibrary, combine, getContentPatterns(), qName, location, debugWriter);
+	public void buildStart(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String combine, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		Start s = new Start(prefixMapping, xmlBase, ns, datatypeLibrary, combine, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(s);
+		writeLevels();
 	}
 	//**************************************************************************
 	//END DEFINITION BUILDING **************************************************
 	//**************************************************************************
 
-	public void buildDivIncludeContent(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		DivIncludeContent dic = new DivIncludeContent(prefixMapping, xmlBase, ns, datatypeLibrary, getContentIncludeContent(), qName, location, debugWriter);
+	public void buildDivIncludeContent(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		DivIncludeContent dic = new DivIncludeContent(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(dic);
+		writeLevels();
 	}
-	public void buildDivGrammarContent(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		DivGrammarContent dgc = new DivGrammarContent(prefixMapping, xmlBase, ns, datatypeLibrary, getContentGrammarContent(), qName, location, debugWriter);
+	public void buildDivGrammarContent(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		DivGrammarContent dgc = new DivGrammarContent(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(dgc);
+		writeLevels();
 	}
 
-	public void buildParam(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, String charContent, String qName, String location){
-		Param p = new Param(prefixMapping, xmlBase, ns, datatypeLibrary, name, charContent, qName, location, debugWriter);
+	public void buildParam(Map<String, String> prefixMapping, 
+                            String xmlBase, 
+                            String ns, 
+                            String datatypeLibrary, 
+                            String name,
+                            AttributeInfo[] foreignAttributes,
+                            String charContent, 
+                            String qName, 
+                            String location){
+		writeLevels();		
+		Param p = new Param(prefixMapping, xmlBase, ns, datatypeLibrary, name, foreignAttributes, charContent, qName, location, debugWriter);
 		addToCurrentLevel(p);
+		writeLevels();
 	}
 
-	public void buildExceptNameClass(Map<String, String> prefixMapping, String xmlBase,  String ns, String datatypeLibrary, String qName, String location){
-		ExceptNameClass enc = new ExceptNameClass(prefixMapping, xmlBase, ns, datatypeLibrary, getContentNameClasses(), qName, location, debugWriter);
+	public void buildExceptNameClass(Map<String, String> prefixMapping, String xmlBase,  String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		ExceptNameClass enc = new ExceptNameClass(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(enc);
+		writeLevels();
 	}
-	public void buildExceptPattern(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		ExceptPattern ep = new ExceptPattern(prefixMapping, xmlBase, ns, datatypeLibrary, getContentPatterns(), qName, location, debugWriter);
+	public void buildExceptPattern(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		ExceptPattern ep = new ExceptPattern(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(ep);
+		writeLevels();
 	}
 	
-	public void buildInclude(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String href, String qName, String location){
-		Include i = new Include(prefixMapping, xmlBase, ns, datatypeLibrary, href, getContentIncludeContent(), qName, location, debugWriter);
+	public void buildInclude(Map<String, String> prefixMapping, 
+                                String xmlBase, 
+                                String ns, 
+                                String datatypeLibrary, 
+                                String href,
+                                AttributeInfo[] foreignAttributes,
+                                String qName, 
+                                String location){
+		writeLevels();		
+		Include i = new Include(prefixMapping, xmlBase, ns, datatypeLibrary, href, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(i);
+		writeLevels();
 	}
 	
-	public void buildDummy(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String qName, String location){
-		Dummy dd = new Dummy(prefixMapping, xmlBase, ns, datatypeLibrary, getContentPatterns(), qName, location, debugWriter);
+	public void buildDummy(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		Dummy dd = new Dummy(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(dd);
+		writeLevels();
+	}
+    
+    public void buildForeignComponent(String namespaceURI, String localName, Map<String, String> prefixMapping, String xmlBase, AttributeInfo[] foreignAttributes, String qName, String location){
+		writeLevels();		
+		ForeignComponent fc = new ForeignComponent(namespaceURI, localName, prefixMapping, xmlBase, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+		clearContent();
+		addToCurrentLevel(fc);
+		writeLevels();
 	}
 }

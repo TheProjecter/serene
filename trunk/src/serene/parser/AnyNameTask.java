@@ -25,10 +25,11 @@ class AnyNameTask extends RNGParseEndElementTask{
 	AnyNamePool pool;
 	
 	AnyNameTask(SAttribute ns,
-						SAttribute datatypeLibrary, 
+						SAttribute datatypeLibrary,
+                        SAttribute foreign,
 						AnyNamePool pool, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.pool = pool;
 	}
 	
@@ -39,6 +40,6 @@ class AnyNameTask extends RNGParseEndElementTask{
 	}
 	public void execute(){	
 		builder.endLevel();
-		builder.buildAnyName(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getQName(), getLocation());
+		builder.buildAnyName(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getOtherAttributes(), getQName(), getLocation());
 	}
 }

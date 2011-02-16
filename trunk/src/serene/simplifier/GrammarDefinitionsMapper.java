@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.simplifier;
 
 import java.net.URI;
@@ -32,56 +33,59 @@ import org.xml.sax.SAXParseException;
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.DatatypeLibraryFactory;
 
-import serene.SereneRecoverableException;
+
+import serene.datatype.MissingLibraryException;
 
 import serene.internal.InternalRNGFactory;
 
 import serene.validation.DTDMapping;
 
-import serene.datatype.MissingLibraryException;
-
 import serene.validation.schema.parsed.ParsedComponent;
 import serene.validation.schema.parsed.SimplifyingVisitor;
 
-import serene.validation.schema.parsed.components.Pattern;
-import serene.validation.schema.parsed.components.Param;
-import serene.validation.schema.parsed.components.Include;
-import serene.validation.schema.parsed.components.ExceptPattern;
-import serene.validation.schema.parsed.components.ExceptNameClass;
-import serene.validation.schema.parsed.components.DivGrammarContent;
-import serene.validation.schema.parsed.components.DivIncludeContent;
-import serene.validation.schema.parsed.components.Definition;
+import serene.validation.schema.parsed.Pattern;
+import serene.validation.schema.parsed.Param;
+import serene.validation.schema.parsed.Include;
+import serene.validation.schema.parsed.ExceptPattern;
+import serene.validation.schema.parsed.ExceptNameClass;
+import serene.validation.schema.parsed.DivGrammarContent;
+import serene.validation.schema.parsed.DivIncludeContent;
+import serene.validation.schema.parsed.Definition;
 
-import serene.validation.schema.parsed.components.ElementWithNameClass;
-import serene.validation.schema.parsed.components.ElementWithNameInstance;
-import serene.validation.schema.parsed.components.AttributeWithNameClass;
-import serene.validation.schema.parsed.components.AttributeWithNameInstance;
-import serene.validation.schema.parsed.components.ChoicePattern;
-import serene.validation.schema.parsed.components.Interleave;
-import serene.validation.schema.parsed.components.Group;
-import serene.validation.schema.parsed.components.ZeroOrMore;
-import serene.validation.schema.parsed.components.OneOrMore;
-import serene.validation.schema.parsed.components.Optional;
-import serene.validation.schema.parsed.components.ListPattern;
-import serene.validation.schema.parsed.components.Mixed;
-import serene.validation.schema.parsed.components.Empty;
-import serene.validation.schema.parsed.components.Text;
-import serene.validation.schema.parsed.components.NotAllowed;
-import serene.validation.schema.parsed.components.ExternalRef;
-import serene.validation.schema.parsed.components.Ref;
-import serene.validation.schema.parsed.components.ParentRef;
-import serene.validation.schema.parsed.components.Data;
-import serene.validation.schema.parsed.components.Value;
-import serene.validation.schema.parsed.components.Grammar;
-import serene.validation.schema.parsed.components.Dummy;
+import serene.validation.schema.parsed.ElementWithNameClass;
+import serene.validation.schema.parsed.ElementWithNameInstance;
+import serene.validation.schema.parsed.AttributeWithNameClass;
+import serene.validation.schema.parsed.AttributeWithNameInstance;
+import serene.validation.schema.parsed.ChoicePattern;
+import serene.validation.schema.parsed.Interleave;
+import serene.validation.schema.parsed.Group;
+import serene.validation.schema.parsed.ZeroOrMore;
+import serene.validation.schema.parsed.OneOrMore;
+import serene.validation.schema.parsed.Optional;
+import serene.validation.schema.parsed.ListPattern;
+import serene.validation.schema.parsed.Mixed;
+import serene.validation.schema.parsed.Empty;
+import serene.validation.schema.parsed.Text;
+import serene.validation.schema.parsed.NotAllowed;
+import serene.validation.schema.parsed.ExternalRef;
+import serene.validation.schema.parsed.Ref;
+import serene.validation.schema.parsed.ParentRef;
+import serene.validation.schema.parsed.Data;
+import serene.validation.schema.parsed.Value;
+import serene.validation.schema.parsed.Grammar;
+import serene.validation.schema.parsed.Dummy;
 
-import serene.validation.schema.parsed.components.Name;
-import serene.validation.schema.parsed.components.AnyName;
-import serene.validation.schema.parsed.components.NsName;
-import serene.validation.schema.parsed.components.ChoiceNameClass;
+import serene.validation.schema.parsed.Name;
+import serene.validation.schema.parsed.AnyName;
+import serene.validation.schema.parsed.NsName;
+import serene.validation.schema.parsed.ChoiceNameClass;
 
-import serene.validation.schema.parsed.components.Define;
-import serene.validation.schema.parsed.components.Start;
+import serene.validation.schema.parsed.Define;
+import serene.validation.schema.parsed.Start;
+
+import serene.validation.schema.parsed.ForeignComponent;
+
+import serene.validation.schema.parsed.DefinitionCopier;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -108,7 +112,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	IncludeParser includeParser;
 	IncludedGrammarDefinitionsMapper includedGrammarDefinitionsMapper;
 	NamespaceInheritanceHandler namespaceInheritanceHandler;
-	IncludedDefinitionCopier includedDefinitionCopier; 
+	DefinitionCopier definitionCopier; 
 	
 	DatatypeLibraryFactory datatypeLibraryFactory;
 	String currentDatatypeLibrary;
@@ -204,7 +208,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		}catch(URISyntaxException e){			
 			// report 4.5 error
 			String message = "Simplification 4.5 error. "
-			+"Illegal href attribute value in <"+include.getQName()+"> at "+include.getLocation()+": "
+			+"Illegal href attribute value in "+include.getQName()+" at "+include.getLocation()+": "
 			+"\n\t"+e.getMessage(); 
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
@@ -213,7 +217,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		}
 		if(hrefURI.getFragment() != null){
 			String message = "Simplification 4.5 error. "
-			+"Illegal href attribute value in <"+include.getQName()+"> at "+include.getLocation()+": "
+			+"Illegal href attribute value in "+include.getQName()+" at "+include.getLocation()+": "
 			+"\n\t"+"Fragment identifier present";
 			//System.out.println(message);
 			// report 4.5 error
@@ -223,7 +227,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		}
 		if(inclusionPath.contains(hrefURI)){
 			String message = "Simplification 4.6 error. "
-			+"Illegal href attribute value in <"+include.getQName()+"> at "+include.getLocation()+": "
+			+"Illegal href attribute value in "+include.getQName()+" at "+include.getLocation()+": "
 			+"\n\t"+"Recursive inclusion.";
 			//System.out.println(message);
 			// report 4.6 error
@@ -234,7 +238,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		
         IncludedParsedModel includedModel = parse(hrefURI); 
 		Grammar includedGrammar = includedModel.getTopPattern();
-            
+        
 		if(includedGrammar == null) return;
 
         DTDMapping dtdMapping = includedModel.getDTDMapping();
@@ -328,10 +332,10 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			}else{
 				// create copies of the included definitions 
 				// and map to be ready for ns/currentDatatypeLibrary simplification
-				if(includedDefinitionCopier == null) includedDefinitionCopier = new IncludedDefinitionCopier(debugWriter);
+				if(definitionCopier == null) definitionCopier = new DefinitionCopier(debugWriter);
 				for(int i = 0; i < included.size(); i++){
 					Definition d = included.get(i);
-					d = includedDefinitionCopier.copy(d);
+					d = definitionCopier.copy(d);
 					included.set(i, d);
 					namespaceInheritanceHandler.put(d, include);
 				}
@@ -351,20 +355,20 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 				if(remainingName == null){
 					//report error start
 					String message = "Simplification 4.7 error. "
-					+"Included grammar contains no start element to match the content of <"+include.getQName()+"> at "+include.getLocation()+":";
+					+"Included grammar contains no start element to match the content of "+include.getQName()+" at "+include.getLocation()+":";
 					ArrayList<Definition> starts = overrideDefinitions.get(null);
 					for(int i = 0; i < starts.size(); i++){
-						message += "\n\t<"+starts.get(i).getQName()+"> at "+starts.get(i).getLocation();
+						message += "\n\t"+starts.get(i).getQName()+" at "+starts.get(i).getLocation();
 					}
 					message += ".";
 					errorDispatcher.error(new SAXParseException(message, null));
 				}else{
 					//report error define
 					String message = "Simplification 4.7 error. "
-					+"Included grammar contains no define element with name \""+remainingName+"\"to match the content of <"+include.getQName()+"> at "+include.getLocation()+":";
+					+"Included grammar contains no define element with name \""+remainingName+"\"to match the content of "+include.getQName()+" at "+include.getLocation()+":";
 					ArrayList<Definition> defines = overrideDefinitions.get(remainingName);
 					for(int i = 0; i < defines.size(); i++){
-						message += "\n\t<"+defines.get(i).getQName()+"> at "+defines.get(i).getLocation();
+						message += "\n\t"+defines.get(i).getQName()+" at "+defines.get(i).getLocation();
 					}
 					message += ".";
 					errorDispatcher.error(new SAXParseException(message, null));
@@ -595,9 +599,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		if(xmlBase != null){
 			resolve(xmlBase, element);
 		}
-			
-		ParsedComponent nameClass = element.getNameClass();
-		if(nameClass != null) next(nameClass);
+				
 		ParsedComponent[] children = element.getChildren();
 		if(children != null)next(children);
 		
@@ -645,9 +647,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		if(xmlBase != null){
 			resolve(xmlBase, attribute);
 		}
-			
-		ParsedComponent nameClass = attribute.getNameClass();
-		if(nameClass != null) nameClass.accept(this);		
+						
 		ParsedComponent[] children = attribute.getChildren();
 		if(children != null) next(children);
 
@@ -896,7 +896,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		}catch(URISyntaxException e){			
 			// report 4.5 error
 			String message = "Simplification 4.5 error. "
-			+"Illegal href attribute value in <"+externalRef.getQName()+"> at "+externalRef.getLocation()+": "
+			+"Illegal href attribute value in "+externalRef.getQName()+" at "+externalRef.getLocation()+": "
 			+"\n\t"+e.getMessage(); 
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
@@ -905,7 +905,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		}
 		if(hrefURI.getFragment() != null){
 			String message = "Simplification 4.5 error. "
-			+"Illegal href attribute value in <"+externalRef.getQName()+"> at "+externalRef.getLocation()+": "
+			+"Illegal href attribute value in "+externalRef.getQName()+" at "+externalRef.getLocation()+": "
 			+"\n\t"+"Fragment identifier present";
 			//System.out.println(message);
 			// report 4.5 error
@@ -924,7 +924,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		xmlBaseUri = oldBase;
 	}
 	public void visit(Ref ref){}
-	public void visit(ParentRef parentRef){}
+	public void visit(ParentRef parentRef){}    
 	public void visit(Value value) throws SAXException{
 		String dla = value.getDatatypeLibraryAttribute();
 		String oldDla = null;
@@ -955,10 +955,8 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			resolve(xmlBase, data);
 		}
 		
-		/*ParsedComponent[] param = data.getParam();
-		if(param != null) next(param);*/
-		ParsedComponent[] exceptPattern = data.getExceptPattern();
-		if(exceptPattern != null) next(exceptPattern);
+		ParsedComponent[] children = data.getChildren();
+		if(children != null) next(children);
 		
 		xmlBaseUri = oldBase;
 		
@@ -966,7 +964,8 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			currentDatatypeLibrary = oldDla;
 		}
 	}	
-		
+	public void visit(Param param){}
+    
 	public void visit(Grammar grammar) throws SAXException{
 		String dla = grammar.getDatatypeLibraryAttribute();
 		String oldDla = null;
@@ -1024,6 +1023,10 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		if(oldDla != null){
 			currentDatatypeLibrary = oldDla;
 		}
+	}
+    
+    public void visit(ForeignComponent fc) throws SAXException{
+		
 	}
 	
 	void next(ParsedComponent[] children) throws SAXException{	

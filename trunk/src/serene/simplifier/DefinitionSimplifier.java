@@ -37,12 +37,12 @@ import serene.util.BooleanList;
 import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.parsed.ParsedComponent;
 
-import serene.validation.schema.parsed.components.Pattern;
-import serene.validation.schema.parsed.components.Definition;
-import serene.validation.schema.parsed.components.Grammar;
-import serene.validation.schema.parsed.components.ExternalRef;
-import serene.validation.schema.parsed.components.Define;
-import serene.validation.schema.parsed.components.Start;
+import serene.validation.schema.parsed.Pattern;
+import serene.validation.schema.parsed.Definition;
+import serene.validation.schema.parsed.Grammar;
+import serene.validation.schema.parsed.ExternalRef;
+import serene.validation.schema.parsed.Define;
+import serene.validation.schema.parsed.Start;
 
 import serene.validation.schema.simplified.RecursionModel;
 import serene.validation.schema.simplified.SimplifiedModel;

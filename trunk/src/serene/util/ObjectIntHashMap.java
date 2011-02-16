@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.util;
 
 import java.util.Arrays;
-import java.util.HashSet;
 
 import sereneWrite.MessageWriter;
 
@@ -113,6 +113,22 @@ public class ObjectIntHashMap{
 		size = 0;
 	}
 	
+    public boolean containsKey(Object key){
+        int hash = 0;		
+        if (key != null) hash = hash(key.hashCode());
+			
+		//check to see if there is already a record for this key
+		int bucketIndex = indexFor(hash, hashTable.length);
+		if(hashTable[bucketIndex] != null){
+			for (int i = 0; i< hashTable[bucketIndex].length; i++) {
+				if (hash == hashTable[bucketIndex][i]){
+					return true;
+				}
+			}			
+		}
+        return false;
+    }
+    
 	public void put(Object key, int value){	
 		int hash = 0;		
         if (key != null) hash = hash(key.hashCode());
@@ -199,13 +215,19 @@ public class ObjectIntHashMap{
 	* return if any was set, or an IllegalArgumentException is thrown.
 	*/
 	public int get(Object key) {
+		//debugWriter.write("objectIntHashMap START GET "+key);
         int hash = 0;		
         if (key != null) hash = hash(key.hashCode());
-		int bucketIndex = indexFor(hash, hashTable.length);
+		//debugWriter.write("objectIntHashMap hash "+hash);
+		int bucketIndex = indexFor(hash, hashTable.length);	
+		//debugWriter.write("objectIntHashMap bucketIndex "+bucketIndex+" of "+hashTable.length);
+		//debugWriter.write("objectIntHashMap hashTable "+Arrays.deepToString(hashTable));
+		//debugWriter.write("objectIntHashMap intTable "+Arrays.deepToString(intTable));
 		if(hashTable[bucketIndex] == null) return getNullValue();
 		for (int i = 0; i< hashTable[bucketIndex].length; i++) {
 			if (hash == hashTable[bucketIndex][i]) return intTable[bucketIndex][i];
-		}        
+		}
+		//debugWriter.write("objectIntHashMap END GET "+key);        
        return getNullValue();	   
     }
 	
@@ -254,10 +276,12 @@ public class ObjectIntHashMap{
      * Returns index for hash.
      */
     private int indexFor(int hash, int length) {
+		//debugWriter.write("objectIntHashMap INDEX FOR "+hash+" "+length+" = "+(hash & (length-1)));
         return hash & (length-1);
     }
 	
 	private void handleSize(){
+		//debugWriter.write("objectIntHashMap HANDLE SIZE "+(size+1)+" "+threshold);
 		if (++size >= threshold)
             resize(2 * hashTable.length);
 	} 
@@ -284,6 +308,7 @@ public class ObjectIntHashMap{
 	}
 	
 	private void resize(int newCapacity) {
+		//debugWriter.write("objectIntHashMap START RESIZE from capacity "+hashTable.length+ " to capacity "+newCapacity);
         int[][] oldHashTable = hashTable;
 		int[][] oldIndexTable = intTable;
         int oldCapacity = oldHashTable.length;
@@ -296,6 +321,7 @@ public class ObjectIntHashMap{
 		intTable = new int[newCapacity][];
 		threshold = (int)(newCapacity * LOAD_FACTOR);
         transfer(newCapacity, oldHashTable, oldIndexTable);
+        //debugWriter.write("objectIntHashMap "+"END RESIZE");
     }
 	
 	/**

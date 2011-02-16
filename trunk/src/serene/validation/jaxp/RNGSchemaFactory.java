@@ -87,9 +87,11 @@ import serene.validation.DTDMapping;
 
 import serene.validation.schema.parsed.ParsedComponentBuilder;
 import serene.validation.schema.parsed.ParsedModel;
-import serene.validation.schema.parsed.components.Pattern;
+import serene.validation.schema.parsed.Pattern;
 
 import serene.validation.schema.simplified.SimplifiedModel;
+
+import serene.Constants;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -429,8 +431,13 @@ public class RNGSchemaFactory extends SchemaFactory{
 		
 		//build parsed model
 		parsedComponentBuilder.startBuild();
-		queue.executeAll();		
-		Pattern p = parsedComponentBuilder.getCurrentPattern();
+		queue.executeAll();
+        Pattern p = null;		
+		try{
+            p = (Pattern)parsedComponentBuilder.getCurrentParsedComponent();
+        }catch(ClassCastException c){
+            // syntax error, already handled
+        }
 		if(p == null) {
 			// !!! MUST always return a non-null Schema object, meaningfull or not.
 			return new RNGSchema(null, null, debugWriter);
@@ -491,7 +498,12 @@ public class RNGSchemaFactory extends SchemaFactory{
 		//build parsed model
 		parsedComponentBuilder.startBuild();
 		queue.executeAll();		
-		Pattern p = parsedComponentBuilder.getCurrentPattern();
+		Pattern p = null;		
+		try{
+            p = (Pattern)parsedComponentBuilder.getCurrentParsedComponent();
+        }catch(ClassCastException c){
+            // syntax error, already handled
+        }
 		if(p == null) {
 			// !!! MUST always return a non-null Schema object, meaningfull or not.
 			return new RNGSchema(null, null, debugWriter);
