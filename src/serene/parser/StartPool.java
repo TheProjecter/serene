@@ -31,17 +31,18 @@ public class StartPool extends RNGParseEndElementTaskPool{
 	public StartPool(SAttribute ns,
 						SAttribute datatypeLibrary,
 						SAttribute combine,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.combine = combine;
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new StartTask[taskPoolSize];
 	}
 	
 	public StartTask getTask(){
 		if(taskFree == 0){			
-			return new StartTask(ns, datatypeLibrary, combine, this, debugWriter);			
+			return new StartTask(ns, datatypeLibrary, combine, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

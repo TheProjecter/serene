@@ -17,7 +17,7 @@ limitations under the License.
 package serene.parser;
 
 import serene.validation.schema.simplified.components.SAttribute;
-
+import serene.util.AttributeInfo;
 import sereneWrite.MessageWriter;
 
 class ValueTask extends RNGParseEndElementTask{
@@ -28,9 +28,10 @@ class ValueTask extends RNGParseEndElementTask{
 	ValueTask(SAttribute ns,
 						SAttribute datatypeLibrary,
 						SAttribute type,
+                        SAttribute foreign, 
 						ValuePool pool, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.pool = pool;
 		this.type = type;
 	}
@@ -41,10 +42,12 @@ class ValueTask extends RNGParseEndElementTask{
 		pool.recycle(this);
 	}
 	public void execute(){
-		builder.buildValue(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getType(), context.getCharacterContent(), getQName(), getLocation());		
+		builder.buildValue(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getType(), getOtherAttributes(), context.getCharacterContent(), getQName(), getLocation());		
 	}
 	
 	String getType(){
-		return context.getAttributeValue(type);
+		AttributeInfo[] ai = context.getAttributeInfo(type);
+        if(ai == null)return null;
+		return ai[0].getValue();
 	}
 }

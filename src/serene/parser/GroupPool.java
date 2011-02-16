@@ -28,16 +28,17 @@ public class GroupPool extends RNGParseEndElementTaskPool{
 	
 	public GroupPool(SAttribute ns,
 						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new GroupTask[taskPoolSize];
 	}
 	
 	public GroupTask getTask(){
 		if(taskFree == 0){			
-			return new GroupTask(ns, datatypeLibrary, this, debugWriter);			
+			return new GroupTask(ns, datatypeLibrary, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

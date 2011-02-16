@@ -99,8 +99,8 @@ class SimplificationEventContext implements  ValidationContext{
 	
 	public String resolveNamespacePrefix(String prefix){
 		return prefixMapping.getURI(prefix);
-	} 
-    
+	}
+        
     public String toString(){
         return"SimplificationEventContext ";
     }

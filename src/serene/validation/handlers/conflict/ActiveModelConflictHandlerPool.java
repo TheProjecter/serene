@@ -186,7 +186,10 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		}		
 	}
 	
-	public BoundInternalConflictResolver getBoundInternalConflictResolver(String value, 
+	public BoundInternalConflictResolver getBoundInternalConflictResolver(String namespaceURI, 
+                                                                    String localName,
+                                                                    String qName,
+                                                                    String value, 
 																	Queue queue, 
 																	int entry, 
 																	Map<AAttribute, AttributeBinder> attributeBinders){				
@@ -194,14 +197,20 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			// boundInternalConflictResolverCreated++;
 			BoundInternalConflictResolver icr = new BoundInternalConflictResolver(debugWriter);
 			icr.init(this, validationItemLocator);
-			icr.init(value, 
+			icr.init(namespaceURI, 
+                    localName,
+                    qName,
+                    value, 
 					queue, 
 					entry, 
 					attributeBinders);			
 			return icr;			
 		}else{
 			BoundInternalConflictResolver icr = boundInternalConflictResolver[--boundInternalConflictResolverFree];
-			icr.init(value, 
+			icr.init(namespaceURI, 
+                    localName,
+                    qName,
+                    value, 
 					queue, 
 					entry, 
 					attributeBinders);

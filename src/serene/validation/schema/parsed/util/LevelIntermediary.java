@@ -14,18 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.validation.schema.parsed.util;
 
 import java.util.Arrays;
 
-import serene.validation.schema.parsed.components.Pattern;
-import serene.validation.schema.parsed.components.NameClass;
-import serene.validation.schema.parsed.components.Param;
-import serene.validation.schema.parsed.components.ExceptNameClass;
-import serene.validation.schema.parsed.components.ExceptPattern;
-import serene.validation.schema.parsed.components.IncludeContent;
-import serene.validation.schema.parsed.components.GrammarContent;
-
+import serene.validation.schema.parsed.ParsedComponent;
 import sereneWrite.MessageWriter;
 
 class LevelIntermediary extends Level{
@@ -37,44 +31,16 @@ class LevelIntermediary extends Level{
 		child = new LevelBottom(this, debugWriter);
 	}
 	
-	LevelIntermediary(int ncIndex,
-						int ncSize,
-						NameClass[] nameClasses,
-						int ptIndex,
-						int ptSize,
-						Pattern[] patterns,	
-						int prIndex,
-						int prSize,
-						Param[] params,
-						ExceptNameClass exceptNameClass,
-						ExceptPattern[] exceptPatterns,
-						int icIndex,
-						int icSize,
-						IncludeContent[] includeContent,
-						int gcIndex,
-						int gcSize,
-						GrammarContent[] grammarContent,
+	LevelIntermediary(int pcIndex,
+						int pcSize,
+						ParsedComponent[] parsedComponents,
 						Level parent,
 						MessageWriter debugWriter){		
 		super( debugWriter);
 		this.parent = parent;
-		this.ncIndex = ncIndex;
-		this.ncSize = ncSize;		
-		this.nameClasses = nameClasses;		
-		this.ptIndex = ptIndex;
-		this.ptSize = ptSize;	
-		this.patterns = patterns;		
-		this.prIndex = prIndex;
-		this.prSize = prSize;	
-		this.params = params;
-		this.exceptNameClass = exceptNameClass;
-		this.exceptPatterns = exceptPatterns;
-		this.icIndex = icIndex;
-		this.icSize = icSize;
-		this.includeContent = includeContent;
-		this.gcIndex = gcIndex;
-		this.gcSize = gcSize;
-		this.grammarContent = grammarContent;
+		this.pcIndex = pcIndex;
+		this.pcSize = pcSize;	
+		this.parsedComponents = parsedComponents;
 		child = new LevelBottom(this, debugWriter);
 	}
 	
@@ -101,16 +67,12 @@ class LevelIntermediary extends Level{
 	}
 	
 	public String toString(){
-		return "0 INTERMEDIARY nameClasses "+Arrays.toString(nameClasses)
-				+"  patterns "+Arrays.toString(patterns)
-				+" exceptPatterns "+Arrays.toString(exceptPatterns)				
+		return "0 INTERMEDIARY components "+Arrays.toString(parsedComponents)	
 				+child.toString(1);		
 	}
 	
 	String toString(int i){
-		return i +" INTERMEDIARY nameClasses "+Arrays.toString(nameClasses)
-				+"  patterns "+Arrays.toString(patterns)
-				+" exceptPatterns "+Arrays.toString(exceptPatterns)
+		return i +" INTERMEDIARY components "+Arrays.toString(parsedComponents)
 				+child.toString(i+1);
 	}	
 }

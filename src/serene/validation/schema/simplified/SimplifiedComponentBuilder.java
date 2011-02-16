@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.validation.schema.simplified;
 
 import org.relaxng.datatype.Datatype;
@@ -97,7 +98,9 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		level.add(p);
 	}
 	public void addAllToCurrentLevel(SPattern[] p){
+		
 		level.add(p);
+		
 	}
 	public SPattern[] getAllCurrentPatterns(){
 		return level.getPatterns();
@@ -108,6 +111,9 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	public int getCurrentPatternsCount(){
 		return level.getPatternsCount();
 	}
+    public void clearCurrentPatterns(){
+        level.clearPatterns();
+    }
 	public int getContentPatternsCount(){
 		Level contentLevel = level.getLevelDown();		
 		return contentLevel.getPatternsCount();
@@ -137,6 +143,9 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	public int getCurrentNameClassesCount(){
 		return level.getNameClassesCount();
 	}
+    public void clearCurrentNameClasses(){
+        level.clearNameClasses();
+    }
 	public int getContentNameClassesCount(){
 		Level contentLevel = level.getLevelDown();
 		return contentLevel.getNameClassesCount();
@@ -151,8 +160,7 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		Level contentLevel = level.getLevelDown();
 		return contentLevel.getLastNameClass();
 	}
-		
-		
+			
 	
 	
 	public void addToCurrentLevel(SExceptPattern ep){
@@ -167,6 +175,9 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	public int getCurrentExceptPatternsCount(){				
 		return level.getExceptPatternsCount();
 	}
+    public void clearCurrentExceptPatterns(){
+        level.clearExceptPatterns();
+    }
 	public int getContentExceptPatternsCount(){
 		Level contentLevel = level.getLevelDown();		
 		return contentLevel.getExceptPatternsCount();
@@ -194,6 +205,9 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		Level contentLevel = level.getLevelDown();	
 		return contentLevel.getExceptNameClass();
 	}	
+    public void clearCurrentExceptNameClass(){
+        level.clearExceptNameClass();
+    }
 	
 	public void addGroup(){}
 	public void addInterleave(){}	
@@ -214,12 +228,18 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	public void buildGroup(String qName, String location){
 		SGroup g = new SGroup(getContentPatterns(), qName, location, debugWriter);
 		clearContent();
-		addToCurrentLevel(g);	
-	}		
+		addToCurrentLevel(g);
+	}
+    public void buildReplacementGroup(String qName, String location){
+        SPattern[] children = getAllCurrentPatterns();
+		SGroup g = new SGroup(children, qName, location, debugWriter);
+		clearCurrentPatterns();
+		addToCurrentLevel(g);
+	}
 	public void buildInterleave(String qName, String location){
 		SInterleave i = new SInterleave(getContentPatterns(), qName, location, debugWriter);
 		clearContent();
-		addToCurrentLevel(i);	
+		addToCurrentLevel(i);
 	}
 	public void buildChoicePattern(String qName, String location){
 		SChoicePattern cp = new SChoicePattern(getContentPatterns(), qName, location, debugWriter);
@@ -229,12 +249,12 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	public void buildMixed(String qName, String location){
 		SMixed o = new SMixed(getLastContentPattern(), qName, location, debugWriter);
 		clearContent();
-		addToCurrentLevel(o);	
+		addToCurrentLevel(o);
 	}
 	public void buildOptional(String qName, String location){
 		SOptional o = new SOptional(getLastContentPattern(), qName, location, debugWriter);
 		clearContent();
-		addToCurrentLevel(o);	
+		addToCurrentLevel(o);
 	}
 	public void buildZeroOrMore(String qName, String location){
 		SZeroOrMore zom = new SZeroOrMore(getLastContentPattern(), qName, location, debugWriter);
@@ -310,7 +330,7 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	}	
 	//**************************************************************************
 	//END NAME CLASS BUILDING **************************************************
-	//**************************************************************************
+	//**************************************************************************	
 	public void buildExceptNameClass(String qName, String location){
 		SExceptNameClass enc = new SExceptNameClass(getLastContentNameClass(), qName, location, debugWriter);
 		clearContent();
@@ -326,6 +346,6 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	public void buildDummy(String qName, String location){
 		SDummy d = new SDummy(getContentPatterns(), qName, location, debugWriter);
 		clearContent();
-		addToCurrentLevel(d);	
+		addToCurrentLevel(d);
 	}		
 }  

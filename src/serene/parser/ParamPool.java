@@ -31,17 +31,18 @@ public class ParamPool extends RNGParseEndElementTaskPool{
 	public ParamPool(SAttribute ns,
 						SAttribute datatypeLibrary,
 						SAttribute name,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.name = name;
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new ParamTask[taskPoolSize];
 	}
 	
 	public ParamTask getTask(){
 		if(taskFree == 0){			
-			return new ParamTask(ns, datatypeLibrary, name, this, debugWriter);			
+			return new ParamTask(ns, datatypeLibrary, name, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

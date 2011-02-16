@@ -14,7 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.bind;
+
+import serene.util.NameInfo;
 
 import sereneWrite.MessageWriter;
 
@@ -41,8 +44,8 @@ public class ElementBinder{
 		endTask = null;
 	}
 	
-	public void bindQName(Queue queue, int startRecord, String qName){
-		queue.addElementQName(startRecord, qName);
+	public void bindName(Queue queue, int startRecord, String namespaceURI, String localName, String qName){
+		queue.addNameInfo(startRecord, new NameInfo(namespaceURI, localName, qName, debugWriter));
 	}
 	
 	public void bindLocation(Queue queue, int  record, String location){

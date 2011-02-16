@@ -25,10 +25,11 @@ class InterleaveTask extends RNGParseEndElementTask{
 	InterleavePool pool;
 	
 	InterleaveTask(SAttribute ns,
-						SAttribute datatypeLibrary, 
+						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						InterleavePool pool, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.pool = pool;
 	}
 	
@@ -39,6 +40,6 @@ class InterleaveTask extends RNGParseEndElementTask{
 	}
 	public void execute(){
 		builder.endLevel();
-		builder.buildInterleave(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getQName(), getLocation());
+		builder.buildInterleave(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getOtherAttributes(), getQName(), getLocation());
 	}
 }

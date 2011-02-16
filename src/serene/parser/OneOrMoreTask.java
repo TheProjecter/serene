@@ -25,10 +25,11 @@ class OneOrMoreTask extends RNGParseEndElementTask{
 	OneOrMorePool pool;
 	
 	OneOrMoreTask(SAttribute ns,
-						SAttribute datatypeLibrary, 
+						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						OneOrMorePool pool, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.pool = pool;
 	}
 	
@@ -39,6 +40,6 @@ class OneOrMoreTask extends RNGParseEndElementTask{
 	}
 	public void execute(){
 		builder.endLevel();
-		builder.buildOneOrMore(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getQName(), getLocation());
+		builder.buildOneOrMore(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getOtherAttributes(), getQName(), getLocation());
 	}
 }

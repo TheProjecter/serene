@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.bind;
 
 import java.util.Arrays;
@@ -25,12 +26,14 @@ import serene.validation.schema.simplified.components.SAttribute;
 
 import serene.util.ObjectIntHashMap;
 
+import serene.util.NameInfo;
+import serene.util.AttributeInfo;
+
 import serene.Reusable;
 
 import sereneWrite.MessageWriter;
 
 public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable{
-
 	ValidatorQueuePool pool;
 	
 	int currentIndex;
@@ -39,11 +42,17 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 	int currentAttributeIndex;
 
 	String[] location;
-	String[] qName;
+    NameInfo[] elementNameInfo;
 	HashMap<String, String>[] xmlns;
 	String[] xmlBase;	
-	String[][] attributeQName;
-	String[][] attributeValue;
+    // There can be several attribute instances for the same definition when 
+    // the name is defined using a wild card. This implies a one to many relation
+    // between the attributeIndex(corresponding to definition) and the actual
+    // attribute data (name and value). So the queue must be prepared to 
+    // accomodate all the occurrences, but, at least for now, the relationship
+    // definition - task stays one to one.
+    // Implementation [record index][attribute definition index][instance index]
+    AttributeInfo[][][] attributeInfo;
 	AttributeTask[][] attributeTask;	 
 	String[] characterContent;
 	ElementTask[] elementTask;
@@ -79,11 +88,10 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		currentAttributeIndex = -1;
 		
 		location = new String[size];
-		qName = new String[size];
+        elementNameInfo = new NameInfo[size];
 		xmlns = new HashMap[size];
 		xmlBase = new String[size];
-		attributeQName = new String[size][];
-		attributeValue = new String[size][];	
+        attributeInfo = new AttributeInfo[size][][];
 		attributeTask = new AttributeTask[size][];		
 		characterContent = new String[size];	
 		elementTask = new ElementTask[size];
@@ -104,11 +112,10 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		currentAttributeIndex = -1;
 		
 		Arrays.fill(location, null);
-		Arrays.fill(qName, null);
+        Arrays.fill(elementNameInfo, null);
 		Arrays.fill(xmlns, null);
 		Arrays.fill(xmlBase, null);
-		Arrays.fill(attributeQName, null);
-		Arrays.fill(attributeValue, null);	
+        Arrays.fill(attributeInfo, null);
 		Arrays.fill(attributeTask, null);		
 		Arrays.fill(characterContent, null);	
 		Arrays.fill(elementTask, null);
@@ -160,10 +167,10 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		}
 	}
 	
-	public void setFeature(String name, boolean value)  throws SAXNotRecognizedException{
+	public void setFeature(String name, boolean value)  throws SAXNotRecognizedException{	
 		if (name == null) {
             throw new NullPointerException();
-        }		
+        }
 		if(name.equals("useReservationStartDummyElementTask")){
 			useReservationStartDummyElementTask = value;
 		}else if(name.equals("useReservationEndDummyElementTask")){
@@ -203,28 +210,38 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		// System.out.println(hashCode()+" ADD LOCATION ");
 		location[record] = loc;
 	}
+
 	
-	public void addElementQName(int record, String name){
+    public void addNameInfo(int record, NameInfo eni){
 		// System.out.println(hashCode()+" ADD ELEMENT QNAME ");
 		//System.out.println(record+" /"+content+"/");
-		qName[record] = name;
+        elementNameInfo[record] = eni;
 	}
-	
-	public void addAttributeQName(int record, int attributeIndex, String name){
+    
+	public void addAttributeInfo(int record, int attributeIndex, AttributeInfo ai){
 		// System.out.println(hashCode()+" ADD ATTRIBUTE QNAME");		
-		//System.out.println(record+" /"+attributeIndex+"/"+value+"/");
+		//System.out.println(record+" /"+attributeIndex+"/"+qN+"/");
 		if(attributeIndex < 0 || attributeIndex > attributeCount) throw new IllegalArgumentException();
-		if(attributeQName[record] == null )attributeQName[record] = new String[attributeCount];
-		attributeQName[record][attributeIndex] = name;		
+        
+		if(attributeInfo[record] == null ){
+            attributeInfo[record] = new AttributeInfo[attributeCount][];
+            attributeInfo[record][attributeIndex] = new AttributeInfo[1];
+            attributeInfo[record][attributeIndex][0] = ai;            
+        }else{
+            if(attributeInfo[record][attributeIndex] == null){
+                attributeInfo[record][attributeIndex] = new AttributeInfo[1];
+                attributeInfo[record][attributeIndex][0] = ai;
+            }else{         
+                int currentLength = attributeInfo[record][attributeIndex].length;
+                
+                AttributeInfo[] increasedURI = new AttributeInfo[currentLength+1];
+                System.arraycopy(attributeInfo[record][attributeIndex], 0, increasedURI, 0, currentLength);
+                attributeInfo[record][attributeIndex] = increasedURI;
+                attributeInfo[record][attributeIndex][currentLength] = ai;
+            }
+        }        
 	}
 	
-	public void addAttributeValue(int record, int attributeIndex, String value){
-		// System.out.println(hashCode()+" ADD ATTRIBUTE VALUE ");		
-		//System.out.println(record+" /"+attributeIndex+"/"+value+"/");
-		if(attributeIndex < 0 || attributeIndex > attributeCount) throw new IllegalArgumentException();
-		if(attributeValue[record] == null )attributeValue[record] = new String[attributeCount];
-		attributeValue[record][attributeIndex] = value;		
-	}
 	public void addAttributeTask(int record, int attributeIndex, AttributeTask task){
 		// System.out.println(hashCode()+" ADD ATTRIBUTE TASK ");
 		if(attributeIndex < 0 || attributeIndex > attributeCount) throw new IllegalArgumentException();
@@ -292,11 +309,10 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 	
 		
 		String[] otherL = other.getAllLocations();
-		String[] otherQN = other.getAllQNames();
+        NameInfo[] otherENI = other.getAllNameInfos();
 		HashMap[] otherXmlns = other.getAllXmlns();
 		String[] otherXmlBase = other.getAllXmlBase();
-		String[][] otherAQN = other.getAllAttributeQNames();
-		String[][] otherAV = other.getAllAttributeValues();
+        AttributeInfo[][][] otherAI = other.getAllAttributeInfos();
 		AttributeTask[][] otherAT = other.getAllAttributeTasks();
 		String[] otherCI = other.getAllCharacterContent();
 		ElementTask[] otherET = other.getAllElementTasks();
@@ -307,11 +323,10 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		int offset = reservationOffset[reservationRegistrationIndex];
 		for(int i = 0; i < reservationCount; i++){
 			location[i+offset] = otherL[i];
-			qName[i+offset] = otherQN[i];
+            elementNameInfo[i+offset] = otherENI[i];
 			if(xmlns[i+offset] == null) xmlns[i+offset] = otherXmlns[i];
 			if(xmlBase[i+offset] == null) xmlBase[i+offset] = otherXmlBase[i];
-			attributeQName[i+offset] = otherAQN[i];
-			attributeValue[i+offset] = otherAV[i];
+            attributeInfo[i+offset] = otherAI[i];
 			attributeTask[i+offset] = otherAT[i];			
 			characterContent[i+offset] = otherCI[i];
 			elementTask[i+offset] = otherET[i];
@@ -409,11 +424,11 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		else endIndex = currentIndex;
 		return location[endIndex];
 	}
-	public String getQName(){
+    public NameInfo getElementNameInfo(){
 		int nameIndex;
 		if(!isCurrentEntryStart()) nameIndex = correspStartIndex[currentIndex];
 		else nameIndex = currentIndex;
-		return qName[nameIndex];
+		return elementNameInfo[nameIndex];
 	}
 	public String getXmlBase(){
 		int baseIndex;
@@ -427,7 +442,8 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		else mapIndex = currentIndex;
 		return xmlns[mapIndex];
 	}
-	public String getAttributeQName(SAttribute attribute){
+    
+    public AttributeInfo[] getAttributeInfo(SAttribute attribute){
 		int attributesRecordIndex;
 		if(!isCurrentEntryStart()) attributesRecordIndex = correspStartIndex[currentIndex];
 		else attributesRecordIndex = currentIndex;
@@ -436,20 +452,7 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		//System.out.println(currentIndex+" /"+attributesRecordIndex+"/");
 		//System.out.println(currentIndex+" /"+attributeIndex+"/"+attribute);
 		//System.out.println(currentIndex+" /"+Arrays.toString(attributeValue[attributesRecordIndex]));
-		if(attributeQName[attributesRecordIndex]!=null)return attributeQName[attributesRecordIndex][attributeIndex];
-		return null;
-	}
-	
-	public String getAttributeValue(SAttribute attribute){
-		int attributesRecordIndex;
-		if(!isCurrentEntryStart()) attributesRecordIndex = correspStartIndex[currentIndex];
-		else attributesRecordIndex = currentIndex;
-		
-		int attributeIndex = sattributeIndexMap.get(attribute);		
-		//System.out.println(currentIndex+" /"+attributesRecordIndex+"/");
-		//System.out.println(currentIndex+" /"+attributeIndex+"/"+attribute);
-		//System.out.println(currentIndex+" /"+Arrays.toString(attributeValue[attributesRecordIndex]));
-		if(attributeValue[attributesRecordIndex]!=null)return attributeValue[attributesRecordIndex][attributeIndex];
+		if(attributeInfo[attributesRecordIndex]!=null)return attributeInfo[attributesRecordIndex][attributeIndex];
 		return null;
 	}
 	
@@ -464,14 +467,9 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 	
 	//AttributeTaskContext
 	//--------------------------------------------------------------------------
-	public String getAttributeQName(){
+    public AttributeInfo[] getAttributeInfo(){
 		// when executing an attribute task the currentIndex is always at a start tag
-		return attributeQName[currentIndex][currentAttributeIndex];
-	}
-	
-	public String getAttributeValue(){
-		// when executing an attribute task the currentIndex is always at a start tag
-		return attributeValue[currentIndex][currentAttributeIndex];
+		return attributeInfo[currentIndex][currentAttributeIndex];
 	}
 	//--------------------------------------------------------------------------
 	
@@ -490,9 +488,9 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		System.arraycopy(location, 0, increasedL, 0, currentIndex);
 		location = increasedL;
 		
-		String[] increasedQN = new String[size];
-		System.arraycopy(qName, 0, increasedQN, 0, currentIndex);
-		qName = increasedQN;
+        NameInfo[] increasedENI = new NameInfo[size];
+		System.arraycopy(elementNameInfo, 0, increasedENI, 0, currentIndex);
+		elementNameInfo = increasedENI;
 		
 		HashMap<String, String>[] increasedX = new HashMap[size];
 		System.arraycopy(xmlns, 0, increasedX, 0, currentIndex);
@@ -502,25 +500,21 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		System.arraycopy(xmlBase, 0, increasedXB, 0, currentIndex);
 		xmlBase = increasedXB;
 		
-		String[][] increasedAQN = new String[size][];
+        
+        AttributeInfo[][][] increasedAI = new AttributeInfo[size][][];
 		for(int i = 0; i< currentIndex; i++){
-			if(attributeQName[i] != null){
-				String[] newNames = new String[attributeQName[i].length];
-				System.arraycopy(attributeQName[i], 0, newNames, 0, attributeQName[i].length);
-				increasedAQN[i] = newNames; 
+			if(attributeInfo[i] != null){
+                increasedAI[i] = new AttributeInfo[attributeInfo[i].length][];
+                for(int j = 0; j < attributeInfo[i].length; j++){
+                    if(attributeInfo[i][j] != null){
+                        AttributeInfo[] newAI = new AttributeInfo[attributeInfo[i][j].length];
+                        System.arraycopy(attributeInfo[i][j], 0, newAI, 0, attributeInfo[i][j].length);
+                        increasedAI[i][j] = newAI;
+                    }
+                }
 			}				
 		}		
-		attributeQName = increasedAQN;
-		
-		String[][] increasedAV = new String[size][];
-		for(int i = 0; i< currentIndex; i++){
-			if(attributeValue[i] != null){
-				String[] newValues = new String[attributeValue[i].length];
-				System.arraycopy(attributeValue[i], 0, newValues, 0, attributeValue[i].length);
-				increasedAV[i] = newValues; 
-			}				
-		}	
-		attributeValue = increasedAV;
+		attributeInfo = increasedAI;
 		
 		AttributeTask[][] increasedAT = new AttributeTask[size][];
 		for(int i = 0; i< currentIndex; i++){
@@ -584,8 +578,8 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		return location;
 	}
 	
-	private String[] getAllQNames(){
-		return qName;
+    private NameInfo[] getAllNameInfos(){
+		return elementNameInfo;
 	}
 	
 	private HashMap[] getAllXmlns(){
@@ -595,12 +589,8 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		return xmlBase;
 	}
 	
-	private String[][] getAllAttributeQNames(){
-		return attributeQName;
-	}
-		
-	private String[][] getAllAttributeValues(){
-		return attributeValue;
+    private AttributeInfo[][][] getAllAttributeInfos(){
+		return attributeInfo;
 	}
 
 	private AttributeTask[][] getAllAttributeTasks(){
@@ -637,9 +627,10 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		return reservationUsed;
 	}
 
-	public String toString(){
-		String s = "";
-		s = s+"Attribute values "+Arrays.deepToString(attributeValue);
+	public String toString(){		
+        String s = "";
+        s = s+"Element name info "+Arrays.deepToString(elementNameInfo);
+		s = s+"Attribute info "+Arrays.deepToString(attributeInfo);
 		s = s+"\nAttribute tasks " +Arrays.deepToString(attributeTask);	 
 		s = s+"\nCharacter content "+Arrays.toString(characterContent);
 		s = s+"\nElement tasks "+Arrays.toString(elementTask);

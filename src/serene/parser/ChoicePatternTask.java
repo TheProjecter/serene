@@ -25,10 +25,11 @@ class ChoicePatternTask extends RNGParseEndElementTask{
 	ChoicePatternPool pool;
 	
 	ChoicePatternTask(SAttribute ns,
-						SAttribute datatypeLibrary, 
+						SAttribute datatypeLibrary,
+                        SAttribute foreign,
 						ChoicePatternPool pool, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.pool = pool;
 	}
 	
@@ -39,6 +40,6 @@ class ChoicePatternTask extends RNGParseEndElementTask{
 	}
 	public void execute(){
 		builder.endLevel();
-		builder.buildChoicePattern(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getQName(), getLocation());
+		builder.buildChoicePattern(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getOtherAttributes(), getQName(), getLocation());
 	}
 }

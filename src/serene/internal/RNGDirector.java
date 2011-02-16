@@ -14,26 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.internal;
 
-import java.util.Map;
 import java.util.HashMap;
 
 import javax.xml.XMLConstants;
 
-import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.DatatypeLibraryFactory;
+import org.relaxng.datatype.DatatypeException;
 
 import serene.datatype.DatatypeLibraryFinder;
 
 import serene.validation.schema.simplified.components.SPattern;
+//import serene.validation.schema.simplified.components.NameClass;
 import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SAttribute;
 
 import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.SimplifiedModel;
-
 
 import serene.parser.AnyNamePool;
 import serene.parser.AttributeWithNameClassPool;
@@ -70,12 +70,17 @@ import serene.parser.TextPool;
 import serene.parser.ValuePool;
 import serene.parser.ZeroOrMorePool;
 
+import serene.parser.ForeignElementTaskPool;
+
 import serene.parser.StartLevelPool;
 
 import serene.parser.RNGParseElementTaskPool;
 import serene.parser.RNGParseBindingPool;
 
 import serene.bind.AttributeTaskPool;
+import serene.bind.ElementTaskPool;
+
+import serene.Constants;
 
 import sereneWrite.MessageWriter;
 
@@ -90,9 +95,18 @@ import sereneWrite.MessageWriter;
 // anyElement = 5
 
 
+//********************
+// TODO
+// start() and define()
+// must become startGrammarContent() and defineGrammarContent()
+// in order to be able to add the creation of corresponding 
+// command objects that need to be used for creating the ParsedModel 
+// when parsing a schema.
+//*********************
+
 class RNGDirector{
-	HashMap<SElement, RNGParseElementTaskPool> startElementTaskPool;
-	HashMap<SElement, RNGParseElementTaskPool> endElementTaskPool;
+	HashMap<SElement, ElementTaskPool> startElementTaskPool;
+	HashMap<SElement, ElementTaskPool> endElementTaskPool;
 	HashMap<SAttribute, AttributeTaskPool> attributeTaskPool;
 	
 	SimplifiedComponentBuilder builder;
@@ -106,9 +120,11 @@ class RNGDirector{
 	private SAttribute name;
 	private SAttribute combine;
 	private SAttribute type;
-	private SAttribute href;
+	private SAttribute href;  
+    private SAttribute any;
+    private SAttribute foreign;  
 	private StartLevelPool startLevelPool;
-	
+    
 	DatatypeLibrary internalLibrary;
     DatatypeLibrary nativeLibrary;
 	
@@ -129,8 +145,9 @@ class RNGDirector{
 
         DatatypeLibraryFactory datatypeLibraryFactory = new DatatypeLibraryFinder(cl);
         
-        internalLibrary = datatypeLibraryFactory.createDatatypeLibrary("http://serenerng.org/datatype/internal");
-        nativeLibrary = datatypeLibraryFactory.createDatatypeLibrary("");        
+        internalLibrary = datatypeLibraryFactory.createDatatypeLibrary(Constants.INTERNAL_DATATYPE_LIBRARY);
+        nativeLibrary = datatypeLibraryFactory.createDatatypeLibrary("");      
+        	    
 	}
 	
 	
@@ -138,8 +155,8 @@ class RNGDirector{
 		this.builder = builder;
 		
 		refDefinitionTopPattern = new SPattern[6];
-		startElementTaskPool = new HashMap<SElement, RNGParseElementTaskPool>();
-		endElementTaskPool = new HashMap<SElement, RNGParseElementTaskPool>();
+		startElementTaskPool = new HashMap<SElement, ElementTaskPool>();
+		endElementTaskPool = new HashMap<SElement, ElementTaskPool>();
 		attributeTaskPool = new HashMap<SAttribute, AttributeTaskPool>();
 		
 		startLevelPool = new StartLevelPool(debugWriter);
@@ -244,7 +261,7 @@ class RNGDirector{
 		refDefinitionTopPattern[3] = cp[0];
 	}	
 	
-	private void defineNameClass()  throws DatatypeException{	
+	private void defineNameClass()  throws DatatypeException{		
 		builder.startBuild();
 		builder.startLevel();{
 			name();
@@ -264,8 +281,13 @@ class RNGDirector{
 			anyNameExceptRNG();
 		}builder.endLevel();
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: foreign element");
-		SPattern[] e = builder.getAllCurrentPatterns();
-		refDefinitionTopPattern[4] = e[0];
+		//SPattern[] e = builder.getAllCurrentPatterns();
+		//refDefinitionTopPattern[4] = e[0];
+        
+        SElement e = (SElement)builder.getCurrentPattern();
+		startElementTaskPool.put(e, startLevelPool);
+        refDefinitionTopPattern[4] = e;
+		endElementTaskPool.put(e, new ForeignElementTaskPool(any, debugWriter));
 	}
 	
 	private void defineAnyElement(){
@@ -275,8 +297,13 @@ class RNGDirector{
 			builder.buildAnyName("anyName","RELAXNG Specification 3.Full Syntax: any element");
 		}builder.endLevel();
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: any element");
-		SPattern[] e = builder.getAllCurrentPatterns();
-		refDefinitionTopPattern[5] = e[0];
+		//SPattern[] e = builder.getAllCurrentPatterns();
+		//refDefinitionTopPattern[5] = e[0];
+        
+        SElement e = (SElement)builder.getCurrentPattern();
+		startElementTaskPool.put(e, startLevelPool);
+        refDefinitionTopPattern[5] = e;
+		endElementTaskPool.put(e, new ForeignElementTaskPool(any, debugWriter));
 	}
 	
 	//**************************************************************************
@@ -296,7 +323,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new ElementWithNameClassPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new ElementWithNameClassPool(ns, datatypeLibrary, foreign, debugWriter));
 	}			
 	
 	private void elementWithNameInstance() throws DatatypeException{
@@ -314,7 +341,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new ElementWithNameInstancePool(ns, datatypeLibrary, name, debugWriter));
+		endElementTaskPool.put(e, new ElementWithNameInstancePool(ns, datatypeLibrary, name, foreign, debugWriter));
 	}
 	
 	private void attributeWithNameClass() throws DatatypeException{
@@ -331,7 +358,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new AttributeWithNameClassPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new AttributeWithNameClassPool(ns, datatypeLibrary, foreign, debugWriter));
 	}			
 	
 	private void attributeWithNameInstance() throws DatatypeException{
@@ -349,7 +376,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new AttributeWithNameInstancePool(ns, datatypeLibrary, name, debugWriter));
+		endElementTaskPool.put(e, new AttributeWithNameInstancePool(ns, datatypeLibrary, name, foreign, debugWriter));
 	}
 	
 	private void group() throws DatatypeException{
@@ -366,7 +393,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new GroupPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new GroupPool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void interleave() throws DatatypeException{
@@ -383,7 +410,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new InterleavePool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new InterleavePool(ns, datatypeLibrary, foreign, debugWriter));
 	}		
 	
 	private void choicePattern() throws DatatypeException{
@@ -400,7 +427,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new ChoicePatternPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new ChoicePatternPool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void optional() throws DatatypeException{
@@ -417,7 +444,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new OptionalPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new OptionalPool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void zeroOrMore() throws DatatypeException{
@@ -434,7 +461,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new ZeroOrMorePool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new ZeroOrMorePool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void oneOrMore() throws DatatypeException{
@@ -451,7 +478,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new OneOrMorePool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new OneOrMorePool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void list() throws DatatypeException{
@@ -468,7 +495,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new ListPatternPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new ListPatternPool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void mixed() throws DatatypeException{
@@ -485,7 +512,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new MixedPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new MixedPool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void ref() throws DatatypeException{
@@ -494,6 +521,7 @@ class RNGDirector{
 				nameAttributeNCName();
 				commonAttributes();
 				foreignAttributes();
+                foreignStar();
 			}builder.endLevel();
 			builder.buildGroup("attributes group","RELAXNG Specification 3.Full Syntax: ref");
 			builder.buildName(XMLConstants.RELAXNG_NS_URI,"ref","name","RELAXNG Specification 3.Full Syntax: ref");
@@ -501,7 +529,7 @@ class RNGDirector{
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: ref");
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskPool.put(e, new RefPool(ns, datatypeLibrary, name, debugWriter));
+		endElementTaskPool.put(e, new RefPool(ns, datatypeLibrary, name, foreign, debugWriter));
 	}
 	
 	private void parentRef() throws DatatypeException{
@@ -510,6 +538,7 @@ class RNGDirector{
 				nameAttributeNCName();
 				commonAttributes();
 				foreignAttributes();
+                foreignStar();
 			}builder.endLevel();
 			builder.buildGroup("attributes group","RELAXNG Specification 3.Full Syntax: parentRef");
 			builder.buildName(XMLConstants.RELAXNG_NS_URI,"parentRef","name","RELAXNG Specification 3.Full Syntax: parentRef");
@@ -517,7 +546,7 @@ class RNGDirector{
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: parentRef");
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskPool.put(e, new ParentRefPool(ns, datatypeLibrary, name, debugWriter));
+		endElementTaskPool.put(e, new ParentRefPool(ns, datatypeLibrary, name, foreign, debugWriter));
 	}
 	
 	private void empty() throws DatatypeException{
@@ -525,6 +554,7 @@ class RNGDirector{
 			builder.startLevel();{
 				commonAttributes();
 				foreignAttributes();
+                foreignStar();
 			}builder.endLevel();
 			builder.buildGroup("attributes group","RELAXNG Specification 3.Full Syntax: empty");
 			builder.buildName(XMLConstants.RELAXNG_NS_URI,"empty","name","RELAXNG Specification 3.Full Syntax: empty");
@@ -532,7 +562,7 @@ class RNGDirector{
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: empty");
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskPool.put(e, new EmptyPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new EmptyPool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void text() throws DatatypeException{
@@ -540,6 +570,7 @@ class RNGDirector{
 			builder.startLevel();{
 				commonAttributes();
 				foreignAttributes();
+                foreignStar();
 			}builder.endLevel();
 			builder.buildGroup("attributes group","RELAXNG Specification 3.Full Syntax: text");
 			builder.buildName(XMLConstants.RELAXNG_NS_URI,"text","name","RELAXNG Specification 3.Full Syntax: text");
@@ -547,7 +578,7 @@ class RNGDirector{
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: text");
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskPool.put(e, new TextPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new TextPool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void value() throws DatatypeException{
@@ -564,7 +595,7 @@ class RNGDirector{
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: value");
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskPool.put(e, new ValuePool(ns, datatypeLibrary, type, debugWriter));
+		endElementTaskPool.put(e, new ValuePool(ns, datatypeLibrary, type, foreign, debugWriter));
 	}
 	
 	private void data() throws DatatypeException{
@@ -582,7 +613,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new DataPool(ns, datatypeLibrary, type, debugWriter));
+		endElementTaskPool.put(e, new DataPool(ns, datatypeLibrary, type, foreign, debugWriter));
 	}
 	
 	private void notAllowed() throws DatatypeException{
@@ -590,6 +621,7 @@ class RNGDirector{
 			builder.startLevel();{
 				commonAttributes();
 				foreignAttributes();
+                foreignStar();
 			}builder.endLevel();
 			builder.buildGroup("attributes group","RELAXNG Specification 3.Full Syntax: notAllowed");
 			builder.buildName(XMLConstants.RELAXNG_NS_URI,"notAllowed","name","RELAXNG Specification 3.Full Syntax: notAllowed");
@@ -597,7 +629,7 @@ class RNGDirector{
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: notAllowed");
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskPool.put(e, new NotAllowedPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new NotAllowedPool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void externalRef() throws DatatypeException{
@@ -605,7 +637,8 @@ class RNGDirector{
 			builder.startLevel();{
 				hrefAttribute();
 				commonAttributes();
-				foreignAttributes();				
+				foreignAttributes();
+                foreignStar();				
 			}builder.endLevel();
 			builder.buildGroup("attributes group","RELAXNG Specification 3.Full Syntax: externalRef");
 			builder.buildName(XMLConstants.RELAXNG_NS_URI,"externalRef","name","RELAXNG Specification 3.Full Syntax: externalRef");
@@ -613,7 +646,7 @@ class RNGDirector{
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: externalRef");
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskPool.put(e, new ExternalRefPool(ns, datatypeLibrary, href, debugWriter));
+		endElementTaskPool.put(e, new ExternalRefPool(ns, datatypeLibrary, href, foreign, debugWriter));
 	}
 	
 	private void grammar() throws DatatypeException{
@@ -631,7 +664,7 @@ class RNGDirector{
 		SElement e = (SElement)builder.getCurrentPattern();
 		includeStartTopPattern = e;
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new GrammarPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new GrammarPool(ns, datatypeLibrary, foreign, debugWriter));
 	}		
 	//**************************************************************************
 	//END PATTERN METHODS ******************************************************
@@ -655,7 +688,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new StartPool(ns, datatypeLibrary, combine, debugWriter));
+		endElementTaskPool.put(e, new StartPool(ns, datatypeLibrary, combine, foreign, debugWriter));
 	}
 	
 	private void define() throws DatatypeException{
@@ -674,7 +707,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new DefinePool(ns, datatypeLibrary, name, combine, debugWriter));
+		endElementTaskPool.put(e, new DefinePool(ns, datatypeLibrary, name, combine, foreign, debugWriter));
 	}
 	
 	private void divGrammarContent() throws DatatypeException{
@@ -691,7 +724,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new DivGrammarContentPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new DivGrammarContentPool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void divIncludeContent() throws DatatypeException{
@@ -708,7 +741,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new DivIncludeContentPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new DivIncludeContentPool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void include() throws DatatypeException{
@@ -726,7 +759,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new IncludePool(ns, datatypeLibrary, href, debugWriter));
+		endElementTaskPool.put(e, new IncludePool(ns, datatypeLibrary, href, foreign, debugWriter));
 	}
 	//**************************************************************************
 	//END TOP COMPONENT METHODS ************************************************
@@ -749,7 +782,7 @@ class RNGDirector{
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: name");
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskPool.put(e, new NamePool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new NamePool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void anyName() throws DatatypeException{
@@ -766,7 +799,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new AnyNamePool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new AnyNamePool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void nsName() throws DatatypeException{
@@ -783,7 +816,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new NsNamePool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new NsNamePool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void choiceNameClass() throws DatatypeException{
@@ -800,7 +833,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new ChoiceNameClassPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new ChoiceNameClassPool(ns, datatypeLibrary, foreign, debugWriter));
 	}	
 	//**************************************************************************
 	//END NAME CLASS METHODS ***************************************************
@@ -823,7 +856,7 @@ class RNGDirector{
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: param");				
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskPool.put(e, new ParamPool(ns, datatypeLibrary, name, debugWriter));
+		endElementTaskPool.put(e, new ParamPool(ns, datatypeLibrary, name, foreign, debugWriter));
 	}
 	
 	private void exceptPattern() throws DatatypeException{
@@ -840,7 +873,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new ExceptPatternPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new ExceptPatternPool(ns, datatypeLibrary, foreign, debugWriter));
 	}
 	
 	private void exceptNameClass() throws DatatypeException{
@@ -857,7 +890,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new ExceptNameClassPool(ns, datatypeLibrary, debugWriter));
+		endElementTaskPool.put(e, new ExceptNameClassPool(ns, datatypeLibrary, foreign, debugWriter));
 	}	
 	//**************************************************************************
 	//END OTHER COMPONENT METHODS **********************************************
@@ -897,6 +930,8 @@ class RNGDirector{
 				builder.buildText("text","RELAXNG Specification 3.Full Syntax: foreign attribute");
 			}builder.endLevel();
 			builder.buildAttribute("attribute","RELAXNG Specification 3.Full Syntax: foreign attribute");
+            foreign = (SAttribute)builder.getCurrentPattern();
+			attributeTaskPool.put(foreign, null);	
 		}builder.endLevel();				
 		builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign attribute");
 	}
@@ -1133,6 +1168,8 @@ class RNGDirector{
 			builder.buildText("text","RELAXNG Specification 3.Full Syntax");
 		}builder.endLevel();
 		builder.buildAttribute("attribute","RELAXNG Specification 3.Full Syntax");
+        any = (SAttribute)builder.getCurrentPattern();
+		attributeTaskPool.put(any, null);	
 	}	
 	//**************************************************************************
 	//END COMMON METHODS ******************************************************

@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.validation.schema.active;
 
 import java.util.Arrays;
@@ -163,13 +164,17 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 	}
 	
 	private void createStart(SPattern originalTopPattern, ActiveModelStackHandlerPool stackHandlerPool, ActiveModelRuleHandlerPool ruleHandlerPool){
-		if(elementIndex == elementSize) increaseElementSize();		 
-		startElement = new AElement(elementIndex, model, stackHandlerPool, ruleHandlerPool, "start", null, debugWriter); 
-		elementDefinitions[elementIndex++] = new ActiveDefinitionPool(originalTopPattern,
+		if(elementIndex == elementSize) increaseElementSize();	
+        selementIndexMap.put(null, elementIndex);
+		elementNameClasses[elementIndex] = null;		
+        elementDefinitions[elementIndex] = new ActiveDefinitionPool(originalTopPattern,
 																	model,
 																	definitionDirector,
 																	componentBuilder,
 																	debugWriter);
+        startElement = new AElement(elementIndex, model, stackHandlerPool, ruleHandlerPool, "start", null, debugWriter);
+        elementIndex++;
+        
 	}
 	
 	private void createRecord(SPattern[] originalTopPatterns){
@@ -183,7 +188,7 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 		}
 	}
 	
-	private void createRecord(SElement originalElement){
+	private void createRecord(SElement originalElement){        
 		if(elementIndex == elementSize) increaseElementSize();
 		selementIndexMap.put(originalElement, elementIndex);
 		elementNameClasses[elementIndex] = nameClassDirector.createActiveNameClass(componentBuilder,
@@ -252,19 +257,21 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 	
 	
 	public void visit(SElement element){
+        if(selementIndexMap.containsKey(element))return;
 		createRecord(element);
 		SimplifiedComponent child = element.getChild();
 		if(child != null) child.accept(this);	
 	}
 	
 	public void visit(SAttribute attribute){
+        if(sattributeIndexMap.containsKey(attribute))return;
 		createRecord(attribute);
 		SimplifiedComponent[] children = attribute.getChildren();
 		if(children != null) children[0].accept(this);
 	}		
 	
-	
 	public void visit(SExceptPattern exceptPattern){
+        if(sexceptPatternIndexMap.containsKey(exceptPattern))return;
 		createRecord(exceptPattern);
 		SimplifiedComponent child = exceptPattern.getChild();
 		if(child != null) child.accept(this);

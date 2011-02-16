@@ -25,10 +25,11 @@ class GroupTask extends RNGParseEndElementTask{
 	GroupPool pool;
 	
 	GroupTask(SAttribute ns,
-						SAttribute datatypeLibrary, 
+						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						GroupPool pool, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.pool = pool;
 	}
 	
@@ -39,6 +40,6 @@ class GroupTask extends RNGParseEndElementTask{
 	}
 	public void execute(){
 		builder.endLevel();
-		builder.buildGroup(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getQName(), getLocation());
+		builder.buildGroup(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getOtherAttributes(), getQName(), getLocation());
 	}
 }

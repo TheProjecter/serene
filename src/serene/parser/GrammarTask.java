@@ -25,10 +25,11 @@ class GrammarTask extends RNGParseEndElementTask{
 	GrammarPool pool;
 	
 	GrammarTask(SAttribute ns,
-						SAttribute datatypeLibrary, 
+						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						GrammarPool pool, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.pool = pool;
 	}
 	
@@ -39,6 +40,6 @@ class GrammarTask extends RNGParseEndElementTask{
 	}
 	public void execute(){
 		builder.endLevel();
-		builder.buildGrammar(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getQName(), getLocation());
+		builder.buildGrammar(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getOtherAttributes(), getQName(), getLocation());
 	}
 }

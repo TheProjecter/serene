@@ -56,12 +56,12 @@ import serene.bind.Queue;
 import serene.bind.XmlBaseBinder;
 import serene.bind.XmlnsBinder;
 
+import serene.Constants;
+
 import sereneWrite.MessageWriter;
 
 // Only for internal use, passing events to ContentHandler not implemented.
-class BoundValidatorHandlerImpl extends ValidatorHandler{
-    String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
-    String DTD_MAPPING_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdMapping";
+class BoundValidatorHandlerImpl extends ValidatorHandler{   
     
 	ContentHandler contentHandler;	
 	LSResourceResolver lsResourceResolver;
@@ -214,7 +214,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 			validationItemLocator.closeCharsContent();			
 		}
 				
-		validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), qName);
+		validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), namespaceURI, localName, qName);
 		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName);		
 		String xmlBase = attributes.getValue(XMLConstants.XML_NS_URI, "base");		
 		if(xmlBase != null){
@@ -253,9 +253,9 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 
         if (name == null) {
             throw new NullPointerException();
-        }else if(name.equals(DTD_HANDLER_PROPERTY)){
+        }else if(name.equals(Constants.DTD_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
-        }else if(name.equals(DTD_MAPPING_PROPERTY)){
+        }else if(name.equals(Constants.DTD_MAPPING_PROPERTY)){
             // recognized but not set, only for retrieval
         }
 
@@ -267,9 +267,9 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 
         if (name == null) {
             throw new NullPointerException();
-        }else if(name.equals(DTD_HANDLER_PROPERTY)){
+        }else if(name.equals(Constants.DTD_HANDLER_PROPERTY)){
             return validationEventContext;
-        }else if(name.equals(DTD_MAPPING_PROPERTY)){
+        }else if(name.equals(Constants.DTD_MAPPING_PROPERTY)){
             return validationEventContext.getDTDMapping();
         }
 

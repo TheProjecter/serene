@@ -14,18 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.bind;
 
 import java.util.Map;
 
 import serene.validation.schema.simplified.components.SAttribute;
 
+import serene.util.NameInfo;
+import serene.util.AttributeInfo;
+
+/**
+* The context of the current element task. Used when executing the queued 
+* tasks, so it assumes that the order is known and no arguments are passed to 
+* the getter methods.
+*/
 public interface ElementTaskContext{
 	String getStartLocation();
 	String getEndLocation();
-	String getQName();
-	String getAttributeQName(SAttribute attribute);
-	String getAttributeValue(SAttribute attribute);
+    NameInfo getElementNameInfo();
+    AttributeInfo[] getAttributeInfo(SAttribute attribute);
 	String getCharacterContent();
 	Map<String, String> getPrefixMapping();
 	String getXmlBase();	

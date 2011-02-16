@@ -31,17 +31,18 @@ public class ParentRefPool extends RNGParseEndElementTaskPool{
 	public ParentRefPool(SAttribute ns,
 						SAttribute datatypeLibrary,
 						SAttribute name,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.name = name;
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new ParentRefTask[taskPoolSize];
 	}
 	
 	public ParentRefTask getTask(){
 		if(taskFree == 0){			
-			return new ParentRefTask(ns, datatypeLibrary, name, this, debugWriter);			
+			return new ParentRefTask(ns, datatypeLibrary, name, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

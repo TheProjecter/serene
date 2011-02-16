@@ -14,8 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.bind;
 
+import serene.util.AttributeInfo;
 import sereneWrite.MessageWriter;
 
 public class AttributeBinder{
@@ -35,13 +37,7 @@ public class AttributeBinder{
 		task = null;
 	}
 	
-	public void bindQName(Queue queue, int  record, int attributeIndex, String qName){
-		queue.addAttributeQName(record, attributeIndex, qName);
+	public void bindAttribute(Queue queue, int  record, int attributeIndex, String namespaceURI, String localName, String qName, String value){
+		queue.addAttributeInfo(record, attributeIndex, new AttributeInfo(namespaceURI, localName, qName, value, debugWriter));
 	}
-
-	
-	public void bind(Queue queue, int  record, int attributeIndex, String value){
-		queue.addAttributeValue(record, attributeIndex, value);
-		if(task!=null)queue.addAttributeTask(record, attributeIndex, task);
-	}	
 }

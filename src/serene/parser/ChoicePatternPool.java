@@ -28,16 +28,17 @@ public class ChoicePatternPool extends RNGParseEndElementTaskPool{
 	
 	public ChoicePatternPool(SAttribute ns,
 						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new ChoicePatternTask[taskPoolSize];
 	}
 	
 	public ChoicePatternTask getTask(){
 		if(taskFree == 0){			
-			return new ChoicePatternTask(ns, datatypeLibrary, this, debugWriter);			
+			return new ChoicePatternTask(ns, datatypeLibrary, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

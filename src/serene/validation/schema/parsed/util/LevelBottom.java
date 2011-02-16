@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.validation.schema.parsed.util;
 
 import java.util.Arrays;
@@ -38,23 +39,9 @@ class LevelBottom extends Level{
 		return parent;
 	}
 	public Level getLevelDown(){
-		Level intermediary = new LevelIntermediary(ncIndex,
-													ncSize,
-													nameClasses,
-													ptIndex,
-													ptSize,
-													patterns,	
-													prIndex,
-													prSize,
-													params,
-													exceptNameClass,
-													exceptPatterns,
-													icIndex,
-													icSize,
-													includeContent,
-													gcIndex,
-													gcSize,
-													grammarContent,
+		Level intermediary = new LevelIntermediary(pcIndex,
+													pcSize,
+													parsedComponents,
 													parent,
 													debugWriter);
 		parent.setChild(intermediary);
@@ -70,14 +57,10 @@ class LevelBottom extends Level{
 	}
 	
 	public String toString(){
-		return "0 BOTTOM nameClasses "+Arrays.toString(nameClasses)
-				+"  patterns "+Arrays.toString(patterns)
-				+" exceptPatterns "+Arrays.toString(exceptPatterns);		
+		return "0 BOTTOM parsedComponents "+Arrays.toString(parsedComponents);
 	}
 	
 	String toString(int i){
-		return i +" BOTTOM nameClasses "+Arrays.toString(nameClasses)
-				+"  patterns "+Arrays.toString(patterns)
-				+" exceptPatterns "+Arrays.toString(exceptPatterns);
+		return i +" BOTTOM parsedComponents "+Arrays.toString(parsedComponents);
 	}
 }

@@ -34,10 +34,10 @@ import serene.internal.InternalRNGFactory;
 
 import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.parsed.ParsedComponent;
-import serene.validation.schema.parsed.components.Pattern;
-import serene.validation.schema.parsed.components.Definition;
-import serene.validation.schema.parsed.components.Grammar;
-import serene.validation.schema.parsed.components.ExternalRef;
+import serene.validation.schema.parsed.Pattern;
+import serene.validation.schema.parsed.Definition;
+import serene.validation.schema.parsed.Grammar;
+import serene.validation.schema.parsed.ExternalRef;
 
 import serene.datatype.DatatypeLibraryFinder;
 

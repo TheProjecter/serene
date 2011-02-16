@@ -25,10 +25,11 @@ class DummyTask extends RNGParseEndElementTask{
 	DummyPool pool;
 	
 	DummyTask(SAttribute ns,
-						SAttribute datatypeLibrary, 
+						SAttribute datatypeLibrary,
+                        SAttribute foreign,
 						DummyPool pool, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.pool = pool;
 	}
 	
@@ -39,6 +40,6 @@ class DummyTask extends RNGParseEndElementTask{
 	}
 	public void execute(){
 		builder.endLevel();
-		builder.buildDummy(null, null, null, null, null, null);
+		builder.buildDummy(null, null, null, null, null, null, null);
 	}
 }

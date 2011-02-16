@@ -31,11 +31,12 @@ public class ElementWithNameInstancePool extends RNGParseEndElementTaskPool{
 	public ElementWithNameInstancePool(SAttribute ns,
 						SAttribute datatypeLibrary,
 						SAttribute name,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.name = name;
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new ElementWithNameInstanceTask[taskPoolSize];
 	}
 	
@@ -44,6 +45,7 @@ public class ElementWithNameInstancePool extends RNGParseEndElementTaskPool{
 			return new ElementWithNameInstanceTask(ns,
 												datatypeLibrary,
 												name,
+                                                foreign, 
 												this, 
 												debugWriter);			
 		}

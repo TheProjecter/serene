@@ -14,45 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.validation.schema.parsed;
-
-import serene.validation.schema.parsed.components.Param;
-import serene.validation.schema.parsed.components.Include;
-import serene.validation.schema.parsed.components.ExceptPattern;
-import serene.validation.schema.parsed.components.ExceptNameClass;
-import serene.validation.schema.parsed.components.DivGrammarContent;
-import serene.validation.schema.parsed.components.DivIncludeContent;
-
-import serene.validation.schema.parsed.components.ElementWithNameClass;
-import serene.validation.schema.parsed.components.ElementWithNameInstance;
-import serene.validation.schema.parsed.components.AttributeWithNameClass;
-import serene.validation.schema.parsed.components.AttributeWithNameInstance;
-import serene.validation.schema.parsed.components.ChoicePattern;
-import serene.validation.schema.parsed.components.Interleave;
-import serene.validation.schema.parsed.components.Group;
-import serene.validation.schema.parsed.components.ZeroOrMore;
-import serene.validation.schema.parsed.components.OneOrMore;
-import serene.validation.schema.parsed.components.Optional;
-import serene.validation.schema.parsed.components.ListPattern;
-import serene.validation.schema.parsed.components.Mixed;
-import serene.validation.schema.parsed.components.Empty;
-import serene.validation.schema.parsed.components.Text;
-import serene.validation.schema.parsed.components.NotAllowed;
-import serene.validation.schema.parsed.components.ExternalRef;
-import serene.validation.schema.parsed.components.Ref;
-import serene.validation.schema.parsed.components.ParentRef;
-import serene.validation.schema.parsed.components.Data;
-import serene.validation.schema.parsed.components.Value;
-import serene.validation.schema.parsed.components.Grammar;
-import serene.validation.schema.parsed.components.Dummy;
-
-import serene.validation.schema.parsed.components.Name;
-import serene.validation.schema.parsed.components.AnyName;
-import serene.validation.schema.parsed.components.NsName;
-import serene.validation.schema.parsed.components.ChoiceNameClass;
-
-import serene.validation.schema.parsed.components.Define;
-import serene.validation.schema.parsed.components.Start;
 
 
 public interface ParsedComponentVisitor{
@@ -94,5 +57,7 @@ public interface ParsedComponentVisitor{
 	
 	void visit(Define component);
 	void visit(Start component);
+    
+    void visit(ForeignComponent component);
 		
 }

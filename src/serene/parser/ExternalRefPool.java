@@ -31,17 +31,18 @@ public class ExternalRefPool extends RNGParseEndElementTaskPool{
 	public ExternalRefPool(SAttribute ns,
 						SAttribute datatypeLibrary,
 						SAttribute href,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.href = href;
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new ExternalRefTask[taskPoolSize];
 	}
 	
 	public ExternalRefTask getTask(){
 		if(taskFree == 0){			
-			return new ExternalRefTask(ns, datatypeLibrary, href, this, debugWriter);			
+			return new ExternalRefTask(ns, datatypeLibrary, href, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

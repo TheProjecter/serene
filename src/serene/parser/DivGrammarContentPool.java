@@ -28,16 +28,17 @@ public class DivGrammarContentPool extends RNGParseEndElementTaskPool{
 	
 	public DivGrammarContentPool(SAttribute ns,
 						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new DivGrammarContentTask[taskPoolSize];
 	}
 	
 	public DivGrammarContentTask getTask(){
 		if(taskFree == 0){			
-			return new DivGrammarContentTask(ns, datatypeLibrary, this, debugWriter);			
+			return new DivGrammarContentTask(ns, datatypeLibrary, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

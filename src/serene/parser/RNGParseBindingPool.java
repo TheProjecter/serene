@@ -29,6 +29,8 @@ import serene.bind.ElementBinder;
 import serene.bind.AttributeBinder;
 import serene.bind.CharacterContentBinder;
 import serene.bind.AttributeTaskPool;
+import serene.bind.ElementTaskPool;
+import serene.bind.ElementTask;
 import serene.bind.Queue;
 
 import serene.validation.schema.simplified.components.SElement;
@@ -39,18 +41,18 @@ import serene.validation.schema.parsed.ParsedComponentBuilder;
 import sereneWrite.MessageWriter;
 
 public class RNGParseBindingPool extends BindingPool{
-	Map<SElement, RNGParseElementTaskPool> startElementTaskPools;
-	Map<SElement, RNGParseElementTaskPool> endElementTaskPools;
-	Map<SAttribute, ? extends AttributeTaskPool> attributeTaskPools;
+	Map<SElement, ElementTaskPool> startElementTaskPools;
+	Map<SElement, ElementTaskPool> endElementTaskPools;
+	Map<SAttribute, AttributeTaskPool> attributeTaskPools;
 		
 	RNGParseBindingModel[] bindingModel;
 	int bindingModelFree, bindingModelPoolSize;
 	
 	ParsedComponentBuilder builder;
 	
-	public RNGParseBindingPool(Map<SElement, RNGParseElementTaskPool> startElementTaskPools,
-									Map<SAttribute, ? extends AttributeTaskPool> attributeTaskPools,
-									Map<SElement, RNGParseElementTaskPool> endElementTaskPools,									
+	public RNGParseBindingPool(Map<SElement, ElementTaskPool> startElementTaskPools,
+									Map<SAttribute, AttributeTaskPool> attributeTaskPools,
+									Map<SElement, ElementTaskPool> endElementTaskPools,									
 									MessageWriter debugWriter){
 		super(startElementTaskPools, attributeTaskPools, endElementTaskPools,debugWriter);
 		this.startElementTaskPools = startElementTaskPools;
@@ -105,8 +107,8 @@ public class RNGParseBindingPool extends BindingPool{
 		Set<SElement> startKeys = startElementTaskPools.keySet();
 		Map<SElement, ElementBinder> selementBinders = new HashMap<SElement, ElementBinder>();
 		for(SElement element : startKeys){
-			RNGParseElementTaskPool taskPool = startElementTaskPools.get(element);
-			RNGParseElementTask task = taskPool.getTask();
+			ElementTaskPool taskPool = startElementTaskPools.get(element);
+			ElementTask task = taskPool.getTask();
 			task.setExecutant(builder);
 			
 			ElementBinder binder = new ElementBinder(debugWriter);
@@ -115,8 +117,8 @@ public class RNGParseBindingPool extends BindingPool{
 		}		
 		Set<SElement> endKeys = endElementTaskPools.keySet();
 		for(SElement element : endKeys){
-			RNGParseElementTaskPool taskPool = endElementTaskPools.get(element);
-			RNGParseElementTask task = taskPool.getTask();
+			ElementTaskPool taskPool = endElementTaskPools.get(element);
+			ElementTask task = taskPool.getTask();
 			task.setExecutant(builder);
 			
 			ElementBinder binder = selementBinders.get(element);

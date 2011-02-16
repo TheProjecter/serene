@@ -28,16 +28,17 @@ public class AttributeWithNameClassPool extends RNGParseEndElementTaskPool{
 	
 	public AttributeWithNameClassPool(SAttribute ns,
 						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 32;
+		taskPoolSize = 3;
 		task = new AttributeWithNameClassTask[taskPoolSize];
 	}
 	
 	public AttributeWithNameClassTask getTask(){
 		if(taskFree == 0){			
-			return new AttributeWithNameClassTask(ns, datatypeLibrary, this, debugWriter);			
+			return new AttributeWithNameClassTask(ns, datatypeLibrary, foreign, this, debugWriter);			
 		}
 		else{				
 			return task[--taskFree];

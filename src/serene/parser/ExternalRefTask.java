@@ -17,7 +17,7 @@ limitations under the License.
 package serene.parser;
 
 import serene.validation.schema.simplified.components.SAttribute;
-
+import serene.util.AttributeInfo;
 import sereneWrite.MessageWriter;
 
 class ExternalRefTask extends RNGParseEndElementTask{
@@ -28,9 +28,10 @@ class ExternalRefTask extends RNGParseEndElementTask{
 	ExternalRefTask(SAttribute ns,
 						SAttribute datatypeLibrary,
 						SAttribute href,
+                        SAttribute foreign, 
 						ExternalRefPool pool, 
 						MessageWriter debugWriter){
-		super(ns, datatypeLibrary, debugWriter);
+		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.pool = pool;
 		this.href = href;
 	}
@@ -41,10 +42,12 @@ class ExternalRefTask extends RNGParseEndElementTask{
 		pool.recycle(this);
 	}
 	public void execute(){
-		builder.buildExternalRef(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getHref(), getQName(), getLocation());
+		builder.buildExternalRef(getPrefixMapping(), getXmlBase(), getNs(), getDatatypeLibrary(), getHref(), getOtherAttributes(), getQName(), getLocation());
 	}
 	
 	String getHref(){
-		return context.getAttributeValue(href);
+		AttributeInfo[] ai = context.getAttributeInfo(href);
+        if(ai == null)return null;
+		return ai[0].getValue();
 	}
 }

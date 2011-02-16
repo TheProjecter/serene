@@ -18,6 +18,8 @@ package serene.parser;
 
 import java.util.Map;
 
+import serene.util.AttributeInfo;
+
 import serene.validation.schema.simplified.components.SAttribute;
 
 import sereneWrite.MessageWriter;
@@ -25,36 +27,46 @@ import sereneWrite.MessageWriter;
 abstract class RNGParseEndElementTask extends RNGParseElementTask{
 	SAttribute ns;
 	SAttribute datatypeLibrary;
-	
+    SAttribute foreign;	
 	RNGParseEndElementTask(SAttribute ns,
-						SAttribute datatypeLibrary, 
+						SAttribute datatypeLibrary,
+                        SAttribute foreign,
 						MessageWriter debugWriter){
 		super(debugWriter);
 		this.ns = ns;
-		this.datatypeLibrary = datatypeLibrary;		
+		this.datatypeLibrary = datatypeLibrary;
+        this.foreign = foreign;		
 	}
 	
-	protected String getNs(){
-		return context.getAttributeValue(ns);
+	String getNs(){
+        AttributeInfo[] ai = context.getAttributeInfo(ns);
+        if(ai == null)return null;
+		return ai[0].getValue();
 	}
 	
-	protected String getDatatypeLibrary(){
-		return context.getAttributeValue(datatypeLibrary);
+	String getDatatypeLibrary(){
+		AttributeInfo[] ai = context.getAttributeInfo(datatypeLibrary);
+        if(ai == null)return null;
+		return ai[0].getValue();
 	}
 
-	protected Map<String, String> getPrefixMapping(){
+	Map<String, String> getPrefixMapping(){
 		return context.getPrefixMapping();
 	}	
 	
-	protected String getXmlBase(){
+	String getXmlBase(){
 		return context.getXmlBase();
 	}
 	
-	protected String getQName(){
-		return context.getQName();
+	String getQName(){
+		return context.getElementNameInfo().getQName();
 	}
 	
-	protected String getLocation(){
+	String getLocation(){
 		return context.getStartLocation();
 	}
+    
+    AttributeInfo[] getOtherAttributes(){        
+        return context.getAttributeInfo(foreign);
+    }
 }

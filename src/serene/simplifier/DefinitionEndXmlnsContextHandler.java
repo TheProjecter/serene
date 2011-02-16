@@ -24,45 +24,47 @@ import javax.xml.XMLConstants;
 import serene.validation.schema.parsed.ParsedComponent;
 import serene.validation.schema.parsed.ParsedComponentVisitor;
 
-import serene.validation.schema.parsed.components.Param;
-import serene.validation.schema.parsed.components.Include;
-import serene.validation.schema.parsed.components.ExceptPattern;
-import serene.validation.schema.parsed.components.ExceptNameClass;
-import serene.validation.schema.parsed.components.DivGrammarContent;
-import serene.validation.schema.parsed.components.DivIncludeContent;
+import serene.validation.schema.parsed.Param;
+import serene.validation.schema.parsed.Include;
+import serene.validation.schema.parsed.ExceptPattern;
+import serene.validation.schema.parsed.ExceptNameClass;
+import serene.validation.schema.parsed.DivGrammarContent;
+import serene.validation.schema.parsed.DivIncludeContent;
 
-import serene.validation.schema.parsed.components.ElementWithNameClass;
-import serene.validation.schema.parsed.components.ElementWithNameInstance;
-import serene.validation.schema.parsed.components.AttributeWithNameClass;
-import serene.validation.schema.parsed.components.AttributeWithNameInstance;
-import serene.validation.schema.parsed.components.ChoicePattern;
-import serene.validation.schema.parsed.components.Interleave;
-import serene.validation.schema.parsed.components.Group;
-import serene.validation.schema.parsed.components.ZeroOrMore;
-import serene.validation.schema.parsed.components.OneOrMore;
-import serene.validation.schema.parsed.components.Optional;
-import serene.validation.schema.parsed.components.ListPattern;
-import serene.validation.schema.parsed.components.Mixed;
-import serene.validation.schema.parsed.components.Empty;
-import serene.validation.schema.parsed.components.Text;
-import serene.validation.schema.parsed.components.NotAllowed;
-import serene.validation.schema.parsed.components.ExternalRef;
-import serene.validation.schema.parsed.components.Ref;
-import serene.validation.schema.parsed.components.ParentRef;
-import serene.validation.schema.parsed.components.Data;
-import serene.validation.schema.parsed.components.Value;
-import serene.validation.schema.parsed.components.Grammar;
-import serene.validation.schema.parsed.components.Dummy;
+import serene.validation.schema.parsed.ElementWithNameClass;
+import serene.validation.schema.parsed.ElementWithNameInstance;
+import serene.validation.schema.parsed.AttributeWithNameClass;
+import serene.validation.schema.parsed.AttributeWithNameInstance;
+import serene.validation.schema.parsed.ChoicePattern;
+import serene.validation.schema.parsed.Interleave;
+import serene.validation.schema.parsed.Group;
+import serene.validation.schema.parsed.ZeroOrMore;
+import serene.validation.schema.parsed.OneOrMore;
+import serene.validation.schema.parsed.Optional;
+import serene.validation.schema.parsed.ListPattern;
+import serene.validation.schema.parsed.Mixed;
+import serene.validation.schema.parsed.Empty;
+import serene.validation.schema.parsed.Text;
+import serene.validation.schema.parsed.NotAllowed;
+import serene.validation.schema.parsed.ExternalRef;
+import serene.validation.schema.parsed.Ref;
+import serene.validation.schema.parsed.ParentRef;
+import serene.validation.schema.parsed.Data;
+import serene.validation.schema.parsed.Value;
+import serene.validation.schema.parsed.Grammar;
+import serene.validation.schema.parsed.Dummy;
 
-import serene.validation.schema.parsed.components.Name;
-import serene.validation.schema.parsed.components.AnyName;
-import serene.validation.schema.parsed.components.NsName;
-import serene.validation.schema.parsed.components.ChoiceNameClass;
+import serene.validation.schema.parsed.Name;
+import serene.validation.schema.parsed.AnyName;
+import serene.validation.schema.parsed.NsName;
+import serene.validation.schema.parsed.ChoiceNameClass;
 
-import serene.validation.schema.parsed.components.Define;
-import serene.validation.schema.parsed.components.Start;
+import serene.validation.schema.parsed.Define;
+import serene.validation.schema.parsed.Start;
 
-import serene.validation.schema.parsed.components.Definition;
+import serene.validation.schema.parsed.Definition;
+
+import serene.validation.schema.parsed.ForeignComponent;
 
 import sereneWrite.MessageWriter;
 
@@ -212,6 +214,10 @@ class DefinitionEndXmlnsContextHandler implements ParsedComponentVisitor{
 	public void visit(Grammar grammar){}
 	
 	public void visit(Dummy dummy){
+		throw new IllegalStateException();
+	}
+ 
+    public void visit(ForeignComponent fg){
 		throw new IllegalStateException();
 	}
     

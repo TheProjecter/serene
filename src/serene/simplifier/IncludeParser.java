@@ -42,17 +42,16 @@ import serene.bind.BindingModel;
 import serene.validation.DTDMapping;
 
 import serene.validation.schema.parsed.ParsedComponentBuilder;
-import serene.validation.schema.parsed.components.Grammar;
+import serene.validation.schema.parsed.Grammar;
 
 import serene.validation.handlers.error.ErrorDispatcher;
+
+import serene.Constants;
 
 import sereneWrite.MessageWriter;
 import sereneWrite.ParsedComponentWriter;
 
 class IncludeParser{
-    String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
-    String DTD_MAPPING_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdMapping";
-    
 	XMLReader xmlReader;		
 	
 	ValidatorHandler validatorHandler;		
@@ -105,7 +104,7 @@ class IncludeParser{
 	IncludedParsedModel parse(URI uri){		
 		xmlReader.setContentHandler(validatorHandler);
         try{
-            DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+            DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(Constants.DTD_HANDLER_PROPERTY);
             xmlReader.setDTDHandler(dtdHandler);
         }catch(SAXNotRecognizedException e){
             e.printStackTrace();
@@ -126,7 +125,7 @@ class IncludeParser{
 		queue.executeAll();
 		Grammar g = null;
 		try{
-            g = (Grammar)parsedComponentBuilder.getCurrentPattern();
+            g = (Grammar)parsedComponentBuilder.getCurrentParsedComponent();
 		}catch(ClassCastException cce){
 			// TODO
 			// the included document was not valid, 
@@ -139,7 +138,7 @@ class IncludeParser{
         DTDMapping dtdMapping = null;
         
         try{
-            dtdMapping = (DTDMapping)validatorHandler.getProperty(DTD_MAPPING_PROPERTY);
+            dtdMapping = (DTDMapping)validatorHandler.getProperty(Constants.DTD_MAPPING_PROPERTY);
         }catch(SAXNotRecognizedException e){
             e.printStackTrace();
         }catch(SAXNotSupportedException e){

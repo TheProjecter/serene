@@ -23,13 +23,16 @@ import sereneWrite.MessageWriter;
 abstract class RNGParseEndElementTaskPool extends RNGParseElementTaskPool{
 	SAttribute ns;
 	SAttribute datatypeLibrary;
-	
+	SAttribute foreign;
+    
 	RNGParseEndElementTaskPool(SAttribute ns,
 						SAttribute datatypeLibrary,
+                        SAttribute foreign, 
 						MessageWriter debugWriter){
 		super(debugWriter);
 		this.ns = ns;
 		this.datatypeLibrary = datatypeLibrary;
+        this.foreign = foreign; 
 	}
 }
 	
