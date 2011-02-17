@@ -95,6 +95,9 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 	//Start StructureHandler----------------------------------------------------------
 	//StructureHandler getParentHandler(); super	
 	// StructureValidationHandler getAncestorOrSelfHandler(Rule rule) super
+    public void deactivate(){
+        if(mayDeactivate())stackHandler.endSubtreeValidation(this);
+	}
 	// StructureHandler getChildHandler(Rule child) super
 	// APattern getRule() super
 	// boolean handleChildShift(AElement element, int expectedOrderHandlingCount) super

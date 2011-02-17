@@ -68,6 +68,10 @@ public class SInterleaveHandler extends InterleaveHandler{
 	public void deactivate(){
 		throw new IllegalStateException();
 	}
+    public boolean mayDeactivate(){
+        stackHandler.setAsCurrentHandler(primaryHandler);      
+        return false;
+    }
 	public StructureHandler getChildHandler(Rule child){		
 		if(!child.getParent().equals(rule)) throw new IllegalArgumentException();
 		int childIndex = child.getChildIndex();		

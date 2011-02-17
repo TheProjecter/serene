@@ -62,6 +62,9 @@ abstract class InnerPatternHandler extends StructureValidationHandler{
 	public void deactivate(){
 		stackHandler.endSubtreeValidation(this);
 	}
+    public boolean mayDeactivate(){
+        return parent.mayDeactivate();
+    }
 	//StructureHandler getChildHandler(Rule child); subclasses	
 	public APattern getRule(){
 		return rule;

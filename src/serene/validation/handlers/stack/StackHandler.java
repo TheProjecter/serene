@@ -104,9 +104,9 @@ public interface StackHandler extends FunctionallyEquivalable{
 	/**
 	* To be called from deactivate when the current handler must not be ended 
 	* before another one can start, that is in the context of an interleave,
-	* called from StructureDoubleHandlers.
+	* called from StructureDoubleHandlers or from GroupHandler.
 	*/
-	void setParentCurrentHandler();
+	void setAsCurrentHandler(StructureHandler sh);
 	
 	boolean handlesConflict();
 	

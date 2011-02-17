@@ -108,6 +108,10 @@ public class MInterleaveHandler extends InterleaveHandler{
 	//Start StructureHandler----------------------------------------------------------
 	//StructureHandler getParentHandler(); super	
 	// StructureValidationHandler getAncestorOrSelfHandler(Rule rule) super
+    public boolean mayDeactivate(){
+        stackHandler.setAsCurrentHandler(this);      
+        return false;
+    }
 	public StructureHandler getChildHandler(Rule child){		
 		if(!child.getParent().equals(rule)) throw new IllegalArgumentException();
 		int childIndex = child.getChildIndex();		
