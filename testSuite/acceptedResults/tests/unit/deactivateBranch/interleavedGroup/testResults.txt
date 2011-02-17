@@ -1,0 +1,7 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\unit\deactivateBranch\interleavedGroup\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
