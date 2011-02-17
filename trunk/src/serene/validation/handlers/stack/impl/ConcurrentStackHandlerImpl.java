@@ -1173,10 +1173,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		return fec;
 	}
 	
-	public void setParentCurrentHandler(){
-		throw new IllegalStateException();
-	}
-	
 	public String toString(){
 		return "ConcurrentStackHandlerImpl candidates "+candidates;
 	}

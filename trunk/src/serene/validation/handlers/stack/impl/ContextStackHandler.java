@@ -222,9 +222,6 @@ public class ContextStackHandler  implements  StackHandler{
 		endingValidation = false;
 	}
 	
-	public void setParentCurrentHandler(){
-		currentHandler = currentHandler.getParentHandler();
-	}
 	/**
 	* current is a handler on the currently active path
 	*/
