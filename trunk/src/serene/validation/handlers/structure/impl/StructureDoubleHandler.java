@@ -101,8 +101,11 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 		else return parent.getAncestorOrSelfHandler(rule);
 	}
 	public void deactivate(){
-		stackHandler.setParentCurrentHandler();
+		if(parent.mayDeactivate())throw new IllegalStateException();
 	}
+	public boolean mayDeactivate(){
+        throw new IllegalStateException();
+    }
 	
 	public StructureHandler getChildHandler(Rule child){		
 		//if(!child.getParent().equals(rule)) throw new IllegalArgumentException();

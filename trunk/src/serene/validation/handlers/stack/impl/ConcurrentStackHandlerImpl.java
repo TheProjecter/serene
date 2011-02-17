@@ -122,7 +122,10 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		this.errorCatcher = errorCatcher;
 	}
 		
-	
+	public void setAsCurrentHandler(StructureHandler sh){
+        throw new IllegalStateException();
+    }
+    
 	public boolean handlesConflict(){
 		return true;
 	}

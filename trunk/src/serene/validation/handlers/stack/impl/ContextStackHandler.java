@@ -246,6 +246,10 @@ public class ContextStackHandler  implements  StackHandler{
 		return topHandler.functionalEquivalenceCode();
 	}
 	
+    public void setAsCurrentHandler(StructureHandler sh){
+        this.currentHandler = sh;
+    }
+    
 	public boolean handlesConflict(){
 		return false;
 	}

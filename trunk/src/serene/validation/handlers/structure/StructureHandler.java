@@ -40,12 +40,17 @@ public interface StructureHandler extends RuleHandler{
 	* Called from the StackHandler when this is the current active StructureHandler
 	* and the pathes formed by this handler with the top handler and by the next 
 	* shift handler with the top handler are different. In most cases it is 
-	* necessary to reduce the current handler. This does not happen in the context 
+	* necessary to reduce the current handler. This doesn't happen in the context 
 	* of an interleave when a group or interleave handler(StructureDoubleHandler)
-	* must not end when another sibling starts. In those cases the parent of the 
-	* currentHandler is simply set as currentHandler.
-	*/	
+	* must not end when another sibling starts. In those cases the interleave is 
+    * simply set as the current handler in the StackHandler.
+	*/    
 	void deactivate();
+    /**
+    * Asks parent for deactivation permission, called from group to determine   
+    * if it is in the context of interleave.
+    */
+    boolean mayDeactivate();
 	StructureHandler getChildHandler(Rule child);	
 	Rule getRule();	
 	
