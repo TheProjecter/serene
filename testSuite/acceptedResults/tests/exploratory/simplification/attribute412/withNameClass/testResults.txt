@@ -1,0 +1,7 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\simplification\attribute412\withNameClass\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
