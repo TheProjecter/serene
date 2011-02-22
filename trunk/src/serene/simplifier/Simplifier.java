@@ -539,18 +539,21 @@ abstract class Simplifier implements SimplifyingVisitor{
 	public void visit(AttributeWithNameClass attribute)  throws SAXException{
 		ParsedComponent[] children = attribute.getChildren();		
 		
-        Map<String, String> prefixMapping = attribute.getXmlns();
+       Map<String, String> prefixMapping = attribute.getXmlns();
         if(prefixMapping != null) startXmlnsContext(prefixMapping);
+        		
+		if(children == null){
+            builder.startLevel();
+            builder.buildText("default text", attribute.getLocation());
+			builder.endLevel();           
+            builder.buildAttribute(attribute.getQName(), attribute.getLocation());
+            
+            if(prefixMapping != null) endXmlnsContext(prefixMapping);
+            return;
+        }
         
 		builder.startLevel();		
-		if(children == null) {
-			builder.buildText("default text", attribute.getLocation());
-			builder.endLevel();
-			builder.buildAttribute(attribute.getQName(), attribute.getLocation());
-            if(prefixMapping != null) endXmlnsContext(prefixMapping);
-			return;
-		}				
-		if(children != null)next(children);
+		next(children);
 		if(notAllowedChild){			
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
@@ -565,7 +568,9 @@ abstract class Simplifier implements SimplifyingVisitor{
 			String ns  = namespaceInheritanceHandler.getNsURI(attribute);
 			if(ns == null) ns = "";
 			builder.buildValue(ns, null, null, "value", attribute.getLocation());
-		}				
+		}else if(builder.getCurrentPattern() == null){
+            builder.buildText("default text", attribute.getLocation());            
+        }				
 		builder.endLevel();
 		builder.buildAttribute(attribute.getQName(), attribute.getLocation());
 		
