@@ -228,6 +228,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 					ExceptPatternTester ept = pool.getExceptPatternTester(data, charsItemMatches, totalCount, errorCatcher);
 					except.assembleDefinition();
 					ept.handleChars(chars, except);
+                    except.releaseDefinition();
 					ept.recycle();
 				}
 			}catch(DatatypeException de){
@@ -255,6 +256,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 					ExceptPatternTester ept = pool.getExceptPatternTester(data, charsItemMatches, totalCount, errorCatcher);
 					except.assembleDefinition();
 					ept.handleString(value, except);
+                    except.releaseDefinition();
 					ept.recycle();
 				}
 			}catch(DatatypeException de){
