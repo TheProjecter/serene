@@ -240,8 +240,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	
 	public void handleOccurrence(String qN, String sI, int lN, int cN){
 		occurs++;		
-		state.handleOccurrence(qN, sI, lN, cN);		
-		if(qN.equals("rng:ref") && lN == 5 )throw new IllegalStateException();
+		state.handleOccurrence(qN, sI, lN, cN);	
 	}
 		
 	public void handleOccurrence(StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver){
