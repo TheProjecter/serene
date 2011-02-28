@@ -44,7 +44,8 @@ public abstract class DatatypedCharsAPattern extends CharsAPattern implements Da
 		
 	//DatatypedActiveTypeItem
 	//--------------------------------------------------------------------------
-	public void datatypeMatches(String value, ValidationContext validationContext) throws DatatypeException{		
+	public void datatypeMatches(String value, ValidationContext validationContext) throws DatatypeException{
+        if(datatype == null) throw new DatatypeException(" No datatype definition.");		
 		datatype.checkValid(value, validationContext);
 	}
 	public void datatypeMatches(char[] chars, ValidationContext validationContext) throws DatatypeException{
