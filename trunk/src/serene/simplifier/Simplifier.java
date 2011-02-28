@@ -562,12 +562,8 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
 		}
-		// This builds a dummy SValue that will produce an StackOverfloError when
-		// validation is attempted for any value of this attribute.
 		if(emptyChild){
-			String ns  = namespaceInheritanceHandler.getNsURI(attribute);
-			if(ns == null) ns = "";
-			builder.buildValue(ns, null, null, "value", attribute.getLocation());
+		    builder.buildEmpty("empty", emptyComponent.getLocation());	
 		}else if(builder.getCurrentPattern() == null){
             builder.buildText("default text", attribute.getLocation());            
         }				
@@ -611,14 +607,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
 		}
-		// This builds a dummy SValue that will produce an StackOverfloError when
-		// validation is attempted for this any value of this attribute.
 		if(emptyChild){
-			/*
-			Replaced with a limitation placed in restrictions control.
-			String ns  = namespaceInheritanceHandler.getNsURI(attribute);
-			if(ns == null) ns = "";
-			builder.buildValue(ns, "-1", null, null, "value", attribute.getLocation());*/
 			builder.buildEmpty("empty", emptyComponent.getLocation());
 		}				
 		
