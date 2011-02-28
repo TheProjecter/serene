@@ -98,6 +98,7 @@ abstract class ListPatternTesterState extends AbstractCVH  implements ErrorCatch
 					ExceptPatternTester ept = pool.getExceptPatternTester(data, charsItemMatches, totalCount, this);
 					except.assembleDefinition();
 					ept.handleChars(chars, except);
+                    except.releaseDefinition();
 					ept.recycle();
 				}
 			}catch(DatatypeException de){
@@ -125,6 +126,7 @@ abstract class ListPatternTesterState extends AbstractCVH  implements ErrorCatch
 					ExceptPatternTester ept = pool.getExceptPatternTester(data, charsItemMatches, totalCount, this);
 					except.assembleDefinition();
 					ept.handleString(value, except);
+                    except.releaseDefinition();
 					ept.recycle();
 				}
 			}catch(DatatypeException de){

@@ -60,6 +60,7 @@ class AttributeValidationHandler extends ValidatingAEH /*implements ErrorCatcher
 			stackHandler.recycle();
 			stackHandler = null;
 		}
+        attribute.releaseDefinition();
 		pool.recycle(this);
 	}
 	
