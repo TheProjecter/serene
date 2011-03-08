@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+    <!--datatypeLibrary="http://relaxng.org/ns/compatibility/datatypes/1.0"-->
+    <start>
+        <element name="root">
+            <group>
+                <attribute name="aa" a:defaultValue="aa"/>                
+                <attribute name="bb" a:defaultValue="bb"/>  
+                <optional>
+                    <attribute name="cc" a:defaultValue="cc"/>
+                </optional>
+                <choice>
+                    <empty/>
+                    <attribute name="dd" a:defaultValue="dd"/>
+                    <attribute name="ee" a:defaultValue="ee"/>
+                </choice>
+            </group>
+        </element>
+    </start>    
+</grammar>

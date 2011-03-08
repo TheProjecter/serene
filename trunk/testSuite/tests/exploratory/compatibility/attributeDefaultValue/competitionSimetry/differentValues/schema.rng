@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">
+    <start>
+        <element name="root">
+            <group>
+                <element name="foo">
+                    <ref name="firstCompetitor"/>
+                </element>
+                <ref name="secondCompetitor"/>
+            </group>            
+        </element>
+    </start>
+    
+    <define name="firstCompetitor">
+        <element name="bar">
+            <ref name="choiceAttributes"/>
+        </element>
+    </define>
+    
+    <define name="secondCompetitor">
+        <element name="bar">
+            <optional>
+                <attribute name="aa" a:defaultValue="bb"/>
+            </optional>
+        </element>
+    </define>
+    
+    <define name="choiceAttributes">
+        <choice>
+            <attribute name="aa" a:defaultValue="aa">
+              <choice>
+                <value>aa</value>
+                <value>bb</value>
+              </choice>
+            </attribute>
+            <attribute name="bb"/>
+            <empty/>
+        </choice>
+    </define>
+</grammar>

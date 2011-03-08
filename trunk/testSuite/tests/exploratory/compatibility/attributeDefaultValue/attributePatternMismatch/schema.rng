@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">
+    <start>
+        <element name="root">    
+            <ref name="optionalAttribute"/>
+        </element>
+    </start>
+    
+    <define name="optionalAttribute">
+        <optional>
+            <attribute name="attribute" a:defaultValue="x">
+              <choice>
+                <value>aa</value>
+                <value>bb</value>
+              </choice>
+            </attribute>
+        </optional>
+    </define>
+</grammar>

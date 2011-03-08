@@ -1,0 +1,5 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\attributeDefaultValue\illegalAttributeNameClass\schema.rng
+
+null:-1:-1 DTD compatibility error. Default value not allowed for an attribute definition without a <name> name class, <attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/illegalAttributeNameClass/schema.rng:13:43 .
