@@ -905,7 +905,7 @@ class RNGDirector{
 				builder.buildName("","ns","name","RELAXNG Specification 3.Full Syntax: ns attribute");	
 				builder.buildData(nativeLibrary.createDatatype("token"),"data","RELAXNG Specification 3.Full Syntax: ns attribute");
 			}builder.endLevel();
-			builder.buildAttribute("attribute","RELAXNG Specification 3.Full Syntax: ns attribute");
+			builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: ns attribute");
 			ns = (SAttribute)builder.getCurrentPattern();
 			attributeTaskPool.put(ns, null);		
 		}builder.endLevel();				
@@ -916,7 +916,7 @@ class RNGDirector{
 				builder.buildName("","datatypeLibrary","name","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute");				
 				builder.buildData(internalLibrary.createDatatype("datatypeLibraryURI"),"data","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute");
 			}builder.endLevel();
-			builder.buildAttribute("attribute","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute");
+			builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute");
 			datatypeLibrary = (SAttribute)builder.getCurrentPattern();
 			attributeTaskPool.put(datatypeLibrary, null);
 		}builder.endLevel();				
@@ -929,7 +929,7 @@ class RNGDirector{
 				anyNameExceptNullOrRNG();	
 				builder.buildText("text","RELAXNG Specification 3.Full Syntax: foreign attribute");
 			}builder.endLevel();
-			builder.buildAttribute("attribute","RELAXNG Specification 3.Full Syntax: foreign attribute");
+			builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: foreign attribute");
             foreign = (SAttribute)builder.getCurrentPattern();
 			attributeTaskPool.put(foreign, null);	
 		}builder.endLevel();				
@@ -941,7 +941,7 @@ class RNGDirector{
 			builder.buildName("","name","name","RELAXNG Specification 3.Full Syntax: name attribute");
 			builder.buildData(internalLibrary.createDatatype("QName"),"data","RELAXNG Specification 3.Full Syntax: name attribute");
 		}builder.endLevel();
-		builder.buildAttribute("attribute","RELAXNG Specification 3.Full Syntax: name attribute");
+		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: name attribute");
 		name = (SAttribute)builder.getCurrentPattern();
 		attributeTaskPool.put(name, null);
 	}
@@ -951,7 +951,7 @@ class RNGDirector{
 			builder.buildName("","name","name","RELAXNG Specification 3.Full Syntax: name attribute");				
 			builder.buildData(internalLibrary.createDatatype("NCName"),"attribute","RELAXNG Specification 3.Full Syntax: name attribute");
 		}builder.endLevel();
-		builder.buildAttribute("attribute","RELAXNG Specification 3.Full Syntax: name attribute");
+		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: name attribute");
 		name = (SAttribute)builder.getCurrentPattern();
 		attributeTaskPool.put(name, null);
 	}
@@ -968,7 +968,7 @@ class RNGDirector{
 			builder.buildName("","type","name","RELAXNG Specification 3.Full Syntax: type attribute");				
 			builder.buildData(internalLibrary.createDatatype("NCName"),"data","RELAXNG Specification 3.Full Syntax: type attribute");
 		}builder.endLevel();
-		builder.buildAttribute("attribute","RELAXNG Specification 3.Full Syntax: type attribute");
+		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: type attribute");
 		type = (SAttribute)builder.getCurrentPattern();
 		attributeTaskPool.put(type, null);
 	}
@@ -978,7 +978,7 @@ class RNGDirector{
 			builder.buildName("","href","name","RELAXNG Specification 3.Full Syntax: href attribute");
 			builder.buildData(internalLibrary.createDatatype("hrefURI"),"data","RELAXNG Specification 3.Full Syntax: href attribute");
 		}builder.endLevel();
-		builder.buildAttribute("attribute","RELAXNG Specification 3.Full Syntax: href attribute");
+		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: href attribute");
 		href = (SAttribute)builder.getCurrentPattern();
 		attributeTaskPool.put(href, null);
 	}
@@ -989,7 +989,7 @@ class RNGDirector{
 				builder.buildName("","combine","name","RELAXNG Specification 3.Full Syntax: combine attribute");
 				builder.buildData(internalLibrary.createDatatype("combine"), "value","RELAXNG Specification 3.Full Syntax: combine attribute");
 			}builder.endLevel();
-			builder.buildAttribute("attribute","RELAXNG Specification 3.Full Syntax: combine attribute");
+			builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: combine attribute");
 			combine = (SAttribute)builder.getCurrentPattern();
 			attributeTaskPool.put(combine, null);
 		}builder.endLevel();				
@@ -1167,7 +1167,7 @@ class RNGDirector{
 			builder.buildAnyName("anyName","RELAXNG Specification 3.Full Syntax");
 			builder.buildText("text","RELAXNG Specification 3.Full Syntax");
 		}builder.endLevel();
-		builder.buildAttribute("attribute","RELAXNG Specification 3.Full Syntax");
+		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax");
         any = (SAttribute)builder.getCurrentPattern();
 		attributeTaskPool.put(any, null);	
 	}	

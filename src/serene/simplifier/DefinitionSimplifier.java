@@ -88,7 +88,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 			ObjectIntHashMap indexes,
 			IntStack referencePath,
 			BooleanList definitionEmptyChild,
-			BooleanList definitionNotAllowedChild,	
+			BooleanList definitionNotAllowedChild,
 			RecursionModel recursionModel,			
 			Grammar currentGrammar,
 			Stack<Grammar> previousGrammars,
@@ -106,13 +106,13 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		this.indexes = indexes;	
 		this.referencePath = referencePath;
 		this.definitionEmptyChild = definitionEmptyChild;
-		this.definitionNotAllowedChild = definitionNotAllowedChild;	
+		this.definitionNotAllowedChild = definitionNotAllowedChild;
 		this.recursionModel = recursionModel;
 	
 		this.currentGrammar = currentGrammar;
 		this.previousGrammars = previousGrammars;
         
-        this.simplificationContext = simplificationContext;
+        this.simplificationContext = simplificationContext;      
 	}
 	
 	public void recycle(){
@@ -133,7 +133,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		
 		pool.recycle(this);
 	}
-	void simplify(ArrayList<Definition> definitions) throws SAXException{
+	void simplify(ArrayList<Definition> definitions) throws SAXException{        
 		emptyChild = false;
 		notAllowedChild = false;
 		
@@ -142,11 +142,13 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		nsNameContext = false;
 		nsNameExceptContext = false;
 		attributeContext = false;
-		
+        
 		combine = null;
-		nullCombine.clear();
+		nullCombine.clear();        
 		if(otherCombine != null) otherCombine.clear();
 		
+        paramStack.clear();
+         
 		builder.startBuild();		
 		
 		for(int i = 0; i < definitions.size(); i++){
@@ -234,5 +236,5 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 	
 	boolean getNotAllowedChild(){
 		return notAllowedChild;
-	}
+	}    
 }

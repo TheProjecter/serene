@@ -52,7 +52,7 @@ import serene.Reusable;
 
 import sereneWrite.MessageWriter; 
 
-class OverlapController implements SimplifiedComponentVisitor, Reusable{
+public class OverlapController implements SimplifiedComponentVisitor, Reusable{
 	
 	SNameClass test;
 	boolean overlap;
@@ -65,7 +65,7 @@ class OverlapController implements SimplifiedComponentVisitor, Reusable{
 	
 	MessageWriter debugWriter;
 	
-	OverlapController(ControllerPool pool, MessageWriter debugWriter){
+	public OverlapController(ControllerPool pool, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		this.pool = pool;
 		
@@ -86,7 +86,7 @@ class OverlapController implements SimplifiedComponentVisitor, Reusable{
 		pool.recycle(this);
 	}
 	
-	boolean overlap(SNameClass nc1, SNameClass nc2){
+	public boolean overlap(SNameClass nc1, SNameClass nc2){
 		this.test = nc1;
 		nc2.accept(this);
 		return overlap;

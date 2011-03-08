@@ -21,21 +21,20 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
-import serene.validation.schema.simplified.components.SPattern;
-import serene.validation.schema.simplified.components.SNameClass;
-
 import sereneWrite.MessageWriter;
 
 public class SAttribute extends AbstractMultipleChildrenPattern{
 	SNameClass nameClass;
-	
+	String defaultValue;
 	public SAttribute(SNameClass nameClass, 
 								SPattern[] children,
+                                String defaultValue,
 								String qName, 
 								String location, 
 								MessageWriter debugWriter){		
 		super(children, qName, location, debugWriter);
 		this.nameClass = nameClass;
+        this.defaultValue = defaultValue;
 	}	
 	
 	public SNameClass getNameClass(){
@@ -48,8 +47,11 @@ public class SAttribute extends AbstractMultipleChildrenPattern{
 	public void accept(RestrictingVisitor v) throws SAXException{
 		v.visit(this);
 	}
+    public String getDefaultValue(){
+        return defaultValue;
+    }    
 	public String toString(){
-		String s = "SAttribute "+nameClass.toString();		
+		String s = "SAttribute "+nameClass.toString()+" defaultValue "+defaultValue;		
 		return s;
 	}
 }

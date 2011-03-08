@@ -220,8 +220,8 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		clearContent();
 		addToCurrentLevel(e);
 	}
-	public void buildAttribute(String qName, String location){
-		SAttribute a = new SAttribute(getLastContentNameClass(), getContentPatterns(), qName, location, debugWriter);
+	public void buildAttribute(String defaultValue, String qName, String location){
+		SAttribute a = new SAttribute(getLastContentNameClass(), getContentPatterns(), defaultValue, qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(a);
 	}
@@ -245,6 +245,12 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		SChoicePattern cp = new SChoicePattern(getContentPatterns(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(cp);
+	}
+    public void buildReplacementChoicePattern(String qName, String location){
+        SPattern[] children = getAllCurrentPatterns();
+		SChoicePattern c = new SChoicePattern(children, qName, location, debugWriter);
+		clearCurrentPatterns();
+		addToCurrentLevel(c);	
 	}
 	public void buildMixed(String qName, String location){
 		SMixed o = new SMixed(getLastContentPattern(), qName, location, debugWriter);
@@ -328,6 +334,12 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		clearContent();
 		addToCurrentLevel(cnc);
 	}	
+    public void buildReplacementChoiceNameClass(String qName, String location){
+        SNameClass[] children = getAllCurrentNameClasses();
+		SChoiceNameClass c = new SChoiceNameClass(children, qName, location, debugWriter);
+		clearCurrentNameClasses();
+		addToCurrentLevel(c);
+	}
 	//**************************************************************************
 	//END NAME CLASS BUILDING **************************************************
 	//**************************************************************************	

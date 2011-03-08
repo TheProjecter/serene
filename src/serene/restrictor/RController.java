@@ -121,15 +121,14 @@ public class RController implements RestrictingVisitor{
 	ErrorDispatcher errorDispatcher;
 	MessageWriter debugWriter;
 	
-	public RController(ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
+	public RController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
 		this.errorDispatcher = errorDispatcher;
 		this.debugWriter = debugWriter;
+        this.pool = pool;
 				
 		handledDefinitions = new IntList();
 		definitionsContentTypes = new ObjectIntHashMap(debugWriter);
-        
-		pool = new ControllerPool(errorDispatcher, debugWriter);
-		
+        		
 		attributesPath = new Stack<SAttribute>();
 		morePath = new MorePath();
 		listsPath = new Stack<SListPattern>();
@@ -137,7 +136,7 @@ public class RController implements RestrictingVisitor{
 		
 		texts = new SereneArrayList<SPattern>();
 	}
-	
+		
 	
 	public void control(SimplifiedModel simplifiedModel)throws SAXException{		
 		init(simplifiedModel);		
@@ -189,7 +188,7 @@ public class RController implements RestrictingVisitor{
 		
 		contentType = ContentType.EMPTY;
 	}
-	void close() throws SAXException{		
+	void close() throws SAXException{
 		elementNamingController.control();
 		elementNamingController.recycle();
 		
@@ -249,7 +248,7 @@ public class RController implements RestrictingVisitor{
 
 	//------------------
 	//  !!! subclass !!!
-	public void visit(SElement element) throws SAXException{		
+	public void visit(SElement element) throws SAXException{	
 		if(attributeContext){
 			// error 7.1.1	
 			String message = "Restrictions 7.1.1 error. Forbiden path:"

@@ -116,6 +116,8 @@ public class RNGSimplifier extends Simplifier{
         
         simplificationContext.reset();
 		
+        paramStack.clear();
+        
 		this.topPattern = topPattern;
 		inclusionPath.push(base);
 		docParsedModels.put(base, parsedModel);

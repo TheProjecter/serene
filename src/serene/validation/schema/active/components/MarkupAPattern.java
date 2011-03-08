@@ -49,13 +49,13 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 												CharsActiveType{
 	APattern child;
 	
-	int index;
+	protected int index;
+	    
+	protected ActiveGrammarModel grammarModel;	
+	protected ActiveModelStackHandlerPool stackHandlerPool;
 	
-	ActiveDefinition definition;
-	ActiveGrammarModel grammarModel;	
+    ActiveDefinition definition;
 	
-	ActiveModelStackHandlerPool stackHandlerPool;
-		
 	boolean allowsDataContent;
 	AData[] contextDatas;
 	
@@ -99,7 +99,7 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 	public void assembleDefinition(){		
 		setDefinition();
 		setContextCache();
-		assembleRefDefinitions();
+		assembleRefDefinitions();	
 	}
 	public void releaseDefinition(){
 		if(child != null){

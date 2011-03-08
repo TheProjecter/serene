@@ -50,6 +50,20 @@ public class SExceptNameClass extends SExcept{
 	public void accept(RestrictingVisitor v) throws SAXException{
 		v.visit(this);
 	}
+    
+    public boolean equals(Object o){
+        if(o == null) return false;
+        if(!(o instanceof SExceptNameClass))return false;
+        SExceptNameClass other = (SExceptNameClass)o;
+        SNameClass otherChild = other.getChild();
+        if(child != null){            
+            if(otherChild == null)return false;
+            return child.equals(otherChild);
+        }
+        if(otherChild != null)return false;
+        return true;        
+    }
+    
 	public String toString(){
 		String s = "SExceptNameClass ";
 		if(child!=null)s+=child.toString();

@@ -20,8 +20,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 import javax.xml.validation.ValidatorHandler;
 
-//import serene.validation.handlers.ErrorDispatcher;
-
+import serene.validation.BaseSchema;
 
 import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.simplified.SimplifiedModel;
@@ -38,6 +37,7 @@ import serene.bind.ValidatorQueuePool;
 
 import sereneWrite.MessageWriter;
 
+
 //SPECIFICATION
 //	thread safe(should be shared across parsers and threads)
 //	immutable(validating the same document over the same schema gives the same result)
@@ -48,18 +48,18 @@ import sereneWrite.MessageWriter;
 //			ValidatorHandler - thread unsafe
 
 
-class RNGSchema extends Schema{		
-	final ParsedModel parsedModel;
-	final SimplifiedModel simplifiedModel;	
+public class RNGSchema extends BaseSchema{		
+	protected final ParsedModel parsedModel;
+	protected final SimplifiedModel simplifiedModel;	
 		
-	ActiveModelPool activeModelPool;
+	protected ActiveModelPool activeModelPool;
 		
-	ContentHandlerPool contentHandlerPool;	
-	ErrorHandlerPool errorHandlerPool;
+	protected ContentHandlerPool contentHandlerPool;	
+	protected ErrorHandlerPool errorHandlerPool;
 		
-	MessageWriter debugWriter;
+	protected MessageWriter debugWriter;
 	
-	RNGSchema(ParsedModel parsedModel,
+	public RNGSchema(ParsedModel parsedModel,
 					SimplifiedModel simplifiedModel,
 					MessageWriter debugWriter){		
 		this.debugWriter = debugWriter;
@@ -70,17 +70,15 @@ class RNGSchema extends Schema{
 		contentHandlerPool = ContentHandlerPool.getInstance(debugWriter);
 		errorHandlerPool = ErrorHandlerPool.getInstance(debugWriter);
 		
-		activeModelPool = new ActiveModelPool(simplifiedModel, debugWriter);				
+		activeModelPool = new ActiveModelPool(simplifiedModel, debugWriter);
 	}
 	
 	
 	public Validator newValidator(){
-        //TODO see about the JAXP 1.4 features clarification
 		return new ValidatorImpl(this, debugWriter);
 	}
 	
-	public ValidatorHandler newValidatorHandler(){		
-		//TODO see about the JAXP 1.4 features clarification
+	public ValidatorHandler newValidatorHandler(){	
 		return new ValidatorHandlerImpl(contentHandlerPool.getValidatorEventHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										activeModelPool,
@@ -93,5 +91,9 @@ class RNGSchema extends Schema{
 	
 	public SimplifiedModel getSimplifiedModel(){
 		return simplifiedModel;
-	}	
+	}
+	
+    public ActiveModelPool getActiveModelPool(){
+        return activeModelPool;
+    }
 }

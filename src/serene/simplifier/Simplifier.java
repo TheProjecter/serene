@@ -98,17 +98,20 @@ import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.components.SNameClass;
 import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SRef;
+import serene.validation.schema.simplified.components.SAttribute;
 
 import serene.internal.InternalRNGFactory;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import serene.Constants;
+import serene.util.AttributeInfo;
 
 import sereneWrite.MessageWriter;
 import sereneWrite.ParsedComponentWriter;
 
-abstract class Simplifier implements SimplifyingVisitor{
+import serene.Constants;
+
+abstract class Simplifier implements SimplifyingVisitor{	
 	Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions;	
 	Map<ExternalRef, URI> externalRefs;
 	Map<URI, ParsedModel> docParsedModels;
@@ -149,9 +152,11 @@ abstract class Simplifier implements SimplifyingVisitor{
 	SimplifiedComponentBuilder builder;
 	
 	ErrorDispatcher errorDispatcher;
-		
+
+    boolean level1AttributeDefaultValue;
 	boolean replaceMissingDatatypeLibrary;
-	
+     
+		
 	MessageWriter debugWriter;
 	ParsedComponentWriter pcw;
 	
@@ -163,12 +168,17 @@ abstract class Simplifier implements SimplifyingVisitor{
 		pcw = new ParsedComponentWriter();
 		
 		replaceMissingDatatypeLibrary =  true;
+        level1AttributeDefaultValue  = false;
         
         paramStack = new Stack<ArrayList<Param>>();
 	}
 	
 	public abstract void setReplaceMissingDatatypeLibrary(boolean value);
-	
+	public void setCompatibilityAttributeDefaultValue(boolean level1AttributeDefaultValue){
+        this.level1AttributeDefaultValue = level1AttributeDefaultValue;
+    }
+    
+    
 	public void visit(Include include){
 		throw new IllegalStateException();
 	}
@@ -186,23 +196,23 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int emptyCount = 0;
 		builder.startLevel();        
 		for(int i = 0; i < children.length; i++){
-			if(children[i] != null)next(children[i]);
+			if(children[i] != null){
+                next(children[i]);
+                if(notAllowedChild) {
+                    allowedChildrenCount--;
+                    notAllowedChild = false;
+                }
+                if(emptyChild){
+                    emptyCount++;
+                    emptyChild = false;
+                }
+            }
 			else{
 				childrenCount--;
 				allowedChildrenCount--;				
 			}
-			if(notAllowedChild) {
-				allowedChildrenCount--;
-				notAllowedChild = false;
-			}
-			if(emptyChild){
-				emptyCount++;
-				emptyChild = false;
-			}
 		}		
 		if(allowedChildrenCount == 0){
-			notAllowedChild = true;
-			emptyChild = false;	
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
@@ -212,15 +222,19 @@ abstract class Simplifier implements SimplifyingVisitor{
 			builder.buildEmpty("empty", emptyComponent.getLocation());
 			allowedChildrenCount = allowedChildrenCount - emptyCount + 1;					
 		}
-		if(allowedChildrenCount > 1){
-			builder.endLevel();
-			builder.buildChoicePattern("children choice", exceptPattern.getLocation());
+        if(builder.getCurrentPatternsCount() > 1){
+			builder.buildReplacementChoicePattern("choice added by except simplification", exceptPattern.getLocation());
 		}
 		builder.endLevel();
 		builder.buildExceptPattern( exceptPattern.getQName(), exceptPattern.getLocation());
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}
 	public void visit(ExceptNameClass exceptNameClass) throws SAXException{
+        ParsedComponent[] children = exceptNameClass.getChildren();
+        if(children == null) {
+			builder.buildExceptNameClass(exceptNameClass.getQName(), exceptNameClass.getLocation());
+			return;
+		}        
         Map<String, String> prefixMapping = exceptNameClass.getXmlns();
         if(prefixMapping != null) startXmlnsContext(prefixMapping);
         
@@ -231,12 +245,13 @@ abstract class Simplifier implements SimplifyingVisitor{
 			nsNameExceptContext = true;
 		}
 		attributeContext = false;
-		ParsedComponent[] children = exceptNameClass.getChildren();
-		if(children != null) nextLevel(children);
-		if(builder.getContentNameClassesCount() > 1){
-			builder.buildChoiceNameClass("children choice", exceptNameClass.getLocation());
-			builder.endLevel();
+		
+        builder.startLevel();
+		next(children);		
+        if(builder.getCurrentNameClassesCount() > 1){
+			builder.buildReplacementChoiceNameClass("choice added by except simplification", exceptNameClass.getLocation());
 		}
+        builder.endLevel();
 		builder.buildExceptNameClass(exceptNameClass.getQName(), exceptNameClass.getLocation());
 		
 		anyNameExceptContext = false;	
@@ -317,7 +332,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}
-	public void visit(NsName nsName) throws SAXException{	
+	public void visit(NsName nsName) throws SAXException{
 		if(nsNameExceptContext){
 			// 4.16 error
 			String message = "Simplification 4.16 error. "
@@ -326,7 +341,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			// TODO Q: do you need to build a dummy?
 			return;
 		}        
-		String ns = namespaceInheritanceHandler.getNsURI(nsName);				
+		String ns = namespaceInheritanceHandler.getNsURI(nsName);	
 		if(ns == null)ns ="";
 		if(attributeContext){			
 			if(ns.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)){
@@ -375,27 +390,27 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int childrenCount = children.length;
 		builder.startLevel();
 		for(int i = 0; i < children.length; i++){
-			if(children[i] != null)next(children[i]);
-			else childrenCount--;
-			if(notAllowedChild){				
-				builder.endLevel();
-				builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
-				//notAllowedChild = true;
-				emptyChild = false;
-                namespaceInheritanceHandler.endXmlnsContext(simplificationContext, define);
-				return;
-			}
-			if(emptyChild){
-				emptyCount++;
-				emptyChild = false;
-			}
+			if(children[i] != null){
+                next(children[i]);
+                if(notAllowedChild){				
+                    builder.endLevel();
+                    builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
+                    //notAllowedChild = true;
+                    emptyChild = false;
+                    namespaceInheritanceHandler.endXmlnsContext(simplificationContext, define);
+                    return;
+                }
+                if(emptyChild){
+                    emptyCount++;
+                    emptyChild = false;
+                }
+            }else childrenCount--;			
 		}		
 		if(emptyCount == childrenCount){
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
 			emptyChild = true;
 			emptyComponent = define;
-			notAllowedChild = false;
             namespaceInheritanceHandler.endXmlnsContext(simplificationContext, define);
 			return;
 		}
@@ -421,7 +436,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
 			builder.endLevel();
-			//notAllowedChild = true;
+			// notAllowedChild = true;
 			emptyChild = false;
             namespaceInheritanceHandler.endXmlnsContext(simplificationContext, start);
 			return;
@@ -430,7 +445,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
 			//emptyChild = true;
-			notAllowedChild = false;
+			//notAllowedChild = false;
             namespaceInheritanceHandler.endXmlnsContext(simplificationContext, start);
 			return;
 		}		
@@ -440,7 +455,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         namespaceInheritanceHandler.endXmlnsContext(simplificationContext, start);
 	}
 		
-	public void visit(ElementWithNameClass element)  throws SAXException{	
+	public void visit(ElementWithNameClass element)  throws SAXException{
 		ParsedComponent[] children = element.getChildren();		
 		        		
 		if(children == null) {			
@@ -452,35 +467,31 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(prefixMapping != null) startXmlnsContext(prefixMapping);
         
 		int notAllowedCount = 0;
-		int emptyCount = 0;
         builder.startLevel();
 		for(int i = 0; i < children.length; i++){
-			if(children[i] != null)next(children[i]);
-			if(notAllowedChild){
-				notAllowedCount++;
-				notAllowedChild = false;
-			}
-			if(emptyChild){
-				emptyCount++;
-				emptyChild = false;
-			}
+			if(children[i] != null){
+                next(children[i]);
+                if(notAllowedChild){
+                    notAllowedCount++;
+                    notAllowedChild = false;
+                }
+                if(emptyChild){
+                    emptyChild = false;
+                }
+            }
 		}		
 		if(notAllowedCount > 0){
-			notAllowedChild = false;
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
-		}		
-		if(builder.getCurrentPatternsCount() - emptyCount > 1){
+		}        
+		if(builder.getCurrentPatternsCount() > 1){
 			builder.buildReplacementGroup("group added by element simplification", element.getLocation());
 		}
 		builder.endLevel();
 		builder.buildElement(element.getQName(), element.getLocation());
-		
-		notAllowedChild = false;
-		emptyChild = false;
-        
+		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}	
 	public void visit(ElementWithNameInstance element)  throws SAXException{
@@ -495,28 +506,27 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(prefixMapping != null) startXmlnsContext(prefixMapping);
 		
 		int notAllowedCount = 0;
-		int emptyCount = 0;
 		builder.startLevel();//children
 		for(int i = 0; i < children.length; i++){
-			if(children[i] != null)next(children[i]);
-			if(notAllowedChild){
-				notAllowedCount++;
-				notAllowedChild = false;
-			}
-			if(emptyChild){
-				emptyCount++;
-				emptyChild = false;
-			}
+			if(children[i] != null){
+                next(children[i]);
+                if(notAllowedChild){
+                    notAllowedCount++;
+                    notAllowedChild = false;
+                }
+                if(emptyChild){
+                    emptyChild = false;
+                }
+            }
 		}		
 		if(notAllowedCount > 0){
-			notAllowedChild = false;
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
             
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
 		}		
-		if(builder.getCurrentPatternsCount() - emptyCount > 1){
+		if(builder.getCurrentPatternsCount() > 1){
 			builder.buildReplacementGroup("group added by element simplification", element.getLocation());
 		}
 		String name = element.getName().trim();
@@ -530,24 +540,29 @@ abstract class Simplifier implements SimplifyingVisitor{
 		
 		builder.endLevel();
 		builder.buildElement(element.getQName(), element.getLocation());
-		
-		notAllowedChild = false;
-		emptyChild = false;
-        
+		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}	
 	public void visit(AttributeWithNameClass attribute)  throws SAXException{
 		ParsedComponent[] children = attribute.getChildren();		
 		
-       Map<String, String> prefixMapping = attribute.getXmlns();
+        Map<String, String> prefixMapping = attribute.getXmlns();
         if(prefixMapping != null) startXmlnsContext(prefixMapping);
-        		
-		if(children == null){
+                
+        if(children == null){
             builder.startLevel();
             builder.buildText("default text", attribute.getLocation());
-			builder.endLevel();           
-            builder.buildAttribute(attribute.getQName(), attribute.getLocation());
-            
+			builder.endLevel();
+            if(level1AttributeDefaultValue){
+                AttributeInfo[] foreignAttributes = attribute.getForeignAttributes();
+                if(foreignAttributes != null){
+                    builder.buildAttribute(getDefaultValue(foreignAttributes), attribute.getQName(), attribute.getLocation());
+                }else{
+                    builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
+                }                
+            }else{
+                builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
+            }
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             return;
         }
@@ -563,19 +578,27 @@ abstract class Simplifier implements SimplifyingVisitor{
 			return;
 		}
 		if(emptyChild){
-		    builder.buildEmpty("empty", emptyComponent.getLocation());	
+            builder.buildEmpty("empty", emptyComponent.getLocation());
+            emptyChild = false;
 		}else if(builder.getCurrentPattern() == null){
             builder.buildText("default text", attribute.getLocation());            
-        }				
+        }       
+        
 		builder.endLevel();
-		builder.buildAttribute(attribute.getQName(), attribute.getLocation());
-		
-		notAllowedChild = false;
-		emptyChild = false;
+		if(level1AttributeDefaultValue){
+            AttributeInfo[] foreignAttributes = attribute.getForeignAttributes();
+            if(foreignAttributes != null){
+                builder.buildAttribute(getDefaultValue(foreignAttributes), attribute.getQName(), attribute.getLocation());
+            }else{
+                builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
+            }                
+        }else{
+            builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
+        }
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}
-	public void visit(AttributeWithNameInstance attribute)  throws SAXException{				
+	public void visit(AttributeWithNameInstance attribute)  throws SAXException{
 		ParsedComponent[] children = attribute.getChildren();		
 		
         Map<String, String> prefixMapping = attribute.getXmlns();
@@ -594,7 +617,16 @@ abstract class Simplifier implements SimplifyingVisitor{
 			if(ns == null)ns = "";		
 			builder.buildName(ns, localPart, "name", attribute.getLocation());
 			builder.endLevel();
-			builder.buildAttribute(attribute.getQName(), attribute.getLocation());
+			if(level1AttributeDefaultValue){
+                AttributeInfo[] foreignAttributes = attribute.getForeignAttributes();
+                if(foreignAttributes != null){
+                    builder.buildAttribute(getDefaultValue(foreignAttributes), attribute.getQName(), attribute.getLocation());
+                }else{
+                    builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
+                }                
+            }else{
+                builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
+            }
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
 		}				
@@ -607,8 +639,10 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
 		}
+		
 		if(emptyChild){
-			builder.buildEmpty("empty", emptyComponent.getLocation());
+            builder.buildEmpty("empty", emptyComponent.getLocation());
+            emptyChild = false;
 		}				
 		
 		String name = attribute.getName().trim();		
@@ -633,14 +667,20 @@ abstract class Simplifier implements SimplifyingVisitor{
 		builder.buildName(ns, localPart, "name", attribute.getLocation());
 		
 		builder.endLevel();
-		builder.buildAttribute(attribute.getQName(), attribute.getLocation());
-		
-		notAllowedChild = false;
-		emptyChild = false;		
-        
+		if(level1AttributeDefaultValue){
+            AttributeInfo[] foreignAttributes = attribute.getForeignAttributes();
+            if(foreignAttributes != null){
+                builder.buildAttribute(getDefaultValue(foreignAttributes), attribute.getQName(), attribute.getLocation());
+            }else{
+                builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
+            }                
+        }else{
+            builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
+        }
+		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}
-	public void visit(ChoicePattern choice)  throws SAXException{				
+	public void visit(ChoicePattern choice)  throws SAXException{
 		ParsedComponent[] children = choice.getChildren();	
 		if(children == null){
 			builder.buildChoicePattern(choice.getQName(), choice.getLocation());
@@ -655,19 +695,20 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int emptyCount = 0;
 		builder.startLevel();
 		for(int i = 0; i < children.length; i++){
-			if(children[i] != null) next(children[i]);
-			else{
+			if(children[i] != null){
+                next(children[i]);
+                if(notAllowedChild){
+                    allowedChildrenCount--;
+                    notAllowedChild = false;
+                }
+                if(emptyChild){
+                    emptyCount++;
+                    emptyChild = false;
+                }
+            }else{
 				childrenCount--;
 				allowedChildrenCount--;
-			}
-			if(notAllowedChild){
-				allowedChildrenCount--;
-				notAllowedChild = false;
-			}
-			if(emptyChild){
-				emptyCount++;
-				emptyChild = false;
-			}
+			}			
 		}		
 		if(allowedChildrenCount == 0){						
 			builder.endLevel();
@@ -680,7 +721,6 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(emptyCount == allowedChildrenCount){			
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
-			notAllowedChild = false;
 			emptyChild = true;
 			emptyComponent = choice;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
@@ -691,9 +731,6 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}
 		builder.endLevel();
 		builder.buildChoicePattern(choice.getQName(), choice.getLocation());
-		
-		emptyChild = false;
-		notAllowedChild = false;
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}
@@ -701,7 +738,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = interleave.getChildren();
 		
 		if(children == null) {
-			builder.buildInterleave(interleave.getQName(), interleave.getLocation());			
+			builder.buildInterleave(interleave.getQName(), interleave.getLocation());
 			return;
 		}
         
@@ -712,27 +749,27 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int childrenCount = children.length;
 		builder.startLevel();
 		for(int i = 0; i < children.length; i++){
-			if(children[i] != null)next(children[i]);
-			else childrenCount--;
-			if(notAllowedChild){				
-				builder.endLevel();
-				builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
-				//notAllowedChild = true;
-				emptyChild = false;                
-                if(prefixMapping != null) endXmlnsContext(prefixMapping);
-				return;
-			}
-			if(emptyChild){
-				emptyCount++;
-				emptyChild = false;
-			}
+			if(children[i] != null){
+                next(children[i]);
+                if(notAllowedChild){				
+                    builder.endLevel();
+                    builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
+                    //notAllowedChild = true;
+                    emptyChild = false;                
+                    if(prefixMapping != null) endXmlnsContext(prefixMapping);
+                    return;
+                }
+                if(emptyChild){
+                    emptyCount++;
+                    emptyChild = false;
+                }
+            }else childrenCount--;			
 		}		
 		if(emptyCount == childrenCount){
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
 			emptyChild = true;
 			emptyComponent = interleave;
-			notAllowedChild = false;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
 		}	
@@ -740,16 +777,13 @@ abstract class Simplifier implements SimplifyingVisitor{
 		builder.endLevel();
 		builder.buildInterleave(interleave.getQName(), interleave.getLocation());
 		
-		notAllowedChild = false;
-		emptyChild = false;		
-        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}
 	public void visit(Group group)  throws SAXException{
 		ParsedComponent[] children = group.getChildren();
 		
 		if(children == null) {
-			builder.buildGroup(group.getQName(), group.getLocation());			
+			builder.buildGroup(group.getQName(), group.getLocation());
 			return;
 		}
         
@@ -760,44 +794,41 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int childrenCount = children.length;
 		builder.startLevel();
 		for(int i = 0; i < children.length; i++){
-			if(children[i] != null)next(children[i]);
-			else childrenCount--;
-			if(notAllowedChild){				
-				builder.endLevel();
-				builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
-				//notAllowedChild = true;
-				emptyChild = false;
-                if(prefixMapping != null) endXmlnsContext(prefixMapping);
-				return;
-			}
-			if(emptyChild){
-				emptyCount++;
-				emptyChild = false;
-			}
+			if(children[i] != null){
+                next(children[i]);
+                if(notAllowedChild){				
+                    builder.endLevel();
+                    builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
+                    //notAllowedChild = true;
+                    emptyChild = false;
+                    if(prefixMapping != null) endXmlnsContext(prefixMapping);
+                    return;
+                }
+                if(emptyChild){
+                    emptyCount++;
+                    emptyChild = false;
+                }
+            }else childrenCount--;			
 		}		
 		if(emptyCount == childrenCount){
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
 			emptyChild = true;
 			emptyComponent = group;
-			notAllowedChild = false;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
 		}
 		
 		builder.endLevel();
 		builder.buildGroup(group.getQName(), group.getLocation());
-		
-		notAllowedChild = false;
-		emptyChild = false;
-        
+		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}
 	public void visit(ZeroOrMore zeroOrMore)  throws SAXException{
 		ParsedComponent[] children = zeroOrMore.getChildren();
 		
 		if(children == null) {
-			builder.buildZeroOrMore(zeroOrMore.getQName(), zeroOrMore.getLocation());			
+			builder.buildZeroOrMore(zeroOrMore.getQName(), zeroOrMore.getLocation());
 			return;
 		}
         
@@ -808,27 +839,27 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int childrenCount = children.length;
 		builder.startLevel();//children
 		for(int i = 0; i < children.length; i++){
-			if(children[i] != null)next(children[i]);
-			else childrenCount--;
-			if(notAllowedChild){				
-				builder.endLevel();
-				builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
-				//notAllowedChild = true;
-				emptyChild = false;
-                if(prefixMapping != null) endXmlnsContext(prefixMapping);
-				return;
-			}
-			if(emptyChild){
-				emptyCount++;
-				emptyChild = false;
-			}
+			if(children[i] != null){
+                next(children[i]);
+                if(notAllowedChild){				
+                    builder.endLevel();
+                    builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
+                    //notAllowedChild = true;
+                    emptyChild = false;
+                    if(prefixMapping != null) endXmlnsContext(prefixMapping);
+                    return;
+                }
+                if(emptyChild){
+                    emptyCount++;
+                    emptyChild = false;
+                }
+            }else childrenCount--;			
 		}		
 		if(emptyCount == childrenCount){
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
 			emptyChild = true;
 			emptyComponent = zeroOrMore;
-			notAllowedChild = false;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
 		}		
@@ -837,9 +868,6 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}	
 		builder.endLevel();
 		builder.buildZeroOrMore(zeroOrMore.getQName(), zeroOrMore.getLocation());
-		
-		notAllowedChild = false;
-		emptyChild = false;
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}
@@ -847,7 +875,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = oneOrMore.getChildren();
 		
 		if(children == null) {
-			builder.buildOneOrMore(oneOrMore.getQName(), oneOrMore.getLocation());			
+			builder.buildOneOrMore(oneOrMore.getQName(), oneOrMore.getLocation());
 			return;
 		}
         
@@ -858,27 +886,27 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int childrenCount = children.length;
 		builder.startLevel();//children
 		for(int i = 0; i < children.length; i++){
-			if(children[i] != null)next(children[i]);
-			else childrenCount--;
-			if(notAllowedChild){				
-				builder.endLevel();
-				builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
-				//notAllowedChild = true;
-				emptyChild = false;
-                if(prefixMapping != null) endXmlnsContext(prefixMapping);
-				return;
-			}
-			if(emptyChild){
-				emptyCount++;
-				emptyChild = false;
-			}
+			if(children[i] != null){
+                next(children[i]);
+                if(notAllowedChild){				
+                    builder.endLevel();
+                    builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
+                    //notAllowedChild = true;
+                    emptyChild = false;
+                    if(prefixMapping != null) endXmlnsContext(prefixMapping);
+                    return;
+                }
+                if(emptyChild){
+                    emptyCount++;
+                    emptyChild = false;
+                }
+            }else childrenCount--;			
 		}		
 		if(emptyCount == childrenCount){
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
 			emptyChild = true;
 			emptyComponent = oneOrMore;
-			notAllowedChild = false;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
 		}		
@@ -887,17 +915,14 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}		
 		builder.endLevel();
 		builder.buildOneOrMore(oneOrMore.getQName(), oneOrMore.getLocation());
-		
-		notAllowedChild = false;
-		emptyChild = false;
-        
+		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}
 	public void visit(Optional optional)  throws SAXException{
 		ParsedComponent[] children = optional.getChildren();
 		
 		if(children == null) {
-			builder.buildOptional(optional.getQName(), optional.getLocation());			
+			builder.buildOptional(optional.getQName(), optional.getLocation());
 			return;
 		}
         
@@ -908,29 +933,28 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int childrenCount = children.length;
 		builder.startLevel();//children
 		for(int i = 0; i < children.length; i++){
-			if(children[i] != null)next(children[i]);
-			else childrenCount--;
-			if(notAllowedChild){				
-				builder.endLevel();
-				builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
-				//notAllowedChild = true;
-				emptyChild = false;
-                
-                if(prefixMapping != null) endXmlnsContext(prefixMapping);
-				return;
-			}
-			if(emptyChild){
-				emptyCount++;
-				emptyChild = false;
-			}
+			if(children[i] != null){
+                next(children[i]);
+                if(notAllowedChild){				
+                    builder.endLevel();
+                    builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
+                    //notAllowedChild = true;
+                    emptyChild = false;
+                    
+                    if(prefixMapping != null) endXmlnsContext(prefixMapping);
+                    return;
+                }
+                if(emptyChild){
+                    emptyCount++;
+                    emptyChild = false;
+                }
+            }else childrenCount--;			
 		}		
 		if(emptyCount == childrenCount){
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
 			emptyChild = true;
-			emptyComponent = optional;
-			notAllowedChild = false;
-            
+			emptyComponent = optional;            
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
 		}		
@@ -939,17 +963,14 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}		
 		builder.endLevel();
 		builder.buildOptional(optional.getQName(), optional.getLocation());
-		
-		notAllowedChild = false;
-		emptyChild = false;		
-                
+		    
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}	
 	public void visit(ListPattern list)  throws SAXException{
 		ParsedComponent[] children = list.getChildren();
 		
 		if(children == null) {
-			builder.buildListPattern(list.getQName(), list.getLocation());			
+			builder.buildListPattern(list.getQName(), list.getLocation());
 			return;
 		}
         
@@ -960,27 +981,27 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int childrenCount = children.length;
 		builder.startLevel();//children
 		for(int i = 0; i < children.length; i++){
-			if(children[i] != null)next(children[i]);
-			else childrenCount--;
-			if(notAllowedChild){				
-				builder.endLevel();
-				builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
-				//notAllowedChild = true;
-				emptyChild = false;
-                if(prefixMapping != null) endXmlnsContext(prefixMapping);
-				return;
-			}
-			if(emptyChild){
-				emptyCount++;
-				emptyChild = false;
-			}
+			if(children[i] != null){
+                next(children[i]);
+                if(notAllowedChild){				
+                    builder.endLevel();
+                    builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
+                    //notAllowedChild = true;
+                    emptyChild = false;
+                    if(prefixMapping != null) endXmlnsContext(prefixMapping);
+                    return;
+                }
+                if(emptyChild){
+                    emptyCount++;
+                    emptyChild = false;
+                }
+            }else childrenCount--;			
 		}		
 		if(emptyCount == childrenCount){
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
 			emptyChild = true;
 			emptyComponent = list;
-			notAllowedChild = false;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
 		}		
@@ -989,17 +1010,14 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}		
 		builder.endLevel();
 		builder.buildListPattern(list.getQName(), list.getLocation());
-		
-		notAllowedChild = false;
-		emptyChild = false;		
-        
+		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}	
 	public void visit(Mixed mixed)  throws SAXException{
 		ParsedComponent[] children = mixed.getChildren();
 		
 		if(children == null) {
-			builder.buildMixed(mixed.getQName(), mixed.getLocation());			
+			builder.buildMixed(mixed.getQName(), mixed.getLocation());
 			return;
 		}
         
@@ -1010,27 +1028,27 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int childrenCount = children.length;
 		builder.startLevel();//children
 		for(int i = 0; i < children.length; i++){
-			if(children[i] != null)next(children[i]);
-			else childrenCount--;
-			if(notAllowedChild){				
-				builder.endLevel();
-				builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
-				//notAllowedChild = true;
-				emptyChild = false;
-                if(prefixMapping != null) endXmlnsContext(prefixMapping);
-				return;
-			}
-			if(emptyChild){
-				emptyCount++;
-				emptyChild = false;
-			}
+			if(children[i] != null){
+                next(children[i]);
+                if(notAllowedChild){				
+                    builder.endLevel();
+                    builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
+                    //notAllowedChild = true;
+                    emptyChild = false;
+                    if(prefixMapping != null) endXmlnsContext(prefixMapping);
+                    return;
+                }
+                if(emptyChild){
+                    emptyCount++;
+                    emptyChild = false;
+                }
+            }else childrenCount--;			
 		}		
 		if(emptyCount == childrenCount){
 			builder.endLevel();
 			builder.clearContent();//why? Because SRef is built anyway, even if notAllowed or empty.
 			builder.buildText("default text", mixed.getLocation());
 			emptyChild = false;
-			notAllowedChild = false;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
 			return;
 		}		
@@ -1040,8 +1058,6 @@ abstract class Simplifier implements SimplifyingVisitor{
 		builder.endLevel();
 		builder.buildMixed(mixed.getQName(), mixed.getLocation());
 		
-		notAllowedChild = false;
-		emptyChild = false;		
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}	
 	
@@ -1090,9 +1106,9 @@ abstract class Simplifier implements SimplifyingVisitor{
 		index = definitionTopPatterns.size();
 		
 		definitionTopPatterns.add(null);
-		definitionEmptyChild.add(false);
+		definitionEmptyChild.add(false);        
 		definitionNotAllowedChild.add(false);
-		
+        
 		referencePath.push(index);
 		indexes.put(docTopPattern, index);
 		
@@ -1112,7 +1128,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             return;
         }
 		builder.buildRef(index, externalRef.getQName(), externalRef.getLocation());
-        if(prefixMapping != null) endXmlnsContext(prefixMapping);		
+        if(prefixMapping != null) endXmlnsContext(prefixMapping);	
 	}
 	public void visit(Ref ref) throws SAXException{
 		ArrayList<Definition> definitions = getReferencedDefinition(currentGrammar, ref.getName().trim());
@@ -1170,12 +1186,13 @@ abstract class Simplifier implements SimplifyingVisitor{
 			indexes,
 			referencePath,
 			definitionEmptyChild,
-			definitionNotAllowedChild,	
+			definitionNotAllowedChild,
 			recursionModel,			
 			currentGrammar,
 			previousGrammars,
             simplificationContext);
 		
+        ds.setCompatibilityAttributeDefaultValue(true);
 		ds.simplify(definitions);
 		
 		SPattern topPattern = ds.getCurrentPattern();
@@ -1249,12 +1266,13 @@ abstract class Simplifier implements SimplifyingVisitor{
 			indexes,
 			referencePath,
 			definitionEmptyChild,
-			definitionNotAllowedChild,	
+			definitionNotAllowedChild,
 			recursionModel,			
 			currentGrammar,
 			previousGrammars,
             simplificationContext);
 		
+        ds.setCompatibilityAttributeDefaultValue(true);
 		ds.simplify(definitions);
 		
 		SPattern topPattern = ds.getCurrentPattern();
@@ -1266,6 +1284,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		notAllowedChild = ds.getNotAllowedChild();
 		definitionNotAllowedChild.set(index, notAllowedChild);
 		
+        
 		referencePath.pop();
 		
 		if(emptyChild || notAllowedChild){
@@ -1273,7 +1292,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             return;
         }
 		builder.buildRef(index, parentRef.getQName(), parentRef.getLocation());
-        if(prefixMapping != null) endXmlnsContext(prefixMapping);		
+        if(prefixMapping != null) endXmlnsContext(prefixMapping);	
 	}
 	public void visit(Value value) throws SAXException{
         Map<String, String> prefixMapping = value.getXmlns();
@@ -1506,12 +1525,12 @@ abstract class Simplifier implements SimplifyingVisitor{
 			indexes,
 			referencePath,
 			definitionEmptyChild,
-			definitionNotAllowedChild,	
+			definitionNotAllowedChild,
 			recursionModel,			
 			currentGrammar,
 			previousGrammars,
             simplificationContext);
-		
+		ds.setCompatibilityAttributeDefaultValue(true);
 		ds.simplify(start);		
 		
 		notAllowedChild = ds.getNotAllowedChild();
@@ -1545,7 +1564,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = dummy.getChildren();
 		
 		if(children == null) {
-			builder.buildDummy(dummy.getQName(), dummy.getLocation());			
+			builder.buildDummy(dummy.getQName(), dummy.getLocation());
 			return;
 		}
         
@@ -1660,5 +1679,17 @@ abstract class Simplifier implements SimplifyingVisitor{
         for(String prefix : prefixes){
             simplificationContext.endPrefixMapping(prefix);
         }
+    }
+
+    private String getDefaultValue(AttributeInfo[] foreignAttributes){
+        for(AttributeInfo attributeInfo : foreignAttributes){
+            String uri = attributeInfo.getNamespaceURI(); 
+            String ln = attributeInfo.getLocalName();
+            if( uri != null && uri.equals(Constants.DTD_COMPATIBILITY_ANNOTATIONS_NAMESPACE)
+                && ln != null && ln.equals(Constants.DTD_COMPATIBILITY_DEFAULT_VALUE)) 
+            return attributeInfo.getValue();
+        }
+    
+        return null;
     }	
 }
