@@ -125,6 +125,11 @@ public class ContentHandlerPool{
 	int attributeValueHPoolSize;
 	int attributeValueHFree;
 	AttributeValueValidationHandler[] attributeValueH;
+    
+    int defaultVAttributeHAverageUse;
+	int defaultVAttributeHPoolSize;
+	int defaultVAttributeHFree;
+	DefaultValueAttributeValidationHandler[] defaultVAttributeH;
 		
 	int listPatternTAverageUse;
 	int listPatternTPoolSize;
@@ -268,6 +273,11 @@ public class ContentHandlerPool{
 		attributeValueHPoolSize = 1;
 		attributeValueHFree = 0;
 		attributeValueH = new AttributeValueValidationHandler[attributeValueHPoolSize];
+        
+        defaultVAttributeHAverageUse = UNUSED;
+		defaultVAttributeHPoolSize = 1;
+		defaultVAttributeHFree = 0;
+		defaultVAttributeH = new DefaultValueAttributeValidationHandler[defaultVAttributeHPoolSize];
 		
 		listPatternTAverageUse = UNUSED;
 		listPatternTPoolSize = 1;
@@ -362,6 +372,7 @@ public class ContentHandlerPool{
 					AttributeConcurrentHandler[] attributeConcurrentH,
 					CharacterContentValidationHandler[] characterContentH,					
 					AttributeValueValidationHandler[] attributeValueH,
+                    DefaultValueAttributeValidationHandler[] defaultVAttributeH,
 					ListPatternTester[] listPatternT,
 					ExceptPatternTester[] exceptPatternT,
 					BoundElementValidationHandler[] boundElementVH,
@@ -605,6 +616,19 @@ public class ContentHandlerPool{
 		}		
 		System.arraycopy(this.attributeValueH, attributeValueHFree, 
 							attributeValueH, 0, attributeValueHFillCount);
+        
+        int defaultVAttributeHFillCount;
+		if(defaultVAttributeH == null || defaultVAttributeH.length < defaultVAttributeHAverageUse)
+			defaultVAttributeH = new DefaultValueAttributeValidationHandler[defaultVAttributeHAverageUse];		
+		if(defaultVAttributeHFree > defaultVAttributeHAverageUse){
+			defaultVAttributeHFillCount = defaultVAttributeHAverageUse;
+			defaultVAttributeHFree = defaultVAttributeHFree - defaultVAttributeHAverageUse;
+		}else{
+			defaultVAttributeHFillCount = defaultVAttributeHFree;
+			defaultVAttributeHFree = 0;
+		}		
+		System.arraycopy(this.defaultVAttributeH, defaultVAttributeHFree, 
+							defaultVAttributeH, 0, defaultVAttributeHFillCount);
 		
 		int listPatternTFillCount;
 		if(listPatternT == null || listPatternT.length < listPatternTAverageUse)
@@ -750,6 +774,8 @@ public class ContentHandlerPool{
 										characterContentH,
 										attributeValueHFillCount,
 										attributeValueH,
+                                        defaultVAttributeHFillCount,
+										defaultVAttributeH,
 										listPatternTFillCount,
 										listPatternT,
 										exceptPatternTFillCount,
@@ -804,6 +830,8 @@ public class ContentHandlerPool{
 							CharacterContentValidationHandler[] characterContentH,
 							int attributeValueHAverageUse,
 							AttributeValueValidationHandler[] attributeValueH,
+                            int defaultVAttributeHAverageUse,
+							DefaultValueAttributeValidationHandler[] defaultVAttributeH,
 							int listPatternTAverageUse,
 							ListPatternTester[] listPatternT,
 							int exceptPatternTAverageUse,
@@ -1037,6 +1065,19 @@ public class ContentHandlerPool{
 		if(this.attributeValueHAverageUse != 0)this.attributeValueHAverageUse = (this.attributeValueHAverageUse + attributeValueHAverageUse)/2;
 		else this.attributeValueHAverageUse = attributeValueHAverageUse;
 		// System.out.println("vh "+this.attributeValueHAverageUse);
+        
+        
+        if(defaultVAttributeHFree + defaultVAttributeHAverageUse >= defaultVAttributeHPoolSize){			 
+			defaultVAttributeHPoolSize+= defaultVAttributeHAverageUse;
+			DefaultValueAttributeValidationHandler[] increased = new DefaultValueAttributeValidationHandler[defaultVAttributeHPoolSize];
+			System.arraycopy(this.defaultVAttributeH, 0, increased, 0, defaultVAttributeHFree);
+			this.defaultVAttributeH = increased;
+		}
+		System.arraycopy(defaultVAttributeH, 0, this.defaultVAttributeH, defaultVAttributeHFree, defaultVAttributeHAverageUse);
+		defaultVAttributeHFree += defaultVAttributeHAverageUse;
+		if(this.defaultVAttributeHAverageUse != 0)this.defaultVAttributeHAverageUse = (this.defaultVAttributeHAverageUse + defaultVAttributeHAverageUse)/2;
+		else this.defaultVAttributeHAverageUse = defaultVAttributeHAverageUse;
+		// System.out.println("vh "+this.defaultVAttributeHAverageUse);
 		
 		
 		if(listPatternTFree + listPatternTAverageUse >= listPatternTPoolSize){			 

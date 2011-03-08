@@ -129,6 +129,10 @@ public class ValidatorEventHandlerPool implements Reusable{
 	int attributeValueHPoolSize;
 	int attributeValueHFree = 0;
 	AttributeValueValidationHandler[] attributeValueH;
+    
+    int defaultVAttributeHPoolSize;
+	int defaultVAttributeHFree = 0;
+	DefaultValueAttributeValidationHandler[] defaultVAttributeH;
 	
 	int listPatternTPoolSize;
 	int listPatternTFree = 0;
@@ -191,6 +195,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 			attributeConcurrentHFree != 0 ||
 			characterContentHFree != 0 ||
 			attributeValueHFree != 0 ||
+            defaultVAttributeHFree != 0 ||
 			listPatternTFree != 0 ||
 			exceptPatternTFree != 0 ||
 			boundElementVHFree != 0 ||
@@ -227,6 +232,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 						attributeConcurrentH,
 						characterContentH,
 						attributeValueH,
+                        defaultVAttributeH,
 						listPatternT,
 						exceptPatternT,
 						boundElementVH,
@@ -273,6 +279,8 @@ public class ValidatorEventHandlerPool implements Reusable{
 					CharacterContentValidationHandler[] characterContentH,					
 					int attributeValueHFree,
 					AttributeValueValidationHandler[] attributeValueH,
+                    int defaultVAttributeHFree,
+					DefaultValueAttributeValidationHandler[] defaultVAttributeH,
 					int listPatternTFree,
 					ListPatternTester[] listPatternT,
 					int exceptPatternTFree,
@@ -425,6 +433,13 @@ public class ValidatorEventHandlerPool implements Reusable{
 		for(int i = 0; i < attributeValueHFree; i++){	
 			attributeValueH[i].init(this, validationItemLocator, matchHandler);
 		}
+        
+        defaultVAttributeHPoolSize = defaultVAttributeH.length;
+		this.defaultVAttributeHFree = defaultVAttributeHFree;
+		this.defaultVAttributeH = defaultVAttributeH;
+		for(int i = 0; i < defaultVAttributeHFree; i++){	
+			defaultVAttributeH[i].init(this, validationItemLocator, matchHandler);
+		}
 		
 		listPatternTPoolSize = listPatternT.length;
 		this.listPatternTFree = listPatternTFree;
@@ -526,6 +541,8 @@ public class ValidatorEventHandlerPool implements Reusable{
 									characterContentH,
 									attributeValueHFree,
 									attributeValueH,
+                                    defaultVAttributeHFree,
+									defaultVAttributeH,
 									listPatternTFree,
 									listPatternT,
 									exceptPatternTFree,
@@ -1007,6 +1024,28 @@ public class ValidatorEventHandlerPool implements Reusable{
 			attributeValueH = increased;
 		}
 		attributeValueH[attributeValueHFree++] = ach;
+	}
+
+    public DefaultValueAttributeValidationHandler getDefaultValueAttributeValidationHandler(){		
+		if(defaultVAttributeHFree == 0){
+			DefaultValueAttributeValidationHandler dvah = new DefaultValueAttributeValidationHandler(debugWriter);
+			dvah.init(this, validationItemLocator, matchHandler);
+			return dvah;
+		}
+		else{
+			DefaultValueAttributeValidationHandler dvah = defaultVAttributeH[--defaultVAttributeHFree];
+            dvah.init(this, validationItemLocator, matchHandler);			
+			return dvah; 
+		}		
+	}
+		
+	void recycle(DefaultValueAttributeValidationHandler ach){		
+		if(defaultVAttributeHFree == defaultVAttributeHPoolSize){			
+			DefaultValueAttributeValidationHandler[] increased = new DefaultValueAttributeValidationHandler[++defaultVAttributeHPoolSize];
+			System.arraycopy(defaultVAttributeH, 0, increased, 0, defaultVAttributeHFree);
+			defaultVAttributeH = increased;
+		}
+		defaultVAttributeH[defaultVAttributeHFree++] = ach;
 	}
 	
 	ListPatternTester getListPatternTester(List<CharsActiveTypeItem> totalCharsItemMatches, int totalCount, ErrorCatcher errorCatcher){		

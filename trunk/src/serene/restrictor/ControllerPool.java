@@ -19,7 +19,7 @@ package serene.restrictor;
 import serene.validation.handlers.error.ErrorDispatcher;
 import sereneWrite.MessageWriter;
 
-class ControllerPool{
+public class ControllerPool{
 	ContentTypeController[] ctc;
 	int ctcFree;
 	int ctcSize;

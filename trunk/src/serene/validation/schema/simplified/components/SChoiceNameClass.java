@@ -61,6 +61,29 @@ public class SChoiceNameClass extends SNameClass{
 	public void accept(RestrictingVisitor v) throws SAXException{
 		v.visit(this);
 	}
+    
+    public boolean equals(Object o){
+        if(o == null) return false;
+        if(!(o instanceof SChoiceNameClass))return false;
+        SChoiceNameClass other = (SChoiceNameClass)o;
+        SNameClass[] otherChildren = other.getChildren();
+        if(children == null){
+            if(otherChildren != null)return false;
+            else return true;
+        }
+        if(otherChildren == null)return false;
+        
+        for(SNameClass child : children){
+            first:{
+                for(SNameClass otherChild : otherChildren){
+                    if(otherChild.equals(child))break first;
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+    
 	public String toString(){
 		String s = "SChoiceNameClass";
 		if(children != null && children.length != 0){

@@ -86,8 +86,8 @@ public class RRController extends RController{
 	OpenAlternativesHandler openAlternativesHandler;
 	
 	
-	public RRController(ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		super(errorDispatcher, debugWriter);
+	public RRController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
+		super(pool, errorDispatcher, debugWriter);
 		
 		loopElement = new ArrayList<BooleanStack>();
 		loopOptional = new ArrayList<BooleanStack>();
@@ -100,6 +100,7 @@ public class RRController extends RController{
 		
 		openAlternativesHandler = new OpenAlternativesHandler(debugWriter);
 	}
+	
 	
 	public void control(SimplifiedModel simplifiedModel) throws SAXException{
 		init(simplifiedModel);

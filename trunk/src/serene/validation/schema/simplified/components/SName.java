@@ -31,7 +31,7 @@ public class SName extends SNameClass{
 	public SName(String ns, String localPart, String qName, String location, MessageWriter debugWriter){
 		super(qName, location, debugWriter);		
 		this.ns = ns;
-		this.localPart = localPart;		
+		this.localPart = localPart;	
 	}
 		
 	public void accept(SimplifiedComponentVisitor v){
@@ -48,6 +48,42 @@ public class SName extends SNameClass{
 		return localPart;
 	}
 	
+    public boolean equals(Object o){
+        if(o == null) return false;
+        if(!(o instanceof SName)) return false;
+        SName other = (SName)o;
+        String otherNs = other.getNamespaceURI();
+        String otherLocalPart = other.getLocalPart();
+        boolean equalsNs = false;
+        if(ns == null ){
+            if(otherNs != null){
+                return false;
+            }else{
+                equalsNs = true; 
+            }
+        }else{
+            if(otherNs == null){
+                return false;
+            }else{
+                equalsNs = otherNs.equals(ns); 
+            }
+        }
+        
+        if(localPart == null){
+            if(otherLocalPart != null){
+                return false;
+            }else{
+                return equalsNs;
+            }
+        }else{
+            if(otherLocalPart == null){
+                return false;
+            }else{
+                return equalsNs && localPart.equals(otherLocalPart);
+            }
+        }
+    }
+    
 	public String toString(){
 		return "SName "+ns+":"+localPart;
 	}	

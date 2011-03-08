@@ -52,6 +52,7 @@ import org.xml.sax.DTDHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 import org.xml.sax.helpers.XMLReaderFactory;
 import org.xml.sax.helpers.LocatorImpl;
@@ -82,6 +83,9 @@ import serene.bind.BindingModel;
 
 import serene.simplifier.RNGSimplifier;
 import serene.restrictor.RestrictionController;
+import serene.restrictor.ControllerPool;
+
+import serene.dtdcompatibility.CompatibilityHandler;
 
 import serene.validation.DTDMapping;
 
@@ -94,6 +98,9 @@ import serene.validation.schema.simplified.SimplifiedModel;
 import serene.Constants;
 
 import serene.validation.handlers.error.ErrorDispatcher;
+import serene.validation.handlers.error.ValidatorErrorHandlerPool;
+import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
+import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import serene.util.IntStack;
 
@@ -119,7 +126,9 @@ public class RNGSchemaFactory extends SchemaFactory{
 	
 	private RNGSimplifier simplifier;
 	private RestrictionController restrictionController;
+    private CompatibilityHandler compatibilityHandler;
 
+    private boolean level1AttributeDefaultValue;	
 	private boolean replaceMissingDatatypeLibrary;
 	private boolean parsedModelSchema;
 		
@@ -198,8 +207,9 @@ public class RNGSchemaFactory extends SchemaFactory{
 	}
 	
 	private void initDefaultFeatures(){
+		level1AttributeDefaultValue = true;
 		replaceMissingDatatypeLibrary = true;
-		parsedModelSchema = false;	
+		parsedModelSchema = false;
 	}
 	
 	private void initDefaultProperties(){		
@@ -257,13 +267,27 @@ public class RNGSchemaFactory extends SchemaFactory{
 		}		
 		xmlReader.setErrorHandler(errorDispatcher);				
 	}
-	private void createSimplifier(){
-		simplifier = new RNGSimplifier(xmlReader, internalRNGFactory, errorDispatcher, debugWriter);		
+    private void createSimplifier(){
+		simplifier = new RNGSimplifier(xmlReader, internalRNGFactory, errorDispatcher, debugWriter);		  
 		simplifier.setReplaceMissingDatatypeLibrary(replaceMissingDatatypeLibrary);
+        simplifier.setCompatibilityAttributeDefaultValue(level1AttributeDefaultValue);
 	}
 	private void createRestrictionController(){
 		restrictionController = new RestrictionController(errorDispatcher, debugWriter);
 	}
+    private void createCompatibilityHandler(){
+        try{
+            ValidatorErrorHandlerPool vehp = (ValidatorErrorHandlerPool)validatorHandler.getProperty(Constants.ERROR_HANDLER_POOL_PROPERTY);
+            ValidatorEventHandlerPool ehp = (ValidatorEventHandlerPool)validatorHandler.getProperty(Constants.EVENT_HANDLER_POOL_PROPERTY);
+            ValidationItemLocator vil = (ValidationItemLocator)validatorHandler.getProperty(Constants.ITEM_LOCATOR_PROPERTY);
+            ControllerPool cp = (ControllerPool)restrictionController.getProperty(Constants.CONTROLLER_POOL_PROPERTY);
+            compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, vil, errorDispatcher, debugWriter);
+        }catch (SAXNotRecognizedException e) {
+            e.printStackTrace();
+        }catch (SAXNotSupportedException e) {
+            e.printStackTrace();
+        }  
+    }
 	//------------------------------------------------------------------------------------------
 	//START methods of the javax.xml.validation.SchemaFactory  
 	//------------------------------------------------------------------------------------------	
@@ -293,23 +317,32 @@ public class RNGSchemaFactory extends SchemaFactory{
 		if (name == null) {
             throw new NullPointerException();
         }
-		if(name.equals("http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary")){
+		if(name.equals(Constants.REPLACE_MISSING_LIBRARY_FEATURE)){
 			replaceMissingDatatypeLibrary = value;
 			simplifier.setReplaceMissingDatatypeLibrary(value);
 			return;	
-		}else if(name.equals("http://serenerng.org/features/schemaFactory/preserveParsedModel")){
+		}else if(name.equals(Constants.PARSED_MODEL_SCHEMA_FEATURE)){
 			parsedModelSchema = value;
 			return;	
-		}		
+		}else if(name.equals(Constants.LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
+            level1AttributeDefaultValue = value;
+            simplifier.setCompatibilityAttributeDefaultValue(level1AttributeDefaultValue);
+        }
 		throw new IllegalArgumentException("Unknown feature.");
 	}
 	
 	public boolean getFeature(String name){
-		if(name.equals("http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary")){
+		if (name == null) {
+            throw new NullPointerException();
+        }
+		if(name.equals(Constants.REPLACE_MISSING_LIBRARY_FEATURE)){
 			return replaceMissingDatatypeLibrary;
-		}else if(name.equals("http://serenerng.org/features/schemaFactory/preserveParsedModel")){
+		}else if(name.equals(Constants.PARSED_MODEL_SCHEMA_FEATURE)){
 			return parsedModelSchema;
-		}
+		}else if(name.equals(Constants.LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
+            return level1AttributeDefaultValue;
+        }
+        
 		throw new IllegalArgumentException("Unknown feature.");
 	}
 	
@@ -457,12 +490,23 @@ public class RNGSchemaFactory extends SchemaFactory{
 			sm = simplifier.simplify(null, pm);
 		}
 		
-		//apply restrictions
-		if(sm != null) restrictionController.control(sm);
-		
-		//create schema		
+        //create schema		
 		// !!! MUST always return a non-null Schema object, meaningfull or not.
-		RNGSchema schema = new RNGSchema(pm, sm, debugWriter);
+        RNGSchema schema = new RNGSchema(pm, sm, debugWriter);
+        
+		//apply restrictions
+		if(sm != null){ 
+            restrictionController.control(sm);
+            
+            if(level1AttributeDefaultValue){
+                if(compatibilityHandler == null){                
+                    createCompatibilityHandler();                
+                }
+                compatibilityHandler.setCompatibilityAttributeDefaultValue(true);
+                compatibilityHandler.handle(schema);
+            }
+        }
+				
 		return schema;
 	}
 	
@@ -524,13 +568,23 @@ public class RNGSchemaFactory extends SchemaFactory{
 			sm = simplifier.simplify(null, pm);
 		}
 		
-		//apply restrictions
-		if(sm != null) restrictionController.control(sm);
-		else return null;
-		
-		//create schema		
+        //create schema		
 		// !!! MUST always return a non-null Schema object, meaningfull or not.
-		RNGSchema schema = new RNGSchema(pm, sm, debugWriter);
+        RNGSchema schema = new RNGSchema(pm, sm, debugWriter);
+        
+		//apply restrictions
+		if(sm != null){ 
+            restrictionController.control(sm);
+            
+            if(level1AttributeDefaultValue){
+                if(compatibilityHandler == null){                
+                    createCompatibilityHandler();                
+                }
+                compatibilityHandler.setCompatibilityAttributeDefaultValue(true);
+                compatibilityHandler.handle(schema);
+            }
+        }
+					
 		return schema;
 	}
 		

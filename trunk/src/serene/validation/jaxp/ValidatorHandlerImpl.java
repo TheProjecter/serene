@@ -313,9 +313,17 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 
         if (name == null) {
             throw new NullPointerException();
-        }else if(name.equals(DTD_HANDLER_PROPERTY)){
+        }else if(name.equals(Constants.DTD_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
-        }else if(name.equals(DTD_MAPPING_PROPERTY)){
+        }else if(name.equals(Constants.DTD_MAPPING_PROPERTY)){
+            // recognized but not set, only for retrieval
+        }else if(name.equals(Constants.ERROR_HANDLER_POOL_PROPERTY)){
+            // recognized but not set, only for retrieval
+        }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
+            // recognized but not set, only for retrieval
+        }else if(name.equals(Constants.ITEM_LOCATOR_PROPERTY)){
+            // recognized but not set, only for retrieval
+        }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
         }
 
@@ -327,10 +335,18 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 
         if (name == null) {
             throw new NullPointerException();
-        }else if(name.equals(DTD_HANDLER_PROPERTY)){
+        }else if(name.equals(Constants.DTD_HANDLER_PROPERTY)){
             return validationEventContext;
-        }else if(name.equals(DTD_MAPPING_PROPERTY)){
+        }else if(name.equals(Constants.DTD_MAPPING_PROPERTY)){
             return validationEventContext.getDTDMapping();
+        }else if(name.equals(Constants.ERROR_HANDLER_POOL_PROPERTY)){
+            return errorHandlerPool;
+        }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
+            return eventHandlerPool;
+        }else if(name.equals(Constants.ITEM_LOCATOR_PROPERTY)){
+            return validationItemLocator;
+        }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){
+            return matchHandler;
         }
 
         throw new SAXNotRecognizedException(name);

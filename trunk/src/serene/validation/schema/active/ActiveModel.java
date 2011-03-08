@@ -18,6 +18,10 @@ package serene.validation.schema.active;
 
 import org.relaxng.datatype.ValidationContext;
 
+import serene.validation.schema.simplified.components.SElement;
+import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.components.SExceptPattern;
+
 import serene.validation.schema.active.components.AElement;
 
 import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
@@ -90,6 +94,21 @@ public class ActiveModel  implements Reusable{
 		return grammarModel.getStartElement();
 	}
 	
+    public ActiveDefinition getActiveDefinition(SElement selement){
+        int index = grammarModel.getIndex(selement);
+        return grammarModel.getElementDefinition(index);
+    }
+    
+    public ActiveDefinition getActiveDefinition(SAttribute sattribute){
+        int index = grammarModel.getIndex(sattribute);
+        return grammarModel.getAttributeDefinition(index);
+    }
+    
+    public ActiveDefinition getActiveDefinition(SExceptPattern sexceptPattern){
+        int index = grammarModel.getIndex(sexceptPattern);
+        return grammarModel.getExceptPatternDefinition(index);
+    }
+    
 	public ObjectIntHashMap getSElementIndexMap(){
 		return grammarModel.getSElementIndexMap();
 	}
@@ -97,4 +116,16 @@ public class ActiveModel  implements Reusable{
 	public ObjectIntHashMap getSAttributeIndexMap(){
 		return grammarModel.getSAttributeIndexMap();
 	}
+    
+    public ActiveModelStackHandlerPool getStackHandlerPool(){
+        return stackHandlerPool;
+    }
+    
+    public ActiveModelRuleHandlerPool getRuleHandlerPool(){
+        return ruleHandlerPool;
+    }
+    
+    public ActiveGrammarModel getGrammarModel(){
+        return grammarModel;
+    }
 } 

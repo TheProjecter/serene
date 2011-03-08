@@ -16,17 +16,15 @@ limitations under the License.
 
 package serene.internal;
 
-import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 import javax.xml.validation.ValidatorHandler;
-
-//import serene.validation.handlers.ErrorDispatcher;
-
 
 import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.active.ActiveModel;
 import serene.validation.schema.active.ActiveModelPool;
+
+import serene.validation.BaseSchema;
 
 import serene.validation.handlers.content.impl.ContentHandlerPool;
 import serene.validation.handlers.error.ErrorHandlerPool;
@@ -48,7 +46,7 @@ import sereneWrite.MessageWriter;
 //			ValidatorHandler - thread unsafe
 
 
-public class InternalRNGSchema extends Schema{		
+public class InternalRNGSchema extends BaseSchema{		
 	final ParsedModel parsedModel;
 	final SimplifiedModel simplifiedModel;	
 		
@@ -90,4 +88,16 @@ public class InternalRNGSchema extends Schema{
 										queuePool,
 										debugWriter);
 	}
+    
+    public ParsedModel getParsedModel(){
+		return parsedModel;
+	}
+	
+	public SimplifiedModel getSimplifiedModel(){
+		return simplifiedModel;
+	}
+	
+    public ActiveModelPool getActiveModelPool(){
+        return activeModelPool;
+    }
 }

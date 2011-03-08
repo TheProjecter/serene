@@ -204,7 +204,7 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 		if(attributeIndex == attributeSize) increaseAttributeSize();		
 		sattributeIndexMap.put(originalAttribute, attributeIndex);
 		attributeNameClasses[attributeIndex] = nameClassDirector.createActiveNameClass(componentBuilder,
-																	originalAttribute.getNameClass());
+																	originalAttribute.getNameClass());       
 		attributeDefinitions[attributeIndex++] = new ActiveDefinitionPool(originalAttribute.getChildren()[0],
 																	model,
 																	definitionDirector,
@@ -295,6 +295,6 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 	}
 	
 	public void visit(SDummy dummy){
-		throw new IllegalStateException();
+		
 	}
 }

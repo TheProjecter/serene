@@ -45,8 +45,30 @@ public class SNsName extends AbstractWildCard{
 		return ns;
 	}
 	
+
+    public boolean equals(Object o){
+        if(o == null) return false;
+        if(!(o instanceof SNsName))return false;
+        SNsName other = (SNsName)o;
+        String otherNs = other.getNamespaceURI();
+        boolean nsEquals = false;
+        if(ns != null){            
+            if(otherNs != null)nsEquals = ns.equals(otherNs);            
+        }else{
+            if(otherNs == null)nsEquals = true;
+        }
+        SExceptNameClass otherChild = other.getExceptNameClass();        
+        if(child != null){            
+            if(otherChild == null)return false;
+            return nsEquals && child.equals(otherChild);
+        }
+        if(otherChild != null)return false;
+        return nsEquals;        
+    }
+    
+    
 	public String toString(){
-		String s = "SNsName "+ns+" ";
+		String s = "SNsName /"+ns+"/ ";
 		if(child != null){
 			s+= "[";
 			s+= child.toString();

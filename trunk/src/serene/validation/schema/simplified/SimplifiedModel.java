@@ -16,9 +16,12 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.ArrayList;
+
 import org.relaxng.datatype.DatatypeLibrary;
 
 import serene.validation.schema.simplified.components.SPattern;
+import serene.validation.schema.simplified.components.SAttribute;
 
 import sereneWrite.MessageWriter;
 import sereneWrite.SimplifiedComponentWriter;
@@ -29,9 +32,8 @@ public class SimplifiedModel{
 	SPattern[] refDefinitionTopPattern;
 
 	RecursionModel recursionModel;
-	
+    
 	MessageWriter debugWriter;
-	SimplifiedComponentWriter writer;
 	
 	public SimplifiedModel(SPattern[] startTopPattern,
 								SPattern[] refDefinitionTopPattern,
@@ -41,8 +43,6 @@ public class SimplifiedModel{
 		this.startTopPattern = startTopPattern;
 		this.refDefinitionTopPattern = refDefinitionTopPattern;
 		this.recursionModel = recursionModel;
-		
-		writer = new SimplifiedComponentWriter();
 	}
 	
 	public SPattern[] getStartTopPattern(){
@@ -52,12 +52,12 @@ public class SimplifiedModel{
 	public SPattern[] getRefDefinitionTopPattern(){
 		return refDefinitionTopPattern;
 	}
-	
+	    
 	public RecursionModel getRecursionModel(){
 		return recursionModel;
 	}
 	
 	public boolean hasRecursions(){
 		return recursionModel.hasRecursions();
-	}	
+	}
 }

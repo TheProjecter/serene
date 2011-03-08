@@ -39,6 +39,20 @@ public class SAnyName extends AbstractWildCard{
 	public void accept(RestrictingVisitor v) throws SAXException{
 		v.visit(this);
 	}
+    
+    public boolean equals(Object o){
+        if(o == null) return false;
+        if(!(o instanceof SAnyName))return false;
+        SAnyName other = (SAnyName)o;
+        SExceptNameClass otherChild = other.getExceptNameClass();
+        if(child != null){            
+            if(otherChild == null)return false;
+            return child.equals(otherChild);
+        }
+        if(otherChild != null)return false;
+        return true;        
+    }
+    
 	public String toString(){
 		String s = "SAnyName";
 		if(child != null){
