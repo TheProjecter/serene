@@ -29,6 +29,7 @@ import org.apache.xerces.impl.dv.InvalidDatatypeValueException;
 import sereneWrite.MessageWriter;
 
 class XsdDatatype implements Datatype{
+    boolean isContextDependent;
     boolean needsExtraChecking;
     boolean needsFacetChecking;
     boolean needsToNormalize;
@@ -48,6 +49,10 @@ class XsdDatatype implements Datatype{
         needsToNormalize = true;        
     }
     
+    
+    void setContextDependent(boolean value){
+        isContextDependent = value;
+    }
     
     void setNeedsExtraChecking(boolean value){
         needsExtraChecking = value;
@@ -96,7 +101,7 @@ class XsdDatatype implements Datatype{
 	}
 
 	public boolean isContextDependent() {
-		return false;
+		return isContextDependent;
 	}
 
 	public boolean alwaysValid() {
