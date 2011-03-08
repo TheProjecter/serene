@@ -39,15 +39,14 @@ public class XsdLibrary implements DatatypeLibrary{
     SchemaDVFactory xercesFactory;
     XsdValidationContext xsdValidationContext;
     HashMap<String, XsdDatatype> datatypes;
-    // TODO 
-    // map of builders ?
     
 	XsdLibrary(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
         
-        xercesFactory = SchemaDVFactory.getInstance("org.apache.xerces.impl.dv.xs.FullDVFactory");// Make sure you get the Full factory
-        //xercesFactory = SchemaDVFactory.getInstance();        
-        //System.out.println("*****"+xercesFactory);
+        xercesFactory = SchemaDVFactory.getInstance("org.apache.xerces.impl.dv.xs.FullDVFactory");
+        if(xercesFactory == null){
+            xercesFactory = SchemaDVFactory.getInstance();
+        }
         
         xsdValidationContext = new XsdValidationContext(debugWriter);
         
@@ -68,6 +67,8 @@ public class XsdLibrary implements DatatypeLibrary{
                 || typeLocalName.equals("IDREF")
                 ||*/ typeLocalName.equals("ENTITY")
                     || typeLocalName.equals("ENTITIES")) datatype.setNeedsExtraChecking(true);
+            if(typeLocalName.equals("QName")
+                || typeLocalName.equals("NOTATION"))datatype.setContextDependent(true);
             datatypes.put(typeLocalName, datatype);
         }        
         return datatype;
