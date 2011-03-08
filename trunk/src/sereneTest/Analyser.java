@@ -96,8 +96,8 @@ class Analyser{
 		File[] testDirs = new File[testContent.length];
 		for(int i = 0; i < testContent.length; i++){			
 			String fileName = testContent[i].getName();
-			if(testContent[i].isDirectory()){
-				testDirs[i] = testContent[i]; 	
+			if(testContent[i].isDirectory() ){
+				if(!fileName.startsWith("."))testDirs[i] = testContent[i]; 	
 			}else{
 				testFiles[i] = testContent[i];
 			}
@@ -155,7 +155,7 @@ class Analyser{
 		for(int i = 0; i < testContent.length; i++){			
 			String fileName = testContent[i].getName();
 			if(testContent[i].isDirectory()){
-				testDirs[i] = testContent[i]; 	
+				if(!fileName.startsWith(".")) testDirs[i] = testContent[i]; 	
 			}else{
 				testFiles[i] = testContent[i];
 			}

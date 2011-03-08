@@ -188,7 +188,7 @@ class Tester{
 		for(int i = 0; i < content.length; i++){			
 			String fileName = content[i].getName();
 			if(content[i].isDirectory()){
-				if(!fileName.equals("acceptedResults"))test(content[i]);				
+				if(!fileName.equals("acceptedResults") && !fileName.startsWith(".")) test(content[i]);				
 			}else{		
 				if(fileName.equals("schema.rng")){
 					rngFile = content[i]; 
@@ -242,7 +242,7 @@ class Tester{
 		for(int i = 0; i < content.length; i++){			
 			String fileName = content[i].getName();
 			if(content[i].isDirectory()){
-				test(content[i]);				
+				if(!fileName.startsWith(".")) test(content[i]);				
 			}else{		
 				if(fileName.equals("schema.rng")){
 					rngFile = content[i]; 
