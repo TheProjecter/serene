@@ -31,12 +31,13 @@ import org.apache.xerces.impl.dv.SchemaDVFactory;
 import org.apache.xerces.xs.XSObjectList;
 import org.apache.xerces.xs.XSSimpleTypeDefinition;
 
+import serene.Constants;
+
 import sereneWrite.MessageWriter;
 
-public class XsdBuilder implements DatatypeBuilder {
-    final String TARGET_NAMESPACE_NAME = "http://serenerng.org/param/targetNamespace";
+public class XsdBuilder implements DatatypeBuilder {    
     
-    String typeName;
+    String typeLocalName;
     XSSimpleType baseType;
     XSSimpleType restrictedType;    
     
@@ -56,10 +57,10 @@ public class XsdBuilder implements DatatypeBuilder {
     
     MessageWriter debugWriter;
     
-	public XsdBuilder(String typeName, XSSimpleType baseType, SchemaDVFactory xercesFactory, XsdValidationContext xsdValidationContext, MessageWriter debugWriter){
+	public XsdBuilder(String typeLocalName, XSSimpleType baseType, SchemaDVFactory xercesFactory, XsdValidationContext xsdValidationContext, MessageWriter debugWriter){
         
         this.debugWriter = debugWriter;
-        this.typeName = typeName;
+        this.typeLocalName = typeLocalName;
         this.xercesFactory = xercesFactory;
         this.xsdValidationContext = xsdValidationContext;
 		this.baseType = baseType;
@@ -72,7 +73,7 @@ public class XsdBuilder implements DatatypeBuilder {
 	
 	public void addParameter( String name, String value, ValidationContext context )
 			throws DatatypeException {       
-        if(name.equals(TARGET_NAMESPACE_NAME)){
+        if(name.equals(Constants.TARGET_NAMESPACE_NAME)){
             targetNamespace = value;
             return;
         }else if(name.equals("pattern")){
@@ -132,7 +133,7 @@ public class XsdBuilder implements DatatypeBuilder {
         }else
         
         xsdValidationContext.setRngValidationContext(context);//normally the context is needed only for namespaces and entities
-        XSSimpleType typeRestriction = xercesFactory.createTypeRestriction(typeName, targetNamespace, (short)0, baseType, dummyAnnotations);
+        XSSimpleType typeRestriction = xercesFactory.createTypeRestriction(typeLocalName, targetNamespace, (short)0, baseType, dummyAnnotations);
         try{
             typeRestriction.applyFacets(xercesFacets, presentFacets, XSSimpleTypeDefinition.FACET_NONE, xsdValidationContext);
             restrictedType = typeRestriction;
@@ -144,6 +145,14 @@ public class XsdBuilder implements DatatypeBuilder {
 	}	
     
     public Datatype createDatatype() throws DatatypeException{
-        return new XsdDatatype(xsdValidationContext, restrictedType, debugWriter);
+        XsdDatatype datatype = new XsdDatatype(xsdValidationContext, restrictedType, debugWriter); 
+        if(typeLocalName.equals("string")) datatype.setNeedsToNormalize(false);
+            if(/*typeLocalName.equals("ID") 
+                || typeLocalName.equals("IDREF")
+                ||*/ typeLocalName.equals("ENTITY")
+                    || typeLocalName.equals("ENTITIES")) datatype.setNeedsExtraChecking(true);
+            if(typeLocalName.equals("QName")
+                || typeLocalName.equals("NOTATION"))datatype.setContextDependent(true);
+        return datatype;
     }
 }
