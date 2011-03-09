@@ -57,7 +57,7 @@ import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import serene.datatype.ValidationEventContext;
+import serene.DocumentContext;
 
 import serene.util.CharsBuffer;
 import serene.util.SpaceCharsHandler;
@@ -86,7 +86,7 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 	ErrorDispatcher errorDispatcher;
 	ValidationItemLocator validationItemLocator;
 	CharsBuffer charsBuffer;
-	ValidationEventContext validationEventContext;
+	DocumentContext documentContext;
 	
 	ElementEventHandler elementHandler;	
 	ActiveModel activeModel;
@@ -121,8 +121,8 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 		namespacePrefixes = false;
 		prefixNamespaces = new HashMap<String, String>();
 
-        validationEventContext = new ValidationEventContext(debugWriter);
-        eventHandlerPool.setValidationContext(validationEventContext);
+        documentContext = new DocumentContext(debugWriter);
+        eventHandlerPool.setValidationContext(documentContext);
 	}
 	
 	protected void finalize(){		
@@ -179,7 +179,7 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 		if(contentHandler != null) contentHandler.ignorableWhitespace(ch, start, len);
 	}
 	public void startDocument() throws SAXException{
-		validationEventContext.reset();
+		documentContext.reset();
 		validationItemLocator.clear();
 		activeModel = activeModelPool.getActiveModel(validationItemLocator, 
 														errorDispatcher);
@@ -191,7 +191,7 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 		if(contentHandler != null) contentHandler.startDocument();
 	}			
 	public void startPrefixMapping(String prefix, String uri) throws SAXException{
-		validationEventContext.startPrefixMapping(prefix, uri);
+		documentContext.startPrefixMapping(prefix, uri);
 		if(namespacePrefixes){
 			if(prefix.equals("")){
 				defaultNamespace = uri;
@@ -202,7 +202,7 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 		if(contentHandler != null) contentHandler.startPrefixMapping(prefix, uri);
 	}	
 	public void endPrefixMapping(String prefix) throws SAXException{
-		validationEventContext.endPrefixMapping(prefix);		
+		documentContext.endPrefixMapping(prefix);		
 		if(contentHandler != null) contentHandler.endPrefixMapping(prefix);
 	}	
 	public void setDocumentLocator(Locator locator){
@@ -336,9 +336,9 @@ class ValidatorHandlerImpl extends ValidatorHandler{
         if (name == null) {
             throw new NullPointerException();
         }else if(name.equals(Constants.DTD_HANDLER_PROPERTY)){
-            return validationEventContext;
+            return documentContext;
         }else if(name.equals(Constants.DTD_MAPPING_PROPERTY)){
-            return validationEventContext.getDTDMapping();
+            return documentContext.getDTDMapping();
         }else if(name.equals(Constants.ERROR_HANDLER_POOL_PROPERTY)){
             return errorHandlerPool;
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){

@@ -14,24 +14,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.simplifier;
 
+import serene.DocumentContext;
+import serene.PrefixMapping;
 import serene.DTDMapping;
-
-import serene.validation.schema.parsed.ParsedModel;
-import serene.validation.schema.parsed.Pattern;
-import serene.validation.schema.parsed.Grammar;
+import serene.NotationDeclaration;
+import serene.EntityDeclaration;
 
 import sereneWrite.MessageWriter;
- 
-class IncludedParsedModel extends ParsedModel{
-	Grammar grammar;
-	IncludedParsedModel(DTDMapping dtdMapping, Grammar topPattern, MessageWriter debugWriter){		
-		super(dtdMapping, topPattern, debugWriter);
-        this.grammar = topPattern;
+
+class DocumentSimplificationContext extends DocumentContext{
+  	
+    DocumentSimplificationContext(MessageWriter debugWriter){
+		super(debugWriter);
 	}
+    	
+    void setDTDMapping(DTDMapping dtdMapping){
+        this.dtdMapping = dtdMapping;
+    }
     
-    public Grammar getTopPattern(){
-        return grammar;
-    }    
+    void merge(DTDMapping dtdMapping){
+        if(this.dtdMapping == null) this.dtdMapping = dtdMapping; 
+        this.dtdMapping.merge(dtdMapping);
+    }
+        
+    public String toString(){
+        return"DocumentSimplificationContext ";
+    }
 }

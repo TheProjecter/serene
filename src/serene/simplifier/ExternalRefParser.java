@@ -40,7 +40,7 @@ import serene.bind.ElementTask;
 import serene.bind.BindingPool;
 import serene.bind.BindingModel;
 
-import serene.validation.DTDMapping;
+import serene.DTDMapping;
 
 import serene.validation.schema.parsed.ParsedModel;
 

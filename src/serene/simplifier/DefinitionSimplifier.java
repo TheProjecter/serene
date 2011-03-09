@@ -92,7 +92,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 			RecursionModel recursionModel,			
 			Grammar currentGrammar,
 			Stack<Grammar> previousGrammars,
-            SimplificationEventContext simplificationContext){
+            DocumentSimplificationContext simplificationContext){
 		this.grammarDefinitions = grammarDefinitions;	
 		this.externalRefs = externalRefs;
 		this.docParsedModels = docParsedModels;	

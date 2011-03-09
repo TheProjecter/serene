@@ -92,7 +92,7 @@ public class RNGSimplifier extends Simplifier{
 		inclusionPath = new Stack<URI>();
 		mapper = new Mapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, debugWriter);
         
-        simplificationContext = new SimplificationEventContext(debugWriter);
+        simplificationContext = new DocumentSimplificationContext(debugWriter);
 	}
 	
 	public void setReplaceMissingDatatypeLibrary(boolean value){

@@ -45,7 +45,7 @@ import serene.validation.handlers.match.MatchHandler;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import serene.datatype.ValidationEventContext;
+import serene.DocumentContext;
 
 import serene.util.CharsBuffer;
 import serene.util.SpaceCharsHandler;
@@ -79,7 +79,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	ErrorDispatcher errorDispatcher;
 	ValidationItemLocator validationItemLocator;
 	CharsBuffer charsBuffer;
-	ValidationEventContext validationEventContext;
+	DocumentContext documentContext;
 	
 	ElementEventHandler elementHandler;	
 	ActiveModel activeModel;
@@ -119,8 +119,8 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		errorHandlerPool.fill(errorDispatcher);
 		eventHandlerPool.fill(spaceHandler, matchHandler, validationItemLocator, errorHandlerPool);
 		
-		validationEventContext = new ValidationEventContext(debugWriter);
-        eventHandlerPool.setValidationContext(validationEventContext);
+		documentContext = new DocumentContext(debugWriter);
+        eventHandlerPool.setValidationContext(documentContext);
 		
 		this.bindingModel = bindingModel;
 		this.queuePool = queuePool;		
@@ -170,7 +170,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	public void skippedEntity(String name){}	
 	public void ignorableWhitespace(char[] ch, int start, int len){}
 	public void startDocument(){
-		validationEventContext.reset();
+		documentContext.reset();
 		validationItemLocator.clear();
 		activeModel = activeModelPool.getActiveModel(validationItemLocator, 
 													errorDispatcher);
@@ -188,11 +188,11 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		//to the Simplifier. This needs reviewing. 		
 	}			
 	public void startPrefixMapping(String prefix, String uri){
-		validationEventContext.startPrefixMapping(prefix, uri);
+		documentContext.startPrefixMapping(prefix, uri);
 		xmlnsBinder.bind(queue, prefix, uri);
 	}	
 	public void endPrefixMapping(String prefix){
-		validationEventContext.endPrefixMapping(prefix);
+		documentContext.endPrefixMapping(prefix);
 	}	
 	public void setDocumentLocator(Locator locator){
 		this.locator = locator;
@@ -276,9 +276,9 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
         if (name == null) {
             throw new NullPointerException();
         }else if(name.equals(Constants.DTD_HANDLER_PROPERTY)){
-            return validationEventContext;
+            return documentContext;
         }else if(name.equals(Constants.DTD_MAPPING_PROPERTY)){
-            return validationEventContext.getDTDMapping();
+            return documentContext.getDTDMapping();
         }else if(name.equals(Constants.ERROR_HANDLER_POOL_PROPERTY)){
             return errorHandlerPool;
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){

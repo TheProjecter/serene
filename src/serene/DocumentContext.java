@@ -15,66 +15,64 @@ limitations under the License.
 */
 
 
-package serene.simplifier;
+package serene;
 
+import org.xml.sax.DTDHandler;
 import org.relaxng.datatype.ValidationContext;
-
-import serene.validation.PrefixMapping;
-import serene.validation.DTDMapping;
-import serene.validation.NotationDeclaration;
-import serene.validation.EntityDeclaration;
+import serene.dtdcompatibility.InfosetModificationContext;
 
 import sereneWrite.MessageWriter;
 
-class SimplificationEventContext implements  ValidationContext{
+public class DocumentContext implements  ValidationContext, InfosetModificationContext, DTDHandler{
     
-	boolean isBaseURISet; 
-	String baseURI;
+	protected boolean isBaseURISet; 
+	protected String baseURI;
     
-	PrefixMapping prefixMapping;
-    DTDMapping dtdMapping;
+	protected PrefixMapping prefixMapping;
+    protected DTDMapping dtdMapping;
     
-	MessageWriter debugWriter;	
+	protected MessageWriter debugWriter;	
 	
-    SimplificationEventContext(MessageWriter debugWriter){
+    public DocumentContext(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		isBaseURISet = false;
         
         prefixMapping = new PrefixMapping(debugWriter);
+        dtdMapping = new DTDMapping(debugWriter);		
 	}
     	
     public void reset(){
         isBaseURISet = false;
         baseURI = null;
-                
-        prefixMapping = prefixMapping.reset();//only needed when revious topPattern was not grammar, the rest are clean
-        if(dtdMapping != null) dtdMapping.reset();
+              
+        prefixMapping = prefixMapping.reset();
+        dtdMapping.reset();
     }
         
-    void setDTDMapping(DTDMapping dtdMapping){
-        this.dtdMapping = dtdMapping;
-    }
+    // start DTDHandler
+    public void unparsedEntityDecl(String entityName, String publicId, String systemId, String notationName){
+		dtdMapping.unparsedEntityDecl(entityName, publicId, systemId, notationName);
+	}
+	
+    public void notationDecl(String notationName, String publicId, String systemId){
+		dtdMapping.notationDecl(notationName, publicId, systemId);
+	} 
+    // end DTDHandler
     
-    DTDMapping getDTDMapping(){
-        return dtdMapping;
-    }
-    
-    void merge(DTDMapping dtdMapping){
-        if(this.dtdMapping == null) this.dtdMapping = dtdMapping; 
-        this.dtdMapping.merge(dtdMapping);
-    }
-    
-	PrefixMapping getPrefixMapping(){
+	public PrefixMapping getPrefixMapping(){
 		return prefixMapping;
 	}
 	
-	
+	public DTDMapping getDTDMapping(){
+		return dtdMapping;
+	}
+    
 	public void startPrefixMapping(String prefix, String uri){
-		prefixMapping = prefixMapping.startMapping(prefix, uri);
+		prefixMapping = prefixMapping.startMapping(prefix, uri);	
 	}
 	
-	public void endPrefixMapping(String prefix){        
-		prefixMapping = prefixMapping.endMapping(prefix);
+	public void endPrefixMapping(String prefix){
+		prefixMapping = prefixMapping.endMapping(prefix);	
 	}
 	
 	public void setBaseURI(String baseURI){
@@ -85,6 +83,8 @@ class SimplificationEventContext implements  ValidationContext{
     public boolean isBaseURISet(){
         return isBaseURISet;
     }
+    
+    // start ValidationContext
     public String getBaseUri(){
 		return baseURI;
 	}
@@ -99,9 +99,16 @@ class SimplificationEventContext implements  ValidationContext{
 	
 	public String resolveNamespacePrefix(String prefix){
 		return prefixMapping.getURI(prefix);
-	}
-        
+	} 
+    // end ValidationContext
+    
+    // start InfosetModificationContext    
+    public String getPrefix(String uri){
+        return prefixMapping.getPrefix(uri);
+    }
+    // end InfosetModificationContext
+    
     public String toString(){
-        return"SimplificationEventContext ";
+        return"ValidationEventContext ";
     }
 }

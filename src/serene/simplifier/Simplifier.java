@@ -146,7 +146,7 @@ abstract class Simplifier implements SimplifyingVisitor{
     Stack<ArrayList<Param>> paramStack;
     ArrayList<Param> currentParams;
     
-    SimplificationEventContext simplificationContext;
+    DocumentSimplificationContext simplificationContext;
 	
 	DefinitionSimplifierPool pool;
 	SimplifiedComponentBuilder builder;

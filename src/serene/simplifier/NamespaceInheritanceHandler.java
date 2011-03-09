@@ -53,11 +53,11 @@ class NamespaceInheritanceHandler{
 		return nsInheritanceHandler.getURI(component);
 	}
 	
-	void startXmlnsContext(SimplificationEventContext simplificationContext, Definition definition){				
+	void startXmlnsContext(DocumentSimplificationContext simplificationContext, Definition definition){				
 		definitionStartXmlnsContextHandler.handle(simplificationContext, definition);
 	}
     
-    void endXmlnsContext(SimplificationEventContext simplificationContext, Definition definition){				
+    void endXmlnsContext(DocumentSimplificationContext simplificationContext, Definition definition){				
 		definitionEndXmlnsContextHandler.handle(simplificationContext, definition);
 	}
 }

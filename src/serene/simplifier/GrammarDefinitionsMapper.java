@@ -38,7 +38,7 @@ import serene.datatype.MissingLibraryException;
 
 import serene.internal.InternalRNGFactory;
 
-import serene.validation.DTDMapping;
+import serene.DTDMapping;
 
 import serene.validation.schema.parsed.ParsedComponent;
 import serene.validation.schema.parsed.SimplifyingVisitor;
@@ -119,7 +119,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	
 	boolean replaceMissingDatatypeLibrary;
     
-    SimplificationEventContext simplificationContext;
+    DocumentSimplificationContext simplificationContext;
 	
 	ErrorDispatcher errorDispatcher;
 	
@@ -152,7 +152,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			Stack<URI> inclusionPath,
 			Map<ParsedComponent, String> componentAsciiDL,
 			Map<String, DatatypeLibrary> asciiDlDatatypeLibrary,
-            SimplificationEventContext simplificationContext) throws SAXException{
+            DocumentSimplificationContext simplificationContext) throws SAXException{
 		this.grammarDefinitions = grammarDefinitions;	
 		this.definitionExternalRefs = definitionExternalRefs;	
 		this.inclusionPath = inclusionPath;

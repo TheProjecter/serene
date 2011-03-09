@@ -17,7 +17,7 @@ limitations under the License.
 
 package serene.validation.schema.parsed;
 
-import serene.validation.DTDMapping;
+import serene.DTDMapping;
 
 import sereneWrite.MessageWriter;
  
