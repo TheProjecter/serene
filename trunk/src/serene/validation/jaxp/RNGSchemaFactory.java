@@ -87,7 +87,7 @@ import serene.restrictor.ControllerPool;
 
 import serene.dtdcompatibility.CompatibilityHandler;
 
-import serene.validation.DTDMapping;
+import serene.DTDMapping;
 
 import serene.validation.schema.parsed.ParsedComponentBuilder;
 import serene.validation.schema.parsed.ParsedModel;
