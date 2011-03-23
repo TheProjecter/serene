@@ -121,7 +121,8 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 		
 		start.accept(this);
 		for(SPattern refDefTop : refDefTops){
-			refDefTop.accept(this);
+			if(refDefTop != null)//check for empty or notAllowed, the place was created anyway  
+                refDefTop.accept(this);
 		}
 				
 		model.init(startElement, 
