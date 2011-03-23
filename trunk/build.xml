@@ -16,7 +16,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<project name="Serene.0.5" default="default">
+<project name="Serene.0.5.1" default="default">
+    <property name="datatype.dir" value="./src/org"/>
     <property name="source.dir" value="./src"/>
 	<property name="build.dir" value="./build"/>
     <property name="buildClasses.dir" value="./build/classes"/>
@@ -28,6 +29,7 @@ limitations under the License.
     <property name="rngDatatypeJar.file" value="./lib/ext/relaxngDatatype.jar"/>
     
  
+  
 
     <!--
     ****************************************************************************
@@ -49,7 +51,12 @@ limitations under the License.
     
     <target name="compile" depends="prepare" description="Compile ${source.dir} into ${buildClasses.dir}.">
         <echo>Compiling all...</echo>
-        <javac srcdir="${source.dir}" destdir="${buildClasses.dir}" classpath="${xercesJar.file};${rngDatatypeJar.file}" includeAntRuntime="false">
+        <javac srcdir="${source.dir}" excludes="${datatype.dir}/**"
+                destdir="${buildClasses.dir}" 
+                classpath="${xercesJar.file};${rngDatatypeJar.file}" 
+                includeAntRuntime="false"
+                debug="true"
+                debuglevel="lines,source">
            <!-- <compilerarg value="-Xlint"/>-->
         </javac>
     </target>
@@ -177,6 +184,16 @@ limitations under the License.
         <java jar="${intLib.dir}/sereneTest.jar" fork="true">
             <arg value="a"/>
             <arg value="testSuite"/>
+        </java>
+    </target>
+    
+    <target name="currentTest" depends="packSereneWrite, packSerene, packSereneTest" description="Builds the entire project and runs the sereneTest.Driver on the testSuite/ with the regression analysis option on.">        
+        <delete dir="${build.dir}"/>
+        <echo>This was the test build.</echo>
+        <echo>Running the current test.</echo>
+        <java jar="${intLib.dir}/sereneTest.jar" fork="true">
+            <arg value="a"/>
+            <arg value="currentTestCase/testSuite/test"/>
         </java>
     </target>
 </project>

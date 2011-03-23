@@ -28,7 +28,7 @@
                classpath="../lib/ext/relaxngDatatype.jar;../lib/int/serene.jar" 
                includeAntRuntime="false"
                debug="true"
-               debugLevel="lines, vars, source">
+               debugLevel="lines,source">
             <compilerarg value="-Xlint"/>
         </javac>
     </target>
@@ -37,7 +37,7 @@
         <echo>Packing samples...</echo>
         <jar destfile="${lib.dir}/samples.jar" basedir="${build.dir}">
             <manifest>
-                <attribute name="Class-Path" value="../../lib/ext/relaxngDatatype.jar ../../lib/int/serene.jar "/>
+                <attribute name="Class-Path" value="../../lib/ext/xml-apis.jar ../../lib/ext/xercesImpl.jar ../../lib/ext/relaxngDatatype.jar ../../lib/int/serene.jar "/>
             </manifest>
         </jar>
         <delete dir="${build.dir}"/>
