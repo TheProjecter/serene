@@ -1,0 +1,5 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\restrictions\start715\inGrammar\value\schema.rng
+
+null:-1:-1 Restrictions 7.1.5 error. Element <rng:value> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/restrictions/start715/inGrammar/value/schema.rng:5:33 is not expected as start of the schema.

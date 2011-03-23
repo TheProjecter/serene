@@ -1074,7 +1074,7 @@ public class RController implements RestrictingVisitor{
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+empty.getQName()+"> at "+empty.getLocation()+" is not expected as start of the schema.";
+			+"The start of schema <"+empty.getQName()+"> at "+empty.getLocation()+" is not expected to result in an <empty> component.";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
