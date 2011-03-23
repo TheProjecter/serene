@@ -22,17 +22,17 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Entity;
 import org.w3c.dom.Notation;
 import org.w3c.dom.DocumentType;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Attr;
+
 
 import org.xml.sax.ErrorHandler;
-import org.xml.sax.DTDHandler;
 import org.xml.sax.XMLReader;
+import org.xml.sax.DTDHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
-import org.xml.sax.helpers.AttributesImpl;
-import org.xml.sax.helpers.LocatorImpl;
+
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.IOException;
@@ -46,7 +46,6 @@ import javax.xml.XMLConstants;
 
 import javax.xml.validation.Validator;
 import javax.xml.validation.ValidatorHandler;
-import javax.xml.validation.Schema;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Result;
@@ -84,17 +83,16 @@ import serene.Constants;
 import sereneWrite.MessageWriter;
 
 
-class ValidatorImpl extends Validator{
+class ValidatorImpl extends Validator{    
 	LSResourceResolver lsResourceResolver;
 	
 	ErrorDispatcher errorDispatcher;
 	
 	MessageWriter debugWriter;
 	
-	Schema schema;
 	ValidatorHandler validatorHandler;
 	
-	DOMHandler domHandler;
+    DOMHandler domHandler;
     DOMAugmentingHandler domAugmentingHandler;
     DOMBuildingHandler domBuildingHandler;
 
@@ -104,14 +102,79 @@ class ValidatorImpl extends Validator{
     
 	TransformerHandler identityTransformerHandler;
 	
-	ValidatorImpl(Schema schema, MessageWriter debugWriter){
-		this.schema = schema;
+    boolean secureProcessing;
+    boolean namespacePrefixes;
+    boolean level1AttributeDefaultValue;
+    boolean level2AttributeDefaultValue;
+    
+    
+    //boolean defaultSecureProcessing; can't be changed anyway
+    boolean defaultNamespacePrefixes;
+    //boolean defaultLevel1AttributeDefaultValue; can't be changed anyway
+    boolean defaultLevel2AttributeDefaultValue;
+    
+	ValidatorImpl(boolean secureProcessing,                            
+                    boolean namespacePrefixes,
+                    boolean level1AttributeDefaultValue,
+                    boolean level2AttributeDefaultValue,
+                    ValidatorHandler validatorHandler, 
+                    MessageWriter debugWriter){
 		this.debugWriter = debugWriter;		
+        
+        this.secureProcessing = secureProcessing;
+        this.namespacePrefixes = namespacePrefixes; 
+        this.level1AttributeDefaultValue = level1AttributeDefaultValue;
+        this.level2AttributeDefaultValue = level2AttributeDefaultValue;
 		
-		validatorHandler = schema.newValidatorHandler();
+        
+        //defaultSecureProcessing = secureProcessing;
+        defaultNamespacePrefixes = namespacePrefixes;
+        //defaultLevel1AttributeDefaultValue = level1AttributeDefaultValue;
+        defaultLevel2AttributeDefaultValue = level2AttributeDefaultValue;
+        
+		this.validatorHandler = validatorHandler;
+        
 		errorDispatcher = new ErrorDispatcher(debugWriter);
+        
+        validatorHandler.setErrorHandler(errorDispatcher);
 	}
 	
+    public void reset(){
+        try{
+            validatorHandler.setFeature(Constants.NAMESPACES_PREFIXES_SAX_FEATURE, defaultNamespacePrefixes);
+            validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE, defaultLevel2AttributeDefaultValue);
+        }catch(SAXNotRecognizedException e){
+            e.printStackTrace();
+        }catch(SAXNotSupportedException e){
+            e.printStackTrace();
+        }
+	}
+    
+    public void setFeature(String name, boolean value) throws SAXNotRecognizedException, SAXNotSupportedException{
+        if (name == null) {
+            throw new NullPointerException();
+        }else if(name.equals(Constants.NAMESPACES_PREFIXES_SAX_FEATURE)){
+            namespacePrefixes = value;  
+        }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
+            level2AttributeDefaultValue = value;                        
+        }else{
+            throw new SAXNotRecognizedException(name);
+        }
+        validatorHandler.setFeature(name, value);
+    }
+    
+    public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException{
+        if (name == null) {
+            throw new NullPointerException();
+        }else if(name.equals(Constants.NAMESPACES_PREFIXES_SAX_FEATURE)){
+            return namespacePrefixes;  
+        }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
+            return level2AttributeDefaultValue;
+        }else{
+            throw new SAXNotRecognizedException(name);
+        }        
+    }
+    
 	public ErrorHandler getErrorHandler(){
 		return errorDispatcher.getErrorHandler();
 	}
@@ -145,26 +208,23 @@ class ValidatorImpl extends Validator{
 	}
 	
 	public void validate(Source source, Result result) throws SAXException, IOException{
-		if(source == null){
-			throw new NullPointerException();
-		}else if(source instanceof SAXSource){
+		if(source == null)throw new NullPointerException();        
+        if(result == null){
+			validate(source);
+			return;
+		}
+        
+        if(source instanceof SAXSource){
 			validate((SAXSource)source, result);
 		}else if(source instanceof DOMSource){
 			validate((DOMSource)source, result);
 		}else if(source instanceof StreamSource){
-			validate((StreamSource)source);
+			validate((StreamSource)source, result);
 		}else if(source instanceof StAXSource){
 			validate((StAXSource)source, result);
 		}else{
 			throw new IllegalArgumentException();
 		}
-	}
-	
-	public void reset(){
-		validatorHandler = null;
-		lsResourceResolver = null;
-		
-		errorDispatcher = new ErrorDispatcher(debugWriter);
 	}
 	
 	public void validate(SAXSource source, Result result) throws SAXException, IOException{
@@ -261,11 +321,25 @@ class ValidatorImpl extends Validator{
                 }
                 // create handler and validate
                 if(xmlStreamWriter != null){
-                    if(stAXStreamBuildingHandler == null) stAXStreamBuildingHandler = new StAXStreamBuildingHandler(debugWriter);
-                    stAXStreamBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlStreamReader, xmlStreamWriter);
+                    if(level2AttributeDefaultValue){                        
+                        if(stAXStreamBuildingHandler == null) stAXStreamBuildingHandler = new StAXStreamBuildingHandler(debugWriter);
+                        stAXStreamBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
+                        stAXStreamBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlStreamReader, xmlStreamWriter);
+                        stAXStreamBuildingHandler.setLevel2AttributeDefaultValue(false);
+                    }else{
+                        if(stAXStreamBuildingHandler == null) stAXStreamBuildingHandler = new StAXStreamBuildingHandler(debugWriter);
+                        stAXStreamBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlStreamReader, xmlStreamWriter);                        
+                    }
                 }else{
-                    if(stAXEventBuildingHandler == null) stAXEventBuildingHandler = new StAXEventBuildingHandler(debugWriter);
-                    stAXEventBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlStreamReader, xmlEventWriter);
+                    if(level2AttributeDefaultValue){
+                        if(stAXEventBuildingHandler == null) stAXEventBuildingHandler = new StAXEventBuildingHandler(debugWriter);
+                        stAXEventBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
+                        stAXEventBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlStreamReader, xmlEventWriter);
+                        stAXEventBuildingHandler.setLevel2AttributeDefaultValue(false);
+                    }else{
+                        if(stAXEventBuildingHandler == null) stAXEventBuildingHandler = new StAXEventBuildingHandler(debugWriter);
+                        stAXEventBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlStreamReader, xmlEventWriter);
+                    }
                 }                
              }catch(XMLStreamException e){
                  throw new SAXException(e);
@@ -282,11 +356,25 @@ class ValidatorImpl extends Validator{
                  }
                  // create handler and validate
                 if(xmlStreamWriter != null){
-                    if(stAXStreamBuildingHandler == null) stAXStreamBuildingHandler = new StAXStreamBuildingHandler(debugWriter);
-                    stAXStreamBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlEventReader, xmlStreamWriter);
+                    if(level2AttributeDefaultValue){
+                        if(stAXStreamBuildingHandler == null) stAXStreamBuildingHandler = new StAXStreamBuildingHandler(debugWriter);
+                        stAXStreamBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);                        
+                        stAXStreamBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlEventReader, xmlStreamWriter);
+                        stAXStreamBuildingHandler.setLevel2AttributeDefaultValue(false);
+                    }else{                        
+                        if(stAXStreamBuildingHandler == null) stAXStreamBuildingHandler = new StAXStreamBuildingHandler(debugWriter);
+                        stAXStreamBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlEventReader, xmlStreamWriter);
+                    }
                 }else{
-                    if(stAXEventBuildingHandler == null) stAXEventBuildingHandler = new StAXEventBuildingHandler(debugWriter);
-                    stAXEventBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlEventReader, xmlEventWriter);
+                    if(level2AttributeDefaultValue){
+                        if(stAXEventBuildingHandler == null) stAXEventBuildingHandler = new StAXEventBuildingHandler(debugWriter);
+                        stAXEventBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
+                        stAXEventBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlEventReader, xmlEventWriter);
+                        stAXEventBuildingHandler.setLevel2AttributeDefaultValue(false);
+                    }else{
+                        if(stAXEventBuildingHandler == null) stAXEventBuildingHandler = new StAXEventBuildingHandler(debugWriter);
+                        stAXEventBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlEventReader, xmlEventWriter);
+                    }
                 }
              }catch(XMLStreamException e){
                  throw new SAXException(e);
@@ -331,7 +419,6 @@ class ValidatorImpl extends Validator{
          }
 	}
 	
-	
     public void validate(DOMSource source, Result result) throws SAXException, IOException{
         if(source == null)throw new NullPointerException();
         if(result == null)validate(source);
@@ -349,8 +436,15 @@ class ValidatorImpl extends Validator{
         String systemId = source.getSystemId();
         
         if(resultNode == sourceNode){
-            if(domHandler == null) domHandler = new DOMHandler(debugWriter);
-            domHandler.handle(systemId, validatorHandler, sourceNode);
+            if(level2AttributeDefaultValue){
+                if(domAugmentingHandler == null) domAugmentingHandler = new DOMAugmentingHandler(debugWriter);
+                domAugmentingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
+                domAugmentingHandler.handle(systemId, validatorHandler, sourceNode, resultNode);
+                domAugmentingHandler.setLevel2AttributeDefaultValue(false);
+            }else{
+                if(domHandler == null) domHandler = new DOMHandler(debugWriter);
+                domHandler.handle(systemId, validatorHandler, sourceNode);
+            }
         }else{
             if(resultNode == null){
                 try{
@@ -364,7 +458,9 @@ class ValidatorImpl extends Validator{
                 }
             }            
             if(domBuildingHandler == null) domBuildingHandler = new DOMBuildingHandler(debugWriter);
+            if(level2AttributeDefaultValue) domBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
             domBuildingHandler.handle(systemId, validatorHandler, sourceNode, resultNode);
+            if(level2AttributeDefaultValue) domBuildingHandler.setLevel2AttributeDefaultValue(false);
         }    
 	}
     
@@ -379,7 +475,8 @@ class ValidatorImpl extends Validator{
         if(domHandler == null) domHandler = new DOMHandler(debugWriter);
         domHandler.handle(systemId, validatorHandler, node);        
 	}
-		   
+		
+    
     
 	
 	private void createTransformerHandler(){

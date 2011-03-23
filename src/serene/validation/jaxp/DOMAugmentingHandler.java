@@ -36,6 +36,9 @@ import org.xml.sax.helpers.LocatorImpl;
 import javax.xml.XMLConstants;
 import javax.xml.validation.ValidatorHandler;
 
+import serene.dtdcompatibility.InfosetModificationHandler;
+import serene.dtdcompatibility.InfosetModificationModel;
+
 import serene.util.IntStack;
 
 import serene.DocumentContext;
@@ -48,11 +51,24 @@ class DOMAugmentingHandler extends DOMHandler{
     Element currentElement;
     Document resultDocument;
     
+    InfosetModificationHandler infosetModificationHandler;
+    boolean level2AttributeDefaultValue;
+    
+    DocumentContext documentContext;
+    
     DOMAugmentingHandler(MessageWriter debugWriter){
         super(debugWriter);
     }    
     
-	void handle(String systemId, ValidatorHandler validatorHandler, Node sourceNode, Node resultNode) throws SAXException{        
+    void setLevel2AttributeDefaultValue(boolean level2AttributeDefaultValue){
+        this.level2AttributeDefaultValue = level2AttributeDefaultValue;
+    }
+    
+	void handle(String systemId, ValidatorHandler validatorHandler, Node sourceNode, Node resultNode) throws SAXException{
+        infosetModificationHandler = (InfosetModificationHandler)validatorHandler.getProperty(Constants.INFOSET_MODIFICATION_HANDLER_PROPERTY);
+        if(level2AttributeDefaultValue && infosetModificationHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
+        documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
+        
         // TODO
         // What if the result has null node? It will throw some NullPointerException
         currentElement = null;                
@@ -97,5 +113,10 @@ class DOMAugmentingHandler extends DOMHandler{
         handleAttributes(attrs); // fires startPrefixMapping and add copies to currentElement
         
         validatorHandler.startElement(namespaceURI, localName, qName, attributes);
+                
+        if(level2AttributeDefaultValue){
+            infosetModificationHandler.modify(namespaceURI, localName, (Element)element, attrs, documentContext);
+        }
+        
     }
 }

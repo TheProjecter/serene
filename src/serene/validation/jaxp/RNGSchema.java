@@ -20,23 +20,11 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 import javax.xml.validation.ValidatorHandler;
 
-import serene.validation.BaseSchema;
+import serene.BaseSchema;
+import serene.SchemaModel;
 
-import serene.validation.schema.parsed.ParsedModel;
-import serene.validation.schema.simplified.SimplifiedModel;
-import serene.validation.schema.active.ActiveModel;
-import serene.validation.schema.active.ActiveModelPool;
-
-import serene.validation.handlers.content.impl.ContentHandlerPool;
-import serene.validation.handlers.error.ErrorHandlerPool;
-
-
-import serene.bind.BindingModel;
-import serene.bind.Queue;
-import serene.bind.ValidatorQueuePool;
 
 import sereneWrite.MessageWriter;
-
 
 //SPECIFICATION
 //	thread safe(should be shared across parsers and threads)
@@ -49,51 +37,41 @@ import sereneWrite.MessageWriter;
 
 
 public class RNGSchema extends BaseSchema{		
-	protected final ParsedModel parsedModel;
-	protected final SimplifiedModel simplifiedModel;	
-		
-	protected ActiveModelPool activeModelPool;
-		
-	protected ContentHandlerPool contentHandlerPool;	
-	protected ErrorHandlerPool errorHandlerPool;
-		
-	protected MessageWriter debugWriter;
-	
-	public RNGSchema(ParsedModel parsedModel,
-					SimplifiedModel simplifiedModel,
-					MessageWriter debugWriter){		
-		this.debugWriter = debugWriter;
-		this.parsedModel = parsedModel;		
-		this.simplifiedModel = simplifiedModel;
-		if(simplifiedModel == null)throw new NullPointerException();
-		
-		contentHandlerPool = ContentHandlerPool.getInstance(debugWriter);
-		errorHandlerPool = ErrorHandlerPool.getInstance(debugWriter);
-		
-		activeModelPool = new ActiveModelPool(simplifiedModel, debugWriter);
+	   
+	boolean namespacePrefixes;
+    boolean level1AttributeDefaultValue;
+    boolean level2AttributeDefaultValue;
+    
+	RNGSchema(boolean secureProcessing,
+                    boolean namespacePrefixes,
+                    boolean level1AttributeDefaultValue,
+                    boolean level2AttributeDefaultValue,
+                    SchemaModel schemaModel,
+                    MessageWriter debugWriter){
+		super(secureProcessing, schemaModel, debugWriter);
+        this.namespacePrefixes = namespacePrefixes;
+        this.level1AttributeDefaultValue = level1AttributeDefaultValue;
+        this.level2AttributeDefaultValue = level2AttributeDefaultValue;        
 	}
 	
 	
 	public Validator newValidator(){
-		return new ValidatorImpl(this, debugWriter);
+		return new ValidatorImpl(secureProcessing,                            
+                                    namespacePrefixes,
+                                    level1AttributeDefaultValue,
+                                    level2AttributeDefaultValue,
+                                    newValidatorHandler(), 
+                                    debugWriter);
 	}
 	
-	public ValidatorHandler newValidatorHandler(){	
-		return new ValidatorHandlerImpl(contentHandlerPool.getValidatorEventHandlerPool(),
+	public ValidatorHandler newValidatorHandler(){
+		return new ValidatorHandlerImpl(secureProcessing,
+                                        namespacePrefixes,
+                                        level1AttributeDefaultValue,
+                                        level2AttributeDefaultValue,
+                                        contentHandlerPool.getValidatorEventHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
-										activeModelPool,
+										schemaModel,
 										debugWriter);
 	}
-		
-	public ParsedModel getParsedModel(){
-		return parsedModel;
-	}
-	
-	public SimplifiedModel getSimplifiedModel(){
-		return simplifiedModel;
-	}
-	
-    public ActiveModelPool getActiveModelPool(){
-        return activeModelPool;
-    }
 }

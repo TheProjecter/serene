@@ -19,16 +19,8 @@ package serene.internal;
 import javax.xml.validation.Validator;
 import javax.xml.validation.ValidatorHandler;
 
-import serene.validation.schema.parsed.ParsedModel;
-import serene.validation.schema.simplified.SimplifiedModel;
-import serene.validation.schema.active.ActiveModel;
-import serene.validation.schema.active.ActiveModelPool;
-
-import serene.validation.BaseSchema;
-
-import serene.validation.handlers.content.impl.ContentHandlerPool;
-import serene.validation.handlers.error.ErrorHandlerPool;
-
+import serene.BaseSchema;
+import serene.SchemaModel;
 
 import serene.bind.BindingModel;
 import serene.bind.Queue;
@@ -47,57 +39,29 @@ import sereneWrite.MessageWriter;
 
 
 public class InternalRNGSchema extends BaseSchema{		
-	final ParsedModel parsedModel;
-	final SimplifiedModel simplifiedModel;	
-		
-	ActiveModelPool activeModelPool;
-		
-	ContentHandlerPool contentHandlerPool;	
-	ErrorHandlerPool errorHandlerPool;
-		
-	MessageWriter debugWriter;
 	
-	public InternalRNGSchema(ParsedModel parsedModel,
-					SimplifiedModel simplifiedModel,
-					MessageWriter debugWriter){		
-		this.debugWriter = debugWriter;
-		this.parsedModel = parsedModel;		
-		this.simplifiedModel = simplifiedModel;
-		if(simplifiedModel == null)throw new NullPointerException();
-		
-		contentHandlerPool = ContentHandlerPool.getInstance(debugWriter);
-		errorHandlerPool = ErrorHandlerPool.getInstance(debugWriter);
-		
-		activeModelPool = new ActiveModelPool(simplifiedModel, debugWriter);	
+	
+	public InternalRNGSchema(boolean secureProcessing,
+                    SchemaModel schemaModel,
+                    MessageWriter debugWriter){
+		super(secureProcessing, schemaModel, debugWriter);
 	}
-	
-	public Validator newValidator(){
+    
+    public Validator newValidator(){
 		throw new UnsupportedOperationException();
 	}
-	
-	public ValidatorHandler newValidatorHandler(){		
+    
+	public ValidatorHandler newValidatorHandler(){	
 		throw new UnsupportedOperationException();
-	}
+	}	
 	
 	public ValidatorHandler newValidatorHandler(BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){
 		return new BoundValidatorHandlerImpl(contentHandlerPool.getValidatorEventHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
-										activeModelPool,
+										schemaModel,
 										bindingModel,
 										queue,
 										queuePool,
 										debugWriter);
-	}
-    
-    public ParsedModel getParsedModel(){
-		return parsedModel;
-	}
-	
-	public SimplifiedModel getSimplifiedModel(){
-		return simplifiedModel;
-	}
-	
-    public ActiveModelPool getActiveModelPool(){
-        return activeModelPool;
-    }
+	}    
 }

@@ -33,7 +33,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.XMLReader;
 
 import org.xml.sax.helpers.XMLReaderFactory;
-import org.xml.sax.helpers.DefaultHandler;
+
 
 import org.w3c.dom.Document;
 
@@ -80,7 +80,7 @@ public class XmlnsAugmentingValidation{
             e.printStackTrace();
         }	
 		
-		debugErrorHandler.print("SCHEMA "+args[0]);
+		debugErrorHandler.print("*SCHEMA "+args[0]);
 				
 		//schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		schemaFactory = new RNGSchemaFactory(debugWriter);
@@ -123,7 +123,7 @@ public class XmlnsAugmentingValidation{
 		for(int i = 1; i < args.length; i++){
 			String name = args[i].substring(args[i].lastIndexOf(File.separator)+1);
 			
-			debugErrorHandler.print("FILE "+ name);						
+			debugErrorHandler.print("*FILE "+ name);						
 			try{
 				xmlReader.parse(args[i]);
 			}catch(IOException e){
@@ -137,41 +137,5 @@ public class XmlnsAugmentingValidation{
 		debugErrorHandler.close();		
 	}
 
-	static class WritingContentHandler extends DefaultHandler{
-		String align = "";
-		String line = "";
-		String att = "";
-		public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException{			
-			att = "";
-			for(int i = 0; i < atts.getLength(); i++){
-				att += (" "+
-						atts.getQName(i)
-						+ "="
-						+atts.getValue(i));
-			}			
-			line = (align 
-					+ "<"
-					+ qName
-					+ att
-					+ ">");
-			System.out.println(line);
-			align +="\t";
-		}
 		
-		public void endElement(String uri, String localName, String qName) throws SAXException{
-			align = align.substring(0, align.length()-1);
-			line = (align 
-					+ "</"
-					+ qName
-					+ ">");
-			System.out.println(line);			
-		}
-		
-		public void characters(char[] chars, int offset, int length){
-			line = (new String(chars, offset, length)).trim();
-			if(line.equals(""))return;
-			System.out.println(align+line);
-		}
-		
-	}	
 }

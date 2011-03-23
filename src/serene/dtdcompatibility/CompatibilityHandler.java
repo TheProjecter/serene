@@ -26,7 +26,9 @@ import org.relaxng.datatype.Datatype;
 
 import serene.util.BooleanList;
 
-import serene.validation.BaseSchema;
+import serene.BaseSchema;
+
+import serene.restrictor.ControllerPool;
 
 import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.RestrictingVisitor;
@@ -96,7 +98,10 @@ import serene.validation.handlers.content.DefaultValueAttributeHandler;
 import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
-import serene.restrictor.ControllerPool;
+import serene.SchemaModel;
+import serene.validation.schema.ValidationModel;
+
+import serene.util.AttributeInfo;
 
 import sereneWrite.MessageWriter;
 
@@ -104,12 +109,13 @@ public class CompatibilityHandler implements RestrictingVisitor{
     SPattern[] startTopPattern;
 	SPattern[] refDefinitionTopPattern;
     RecursionModel recursionModel;
-    
+        
     boolean level1AttributeDefaultValue;
     
     CompatibilityControlAttribute ccAttribute;
     DefaultValueAttributeHandler defaultValueHandler;
     
+    ActiveModel activeModel;
     ActiveGrammarModel grammarModel;
     
     ValidatorErrorHandlerPool errorHandlerPool;
@@ -127,13 +133,22 @@ public class CompatibilityHandler implements RestrictingVisitor{
     boolean hasName; // for name class control
     
     ControllerPool controllerPool;
+    
+    Stack<ArrayList<AttributeInfo>> attributesDVListsStack;
+    ArrayList<AttributeInfo> currentAttributesDVList;
+    
     CompetitionSimetryController simetryController;
+    
     Stack<ArrayList<SAttribute>> attributeListsStack;   
     ArrayList<SAttribute> currentAttributesList;
+    
     Stack<BooleanList> isRequiredBranchStack;
     BooleanList isRequiredBranch;
+    
     Stack<BooleanList> needsOptionalChoiceStack;
     BooleanList needsOptionalChoice;  
+    
+    AttributeDefaultValueModel attributeDefaultValueModel;
     
     MessageWriter debugWriter;
     
@@ -151,13 +166,14 @@ public class CompatibilityHandler implements RestrictingVisitor{
         this.errorDispatcher = errorDispatcher; 
         defaultValueErrorHandler = new AttributeDefaultValueErrorHandler(errorDispatcher, debugWriter);
         simetryController = new CompetitionSimetryController(controllerPool, errorDispatcher, debugWriter);
+        
+        attributesDVListsStack = new Stack<ArrayList<AttributeInfo>>();
         attributeListsStack = new Stack<ArrayList<SAttribute>>();
         isRequiredBranchStack = new Stack<BooleanList>();
         needsOptionalChoiceStack = new Stack<BooleanList>();
     }
     
-    
-    public void setCompatibilityAttributeDefaultValue(boolean value){
+    public void setLevel1AttributeDefaultValue(boolean value){
         level1AttributeDefaultValue = value;
         if(level1AttributeDefaultValue){
             if(ccAttribute == null) ccAttribute = new CompatibilityControlAttribute(debugWriter);
@@ -165,27 +181,35 @@ public class CompatibilityHandler implements RestrictingVisitor{
         }
     }
     
-    public void handle(BaseSchema schema) throws SAXException{        
-        if(schema == null)return;
-        SimplifiedModel simplifiedModel = schema.getSimplifiedModel();
-        ActiveModelPool activeModelPool = schema.getActiveModelPool();
-        ActiveModel activeModel = activeModelPool.getActiveModel(validationItemLocator, errorDispatcher);
-        grammarModel = activeModel.getGrammarModel();
-        ccAttribute.init(grammarModel,
-                        activeModel.getStackHandlerPool(),
-                        activeModel.getRuleHandlerPool());
+    public SchemaModel handle(ValidationModel validationModel) throws SAXException{
+        SimplifiedModel simplifiedModel = validationModel.getSimplifiedModel();
+        if(simplifiedModel == null)return new SchemaModel(validationModel, new InfosetModificationModelImpl(null, debugWriter), debugWriter);
+        activeModel = validationModel.getActiveModel(validationItemLocator, errorDispatcher);
+        grammarModel = activeModel.getGrammarModel();       
                 
         startTopPattern = simplifiedModel.getStartTopPattern();
         refDefinitionTopPattern = simplifiedModel.getRefDefinitionTopPattern();
         recursionModel = simplifiedModel.getRecursionModel();
         
-        if(level1AttributeDefaultValue){        
-            simetryController.clear();
+        attributeDefaultValueModel = null;
+        
+        InfosetModificationModel infosetModificationModel = null;
+        if(level1AttributeDefaultValue){
+            
+            attributeDefaultValueModel = new AttributeDefaultValueModel(debugWriter);
+            
+            ccAttribute.init(grammarModel,
+                        activeModel.getStackHandlerPool(),
+                        activeModel.getRuleHandlerPool());
+            
             attributeListsStack.clear();
             isRequiredBranchStack.clear();
             needsOptionalChoiceStack.clear();
             
-            currentAttributesList = new ArrayList<SAttribute>();            
+            simetryController.clear();
+            
+            currentAttributesList = new ArrayList<SAttribute>();
+            currentAttributesDVList = new ArrayList<AttributeInfo>();                        
             isRequiredBranch = new BooleanList();
             needsOptionalChoice = new BooleanList();
             defaultedAttributeContent = false;
@@ -196,7 +220,11 @@ public class CompatibilityHandler implements RestrictingVisitor{
         }
         for(SPattern start : startTopPattern){
             start.accept(this);
-        }        
+        }
+        activeModel.recycle();
+        if(errorDispatcher.hasAttributeDefaultValueError()) infosetModificationModel = new InfosetModificationModelImpl(null, debugWriter);
+        else infosetModificationModel = new InfosetModificationModelImpl(attributeDefaultValueModel, debugWriter);
+        return new SchemaModel(validationModel, infosetModificationModel, debugWriter);        
     }
     
     public void visit(SExceptPattern exceptPattern)throws SAXException{
@@ -231,13 +259,17 @@ public class CompatibilityHandler implements RestrictingVisitor{
         SimplifiedComponent child = element.getChild();
         if(child == null){
             ArrayList<SAttribute> attributesList = new ArrayList<SAttribute>();
+            //simetryController = new CompetitionSimetryController(controllerPool, errorDispatcher, debugWriter);
             simetryController.control(element, attributesList);           
             return;
         }
         
         boolean defaultedAttributeContextMemo = defaultedAttributeContext;
         boolean defaultedAttributeContentMemo = defaultedAttributeContent;
-        if(level1AttributeDefaultValue){
+        if(level1AttributeDefaultValue){            
+            attributesDVListsStack.push(currentAttributesDVList);
+            currentAttributesDVList = new ArrayList<AttributeInfo>();
+            
             attributeListsStack.push(currentAttributesList);
             currentAttributesList = new ArrayList<SAttribute>();
             
@@ -285,7 +317,11 @@ public class CompatibilityHandler implements RestrictingVisitor{
                                     +attributes+".";
                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                 }
-            }                   
+            }           
+            attributeDefaultValueModel.addAttributeDefaultValueInfo(activeModel.getActiveNameClass(element), 
+                                                    currentAttributesDVList.toArray(new AttributeInfo[currentAttributesDVList.size()]));
+            currentAttributesDVList = attributesDVListsStack.pop();
+            
             simetryController.control(element, currentAttributesList);
             currentAttributesList = attributeListsStack.pop();
             
@@ -307,7 +343,6 @@ public class CompatibilityHandler implements RestrictingVisitor{
         String defaultValue = null;
         boolean defaultedAttributeContextMemo = defaultedAttributeContext;
         if(level1AttributeDefaultValue){
-            
             defaultValue = attribute.getDefaultValue();
             if(defaultValue != null){                
                 isRequiredBranch.add(true);
@@ -339,8 +374,12 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 if(!hasName){
                     String message = "DTD compatibility error. Default value not allowed for an attribute definition without a <name> name class, <"+attribute.getQName()+"> at "+attribute.getLocation()+" .";
                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
+                }else{
+                    SName name = (SName)nc;
+                    currentAttributesDVList.add(new AttributeInfo(name.getNamespaceURI(), name.getLocalPart(), null, defaultValue, debugWriter));
                 }                
                 defaultedAttributeContent = true;
+                
             }
             
             defaultValueErrorHandler.report();
@@ -505,11 +544,11 @@ public class CompatibilityHandler implements RestrictingVisitor{
 	public void visit(SText text){
     }
 	public void visit(SNotAllowed notAllowed){}
-	public void visit(SRef ref)throws SAXException{
+	public void visit(SRef ref)throws SAXException{        
         if(recursionModel.isRecursiveReference(ref)){
             return;
         }
-        int index = ref.getDefinitionIndex();        
+        int index = ref.getDefinitionIndex(); 
         SPattern defTopPattern = refDefinitionTopPattern[index];
         if(defTopPattern != null)defTopPattern.accept(this);
     }

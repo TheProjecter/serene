@@ -20,6 +20,10 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXException;
 
+import serene.SereneRecoverableException;
+import serene.dtdcompatibility.DTDCompatibilityException;
+import serene.dtdcompatibility.AttributeDefaultValueException;
+
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import sereneWrite.MessageWriter;
@@ -27,10 +31,21 @@ import sereneWrite.MessageWriter;
 public class ErrorDispatcher implements ErrorHandler{
 	
 	ErrorHandler errorHandler;
+    boolean hasError = false;
+	boolean hasUnrecoverableError = false;
+    boolean hasDTDCompatibilityError = false;
+    boolean hasAttributeDefaultValueError = false;
 	MessageWriter debugWriter;
 		
 	public ErrorDispatcher(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
+	}
+	
+	public void init(){
+		hasError = false;
+        hasUnrecoverableError = false;
+        hasDTDCompatibilityError = false;
+        hasAttributeDefaultValueError = false;
 	}
 	
 	
@@ -44,17 +59,54 @@ public class ErrorDispatcher implements ErrorHandler{
 
 	public void fatalError(SAXParseException exception) throws SAXException{
 		if(errorHandler != null) errorHandler.fatalError(exception);
+		hasError = true;
+        hasUnrecoverableError = true;
 	}
 	
 	public void error(SAXParseException exception) throws SAXException{
 		if(errorHandler != null) errorHandler.error(exception);
+		hasError = true;
+        hasUnrecoverableError = true;
 	}
 	
+	public void error(SereneRecoverableException exception) throws SAXException{
+		if(errorHandler != null) errorHandler.error(exception);
+        hasError = true;
+	}
+    
+    public void error(DTDCompatibilityException exception) throws SAXException{
+		if(errorHandler != null) errorHandler.error(exception);
+        hasError = true;
+        hasDTDCompatibilityError = true;
+	}
+    
+    public void error(AttributeDefaultValueException exception) throws SAXException{
+		if(errorHandler != null) errorHandler.error(exception);
+        hasError = true;
+        hasAttributeDefaultValueError = true;        
+	}
+    
 	public void warning(SAXParseException exception) throws SAXException{
 		if(errorHandler != null) errorHandler.warning(exception);
 	}
 	
+    
+    public boolean hasError(){
+        return hasError;
+    }
+    
+	public boolean hasUnrecoverableError(){
+		return hasUnrecoverableError;
+	}
 	
+    public boolean hasDTDCompatibilityError(){
+        return hasDTDCompatibilityError;
+    }
+    
+    public boolean hasAttributeDefaultValueError(){
+        return hasAttributeDefaultValueError;
+    }
+    
 	public String toString(){
 		if(errorHandler != null)
 			//return super.toString()+" "+hashCode()+" "+errorHandler.toString();

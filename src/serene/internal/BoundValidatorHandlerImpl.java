@@ -31,9 +31,14 @@ import org.xml.sax.Attributes;
 
 import org.w3c.dom.ls.LSResourceResolver;
 
+import org.relaxng.datatype.ValidationContext;
 
-import serene.validation.schema.active.ActiveModelPool;
+import serene.SchemaModel;
 import serene.validation.schema.active.ActiveModel;
+
+import serene.validation.schema.active.components.AElement;
+
+import serene.validation.handlers.match.MatchHandler;
 
 import serene.validation.handlers.content.ElementEventHandler;
 import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
@@ -41,14 +46,15 @@ import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 
-import serene.validation.handlers.match.MatchHandler;
-
 import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.DocumentContext;
 
 import serene.util.CharsBuffer;
 import serene.util.SpaceCharsHandler;
+
+import sereneWrite.MessageWriter;
+
 
 import serene.bind.BindingModel;
 import serene.bind.ValidatorQueuePool;
@@ -58,11 +64,7 @@ import serene.bind.XmlnsBinder;
 
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
-// Only for internal use, passing events to ContentHandler not implemented.
-class BoundValidatorHandlerImpl extends ValidatorHandler{   
-    
+class BoundValidatorHandlerImpl extends ValidatorHandler{
 	ContentHandler contentHandler;	
 	LSResourceResolver lsResourceResolver;
 	TypeInfoProvider typeInfoProvider;
@@ -72,7 +74,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	ValidatorEventHandlerPool eventHandlerPool;	
 	ValidatorErrorHandlerPool errorHandlerPool;
 	
-	ActiveModelPool activeModelPool;
+	SchemaModel schemaModel;
 							
 	SpaceCharsHandler spaceHandler;
 	MatchHandler matchHandler;
@@ -85,10 +87,9 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	ActiveModel activeModel;
 	
 	MessageWriter debugWriter;	
-	int count = 0;	
-	
-	
-
+	int count = 0;
+    
+    
 	BindingModel bindingModel;	
 	ValidatorQueuePool queuePool;
 	Queue queue;
@@ -97,18 +98,17 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	
 	BoundValidatorHandlerImpl(ValidatorEventHandlerPool eventHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
-							ActiveModelPool activeModelPool,
+							SchemaModel schemaModel,
 							BindingModel bindingModel,
 							Queue queue,
 							ValidatorQueuePool queuePool,
 							MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	    this.debugWriter = debugWriter;
 		
 		this.eventHandlerPool = eventHandlerPool;	
 		this.errorHandlerPool = errorHandlerPool;
-				
 		
-		this.activeModelPool = activeModelPool;
+		this.schemaModel = schemaModel;
 			
 		validationItemLocator = new ValidationItemLocator(debugWriter);		
 		errorDispatcher = new ErrorDispatcher(debugWriter);
@@ -119,9 +119,9 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		errorHandlerPool.fill(errorDispatcher);
 		eventHandlerPool.fill(spaceHandler, matchHandler, validationItemLocator, errorHandlerPool);
 		
-		documentContext = new DocumentContext(debugWriter);
-        eventHandlerPool.setValidationContext(documentContext);
-		
+        documentContext = new DocumentContext(debugWriter);
+        eventHandlerPool.setValidationContext(documentContext);	
+    
 		this.bindingModel = bindingModel;
 		this.queuePool = queuePool;		
 		this.queue = queue;
@@ -129,7 +129,8 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		xmlBaseBinder = new XmlBaseBinder(debugWriter);
 		xmlnsBinder = new XmlnsBinder(debugWriter);
 	}
-	
+    
+    
 	public ValidationItemLocator getValidationItemLocator(){
 		return validationItemLocator;
 	}
@@ -166,36 +167,35 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		this.typeInfoProvider = typeInfoProvider;
 	}
 	
+	
 	public void processingInstruction(String target, String date){} 
 	public void skippedEntity(String name){}	
 	public void ignorableWhitespace(char[] ch, int start, int len){}
+	
 	public void startDocument(){
+		errorDispatcher.init();
 		documentContext.reset();
 		validationItemLocator.clear();
-		activeModel = activeModelPool.getActiveModel(validationItemLocator, 
+		//debugWriter.write("boundValidatorHandler START PREPARE BINDING : ");
+		activeModel = schemaModel.getActiveModel(validationItemLocator, 
 													errorDispatcher);
+        if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
 		bindingModel.index(activeModel.getSElementIndexMap(), activeModel.getSAttributeIndexMap());
 		queue.clear();
 		queue.index(activeModel.getSAttributeIndexMap());
-		queuePool.index(activeModel.getSAttributeIndexMap());
+		queuePool.index(activeModel.getSAttributeIndexMap());		
+		//debugWriter.write("boundValidatorHandler END PREPARE BINDING ");
 		
 		elementHandler = eventHandlerPool.getBoundStartValidationHandler(activeModel.getStartElement(), bindingModel, queue, queuePool);
 			
-		xmlBaseBinder.bind(queue, locator.getSystemId());// must happen last, after queue.newRecord() which is in elementHandler's init, might need to be moved  
-		
+		xmlBaseBinder.bind(queue, locator.getSystemId());// must happen last, after queue.newRecord() which is in elementHandler's init, might need to be moved
 		//Note that locator is only garanteed to pass correct information AFTER
 		//startDocument. The base URI of the document is also passed independently 
 		//to the Simplifier. This needs reviewing. 		
 	}			
-	public void startPrefixMapping(String prefix, String uri){
-		documentContext.startPrefixMapping(prefix, uri);
-		xmlnsBinder.bind(queue, prefix, uri);
-	}	
-	public void endPrefixMapping(String prefix){
-		documentContext.endPrefixMapping(prefix);
-	}	
 	public void setDocumentLocator(Locator locator){
 		this.locator = locator;
+        if(!documentContext.isBaseURISet())documentContext.setBaseURI(locator.getSystemId());
 	}
 	public void characters(char[] chars, int start, int length)throws SAXException{
 		//TODO make sure this is correct for all circumstances
@@ -203,7 +203,13 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		charsBuffer.append(chars, start, length);		
 		validationItemLocator.newCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
 	}
-	
+	public void startPrefixMapping(String prefix, String uri){
+		xmlnsBinder.bind(queue, prefix, uri);
+		documentContext.startPrefixMapping(prefix, uri);
+	}
+	public void endPrefixMapping(String prefix){
+		documentContext.endPrefixMapping(prefix);
+	}	
 	public void startElement(String namespaceURI, 
 							String localName, 
 							String qName, 
@@ -245,7 +251,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler.recycle();
 		elementHandler = null;
 		activeModel.recycle();
-		activeModel = null;		
+		activeModel = null;				
 	}
 
     public void setProperty(String name, Object object)

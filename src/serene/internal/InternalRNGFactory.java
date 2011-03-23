@@ -27,6 +27,11 @@ import javax.xml.validation.Schema;
 
 import org.relaxng.datatype.DatatypeException;
 
+import serene.SchemaModel;
+
+import serene.validation.schema.ValidationModel;
+import serene.validation.schema.ValidationModelImpl;
+
 import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.SimplifiedModel;
 
@@ -91,22 +96,28 @@ public class InternalRNGFactory{
 		// TODO see that you add the unexpected and the unknown nodes somehow
 		// here or in the builder, whereever you see fit
 		// they have to be added to all elements, including empty		
-		InternalRNGSchema schema = new InternalRNGSchema(null,
-										rngModel,  
-										debugWriter);				
+		ValidationModel vm = new ValidationModelImpl(null, rngModel, debugWriter); 
+        SchemaModel sm = new SchemaModel(vm, null, debugWriter); 
+		InternalRNGSchema schema = new InternalRNGSchema(false,
+                                        sm,
+										debugWriter);					
 		return schema;
 	}
 	
 	public InternalRNGSchema getExternalRefSchema(){		
-		InternalRNGSchema schema = new InternalRNGSchema(null,
-										externalRefModel,  
+		ValidationModel vm = new ValidationModelImpl(null, externalRefModel, debugWriter); 
+        SchemaModel sm = new SchemaModel(vm, null, debugWriter);
+		InternalRNGSchema schema = new InternalRNGSchema(false,
+                                        sm,
 										debugWriter);		
 		return schema;
 	}
 	
 	public InternalRNGSchema getIncludeSchema(){		
-		InternalRNGSchema schema = new InternalRNGSchema(null,
-										includeModel,  
+		ValidationModel vm = new ValidationModelImpl(null, includeModel, debugWriter); 
+        SchemaModel sm = new SchemaModel(vm, null, debugWriter);
+		InternalRNGSchema schema = new InternalRNGSchema(false,
+                                        sm,
 										debugWriter);		
 		return schema;
 	}
