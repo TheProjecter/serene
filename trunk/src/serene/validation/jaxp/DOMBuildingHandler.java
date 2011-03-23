@@ -45,6 +45,9 @@ import org.apache.xerces.dom.EntityImpl;
 import org.apache.xerces.dom.NotationImpl;
 
 
+import serene.dtdcompatibility.InfosetModificationHandler;
+import serene.dtdcompatibility.InfosetModificationModel;
+
 import serene.util.IntStack;
 
 import serene.DocumentContext;
@@ -87,13 +90,24 @@ class DOMBuildingHandler extends DOMHandler{
     Node currentFragmentRoot;
     Element currentElement;
     
+    InfosetModificationHandler infosetModificationHandler;
+    boolean level2AttributeDefaultValue;
+    
+    DocumentContext documentContext;
     
     DOMBuildingHandler(MessageWriter debugWriter){
         super(debugWriter);
         resultNodeChildren = new ArrayList<Node>(); 
     }
     
+    void setLevel2AttributeDefaultValue(boolean level2AttributeDefaultValue){
+        this.level2AttributeDefaultValue = level2AttributeDefaultValue;
+    }    
+    
 	void handle(String systemId, ValidatorHandler validatorHandler, Node sourceNode, Node resultNode) throws SAXException{
+        infosetModificationHandler = (InfosetModificationHandler)validatorHandler.getProperty(Constants.INFOSET_MODIFICATION_HANDLER_PROPERTY);
+        if(level2AttributeDefaultValue && infosetModificationHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
+        documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
         
         currentNode = null;
         currentFragmentRoot = null;
@@ -158,7 +172,11 @@ class DOMBuildingHandler extends DOMHandler{
         handleAttributes(attrs); // fires startPrefixMapping and add copies to currentElement
         
         validatorHandler.startElement(namespaceURI, localName, qName, attributes);
-
+                
+        if(level2AttributeDefaultValue){
+            infosetModificationHandler.modify(namespaceURI, localName, currentElement, attrs, documentContext);
+        }
+        
         append(currentElement);
         currentNode = currentElement;
         if (currentFragmentRoot == null) {

@@ -16,9 +16,10 @@ limitations under the License.
 
 package serene.validation.jaxp;
 
+//import java.util.Arrays;
 import java.util.Stack;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Iterator;
 
 import java.net.URI;
@@ -42,7 +43,7 @@ import org.w3c.dom.ls.LSResourceResolver;
 
 import org.relaxng.datatype.ValidationContext;
 
-import serene.validation.schema.active.ActiveModelPool;
+import serene.SchemaModel;
 import serene.validation.schema.active.ActiveModel;
 
 import serene.validation.schema.active.components.AElement;
@@ -57,57 +58,73 @@ import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
+import serene.dtdcompatibility.InfosetModificationHandler;
+import serene.dtdcompatibility.AttributeDefaultValueModel;
+
 import serene.DocumentContext;
 
 import serene.util.CharsBuffer;
 import serene.util.SpaceCharsHandler;
 
-import serene.Constants;
-
 import sereneWrite.MessageWriter;
 
-class ValidatorHandlerImpl extends ValidatorHandler{
-    String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
-    String DTD_MAPPING_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdMapping";
+import serene.Constants;
 
-	ContentHandler contentHandler;	
-	LSResourceResolver lsResourceResolver;
-	TypeInfoProvider typeInfoProvider;
-	Locator locator;
+public class ValidatorHandlerImpl extends ValidatorHandler{    
+	protected ContentHandler contentHandler;	
+	protected LSResourceResolver lsResourceResolver;
+	protected TypeInfoProvider typeInfoProvider;
+	protected Locator locator;
 		
 	
-	ValidatorEventHandlerPool eventHandlerPool;	
-	ValidatorErrorHandlerPool errorHandlerPool;
+	protected ValidatorEventHandlerPool eventHandlerPool;	
+	protected ValidatorErrorHandlerPool errorHandlerPool;
 	
-	ActiveModelPool activeModelPool;
+	protected SchemaModel schemaModel;
 							
-	SpaceCharsHandler spaceHandler;
-	MatchHandler matchHandler;
-	ErrorDispatcher errorDispatcher;
-	ValidationItemLocator validationItemLocator;
-	CharsBuffer charsBuffer;
-	DocumentContext documentContext;
+	protected SpaceCharsHandler spaceHandler;
+	protected MatchHandler matchHandler;
+	protected ErrorDispatcher errorDispatcher;
+	protected ValidationItemLocator validationItemLocator;
+	protected CharsBuffer charsBuffer;
+	protected DocumentContext documentContext;
 	
-	ElementEventHandler elementHandler;	
-	ActiveModel activeModel;
-	
-	boolean namespacePrefixes;
-	String defaultNamespace;
-	HashMap<String, String> prefixNamespaces;	
-	
-	MessageWriter debugWriter;	
+	protected ElementEventHandler elementHandler;	
+	protected ActiveModel activeModel;
+	    
+    boolean secureProcessing;
+    boolean namespacePrefixes;
+    boolean level1AttributeDefaultValue;
+    boolean level2AttributeDefaultValue;
     
-	public ValidatorHandlerImpl(ValidatorEventHandlerPool eventHandlerPool,
+    protected InfosetModificationHandler infosetModificationHandler;
+    
+    //for namespacesPrefixes feature
+    String defaultNamespace;
+    HashMap<String, String> prefixNamespaces;	
+    
+	protected MessageWriter debugWriter;
+    
+	public ValidatorHandlerImpl(boolean secureProcessing,
+                            boolean namespacePrefixes,
+                            boolean level1AttributeDefaultValue,
+                            boolean level2AttributeDefaultValue,
+                            ValidatorEventHandlerPool eventHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
-							ActiveModelPool activeModelPool,
+							SchemaModel schemaModel,
 							MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		
+        this.secureProcessing = secureProcessing;
+        this.namespacePrefixes = namespacePrefixes; 
+        this.level1AttributeDefaultValue = level1AttributeDefaultValue;
+        this.level2AttributeDefaultValue = level2AttributeDefaultValue;
+        
 		this.eventHandlerPool = eventHandlerPool;	
 		this.errorHandlerPool = errorHandlerPool;
 				
 		
-		this.activeModelPool = activeModelPool;
+		this.schemaModel = schemaModel;
 			
 		validationItemLocator = new ValidationItemLocator(debugWriter);		
 		errorDispatcher = new ErrorDispatcher(debugWriter);
@@ -118,11 +135,11 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 		errorHandlerPool.fill(errorDispatcher);
 		eventHandlerPool.fill(spaceHandler, matchHandler, validationItemLocator, errorHandlerPool);
 		
-		namespacePrefixes = false;
-		prefixNamespaces = new HashMap<String, String>();
-
         documentContext = new DocumentContext(debugWriter);
         eventHandlerPool.setValidationContext(documentContext);
+		//default recognizeOutOfContext is true
+                
+		prefixNamespaces = new HashMap<String, String>();
 	}
 	
 	protected void finalize(){		
@@ -172,27 +189,37 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 	
 	
 	public void processingInstruction(String target, String date) throws SAXException{
-		if(contentHandler != null) contentHandler.processingInstruction(target, date);
-	} 
-	public void skippedEntity(String name) throws SAXException{}	
+        if(contentHandler != null) contentHandler.processingInstruction(target, date);
+    } 
+	public void skippedEntity(String name) throws SAXException{
+		if(contentHandler != null) contentHandler.skippedEntity(name);
+    }	
 	public void ignorableWhitespace(char[] ch, int start, int len) throws SAXException{
-		if(contentHandler != null) contentHandler.ignorableWhitespace(ch, start, len);
-	}
-	public void startDocument() throws SAXException{
-		documentContext.reset();
+        if(contentHandler != null) contentHandler.ignorableWhitespace(ch, start, len);
+    }
+	public void startDocument() throws SAXException{        
+		errorDispatcher.init();
+		documentContext.reset();        
 		validationItemLocator.clear();
-		activeModel = activeModelPool.getActiveModel(validationItemLocator, 
+		activeModel = schemaModel.getActiveModel(validationItemLocator, 
 														errorDispatcher);
+        if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
 		elementHandler = eventHandlerPool.getStartValidationHandler(activeModel.getStartElement());
-		
-		defaultNamespace = null;
+        if(level2AttributeDefaultValue && infosetModificationHandler == null){
+            infosetModificationHandler = new InfosetModificationHandler(debugWriter);
+            AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
+            if(attributeDefaultValueModel == null) throw new IllegalStateException("Attempting to use erroneous schema.");
+            infosetModificationHandler.setAttributeDefaultValueModel(attributeDefaultValueModel);
+        }
+        
+        defaultNamespace = null;
 		prefixNamespaces.clear();
 		
 		if(contentHandler != null) contentHandler.startDocument();
 	}			
 	public void startPrefixMapping(String prefix, String uri) throws SAXException{
 		documentContext.startPrefixMapping(prefix, uri);
-		if(namespacePrefixes){
+        if(namespacePrefixes){
 			if(prefix.equals("")){
 				defaultNamespace = uri;
 			}else{
@@ -202,19 +229,27 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 		if(contentHandler != null) contentHandler.startPrefixMapping(prefix, uri);
 	}	
 	public void endPrefixMapping(String prefix) throws SAXException{
-		documentContext.endPrefixMapping(prefix);		
-		if(contentHandler != null) contentHandler.endPrefixMapping(prefix);
+		documentContext.endPrefixMapping(prefix);
+        if(namespacePrefixes){
+			if(prefix.equals("")){
+				defaultNamespace = null;
+			}else{
+				prefixNamespaces.remove(prefix);
+			}
+		}
+        if(contentHandler != null) contentHandler.endPrefixMapping(prefix);
 	}	
 	public void setDocumentLocator(Locator locator){
 		this.locator = locator;
-		if(contentHandler != null) contentHandler.setDocumentLocator(locator);
+        if(!documentContext.isBaseURISet())documentContext.setBaseURI(locator.getSystemId());
+        if(contentHandler != null) contentHandler.setDocumentLocator(locator);
 	}
 	public void characters(char[] chars, int start, int length)throws SAXException{
 		//TODO make sure this is correct for all circumstances
 		String chunk = new String(chars, start, length);	
 		charsBuffer.append(chars, start, length);
 		validationItemLocator.newCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
-		if(contentHandler != null) contentHandler.characters(chars, start, length);
+        if(contentHandler != null) contentHandler.characters(chars, start, length);
 	}
 	
 	
@@ -230,8 +265,12 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 		validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), namespaceURI, localName, qName);
 		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName);
 		elementHandler.handleAttributes(attributes, locator);
-		
-		if(contentHandler != null){
+        
+        if(contentHandler != null){
+            if(level2AttributeDefaultValue){
+                attributes = infosetModificationHandler.modify(namespaceURI, localName, attributes, documentContext);
+            }
+            
 			if(namespacePrefixes){
 				//create new AttributesImpl
 				//add xmlns attributes
@@ -255,7 +294,7 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 			}else{
 				contentHandler.startElement(namespaceURI, localName, qName, attributes);
 			}
-		}		
+		}
 	}		
 	
 	public void endElement(String namespaceURI, 
@@ -270,10 +309,10 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler.handleEndElement(locator);
 		ElementEventHandler parent = elementHandler.getParentHandler(); 
 		elementHandler.recycle();
-		elementHandler = parent;
+		elementHandler = parent;		
 		validationItemLocator.closeElement();
 		
-		if(contentHandler != null) contentHandler.endElement(namespaceURI, localName, qName);
+        if(contentHandler != null) contentHandler.endElement(namespaceURI, localName, qName);		
 	}
 	
 	public void endDocument()  throws SAXException {		
@@ -282,29 +321,41 @@ class ValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler = null;
 		activeModel.recycle();
 		activeModel = null;
-		if(contentHandler != null) contentHandler.endDocument();
+        
+        if(contentHandler != null) contentHandler.endDocument();
 	}
 		
 	public void setFeature(String name, boolean value)
         throws SAXNotRecognizedException, SAXNotSupportedException {
-		
         if (name == null) {
-            throw new NullPointerException();
+            throw new NullPointerException();            
+        }else if(name.equals(Constants.NAMESPACES_PREFIXES_SAX_FEATURE)){
+            namespacePrefixes = value;  
+        }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
+            level2AttributeDefaultValue = value;
+            if(level2AttributeDefaultValue && !level1AttributeDefaultValue){
+                throw new SAXNotSupportedException("The infoset modification model was not created. Please make sure the appropriate features are set to the SchemaFactory.");
+            }
+            if(level2AttributeDefaultValue && infosetModificationHandler == null){
+                infosetModificationHandler = new InfosetModificationHandler(debugWriter);
+                AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
+                if(attributeDefaultValueModel == null) throw new SAXNotSupportedException("Attempting to use erroneous schema.");
+                infosetModificationHandler.setAttributeDefaultValueModel(attributeDefaultValueModel);
+            }      
+        }else{
+            throw new SAXNotRecognizedException(name+" "+Constants.NAMESPACES_PREFIXES_SAX_FEATURE);
         }
-		if(name.equals("http://xml.org/sax/features/namespace-prefixes")){
-			namespacePrefixes = value;
-			return;
-		}
-        throw new SAXNotRecognizedException(name);
     }
 	
 	public boolean getFeature(String name)
         throws SAXNotRecognizedException, SAXNotSupportedException {
-
         if (name == null) {
             throw new NullPointerException();
+        }else if(name.equals(Constants.NAMESPACES_PREFIXES_SAX_FEATURE)){
+            return namespacePrefixes;    
+        }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
+            return level2AttributeDefaultValue;
         }
-
         throw new SAXNotRecognizedException(name);
     }
     
@@ -323,7 +374,11 @@ class ValidatorHandlerImpl extends ValidatorHandler{
             // recognized but not set, only for retrieval
         }else if(name.equals(Constants.ITEM_LOCATOR_PROPERTY)){
             // recognized but not set, only for retrieval
+        }else if(name.equals(Constants.DOCUMENT_CONTEXT_PROPERTY)){
+            // recognized but not set, only for retrieval
         }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){
+            // recognized but not set, only for retrieval
+        }else if(name.equals(Constants.INFOSET_MODIFICATION_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
         }
 
@@ -345,8 +400,17 @@ class ValidatorHandlerImpl extends ValidatorHandler{
             return eventHandlerPool;
         }else if(name.equals(Constants.ITEM_LOCATOR_PROPERTY)){
             return validationItemLocator;
+        }else if(name.equals(Constants.DOCUMENT_CONTEXT_PROPERTY)){
+            return documentContext;
         }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){
             return matchHandler;
+        }else if(name.equals(Constants.INFOSET_MODIFICATION_HANDLER_PROPERTY)){
+            if(infosetModificationHandler == null){
+                infosetModificationHandler = new InfosetModificationHandler(debugWriter);
+                AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
+                infosetModificationHandler.setAttributeDefaultValueModel(attributeDefaultValueModel);
+            }
+            return infosetModificationHandler;
         }
 
         throw new SAXNotRecognizedException(name);

@@ -22,7 +22,9 @@ import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SExceptPattern;
 
+
 import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.active.components.ANameClass;
 
 import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
@@ -102,6 +104,16 @@ public class ActiveModel  implements Reusable{
     public ActiveDefinition getActiveDefinition(SAttribute sattribute){
         int index = grammarModel.getIndex(sattribute);
         return grammarModel.getAttributeDefinition(index);
+    }
+    
+    public ANameClass getActiveNameClass(SElement selement){
+        int index = grammarModel.getIndex(selement);
+        return grammarModel.getElementNameClass(index);
+    }
+    
+    public ANameClass getActiveNameClass(SAttribute sattribute){
+        int index = grammarModel.getIndex(sattribute);
+        return grammarModel.getAttributeNameClass(index);
     }
     
     public ActiveDefinition getActiveDefinition(SExceptPattern sexceptPattern){

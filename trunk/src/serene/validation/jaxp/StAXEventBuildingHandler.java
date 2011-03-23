@@ -55,6 +55,11 @@ import javax.xml.stream.events.NotationDeclaration;
 
 import javax.xml.namespace.QName;
 
+import serene.dtdcompatibility.InfosetModificationHandler;
+import serene.dtdcompatibility.InfosetModificationModel;
+
+import serene.DocumentContext;
+
 import serene.Constants;
 
 import sereneWrite.MessageWriter;
@@ -66,6 +71,11 @@ class StAXEventBuildingHandler extends StAXHandler{
     Stack<Iterator> namespaceIteratorStack;
     HashMap<String, EntityDeclaration> entityDeclarations;
     
+    InfosetModificationHandler infosetModificationHandler;
+    boolean level2AttributeDefaultValue;
+    
+    DocumentContext documentContext;
+    
     StAXEventBuildingHandler(MessageWriter debugWriter){
         super(debugWriter);
         xmlEventFactory = xmlEventFactory.newInstance();
@@ -73,10 +83,18 @@ class StAXEventBuildingHandler extends StAXHandler{
         namespaceIteratorStack = new Stack<Iterator>();
         entityDeclarations = new HashMap<String, EntityDeclaration>();
     }
+
+    void setLevel2AttributeDefaultValue(boolean level2AttributeDefaultValue){
+        this.level2AttributeDefaultValue = level2AttributeDefaultValue;
+    }    
     
     void handle(String systemId, ValidatorHandler validatorHandler, XMLEventReader xmlEventReader, XMLEventWriter xmlEventWriter) throws SAXException{
         this.validatorHandler = validatorHandler;
         this.xmlEventWriter = xmlEventWriter;
+        
+        infosetModificationHandler = (InfosetModificationHandler)validatorHandler.getProperty(Constants.INFOSET_MODIFICATION_HANDLER_PROPERTY);
+        if(level2AttributeDefaultValue && infosetModificationHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
+        documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
         
         if(locator == null){
             locator = new LocatorImpl();
@@ -140,7 +158,11 @@ class StAXEventBuildingHandler extends StAXHandler{
     void handle(String systemId, ValidatorHandler validatorHandler, XMLStreamReader xmlStreamReader, XMLEventWriter xmlEventWriter) throws SAXException{
         this.validatorHandler = validatorHandler;
         this.xmlEventWriter = xmlEventWriter;
-
+        
+        infosetModificationHandler = (InfosetModificationHandler)validatorHandler.getProperty(Constants.INFOSET_MODIFICATION_HANDLER_PROPERTY);
+        if(level2AttributeDefaultValue && infosetModificationHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
+        documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
+        
         if(locator == null){
             locator = new LocatorImpl();
             locator.setSystemId(systemId);
@@ -267,7 +289,11 @@ class StAXEventBuildingHandler extends StAXHandler{
             attributes.addAttribute(attrNamespaceURI, attrLocalPart, attrQName, type, value);            
         }
         validatorHandler.startElement(namespaceURI, localPart, qName, attributes);
-
+        
+        if(level2AttributeDefaultValue){            
+            infosetModificationHandler.modify(namespaceURI, localPart, attributes, attrList, documentContext);
+        }
+        
         Iterator namespacesIterator = new NamespacesIterator(nsList, debugWriter);
         namespaceIteratorStack.push(namespacesIterator);
         try{
@@ -338,7 +364,11 @@ class StAXEventBuildingHandler extends StAXHandler{
         }
         
         validatorHandler.startElement(namespaceURI, localPart, qName, attributes);
-                
+        
+        if(level2AttributeDefaultValue){            
+            infosetModificationHandler.modify(namespaceURI, localPart, attributes, attrList, documentContext);
+        }
+        
         Iterator namespacesIterator = new NamespacesIterator(nsList, debugWriter);
         namespaceIteratorStack.push(namespacesIterator);
         try{

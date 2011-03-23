@@ -174,7 +174,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 	}
 	
 	public abstract void setReplaceMissingDatatypeLibrary(boolean value);
-	public void setCompatibilityAttributeDefaultValue(boolean level1AttributeDefaultValue){
+	public void setLevel1AttributeDefaultValue(boolean level1AttributeDefaultValue){
         this.level1AttributeDefaultValue = level1AttributeDefaultValue;
     }
     
@@ -1192,7 +1192,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			previousGrammars,
             simplificationContext);
 		
-        ds.setCompatibilityAttributeDefaultValue(true);
+        ds.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
 		ds.simplify(definitions);
 		
 		SPattern topPattern = ds.getCurrentPattern();
@@ -1272,7 +1272,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			previousGrammars,
             simplificationContext);
 		
-        ds.setCompatibilityAttributeDefaultValue(true);
+        ds.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
 		ds.simplify(definitions);
 		
 		SPattern topPattern = ds.getCurrentPattern();
@@ -1530,7 +1530,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			currentGrammar,
 			previousGrammars,
             simplificationContext);
-		ds.setCompatibilityAttributeDefaultValue(true);
+		ds.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
 		ds.simplify(start);		
 		
 		notAllowedChild = ds.getNotAllowedChild();

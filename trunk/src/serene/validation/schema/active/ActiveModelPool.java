@@ -65,7 +65,10 @@ public class ActiveModelPool{
 		ruleHandlerPool = RuleHandlerPool.getInstance(debugWriter);		
 	}
 	
-	public synchronized ActiveModel getActiveModel(ValidationItemLocator validationItemLocator, ErrorDispatcher errorDispatcher){
+	public ActiveModel getActiveModel(ValidationItemLocator validationItemLocator, ErrorDispatcher errorDispatcher){
+        
+        if(simplifiedModel == null) return null;
+        
 		if(modelFree == 0){			
 			ActiveModelConflictHandlerPool conflict = conflictHandlerPool.getActiveModelConflictHandlerPool();
 			ActiveModelStackHandlerPool stack = stackHandlerPool.getActiveModelStackHandlerPool();

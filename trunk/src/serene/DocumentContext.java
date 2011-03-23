@@ -17,8 +17,12 @@ limitations under the License.
 
 package serene;
 
+import javax.xml.XMLConstants;
+
 import org.xml.sax.DTDHandler;
+
 import org.relaxng.datatype.ValidationContext;
+
 import serene.dtdcompatibility.InfosetModificationContext;
 
 import sereneWrite.MessageWriter;
@@ -104,7 +108,9 @@ public class DocumentContext implements  ValidationContext, InfosetModificationC
     
     // start InfosetModificationContext    
     public String getPrefix(String uri){
-        return prefixMapping.getPrefix(uri);
+        String prefix = prefixMapping.getPrefix(uri); 
+        if(prefix == null) prefix = XMLConstants.DEFAULT_NS_PREFIX;
+        return prefix;
     }
     // end InfosetModificationContext
     
