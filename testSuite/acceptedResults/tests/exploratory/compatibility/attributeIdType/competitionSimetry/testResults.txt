@@ -1,0 +1,7 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\attributeIdType\competitionSimetry\schema.rng
+
+null:-1:-1 DTD compatibility error. Competing attribute definitions specify attribute values with different id types:
+<attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/competitionSimetry/schema.rng:31:37;
+<attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/competitionSimetry/schema.rng:22:37.
