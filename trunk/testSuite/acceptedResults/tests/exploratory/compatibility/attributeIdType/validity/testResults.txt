@@ -1,0 +1,11 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\attributeIdType\validity\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/validity/document1.xml:19:46 Syntax error. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/validity/schema.rng:22:30 contains errors: 
+Illegal datatype.
+Value of attribute IDREFS at file:///C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/validity/document1.xml:19:46 does not match the datatype required by schema definition <data> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/validity/schema.rng:30:38. cvc-datatype-valid.1.2.1: 'a:4' is not a valid value for 'NCName'.

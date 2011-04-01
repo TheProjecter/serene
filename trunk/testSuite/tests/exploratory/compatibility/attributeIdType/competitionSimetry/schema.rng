@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+    datatypeLibrary="http://relaxng.org/ns/compatibility/datatypes/1.0">
+    <start>
+        <element name="root">
+            <group>
+                <element name="foo">
+                    <ref name="firstCompetitor"/>
+                </element>
+                <element name="bar">
+                    <ref name="secondCompetitor"/>
+                </element>
+            </group>            
+        </element>
+    </start>
+    
+    <define name="firstCompetitor">
+        <attribute name="correct">
+            <data type="ID"/>
+        </attribute>
+        <attribute name="incorrect">
+            <data type="IDREF"/>
+        </attribute>
+    </define>
+    
+    <define name="secondCompetitor">
+        <attribute name="correct">
+            <value type="ID">aa</value>
+        </attribute>
+        <attribute name="incorrect">
+            <data type="IDREFS"/>
+        </attribute>
+    </define>    
+</grammar>
