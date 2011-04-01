@@ -154,7 +154,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 	ErrorDispatcher errorDispatcher;
 
     boolean level1AttributeDefaultValue;
-    boolean level1IdIdrefIdrefs;
+    boolean level1AttributeIdType;
 	boolean replaceMissingDatatypeLibrary;
      
 		
@@ -170,7 +170,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		
 		replaceMissingDatatypeLibrary =  true;
         level1AttributeDefaultValue  = false;
-        level1IdIdrefIdrefs = false;
+        level1AttributeIdType = false;
         
         paramStack = new Stack<ArrayList<Param>>();
 	}
@@ -180,10 +180,10 @@ abstract class Simplifier implements SimplifyingVisitor{
         this.level1AttributeDefaultValue = level1AttributeDefaultValue;
     }
         
-    public void setLevel1IdIdrefIdrefs(boolean value){
-        level1IdIdrefIdrefs = value;
+    public void setLevel1AttributeIdType(boolean value){
+        level1AttributeIdType = value;
     }
-    
+        
 	public void visit(Include include){
 		throw new IllegalStateException();
 	}
@@ -1198,7 +1198,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             simplificationContext);
 		
         ds.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
-        ds.setLevel1IdIdrefIdrefs(level1IdIdrefIdrefs);
+        ds.setLevel1AttributeIdType(level1AttributeIdType);
 		ds.simplify(definitions);
 		
 		SPattern topPattern = ds.getCurrentPattern();
@@ -1279,7 +1279,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             simplificationContext);
 		
         ds.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
-        ds.setLevel1IdIdrefIdrefs(level1IdIdrefIdrefs);
+        ds.setLevel1AttributeIdType(level1AttributeIdType);
 		ds.simplify(definitions);
 		
 		SPattern topPattern = ds.getCurrentPattern();
@@ -1538,7 +1538,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			previousGrammars,
             simplificationContext);
 		ds.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
-        ds.setLevel1IdIdrefIdrefs(level1IdIdrefIdrefs);
+        ds.setLevel1AttributeIdType(level1AttributeIdType);
 		ds.simplify(start);		
 		
 		notAllowedChild = ds.getNotAllowedChild();

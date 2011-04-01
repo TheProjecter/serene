@@ -52,8 +52,8 @@ import javax.xml.stream.events.NotationDeclaration;
 
 import javax.xml.namespace.QName;
 
-import serene.dtdcompatibility.InfosetModificationHandler;
-import serene.dtdcompatibility.InfosetModificationModel;
+import serene.dtdcompatibility.AttributeDefaultValueHandler;
+import serene.dtdcompatibility.AttributeIdTypeHandler;
 
 import serene.DocumentContext;
 
@@ -64,8 +64,11 @@ import sereneWrite.MessageWriter;
 class StAXStreamBuildingHandler extends StAXHandler{
     XMLStreamWriter xmlStreamWriter;
      
-    InfosetModificationHandler infosetModificationHandler;
-    boolean level2AttributeDefaultValue;
+    AttributeDefaultValueHandler attributeDefaultValueHandler;
+    AttributeIdTypeHandler attributeIdTypeHandler;
+    
+    boolean level2AttributeDefaultValue;    
+    boolean level2AttributeIdType;
     
     DocumentContext documentContext;
     
@@ -77,13 +80,19 @@ class StAXStreamBuildingHandler extends StAXHandler{
     void setLevel2AttributeDefaultValue(boolean level2AttributeDefaultValue){
         this.level2AttributeDefaultValue = level2AttributeDefaultValue;
     }   
+
+    void setLevel2AttributeIdType(boolean level2AttributeIdType){
+        this.level2AttributeIdType = level2AttributeIdType;
+    }
     
     void handle(String systemId, ValidatorHandler validatorHandler, XMLEventReader xmlEventReader, XMLStreamWriter xmlStreamWriter) throws SAXException{
         this.validatorHandler = validatorHandler;
         this.xmlStreamWriter = xmlStreamWriter;
         
-        infosetModificationHandler = (InfosetModificationHandler)validatorHandler.getProperty(Constants.INFOSET_MODIFICATION_HANDLER_PROPERTY);
-        if(level2AttributeDefaultValue && infosetModificationHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
+        attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
+        if(level2AttributeDefaultValue && attributeDefaultValueHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
+        attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
+        if(level2AttributeIdType && attributeIdTypeHandler.getAttributeIdTypeModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
         documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
         
         if(locator == null){
@@ -120,7 +129,7 @@ class StAXStreamBuildingHandler extends StAXHandler{
                 case XMLStreamConstants.END_ELEMENT:
                     handleLocation(currentEvent.getLocation());
                     handleEndElement(currentEvent.asEndElement());
-                    if(--depth >= 0)break loop;
+                    if(--depth <= 0) break loop;
                     break;
                 case XMLStreamConstants.CHARACTERS:
                     handleLocation(currentEvent.getLocation());
@@ -136,6 +145,7 @@ class StAXStreamBuildingHandler extends StAXHandler{
                     break;
                 case XMLStreamConstants.START_DOCUMENT:
                     ++depth;
+                    System.out.println("START_DOCUMENT depth"+depth);
                     handleStartDocument((StartDocument)currentEvent);
                     break;
                 case XMLStreamConstants.END_DOCUMENT:
@@ -167,8 +177,10 @@ class StAXStreamBuildingHandler extends StAXHandler{
         this.validatorHandler = validatorHandler;
         this.xmlStreamWriter = xmlStreamWriter;
         
-        infosetModificationHandler = (InfosetModificationHandler)validatorHandler.getProperty(Constants.INFOSET_MODIFICATION_HANDLER_PROPERTY);
-        if(level2AttributeDefaultValue && infosetModificationHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
+        attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
+        if(level2AttributeDefaultValue && attributeDefaultValueHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
+        attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
+        if(level2AttributeIdType && attributeIdTypeHandler.getAttributeIdTypeModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
         documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
         
         if(locator == null){
@@ -200,7 +212,7 @@ class StAXStreamBuildingHandler extends StAXHandler{
                     case XMLStreamConstants.END_ELEMENT:
                         handleLocation(xmlStreamReader.getLocation());
                         handleEndElement(xmlStreamReader);
-                        if(--depth >= 0)break loop;
+                        if(--depth <= 0)break loop;
                         break;
                     case XMLStreamConstants.CHARACTERS:
                         handleLocation(xmlStreamReader.getLocation());
@@ -311,7 +323,11 @@ class StAXStreamBuildingHandler extends StAXHandler{
         validatorHandler.startElement(namespaceURI, localPart, qName, attributes);
         
         if(level2AttributeDefaultValue){            
-            infosetModificationHandler.modify(namespaceURI, localPart, attributes, xmlStreamWriter, documentContext);
+            attributeDefaultValueHandler.handle(namespaceURI, localPart, attributes, xmlStreamWriter, documentContext);
+        }
+        
+        if(level2AttributeIdType){            
+            attributeIdTypeHandler.handle(namespaceURI, localPart, attributes, startElement.getLocation());
         }
     }
     
@@ -374,7 +390,11 @@ class StAXStreamBuildingHandler extends StAXHandler{
         validatorHandler.startElement(namespaceURI, localPart, qName, attributes);
         
         if(level2AttributeDefaultValue){            
-            infosetModificationHandler.modify(namespaceURI, localPart, attributes, xmlStreamWriter, documentContext);
+            attributeDefaultValueHandler.handle(namespaceURI, localPart, attributes, xmlStreamWriter, documentContext);
+        }
+        
+        if(level2AttributeIdType){            
+            attributeIdTypeHandler.handle(namespaceURI, localPart, attributes, xmlStreamReader.getLocation());
         }
     }
     

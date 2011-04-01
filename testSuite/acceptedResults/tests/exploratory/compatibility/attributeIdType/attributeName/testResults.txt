@@ -2,4 +2,4 @@
 
 TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\attributeIdType\attributeName\schema.rng
 
-null:-1:-1 DTD compatibility error. Attribute definition without a <name> name class, <attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/attributeName/schema.rng:9:28 may not have non-null ID type.
+null:-1:-1 DTD compatibility error. Attribute definition without a <name> name class, <attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/attributeName/schema.rng:25:28 may not have non-null ID-type.

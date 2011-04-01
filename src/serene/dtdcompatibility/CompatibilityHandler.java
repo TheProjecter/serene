@@ -104,6 +104,7 @@ import serene.SchemaModel;
 import serene.validation.schema.ValidationModel;
 
 import serene.util.AttributeInfo;
+import serene.util.NameInfo;
 
 import sereneWrite.MessageWriter;
 
@@ -113,7 +114,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
     RecursionModel recursionModel;
         
     boolean level1AttributeDefaultValue;
-    boolean level1IdIdrefIdrefs;
+    boolean level1AttributeIdType;
     
     CompatibilityControlAttribute ccAttribute;
     DefaultValueAttributeHandler defaultValueHandler;
@@ -158,8 +159,8 @@ public class CompatibilityHandler implements RestrictingVisitor{
     
     // for  ID IDREF IDREFS
     boolean attributeContext; // must be true when idType is not null
-    boolean idTypeNull; // when not true must control the name of attribute
     boolean idTypeAttributeContent; // for element level handling: name
+    int idType;
     
     Stack<ArrayList<SAttribute>> idAttributeListsStack;
     ArrayList<SAttribute> currentIdAttributesList;
@@ -214,13 +215,13 @@ public class CompatibilityHandler implements RestrictingVisitor{
         }
     }
     
-    public void setLevel1IdIdrefIdrefs(boolean value){
-        level1IdIdrefIdrefs = value;
+    public void setLevel1AttributeIdType(boolean value){
+        level1AttributeIdType = value;
     }
     
     public SchemaModel handle(ValidationModel validationModel) throws SAXException{     
         SimplifiedModel simplifiedModel = validationModel.getSimplifiedModel();
-        if(simplifiedModel == null)return new SchemaModel(validationModel, new InfosetModificationModelImpl(null, debugWriter), debugWriter);
+        if(simplifiedModel == null)return new SchemaModel(validationModel, new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
         activeModel = validationModel.getActiveModel(validationItemLocator, errorDispatcher);
         grammarModel = activeModel.getGrammarModel();       
                 
@@ -230,7 +231,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
         
         attributeDefaultValueModel = null;
         
-        InfosetModificationModel infosetModificationModel = null;
+        DTDCompatibilityModel dtdCompatibilityModel = null;
         if(level1AttributeDefaultValue){
             
             attributeDefaultValueModel = new AttributeDefaultValueModel(debugWriter);
@@ -255,12 +256,12 @@ public class CompatibilityHandler implements RestrictingVisitor{
             hasAlternative = false;
             hasName = false;                
         }
-        if(level1IdIdrefIdrefs){
+        if(level1AttributeIdType){
             attributeIdTypeModel = new AttributeIdTypeModel(debugWriter);
             
             attributeContext = false;
-            idTypeNull = true;
             idTypeAttributeContent = false;
+            idType = Datatype.ID_TYPE_NULL;
             
             idAttributeListsStack.clear();
             currentIdAttributesList = new ArrayList<SAttribute>();
@@ -273,9 +274,16 @@ public class CompatibilityHandler implements RestrictingVisitor{
             start.accept(this);
         }
         activeModel.recycle();
-        if(errorDispatcher.hasAttributeDefaultValueError()) infosetModificationModel = new InfosetModificationModelImpl(null, debugWriter);
-        else infosetModificationModel = new InfosetModificationModelImpl(attributeDefaultValueModel, debugWriter);
-        return new SchemaModel(validationModel, infosetModificationModel, debugWriter);        
+        if(level1AttributeDefaultValue){
+            if(errorDispatcher.hasAttributeDefaultValueError()) attributeDefaultValueModel = null;
+            else attributeDefaultValueModel.wrapUp();
+        }
+        if(level1AttributeIdType){
+            if(errorDispatcher.hasAttributeIdTypeError()) attributeIdTypeModel = null;
+            else attributeIdTypeModel.wrapUp();
+        }
+        dtdCompatibilityModel = new DTDCompatibilityModelImpl(attributeDefaultValueModel, attributeIdTypeModel, debugWriter);
+        return new SchemaModel(validationModel, dtdCompatibilityModel, debugWriter);        
     }
     
     public void visit(SExceptPattern exceptPattern)throws SAXException{
@@ -337,7 +345,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             hasAlternative = false;
         } 
             
-        if(level1IdIdrefIdrefs){
+        if(level1AttributeIdType){
             currentElement = element;
             
             idAttributeListsStack.push(currentIdAttributesList);
@@ -355,7 +363,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
         if(level1AttributeDefaultValue){
             if(defaultedAttributeContent){                
                 hasName = false;
-                SimplifiedComponent nameClass = element.getNameClass();
+                SNameClass nameClass = element.getNameClass();
                 if(nameClass != null) nameClass.accept(this);
                 String attributes = "";
                 if(!hasName){                    
@@ -370,25 +378,26 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 }
                 
                 attributes = "";
+                boolean hasRequiredBranch = false;
                 for(int i = 0; i < isRequiredBranch.size(); i++){
                     if(isRequiredBranch.get(i)){
+                        hasRequiredBranch = true;
                         SAttribute attr = currentAttributesList.get(i);
                         attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation();
                     }
                 }
                 
-                if(!attributes.equals("")){                    
+                if(hasRequiredBranch){                    
                     String message = "DTD compatibility error. Default value not allowed for required attribute definitions in the content model of <"+element.getQName()+"> at "+element.getLocation()+" :"
                                     +attributes+".";
                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                 }
-            }      
-            
-            attributeDefaultValueModel.addAttributeInfo(activeModel.getActiveNameClass(element), 
+                attributeDefaultValueModel.addAttributeInfo(nameClass, activeModel.getActiveNameClass(element), 
                                                     currentAttributesDVList.toArray(new AttributeInfo[currentAttributesDVList.size()]));
+            }            
             currentAttributesDVList = attributesDVListsStack.pop();
             
-            if(!level1IdIdrefIdrefs){
+            if(!level1AttributeIdType){                
                 simetryController.control(element, currentAttributesList);
                 currentAttributesList = attributeListsStack.pop();
             }
@@ -400,7 +409,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             defaultedAttributeContent = defaultedAttributeContentMemo;
         }
         
-        if(level1IdIdrefIdrefs){
+        if(level1AttributeIdType){
             if(idTypeAttributeContent){
                 if(level1AttributeDefaultValue && defaultedAttributeContent){
                     if(!hasName){
@@ -409,8 +418,11 @@ public class CompatibilityHandler implements RestrictingVisitor{
                             SAttribute attr = currentIdAttributesList.get(i);
                             attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation();
                         }                                        
-                        String message = "DTD compatibility error. Attribute definitions in the content model of an element definition without a <name> name class, <"+element.getQName()+"> at "+element.getLocation()+" may not have non-null ID type: "+attributes+".";
+                        String message = "DTD compatibility error. Attribute definitions in the content model of an element definition without a <name> name class, <"+element.getQName()+"> at "+element.getLocation()+" may not have non-null ID-type: "+attributes+".";
                         errorDispatcher.error(new AttributeIdTypeException(message, null));
+                    }else{
+                        SName name = (SName)element.getNameClass();
+                        attributeIdTypeModel.addElementNameInfo(new NameInfo(name.getNamespaceURI(), name.getLocalPart(), null, debugWriter));
                     }
                 }else{
                     hasName = false;
@@ -422,8 +434,11 @@ public class CompatibilityHandler implements RestrictingVisitor{
                             SAttribute attr = currentIdAttributesList.get(i);
                             attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation();
                         }                                        
-                        String message = "DTD compatibility error. Attribute definitions in the content model of an element definition without a <name> name class, <"+element.getQName()+"> at "+element.getLocation()+" may not have non-null ID type: "+attributes+".";
+                        String message = "DTD compatibility error. Attribute definitions in the content model of an element definition without a <name> name class, <"+element.getQName()+"> at "+element.getLocation()+" may not have non-null ID-type: "+attributes+".";
                         errorDispatcher.error(new AttributeIdTypeException(message, null));
+                    }else{
+                        SName name = (SName)nameClass;
+                        attributeIdTypeModel.addElementNameInfo(new NameInfo(name.getNamespaceURI(), name.getLocalPart(), null, debugWriter));
                     }
                 }
             }
@@ -472,13 +487,14 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 needsOptionalChoice.add(false);
             }
         }
-        if(level1IdIdrefIdrefs){
+        if(level1AttributeIdType){
             attributeContext = true;
-            idTypeNull = true;
+            idType = Datatype.ID_TYPE_NULL;
         }
         //see that this is done only if necessary
         children[0].accept(this);
         
+        AttributeInfo attributeInfo = null;
         
         if(level1AttributeDefaultValue){
             if(defaultedAttributeContext){
@@ -489,12 +505,13 @@ public class CompatibilityHandler implements RestrictingVisitor{
                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                 }else{
                     SName name = (SName)nc;
-                    currentAttributesDVList.add(new AttributeInfo(name.getNamespaceURI(), 
+                    attributeInfo = new AttributeInfo(name.getNamespaceURI(), 
                                                     name.getLocalPart(), 
                                                     null, 
                                                     defaultValue,
-                                                    Datatype.ID_TYPE_NULL,//not always correct, but it doesn't matter here
-                                                    debugWriter));
+                                                    idType,
+                                                    debugWriter);
+                    currentAttributesDVList.add(attributeInfo);
                 }                
                 defaultedAttributeContent = true;                
             }
@@ -503,21 +520,30 @@ public class CompatibilityHandler implements RestrictingVisitor{
             defaultedAttributeContext = defaultedAttributeContextMemo;
         }
         
-        if(level1IdIdrefIdrefs){
-            if(!idTypeNull){                
+        if(level1AttributeIdType){
+            if(idType != Datatype.ID_TYPE_NULL){
                 if(level1AttributeDefaultValue && defaultedAttributeContext){
                     if(!hasName) {
-                        String message = "DTD compatibility error. Attribute definition without a <name> name class, <"+attribute.getQName()+"> at "+attribute.getLocation()+" may not have non-null ID type.";
+                        String message = "DTD compatibility error. Attribute definition without a <name> name class, <"+attribute.getQName()+"> at "+attribute.getLocation()+" may not have non-null ID-type.";
                         errorDispatcher.error(new AttributeIdTypeException(message, null));
+                    }else{
+                        SNameClass nc = attribute.getNameClass();
+                        attributeIdTypeModel.addAttributeInfo(nc, attributeInfo);
                     }
                 }else{
                     hasName = false;
                     SNameClass nc = attribute.getNameClass();                
                     nc.accept(this);
                     if(hasName){
-                        // TODO see about mapping
+                        SName name = (SName)nc;
+                        attributeIdTypeModel.addAttributeInfo(nc, new AttributeInfo(name.getNamespaceURI(), 
+                                                    name.getLocalPart(), 
+                                                    null, 
+                                                    defaultValue,
+                                                    idType,
+                                                    debugWriter));
                     }else{
-                        String message = "DTD compatibility error. Attribute definition without a <name> name class, <"+attribute.getQName()+"> at "+attribute.getLocation()+" may not have non-null ID type.";
+                        String message = "DTD compatibility error. Attribute definition without a <name> name class, <"+attribute.getQName()+"> at "+attribute.getLocation()+" may not have non-null ID-type.";
                         errorDispatcher.error(new AttributeIdTypeException(message, null));
                     }
                 }
@@ -685,7 +711,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
         }
     }
 	public void visit(SText text){
-        if(level1IdIdrefIdrefs && attributeContext){
+        if(level1AttributeIdType && attributeContext){
             currentAttributeIdTypesList.add(Datatype.ID_TYPE_NULL);
         }
     }
@@ -706,19 +732,16 @@ public class CompatibilityHandler implements RestrictingVisitor{
             }            
         }        
         
-        if(level1IdIdrefIdrefs){
+        if(level1AttributeIdType){
             Datatype dt = value.getDatatype();
-            int idType = dt.getIdType();           
+            idType = dt.getIdType();           
             
             if(!attributeContext){
                 if(idType != Datatype.ID_TYPE_NULL){
-                    String message = "DTD compatibility error. Definition <"+value.getQName()+"> at "+value.getLocation()+" specifying the content of element <"+currentElement.getQName()+"> at "+currentElement.getLocation() +" may not have a non-null ID type.";
+                    String message = "DTD compatibility error. Definition <"+value.getQName()+"> at "+value.getLocation()+" specifying the content of element <"+currentElement.getQName()+"> at "+currentElement.getLocation() +" may not have a non-null ID-type.";
                     errorDispatcher.error(new AttributeIdTypeException(message, null));
                 }
             }else{
-                if(idType != Datatype.ID_TYPE_NULL){
-                    idTypeNull = false;            
-                }
                 currentAttributeIdTypesList.add(idType);
             }
         }
@@ -732,19 +755,16 @@ public class CompatibilityHandler implements RestrictingVisitor{
             }            
         }
  
-        if(level1IdIdrefIdrefs){
+        if(level1AttributeIdType){
             Datatype dt = data.getDatatype();
-            int idType = dt.getIdType();
+            idType = dt.getIdType();
             
             if(!attributeContext){
                 if(idType != Datatype.ID_TYPE_NULL){
-                    String message = "DTD compatibility error. Definition <"+data.getQName()+"> at "+data.getLocation()+" specifying the content of element <"+currentElement.getQName()+"> at "+currentElement.getLocation() +" may not have a non-null ID type.";
+                    String message = "DTD compatibility error. Definition <"+data.getQName()+"> at "+data.getLocation()+" specifying the content of element <"+currentElement.getQName()+"> at "+currentElement.getLocation() +" may not have a non-null ID-type.";
                     errorDispatcher.error(new AttributeIdTypeException(message, null));
                 }
             }else{
-                if(idType != Datatype.ID_TYPE_NULL){
-                    idTypeNull = false;
-                }
                 currentAttributeIdTypesList.add(idType);
             }
         }

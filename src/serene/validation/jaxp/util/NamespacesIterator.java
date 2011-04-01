@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package serene.validation.jaxp;
+package serene.validation.jaxp.util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,35 +22,35 @@ import java.util.NoSuchElementException;
 
 import javax.xml.namespace.QName;
 
-import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Namespace;
 
 import sereneWrite.MessageWriter;
 
-class AttributesIterator implements Iterator{    
+public class NamespacesIterator implements Iterator{    
     int position = 0;
     boolean removed = true;
-    ArrayList<Attribute> attributes;
+    ArrayList<Namespace> namespaces;
     
     MessageWriter debugWriter;
     
-    AttributesIterator(ArrayList<Attribute> attributes, MessageWriter debugWriter){
+    public NamespacesIterator(ArrayList<Namespace> namespaces, MessageWriter debugWriter){
         this.debugWriter = debugWriter;
-        this.attributes = attributes;
+        this.namespaces = namespaces;
     }
     
     public boolean hasNext(){
-        return attributes.size() > position;
+        return namespaces.size() > position;
     }
     
     public Object next(){            
         if(!hasNext()) throw new NoSuchElementException();
         removed = false;
-        return attributes.get(position++);
+        return namespaces.get(position++);
     }
     
     public void remove(){
         if(removed)throw new IllegalStateException();
         removed = true;
-        attributes.remove(--position);
+        namespaces.remove(--position);
     }
 }

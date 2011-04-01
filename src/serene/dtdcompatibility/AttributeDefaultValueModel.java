@@ -18,9 +18,10 @@ limitations under the License.
 package serene.dtdcompatibility;
 
 import java.util.Arrays;
-
+import java.util.HashSet;
 
 import serene.validation.schema.active.Identifier;
+import serene.validation.schema.simplified.components.SNameClass;
 
 import serene.util.AttributeInfo;
 
@@ -31,14 +32,22 @@ public class AttributeDefaultValueModel{
     Identifier[] elementIdentifiers;
     AttributeInfo[][] defaultedAttributes;
     
+    HashSet<SNameClass> elementNames;
+    
     MessageWriter debugWriter;
     
     public AttributeDefaultValueModel(MessageWriter debugWriter){
         this.debugWriter = debugWriter;
+        
+        elementNames = new HashSet<SNameClass>();
     }
     
+    void wrapUp(){
+        elementNames.clear();
+    }
     
-    public void addAttributeInfo(Identifier elementId, AttributeInfo[] attrInfo){        
+    void addAttributeInfo(SNameClass nameClass, Identifier elementId, AttributeInfo[] attrInfo){
+        if(!elementNames.add(nameClass))return;//records have already been made for this name        
         if(elementIdentifiers == null){
             elementIdentifiers = new Identifier[1];
             elementIdentifiers[0] = elementId;

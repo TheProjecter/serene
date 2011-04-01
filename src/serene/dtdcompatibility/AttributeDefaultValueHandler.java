@@ -1,20 +1,3 @@
-/*
-Copyright 2011 Radu Cernuta 
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-
 package serene.dtdcompatibility;
 
 import java.util.BitSet;
@@ -22,11 +5,15 @@ import java.util.List;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.AttributesImpl;
+
+import org.apache.xerces.dom.AttrImpl;
 
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLStreamWriter;
@@ -36,9 +23,14 @@ import javax.xml.stream.events.Attribute;
 
 import serene.util.AttributeInfo;
 
+import serene.validation.jaxp.util.AttrWrapper;
+import serene.validation.jaxp.util.AttributeWrapper;
+
+import serene.validation.handlers.error.ErrorDispatcher;
+
 import sereneWrite.MessageWriter;
 
-public class InfosetModificationHandler{
+public class AttributeDefaultValueHandler{
     final String defaultAttributeType = "CDATA";
     
     AttributeDefaultValueModel attributeDefaultValueModel;
@@ -46,55 +38,112 @@ public class InfosetModificationHandler{
     
     XMLEventFactory xmlEventFactory; 
     
+    ErrorDispatcher errorDispatcher;
     MessageWriter debugWriter;
     
-    public InfosetModificationHandler(MessageWriter debugWriter){
+    public AttributeDefaultValueHandler(AttributeDefaultValueModel attributeDefaultValueModel, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
         this.debugWriter = debugWriter;
-        matchedAttributes = new BitSet();
-    }
-    
-    public void setAttributeDefaultValueModel(AttributeDefaultValueModel attributeDefaultValueModel){
+        this.errorDispatcher = errorDispatcher;;
         this.attributeDefaultValueModel = attributeDefaultValueModel;
+        matchedAttributes = new BitSet();
     }
     
     public AttributeDefaultValueModel getAttributeDefaultValueModel( ){
         return attributeDefaultValueModel;
     }
     
-    public Attributes modify(String elementNamespaceURI, String elementLocalName, Attributes attributes, InfosetModificationContext infosetModificationContext){
-        // must add the attributes and their default values if not in Attributes        
+    public Attributes handle(String elementNamespaceURI, String elementLocalName, Attributes attributes, InfosetModificationContext infosetModificationContext){
+        // must add the attributes and their default values if not in Attributes
+        String s = "[";
+        for(int i = 0; i < attributes.getLength(); i++){
+            s += "("+attributes.getQName(i)+"=\""+attributes.getValue(i)+"\")";
+        }        
+        s += "]";        
         AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeInfo(elementNamespaceURI, elementLocalName);
         if(defaultValues != null){
-            attributes = handle(attributes, defaultValues, infosetModificationContext);            
+            attributes = handle(attributes, defaultValues, infosetModificationContext);
+            s = "[";
+            for(int i = 0; i < attributes.getLength(); i++){
+                s += "("+attributes.getQName(i)+"=\""+attributes.getValue(i)+"\")";
+            }        
+            s += "]";
             return attributes;
         }
         return attributes;
     }
     
-    public void modify(String elementNamespaceURI, String elementLocalName, Element parentElement, NamedNodeMap attrs, InfosetModificationContext infosetModificationContext){
+    public void handle(String elementNamespaceURI, String elementLocalName, Element parentElement, NamedNodeMap attrs, InfosetModificationContext infosetModificationContext) throws SAXException{
         // must add the attributes and their default values if not in Attributes
+        final int attrCount = attrs.getLength();
+        String s = "[";
+        for (int i = 0; i < attrCount; ++i) {			
+            Attr attr = (Attr) attrs.item(i);
+			
+			String qName = attr.getNodeName();
+			if(qName == null) qName = "";
+			
+            String value = attr.getValue();
+            if (value == null) value = "";
+            
+            s += "("+qName+"=\""+value+"\")";
+        }   
+        s += "]";        
         AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeInfo(elementNamespaceURI, elementLocalName);
         if(defaultValues != null){
             handle(parentElement, attrs, defaultValues, infosetModificationContext);
-            attrs = parentElement.getAttributes();            
+            attrs = parentElement.getAttributes();
+            final int attrCount2 = attrs.getLength();
+            s = "[";
+            for (int i = 0; i < attrCount2; ++i) {			
+                Attr attr = (Attr) attrs.item(i);
+                
+                String qName = attr.getNodeName();
+                if(qName == null) qName = "";
+                
+                String value = attr.getValue();
+                if (value == null) value = "";
+                
+                s += "("+qName+"=\""+value+"\")";
+            }        
+            s += "]";
             return;
         }
     }
     
-    public void modify(String elementNamespaceURI, String elementLocalName, Attributes attributes, XMLStreamWriter xmlStreamWriter, InfosetModificationContext infosetModificationContext) throws SAXException{
-         // must add the attributes and their default values to the list if not in attrsIterator        
+    public void handle(String elementNamespaceURI, String elementLocalName, Attributes attributes, XMLStreamWriter xmlStreamWriter, InfosetModificationContext infosetModificationContext) throws SAXException{
+         // must add the attributes and their default values to the list if not in attrsIterator
+        String s = "[";
+        for(int i = 0; i < attributes.getLength(); i++){
+            s += "("+attributes.getQName(i)+"=\""+attributes.getValue(i)+"\")";
+        }        
+        s += "]";
         AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeInfo(elementNamespaceURI, elementLocalName);
         if(defaultValues != null){
-            handle(attributes, defaultValues, xmlStreamWriter, infosetModificationContext);            
+            handle(attributes, defaultValues, xmlStreamWriter, infosetModificationContext);
+            s = "[";
+            for(int i = 0; i < attributes.getLength(); i++){
+                s += "("+attributes.getQName(i)+"=\""+attributes.getValue(i)+"\")";
+            }        
+            s += "]";
         }
     }
     
-    public void modify(String elementNamespaceURI, String elementLocalName, Attributes attributes, List<Attribute> attributeEvents, InfosetModificationContext infosetModificationContext){
-         // must add the attributes and their default values to the list if not in attrsIterator        
+    public void handle(String elementNamespaceURI, String elementLocalName, Attributes attributes, List<Attribute> attributeEvents, InfosetModificationContext infosetModificationContext){
+         // must add the attributes and their default values to the list if not in attrsIterator
+        String s = "[";
+        for(int i = 0; i < attributes.getLength(); i++){
+            s += "("+attributes.getQName(i)+"=\""+attributes.getValue(i)+"\")";
+        }        
+        s += "]";
         if(xmlEventFactory == null) xmlEventFactory = XMLEventFactory.newInstance();
         AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeInfo(elementNamespaceURI, elementLocalName);
         if(defaultValues != null){
-            handle(attributes, defaultValues, attributeEvents, infosetModificationContext);            
+            handle(attributes, defaultValues, attributeEvents, infosetModificationContext);
+            s = "[";
+            for(int i = 0; i < attributes.getLength(); i++){
+                s += "("+attributes.getQName(i)+"=\""+attributes.getValue(i)+"\")";
+            }        
+            s += "]";
         }
     }
     
@@ -130,9 +179,10 @@ public class InfosetModificationHandler{
         return attributes;
     }
     
-    private void handle(Element parentElement, NamedNodeMap attrs, AttributeInfo[] defaultValues, InfosetModificationContext infosetModificationContext){
+    private void handle(Element parentElement, NamedNodeMap attrs, AttributeInfo[] defaultValues, InfosetModificationContext infosetModificationContext) throws SAXException{
         final int attrCount = attrs.getLength();
         matchedAttributes.clear();
+        Document document = null;
         for(AttributeInfo defaultValueInfo : defaultValues){
             String dvNsURI = defaultValueInfo.getNamespaceURI();
             String dvLocalName = defaultValueInfo.getLocalName();
@@ -164,7 +214,21 @@ public class InfosetModificationHandler{
                 }
             }
             if(attributeAbsent){
-                parentElement.setAttributeNS(dvNsURI, getQName(dvNsURI, dvLocalName, infosetModificationContext), defaultValueInfo.getValue()); 
+                if(document == null) document = parentElement.getOwnerDocument();
+                Attr defaultAttribute = document.createAttributeNS(dvNsURI, getQName(dvNsURI, dvLocalName, infosetModificationContext));
+                defaultAttribute.setNodeValue(defaultValueInfo.getValue());                
+                if(defaultAttribute instanceof AttrImpl){
+                    AttrImpl defaultAttrImpl = (AttrImpl)defaultAttribute;
+                    defaultAttrImpl.setSpecified(false);
+                    parentElement.setAttributeNodeNS(defaultAttrImpl);
+                }else{
+                    try{
+                        defaultAttribute = new AttrWrapper(defaultAttribute, false, debugWriter);
+                    }catch(Exception e){
+                        errorDispatcher.warning(new SAXParseException("In the context of element <"+parentElement.getTagName()+"> for the attribute "+getQName(dvNsURI, dvLocalName, infosetModificationContext)+" added by validator the Specified parameter could not be set to false. "+e.getMessage(), null));
+                    }
+                    parentElement.setAttributeNodeNS(defaultAttribute);
+                }
             }
         }        
     } 
@@ -223,10 +287,12 @@ public class InfosetModificationHandler{
                 }
             }
             if(attributeAbsent){    
-                attributeEvents.add(xmlEventFactory.createAttribute(infosetModificationContext.getPrefix(dvNsURI), 
+                Attribute defaultAttribute = xmlEventFactory.createAttribute(infosetModificationContext.getPrefix(dvNsURI), 
                                                                     dvNsURI,
                                                                     dvLocalName,
-                                                                    defaultValueInfo.getValue()));
+                                                                    defaultValueInfo.getValue());
+                defaultAttribute = new AttributeWrapper(defaultAttribute, null, false, debugWriter);
+                attributeEvents.add(defaultAttribute);
             }
         }    
     }
