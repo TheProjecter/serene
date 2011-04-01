@@ -17,7 +17,8 @@ limitations under the License.
 package serene;
 
 public interface Constants{    
-    String INFOSET_MODIFICATION_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/infosetModificationHandler";
+    String ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/attributeDefaultValueHandler";
+    String ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/attributeIdTypeHandler";
     String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
     String DTD_MAPPING_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdMapping";
     String ERROR_HANDLER_POOL_PROPERTY = "http://serenerng.org/validatorHandler/property/errorHandlerPool";
@@ -46,6 +47,6 @@ public interface Constants{
     String LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level1/attributeDefaultValue";
     String LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level2/attributeDefaultValue";
     
-    String LEVEL1_ID_IDREF_IDREFS_FEATURE = "http://serenerng.org/features/DTDCompatibility/level1/idIdrefIdrefs";
-    String LEVEL2_ID_IDREF_IDREFS_FEATURE = "http://serenerng.org/features/DTDCompatibility/level2/idIdrefIdrefs";
+    String LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level1/attributeIdType";
+    String LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level2/attributeIdType";
 }

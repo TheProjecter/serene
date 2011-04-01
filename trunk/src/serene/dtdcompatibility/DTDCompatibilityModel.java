@@ -14,22 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 package serene.dtdcompatibility;
 
 import sereneWrite.MessageWriter;
 
-public class InfosetModificationModelImpl implements InfosetModificationModel{
-    AttributeDefaultValueModel attributeDefaultValueModel;
-    
-    MessageWriter debugWriter;
-    public InfosetModificationModelImpl(AttributeDefaultValueModel attributeDefaultValueModel,
-            MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
-        this.attributeDefaultValueModel = attributeDefaultValueModel;        
-    }
-    
-    public AttributeDefaultValueModel getAttributeDefaultValueModel(){
-        return attributeDefaultValueModel;
-    }
+public interface DTDCompatibilityModel{
+    AttributeDefaultValueModel getAttributeDefaultValueModel();
+    AttributeIdTypeModel getAttributeIdTypeModel();
 }

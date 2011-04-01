@@ -36,8 +36,8 @@ import org.xml.sax.helpers.LocatorImpl;
 import javax.xml.XMLConstants;
 import javax.xml.validation.ValidatorHandler;
 
-import serene.dtdcompatibility.InfosetModificationHandler;
-import serene.dtdcompatibility.InfosetModificationModel;
+import serene.dtdcompatibility.AttributeDefaultValueHandler;
+import serene.dtdcompatibility.AttributeIdTypeHandler;
 
 import serene.util.IntStack;
 
@@ -51,8 +51,11 @@ class DOMAugmentingHandler extends DOMHandler{
     Element currentElement;
     Document resultDocument;
     
-    InfosetModificationHandler infosetModificationHandler;
-    boolean level2AttributeDefaultValue;
+    AttributeDefaultValueHandler attributeDefaultValueHandler;
+    AttributeIdTypeHandler attributeIdTypeHandler;
+    
+    boolean level2AttributeDefaultValue;    
+    boolean level2AttributeIdType;
     
     DocumentContext documentContext;
     
@@ -64,9 +67,15 @@ class DOMAugmentingHandler extends DOMHandler{
         this.level2AttributeDefaultValue = level2AttributeDefaultValue;
     }
     
+    void setLevel2AttributeIdType(boolean level2AttributeIdType){
+        this.level2AttributeIdType = level2AttributeIdType;
+    }
+    
 	void handle(String systemId, ValidatorHandler validatorHandler, Node sourceNode, Node resultNode) throws SAXException{
-        infosetModificationHandler = (InfosetModificationHandler)validatorHandler.getProperty(Constants.INFOSET_MODIFICATION_HANDLER_PROPERTY);
-        if(level2AttributeDefaultValue && infosetModificationHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
+        attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
+        if(level2AttributeDefaultValue && attributeDefaultValueHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
+        attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
+        if(level2AttributeIdType && attributeIdTypeHandler.getAttributeIdTypeModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
         documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
         
         // TODO
@@ -115,8 +124,10 @@ class DOMAugmentingHandler extends DOMHandler{
         validatorHandler.startElement(namespaceURI, localName, qName, attributes);
                 
         if(level2AttributeDefaultValue){
-            infosetModificationHandler.modify(namespaceURI, localName, (Element)element, attrs, documentContext);
+            attributeDefaultValueHandler.handle(namespaceURI, localName, (Element)element, attrs, documentContext);
         }
-        
+        if(level2AttributeIdType){
+            attributeIdTypeHandler.handle(namespaceURI, localName, (Element)element);
+        }        
     }
 }

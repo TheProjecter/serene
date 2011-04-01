@@ -97,7 +97,7 @@ class StAXHandler extends Handler{
                 case XMLStreamConstants.END_ELEMENT:
                     handleLocation(currentEvent.getLocation());
                     handleEndElement(currentEvent.asEndElement());
-                    if(--depth >= 0)break loop;
+                    if(--depth <= 0)break loop;
                     break;
                 case XMLStreamConstants.CHARACTERS:
                 case XMLStreamConstants.SPACE:                   
@@ -148,7 +148,7 @@ class StAXHandler extends Handler{
                     case XMLStreamConstants.END_ELEMENT:
                         handleLocation(xmlStreamReader.getLocation());
                         handleEndElement(xmlStreamReader);
-                        if(--depth >= 0)break loop;
+                        if(--depth <= 0)break loop;
                         break;
                     case XMLStreamConstants.CHARACTERS:
                     case XMLStreamConstants.SPACE:

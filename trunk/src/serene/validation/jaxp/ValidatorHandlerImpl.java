@@ -36,7 +36,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.Attributes;
-
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.w3c.dom.ls.LSResourceResolver;
@@ -58,8 +57,10 @@ import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import serene.dtdcompatibility.InfosetModificationHandler;
+import serene.dtdcompatibility.AttributeDefaultValueHandler;
 import serene.dtdcompatibility.AttributeDefaultValueModel;
+import serene.dtdcompatibility.AttributeIdTypeHandler;
+import serene.dtdcompatibility.AttributeIdTypeModel;
 
 import serene.DocumentContext;
 
@@ -71,44 +72,50 @@ import sereneWrite.MessageWriter;
 import serene.Constants;
 
 public class ValidatorHandlerImpl extends ValidatorHandler{    
-	protected ContentHandler contentHandler;	
-	protected LSResourceResolver lsResourceResolver;
-	protected TypeInfoProvider typeInfoProvider;
-	protected Locator locator;
+	ContentHandler contentHandler;	
+	LSResourceResolver lsResourceResolver;
+	TypeInfoProvider typeInfoProvider;
+	Locator locator;
 		
 	
-	protected ValidatorEventHandlerPool eventHandlerPool;	
-	protected ValidatorErrorHandlerPool errorHandlerPool;
+	ValidatorEventHandlerPool eventHandlerPool;	
+	ValidatorErrorHandlerPool errorHandlerPool;
 	
-	protected SchemaModel schemaModel;
+	SchemaModel schemaModel;
 							
-	protected SpaceCharsHandler spaceHandler;
-	protected MatchHandler matchHandler;
-	protected ErrorDispatcher errorDispatcher;
-	protected ValidationItemLocator validationItemLocator;
-	protected CharsBuffer charsBuffer;
-	protected DocumentContext documentContext;
+	SpaceCharsHandler spaceHandler;
+	MatchHandler matchHandler;
+	ErrorDispatcher errorDispatcher;
+	ValidationItemLocator validationItemLocator;
+	CharsBuffer charsBuffer;
+	DocumentContext documentContext;
 	
-	protected ElementEventHandler elementHandler;	
-	protected ActiveModel activeModel;
-	    
+	ElementEventHandler elementHandler;	
+	ActiveModel activeModel;
+	
     boolean secureProcessing;
     boolean namespacePrefixes;
     boolean level1AttributeDefaultValue;
     boolean level2AttributeDefaultValue;
+    boolean level1AttributeIdType;
+    boolean level2AttributeIdType;
     
-    protected InfosetModificationHandler infosetModificationHandler;
+    AttributeDefaultValueHandler attributeDefaultValueHandler;
+    AttributeIdTypeHandler attributeIdTypeHandler;
     
     //for namespacesPrefixes feature
     String defaultNamespace;
-    HashMap<String, String> prefixNamespaces;	
-    
-	protected MessageWriter debugWriter;
-    
-	public ValidatorHandlerImpl(boolean secureProcessing,
+    HashMap<String, String> prefixNamespaces;
+
+    final boolean noModification = true;    
+	MessageWriter debugWriter;	
+	//int count = 0;
+	public ValidatorHandlerImpl(boolean secureProcessing,                            
                             boolean namespacePrefixes,
                             boolean level1AttributeDefaultValue,
                             boolean level2AttributeDefaultValue,
+                            boolean level1AttributeIdType,
+                            boolean level2AttributeIdType,
                             ValidatorEventHandlerPool eventHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
 							SchemaModel schemaModel,
@@ -119,7 +126,8 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         this.namespacePrefixes = namespacePrefixes; 
         this.level1AttributeDefaultValue = level1AttributeDefaultValue;
         this.level2AttributeDefaultValue = level2AttributeDefaultValue;
-        
+        this.level1AttributeIdType = level1AttributeIdType;
+        this.level2AttributeIdType = level2AttributeIdType;
 		this.eventHandlerPool = eventHandlerPool;	
 		this.errorHandlerPool = errorHandlerPool;
 				
@@ -138,8 +146,8 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         documentContext = new DocumentContext(debugWriter);
         eventHandlerPool.setValidationContext(documentContext);
 		//default recognizeOutOfContext is true
-                
-		prefixNamespaces = new HashMap<String, String>();
+        
+        prefixNamespaces = new HashMap<String, String>();
 	}
 	
 	protected void finalize(){		
@@ -159,7 +167,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		return contentHandler;		
 	}
 	
-	public void setContentHandler(ContentHandler contentHandler){
+	public void setContentHandler(ContentHandler contentHandler){        
 		this.contentHandler = contentHandler;
 	}
 	
@@ -188,16 +196,19 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 	}
 	
 	
-	public void processingInstruction(String target, String date) throws SAXException{
-        if(contentHandler != null) contentHandler.processingInstruction(target, date);
+	public void processingInstruction(String target, String data) throws SAXException{
+        if(contentHandler != null) contentHandler.processingInstruction(target, data);
     } 
+    
 	public void skippedEntity(String name) throws SAXException{
 		if(contentHandler != null) contentHandler.skippedEntity(name);
-    }	
+    }
+	
 	public void ignorableWhitespace(char[] ch, int start, int len) throws SAXException{
         if(contentHandler != null) contentHandler.ignorableWhitespace(ch, start, len);
     }
-	public void startDocument() throws SAXException{        
+    
+	public void startDocument()  throws SAXException{	
 		errorDispatcher.init();
 		documentContext.reset();        
 		validationItemLocator.clear();
@@ -205,19 +216,37 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 														errorDispatcher);
         if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
 		elementHandler = eventHandlerPool.getStartValidationHandler(activeModel.getStartElement());
-        if(level2AttributeDefaultValue && infosetModificationHandler == null){
-            infosetModificationHandler = new InfosetModificationHandler(debugWriter);
-            AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
-            if(attributeDefaultValueModel == null) throw new IllegalStateException("Attempting to use erroneous schema.");
-            infosetModificationHandler.setAttributeDefaultValueModel(attributeDefaultValueModel);
+        if(level2AttributeDefaultValue){
+            if(attributeDefaultValueHandler == null){                
+                AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
+                if(attributeDefaultValueModel == null) throw new IllegalStateException("Attempting to use incorrect schema.");
+                attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher, debugWriter);
+            }else{
+                AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
+                if(attributeDefaultValueModel == null) throw new IllegalStateException("Attempting to use incorrect schema.");
+            }
+        }
+        
+        if(level2AttributeIdType){
+            if(attributeIdTypeHandler == null){
+                AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
+                if(attributeIdTypeModel == null) throw new SAXNotSupportedException("Attempting to use incorrect schema.");
+                attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);                
+            }else{
+                AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
+                if(attributeIdTypeModel == null) throw new SAXNotSupportedException("Attempting to use incorrect schema.");
+                attributeIdTypeHandler.init();
+            }
         }
         
         defaultNamespace = null;
 		prefixNamespaces.clear();
 		
 		if(contentHandler != null) contentHandler.startDocument();
+        
+		//count = 0; 		
 	}			
-	public void startPrefixMapping(String prefix, String uri) throws SAXException{
+	public void startPrefixMapping(String prefix, String uri)  throws SAXException{
 		documentContext.startPrefixMapping(prefix, uri);
         if(namespacePrefixes){
 			if(prefix.equals("")){
@@ -228,7 +257,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		}
 		if(contentHandler != null) contentHandler.startPrefixMapping(prefix, uri);
 	}	
-	public void endPrefixMapping(String prefix) throws SAXException{
+	public void endPrefixMapping(String prefix)  throws SAXException{
 		documentContext.endPrefixMapping(prefix);
         if(namespacePrefixes){
 			if(prefix.equals("")){
@@ -249,7 +278,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		String chunk = new String(chars, start, length);	
 		charsBuffer.append(chars, start, length);
 		validationItemLocator.newCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
-        if(contentHandler != null) contentHandler.characters(chars, start, length);
+        if(contentHandler != null) contentHandler.characters(chars, start, length);		
 	}
 	
 	
@@ -257,6 +286,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 							String localName, 
 							String qName, 
 							Attributes attributes) throws SAXException{
+		//System.out.println((++count)+" "+locator.getLineNumber()+" "+qName);
 		char[] charContent = charsBuffer.removeCharsArray();
 		if(charContent.length > 0){			
 			elementHandler.handleCharacters(charContent);		
@@ -265,12 +295,16 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), namespaceURI, localName, qName);
 		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName);
 		elementHandler.handleAttributes(attributes, locator);
-        
+        if(level2AttributeIdType && contentHandler == null){
+            attributeIdTypeHandler.handle(noModification, namespaceURI, localName, attributes, locator);
+        }
         if(contentHandler != null){
             if(level2AttributeDefaultValue){
-                attributes = infosetModificationHandler.modify(namespaceURI, localName, attributes, documentContext);
+                attributes = attributeDefaultValueHandler.handle(namespaceURI, localName, attributes, documentContext);
             }
-            
+            if(level2AttributeIdType){
+                attributes = attributeIdTypeHandler.handle(namespaceURI, localName, attributes, locator);
+            }
 			if(namespacePrefixes){
 				//create new AttributesImpl
 				//add xmlns attributes
@@ -311,24 +345,28 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler.recycle();
 		elementHandler = parent;		
 		validationItemLocator.closeElement();
-		
-        if(contentHandler != null) contentHandler.endElement(namespaceURI, localName, qName);		
+        
+        if(contentHandler != null) contentHandler.endElement(namespaceURI, localName, qName);
 	}
 	
-	public void endDocument()  throws SAXException {		
+	public void endDocument()  throws SAXException {
 		elementHandler.handleEndElement(locator);
 		elementHandler.recycle();
 		elementHandler = null;
 		activeModel.recycle();
 		activeModel = null;
-        
+        if(level2AttributeIdType){
+            attributeIdTypeHandler.handleRefs();
+        }
         if(contentHandler != null) contentHandler.endDocument();
 	}
-		
+	
+	void xmlVersion(String version){}
+	
 	public void setFeature(String name, boolean value)
         throws SAXNotRecognizedException, SAXNotSupportedException {
         if (name == null) {
-            throw new NullPointerException();            
+            throw new NullPointerException();
         }else if(name.equals(Constants.NAMESPACES_PREFIXES_SAX_FEATURE)){
             namespacePrefixes = value;  
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
@@ -336,14 +374,23 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
             if(level2AttributeDefaultValue && !level1AttributeDefaultValue){
                 throw new SAXNotSupportedException("The infoset modification model was not created. Please make sure the appropriate features are set to the SchemaFactory.");
             }
-            if(level2AttributeDefaultValue && infosetModificationHandler == null){
-                infosetModificationHandler = new InfosetModificationHandler(debugWriter);
+            if(level2AttributeDefaultValue && attributeDefaultValueHandler == null){                
                 AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
-                if(attributeDefaultValueModel == null) throw new SAXNotSupportedException("Attempting to use erroneous schema.");
-                infosetModificationHandler.setAttributeDefaultValueModel(attributeDefaultValueModel);
-            }      
+                if(attributeDefaultValueModel == null) throw new SAXNotSupportedException("Attempting to use incorrect schema.");
+                attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher, debugWriter);
+            }            
+        }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE)){
+            level2AttributeIdType = value;
+            if(level2AttributeIdType && !level1AttributeIdType){
+                throw new SAXNotSupportedException("The infoset modification model was not created. Please make sure the appropriate features are set to the SchemaFactory.");
+            }
+            if(level2AttributeIdType && attributeIdTypeHandler == null){                
+                AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
+                if(attributeIdTypeModel == null) throw new SAXNotSupportedException("Attempting to use incorrect schema.");
+                attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+            }
         }else{
-            throw new SAXNotRecognizedException(name+" "+Constants.NAMESPACES_PREFIXES_SAX_FEATURE);
+            throw new SAXNotRecognizedException(name);
         }
     }
 	
@@ -352,11 +399,14 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         if (name == null) {
             throw new NullPointerException();
         }else if(name.equals(Constants.NAMESPACES_PREFIXES_SAX_FEATURE)){
-            return namespacePrefixes;    
+            return namespacePrefixes;  
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
             return level2AttributeDefaultValue;
+        }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE)){
+            return level2AttributeIdType;
+        }else{
+            throw new SAXNotRecognizedException(name);
         }
-        throw new SAXNotRecognizedException(name);
     }
     
     public void setProperty(String name, Object object)
@@ -378,7 +428,9 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
             // recognized but not set, only for retrieval
         }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
-        }else if(name.equals(Constants.INFOSET_MODIFICATION_HANDLER_PROPERTY)){
+        }else if(name.equals(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY)){
+            // recognized but not set, only for retrieval
+        }else if(name.equals(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
         }
 
@@ -404,13 +456,18 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
             return documentContext;
         }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){
             return matchHandler;
-        }else if(name.equals(Constants.INFOSET_MODIFICATION_HANDLER_PROPERTY)){
-            if(infosetModificationHandler == null){
-                infosetModificationHandler = new InfosetModificationHandler(debugWriter);
+        }else if(name.equals(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY)){
+            if(attributeDefaultValueHandler == null){
                 AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
-                infosetModificationHandler.setAttributeDefaultValueModel(attributeDefaultValueModel);
+                attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher, debugWriter);
             }
-            return infosetModificationHandler;
+            return attributeDefaultValueHandler;
+        }else if(name.equals(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY)){
+            if(attributeIdTypeHandler == null){
+                AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
+                attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+            }
+            return attributeIdTypeHandler;
         }
 
         throw new SAXNotRecognizedException(name);

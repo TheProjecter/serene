@@ -26,32 +26,27 @@ import serene.SchemaModel;
 
 import sereneWrite.MessageWriter;
 
-//SPECIFICATION
-//	thread safe(should be shared across parsers and threads)
-//	immutable(validating the same document over the same schema gives the same result)
-// 	created by SchemaFactory
-
-//	creates
-//			Validator - thread unsafe
-//			ValidatorHandler - thread unsafe
-
-
 public class RNGSchema extends BaseSchema{		
-	   
 	boolean namespacePrefixes;
     boolean level1AttributeDefaultValue;
     boolean level2AttributeDefaultValue;
+	boolean level1AttributeIdType;
+    boolean level2AttributeIdType;
     
-	RNGSchema(boolean secureProcessing,
+	public RNGSchema(boolean secureProcessing,
                     boolean namespacePrefixes,
                     boolean level1AttributeDefaultValue,
                     boolean level2AttributeDefaultValue,
+                    boolean level1AttributeIdType,
+                    boolean level2AttributeIdType,
                     SchemaModel schemaModel,
                     MessageWriter debugWriter){
 		super(secureProcessing, schemaModel, debugWriter);
         this.namespacePrefixes = namespacePrefixes;
         this.level1AttributeDefaultValue = level1AttributeDefaultValue;
-        this.level2AttributeDefaultValue = level2AttributeDefaultValue;        
+        this.level2AttributeDefaultValue = level2AttributeDefaultValue;
+        this.level1AttributeIdType = level1AttributeIdType;
+        this.level2AttributeIdType = level2AttributeIdType;
 	}
 	
 	
@@ -60,18 +55,22 @@ public class RNGSchema extends BaseSchema{
                                     namespacePrefixes,
                                     level1AttributeDefaultValue,
                                     level2AttributeDefaultValue,
+                                    level1AttributeIdType,
+                                    level2AttributeIdType,
                                     newValidatorHandler(), 
                                     debugWriter);
 	}
 	
-	public ValidatorHandler newValidatorHandler(){
+	public ValidatorHandler newValidatorHandler(){	
 		return new ValidatorHandlerImpl(secureProcessing,
                                         namespacePrefixes,
                                         level1AttributeDefaultValue,
                                         level2AttributeDefaultValue,
+                                        level1AttributeIdType,
+                                        level2AttributeIdType,
                                         contentHandlerPool.getValidatorEventHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										schemaModel,
 										debugWriter);
-	}
+	}	   
 }

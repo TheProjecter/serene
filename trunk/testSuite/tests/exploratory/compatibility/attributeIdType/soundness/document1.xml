@@ -1,4 +1,6 @@
-/*
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
 Copyright 2011 Radu Cernuta 
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +14,15 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-*/
+-->
 
-package serene.dtdcompatibility;
-
-public interface InfosetModificationModel{
-    AttributeDefaultValueModel getAttributeDefaultValueModel();    
-}
+<root>
+    <foo id="aa"/>
+    <foo id="bb"/>
+    <foo id="aa"/>
+    <foo idref="aa"/>
+    <foo idref="cc"/>
+    <foo idrefs="aa"/>
+    <foo idrefs="aa bb"/>
+    <foo idrefs="aa bb cc"/>
+</root>

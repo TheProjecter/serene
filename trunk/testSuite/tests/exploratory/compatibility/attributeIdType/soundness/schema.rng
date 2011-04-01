@@ -17,16 +17,29 @@ limitations under the License.
 -->
 
 <grammar xmlns="http://relaxng.org/ns/structure/1.0"
-    xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
-    datatypeLibrary="http://relaxng.org/ns/compatibility/datatypes/1.0">
+        datatypeLibrary="http://relaxng.org/ns/compatibility/datatypes/1.0">
     <start>
         <element name="root">
-            <zeroOrMore>
-                <attribute>
-                    <anyName/>
-                    <data type="ID"/>
-                </attribute>
-            </zeroOrMore>
+            <oneOrMore>
+                <element name="foo">
+                    <ref name="choiceAttributes"/>
+                </element>
+            </oneOrMore>    
         </element>
     </start>
+    
+    <define name="choiceAttributes">
+        <choice>
+            <attribute name="id">
+              <data type="ID"/>
+            </attribute>
+            <attribute name="idref">
+              <data type="IDREF"/>
+            </attribute>
+            <attribute name="idrefs">
+              <data type="IDREFS"/>
+            </attribute>
+        </choice>
+    </define>
+    
 </grammar>

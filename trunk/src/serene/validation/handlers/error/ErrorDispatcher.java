@@ -23,10 +23,12 @@ import org.xml.sax.SAXException;
 import serene.SereneRecoverableException;
 import serene.dtdcompatibility.DTDCompatibilityException;
 import serene.dtdcompatibility.AttributeDefaultValueException;
+import serene.dtdcompatibility.AttributeIdTypeException;
 
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import sereneWrite.MessageWriter;
+import sereneWrite.FileHandler;
 
 public class ErrorDispatcher implements ErrorHandler{
 	
@@ -35,10 +37,11 @@ public class ErrorDispatcher implements ErrorHandler{
 	boolean hasUnrecoverableError = false;
     boolean hasDTDCompatibilityError = false;
     boolean hasAttributeDefaultValueError = false;
+    boolean hasAttributeIdTypeError = false;
 	MessageWriter debugWriter;
 		
 	public ErrorDispatcher(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+		this.debugWriter = debugWriter;        
 	}
 	
 	public void init(){
@@ -46,6 +49,7 @@ public class ErrorDispatcher implements ErrorHandler{
         hasUnrecoverableError = false;
         hasDTDCompatibilityError = false;
         hasAttributeDefaultValueError = false;
+        hasAttributeIdTypeError = false;
 	}
 	
 	
@@ -85,6 +89,11 @@ public class ErrorDispatcher implements ErrorHandler{
         hasError = true;
         hasAttributeDefaultValueError = true;        
 	}
+    public void error(AttributeIdTypeException exception) throws SAXException{
+		if(errorHandler != null) errorHandler.error(exception);
+        hasError = true;
+        hasAttributeIdTypeError = true;        
+	}
     
 	public void warning(SAXParseException exception) throws SAXException{
 		if(errorHandler != null) errorHandler.warning(exception);
@@ -105,6 +114,10 @@ public class ErrorDispatcher implements ErrorHandler{
     
     public boolean hasAttributeDefaultValueError(){
         return hasAttributeDefaultValueError;
+    }
+    
+    public boolean hasAttributeIdTypeError(){
+        return hasAttributeIdTypeError;
     }
     
 	public String toString(){

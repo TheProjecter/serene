@@ -90,8 +90,7 @@ import serene.restrictor.RestrictionController;
 import serene.restrictor.ControllerPool;
 
 import serene.dtdcompatibility.CompatibilityHandler;
-import serene.dtdcompatibility.InfosetModificationModelImpl;
-
+import serene.dtdcompatibility.DTDCompatibilityModelImpl;
 
 import serene.validation.schema.ValidationModel;
 import serene.validation.schema.ValidationModelImpl;
@@ -113,18 +112,7 @@ import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import serene.util.IntStack;
 
-// SPECIFICATION
-// 		not thread-safe; client application's responsibility
-//		not re-entrant; while one newSchema is invoked, applications must not 
-//		attemp to recursively invoke the newSchema method, even from the same thread
-/**
-*
-*
-*/
 public class RNGSchemaFactory extends SchemaFactory{
-    String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
-    String DTD_MAPPING_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdMapping";	
-	
 	private LSResourceResolver resourceResolver;
 	
 	private XMLReader xmlReader;
@@ -142,10 +130,10 @@ public class RNGSchemaFactory extends SchemaFactory{
     private boolean namespacePrefixes;
     private boolean level1AttributeDefaultValue;
     private boolean level2AttributeDefaultValue;
-    private boolean level1IdIdrefIdrefs;	
+    private boolean level1AttributeIdType;
+    private boolean level2AttributeIdType;	
 	private boolean replaceMissingDatatypeLibrary;
 	private boolean parsedModelSchema;	
-
 	
 	ErrorDispatcher errorDispatcher;
 
@@ -187,7 +175,8 @@ public class RNGSchemaFactory extends SchemaFactory{
         namespacePrefixes = false;            
         level1AttributeDefaultValue = true;
         level2AttributeDefaultValue = true;
-        level1IdIdrefIdrefs = true;
+        level1AttributeIdType = true;
+        level2AttributeIdType = true;
 		replaceMissingDatatypeLibrary = true;
 		parsedModelSchema = false;
 	}
@@ -251,7 +240,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 		simplifier = new RNGSimplifier(xmlReader, internalRNGFactory, errorDispatcher, debugWriter);		  
 		simplifier.setReplaceMissingDatatypeLibrary(replaceMissingDatatypeLibrary);
         simplifier.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
-        simplifier.setLevel1IdIdrefIdrefs(level1IdIdrefIdrefs);
+        simplifier.setLevel1AttributeIdType(level1AttributeIdType);
 	}
 	private void createRestrictionController(){
 		restrictionController = new RestrictionController(errorDispatcher, debugWriter);
@@ -311,14 +300,24 @@ public class RNGSchemaFactory extends SchemaFactory{
             simplifier.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
             level2AttributeDefaultValue = value;
-            if(level2AttributeDefaultValue) level1AttributeDefaultValue = value;
-        }else if(name.equals(Constants.LEVEL1_ID_IDREF_IDREFS_FEATURE)){
-            level1IdIdrefIdrefs = value;
-            simplifier.setLevel1IdIdrefIdrefs(level1IdIdrefIdrefs);
+            if(level2AttributeDefaultValue){
+                level1AttributeDefaultValue = value;
+                simplifier.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
+            }
+        }else if(name.equals(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE)){
+            level1AttributeIdType = value;
+            simplifier.setLevel1AttributeIdType(level1AttributeIdType);
+        }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE)){
+            level2AttributeIdType = value;
+            if(level2AttributeIdType){
+                level1AttributeIdType = value;
+                simplifier.setLevel1AttributeIdType(level1AttributeIdType);
+            }
         }else{
             throw new SAXNotRecognizedException("Unknown feature.");
         }
 	}
+	
 	
 	public boolean getFeature(String name) throws SAXNotSupportedException, SAXNotRecognizedException{
 		if (name == null) {
@@ -327,20 +326,22 @@ public class RNGSchemaFactory extends SchemaFactory{
 		       
         if(name.equals(XMLConstants.FEATURE_SECURE_PROCESSING)){
             return false;            
+        }else if(name.equals(Constants.NAMESPACES_PREFIXES_SAX_FEATURE)){
+            return namespacePrefixes;    
         }else if(name.equals(Constants.REPLACE_MISSING_LIBRARY_FEATURE)){
 			return replaceMissingDatatypeLibrary;
-		}else if(name.equals(Constants.NAMESPACES_PREFIXES_SAX_FEATURE)){
-            return namespacePrefixes;    
-        }else if(name.equals(Constants.PARSED_MODEL_SCHEMA_FEATURE)){
+		}else if(name.equals(Constants.PARSED_MODEL_SCHEMA_FEATURE)){
 			return parsedModelSchema;
 		}else if(name.equals(Constants.LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
             return level1AttributeDefaultValue;
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
             return level2AttributeDefaultValue;
-        }else if(name.equals(Constants.LEVEL1_ID_IDREF_IDREFS_FEATURE)){
-            return level1IdIdrefIdrefs;
-        }else{        
-            throw new SAXNotRecognizedException("Unknown feature.");
+        }else if(name.equals(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE)){
+            return level1AttributeIdType;
+        }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE)){
+            return level2AttributeIdType;
+        }else{
+        	throw new SAXNotRecognizedException("Unknown feature.");
         }
 	}
 	
@@ -379,7 +380,7 @@ public class RNGSchemaFactory extends SchemaFactory{
         
         InputSource inputSource = new InputSource(file.toURI().toASCIIString());        
         xmlReader.setContentHandler(validatorHandler);
-        DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+        DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(Constants.DTD_HANDLER_PROPERTY);
         xmlReader.setDTDHandler(dtdHandler);
         try{
             xmlReader.parse(inputSource);
@@ -398,7 +399,7 @@ public class RNGSchemaFactory extends SchemaFactory{
         
         InputSource inputSource = new InputSource(url.toExternalForm());        
         xmlReader.setContentHandler(validatorHandler);
-        DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+        DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(Constants.DTD_HANDLER_PROPERTY);
         xmlReader.setDTDHandler(dtdHandler);
         try{
             xmlReader.parse(inputSource);
@@ -440,7 +441,7 @@ public class RNGSchemaFactory extends SchemaFactory{
         //read schema
 		if(sourceReader != null){            
             sourceReader.setContentHandler(validatorHandler);
-            DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+            DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(Constants.DTD_HANDLER_PROPERTY);
             sourceReader.setDTDHandler(dtdHandler);
             try{
                 sourceReader.parse(inputSource);
@@ -449,7 +450,7 @@ public class RNGSchemaFactory extends SchemaFactory{
             }
 		}else{
             xmlReader.setContentHandler(validatorHandler);
-            DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+            DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(Constants.DTD_HANDLER_PROPERTY);
             xmlReader.setDTDHandler(dtdHandler);
             try{
                 xmlReader.parse(inputSource);
@@ -583,7 +584,7 @@ public class RNGSchemaFactory extends SchemaFactory{
         
         DTDMapping dtdMapping = null;
         try{
-            dtdMapping = (DTDMapping)validatorHandler.getProperty(DTD_MAPPING_PROPERTY);
+            dtdMapping = (DTDMapping)validatorHandler.getProperty(Constants.DTD_MAPPING_PROPERTY);
         }catch(SAXNotRecognizedException e){
             throw new SAXException(e);
         }
@@ -594,11 +595,13 @@ public class RNGSchemaFactory extends SchemaFactory{
         SchemaModel schemaModel = null;
         
 		if(parsedModel == null) {
-			schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new InfosetModificationModelImpl(null, debugWriter), debugWriter);
+			schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
             RNGSchema schema  = new RNGSchema(false,
                                         namespacePrefixes,
                                         level1AttributeDefaultValue,
                                         level2AttributeDefaultValue,
+                                        level1AttributeIdType,
+                                        level2AttributeIdType,
                                         schemaModel, 
                                         debugWriter);
             return schema;
@@ -621,10 +624,10 @@ public class RNGSchemaFactory extends SchemaFactory{
 		if(simplifiedModel != null){
             restrictionController.control(simplifiedModel);
             if(errorDispatcher.hasUnrecoverableError()){
-                schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new InfosetModificationModelImpl(null, debugWriter), debugWriter);
+                schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
             }else{
                 ValidationModel vm = new ValidationModelImpl(parsedModel, simplifiedModel, debugWriter);
-                if(level1AttributeDefaultValue || level1IdIdrefIdrefs){
+                if(level1AttributeDefaultValue || level1AttributeIdType){
                     if(compatibilityHandler == null){                
                         ValidatorErrorHandlerPool vehp = (ValidatorErrorHandlerPool)validatorHandler.getProperty(Constants.ERROR_HANDLER_POOL_PROPERTY);
                         ValidatorEventHandlerPool ehp = (ValidatorEventHandlerPool)validatorHandler.getProperty(Constants.EVENT_HANDLER_POOL_PROPERTY);
@@ -633,18 +636,20 @@ public class RNGSchemaFactory extends SchemaFactory{
                         compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, vil, errorDispatcher, debugWriter);                
                     }
                     if(level1AttributeDefaultValue) compatibilityHandler.setLevel1AttributeDefaultValue(true);
-                    if(level1IdIdrefIdrefs) compatibilityHandler.setLevel1IdIdrefIdrefs(true);
+                    if(level1AttributeIdType) compatibilityHandler.setLevel1AttributeIdType(true);
                     schemaModel = compatibilityHandler.handle(vm);
                 }
             }
         }else{
-            schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new InfosetModificationModelImpl(null, debugWriter), debugWriter);
+            schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
         }
         
 		RNGSchema schema  = new RNGSchema(false,
                                         namespacePrefixes,
                                         level1AttributeDefaultValue,
                                         level2AttributeDefaultValue,
+                                        level1AttributeIdType,
+                                        level2AttributeIdType,
                                         schemaModel, 
                                         debugWriter);
 		return schema;
