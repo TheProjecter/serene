@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.handlers.content.impl;
 
+import org.relaxng.datatype.Datatype;
+
 import serene.validation.schema.active.components.AAttribute;
 
 import serene.validation.handlers.error.ErrorCatcher;
@@ -58,7 +60,7 @@ class BoundAttributeValidationHandler extends AttributeValidationHandler impleme
 		int definitionIndex = attribute.getDefinitionIndex();
 		AttributeBinder binder = bindingModel.getAttributeBinder(definitionIndex);		
 		if(binder != null){
-			binder.bindAttribute(queue, entry, definitionIndex, validationItemLocator.getNamespaceURI(), validationItemLocator.getLocalName(), validationItemLocator.getQName(), value);
+			binder.bindAttribute(queue, entry, definitionIndex, validationItemLocator.getNamespaceURI(), validationItemLocator.getLocalName(), validationItemLocator.getQName(), Datatype.ID_TYPE_NULL, value);
 		}
 	}
 	

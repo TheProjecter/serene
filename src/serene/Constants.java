@@ -32,6 +32,7 @@ public interface Constants{
     
     String XSD_DATATYPE_LIBRARY = "http://www.w3.org/2001/XMLSchema-datatypes";
     String INTERNAL_DATATYPE_LIBRARY = "http://serenerng.org/datatype/internal";
+    String DTD_COMPATIBILITY_DATATYPE_LIBRARY = "http://relaxng.org/ns/compatibility/datatypes/1.0";
     String NATIVE_DATATYPE_LIBRARY = "";    
 	String TOKEN_DT = "token";
   
@@ -44,4 +45,7 @@ public interface Constants{
     
     String LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level1/attributeDefaultValue";
     String LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level2/attributeDefaultValue";
+    
+    String LEVEL1_ID_IDREF_IDREFS_FEATURE = "http://serenerng.org/features/DTDCompatibility/level1/idIdrefIdrefs";
+    String LEVEL2_ID_IDREF_IDREFS_FEATURE = "http://serenerng.org/features/DTDCompatibility/level2/idIdrefIdrefs";
 }

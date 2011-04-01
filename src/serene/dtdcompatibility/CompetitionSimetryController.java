@@ -20,14 +20,16 @@ import java.util.ArrayList;
 
 import org.xml.sax.SAXException;
 
+import serene.restrictor.OverlapController;
+import serene.restrictor.ControllerPool;
+
 import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SNameClass;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import serene.restrictor.ControllerPool;
-import serene.restrictor.OverlapController;
+import serene.util.IntList;
 
 import sereneWrite.MessageWriter;
 
@@ -49,7 +51,6 @@ class CompetitionSimetryController{
     void clear(){
         records.clear();
     }
-    
     void control(SElement element, ArrayList<SAttribute> attributes) throws SAXException{
         SNameClass nameClass = element.getNameClass();        
         for(ElementRecord record : records){
@@ -121,19 +122,171 @@ class CompetitionSimetryController{
                 }
             }
         }
-        ElementRecord er = new ElementRecord(element, attributes);
+        ElementRecord er = new ElementRecord(element, attributes, null);
         records.add(er);        
+    }
+    
+    
+    
+    void control(SElement element, ArrayList<SAttribute> attributes, IntList attributeIdTypes) throws SAXException{
+        SNameClass nameClass = element.getNameClass();        
+        for(ElementRecord record : records){
+            SNameClass recordNameClass = record.element.getNameClass();
+            if(overlapController.overlap(nameClass, recordNameClass)){
+                //Handle both default value and id type
+                for(int i = 0; i < attributes.size(); i++){
+                    SAttribute attribute = attributes.get(i);
+                    String defaultValue = attribute.getDefaultValue();
+                    boolean foundCorrespondent = false;
+                    SNameClass attributeNC = attribute.getNameClass();
+                    for(int j = 0; j < record.attributes.size(); j++){
+                        SAttribute recordAttribute = record.attributes.get(j);
+                        SNameClass recordAttributeNC = recordAttribute.getNameClass();
+                        if(attributeNC.equals(recordAttributeNC)){
+                            String recordDefaultValue = recordAttribute.getDefaultValue();
+                            foundCorrespondent = true;
+                            if(defaultValue == null){                                
+                                if(recordDefaultValue == null){  
+                                }else{
+                                    String message = "DTD compatibility error. Competing element definitions contain attribute definitions with the same name and different default values:"
+                                    +"\n<"+element.getQName()+"> at "+element.getLocation()+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation()+" without default value;"
+                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+" and default value \""+recordDefaultValue+"\".";
+                                    errorDispatcher.error(new AttributeDefaultValueException(message, null));
+                                }
+                            }else{
+                                if(recordDefaultValue != null && recordDefaultValue.equals(defaultValue)){
+                                }else if(recordDefaultValue == null){
+                                    String message = "DTD compatibility error. Competing element definitions contain attribute definitions with the same name and different default values:"
+                                    +"\n<"+element.getQName()+"> at "+element.getLocation()+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation()+" and default value \""+defaultValue+"\";"
+                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+" without default value .";
+                                    errorDispatcher.error(new AttributeDefaultValueException(message, null));
+                                }else{
+                                    String message = "DTD compatibility error. Competing element definitions contain attribute definitions with the same name and different default values:"
+                                    +"\n<"+element.getQName()+"> at "+element.getLocation()+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation()+" and default value \""+defaultValue+"\";"
+                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+" and default value \""+recordDefaultValue+"\".";
+                                    errorDispatcher.error(new AttributeDefaultValueException(message, null));          
+                                }
+                            }
+                            
+                            if(attributeIdTypes.isEmpty()){
+                                System.out.println(attributes);                             
+                            }
+                            int attributeIdType = attributeIdTypes.get(i);
+                            int recordAttributeIdType = record.attributeIdTypes.get(j);
+                            if(attributeIdType != recordAttributeIdType){
+                                String message = "DTD compatibility error. Competing attribute definitions specify attribute values with different id types:"
+                                    +"\n<"+attribute.getQName()+"> at "+attribute.getLocation()+";"
+                                    +"\n<"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+".";
+                                    errorDispatcher.error(new AttributeIdTypeException(message, null));
+                                    break; // attribute handling done, move to next
+                            }
+                        }else if(overlapController.overlap(attributeNC, recordAttributeNC)){
+                            int attributeIdType = attributeIdTypes.get(i);
+                            int recordAttributeIdType = record.attributeIdTypes.get(j);
+                            if(attributeIdType != recordAttributeIdType){
+                                String message = "DTD compatibility error. Competing attribute definitions specify attribute values with different id types:"
+                                    +"\n<"+attribute.getQName()+"> at "+attribute.getLocation()+";"
+                                    +"\n<"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+".";
+                                    errorDispatcher.error(new AttributeIdTypeException(message, null));
+                            }
+                        }
+                    }
+                    if(!foundCorrespondent){
+                        String message = "DTD compatibility error. Competing element definitions without corresponding attribute definitions with default values:"
+                                +"\n<"+element.getQName()+"> at "+element.getLocation()+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation()
+                                +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" without corresponding attribute definition.";
+                        errorDispatcher.error(new AttributeDefaultValueException(message, null));
+                    }                    
+                }
+                for(SAttribute recordAttribute : record.attributes){
+                    String defaultValue = recordAttribute.getDefaultValue();                                        
+                    if(defaultValue != null){
+                        boolean foundCorrespondent = false;
+                        SNameClass recordAttributeNC = recordAttribute.getNameClass();
+                        for(SAttribute attribute : attributes){
+                            SNameClass attributeNC = attribute.getNameClass();
+                            if(attributeNC.equals(recordAttributeNC)){
+                                foundCorrespondent = true;// already handled previously
+                            }
+                        }
+                        if(!foundCorrespondent){
+                            String message = "DTD compatibility error. Competing element definitions without corresponding attribute definitions with default values:"
+                                    +"\n<"+element.getQName()+"> at "+element.getLocation()+" without corresponding attribute definition."
+                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation();
+                            errorDispatcher.error(new AttributeDefaultValueException(message, null));
+                        }
+                    }
+                }
+            }else{
+                //Handle only the idType.
+                for(int i = 0; i < attributes.size(); i++){
+                    SAttribute attribute = attributes.get(i);
+                    SNameClass attributeNC = attribute.getNameClass();
+                    for(int j = 0; j < record.attributes.size(); j++){
+                        SAttribute recordAttribute = record.attributes.get(j);
+                        SNameClass recordAttributeNC = recordAttribute.getNameClass();                            
+                        if(overlapController.overlap(attributeNC, recordAttributeNC)){
+                            int attributeIdType = attributeIdTypes.get(i);
+                            int recordAttributeIdType = record.attributeIdTypes.get(j);
+                            if(attributeIdType != recordAttributeIdType){
+                                String message = "DTD compatibility error. Competing attribute definitions specify attribute values with different id types:"
+                                    +"\n<"+attribute.getQName()+"> at "+attribute.getLocation()+";"
+                                    +"\n<"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+".";
+                                    errorDispatcher.error(new AttributeIdTypeException(message, null));
+                                    break; // attribute handling done, move to next
+                            }
+                        }
+                    }                 
+                }
+            }
+        }
+        ElementRecord er = new ElementRecord(element, attributes, attributeIdTypes);
+        records.add(er);        
+    }
+    
+    void control(ArrayList<SAttribute> attributes, IntList attributeIdTypes) throws SAXException{
+        //there is only one dummy record
+        ElementRecord record = records.get(0);
+        //Handle only the idType.
+        for(int i = 0; i < attributes.size(); i++){
+            SAttribute attribute = attributes.get(i);
+            SNameClass attributeNC = attribute.getNameClass();
+            for(int j = 0; j < record.attributes.size(); j++){
+                SAttribute recordAttribute = record.attributes.get(j);
+                SNameClass recordAttributeNC = recordAttribute.getNameClass();                            
+                if(overlapController.overlap(attributeNC, recordAttributeNC)){
+                    int attributeIdType = attributeIdTypes.get(i);
+                    int recordAttributeIdType = record.attributeIdTypes.get(j);
+                    if(attributeIdType != recordAttributeIdType){
+                        String message = "DTD compatibility error. Competing attribute definitions specify attribute values with different id types:"
+                            +"\n<"+attribute.getQName()+"> at "+attribute.getLocation()+";"
+                            +"\n<"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+".";
+                            errorDispatcher.error(new AttributeIdTypeException(message, null));
+                            break; // attribute handling done, move to next
+                    }
+                }
+            }                 
+        }
+        record.add(attributes, attributeIdTypes);
     }
     
     class ElementRecord{
         SElement element;
         ArrayList<SAttribute> attributes;
+        IntList attributeIdTypes;
         
-        ElementRecord(SElement element, ArrayList<SAttribute> attributes){
+        ElementRecord(SElement element, ArrayList<SAttribute> attributes, IntList attributeIdTypes){
             this.element = element;
             this.attributes = attributes;
+            this.attributeIdTypes = attributeIdTypes;
         }
 
+        void add(ArrayList<SAttribute> attributes, IntList attributeIdTypes){
+            this.attributes.addAll(attributes);
+            for(int i = 0; i < attributeIdTypes.size(); i++){
+                this.attributeIdTypes.add(attributeIdTypes.get(i));
+            }
+        }
         public String toString(){
             return element.toString()+" "+attributes.toString();
         }        

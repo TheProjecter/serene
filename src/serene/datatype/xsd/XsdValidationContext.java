@@ -26,7 +26,7 @@ import org.apache.xerces.util.SymbolTable;
 
 import sereneWrite.MessageWriter;
 
-class XsdValidationContext implements org.apache.xerces.impl.dv.ValidationContext{
+public class XsdValidationContext implements org.apache.xerces.impl.dv.ValidationContext{
     ValidationContext rngValidationContext;
     
     boolean needsExtraChecking;
@@ -40,7 +40,7 @@ class XsdValidationContext implements org.apache.xerces.impl.dv.ValidationContex
     
     MessageWriter debugWriter;
     
-    XsdValidationContext(MessageWriter debugWriter){
+    public XsdValidationContext(MessageWriter debugWriter){
         this.debugWriter = debugWriter;
         
         needsExtraChecking = false;
@@ -54,19 +54,19 @@ class XsdValidationContext implements org.apache.xerces.impl.dv.ValidationContex
     }
     
     
-    void setRngValidationContext(ValidationContext rngValidationContext){
+    public void setRngValidationContext(ValidationContext rngValidationContext){
         this.rngValidationContext = rngValidationContext;
     }
         
-    void setNeedsExtraChecking(boolean value){
+    public void setNeedsExtraChecking(boolean value){
         needsExtraChecking = value;
     }
     
-    void setNeedsFacetChecking(boolean value){
+    public void setNeedsFacetChecking(boolean value){
         needsFacetChecking = value;
     }
     
-    void setNeedsToNormalize(boolean value){
+    public void setNeedsToNormalize(boolean value){
         needsToNormalize = value;
     }
     

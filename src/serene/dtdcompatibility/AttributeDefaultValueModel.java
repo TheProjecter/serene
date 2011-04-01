@@ -38,7 +38,7 @@ public class AttributeDefaultValueModel{
     }
     
     
-    public void addAttributeDefaultValueInfo(Identifier elementId, AttributeInfo[] attrInfo){        
+    public void addAttributeInfo(Identifier elementId, AttributeInfo[] attrInfo){        
         if(elementIdentifiers == null){
             elementIdentifiers = new Identifier[1];
             elementIdentifiers[0] = elementId;
@@ -60,7 +60,7 @@ public class AttributeDefaultValueModel{
 		}
     }
     
-    public AttributeInfo[] getAttributeDefaultValueInfo(String elementNamespaceURI, String elementName){
+    public AttributeInfo[] getAttributeInfo(String elementNamespaceURI, String elementName){
         if(elementIdentifiers == null) return null;
         for(int i= 0; i < elementIdentifiers.length; i++){
             if(elementIdentifiers[i].matches(elementNamespaceURI, elementName)){
