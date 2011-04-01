@@ -40,9 +40,13 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stax.StAXSource;
+import javax.xml.transform.stream.StreamSource;
 
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
 
 import org.xml.sax.Locator;
 import org.xml.sax.InputSource;
@@ -124,6 +128,8 @@ public class RNGSchemaFactory extends SchemaFactory{
 	private LSResourceResolver resourceResolver;
 	
 	private XMLReader xmlReader;
+    private DOMHandler domHandler;
+    private StAXHandler stAXHandler;
 	private InternalRNGFactory internalRNGFactory;	
 	private ValidatorHandler validatorHandler;
 	private Queue queue;
@@ -135,47 +141,11 @@ public class RNGSchemaFactory extends SchemaFactory{
 
     private boolean namespacePrefixes;
     private boolean level1AttributeDefaultValue;
-    private boolean level2AttributeDefaultValue;	
+    private boolean level2AttributeDefaultValue;
+    private boolean level1IdIdrefIdrefs;	
 	private boolean replaceMissingDatatypeLibrary;
-	private boolean parsedModelSchema;
-		
-	
-	// for DOM
-	/**
-	* Locator to be initiated with the systemId of the source and used for DOM
-	* validation.
-	*/
-	LocatorImpl locator;
-	/**
-	* Attributes list as described in the org.xml.sax, updated for every element
-	* and passed to the validator. Used to fire startElement events.
-	*/
-	AttributesImpl attributes;
-	/**
-	* Stack of all the namespace prefixes defined for the context. The prefixes 
-	* are pushed on the stack in the begining of the start element processing and
-	* are popped at the end of end element processing of the corresponding element. 
-	* Used to fire endPrefixMapping events.
-	*/
-	Stack<String> prefixes;
-	/**
-	* Stack containing the count of namespace prefixes defined for the an element.
-	* The count is pushed on the stack in the begining of start element processing
-	* and is popped at the end of end element processing of the corresponding 
-	* element. Used to know how many endPrefixMapping event must be fire, if any.
-	*/
-	IntStack prefixesCount;
-	
-	
-	/** Chunk size (1024). */
-    final int CHUNK_SIZE = (1 << 10);
-    
-    /** Chunk mask (CHUNK_SIZE - 1). */
-    final int CHUNK_MASK = CHUNK_SIZE - 1;
-	
-	/** Array for holding character data. **/
-    char[] chars = new char[CHUNK_SIZE];
-	
+	private boolean parsedModelSchema;	
+
 	
 	ErrorDispatcher errorDispatcher;
 
@@ -214,9 +184,10 @@ public class RNGSchemaFactory extends SchemaFactory{
 	}
 	
 	private void initDefaultFeatures(){
-        namespacePrefixes = false;        
+        namespacePrefixes = false;            
         level1AttributeDefaultValue = true;
         level2AttributeDefaultValue = true;
+        level1IdIdrefIdrefs = true;
 		replaceMissingDatatypeLibrary = true;
 		parsedModelSchema = false;
 	}
@@ -280,6 +251,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 		simplifier = new RNGSimplifier(xmlReader, internalRNGFactory, errorDispatcher, debugWriter);		  
 		simplifier.setReplaceMissingDatatypeLibrary(replaceMissingDatatypeLibrary);
         simplifier.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
+        simplifier.setLevel1IdIdrefIdrefs(level1IdIdrefIdrefs);
 	}
 	private void createRestrictionController(){
 		restrictionController = new RestrictionController(errorDispatcher, debugWriter);
@@ -340,6 +312,9 @@ public class RNGSchemaFactory extends SchemaFactory{
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
             level2AttributeDefaultValue = value;
             if(level2AttributeDefaultValue) level1AttributeDefaultValue = value;
+        }else if(name.equals(Constants.LEVEL1_ID_IDREF_IDREFS_FEATURE)){
+            level1IdIdrefIdrefs = value;
+            simplifier.setLevel1IdIdrefIdrefs(level1IdIdrefIdrefs);
         }else{
             throw new SAXNotRecognizedException("Unknown feature.");
         }
@@ -362,9 +337,11 @@ public class RNGSchemaFactory extends SchemaFactory{
             return level1AttributeDefaultValue;
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
             return level2AttributeDefaultValue;
+        }else if(name.equals(Constants.LEVEL1_ID_IDREF_IDREFS_FEATURE)){
+            return level1IdIdrefIdrefs;
+        }else{        
+            throw new SAXNotRecognizedException("Unknown feature.");
         }
-        
-		throw new SAXNotRecognizedException("Unknown feature.");
 	}
 	
 	public void setProperty(String name, Object object){
@@ -386,8 +363,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 		if(schemaLanguage.length() == 0) throw new IllegalArgumentException();
 		return schemaLanguage.equals(XMLConstants.RELAXNG_NS_URI);
 	}
-	
-	
+		
 	public Schema newSchema(){		
 		throw new UnsupportedOperationException();
 	}
@@ -397,15 +373,41 @@ public class RNGSchemaFactory extends SchemaFactory{
 	}  
 			
 	public Schema newSchema(File file) throws SAXException {
-        // TODO see about the JAXP 1.4 features clarification
 		if(file == null) throw new NullPointerException();
-        return newSchema(new InputSource(file.toURI().toASCIIString()));
+        
+        errorDispatcher.init();
+        
+        InputSource inputSource = new InputSource(file.toURI().toASCIIString());        
+        xmlReader.setContentHandler(validatorHandler);
+        DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+        xmlReader.setDTDHandler(dtdHandler);
+        try{
+            xmlReader.parse(inputSource);
+        }catch(IOException e){			
+            throw new SAXException(e.getMessage(), e);
+        }    
+        
+        ParsedModel pm = getParsedModel();
+        return newSchema(inputSource.getSystemId(), pm);
     }
 	
 	public Schema newSchema(URL url) throws SAXException {
-        // TODO see about the JAXP 1.4 features clarification
 		if(url == null) throw new NullPointerException();
-        return newSchema(new InputSource(url.toExternalForm()));
+        
+        errorDispatcher.init();
+        
+        InputSource inputSource = new InputSource(url.toExternalForm());        
+        xmlReader.setContentHandler(validatorHandler);
+        DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+        xmlReader.setDTDHandler(dtdHandler);
+        try{
+            xmlReader.parse(inputSource);
+        }catch(IOException e){			
+            throw new SAXException(e.getMessage(), e);
+        }    
+        
+        ParsedModel pm = getParsedModel();
+        return newSchema(inputSource.getSystemId(), pm);
     }
 	
 	public Schema newSchema(Source source) throws SAXException{
@@ -426,27 +428,92 @@ public class RNGSchemaFactory extends SchemaFactory{
 	} 
 	
 	public Schema newSchema(SAXSource source) throws SAXException{
-        // TODO see about the JAXP 1.4 features clarification		
-		InputSource inputSource = source.getInputSource();
-		if(inputSource.getSystemId() == null) inputSource.setSystemId(source.getSystemId());		
-		return newSchema(inputSource);
+        // TODO see about the JAXP 1.4 features clarification
+        if(source == null) throw new NullPointerException();
+		
+		InputSource inputSource = source.getInputSource();        
+		if(inputSource.getSystemId() == null) inputSource.setSystemId(source.getSystemId()); // TODO review this        
+        XMLReader sourceReader = source.getXMLReader();
+                
+        errorDispatcher.init();
+        
+        //read schema
+		if(sourceReader != null){            
+            sourceReader.setContentHandler(validatorHandler);
+            DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+            sourceReader.setDTDHandler(dtdHandler);
+            try{
+                sourceReader.parse(inputSource);
+            }catch(IOException e){			
+                throw new SAXException(e.getMessage(), e);
+            }
+		}else{
+            xmlReader.setContentHandler(validatorHandler);
+            DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
+            xmlReader.setDTDHandler(dtdHandler);
+            try{
+                xmlReader.parse(inputSource);
+            }catch(IOException e){			
+                throw new SAXException(e.getMessage(), e);
+            }        
+        }
+
+        ParsedModel pm = getParsedModel();
+        return newSchema(inputSource.getSystemId(), pm);		
 	}
 	
 	
 	public Schema newSchema(StAXSource source)throws SAXException{
-        // TODO see about the JAXP 1.4 features clarification
-		InputSource inputSource;		
-		String si = source.getSystemId();
-		if(si == null){
-			throw new SAXException("Cannot read source: "+source.toString()+".");
-		}else{
-			inputSource = new InputSource(si);
-		}				
-		return newSchema(inputSource);
+        if(source == null) throw new NullPointerException();
+        
+        errorDispatcher.init();
+        
+        // read schema
+        XMLStreamReader xmlStreamReader = source.getXMLStreamReader();         
+        if(xmlStreamReader != null){
+            try{
+                if(xmlStreamReader == null)throw new IllegalArgumentException("Source does not represent an XML artifact. Input is expected to be XML documents or elements.");
+                // check for document or element, else error
+                if(!xmlStreamReader.hasNext()){
+                    throw new IllegalArgumentException("Source does not represent an XML artifact. Input is expected to be XML documents or elements.");
+                }else if(!(xmlStreamReader.getEventType() == XMLStreamConstants.START_DOCUMENT
+                    || xmlStreamReader.getEventType() == XMLStreamConstants.START_ELEMENT)){
+                   throw new IllegalArgumentException("Source represents an XML artifact that cannot be validated. Input is expected to be XML documents or elements.");
+                }
+                // create handler and validate
+                if(stAXHandler == null) stAXHandler = new StAXHandler(debugWriter);
+                stAXHandler.handle(source.getSystemId(), validatorHandler, xmlStreamReader);
+            }catch(XMLStreamException e){
+                throw new SAXException(e);
+            }
+        }else{
+            XMLEventReader xmlEventReader = source.getXMLEventReader();
+            // check for document or element, else error
+            try{
+                if(!xmlEventReader.hasNext()){
+                    throw new IllegalArgumentException("Source does not represent an XML artifact. Input is expected to be XML documents or elements.");
+                }else if(!(xmlEventReader.peek().getEventType() == XMLStreamConstants.START_DOCUMENT
+                    || xmlEventReader.peek().getEventType() == XMLStreamConstants.START_ELEMENT)){
+                   throw new IllegalArgumentException("Source represents an XML artifact that cannot be validated. Input is expected to be XML documents or elements.");
+                }
+                // create handler and validate             
+                if(stAXHandler == null) stAXHandler = new StAXHandler(debugWriter);                 
+                stAXHandler.handle(source.getSystemId(), validatorHandler, xmlEventReader);
+            }catch(XMLStreamException e){
+                throw new SAXException(e);
+            }
+        }
+         
+        ParsedModel pm = getParsedModel();
+        return newSchema(source.getSystemId(), pm);	
 	}
 	
-	public Schema newSchema(StreamSource source) throws SAXException{
-        // TODO see about the JAXP 1.4 features clarification		
+	public Schema newSchema(StreamSource source) throws SAXException{       
+		if(source == null) throw new NullPointerException();
+        
+        errorDispatcher.init();
+         
+        // read schema
 		InputSource inputSource;		
 		InputStream is = source.getInputStream();
 		if(is == null){
@@ -467,24 +534,43 @@ public class RNGSchemaFactory extends SchemaFactory{
 			if(inputSource.getSystemId() == null) inputSource.setSystemId(source.getSystemId());
 		}
 		
-		return newSchema(inputSource);
+		try{
+            xmlReader.parse(inputSource);
+        }catch(IOException e){			
+            throw new SAXException(e.getMessage(), e);
+        }
+        
+        ParsedModel pm = getParsedModel();
+        return newSchema(inputSource.getSystemId(), pm);	
 	}
 	
-	private Schema newSchema(InputSource inputSource) throws SAXException{
-		String systemId = inputSource.getSystemId();		
-		errorDispatcher.init();
-		//read schema
-		xmlReader.setContentHandler(validatorHandler);
-        DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY);
-        xmlReader.setDTDHandler(dtdHandler);
-		try{
-			xmlReader.parse(inputSource);
-		}catch(IOException e){			
-			throw new SAXException(e.getMessage(), e);
-		}
+    
+    public Schema newSchema(DOMSource source) throws SAXException{
+        if(source == null) throw new NullPointerException();
+        
+        errorDispatcher.init();
 		
-		//build parsed model
-		parsedComponentBuilder.startBuild();
+        // read schema
+        Node node = source.getNode();        
+        if(node == null) throw new IllegalArgumentException("Source does not represent an XML artifact. Input is expected to be XML documents or elements.");
+        int type = node.getNodeType();
+        if(!(type == Node.ELEMENT_NODE || type == Node.DOCUMENT_NODE))
+            throw new IllegalArgumentException("Source represents an XML artifact that cannot be validated. Input is expected to be XML documents or elements.");
+		
+        String systemId = source.getSystemId();        
+        if(domHandler == null) domHandler = new DOMHandler(debugWriter);
+        domHandler.handle(systemId, validatorHandler, node);
+        
+        ParsedModel pm = getParsedModel();
+        return newSchema(node.getBaseURI(), pm);
+	}
+    //------------------------------------------------------------------------------------------
+	//END methods of the javax.xml.validation.SchemaFactory
+	//------------------------------------------------------------------------------------------
+	
+    
+    private ParsedModel getParsedModel() throws SAXException{
+        parsedComponentBuilder.startBuild();
 		queue.executeAll();
         Pattern p = null;		
 		try{
@@ -493,338 +579,77 @@ public class RNGSchemaFactory extends SchemaFactory{
             // syntax error, already handled
         }
         
-        SchemaModel schemaModel = null;
+        if(p == null)return null;
         
-		if(p == null) {
-			schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new InfosetModificationModelImpl(null, debugWriter), debugWriter);
-            RNGSchema schema  = new RNGSchema(false,
-                                        namespacePrefixes,
-                                        level1AttributeDefaultValue,
-                                        level2AttributeDefaultValue,
-                                        schemaModel, 
-                                        debugWriter);
-            return schema;
-		}		
-        
-        DTDMapping dtdMapping = (DTDMapping)validatorHandler.getProperty(DTD_MAPPING_PROPERTY);        
-		ParsedModel pm = new ParsedModel(dtdMapping, p, debugWriter);
-        
-		//build simplified model
-		SimplifiedModel sm = null;		
-		if(systemId != null){
-			try{
-				sm = simplifier.simplify(new URI(systemId), pm);
-			}catch(URISyntaxException use){
-				throw new SAXException(use.getMessage());
-			}
-		}else{
-			sm = simplifier.simplify(null, pm);
-		}
-		
-        if(!parsedModelSchema) pm = null;
-        
-		if(sm!=null){
-            restrictionController.control(sm);
-            if(errorDispatcher.hasUnrecoverableError()){
-                schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new InfosetModificationModelImpl(null, debugWriter), debugWriter);
-            }else{
-                ValidationModel vm = new ValidationModelImpl(pm, sm, debugWriter);
-                if(level1AttributeDefaultValue){
-                    if(compatibilityHandler == null){                
-                        ValidatorErrorHandlerPool vehp = (ValidatorErrorHandlerPool)validatorHandler.getProperty(Constants.ERROR_HANDLER_POOL_PROPERTY);
-                        ValidatorEventHandlerPool ehp = (ValidatorEventHandlerPool)validatorHandler.getProperty(Constants.EVENT_HANDLER_POOL_PROPERTY);
-                        ValidationItemLocator vil = (ValidationItemLocator)validatorHandler.getProperty(Constants.ITEM_LOCATOR_PROPERTY);
-                        ControllerPool cp = (ControllerPool)restrictionController.getProperty(Constants.CONTROLLER_POOL_PROPERTY);
-                        compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, vil, errorDispatcher, debugWriter);                
-                    }
-                    compatibilityHandler.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
-                    schemaModel = compatibilityHandler.handle(vm);
-                }
-            }
-        }else{
-            schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new InfosetModificationModelImpl(null, debugWriter), debugWriter);
+        DTDMapping dtdMapping = null;
+        try{
+            dtdMapping = (DTDMapping)validatorHandler.getProperty(DTD_MAPPING_PROPERTY);
+        }catch(SAXNotRecognizedException e){
+            throw new SAXException(e);
         }
-        
-		RNGSchema schema  = new RNGSchema(false,
-                                        namespacePrefixes,
-                                        level1AttributeDefaultValue,
-                                        level2AttributeDefaultValue,
-                                        schemaModel, 
-                                        debugWriter);
-		return schema;
-	}
-	
-	
-	public Schema newSchema(DOMSource source) throws SAXException{
-        errorDispatcher.init();
-		//read schema
-		Node node = source.getNode();
-		String systemId = source.getSystemId();
-		if (node != null) {			
-			if(locator == null){
-				locator = new LocatorImpl();
-				locator.setSystemId(systemId);
-				locator.setPublicId(null);
-				locator.setLineNumber(-1);
-				locator.setColumnNumber(-1);
-			}		
-			validatorHandler.setDocumentLocator(locator);
-			//create attributes
-			if(attributes == null)attributes = new AttributesImpl();
-			//create prefixes stacks
-			if(prefixes == null) prefixes = new Stack<String>();
-			else prefixes.clear();
-			if(prefixesCount == null) prefixesCount = new IntStack();
-			else prefixesCount.clear();
-			
-            try{
-                handleDTDContext((Document)node, (DTDHandler)validatorHandler.getProperty(DTD_HANDLER_PROPERTY));
-            }catch(ClassCastException e){}
-			validate(node);
-		}
-		
-		
-		//build parsed model
-		parsedComponentBuilder.startBuild();
-		queue.executeAll();		
-		Pattern p = null;		
-		try{
-            p = (Pattern)parsedComponentBuilder.getCurrentParsedComponent();
-        }catch(ClassCastException c){
-            // syntax error, already handled
-        }
-		
-        SchemaModel schemaModel = null;
-        
-		if(p == null) {
-			schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new InfosetModificationModelImpl(null, debugWriter), debugWriter);
-            RNGSchema schema  = new RNGSchema(false,
-                                        namespacePrefixes,
-                                        level1AttributeDefaultValue,
-                                        level2AttributeDefaultValue,
-                                        schemaModel, 
-                                        debugWriter);
-            return schema;
-		}		
-        
-        DTDMapping dtdMapping = (DTDMapping)validatorHandler.getProperty(DTD_MAPPING_PROPERTY);        
-		ParsedModel pm = new ParsedModel(dtdMapping, p, debugWriter);
-        
-		//build simplified model
-		SimplifiedModel sm = null;		
-		if(systemId != null){
-			try{
-				sm = simplifier.simplify(new URI(systemId), pm);
-			}catch(URISyntaxException use){
-				throw new SAXException(use.getMessage());
-			}
-		}else{
-			sm = simplifier.simplify(null, pm);
-		}
-		
-        if(!parsedModelSchema) pm = null;
-        
-		if(sm!=null){
-            restrictionController.control(sm);
-            if(errorDispatcher.hasUnrecoverableError()){
-                schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new InfosetModificationModelImpl(null, debugWriter), debugWriter);
-            }else{
-                ValidationModel vm = new ValidationModelImpl(pm, sm, debugWriter);
-                if(level1AttributeDefaultValue){
-                    if(compatibilityHandler == null){                
-                        ValidatorErrorHandlerPool vehp = (ValidatorErrorHandlerPool)validatorHandler.getProperty(Constants.ERROR_HANDLER_POOL_PROPERTY);
-                        ValidatorEventHandlerPool ehp = (ValidatorEventHandlerPool)validatorHandler.getProperty(Constants.EVENT_HANDLER_POOL_PROPERTY);
-                        ValidationItemLocator vil = (ValidationItemLocator)validatorHandler.getProperty(Constants.ITEM_LOCATOR_PROPERTY);
-                        ControllerPool cp = (ControllerPool)restrictionController.getProperty(Constants.CONTROLLER_POOL_PROPERTY);
-                        compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, vil, errorDispatcher, debugWriter);                
-                    }
-                    compatibilityHandler.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
-                    schemaModel = compatibilityHandler.handle(vm);
-                }
-            }
-        }else{
-            schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new InfosetModificationModelImpl(null, debugWriter), debugWriter);
-        }
-        
-		RNGSchema schema  = new RNGSchema(false,
-                                        namespacePrefixes,
-                                        level1AttributeDefaultValue,
-                                        level2AttributeDefaultValue,
-                                        schemaModel, 
-                                        debugWriter);
-		return schema;
-	}
-		
-    private void handleDTDContext(Document document, DTDHandler dtdHandler) throws SAXException{
-        DocumentType doctype = document.getDoctype();
-        NamedNodeMap entities = doctype.getEntities();
-        for(int i = 0; i < entities.getLength(); i++){
-            Entity entity = null;
-            try{
-                entity = (Entity)entities.item(i);
-            }catch(ClassCastException e){}
-            String notationName = entity.getNotationName(); 
-            if(notationName != null){ // unparsed entity
-                dtdHandler.unparsedEntityDecl(entity.getNodeName(), entity.getPublicId(), entity.getSystemId(), notationName);
-            }
-        }
-        
-        NamedNodeMap notations = doctype.getNotations();
-        for(int i = 0; i < notations.getLength(); i++){
-            Notation notation = null;
-            try{
-                notation = (Notation)notations.item(i);
-            }catch(ClassCastException e){}
-            dtdHandler.notationDecl(notation.getNodeName(), notation.getPublicId(), notation.getSystemId());            
-        }
-        
+		return new ParsedModel(dtdMapping, p, debugWriter);
     }
     
-	private void validate(Node node) throws SAXException{
-		validatorHandler.startDocument();
-		
-		final Node top = node;	
-        // Performs a non-recursive traversal of the DOM. This
-        // will avoid a stack overflow for DOMs with high depth.		
-        while (node != null) {
-            beginNode(node);
-            Node next = node.getFirstChild();
-            while (next == null) {
-                finishNode(node);           
-                if (top == node) {
-                    break;
-                }
-                next = node.getNextSibling();
-                if (next == null) {
-                    node = node.getParentNode();
-                    if (node == null || top == node) {
-                        if (node != null) {
-                            finishNode(node);
-                        }
-                        next = null;
-                        break;
-                    }
-                }
-            }
-            node = next;
-        }
-		
-		validatorHandler.endDocument();
-    }
-	
-	private void beginNode(Node node) throws SAXException{
-        switch (node.getNodeType()) {
-            case Node.ELEMENT_NODE:				
-                handleAttributes(node.getAttributes()); // fires startPrefixMapping
-				
-				String namespaceURI = node.getNamespaceURI();
-				if(namespaceURI == null) namespaceURI = "";
-				
-				String qName = node.getNodeName();
-				if(qName == null) qName = "";
-				
-				String localName = node.getLocalName();
-				if(localName == null){
-					int j = qName.indexOf(':');
-					if(j > 0) localName = qName.substring(j+1);
-					else localName = "";
-				}	
-				validatorHandler.startElement(namespaceURI, localName, qName, attributes);
-                break;
-            case Node.TEXT_NODE:
-				handleCharacters(node.getNodeValue());
-                break;
-            case Node.CDATA_SECTION_NODE:
-                handleCharacters(node.getNodeValue());
-                break;
-            default: 
-                break;
-        }
-    }
-	
-	private void handleAttributes(NamedNodeMap attrMap) throws SAXException{		
-        final int attrCount = attrMap.getLength();        
-		attributes.clear();
-		String type = "CDATA";
-		int prefixCount = 0;
-        for (int i = 0; i < attrCount; ++i) {			
-            Attr attr = (Attr) attrMap.item(i);
-			
-			String namespaceURI = attr.getNamespaceURI();
-			if(namespaceURI == null) namespaceURI = XMLConstants.NULL_NS_URI;
-			
-			String qName = attr.getNodeName();
-			if(qName == null) qName = "";
-			
-			String localName = attr.getLocalName();
-			if(localName == null){
-				int j = qName.indexOf(':');
-				if(j > 0) localName = qName.substring(j+1);
-				else localName = "";
+	private Schema newSchema(String systemId, ParsedModel parsedModel) throws SAXException{        
+        SchemaModel schemaModel = null;
+        
+		if(parsedModel == null) {
+			schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new InfosetModificationModelImpl(null, debugWriter), debugWriter);
+            RNGSchema schema  = new RNGSchema(false,
+                                        namespacePrefixes,
+                                        level1AttributeDefaultValue,
+                                        level2AttributeDefaultValue,
+                                        schemaModel, 
+                                        debugWriter);
+            return schema;
+		}	
+        
+		//build simplified model
+		SimplifiedModel simplifiedModel = null;		
+		if(systemId != null){
+			try{
+				simplifiedModel = simplifier.simplify(new URI(systemId), parsedModel);
+			}catch(URISyntaxException use){
+				throw new SAXException(use.getMessage());
 			}
-			
-            String value = attr.getValue();
-            if (value == null) value = "";
-			
-            if (namespaceURI == XMLConstants.XMLNS_ATTRIBUTE_NS_URI) {      
-				prefixCount++;
-                							
-                if (localName.equals(XMLConstants.XMLNS_ATTRIBUTE)) {
-                    validatorHandler.startPrefixMapping(XMLConstants.NULL_NS_URI, value);
-					prefixes.push(XMLConstants.NULL_NS_URI);
-                }
-                else {
-                    validatorHandler.startPrefixMapping(localName, value);
-					prefixes.push(localName);
-                }				
+		}else{
+			simplifiedModel = simplifier.simplify(null, parsedModel);
+		}
+		
+        if(!parsedModelSchema) parsedModel = null;
+        
+		if(simplifiedModel != null){
+            restrictionController.control(simplifiedModel);
+            if(errorDispatcher.hasUnrecoverableError()){
+                schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new InfosetModificationModelImpl(null, debugWriter), debugWriter);
             }else{
-				attributes.addAttribute(namespaceURI, localName, qName, type, value);
-			}
-        }
-		prefixesCount.push(prefixCount);
-    }
-
-	private void handleCharacters(String string) throws SAXException{
-        if (string != null) {
-            int length = string.length();
-            int remainder = length & CHUNK_MASK;
-            if (remainder > 0) {
-                string.getChars(0, remainder, chars, 0);
-                validatorHandler.characters(chars, 0, remainder);
+                ValidationModel vm = new ValidationModelImpl(parsedModel, simplifiedModel, debugWriter);
+                if(level1AttributeDefaultValue || level1IdIdrefIdrefs){
+                    if(compatibilityHandler == null){                
+                        ValidatorErrorHandlerPool vehp = (ValidatorErrorHandlerPool)validatorHandler.getProperty(Constants.ERROR_HANDLER_POOL_PROPERTY);
+                        ValidatorEventHandlerPool ehp = (ValidatorEventHandlerPool)validatorHandler.getProperty(Constants.EVENT_HANDLER_POOL_PROPERTY);
+                        ValidationItemLocator vil = (ValidationItemLocator)validatorHandler.getProperty(Constants.ITEM_LOCATOR_PROPERTY);
+                        ControllerPool cp = (ControllerPool)restrictionController.getProperty(Constants.CONTROLLER_POOL_PROPERTY);
+                        compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, vil, errorDispatcher, debugWriter);                
+                    }
+                    if(level1AttributeDefaultValue) compatibilityHandler.setLevel1AttributeDefaultValue(true);
+                    if(level1IdIdrefIdrefs) compatibilityHandler.setLevel1IdIdrefIdrefs(true);
+                    schemaModel = compatibilityHandler.handle(vm);
+                }
             }
-            int i = remainder;
-            while (i < length) {
-                string.getChars(i, i += CHUNK_SIZE, chars, 0);
-                validatorHandler.characters(chars, 0, CHUNK_SIZE);
-            }
+        }else{
+            schemaModel = new SchemaModel(new ValidationModelImpl(null, null, debugWriter), new InfosetModificationModelImpl(null, debugWriter), debugWriter);
         }
-    }
+        
+		RNGSchema schema  = new RNGSchema(false,
+                                        namespacePrefixes,
+                                        level1AttributeDefaultValue,
+                                        level2AttributeDefaultValue,
+                                        schemaModel, 
+                                        debugWriter);
+		return schema;
+	}
 	
-	private void finishNode(Node node) throws SAXException{
-        if (node.getNodeType() == Node.ELEMENT_NODE) {
-			String namespaceURI = node.getNamespaceURI();
-			if(namespaceURI == null) namespaceURI = "";
-			
-			String qName = node.getNodeName();
-			if(qName == null) qName = "";
-			
-			String localName = node.getLocalName();
-			if(localName == null){
-				int j = qName.indexOf(':');
-				if(j > 0) localName = qName.substring(j+1);
-				else localName = "";
-			}	
-			validatorHandler.endElement(namespaceURI, localName, qName);
-			int prefixCount = prefixesCount.pop();
-			for(int i = 0; i < prefixCount; i++){
-				String prefix = prefixes.pop();
-				validatorHandler.endPrefixMapping(prefix);
-			}			
-        }
-    }
-	//------------------------------------------------------------------------------------------
-	//END methods of the javax.xml.validation.SchemaFactory
-	//------------------------------------------------------------------------------------------
 	
 	public String toString(){
 		return "RNGSchemaFactory";

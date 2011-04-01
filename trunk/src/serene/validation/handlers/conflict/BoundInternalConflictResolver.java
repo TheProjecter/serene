@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 
+import org.relaxng.datatype.Datatype;
+
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
@@ -153,7 +155,7 @@ public class BoundInternalConflictResolver extends InternalConflictResolver{
 				int definitionIndex = attribute.getDefinitionIndex();
 				AttributeBinder binder = attributeBinders.get(attribute);
 				if(binder != null){
-                    binder.bindAttribute(targetQueue, targetEntry, definitionIndex, namespaceURI, localName, qName, value);
+                    binder.bindAttribute(targetQueue, targetEntry, definitionIndex, namespaceURI, localName, qName, Datatype.ID_TYPE_NULL, value);
                 }
 			}else{		
 				int j = 0;

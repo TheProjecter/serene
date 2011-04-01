@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<project name="Serene.0.5.1" default="default">
+<project name="Serene.0.5" default="default">
     <property name="datatype.dir" value="./src/org"/>
     <property name="source.dir" value="./src"/>
 	<property name="build.dir" value="./build"/>
@@ -27,16 +27,14 @@ limitations under the License.
     <property name="extLib.dir" value="./lib/ext"/>
     <property name="xercesJar.file" value="./lib/ext/xercesImpl.jar"/>
     <property name="rngDatatypeJar.file" value="./lib/ext/relaxngDatatype.jar"/>
-    
- 
-  
+
 
     <!--
     ****************************************************************************
     * COMMON
     ****************************************************************************
     -->
-	<target name="clean" description="Delete the ${build.dir} and ${intLib.dir}.">
+	<target name="clean"  description="Delete the ${build.dir} and ${intLib.dir}.">
 		<echo>Cleaning all...</echo>
 		<delete dir="${build.dir}"/>
 		<delete dir="${intLib.dir}"/>
@@ -117,6 +115,8 @@ limitations under the License.
            <filelist dir="${source.dir}/serene/datatype/rngnative"
                     files="org.relaxng.datatype.DatatypeLibraryFactory"/>
            <filelist dir="${source.dir}/serene/datatype/xsd"
+                    files="org.relaxng.datatype.DatatypeLibraryFactory"/>
+           <filelist dir="${source.dir}/serene/dtdcompatibility/datatype"
                     files="org.relaxng.datatype.DatatypeLibraryFactory"/>
         </concat>
     </target>

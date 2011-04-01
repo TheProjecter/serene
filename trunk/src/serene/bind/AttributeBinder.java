@@ -37,7 +37,7 @@ public class AttributeBinder{
 		task = null;
 	}
 	
-	public void bindAttribute(Queue queue, int  record, int attributeIndex, String namespaceURI, String localName, String qName, String value){
-		queue.addAttributeInfo(record, attributeIndex, new AttributeInfo(namespaceURI, localName, qName, value, debugWriter));
+	public void bindAttribute(Queue queue, int  record, int attributeIndex, String namespaceURI, String localName, String qName, int type, String value){
+		queue.addAttributeInfo(record, attributeIndex, new AttributeInfo(namespaceURI, localName, qName, value, type, debugWriter));
 	}
 }

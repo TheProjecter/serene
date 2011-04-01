@@ -63,7 +63,7 @@ public class InfosetModificationHandler{
     
     public Attributes modify(String elementNamespaceURI, String elementLocalName, Attributes attributes, InfosetModificationContext infosetModificationContext){
         // must add the attributes and their default values if not in Attributes        
-        AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeDefaultValueInfo(elementNamespaceURI, elementLocalName);
+        AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeInfo(elementNamespaceURI, elementLocalName);
         if(defaultValues != null){
             attributes = handle(attributes, defaultValues, infosetModificationContext);            
             return attributes;
@@ -73,7 +73,7 @@ public class InfosetModificationHandler{
     
     public void modify(String elementNamespaceURI, String elementLocalName, Element parentElement, NamedNodeMap attrs, InfosetModificationContext infosetModificationContext){
         // must add the attributes and their default values if not in Attributes
-        AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeDefaultValueInfo(elementNamespaceURI, elementLocalName);
+        AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeInfo(elementNamespaceURI, elementLocalName);
         if(defaultValues != null){
             handle(parentElement, attrs, defaultValues, infosetModificationContext);
             attrs = parentElement.getAttributes();            
@@ -83,7 +83,7 @@ public class InfosetModificationHandler{
     
     public void modify(String elementNamespaceURI, String elementLocalName, Attributes attributes, XMLStreamWriter xmlStreamWriter, InfosetModificationContext infosetModificationContext) throws SAXException{
          // must add the attributes and their default values to the list if not in attrsIterator        
-        AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeDefaultValueInfo(elementNamespaceURI, elementLocalName);
+        AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeInfo(elementNamespaceURI, elementLocalName);
         if(defaultValues != null){
             handle(attributes, defaultValues, xmlStreamWriter, infosetModificationContext);            
         }
@@ -92,7 +92,7 @@ public class InfosetModificationHandler{
     public void modify(String elementNamespaceURI, String elementLocalName, Attributes attributes, List<Attribute> attributeEvents, InfosetModificationContext infosetModificationContext){
          // must add the attributes and their default values to the list if not in attrsIterator        
         if(xmlEventFactory == null) xmlEventFactory = XMLEventFactory.newInstance();
-        AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeDefaultValueInfo(elementNamespaceURI, elementLocalName);
+        AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeInfo(elementNamespaceURI, elementLocalName);
         if(defaultValues != null){
             handle(attributes, defaultValues, attributeEvents, infosetModificationContext);            
         }
