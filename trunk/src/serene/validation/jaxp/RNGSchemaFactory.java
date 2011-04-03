@@ -131,7 +131,8 @@ public class RNGSchemaFactory extends SchemaFactory{
     private boolean level1AttributeDefaultValue;
     private boolean level2AttributeDefaultValue;
     private boolean level1AttributeIdType;
-    private boolean level2AttributeIdType;	
+    private boolean level2AttributeIdType;
+    private boolean level1DocumentationElement;	
 	private boolean replaceMissingDatatypeLibrary;
 	private boolean parsedModelSchema;	
 	
@@ -177,6 +178,7 @@ public class RNGSchemaFactory extends SchemaFactory{
         level2AttributeDefaultValue = true;
         level1AttributeIdType = true;
         level2AttributeIdType = true;
+        level1DocumentationElement = true;
 		replaceMissingDatatypeLibrary = true;
 		parsedModelSchema = false;
 	}
@@ -186,7 +188,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 	
 		
 	private void createParser()  throws DatatypeException{
-		internalRNGFactory = InternalRNGFactory.getInstance(debugWriter);
+		internalRNGFactory = InternalRNGFactory.getInstance(level1DocumentationElement, debugWriter);
 		
 		parsedComponentBuilder = new ParsedComponentBuilder(debugWriter);
 		
@@ -313,6 +315,9 @@ public class RNGSchemaFactory extends SchemaFactory{
                 level1AttributeIdType = value;
                 simplifier.setLevel1AttributeIdType(level1AttributeIdType);
             }
+        }else if(name.equals(Constants.LEVEL1_DOCUMENTATION_ELEMENT_FEATURE)){
+            internalRNGFactory.setLevel1DocumentationElement(level1DocumentationElement);
+            level1DocumentationElement = value;
         }else{
             throw new SAXNotRecognizedException("Unknown feature.");
         }
@@ -340,6 +345,8 @@ public class RNGSchemaFactory extends SchemaFactory{
             return level1AttributeIdType;
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE)){
             return level2AttributeIdType;
+        }else if(name.equals(Constants.LEVEL1_DOCUMENTATION_ELEMENT_FEATURE)){
+            return level1DocumentationElement;
         }else{
         	throw new SAXNotRecognizedException("Unknown feature.");
         }
