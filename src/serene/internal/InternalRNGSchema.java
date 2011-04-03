@@ -39,12 +39,13 @@ import sereneWrite.MessageWriter;
 
 
 public class InternalRNGSchema extends BaseSchema{		
-	
-	
+    boolean level1DocumentationElement;	
 	public InternalRNGSchema(boolean secureProcessing,
+                    boolean level1DocumentationElement,
                     SchemaModel schemaModel,
                     MessageWriter debugWriter){
 		super(secureProcessing, schemaModel, debugWriter);
+        this.level1DocumentationElement = level1DocumentationElement;
 	}
     
     public Validator newValidator(){
@@ -62,6 +63,7 @@ public class InternalRNGSchema extends BaseSchema{
 										bindingModel,
 										queue,
 										queuePool,
+                                        level1DocumentationElement,
 										debugWriter);
 	}    
 }

@@ -62,6 +62,8 @@ import serene.bind.Queue;
 import serene.bind.XmlBaseBinder;
 import serene.bind.XmlnsBinder;
 
+import serene.dtdcompatibility.DocumentationElementHandler;
+
 import serene.Constants;
 
 class BoundValidatorHandlerImpl extends ValidatorHandler{
@@ -95,6 +97,9 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	Queue queue;
 	XmlBaseBinder xmlBaseBinder;
 	XmlnsBinder xmlnsBinder;
+
+    boolean level1DocumentationElement;
+    DocumentationElementHandler documentationElementHandler;
 	
 	BoundValidatorHandlerImpl(ValidatorEventHandlerPool eventHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
@@ -102,6 +107,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 							BindingModel bindingModel,
 							Queue queue,
 							ValidatorQueuePool queuePool,
+                            boolean level1DocumentationElement,
 							MessageWriter debugWriter){
 	    this.debugWriter = debugWriter;
 		
@@ -128,6 +134,8 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		
 		xmlBaseBinder = new XmlBaseBinder(debugWriter);
 		xmlnsBinder = new XmlnsBinder(debugWriter);
+        
+        this.level1DocumentationElement = level1DocumentationElement;
 	}
     
     
@@ -176,22 +184,24 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		errorDispatcher.init();
 		documentContext.reset();
 		validationItemLocator.clear();
-		//debugWriter.write("boundValidatorHandler START PREPARE BINDING : ");
 		activeModel = schemaModel.getActiveModel(validationItemLocator, 
 													errorDispatcher);
         if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
 		bindingModel.index(activeModel.getSElementIndexMap(), activeModel.getSAttributeIndexMap());
 		queue.clear();
 		queue.index(activeModel.getSAttributeIndexMap());
-		queuePool.index(activeModel.getSAttributeIndexMap());		
-		//debugWriter.write("boundValidatorHandler END PREPARE BINDING ");
+		queuePool.index(activeModel.getSAttributeIndexMap());
 		
 		elementHandler = eventHandlerPool.getBoundStartValidationHandler(activeModel.getStartElement(), bindingModel, queue, queuePool);
 			
-		xmlBaseBinder.bind(queue, locator.getSystemId());// must happen last, after queue.newRecord() which is in elementHandler's init, might need to be moved
+		xmlBaseBinder.bind(queue, locator.getSystemId());// must happen last, after queue.newRecord() which is in elementHandler's init, might need to be moved        
 		//Note that locator is only garanteed to pass correct information AFTER
 		//startDocument. The base URI of the document is also passed independently 
 		//to the Simplifier. This needs reviewing. 		
+        if(level1DocumentationElement){
+            if(documentationElementHandler == null) documentationElementHandler = new DocumentationElementHandler(errorDispatcher, debugWriter);
+            else documentationElementHandler.init();
+        }
 	}			
 	public void setDocumentLocator(Locator locator){
 		this.locator = locator;
@@ -227,7 +237,9 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 			xmlBaseBinder.bind(queue, xmlBase);
 		}
 		elementHandler.handleAttributes(attributes, locator);
-		
+	    if(level1DocumentationElement){
+            documentationElementHandler.startElement(namespaceURI, localName, qName, attributes, locator);
+        }	
 	}		
 	
 	public void endElement(String namespaceURI, 
@@ -243,7 +255,10 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		ElementEventHandler parent = elementHandler.getParentHandler(); 
 		elementHandler.recycle();
 		elementHandler = parent;
-		validationItemLocator.closeElement();		
+		validationItemLocator.closeElement();
+        if(level1DocumentationElement){
+            documentationElementHandler.endElement(namespaceURI, localName, qName, locator);
+        }		
 	}
 	
 	public void endDocument() throws SAXException{

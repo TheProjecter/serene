@@ -58,12 +58,15 @@ public class InternalRNGFactory{
 	
 	StartLevelPool startPool;
 	DummyPool dummyPool;
-	
+
+    boolean level1DocumentationElement;	
 	MessageWriter debugWriter;
 	
-	private InternalRNGFactory(MessageWriter debugWriter) throws DatatypeException{		
+	private InternalRNGFactory(boolean level1DocumentationElement, MessageWriter debugWriter) throws DatatypeException{		
 		super();		
-		this.debugWriter = debugWriter;		
+		this.debugWriter = debugWriter;
+        this.level1DocumentationElement = level1DocumentationElement;
+		
 		builder = new SimplifiedComponentBuilder(debugWriter);
 		
 		rngDirector = new RNGDirector(debugWriter);
@@ -79,11 +82,15 @@ public class InternalRNGFactory{
 		startPool = new StartLevelPool(debugWriter);
 	}
     
-	public static InternalRNGFactory getInstance(MessageWriter debugWriter)  throws DatatypeException{
+    public void setLevel1DocumentationElement(boolean level1DocumentationElement){
+        this.level1DocumentationElement = level1DocumentationElement;
+    }
+    
+	public static InternalRNGFactory getInstance(boolean level1DocumentationElement, MessageWriter debugWriter)  throws DatatypeException{
 		if(instance == null){
 			synchronized(InternalRNGFactory.class){
 				if(instance == null){
-					instance = new InternalRNGFactory(debugWriter); 
+					instance = new InternalRNGFactory(level1DocumentationElement, debugWriter); 
 				}
 			}
 		}
@@ -99,7 +106,8 @@ public class InternalRNGFactory{
 		ValidationModel vm = new ValidationModelImpl(null, rngModel, debugWriter); 
         SchemaModel sm = new SchemaModel(vm, null, debugWriter); 
 		InternalRNGSchema schema = new InternalRNGSchema(false,
-                                        sm,
+                                        level1DocumentationElement,
+                                        sm, 
 										debugWriter);					
 		return schema;
 	}
@@ -108,6 +116,7 @@ public class InternalRNGFactory{
 		ValidationModel vm = new ValidationModelImpl(null, externalRefModel, debugWriter); 
         SchemaModel sm = new SchemaModel(vm, null, debugWriter);
 		InternalRNGSchema schema = new InternalRNGSchema(false,
+                                        level1DocumentationElement,
                                         sm,
 										debugWriter);		
 		return schema;
@@ -117,6 +126,7 @@ public class InternalRNGFactory{
 		ValidationModel vm = new ValidationModelImpl(null, includeModel, debugWriter); 
         SchemaModel sm = new SchemaModel(vm, null, debugWriter);
 		InternalRNGSchema schema = new InternalRNGSchema(false,
+                                        level1DocumentationElement,
                                         sm,
 										debugWriter);		
 		return schema;

@@ -1616,9 +1616,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
 	}
 
-    public void visit(ForeignComponent fc) throws SAXException{
-		System.out.println("TODO simplify "+fc);
-	}	
+    public void visit(ForeignComponent fc) throws SAXException{}	
 		
 	private void nextLevel(ParsedComponent[] children)  throws SAXException{
 		builder.startLevel();
