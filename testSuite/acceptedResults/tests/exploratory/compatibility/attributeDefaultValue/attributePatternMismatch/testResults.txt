@@ -2,6 +2,6 @@
 
 TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\attributeDefaultValue\attributePatternMismatch\schema.rng
 
-null:-1:-1 DTD compatibility error. Default value for attribute definition <attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/attributePatternMismatch/schema.rng:13:60 does not match attribute pattern. Ambiguous value, possible definitions: 
-<value> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/attributePatternMismatch/schema.rng:15:24
-<value> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/attributePatternMismatch/schema.rng:16:24.
+null:-1:-1 DTD compatibility error. Default value for attribute definition <attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/attributePatternMismatch/schema.rng:29:60 does not match attribute pattern. Ambiguous value, possible definitions: 
+<value> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/attributePatternMismatch/schema.rng:31:24
+<value> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/attributePatternMismatch/schema.rng:32:24.
