@@ -2,5 +2,5 @@
 
 TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\attributeDefaultValue\illegalElementNameClass\schema.rng
 
-null:-1:-1 DTD compatibility error. Default value not allowed for attribute definitions in the content model of an element definition without a <name> name class, <element> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/illegalElementNameClass/schema.rng:7:18 :
-<attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/illegalElementNameClass/schema.rng:10:59.
+null:-1:-1 DTD compatibility error. Default value not allowed for attribute definitions in the content model of an element definition without a <name> name class, <element> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/illegalElementNameClass/schema.rng:23:18 :
+<attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/illegalElementNameClass/schema.rng:26:59.
