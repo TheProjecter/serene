@@ -19,8 +19,11 @@ package serene.dtdcompatibility;
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import org.relaxng.datatype.Datatype;
 
@@ -153,10 +156,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
     BooleanList needsOptionalChoice;
     
     AttributeDefaultValueModel attributeDefaultValueModel;
-    
-    
-    
-    
+        
     // for  ID IDREF IDREFS
     boolean attributeContext; // must be true when idType is not null
     boolean idTypeAttributeContent; // for element level handling: name
@@ -172,8 +172,11 @@ public class CompatibilityHandler implements RestrictingVisitor{
 
     AttributeIdTypeModel attributeIdTypeModel;
     
-    
-    
+    // for default values that are ID IDREF IDREFS when both features are set
+    HashMap<String, SAttribute> idAttributes;
+    ArrayList<SAttribute> idrefAttributes;
+    ArrayList<SAttribute> idrefsAttributes;
+    ArrayList<String> errorTokens;
     
     ControllerPool controllerPool;
     CompetitionSimetryController simetryController;
@@ -205,6 +208,11 @@ public class CompatibilityHandler implements RestrictingVisitor{
         
         currentAttributeIdTypesList = new IntList();
         attributeIdTypeListsStack = new Stack<IntList>();
+        
+        idAttributes = new HashMap<String, SAttribute>();
+        idrefAttributes = new ArrayList<SAttribute>();
+        idrefsAttributes = new ArrayList<SAttribute>();
+        errorTokens = new ArrayList<String>();
     }
     
     public void setLevel1AttributeDefaultValue(boolean value){
@@ -254,7 +262,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             defaultedAttributeContext = false;    
             controlAlternative = false; 
             hasAlternative = false;
-            hasName = false;                
+            hasName = false;            
         }
         if(level1AttributeIdType){
             attributeIdTypeModel = new AttributeIdTypeModel(debugWriter);
@@ -279,6 +287,14 @@ public class CompatibilityHandler implements RestrictingVisitor{
             else attributeDefaultValueModel.wrapUp();
         }
         if(level1AttributeIdType){
+            if(level1AttributeDefaultValue){
+                handleIdRefs();
+                idAttributes.clear();
+                idrefAttributes.clear();
+                idrefsAttributes.clear();
+                errorTokens.clear();
+            }
+            
             if(errorDispatcher.hasAttributeIdTypeError()) attributeIdTypeModel = null;
             else attributeIdTypeModel.wrapUp();
         }
@@ -286,6 +302,41 @@ public class CompatibilityHandler implements RestrictingVisitor{
         return new SchemaModel(validationModel, dtdCompatibilityModel, debugWriter);        
     }
     
+    private void handleIdRefs() throws SAXException{
+        for(int i = 0; i < idrefAttributes.size(); i++){
+            SAttribute attribute = idrefAttributes.get(i);
+            String defaultValue = attribute.getDefaultValue();
+            if(!idAttributes.containsKey(defaultValue)){
+                String message = "DTD compatibility warning. No corresponding attribute of ID-type ID for attribute definition at "+attribute.getLocation()+" with the ID-type IDREF.";
+                errorDispatcher.warning(new AttributeIdTypeException(message, null));
+            }
+        }
+        for(int i = 0; i < idrefsAttributes.size(); i++){
+            SAttribute attribute = idrefsAttributes.get(i);
+            String defaultValue = attribute.getDefaultValue();
+            errorTokens.clear();
+            StringTokenizer tokenizer = new StringTokenizer(defaultValue);
+            while(tokenizer.hasMoreTokens()){
+                String token = tokenizer.nextToken();
+                if(!idAttributes.containsKey(token)){
+                    errorTokens.add(token);
+                }
+            }
+            if(errorTokens.size() == 1){
+                String message = "DTD compatibility warning. No corresponding attribute of ID-type ID for token \""+errorTokens.get(0)+"\" in the value of attribute definition at "+attribute.getLocation()+" with the ID-type IDREFS.";
+                errorDispatcher.error(new AttributeIdTypeException(message, null));
+            }else if(errorTokens.size() > 1){
+                String tokens = "";
+                int lastToken = errorTokens.size()-1;
+                for(int j = 0; j < lastToken; j++){
+                    tokens += "\""+errorTokens.get(j)+"\", ";
+                }
+                tokens += "\""+errorTokens.get(lastToken)+"\"";
+                String message = "DTD compatibility warning. No corresponding attribute of ID-type ID for tokens \""+tokens+"\" in the default value of attribute definition at "+attribute.getLocation()+" with the ID-type IDREFS.";
+                errorDispatcher.error(new AttributeIdTypeException(message, null));
+            }
+        }
+    }
     public void visit(SExceptPattern exceptPattern)throws SAXException{
 		SimplifiedComponent child = exceptPattern.getChild();
         if(child == null) return;
@@ -513,8 +564,24 @@ public class CompatibilityHandler implements RestrictingVisitor{
                                                     debugWriter);
                     currentAttributesDVList.add(attributeInfo);
                 }                
+                
+                if(level1AttributeIdType){
+                    if(idType == Datatype.ID_TYPE_ID){
+                        if(idAttributes.containsKey(defaultValue)){
+                            SAttribute correspondent = idAttributes.get(defaultValue);
+                            String message = "DTD compatibility warning. Default value of attribute definition at "+attribute.getLocation()+" with the ID-type ID is the same as the default value of attribute definition at "+correspondent.getLocation()+" with the ID-type ID.";
+                            errorDispatcher.warning(new SAXParseException(message, null));
+                        }else{
+                            idAttributes.put(defaultValue, attribute);
+                        }
+                    }else if(idType == Datatype.ID_TYPE_IDREF){
+                        idrefAttributes.add(attribute);
+                    }else if(idType == Datatype.ID_TYPE_IDREFS){
+                        idrefsAttributes.add(attribute);
+                    }
+                }
                 defaultedAttributeContent = true;                
-            }
+            }            
             defaultValueErrorHandler.report();
             defaultValueErrorHandler.clear();            
             defaultedAttributeContext = defaultedAttributeContextMemo;
@@ -529,7 +596,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                     }else{
                         SNameClass nc = attribute.getNameClass();
                         attributeIdTypeModel.addAttributeInfo(nc, attributeInfo);
-                    }
+                    } 
                 }else{
                     hasName = false;
                     SNameClass nc = attribute.getNameClass();                
