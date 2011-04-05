@@ -1,3 +1,19 @@
+/*
+Copyright 2011 Radu Cernuta 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package serene.dtdcompatibility;
 
 import java.util.BitSet;
@@ -110,7 +126,13 @@ public class AttributeDefaultValueHandler{
         }
     }
     
-    public void handle(String elementNamespaceURI, String elementLocalName, Attributes attributes, XMLStreamWriter xmlStreamWriter, InfosetModificationContext infosetModificationContext) throws SAXException{
+    /**
+    * When needsFurtherProcessing indicates if it is necessary to also modify the
+    * AttributesImpl attributes in order to make changes available for further 
+    * processing, or just write to the stream.
+    */    
+    public void handle(boolean needsFurtherProcessing, String elementNamespaceURI, String elementLocalName, AttributesImpl attributes, XMLStreamWriter xmlStreamWriter, InfosetModificationContext infosetModificationContext) throws SAXException{
+        
          // must add the attributes and their default values to the list if not in attrsIterator
         String s = "[";
         for(int i = 0; i < attributes.getLength(); i++){
@@ -119,7 +141,11 @@ public class AttributeDefaultValueHandler{
         s += "]";
         AttributeInfo[] defaultValues = attributeDefaultValueModel.getAttributeInfo(elementNamespaceURI, elementLocalName);
         if(defaultValues != null){
-            handle(attributes, defaultValues, xmlStreamWriter, infosetModificationContext);
+            if(needsFurtherProcessing){
+                handle(needsFurtherProcessing, attributes, defaultValues, xmlStreamWriter, infosetModificationContext);
+            }else{
+                handle(attributes, defaultValues, xmlStreamWriter, infosetModificationContext);
+            }
             s = "[";
             for(int i = 0; i < attributes.getLength(); i++){
                 s += "("+attributes.getQName(i)+"=\""+attributes.getValue(i)+"\")";
@@ -233,7 +259,7 @@ public class AttributeDefaultValueHandler{
         }        
     } 
       
-    private void handle(Attributes attributes, AttributeInfo[] defaultValues, XMLStreamWriter xmlStreamWriter, InfosetModificationContext infosetModificationContext) throws SAXException{
+    private void handle(boolean needsFurtherProcesing, AttributesImpl attributes, AttributeInfo[] defaultValues, XMLStreamWriter xmlStreamWriter, InfosetModificationContext infosetModificationContext) throws SAXException{
         final int attributesCount = attributes.getLength();
         matchedAttributes.clear();
         for(AttributeInfo defaultValueInfo : defaultValues){
@@ -255,7 +281,8 @@ public class AttributeDefaultValueHandler{
                 }
             }
             if(attributeAbsent){
-                try{                
+                try{
+                    attributes.addAttribute(dvNsURI, dvLocalName, getQName(dvNsURI, dvLocalName, infosetModificationContext), defaultAttributeType, defaultValueInfo.getValue());                    
                     xmlStreamWriter.writeAttribute(infosetModificationContext.getPrefix(dvNsURI), dvNsURI, dvLocalName, defaultValueInfo.getValue());
                 }catch(XMLStreamException e){
                     throw new SAXException(e);
@@ -264,6 +291,36 @@ public class AttributeDefaultValueHandler{
         }    
     }
     
+    private void handle(AttributesImpl attributes, AttributeInfo[] defaultValues, XMLStreamWriter xmlStreamWriter, InfosetModificationContext infosetModificationContext) throws SAXException{
+        final int attributesCount = attributes.getLength();
+        matchedAttributes.clear();
+        for(AttributeInfo defaultValueInfo : defaultValues){
+            String dvNsURI = defaultValueInfo.getNamespaceURI();           
+            String dvLocalName = defaultValueInfo.getLocalName();
+            boolean attributeAbsent = true;
+            for(int i = 0; i < attributesCount; i++){
+                if(!matchedAttributes.get(i)){
+                    String attrNsURI = attributes.getURI(i);
+                    if(dvNsURI.equals(attrNsURI)){
+                        String attrLocalName = attributes.getLocalName(i);
+                        if(dvLocalName.equals(attrLocalName)){
+                            attributeAbsent = false;
+                            matchedAttributes.set(i);
+                            // attribute present 
+                            // mark so it won't be tested any more
+                        }                   
+                    }
+                }
+            }
+            if(attributeAbsent){
+                try{                                  
+                    xmlStreamWriter.writeAttribute(infosetModificationContext.getPrefix(dvNsURI), dvNsURI, dvLocalName, defaultValueInfo.getValue());
+                }catch(XMLStreamException e){
+                    throw new SAXException(e);
+                }  
+            }
+        }    
+    }
     
     private void handle(Attributes attributes, AttributeInfo[] defaultValues, List<Attribute> attributeEvents, InfosetModificationContext infosetModificationContext){
         final int attributesCount = attributes.getLength();

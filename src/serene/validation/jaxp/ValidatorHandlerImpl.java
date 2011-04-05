@@ -295,40 +295,45 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), namespaceURI, localName, qName);
 		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName);
 		elementHandler.handleAttributes(attributes, locator);
-        if(level2AttributeIdType && contentHandler == null){
-            attributeIdTypeHandler.handle(noModification, namespaceURI, localName, attributes, locator);
-        }
-        if(contentHandler != null){
-            if(level2AttributeDefaultValue){
-                attributes = attributeDefaultValueHandler.handle(namespaceURI, localName, attributes, documentContext);
-            }
-            if(level2AttributeIdType){
+        
+        if(level2AttributeDefaultValue){
+            // TODO 
+            // Review to make more efficient. When contentHandler == null this 
+            // needs to be done only if 
+            //      - there are default values for attributes with non-null ID-type
+            //      - level2AttributeIdType is set  
+            attributes = attributeDefaultValueHandler.handle(namespaceURI, localName, attributes, documentContext);
+        } 
+        if(level2AttributeIdType){
+            if(contentHandler != null){
+                attributeIdTypeHandler.handle(noModification, namespaceURI, localName, attributes, locator);
+            }else{    
                 attributes = attributeIdTypeHandler.handle(namespaceURI, localName, attributes, locator);
             }
-			if(namespacePrefixes){
-				//create new AttributesImpl
-				//add xmlns attributes
-				AttributesImpl ai = new AttributesImpl(attributes);
-				if(defaultNamespace != null){
-					ai.addAttribute(XMLConstants.XMLNS_ATTRIBUTE_NS_URI , XMLConstants.XMLNS_ATTRIBUTE , XMLConstants.XMLNS_ATTRIBUTE, "CDATA", defaultNamespace);
-					defaultNamespace = null;
-				}
-				if(!prefixNamespaces.isEmpty()){
-					Iterator<Map.Entry<String, String>> iterator = prefixNamespaces.entrySet().iterator();
-					while(iterator.hasNext()){
-						Map.Entry<String, String> me = iterator.next();
-						String p = me.getKey();
-						String u = me.getValue();
-						ai.addAttribute(XMLConstants.XMLNS_ATTRIBUTE_NS_URI , p , "xmlns:"+p, "CDATA", u);
-					}
-					prefixNamespaces.clear();
-				}
-				
-				contentHandler.startElement(namespaceURI, localName, qName, ai);
-			}else{
-				contentHandler.startElement(namespaceURI, localName, qName, attributes);
-			}
-		}
+        }
+        if(namespacePrefixes && contentHandler != null){
+            //create new AttributesImpl
+            //add xmlns attributes
+            AttributesImpl ai = new AttributesImpl(attributes);
+            if(defaultNamespace != null){
+                ai.addAttribute(XMLConstants.XMLNS_ATTRIBUTE_NS_URI , XMLConstants.XMLNS_ATTRIBUTE , XMLConstants.XMLNS_ATTRIBUTE, "CDATA", defaultNamespace);
+                defaultNamespace = null;
+            }
+            if(!prefixNamespaces.isEmpty()){
+                Iterator<Map.Entry<String, String>> iterator = prefixNamespaces.entrySet().iterator();
+                while(iterator.hasNext()){
+                    Map.Entry<String, String> me = iterator.next();
+                    String p = me.getKey();
+                    String u = me.getValue();
+                    ai.addAttribute(XMLConstants.XMLNS_ATTRIBUTE_NS_URI , p , "xmlns:"+p, "CDATA", u);
+                }
+                prefixNamespaces.clear();
+            }
+            
+            contentHandler.startElement(namespaceURI, localName, qName, ai);
+        }else if(contentHandler != null){
+            contentHandler.startElement(namespaceURI, localName, qName, attributes);
+        }
 	}		
 	
 	public void endElement(String namespaceURI, 
