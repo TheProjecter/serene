@@ -115,9 +115,9 @@ public class AttributeIdTypeHandler{
                                                                                             columnNumber,
                                                                                             debugWriter)); 
                     if(previousId != null){
-                        String message = "Soundness error. Value of attribute "+qName+" at "+systemId+":"+lineNumber+":"+columnNumber+" with the ID-type ID is the same as  value of attribute "+
+                        String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
                         previousId.getQName()+" at "+previousId.getSystemId()+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
-                        errorDispatcher.error(new AttributeIdTypeException(message, null));
+                        errorDispatcher.error(new AttributeIdTypeException(message, publicId, systemId, lineNumber, columnNumber));
                     }
                 }else if(idType == Datatype.ID_TYPE_IDREF || idType == Datatype.ID_TYPE_IDREFS){
                     refAttributes.add(new AttributeLocationInfo(namespaceURI,
@@ -176,9 +176,9 @@ public class AttributeIdTypeHandler{
                                                                                             columnNumber,
                                                                                             debugWriter)); 
                     if(previousId != null){
-                        String message = "Soundness error. Value of attribute "+qName+" at "+systemId+":"+lineNumber+":"+columnNumber+" with the ID-type ID is the same as  value of attribute "+
+                        String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
                         previousId.getQName()+" at "+previousId.getSystemId()+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
-                        errorDispatcher.error(new AttributeIdTypeException(message, null));
+                        errorDispatcher.error(new AttributeIdTypeException(message, publicId, systemId, lineNumber, columnNumber));
                     }
                 }else if(idType == Datatype.ID_TYPE_IDREF){
                     modifiedAttributes.addAttribute(namespaceURI,
@@ -253,9 +253,9 @@ public class AttributeIdTypeHandler{
                                                                                             columnNumber,
                                                                                             debugWriter)); 
                     if(previousId != null){
-                        String message = "Soundness error. Value of attribute "+qName+" at "+systemId+":"+lineNumber+":"+columnNumber+" with the ID-type ID is the same as  value of attribute "+
+                        String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
                         previousId.getQName()+" at "+previousId.getSystemId()+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
-                        errorDispatcher.error(new AttributeIdTypeException(message, null));
+                        errorDispatcher.error(new AttributeIdTypeException(message, publicId, systemId, lineNumber, columnNumber));
                     }
                 }else if(idType == Datatype.ID_TYPE_IDREF){
                     AttributeWrapper modifiedAttribute = new AttributeWrapper(attrList.get(i), IDREF_TYPE, debugWriter);
@@ -318,9 +318,9 @@ public class AttributeIdTypeHandler{
                                                                                             columnNumber,
                                                                                             debugWriter)); 
                     if(previousId != null){
-                        String message = "Soundness error. Value of attribute "+qName+" at "+systemId+":"+lineNumber+":"+columnNumber+" with the ID-type ID is the same as  value of attribute "+
+                        String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
                         previousId.getQName()+" at "+previousId.getSystemId()+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
-                        errorDispatcher.error(new AttributeIdTypeException(message, null));
+                        errorDispatcher.error(new AttributeIdTypeException(message, publicId, systemId, lineNumber, columnNumber));
                     }
                 }else if(idType == Datatype.ID_TYPE_IDREF || idType == Datatype.ID_TYPE_IDREFS){
                     refAttributes.add(new AttributeLocationInfo(namespaceURI,
@@ -379,9 +379,9 @@ public class AttributeIdTypeHandler{
                                                                                             columnNumber,
                                                                                             debugWriter)); 
                     if(previousId != null){
-                        String message = "Soundness error. Value of attribute "+qName+" at "+systemId+":"+lineNumber+":"+columnNumber+" with the ID-type ID is the same as  value of attribute "+
+                        String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
                         previousId.getQName()+" at "+previousId.getSystemId()+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
-                        errorDispatcher.error(new AttributeIdTypeException(message, null));
+                        errorDispatcher.error(new AttributeIdTypeException(message, publicId, systemId, lineNumber, columnNumber));
                     }
                 }else if(idType == Datatype.ID_TYPE_IDREF || idType == Datatype.ID_TYPE_IDREFS){
                     refAttributes.add(new AttributeLocationInfo(namespaceURI,
@@ -401,7 +401,7 @@ public class AttributeIdTypeHandler{
         }
     }
     
-    public void handleRefs() throws SAXException{
+    public void handleRefs(Locator locator) throws SAXException{
         for(int i = 0; i < refAttributes.size(); i++){
             AttributeLocationInfo attribute = refAttributes.get(i);
             int idType = attribute.getIdType();
@@ -409,7 +409,7 @@ public class AttributeIdTypeHandler{
             if(idType == Datatype.ID_TYPE_IDREF){
                 if(!idAttributes.containsKey(value)){
                     String message = "Soundness error. No corresponding attribute of ID-type ID for attribute "+attribute.getQName()+" at "+attribute.getSystemId()+":"+attribute.getLineNumber()+":"+attribute.getColumnNumber()+" with the ID-type IDREF.";
-                    errorDispatcher.error(new AttributeIdTypeException(message, null));
+                    errorDispatcher.error(new AttributeIdTypeException(message, locator));
                 }
             }else if(idType == Datatype.ID_TYPE_IDREFS){
                 errorTokens.clear();
@@ -422,7 +422,7 @@ public class AttributeIdTypeHandler{
                 }
                 if(errorTokens.size() == 1){
                     String message = "Soundness error. No corresponding attribute of ID-type ID for token \""+errorTokens.get(0)+"\" in the value of attribute "+attribute.getQName()+" at "+attribute.getSystemId()+":"+attribute.getLineNumber()+":"+attribute.getColumnNumber()+" with the ID-type IDREFS.";
-                    errorDispatcher.error(new AttributeIdTypeException(message, null));
+                    errorDispatcher.error(new AttributeIdTypeException(message, locator));
                 }else if(errorTokens.size() > 1){
                     String tokens = "";
                     int lastToken = errorTokens.size()-1;
@@ -431,7 +431,7 @@ public class AttributeIdTypeHandler{
                     }
                     tokens += "\""+errorTokens.get(lastToken)+"\"";
                     String message = "Soundness error. No corresponding attributes of ID-type ID for tokens "+tokens+" in the value of attribute "+attribute.getQName()+" at "+attribute.getSystemId()+":"+attribute.getLineNumber()+":"+attribute.getColumnNumber()+" with the ID-type IDREFS.";
-                    errorDispatcher.error(new AttributeIdTypeException(message, null));
+                    errorDispatcher.error(new AttributeIdTypeException(message, locator));
                 }
             }
         }
