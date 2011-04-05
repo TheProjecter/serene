@@ -251,7 +251,7 @@ public class AttributeDefaultValueHandler{
                     try{
                         defaultAttribute = new AttrWrapper(defaultAttribute, false, debugWriter);
                     }catch(Exception e){
-                        errorDispatcher.warning(new SAXParseException("In the context of element <"+parentElement.getTagName()+"> for the attribute "+getQName(dvNsURI, dvLocalName, infosetModificationContext)+" added by validator the Specified parameter could not be set to false. "+e.getMessage(), null));
+                        errorDispatcher.warning(new SAXParseException("DTD compatibility warning. In the context of element <"+parentElement.getTagName()+"> for the attribute "+getQName(dvNsURI, dvLocalName, infosetModificationContext)+" added by validator the Specified parameter could not be set to false. "+e.getMessage(), null));
                     }
                     parentElement.setAttributeNodeNS(defaultAttribute);
                 }

@@ -6,4 +6,4 @@ TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\at
 
 TESTED DOCUMENT document1.xml
 
-null:-1:-1 Soundness error. Value of attribute barId at file:///C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/defaultValueID/document1.xml:21:22 with the ID-type ID is the same as  value of attribute fooId at file:///C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/defaultValueID/document1.xml:20:11 with the ID-type ID.
+file:///C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/defaultValueID/document1.xml:21:22 Soundness error. Value of attribute barId with the ID-type ID is the same as  value of attribute fooId at file:///C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/defaultValueID/document1.xml:20:11 with the ID-type ID.

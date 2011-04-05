@@ -361,7 +361,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		activeModel.recycle();
 		activeModel = null;
         if(level2AttributeIdType){
-            attributeIdTypeHandler.handleRefs();
+            attributeIdTypeHandler.handleRefs(locator);
         }
         if(contentHandler != null) contentHandler.endDocument();
 	}
