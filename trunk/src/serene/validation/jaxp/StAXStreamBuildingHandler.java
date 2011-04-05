@@ -323,7 +323,7 @@ class StAXStreamBuildingHandler extends StAXHandler{
         validatorHandler.startElement(namespaceURI, localPart, qName, attributes);
         
         if(level2AttributeDefaultValue){            
-            attributeDefaultValueHandler.handle(namespaceURI, localPart, attributes, xmlStreamWriter, documentContext);
+            attributeDefaultValueHandler.handle(level2AttributeIdType, namespaceURI, localPart, attributes, xmlStreamWriter, documentContext);
         }
         
         if(level2AttributeIdType){            
@@ -390,7 +390,7 @@ class StAXStreamBuildingHandler extends StAXHandler{
         validatorHandler.startElement(namespaceURI, localPart, qName, attributes);
         
         if(level2AttributeDefaultValue){            
-            attributeDefaultValueHandler.handle(namespaceURI, localPart, attributes, xmlStreamWriter, documentContext);
+            attributeDefaultValueHandler.handle(level2AttributeIdType, namespaceURI, localPart, attributes, xmlStreamWriter, documentContext);
         }
         
         if(level2AttributeIdType){            

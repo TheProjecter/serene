@@ -309,7 +309,7 @@ class StAXEventBuildingHandler extends StAXHandler{
         }
         
         if(level2AttributeIdType){            
-            attributeIdTypeHandler.handle(namespaceURI, localPart, attributes, attrList, startElement.getLocation());
+            attributeIdTypeHandler.handle(namespaceURI, localPart, attrList, startElement.getLocation());
         }
         
         Iterator namespacesIterator = new NamespacesIterator(nsList, debugWriter);
@@ -389,7 +389,7 @@ class StAXEventBuildingHandler extends StAXHandler{
         }
         
         if(level2AttributeIdType){            
-            attributeIdTypeHandler.handle(namespaceURI, localPart, attributes, attrList, xmlStreamReader.getLocation());
+            attributeIdTypeHandler.handle(namespaceURI, localPart, attrList, xmlStreamReader.getLocation());
         }
         
         Iterator namespacesIterator = new NamespacesIterator(nsList, debugWriter);

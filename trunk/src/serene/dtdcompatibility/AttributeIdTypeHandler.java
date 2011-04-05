@@ -24,6 +24,8 @@ import java.util.StringTokenizer;
 import javax.xml.stream.Location;
 import javax.xml.stream.events.Attribute;
 
+import javax.xml.namespace.QName;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -83,6 +85,7 @@ public class AttributeIdTypeHandler{
     public AttributeIdTypeModel getAttributeIdTypeModel(){
         return attributeIdTypeModel;
     }
+       
     
     public void handle(boolean noModification, String elementNamespaceURI, String elementLocalName, Attributes attributes, Locator locator) throws SAXException{
         if(!attributeIdTypeModel.hasIdAttributes(elementNamespaceURI, elementLocalName)) return;
@@ -133,7 +136,7 @@ public class AttributeIdTypeHandler{
             }
         }    
     }
-        
+    
     public Attributes handle(String elementNamespaceURI, String elementLocalName, Attributes attributes, Locator locator) throws SAXException{
         if(!attributeIdTypeModel.hasIdAttributes(elementNamespaceURI, elementLocalName)) return attributes;
         int attributesCount = attributes.getLength();
@@ -218,14 +221,17 @@ public class AttributeIdTypeHandler{
     }
     
     
-    public void handle(String elementNamespaceURI, String elementLocalName, Attributes attributes, List<Attribute> attrList, Location location) throws SAXException{
+    public void handle(String elementNamespaceURI, String elementLocalName, List<Attribute> attrList, Location location) throws SAXException{
         if(!attributeIdTypeModel.hasIdAttributes(elementNamespaceURI, elementLocalName)) return;
-        int attributesCount = attributes.getLength();
-        for(int i = 0; i < attributesCount; i++){            
-            String namespaceURI = attributes.getURI(i);
-            String localName = attributes.getLocalName(i);
-            String qName = attributes.getQName(i);
-            String value = attributes.getValue(i);
+        int attributesCount = attrList.size();
+        for(int i = 0; i < attributesCount; i++){
+            Attribute attribute = attrList.get(i);
+            QName attributeQName = attribute.getName();            
+            String namespaceURI = attributeQName.getNamespaceURI();
+            String localName = attributeQName.getLocalPart();
+            String prefix = attributeQName.getPrefix();
+            String qName = prefix == null || prefix.equals("") ? localName : prefix+":"+localName;
+            String value = attribute.getValue();
             
             String publicId = location.getPublicId();
             String systemId = location.getSystemId();
