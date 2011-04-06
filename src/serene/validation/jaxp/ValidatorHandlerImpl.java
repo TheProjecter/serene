@@ -88,8 +88,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 	ErrorDispatcher errorDispatcher;
 	ValidationItemLocator validationItemLocator;
 	CharsBuffer charsBuffer;
-	DocumentContext documentContext;
-	
+		
 	ElementEventHandler elementHandler;	
 	ActiveModel activeModel;
 	
@@ -99,15 +98,17 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
     boolean level2AttributeDefaultValue;
     boolean level1AttributeIdType;
     boolean level2AttributeIdType;
-    
+    boolean level1AttributeIdTypeMemo;
+        
     AttributeDefaultValueHandler attributeDefaultValueHandler;
     AttributeIdTypeHandler attributeIdTypeHandler;
-    
+        
     //for namespacesPrefixes feature
     String defaultNamespace;
     HashMap<String, String> prefixNamespaces;
-
-    final boolean noModification = true;    
+    DocumentContext documentContext;
+    
+    final boolean noModification = true;
 	MessageWriter debugWriter;	
 	//int count = 0;
 	public ValidatorHandlerImpl(boolean secureProcessing,                            
@@ -128,12 +129,13 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         this.level2AttributeDefaultValue = level2AttributeDefaultValue;
         this.level1AttributeIdType = level1AttributeIdType;
         this.level2AttributeIdType = level2AttributeIdType;
+        level1AttributeIdTypeMemo = level1AttributeIdType;
 		this.eventHandlerPool = eventHandlerPool;	
 		this.errorHandlerPool = errorHandlerPool;
 				
 		
 		this.schemaModel = schemaModel;
-			
+		                
 		validationItemLocator = new ValidationItemLocator(debugWriter);		
 		errorDispatcher = new ErrorDispatcher(debugWriter);
 		matchHandler  = new MatchHandler(debugWriter);		
@@ -148,6 +150,22 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		//default recognizeOutOfContext is true
         
         prefixNamespaces = new HashMap<String, String>();
+        
+        activeModel = schemaModel.getActiveModel(validationItemLocator, 
+														errorDispatcher);
+        if(activeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Due to errors in the schema document, it cannot be used for validation.");
+        
+        if(level2AttributeDefaultValue){                        
+            AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
+            if(attributeDefaultValueModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Feature "+Constants.LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE+" cannot be supported.");
+            attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher, debugWriter);
+        }
+        
+        if(level1AttributeIdType || level2AttributeIdType){
+            AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
+            if(attributeIdTypeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Feature "+Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE+" cannot be supported.");
+            attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+        }        
 	}
 	
 	protected void finalize(){		
@@ -214,31 +232,11 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		validationItemLocator.clear();
 		activeModel = schemaModel.getActiveModel(validationItemLocator, 
 														errorDispatcher);
-        if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
 		elementHandler = eventHandlerPool.getStartValidationHandler(activeModel.getStartElement());
-        if(level2AttributeDefaultValue){
-            if(attributeDefaultValueHandler == null){                
-                AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
-                if(attributeDefaultValueModel == null) throw new IllegalStateException("Attempting to use incorrect schema.");
-                attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher, debugWriter);
-            }else{
-                AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
-                if(attributeDefaultValueModel == null) throw new IllegalStateException("Attempting to use incorrect schema.");
-            }
-        }
-        
+                
         if(level2AttributeIdType){
-            if(attributeIdTypeHandler == null){
-                AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
-                if(attributeIdTypeModel == null) throw new SAXNotSupportedException("Attempting to use incorrect schema.");
-                attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);                
-            }else{
-                AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
-                if(attributeIdTypeModel == null) throw new SAXNotSupportedException("Attempting to use incorrect schema.");
-                attributeIdTypeHandler.init();
-            }
-        }
-        
+            attributeIdTypeHandler.init();
+        }                
         defaultNamespace = null;
 		prefixNamespaces.clear();
 		
@@ -296,15 +294,18 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName);
 		elementHandler.handleAttributes(attributes, locator);
         
+        
         if(level2AttributeDefaultValue){
             // TODO 
             // Review to make more efficient. When contentHandler == null this 
             // needs to be done only if 
             //      - there are default values for attributes with non-null ID-type
-            //      - level2AttributeIdType is set  
+            //      - level1AttributeIdType is set  
             attributes = attributeDefaultValueHandler.handle(namespaceURI, localName, attributes, documentContext);
         } 
-        if(level2AttributeIdType){
+        if(level1AttributeIdType && !level2AttributeIdType){
+            attributeIdTypeHandler.handle(noModification, namespaceURI, localName, attributes, locator);
+        }else if(level2AttributeIdType){
             if(contentHandler != null){
                 attributeIdTypeHandler.handle(noModification, namespaceURI, localName, attributes, locator);
             }else{    
@@ -351,16 +352,16 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler = parent;		
 		validationItemLocator.closeElement();
         
-        if(contentHandler != null) contentHandler.endElement(namespaceURI, localName, qName);
+        if(contentHandler != null) contentHandler.endElement(namespaceURI, localName, qName);        				
 	}
 	
-	public void endDocument()  throws SAXException {
+	public void endDocument()  throws SAXException {				
 		elementHandler.handleEndElement(locator);
 		elementHandler.recycle();
 		elementHandler = null;
 		activeModel.recycle();
 		activeModel = null;
-        if(level2AttributeIdType){
+        if(level1AttributeIdType){
             attributeIdTypeHandler.handleRefs(locator);
         }
         if(contentHandler != null) contentHandler.endDocument();
@@ -375,24 +376,34 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         }else if(name.equals(Constants.NAMESPACES_PREFIXES_SAX_FEATURE)){
             namespacePrefixes = value;  
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
-            level2AttributeDefaultValue = value;
-            if(level2AttributeDefaultValue && !level1AttributeDefaultValue){
-                throw new SAXNotSupportedException("The infoset modification model was not created. Please make sure the appropriate features are set to the SchemaFactory.");
-            }
-            if(level2AttributeDefaultValue && attributeDefaultValueHandler == null){                
+            level2AttributeDefaultValue = value;            
+            if(level2AttributeDefaultValue){
+                if(!level1AttributeDefaultValue) throw new SAXNotSupportedException("Schema model configuration cannot support feature, SchemaFactory features for creating needed structures were not set.");                
                 AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
-                if(attributeDefaultValueModel == null) throw new SAXNotSupportedException("Attempting to use incorrect schema.");
-                attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher, debugWriter);
+                if(attributeDefaultValueModel == null) throw new SAXNotSupportedException("Schema model configuration cannot support feature, needed schema structures are incorrect.");
+                if(attributeDefaultValueHandler == null){
+                    attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher, debugWriter);
+                }
             }            
+        }else if(name.equals(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE)){
+            if(value){
+                if(!level1AttributeIdTypeMemo) throw new SAXNotSupportedException("Schema model configuration cannot support feature, SchemaFactory features for creating needed structures were not set.");
+                /*AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
+                if(attributeIdTypeModel == null) throw new SAXNotSupportedException("Schema model configuration cannot support feature, needed schema structures are incorrect.");
+                if(attributeIdTypeHandler == null){
+                    attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+                }*/
+            }
+            level1AttributeIdType = value;
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE)){
             level2AttributeIdType = value;
-            if(level2AttributeIdType && !level1AttributeIdType){
-                throw new SAXNotSupportedException("The infoset modification model was not created. Please make sure the appropriate features are set to the SchemaFactory.");
-            }
-            if(level2AttributeIdType && attributeIdTypeHandler == null){                
-                AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
-                if(attributeIdTypeModel == null) throw new SAXNotSupportedException("Attempting to use incorrect schema.");
-                attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+            if(level2AttributeIdType){
+                if(!level1AttributeIdTypeMemo) throw new SAXNotSupportedException("Schema model configuration cannot support feature, SchemaFactory features for creating needed structures were not set.");                
+                /*AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
+                if(attributeIdTypeModel == null) throw new SAXNotSupportedException("Schema model configuration cannot support feature, needed schema structures are incorrect.");
+                if(attributeIdTypeHandler == null){
+                    attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+                }*/
             }
         }else{
             throw new SAXNotRecognizedException(name);
@@ -407,6 +418,8 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
             return namespacePrefixes;  
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE)){
             return level2AttributeDefaultValue;
+        }else if(name.equals(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE)){
+            return level1AttributeIdType;
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE)){
             return level2AttributeIdType;
         }else{

@@ -317,6 +317,7 @@ public class RNGSchemaFactory extends SchemaFactory{
             }
         }else if(name.equals(Constants.LEVEL1_DOCUMENTATION_ELEMENT_FEATURE)){
             internalRNGFactory.setLevel1DocumentationElement(level1DocumentationElement);
+            validatorHandler.setFeature(name, value);
             level1DocumentationElement = value;
         }else{
             throw new SAXNotRecognizedException("Unknown feature.");
@@ -645,6 +646,8 @@ public class RNGSchemaFactory extends SchemaFactory{
                     if(level1AttributeDefaultValue) compatibilityHandler.setLevel1AttributeDefaultValue(true);
                     if(level1AttributeIdType) compatibilityHandler.setLevel1AttributeIdType(true);
                     schemaModel = compatibilityHandler.handle(vm);
+                }else{
+                    schemaModel = new SchemaModel(vm, new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
                 }
             }
         }else{

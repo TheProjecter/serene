@@ -45,6 +45,8 @@ import sereneWrite.WriteHandler;
 import sereneWrite.ConsoleHandler;
 import sereneWrite.FileHandler;
 
+import serene.Constants;
+
 class Tester{
 	
 	SchemaFactory schemaFactory;
@@ -112,6 +114,17 @@ class Tester{
 		debugErrorHandler.init(destinationDirName);			
 		if(schemaFactory == null){
 			schemaFactory = new RNGSchemaFactory(debugWriter);
+            try{
+                schemaFactory.setFeature(Constants.LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE, true);
+                schemaFactory.setFeature(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE, true);
+                schemaFactory.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, true);
+                schemaFactory.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, true);
+                schemaFactory.setFeature(Constants.LEVEL1_DOCUMENTATION_ELEMENT_FEATURE, true);
+            }catch (SAXNotRecognizedException e) {
+				e.printStackTrace();
+			}catch (SAXNotSupportedException e) {
+				e.printStackTrace();
+			}
 			schemaFactory.setErrorHandler(debugErrorHandler);
 		}
 		sourceDirNames.clear();
@@ -171,6 +184,17 @@ class Tester{
                 
 		if(schemaFactory == null){
 			schemaFactory = new RNGSchemaFactory(debugWriter);
+            try{
+                schemaFactory.setFeature(Constants.LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE, true);
+                schemaFactory.setFeature(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE, true);
+                schemaFactory.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, true);
+                schemaFactory.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, true);
+                schemaFactory.setFeature(Constants.LEVEL1_DOCUMENTATION_ELEMENT_FEATURE, true);
+            }catch (SAXNotRecognizedException e) {
+				e.printStackTrace();
+			}catch (SAXNotSupportedException e) {
+				e.printStackTrace();
+			}
 			schemaFactory.setErrorHandler(debugErrorHandler);
 		}
 		sourceDirNames.clear();
