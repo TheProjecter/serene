@@ -57,11 +57,11 @@ public class DatatypeLibraryFinder implements DatatypeLibraryFactory{
 	
 	/**
      * <p>Constructor that specifies <code>ClassLoader</code> to use
-     * to find <code>SchemaFactory</code>.</p>
+     * to find <code>DatatypeLibrary</code>.</p>
      * 
      * @param loader
-     *      to be used to load resource, {@link SchemaFactory}, and
-     *      {@link SchemaFactoryLoader} implementations during
+     *      to be used to load resource, {@link DatatypeLibrary}, and
+     *      {@link DatatypeLibraryLoader} implementations during
      *      the resolution process.
      *      If this parameter is null, the default system class loader
      *      will be used.
@@ -94,7 +94,7 @@ public class DatatypeLibraryFinder implements DatatypeLibraryFactory{
     }
     
     /**
-     * <p><code>ClassLoader</code> to use to find <code>SchemaFactory</code>.</p>
+     * <p><code>ClassLoader</code> to use to find <code>DatatypeLibrary</code>.</p>
      */
     private final ClassLoader classLoader;
         
@@ -119,25 +119,25 @@ public class DatatypeLibraryFinder implements DatatypeLibraryFactory{
     
     
     /**
-     * <p>Lookup a <code>SchemaFactory</code> for the given <code>schemaLanguage</code>.</p>
+     * <p>Lookup a <code>DatatypeLibrary</code> for the given <code>namespace</code>.</p>
      * 
-     * @param schemaLanguage Schema language to lookup <code>SchemaFactory</code> for.
+     * @param namespace Schema language to lookup <code>DatatypeLibrary</code> for.
      *  
-     * @return <code>SchemaFactory</code> for the given <code>schemaLanguage</code>.
+     * @return <code>DatatypeLibrary</code> for the given <code>namespace</code>.
      */
     private DatatypeLibrary _getDatatypeLibrary(String type) {
-        DatatypeLibrary literateRepository;
+        DatatypeLibrary datatypeLibrary;
         		
         // try META-INF/services files
         Iterator sitr = createServiceFileIterator();
         while(sitr.hasNext()) {
             URL resource = (URL)sitr.next();
-            debugPrintln("looking into " + resource);
+            debugPrintln("looking into " + resource);            
             try {
-                literateRepository = loadFromService(type, 
+                datatypeLibrary = loadFromService(type, 
 											resource.toExternalForm(),
 											ss.getURLInputStream(resource));
-                if(literateRepository!=null)    return literateRepository;
+                if(datatypeLibrary!=null) return datatypeLibrary;
             } catch(IOException e) {
                 //if( debug ) {
                 //    debugPrintln("failed to read "+resource);
@@ -155,11 +155,11 @@ public class DatatypeLibraryFinder implements DatatypeLibraryFactory{
      * 
      * <p>Set <code>debug</code> to <code>true</code> to trace property evaluation.</p>
      *
-     * @param schemaLanguage Schema Language to support.
+     * @param namespace Schema Language to support.
      * @param providerConfigFile Name of <code>InputStream</code>.
      * @param in <code>InputStream</code> of properties.
      * 
-     * @return <code>SchemaFactory</code> as determined by <code>keyName</code> value or <code>null</code> if there was an error.
+     * @return <code>DatatypeLibrary</code> as determined by <code>keyName</code> value or <code>null</code> if there was an error.
      * 
      * @throws IOException If IO error reading from <code>in</code>.
      */
@@ -169,8 +169,8 @@ public class DatatypeLibraryFinder implements DatatypeLibraryFactory{
             InputStream in)
             throws IOException {
 
-            DatatypeLibraryFactory literateRepositoryFactory = null;
-			DatatypeLibrary literateRepository = null;
+            DatatypeLibraryFactory datatypeLibraryFactory = null;
+			DatatypeLibrary datatypeLibrary = null;
 			
             debugPrintln("Reading " + providerConfigFile);
 
@@ -205,35 +205,34 @@ public class DatatypeLibraryFinder implements DatatypeLibraryFactory{
 
                     // create an instance of the Class
                     try {
-                            literateRepositoryFactory = (DatatypeLibraryFactory) clazz.newInstance();
+                            datatypeLibraryFactory = (DatatypeLibraryFactory) clazz.newInstance();
                     } catch (ClassCastException classCastException) {
-                            literateRepositoryFactory = null;
+                            datatypeLibraryFactory = null;
 							debugPrintln("ClassCastException "+classCastException);
                             continue;
                     } catch (InstantiationException instantiationException) {
-                            literateRepositoryFactory = null;
+                            datatypeLibraryFactory = null;
 							debugPrintln("InstantiationException "+instantiationException);
                             continue;
                     } catch (IllegalAccessException IllegalAccessException) {
-                            literateRepositoryFactory = null;
+                            datatypeLibraryFactory = null;
 							debugPrintln("IllegalAccessException "+IllegalAccessException);
                             continue;
                     }
                    
-					if(literateRepositoryFactory != null){
-						literateRepository = literateRepositoryFactory.createDatatypeLibrary(type);						
+					if(datatypeLibraryFactory != null){
+						datatypeLibrary = datatypeLibraryFactory.createDatatypeLibrary(type);						
 					}                    					
-					if(literateRepository != null) {
-						factoryCache.put(type, literateRepositoryFactory);
+					if(datatypeLibrary != null) {
+						factoryCache.put(type, datatypeLibraryFactory);
 						break;
 					}
             }
 
             // clean up
             configFileReader.close();
-
-            // return new instance of SchemaFactory or null
-            return literateRepository;
+            // return new instance of DatatypeLibrary or null
+            return datatypeLibrary;
     }
 
     /**
@@ -244,7 +243,7 @@ public class DatatypeLibraryFinder implements DatatypeLibraryFactory{
         if (classLoader == null) {
             return new SingleIterator() {
                 protected Object value() {
-                    ClassLoader classLoader = DatatypeLibraryFinder.class.getClassLoader();                   
+                    ClassLoader classLoader = DatatypeLibraryFinder.class.getClassLoader();                    
                     return ss.getResourceAsURL(classLoader, SERVICE_ID);
                 }
             };
