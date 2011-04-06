@@ -136,6 +136,10 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		xmlnsBinder = new XmlnsBinder(debugWriter);
         
         this.level1DocumentationElement = level1DocumentationElement;
+        
+        activeModel = schemaModel.getActiveModel(validationItemLocator, 
+													errorDispatcher);
+        if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
 	}
     
     
@@ -186,7 +190,6 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		validationItemLocator.clear();
 		activeModel = schemaModel.getActiveModel(validationItemLocator, 
 													errorDispatcher);
-        if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
 		bindingModel.index(activeModel.getSElementIndexMap(), activeModel.getSAttributeIndexMap());
 		queue.clear();
 		queue.index(activeModel.getSAttributeIndexMap());
@@ -311,5 +314,28 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
         }
 
         throw new SAXNotRecognizedException(name);
+    }
+
+    
+    public void setFeature(String name, boolean value)
+        throws SAXNotRecognizedException, SAXNotSupportedException {
+        if (name == null) {
+            throw new NullPointerException();
+        }else if(name.equals(Constants.LEVEL1_DOCUMENTATION_ELEMENT_FEATURE)){
+            level1DocumentationElement = value;
+        }else{
+            throw new SAXNotRecognizedException(name);
+        }
+    }
+	
+	public boolean getFeature(String name)
+        throws SAXNotRecognizedException, SAXNotSupportedException {
+        if (name == null) {
+            throw new NullPointerException();
+        }else if(name.equals(Constants.LEVEL1_DOCUMENTATION_ELEMENT_FEATURE)){
+            return level1DocumentationElement;
+        }else{
+            throw new SAXNotRecognizedException(name);
+        }
     }	
 }

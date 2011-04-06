@@ -103,9 +103,7 @@ class StAXEventBuildingHandler extends StAXHandler{
         this.xmlEventWriter = xmlEventWriter;
         
         attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
-        if(level2AttributeDefaultValue && attributeDefaultValueHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
         attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
-        if(level2AttributeIdType && attributeIdTypeHandler.getAttributeIdTypeModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
         documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
         
         if(locator == null){
@@ -172,9 +170,7 @@ class StAXEventBuildingHandler extends StAXHandler{
         this.xmlEventWriter = xmlEventWriter;
         
         attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
-        if(level2AttributeDefaultValue && attributeDefaultValueHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
         attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
-        if(level2AttributeIdType && attributeIdTypeHandler.getAttributeIdTypeModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
         documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
         
         if(locator == null){

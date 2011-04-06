@@ -113,9 +113,7 @@ class DOMBuildingHandler extends DOMHandler{
     
 	void handle(String systemId, ValidatorHandler validatorHandler, Node sourceNode, Node resultNode) throws SAXException{
         attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
-        if(level2AttributeDefaultValue && attributeDefaultValueHandler.getAttributeDefaultValueModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
         attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
-        if(level2AttributeIdType && attributeIdTypeHandler.getAttributeIdTypeModel() == null) throw new IllegalStateException("Attempting to use incorrect schema.");
         documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
         
         currentNode = null;
