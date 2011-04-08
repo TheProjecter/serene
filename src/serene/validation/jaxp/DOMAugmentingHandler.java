@@ -72,8 +72,13 @@ class DOMAugmentingHandler extends DOMHandler{
     }
     
 	void handle(String systemId, ValidatorHandler validatorHandler, Node sourceNode, Node resultNode) throws SAXException{
-        attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);        
-        attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
+        if(level2AttributeDefaultValue) {
+            attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
+        }
+        if(level2AttributeIdType){
+            attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
+            attributeIdTypeHandler.init();
+        }
         documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
         
         // TODO
@@ -82,6 +87,10 @@ class DOMAugmentingHandler extends DOMHandler{
         resultDocument = (resultNode.getNodeType() == Node.DOCUMENT_NODE) ? (Document)resultNode : resultNode.getOwnerDocument();        
              
         super.handle(systemId, validatorHandler, sourceNode);
+        
+        if(level2AttributeIdType){
+            attributeIdTypeHandler.handleRefs(locator);
+        }
     }
 	    
     
