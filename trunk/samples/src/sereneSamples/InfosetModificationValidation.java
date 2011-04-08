@@ -51,20 +51,20 @@ import sereneWrite.MessageWriter;
 import sereneWrite.WriteHandler;
 import sereneWrite.ConsoleHandler;
 
-public class AddAttributeDefaultValue{	
+public class InfosetModificationValidation{	
 	
 	public static void main(String args[]){
 		if(args == null || args.length == 0){
-			System.out.println("Usage: java sereneSamples.AddAttributeDefaultValue schema-file xml-file ... ");
+			System.out.println("Usage: java sereneSamples.InfosetModificationValidation schema-file xml-file ... ");
 			return;
 		}
 		if(!args[0].endsWith(".rng")){
-			System.out.println("Usage: java sereneSamples.AddAttributeDefaultValue schema-file xml-file ... ");
+			System.out.println("Usage: java sereneSamples.InfosetModificationValidation schema-file xml-file ... ");
 			return;
 		}
 		for(int i = 1; i < args.length; i++){
 			if(!args[i].endsWith(".xml")){
-				System.out.println("Usage: java sereneSamples.AddAttributeDefaultValue schema-file xml-file ... ");
+				System.out.println("Usage: java sereneSamples.InfosetModificationValidation schema-file xml-file ... ");
 				return;
 			}
 		}
@@ -93,6 +93,7 @@ public class AddAttributeDefaultValue{
 		schemaFactory = SchemaFactory.newInstance(XMLConstants.RELAXNG_NS_URI);
         try{
             schemaFactory.setFeature("http://serenerng.org/features/DTDCompatibility/level2/attributeDefaultValue", true);
+            schemaFactory.setFeature("http://serenerng.org/features/DTDCompatibility/level2/attributeIdType", true);
         }catch(SAXNotRecognizedException e){
             e.printStackTrace();
         }catch(SAXNotSupportedException e){
@@ -137,8 +138,15 @@ public class AddAttributeDefaultValue{
 				}
 				Document doc = builder.parse(new File(args[i]));
                 String systemId = new File(args[i]).getAbsolutePath();
+                debugErrorHandler.print("AUGMENTING");
 				source = new DOMSource(doc, systemId);
                 result = new DOMResult(doc, systemId);
+				v.validate(source, result);
+                nodeWriter.write(((DOMResult)result).getNode());
+                
+                debugErrorHandler.print("BUILDING");
+				source = new DOMSource(doc, systemId);
+                result = new DOMResult();
 				v.validate(source, result);
                 nodeWriter.write(((DOMResult)result).getNode());
                 
@@ -163,14 +171,13 @@ public class AddAttributeDefaultValue{
                 }catch(XMLStreamException e){
                     e.printStackTrace();
                 }
-				v.validate(source, result);
-                
+				v.validate(source, result);                
                 
                 debugErrorHandler.print("source: XMLEventReader   result:XMLStreamWriter");
                 is = new FileInputStream(args[i]);
                 try{
                     XMLEventReader xer = xif.createXMLEventReader(is); 
-                    source = new StAXSource(xer);
+                    source = new StAXSource(xer);                    
                     
                     XMLStreamWriter xsw = xof.createXMLStreamWriter(System.out, "UTF-8");
                     result = new StAXResult(xsw);
@@ -193,6 +200,19 @@ public class AddAttributeDefaultValue{
 				v.validate(source, result);
                 
                 debugErrorHandler.print("source: XMLStreamReader   result:XMLStreamWriter");
+                is = new FileInputStream(args[i]);
+                try{
+                    XMLStreamReader xsr = xif.createXMLStreamReader(is); 
+                    source = new StAXSource(xsr);
+                    
+                    XMLStreamWriter xsw = xof.createXMLStreamWriter(System.out, "UTF-8");
+                    result = new StAXResult(xsw);
+                }catch(XMLStreamException e){
+                    e.printStackTrace();
+                }
+				v.validate(source, result);
+                
+                debugErrorHandler.print("source: XMLStreamReader   result:null");
                 is = new FileInputStream(args[i]);
                 try{
                     XMLStreamReader xsr = xif.createXMLStreamReader(is); 
