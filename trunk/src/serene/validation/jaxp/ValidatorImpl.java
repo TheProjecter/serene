@@ -132,7 +132,6 @@ class ValidatorImpl extends Validator{
         this.level2AttributeDefaultValue = level2AttributeDefaultValue;
         this.level1AttributeIdType = level1AttributeIdType;
         this.level2AttributeIdType = level2AttributeIdType;
-		        
         //defaultSecureProcessing = secureProcessing;
         defaultNamespacePrefixes = namespacePrefixes;
         //defaultLevel1AttributeDefaultValue = level1AttributeDefaultValue;
@@ -147,7 +146,10 @@ class ValidatorImpl extends Validator{
         validatorHandler.setErrorHandler(errorDispatcher);
 	}
 	
-    public void reset(){
+    public void reset(){        
+        namespacePrefixes = defaultNamespacePrefixes;
+        level2AttributeDefaultValue = defaultLevel2AttributeDefaultValue;
+        level2AttributeIdType = defaultLevel2AttributeIdType;
         try{
             validatorHandler.setFeature(Constants.NAMESPACES_PREFIXES_SAX_FEATURE, defaultNamespacePrefixes);
             validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE, defaultLevel2AttributeDefaultValue);
@@ -240,11 +242,15 @@ class ValidatorImpl extends Validator{
 		}
 	}
 	
-	public void validate(SAXSource source, Result result) throws SAXException, IOException{
+    public void validate(SAXSource source, Result result) throws SAXException, IOException{
         if(source == null)throw new NullPointerException();
         if(result == null)validate(source);
-		if(!(result instanceof SAXResult)) throw new IllegalArgumentException();        
-		validatorHandler.setContentHandler(((SAXResult)result).getHandler());
+		if(!(result instanceof SAXResult)) throw new IllegalArgumentException();
+        validate(source, (SAXResult)result);
+    }
+    
+	public void validate(SAXSource source, SAXResult result) throws SAXException, IOException{                
+		validatorHandler.setContentHandler(result.getHandler());
 		validate(source);
         validatorHandler.setContentHandler(null);
 	}
@@ -267,10 +273,14 @@ class ValidatorImpl extends Validator{
 		xmlReader.parse(inputSource);
 	}
 	
-	public void validate(StreamSource source, Result result) throws SAXException, IOException{
+    public void validate(StreamSource source, Result result) throws SAXException, IOException{
         if(source == null)throw new NullPointerException();
 		if(result == null) validate(source);
-		if(!(result instanceof StreamResult)) throw new IllegalArgumentException();				
+		if(!(result instanceof StreamResult)) throw new IllegalArgumentException();
+        validate(source, (StreamResult)result);
+    }
+    
+	public void validate(StreamSource source, StreamResult result) throws SAXException, IOException{        				
 		if(identityTransformerHandler == null) createTransformerHandler();		
 		identityTransformerHandler.setResult(result);
 		validatorHandler.setContentHandler(identityTransformerHandler);
@@ -312,14 +322,16 @@ class ValidatorImpl extends Validator{
 		xmlReader.parse(inputSource);
 	}
 
-	public void validate(StAXSource source, Result result) throws SAXException, IOException{
+    public void validate(StAXSource source, Result result) throws SAXException, IOException{
         if(source == null)throw new NullPointerException();
         if(result == null)validate(source);		
 		if(!(result instanceof StAXResult)) throw new IllegalArgumentException();
-        StAXResult stAXResult = (StAXResult)result;
-        
-        XMLStreamWriter xmlStreamWriter = stAXResult.getXMLStreamWriter();
-        XMLEventWriter xmlEventWriter = stAXResult.getXMLEventWriter();
+        validate(source, (StAXResult)result);
+    }
+    
+	public void validate(StAXSource source, StAXResult result) throws SAXException, IOException{        
+        XMLStreamWriter xmlStreamWriter = result.getXMLStreamWriter();
+        XMLEventWriter xmlEventWriter = result.getXMLEventWriter();
         
         XMLStreamReader xmlStreamReader = source.getXMLStreamReader();         
         if(xmlStreamReader != null){
@@ -336,17 +348,33 @@ class ValidatorImpl extends Validator{
                 if(xmlStreamWriter != null){
                     if(stAXStreamBuildingHandler == null) stAXStreamBuildingHandler = new StAXStreamBuildingHandler(debugWriter);
                     if(level2AttributeDefaultValue)stAXStreamBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
-                    if(level2AttributeIdType)stAXStreamBuildingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+                    if(level2AttributeIdType){
+                        validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, false);
+                        validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, false);
+                        stAXStreamBuildingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+                    }
                     stAXStreamBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlStreamReader, xmlStreamWriter);
                     if(level2AttributeDefaultValue)stAXStreamBuildingHandler.setLevel2AttributeDefaultValue(false);
-                    if(level2AttributeIdType)stAXStreamBuildingHandler.setLevel2AttributeIdType(false);
+                    if(level2AttributeIdType){
+                        validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, level1AttributeIdType);
+                        validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, level2AttributeIdType);
+                        stAXStreamBuildingHandler.setLevel2AttributeIdType(false);
+                    }
                 }else{
                     if(stAXEventBuildingHandler == null) stAXEventBuildingHandler = new StAXEventBuildingHandler(debugWriter);
                     if(level2AttributeDefaultValue) stAXEventBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
-                    if(level2AttributeIdType)stAXEventBuildingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+                    if(level2AttributeIdType){
+                        validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, false);
+                        validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, false);
+                        stAXEventBuildingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+                    }
                     stAXEventBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlStreamReader, xmlEventWriter);
                     if(level2AttributeDefaultValue)stAXEventBuildingHandler.setLevel2AttributeDefaultValue(false);     
-                    if(level2AttributeIdType)stAXEventBuildingHandler.setLevel2AttributeIdType(false);
+                    if(level2AttributeIdType){
+                        validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, level1AttributeIdType);
+                        validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, level2AttributeIdType);
+                        stAXEventBuildingHandler.setLevel2AttributeIdType(false);
+                    }
                 }                
              }catch(XMLStreamException e){
                  throw new SAXException(e);
@@ -365,17 +393,33 @@ class ValidatorImpl extends Validator{
                 if(xmlStreamWriter != null){
                     if(stAXStreamBuildingHandler == null) stAXStreamBuildingHandler = new StAXStreamBuildingHandler(debugWriter);
                     if(level2AttributeDefaultValue) stAXStreamBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
-                    if(level2AttributeIdType)stAXStreamBuildingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+                    if(level2AttributeIdType){
+                        validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, false);
+                        validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, false);
+                        stAXStreamBuildingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+                    }
                     stAXStreamBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlEventReader, xmlStreamWriter);
                     if(level2AttributeDefaultValue)stAXStreamBuildingHandler.setLevel2AttributeDefaultValue(false);
-                    if(level2AttributeIdType)stAXStreamBuildingHandler.setLevel2AttributeIdType(false);
+                    if(level2AttributeIdType){
+                        validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, level1AttributeIdType);
+                        validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, level2AttributeIdType);
+                        stAXStreamBuildingHandler.setLevel2AttributeIdType(false);
+                    }
                 }else{
                     if(stAXEventBuildingHandler == null) stAXEventBuildingHandler = new StAXEventBuildingHandler(debugWriter);
                     if(level2AttributeDefaultValue) stAXEventBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
-                    if(level2AttributeIdType)stAXEventBuildingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+                    if(level2AttributeIdType){
+                        validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, false);
+                        validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, false);
+                        stAXEventBuildingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+                    }
                     stAXEventBuildingHandler.handle(source.getSystemId(), validatorHandler, xmlEventReader, xmlEventWriter);
                     if(level2AttributeDefaultValue) stAXEventBuildingHandler.setLevel2AttributeDefaultValue(false);
-                    if(level2AttributeIdType)stAXEventBuildingHandler.setLevel2AttributeIdType(false);
+                    if(level2AttributeIdType){
+                        validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, level1AttributeIdType);
+                        validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, level2AttributeIdType);
+                        stAXEventBuildingHandler.setLevel2AttributeIdType(false);
+                    }
                 }
              }catch(XMLStreamException e){
                  throw new SAXException(e);
@@ -424,25 +468,35 @@ class ValidatorImpl extends Validator{
         if(source == null)throw new NullPointerException();
         if(result == null)validate(source);
 		if(!(result instanceof DOMResult)) throw new IllegalArgumentException();
-			
+        validate(source, (DOMResult)result); 
+    }
+    
+    public void validate(DOMSource source, DOMResult result) throws SAXException, IOException{
         Node sourceNode = source.getNode();   
         if(sourceNode == null) throw new IllegalArgumentException("Source does not represent an XML artifact. Input is expected to be XML documents or elements.");
         int type = sourceNode.getNodeType();
         if(!(type == Node.ELEMENT_NODE || type == Node.DOCUMENT_NODE))
             throw new IllegalArgumentException("Source represents an XML artifact that cannot be validated. Input is expected to be XML documents or elements.");
-		
-        DOMResult domResult = (DOMResult)result; 
-        Node resultNode = domResult.getNode();
+        
+        Node resultNode = result.getNode();
         
         String systemId = source.getSystemId();
         
         if(resultNode == sourceNode){
             if(domAugmentingHandler == null) domAugmentingHandler = new DOMAugmentingHandler(debugWriter);
             if(level2AttributeDefaultValue) domAugmentingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
-            if(level2AttributeIdType) domAugmentingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+            if(level2AttributeIdType){
+                validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, false);
+                validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, false);
+                domAugmentingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+            }
             domAugmentingHandler.handle(systemId, validatorHandler, sourceNode, resultNode);
             if(level2AttributeDefaultValue) domAugmentingHandler.setLevel2AttributeDefaultValue(false);
-            if(level2AttributeIdType) domAugmentingHandler.setLevel2AttributeIdType(false);
+            if(level2AttributeIdType){
+                validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, level1AttributeIdType);
+                validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, level2AttributeIdType);
+                domAugmentingHandler.setLevel2AttributeIdType(false);
+            }
         }else{
             if(resultNode == null){
                 try{
@@ -450,17 +504,25 @@ class ValidatorImpl extends Validator{
                     factory.setNamespaceAware(true);
                     DocumentBuilder builder = factory.newDocumentBuilder();
                     resultNode = builder.newDocument();
-                    domResult.setNode(resultNode);
+                    result.setNode(resultNode);
                 } catch (ParserConfigurationException e) {
                     throw new SAXException(e);
                 }
             }            
             if(domBuildingHandler == null) domBuildingHandler = new DOMBuildingHandler(debugWriter);
             if(level2AttributeDefaultValue) domBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
-            if(level2AttributeIdType) domBuildingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+            if(level2AttributeIdType){
+                validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, false);
+                validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, false);
+                domBuildingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+            }
             domBuildingHandler.handle(systemId, validatorHandler, sourceNode, resultNode);
             if(level2AttributeDefaultValue) domBuildingHandler.setLevel2AttributeDefaultValue(false);
-            if(level2AttributeIdType) domBuildingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+            if(level2AttributeIdType){
+                validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, level1AttributeIdType);
+                validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, level2AttributeIdType);
+                domBuildingHandler.setLevel2AttributeIdType(level2AttributeIdType);
+            }
         }    
 	}
     
@@ -475,9 +537,6 @@ class ValidatorImpl extends Validator{
         if(domHandler == null) domHandler = new DOMHandler(debugWriter);
         domHandler.handle(systemId, validatorHandler, node);        
 	}
-		
-    
-    
 	
 	private void createTransformerHandler(){
 		try {

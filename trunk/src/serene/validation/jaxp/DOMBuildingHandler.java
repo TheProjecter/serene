@@ -112,8 +112,13 @@ class DOMBuildingHandler extends DOMHandler{
     }
     
 	void handle(String systemId, ValidatorHandler validatorHandler, Node sourceNode, Node resultNode) throws SAXException{
-        attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
-        attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
+        if(level2AttributeDefaultValue) {
+            attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
+        }
+        if(level2AttributeIdType){
+            attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
+            attributeIdTypeHandler.init();
+        }
         documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
         
         currentNode = null;
@@ -128,6 +133,10 @@ class DOMBuildingHandler extends DOMHandler{
         super.handle(systemId, validatorHandler, sourceNode);
         
         close();
+        
+        if(level2AttributeIdType){
+            attributeIdTypeHandler.handleRefs(locator);
+        }
     }
     
 	void beginNode(Node node) throws SAXException{

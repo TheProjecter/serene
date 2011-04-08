@@ -102,8 +102,13 @@ class StAXEventBuildingHandler extends StAXHandler{
         this.validatorHandler = validatorHandler;
         this.xmlEventWriter = xmlEventWriter;
         
-        attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
-        attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
+        if(level2AttributeDefaultValue) {
+            attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
+        }
+        if(level2AttributeIdType){
+            attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
+            attributeIdTypeHandler.init();
+        }
         documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
         
         if(locator == null){
@@ -157,8 +162,11 @@ class StAXEventBuildingHandler extends StAXHandler{
                     default:
                         xmlEventWriter.add(currentEvent);
                 }
-            }
+            }            
             validatorHandler.endDocument();
+            if(level2AttributeIdType){
+                attributeIdTypeHandler.handleRefs(locator);
+            }
             xmlEventWriter.flush();
         }catch(XMLStreamException e){
             throw new SAXException(e);
@@ -169,8 +177,13 @@ class StAXEventBuildingHandler extends StAXHandler{
         this.validatorHandler = validatorHandler;
         this.xmlEventWriter = xmlEventWriter;
         
-        attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
-        attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
+        if(level2AttributeDefaultValue) {
+            attributeDefaultValueHandler = (AttributeDefaultValueHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY);
+        }
+        if(level2AttributeIdType){
+            attributeIdTypeHandler = (AttributeIdTypeHandler)validatorHandler.getProperty(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY);
+            attributeIdTypeHandler.init();
+        }
         documentContext = (DocumentContext)validatorHandler.getProperty(Constants.DOCUMENT_CONTEXT_PROPERTY);
         
         if(locator == null){
@@ -242,6 +255,9 @@ class StAXEventBuildingHandler extends StAXHandler{
                 eventType = xmlStreamReader.next();
             }
             validatorHandler.endDocument();
+            if(level2AttributeIdType){
+                attributeIdTypeHandler.handleRefs(locator);
+            }
             xmlEventWriter.flush();            
         }catch(XMLStreamException e){
             throw new SAXException(e);
