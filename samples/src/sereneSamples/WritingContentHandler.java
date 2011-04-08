@@ -16,7 +16,7 @@ class WritingContentHandler extends DefaultHandler{
             att += (" "+
                     atts.getQName(i)
                     + "="
-                    + "\""+atts.getValue(i)+"\"");
+                    +atts.getValue(i));
         }			
         line = (align 
                 + "<"

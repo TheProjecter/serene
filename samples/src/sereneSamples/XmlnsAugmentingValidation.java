@@ -135,7 +135,5 @@ public class XmlnsAugmentingValidation{
 			}
 		}
 		debugErrorHandler.close();		
-	}
-
-		
+	}	
 }

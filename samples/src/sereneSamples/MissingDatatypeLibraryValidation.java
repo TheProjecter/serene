@@ -19,6 +19,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 import org.w3c.dom.Document;
 
@@ -64,10 +65,13 @@ public class MissingDatatypeLibraryValidation{
 		schemaFactory = SchemaFactory.newInstance(XMLConstants.RELAXNG_NS_URI);
         schemaFactory.setErrorHandler(debugErrorHandler);
         
-        debugErrorHandler.print("FEATURE http://example.com/serene/schemaFactory/features/replaceMissingDatatypeLibrary  true (default)");
+        debugErrorHandler.print("FEATURE http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary  true");
         try{
+            schemaFactory.setFeature("http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary", true);            
             debugErrorHandler.setFeature("http://example.com/countMissingLibraryExceptions", false);
         }catch(SAXNotRecognizedException e){
+            e.printStackTrace();
+        }catch(SAXNotSupportedException e){
             e.printStackTrace();
         }
         try{	
@@ -99,10 +103,13 @@ public class MissingDatatypeLibraryValidation{
         }
         
         
-        debugErrorHandler.print("FEATURE http://example.com/serene/schemaFactory/features/replaceMissingDatatypeLibrary  false");
+        debugErrorHandler.print("FEATURE http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary  false");
         try{
+            schemaFactory.setFeature("http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary", false);
             debugErrorHandler.setFeature("http://example.com/countMissingLibraryExceptions", true);
         }catch(SAXNotRecognizedException e){
+            e.printStackTrace();
+        }catch(SAXNotSupportedException e){
             e.printStackTrace();
         }
         try{	
