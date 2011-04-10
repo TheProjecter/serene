@@ -150,22 +150,6 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		//default recognizeOutOfContext is true
         
         prefixNamespaces = new HashMap<String, String>();
-        
-        activeModel = schemaModel.getActiveModel(validationItemLocator, 
-														errorDispatcher);
-        if(activeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Due to errors in the schema document, it cannot be used for validation.");
-        
-        if(level2AttributeDefaultValue){                        
-            AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
-            if(attributeDefaultValueModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Feature "+Constants.LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE+" cannot be supported.");
-            attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher, debugWriter);
-        }
-        
-        if(level1AttributeIdType || level2AttributeIdType){
-            AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
-            if(attributeIdTypeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Feature "+Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE+" cannot be supported.");
-            attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
-        }        
 	}
 	
 	protected void finalize(){		
@@ -232,11 +216,23 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		validationItemLocator.clear();
 		activeModel = schemaModel.getActiveModel(validationItemLocator, 
 														errorDispatcher);
+        if(activeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Due to errors in the schema document, it cannot be used for validation.");
+        
+        if(level2AttributeDefaultValue){                        
+            AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
+            if(attributeDefaultValueModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Feature "+Constants.LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE+" cannot be supported.");
+            if(attributeDefaultValueHandler == null) attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher, debugWriter);
+        }
+        
+        if(level1AttributeIdType || level2AttributeIdType){
+            AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
+            if(attributeIdTypeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Feature "+Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE+" cannot be supported.");
+            if(attributeIdTypeHandler == null)attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+            else attributeIdTypeHandler.init();
+        }        
+        
 		elementHandler = eventHandlerPool.getStartValidationHandler(activeModel.getStartElement());
                 
-        if(level2AttributeIdType){
-            attributeIdTypeHandler.init();
-        }                
         defaultNamespace = null;
 		prefixNamespaces.clear();
 		
@@ -388,22 +384,22 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         }else if(name.equals(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE)){
             if(value){
                 if(!level1AttributeIdTypeMemo) throw new SAXNotSupportedException("Schema model configuration cannot support feature, SchemaFactory features for creating needed structures were not set.");
-                /*AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
+                AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
                 if(attributeIdTypeModel == null) throw new SAXNotSupportedException("Schema model configuration cannot support feature, needed schema structures are incorrect.");
                 if(attributeIdTypeHandler == null){
                     attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
-                }*/
+                }
             }
             level1AttributeIdType = value;
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE)){
             level2AttributeIdType = value;
             if(level2AttributeIdType){
                 if(!level1AttributeIdTypeMemo) throw new SAXNotSupportedException("Schema model configuration cannot support feature, SchemaFactory features for creating needed structures were not set.");                
-                /*AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
+                AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
                 if(attributeIdTypeModel == null) throw new SAXNotSupportedException("Schema model configuration cannot support feature, needed schema structures are incorrect.");
                 if(attributeIdTypeHandler == null){
                     attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
-                }*/
+                }
             }
         }else{
             throw new SAXNotRecognizedException(name);
