@@ -324,7 +324,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             }
             if(errorTokens.size() == 1){
                 String message = "DTD compatibility warning. No corresponding attribute of ID-type ID for token \""+errorTokens.get(0)+"\" in the value of attribute definition at "+attribute.getLocation()+" with the ID-type IDREFS.";
-                errorDispatcher.error(new AttributeIdTypeException(message, null));
+                errorDispatcher.warning(new AttributeIdTypeException(message, null));
             }else if(errorTokens.size() > 1){
                 String tokens = "";
                 int lastToken = errorTokens.size()-1;
@@ -333,7 +333,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 }
                 tokens += "\""+errorTokens.get(lastToken)+"\"";
                 String message = "DTD compatibility warning. No corresponding attribute of ID-type ID for tokens \""+tokens+"\" in the default value of attribute definition at "+attribute.getLocation()+" with the ID-type IDREFS.";
-                errorDispatcher.error(new AttributeIdTypeException(message, null));
+                errorDispatcher.warning(new AttributeIdTypeException(message, null));
             }
         }
     }
