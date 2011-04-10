@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<TITLE>Note on DTD Compatibility Implementation</TITLE>
+</HEAD>
+<BODY>
+    <H1>Note on DTD Compatibility Implementation</H1>
+    <P>
+        <BR>
+    </P>
+    <P>
+        This release introduces the implementation of the DTD compatibility
+        features. The implementation is independent from the validation implementation
+        and it is possible to control which features and levels are to be processed 
+        from the command line or through the <CODE>setFeature(String name, 
+        boolean value)</CODE> methods of the JAXP validation API.    
+        Furthermore, when a schema document contains errors with impact on the 
+        DTD compatibility handling, implementations of the abstract class
+        <CODE>serene.SereneRecoverableException</CODE> extending 
+        <CODE>org.xml.sax.SAXParseException</CODE> are used, so that they can be 
+        caught separately and the features set in the 
+        <CODE>javax.xml.validation.ValidatorHandler</CODE> and
+        <CODE>javax.xml.validation.Validator</CODE> can be adjusted. Concrete 
+        implementations are:        
+    </P>
+    <P>       
+        <UL>
+            <LI> 
+                <CODE>serene.dtdcompatibility.AttributeDefaultValueException</CODE>
+                for attribute default values
+            </LI>
+            <LI> 
+                <CODE>serene.dtdcompatibility.AttributeIdTypeException</CODE>
+                for attributes of type ID, IDREF, IDREFS 
+            </LI>
+            <LI>
+                <CODE>serene.dtdcompatibility.DocumentationElementException</CODE>
+                for documentation elements 
+            </LI>
+        </UL>
+    </P>
+    <P>
+        Even when the compatibility property does not hold for one of the features, 
+        this allows the schema to still be safely used for validation and the 
+        other compatibility features.
+    </P>
+    <P>
+        It is the client's responsibility to ensure that the errors are caught in 
+        an appropriate manner and the right features are set. When attempting to 
+        create an instance of <CODE>javax.xml.validation.ValidatorHandler</CODE> or
+        <CODE>javax.xml.validation.Validator</CODE> an <CODE>IllegalStateException</CODE>
+        is thrown if schema document contained errors that made it impossible to
+        support a certain feature and that feature is set to <CODE>true</CODE>.
+        When attempting to set to <CODE>true</CODE> a feature in the 
+        <CODE>javax.xml.validation.ValidatorHandler</CODE> or
+        <CODE>javax.xml.validation.Validator</CODE> an 
+        <CODE>org.xml.sax.SAXNotSupportedException</CODE> is thrown if schema 
+        document contained errors that made it impossible to
+        support that feature or if corresponding level 1 features were not
+        set in the <CODE>javax.xml.validation.SchemaFactory</CODE>.
+    </P>
+    <P>
+        For attribute default values, the specification requires that "the value 
+        of the a:defaultValue attribute matches the pattern contained in 
+        the attribute element", but it is not clear if the soundness relation for 
+        the ID, IDREF, IDREFS should be regarded as part of the pattern. I chose 
+        to check during the compatibility property control, provided apropriate
+        features were set, if this relashionship holds, but only issue warnings.
+        The reason for this is that there are many situations where the document
+        can be correct even if the default values used in the schema would result 
+        in errors, but if error messages were to be issued, than, according to the 
+        general strategy described above, the client should have to unset the 
+        features and not continue the compatibility processing of the document for 
+        them. On the other hand it seems natural that the user gets some kind of 
+        message, especially where the ID-type is ID.
+    </P>   
+    <P>
+        <BR><BR>
+    </P>
+    <HR>
+    <P>
+        Copyright &copy; 2011 Radu Cernuta
+    </P>
+    <HR>
+</BODY>
