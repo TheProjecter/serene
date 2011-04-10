@@ -6,7 +6,7 @@
 
 This page contains general release information. See additional wiki pages for details.
 
-==Serene 0.5.==
+==Serene 0.5.2==
 
 This release introduces support for DTD compatibility adding several new features and some bug fixes. The implementation of all {{{javax.xml.validation.SchemaFactory}}} and {{{javax.xml.validation.Validator}}}  methods involving {{{javax.xml.transform.Source}}} and {{{javax.xml.transform.Result}}} has been reviewd. 
 
