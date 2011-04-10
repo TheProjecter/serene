@@ -30,6 +30,7 @@ public class WriteErrorHandler implements ErrorHandler{
 	WriteHandler writeHandler;
 	
 	public WriteErrorHandler(){
+        countMissingLibraryExceptions = true;
 		this.writeHandler = new ConsoleHandler();
 	}
 	   
