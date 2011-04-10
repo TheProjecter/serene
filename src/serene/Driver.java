@@ -69,18 +69,7 @@ public class Driver{
 		
 		SchemaFactory schemaFactory;
 		Schema schema;
-		
-		MessageWriter debugWriter = new MessageWriter();;
-		WriteErrorHandler debugErrorHandler = new WriteErrorHandler();
-        try{
-            debugErrorHandler.setFeature("http://example.com/countMissingLibraryExceptions", false);
-        }catch(SAXNotRecognizedException e){
-            e.printStackTrace();
-        }		
-				
-		WriteHandler wh = new ConsoleHandler();
-		debugWriter.setWriteHandler(wh);
-		debugErrorHandler.setWriteHandler(wh);
+		WriteErrorHandler errorHandler = new WriteErrorHandler(); 
 		try{
 			xmlReader = XMLReaderFactory.createXMLReader();
 			//TODO see that the features are correctly set			
@@ -91,15 +80,15 @@ public class Driver{
 			}catch (SAXNotRecognizedException e) {
 				e.printStackTrace();
 			}	
-			xmlReader.setErrorHandler(debugErrorHandler);
+			xmlReader.setErrorHandler(errorHandler);
 		}catch(SAXException e){
 			e.printStackTrace();
 		}		
 				
 		schemaFactory = SchemaFactory.newInstance(XMLConstants.RELAXNG_NS_URI);
 				
-		schemaFactory.setErrorHandler(debugErrorHandler);
-        debugErrorHandler.init();
+		schemaFactory.setErrorHandler(errorHandler);
+        errorHandler.init();
 		ArrayList<File> schemaFiles = new ArrayList<File>(1);
         ArrayList<File> docFiles = new ArrayList<File>(); 
         BooleanList handledOptions = new BooleanList();
@@ -144,9 +133,9 @@ public class Driver{
 			return;
 		}
         
-		if(debugErrorHandler.hasError())return;		
+		if(errorHandler.hasError())return;		
 		ValidatorHandler vh = schema.newValidatorHandler();
-		vh.setErrorHandler(debugErrorHandler);
+		vh.setErrorHandler(errorHandler);
 		
 		xmlReader.setContentHandler(vh);
 
