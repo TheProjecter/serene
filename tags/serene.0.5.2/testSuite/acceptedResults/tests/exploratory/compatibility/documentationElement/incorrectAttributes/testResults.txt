@@ -1,0 +1,9 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\documentationElement\incorrectAttributes\schema.rng
+
+file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/documentationElement/incorrectAttributes/schema.rng:22:63 DTD compatibility error. Unexpected attribute foo in documentation element content.
+
+file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/documentationElement/incorrectAttributes/schema.rng:22:63 DTD compatibility error. Unexpected attribute rng:bar in documentation element content.
+
+file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/documentationElement/incorrectAttributes/schema.rng:22:63 DTD compatibility error. Unexpected attribute a:baz in documentation element content.

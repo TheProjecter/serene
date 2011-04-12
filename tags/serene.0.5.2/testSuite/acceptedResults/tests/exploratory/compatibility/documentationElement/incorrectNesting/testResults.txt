@@ -1,0 +1,5 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\documentationElement\incorrectNesting\schema.rng
+
+file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/documentationElement/incorrectNesting/schema.rng:24:41 DTD compatibility error. Unexpected element <rng:element> in documentation element content.

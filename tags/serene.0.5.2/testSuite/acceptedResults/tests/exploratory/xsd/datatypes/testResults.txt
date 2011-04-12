@@ -1,0 +1,420 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\xsd\datatypes\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:28:52 Syntax error. Element <language> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:45:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:28:41 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:47:48. cvc-pattern-valid: Value 'Syldavian' is not facet-valid with respect to pattern '([a-zA-Z]{1,8})(-[a-zA-Z0-9]{1,8})*' for type 'language'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:31:49 Syntax error. Element <NMTOKEN> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:52:45 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:31:39 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:54:47. cvc-datatype-valid.1.2.1: '1a 2b 3c' is not a valid value for 'NMTOKEN'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:34:51 Syntax error. Element <NMTOKENS> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:59:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:34:40 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:61:48. cvc-datatype-valid.1.2.1: '1a,2b' is not a valid value for 'NMTOKEN'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:37:38 Syntax error. Element <Name> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:66:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:37:31 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:68:44. cvc-datatype-valid.1.2.1: '555' is not a valid value for 'Name'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:40:42 Syntax error. Element <NCName> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:73:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:40:33 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:75:46. cvc-datatype-valid.1.2.1: 'a:b' is not a valid value for 'NCName'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:44:34 Syntax error. Element <ID> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:80:40 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:44:29 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:82:42. cvc-datatype-valid.1.2.1: 'a:b' is not a valid value for 'NCName'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:45:32 Syntax error. Element <ID> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:80:40 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:45:27 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:82:42. cvc-datatype-valid.1.2.1: '1' is not a valid value for 'NCName'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:49:40 Syntax error. Element <IDREF> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:87:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:49:32 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:89:45. cvc-datatype-valid.1.2.1: 'b:b' is not a valid value for 'NCName'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:50:38 Syntax error. Element <IDREF> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:87:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:50:30 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:89:45. cvc-datatype-valid.1.2.1: '1' is not a valid value for 'NCName'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:53:47 Syntax error. Element <IDREFS> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:94:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:53:38 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:96:46. cvc-datatype-valid.1.2.1: 'a:a' is not a valid value for 'NCName'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:55:41 Syntax error. Element <ENTITY> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:101:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:55:32 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:103:46. UndeclaredEntity: Entity 'aa' is not declared.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:56:42 Syntax error. Element <ENTITY> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:101:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:56:33 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:103:46. cvc-datatype-valid.1.2.1: 'a:a' is not a valid value for 'NCName'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:57:40 Syntax error. Element <ENTITY> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:101:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:57:31 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:103:46. cvc-datatype-valid.1.2.1: '1' is not a valid value for 'NCName'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:59:48 Syntax error. Element <ENTITIES> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:108:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:59:37 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:110:48. UndeclaredEntity: Entity 'bb' is not declared.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:60:51 Syntax error. Element <ENTITIES> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:108:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:60:40 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:110:48. cvc-datatype-valid.1.2.1: 'a:a' is not a valid value for 'NCName'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:65:61 Syntax error. Element <anyURI> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:116:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:65:52 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:118:46. cvc-datatype-valid.1.2.1: 'http://example.com/%%%' is not a valid value for 'anyURI'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:70:75 Syntax error. Element <decimal> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:124:45 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:69:78 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:126:47. cvc-datatype-valid.1.2.1: '1754873132498432168495135 76213579615321954531.
+    246546874621968432168743513254965432132168513202341651321321' is not a valid value for 'decimal'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:71:147 Syntax error. Element <decimal> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:124:45 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:71:137 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:126:47. cvc-datatype-valid.1.2.1: '175487313249843216849513576213579615321954531,246546874621968432168743513254965432132168513202341651321321' is not a valid value for 'decimal'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:72:42 Syntax error. Element <decimal> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:124:45 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:72:32 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:126:47. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'decimal'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:75:97 Syntax error. Element <integer> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:131:45 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:75:87 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:133:47. cvc-datatype-valid.1.2.1: '175487313249843216849513576213579615321954531.0000000000' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:76:42 Syntax error. Element <integer> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:131:45 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:76:32 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:133:47. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:80:64 Syntax error. Element <nonPositiveInteger> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:138:56 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:80:43 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:140:58. cvc-maxInclusive-valid: Value '1' is not facet-valid with respect to maxInclusive '0' for type 'nonPositiveInteger'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:81:64 Syntax error. Element <nonPositiveInteger> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:138:56 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:81:43 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:140:58. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:84:58 Syntax error. Element <negativeInteger> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:145:53 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:84:40 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:147:55. cvc-maxInclusive-valid: Value '0' is not facet-valid with respect to maxInclusive '-1' for type 'negativeInteger'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:85:58 Syntax error. Element <negativeInteger> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:145:53 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:85:40 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:147:55. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:89:65 Syntax error. Element <nonNegativeInteger> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:152:56 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:89:44 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:154:58. cvc-minInclusive-valid: Value '-1' is not facet-valid with respect to minInclusive '0' for type 'nonNegativeInteger'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:90:64 Syntax error. Element <nonNegativeInteger> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:152:56 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:90:43 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:154:58. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:93:58 Syntax error. Element <positiveInteger> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:159:53 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:93:40 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:161:55. cvc-minInclusive-valid: Value '0' is not facet-valid with respect to minInclusive '1' for type 'positiveInteger'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:94:58 Syntax error. Element <positiveInteger> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:159:53 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:94:40 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:161:55. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:98:55 Syntax error. Element <long> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:166:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:98:48 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:168:44. cvc-minInclusive-valid: Value '-9223372036854775809' is not facet-valid with respect to minInclusive '-9223372036854775808' for type 'long'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:99:54 Syntax error. Element <long> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:166:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:99:47 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:168:44. cvc-maxInclusive-valid: Value '9223372036854775808' is not facet-valid with respect to maxInclusive '9223372036854775807' for type 'long'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:100:36 Syntax error. Element <long> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:166:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:100:29 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:168:44. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:104:44 Syntax error. Element <int> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:173:41 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:104:38 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:175:43. cvc-minInclusive-valid: Value '-2147483649' is not facet-valid with respect to minInclusive '-2147483648' for type 'int'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:105:43 Syntax error. Element <int> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:173:41 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:105:37 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:175:43. cvc-maxInclusive-valid: Value '2147483648' is not facet-valid with respect to maxInclusive '2147483647' for type 'int'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:106:34 Syntax error. Element <int> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:173:41 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:106:28 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:175:43. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:110:43 Syntax error. Element <short> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:180:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:110:35 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:182:45. cvc-minInclusive-valid: Value '-32769' is not facet-valid with respect to minInclusive '-32768' for type 'short'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:111:42 Syntax error. Element <short> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:180:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:111:34 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:182:45. cvc-maxInclusive-valid: Value '32768' is not facet-valid with respect to maxInclusive '32767' for type 'short'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:112:38 Syntax error. Element <short> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:180:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:112:30 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:182:45. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:116:39 Syntax error. Element <byte> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:187:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:116:32 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:189:44. cvc-minInclusive-valid: Value '-129' is not facet-valid with respect to minInclusive '-128' for type 'byte'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:117:38 Syntax error. Element <byte> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:187:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:117:31 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:189:44. cvc-maxInclusive-valid: Value '128' is not facet-valid with respect to maxInclusive '127' for type 'byte'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:118:36 Syntax error. Element <byte> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:187:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:118:29 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:189:44. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:122:53 Syntax error. Element <unsignedLong> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:194:50 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:122:38 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:196:52. cvc-minInclusive-valid: Value '-1' is not facet-valid with respect to minInclusive '0' for type 'unsignedLong'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:123:71 Syntax error. Element <unsignedLong> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:194:50 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:123:56 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:196:52. cvc-maxInclusive-valid: Value '18446744073709551616' is not facet-valid with respect to maxInclusive '18446744073709551615' for type 'unsignedLong'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:124:52 Syntax error. Element <unsignedLong> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:194:50 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:124:37 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:196:52. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:128:51 Syntax error. Element <unsignedInt> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:201:49 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:128:37 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:203:51. cvc-minInclusive-valid: Value '-1' is not facet-valid with respect to minInclusive '0' for type 'unsignedInt'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:129:59 Syntax error. Element <unsignedInt> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:201:49 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:129:45 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:203:51. cvc-maxInclusive-valid: Value '4294967296' is not facet-valid with respect to maxInclusive '4294967295' for type 'unsignedInt'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:130:50 Syntax error. Element <unsignedInt> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:201:49 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:130:36 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:203:51. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:134:55 Syntax error. Element <unsignedShort> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:208:51 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:134:39 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:210:53. cvc-minInclusive-valid: Value '-1' is not facet-valid with respect to minInclusive '0' for type 'unsignedShort'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:135:58 Syntax error. Element <unsignedShort> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:208:51 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:135:42 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:210:53. cvc-maxInclusive-valid: Value '65536' is not facet-valid with respect to maxInclusive '65535' for type 'unsignedShort'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:136:54 Syntax error. Element <unsignedShort> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:208:51 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:136:38 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:210:53. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:140:53 Syntax error. Element <unsignedByte> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:215:50 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:140:38 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:217:52. cvc-minInclusive-valid: Value '-1' is not facet-valid with respect to minInclusive '0' for type 'unsignedByte'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:141:54 Syntax error. Element <unsignedByte> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:215:50 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:141:39 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:217:52. cvc-maxInclusive-valid: Value '256' is not facet-valid with respect to maxInclusive '255' for type 'unsignedByte'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:142:52 Syntax error. Element <unsignedByte> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:215:50 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:142:37 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:217:52. cvc-datatype-valid.1.2.1: 'a' is not a valid value for 'integer'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:150:45 Syntax error. Element <float> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:222:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:150:37 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:224:45. cvc-datatype-valid.1.2.1: '3.4e +39' is not a valid value for 'float'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:151:45 Syntax error. Element <float> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:222:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:151:37 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:224:45. cvc-datatype-valid.1.2.1: '3.4e+3.9' is not a valid value for 'float'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:152:41 Syntax error. Element <float> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:222:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:152:33 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:224:45. cvc-datatype-valid.1.2.1: '+INF' is not a valid value for 'float'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:153:40 Syntax error. Element <float> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:222:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:153:32 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:224:45. cvc-datatype-valid.1.2.1: 'inf' is not a valid value for 'float'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:154:40 Syntax error. Element <float> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:222:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:154:32 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:224:45. cvc-datatype-valid.1.2.1: 'NAN' is not a valid value for 'float'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:162:48 Syntax error. Element <double> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:229:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:162:39 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:231:46. cvc-datatype-valid.1.2.1: '1.7e -309' is not a valid value for 'double'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:163:48 Syntax error. Element <double> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:229:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:163:39 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:231:46. cvc-datatype-valid.1.2.1: '1.7e+3.09' is not a valid value for 'double'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:164:43 Syntax error. Element <double> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:229:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:164:34 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:231:46. cvc-datatype-valid.1.2.1: '+INF' is not a valid value for 'double'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:165:42 Syntax error. Element <double> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:229:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:165:33 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:231:46. cvc-datatype-valid.1.2.1: 'inf' is not a valid value for 'double'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:166:42 Syntax error. Element <double> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:229:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:166:33 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:231:46. cvc-datatype-valid.1.2.1: 'NAN' is not a valid value for 'double'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:172:43 Syntax error. Element <boolean> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:236:45 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:172:33 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:238:47. cvc-datatype-valid.1.2.1: '-1' is not a valid value for 'boolean'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:173:45 Syntax error. Element <boolean> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:236:45 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:173:35 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:238:47. cvc-datatype-valid.1.2.1: 'TRUE' is not a valid value for 'boolean'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:174:46 Syntax error. Element <boolean> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:236:45 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:174:36 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:238:47. cvc-datatype-valid.1.2.1: 'FALSE' is not a valid value for 'boolean'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:183:53 Syntax error. Element <dateTime> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:245:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:183:42 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:247:48. cvc-datatype-valid.1.2.1: '2010-10-27' is not a valid value for 'dateTime'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:184:59 Syntax error. Element <dateTime> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:245:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:184:48 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:247:48. cvc-datatype-valid.1.2.1: '2010-10-27T21:32' is not a valid value for 'dateTime'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:185:62 Syntax error. Element <dateTime> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:245:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:185:51 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:247:48. cvc-datatype-valid.1.2.1: '2010-10-27T25:32:52' is not a valid value for 'dateTime'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:186:68 Syntax error. Element <dateTime> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:245:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:186:57 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:247:48. cvc-datatype-valid.1.2.1: '2010-10-27T21:32:52+15:00' is not a valid value for 'dateTime'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:192:42 Syntax error. Element <date> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:252:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:192:35 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:254:44. cvc-datatype-valid.1.2.1: '2010-10' is not a valid value for 'date'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:193:45 Syntax error. Element <date> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:252:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:193:38 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:254:44. cvc-datatype-valid.1.2.1: '2010-02-30' is not a valid value for 'date'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:194:51 Syntax error. Element <date> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:252:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:194:44 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:254:44. cvc-datatype-valid.1.2.1: '2010-10-27+15:00' is not a valid value for 'date'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:201:51 Syntax error. Element <gYearMonth> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:259:48 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:201:38 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:261:50. cvc-datatype-valid.1.2.1: '2010' is not a valid value for 'gYearMonth'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:202:60 Syntax error. Element <gYearMonth> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:259:48 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:202:47 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:261:50. cvc-datatype-valid.1.2.1: '2010-10+15:00' is not a valid value for 'gYearMonth'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:203:54 Syntax error. Element <gYearMonth> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:259:48 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:203:41 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:261:50. cvc-datatype-valid.1.2.1: '2010-13' is not a valid value for 'gYearMonth'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:209:44 Syntax error. Element <gYear> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:266:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:209:36 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:268:45. cvc-datatype-valid.1.2.1: '2010-10' is not a valid value for 'gYear'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:210:37 Syntax error. Element <gYear> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:266:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:210:29 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:268:45. cvc-datatype-valid.1.2.1: '10' is not a valid value for 'gYear'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:211:38 Syntax error. Element <gYear> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:266:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:211:30 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:268:45. cvc-datatype-valid.1.2.1: '010' is not a valid value for 'gYear'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:212:47 Syntax error. Element <gYear> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:266:43 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:212:39 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:268:45. cvc-datatype-valid.1.2.1: '2010+15:00' is not a valid value for 'gYear'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:218:40 Syntax error. Element <time> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:273:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:218:33 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:275:44. cvc-datatype-valid.1.2.1: '21:32' is not a valid value for 'time'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:219:43 Syntax error. Element <time> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:273:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:219:36 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:275:44. cvc-datatype-valid.1.2.1: '25:32:52' is not a valid value for 'time'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:220:49 Syntax error. Element <time> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:273:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:220:42 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:275:44. cvc-datatype-valid.1.2.1: '21:32:52+15:00' is not a valid value for 'time'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:221:44 Syntax error. Element <time> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:273:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:221:37 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:275:44. cvc-datatype-valid.1.2.1: '-21:32:52' is not a valid value for 'time'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:222:42 Syntax error. Element <time> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:273:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:222:35 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:275:44. cvc-datatype-valid.1.2.1: '1:32:52' is not a valid value for 'time'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:227:40 Syntax error. Element <gDay> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:280:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:227:33 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:282:44. cvc-datatype-valid.1.2.1: '---32' is not a valid value for 'gDay'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:228:40 Syntax error. Element <gDay> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:280:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:228:33 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:282:44. cvc-datatype-valid.1.2.1: '----1' is not a valid value for 'gDay'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:229:39 Syntax error. Element <gDay> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:280:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:229:32 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:282:44. cvc-datatype-valid.1.2.1: '---2' is not a valid value for 'gDay'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:230:46 Syntax error. Element <gDay> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:280:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:230:39 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:282:44. cvc-datatype-valid.1.2.1: '---01+15:00' is not a valid value for 'gDay'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:231:37 Syntax error. Element <gDay> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:280:42 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:231:30 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:282:44. cvc-datatype-valid.1.2.1: '01' is not a valid value for 'gDay'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:237:52 Syntax error. Element <gMonthDay> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:287:47 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:237:40 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:289:49. cvc-datatype-valid.1.2.1: '--13-01' is not a valid value for 'gMonthDay'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:238:52 Syntax error. Element <gMonthDay> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:287:47 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:238:40 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:289:49. cvc-datatype-valid.1.2.1: '-05-01-' is not a valid value for 'gMonthDay'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:239:52 Syntax error. Element <gMonthDay> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:287:47 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:239:40 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:289:49. cvc-datatype-valid.1.2.1: '---5--1' is not a valid value for 'gMonthDay'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:240:58 Syntax error. Element <gMonthDay> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:287:47 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:240:41 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:289:49. cvc-datatype-valid.1.2.1: '--05-01-15:00' is not a valid value for 'gMonthDay'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:246:43 Syntax error. Element <gMonth> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:294:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:246:34 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:296:46. cvc-datatype-valid.1.2.1: '-05-' is not a valid value for 'gMonth'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:247:43 Syntax error. Element <gMonth> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:294:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:247:34 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:296:46. cvc-datatype-valid.1.2.1: '---5' is not a valid value for 'gMonth'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:248:43 Syntax error. Element <gMonth> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:294:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:248:34 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:296:46. cvc-datatype-valid.1.2.1: '--18' is not a valid value for 'gMonth'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:249:49 Syntax error. Element <gMonth> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:294:44 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:249:40 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:296:46. cvc-datatype-valid.1.2.1: '--05+15:00' is not a valid value for 'gMonth'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:253:56 Syntax error. Element <duration> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:301:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:253:45 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:303:48. cvc-datatype-valid.1.2.1: '1Y2M3DT4H5M6S' is not a valid value for 'duration'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:254:58 Syntax error. Element <duration> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:301:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:254:47 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:303:48. cvc-datatype-valid.1.2.1: 'P1Y2M3DT4H5M-6S' is not a valid value for 'duration'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:255:56 Syntax error. Element <duration> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:301:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:255:45 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:303:48. cvc-datatype-valid.1.2.1: 'P1Y2M3D4H5M6S' is not a valid value for 'duration'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:256:50 Syntax error. Element <duration> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:301:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:256:39 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:303:48. cvc-datatype-valid.1.2.1: 'P4H5M6S' is not a valid value for 'duration'.
+
+file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:257:48 Syntax error. Element <duration> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:301:46 contains errors: 
+Illegal datatype.
+Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/document1.xml:257:37 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/datatypes/schema.rng:303:48. cvc-datatype-valid.1.2.1: 'P2M1Y' is not a valid value for 'duration'.

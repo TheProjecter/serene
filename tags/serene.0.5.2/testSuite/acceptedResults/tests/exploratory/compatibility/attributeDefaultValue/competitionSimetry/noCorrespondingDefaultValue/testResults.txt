@@ -1,0 +1,7 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\attributeDefaultValue\competitionSimetry\noCorrespondingDefaultValue\schema.rng
+
+null:-1:-1 DTD compatibility error. Competing element definitions contain attribute definitions with the same name and different default values:
+<element> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/competitionSimetry/noCorrespondingDefaultValue/schema.rng:39:29 with attribute definition <attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/competitionSimetry/noCorrespondingDefaultValue/schema.rng:41:39 without default value;
+<element> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/competitionSimetry/noCorrespondingDefaultValue/schema.rng:33:29 with attribute definition <attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/competitionSimetry/noCorrespondingDefaultValue/schema.rng:48:54 and default value "aa".

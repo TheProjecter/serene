@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright 2010 Radu Cernuta 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+
+
+<rng:grammar xmlns:rng="http://relaxng.org/ns/structure/1.0">
+	
+	<rng:start>
+		<rng:element name="blaBla" ns="http://example.com">			
+				<rng:ref name="a"/>
+		</rng:element>
+	</rng:start>
+	
+	<rng:include href="testInclude.rng">
+		<rng:define name = 'a' combine="choice">
+			<rng:element name="b">			
+				<rng:empty/>
+			</rng:element>
+		</rng:define>
+	</rng:include>
+	
+	<rng:define name = 'a' >	
+		<rng:choice>
+			<rng:element name="aa">
+				<rng:empty/>
+				<rng:notAllowed/>
+			</rng:element>
+			<rng:element name="bb">			
+				<rng:empty/>
+			</rng:element>
+		</rng:choice>
+	</rng:define>
+	
+	
+</rng:grammar>

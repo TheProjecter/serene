@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+    <foo id="aa"/>
+    <foo id="bb"/>
+    <foo id="aa"/>
+    <foo idref="aa"/>
+    <foo idref="cc"/>
+    <foo idrefs="aa"/>
+    <foo idrefs="aa bb"/>
+    <foo idrefs="aa bb cc"/>
+</root>

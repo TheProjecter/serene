@@ -1,0 +1,6 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\attributeIdType\elementName\schema.rng
+
+null:-1:-1 DTD compatibility error. Attribute definitions in the content model of an element definition without a <name> name class, <element> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/elementName/schema.rng:23:18 may not have non-null ID-type: 
+<attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeIdType/elementName/schema.rng:25:34.

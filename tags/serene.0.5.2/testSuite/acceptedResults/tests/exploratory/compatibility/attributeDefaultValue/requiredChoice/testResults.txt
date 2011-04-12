@@ -1,0 +1,7 @@
+
+
+TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\attributeDefaultValue\requiredChoice\schema.rng
+
+null:-1:-1 DTD compatibility error. Default value not allowed for attribute definitions in the context of a choice without <empty> alternative, <choice> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/requiredChoice/schema.rng:30:25 :
+<attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/requiredChoice/schema.rng:31:63
+<attribute> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/requiredChoice/schema.rng:32:63.
