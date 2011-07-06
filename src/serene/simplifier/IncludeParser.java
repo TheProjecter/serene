@@ -49,7 +49,6 @@ import serene.validation.handlers.error.ErrorDispatcher;
 import serene.Constants;
 
 import sereneWrite.MessageWriter;
-import sereneWrite.ParsedComponentWriter;
 
 class IncludeParser{
 	XMLReader xmlReader;		
@@ -61,7 +60,6 @@ class IncludeParser{
 	ErrorDispatcher errorDispatcher;
 	
 	MessageWriter debugWriter;
-	ParsedComponentWriter pcw;
 	
 	IncludeParser(XMLReader xmlReader, InternalRNGFactory internalRNGFactory, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
@@ -97,8 +95,6 @@ class IncludeParser{
 		
 		validatorHandler = schema.newValidatorHandler(model, queue, queuePool);
 		validatorHandler.setErrorHandler(errorDispatcher);
-				
-		pcw = new ParsedComponentWriter();
 	}
 	
 	IncludedParsedModel parse(URI uri){		
