@@ -48,7 +48,6 @@ class NativeLibrary implements DatatypeLibrary{
 	}
 	
 	public Datatype createDatatype(String typeLocalName) throws DatatypeException{
-		//System.out.println(typeLocalName);
         if(typeLocalName.equals("string")){            
             return stringDT;
         }else if(typeLocalName.equals("token")){            

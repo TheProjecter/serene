@@ -19,17 +19,18 @@ package serene.datatype.rngnative;
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.DatatypeLibraryFactory;
 
+import serene.Constants;
+
 import sereneWrite.MessageWriter;
 
-public class NativeLibraryFactory implements DatatypeLibraryFactory{			
-	final String NATIVE_LIBRARY = "";	
+public class NativeLibraryFactory implements DatatypeLibraryFactory{		
 	MessageWriter debugWriter;
 	public NativeLibraryFactory(){}
 	public NativeLibraryFactory(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 	}
 	public NativeLibrary createDatatypeLibrary(String namespace){
-		if(namespace.equals(NATIVE_LIBRARY)){
+		if(namespace.equals(Constants.NATIVE_DATATYPE_LIBRARY)){
 			return new NativeLibrary(debugWriter);
 		}
 		return null;

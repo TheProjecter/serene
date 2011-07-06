@@ -19,10 +19,11 @@ package serene.internal.datatype;
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.DatatypeLibraryFactory;
 
+import serene.Constants;
+
 import sereneWrite.MessageWriter;
 
 public class InternalLibraryFactory implements DatatypeLibraryFactory{	
-	final String INTERNAL_LIBRARY = "http://serenerng.org/datatype/internal";
 	MessageWriter debugWriter;
 	public InternalLibraryFactory(){}
 	public InternalLibraryFactory(MessageWriter debugWriter){
@@ -30,7 +31,7 @@ public class InternalLibraryFactory implements DatatypeLibraryFactory{
 	}
 	
 	public InternalLibrary createDatatypeLibrary(String namespace){
-		if(namespace.equals(INTERNAL_LIBRARY)){
+		if(namespace.equals(Constants.INTERNAL_DATATYPE_LIBRARY)){
 			return new InternalLibrary(debugWriter);
 		}
 		return null;
