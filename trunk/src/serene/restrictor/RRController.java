@@ -101,18 +101,19 @@ public class RRController extends RController{
 		openAlternativesHandler = new OpenAlternativesHandler(debugWriter);
 	}
 	
-	
 	public void control(SimplifiedModel simplifiedModel) throws SAXException{
 		init(simplifiedModel);
 		
 		if(topPatterns != null && topPatterns.length != 0){//to catch situations where start element was missing
 			for(SPattern topPattern : topPatterns){
-				if(topPattern != null)topPattern.accept(this);
+				if(topPattern != null){
+                    open();
+                    topPattern.accept(this);
+                    close();
+                }
 			}
 		}
-		
-		close();
-		
+						
 		openAlternativesHandler.init(definitionCount,
 								definitionBlindLoops,
 								definitionInfiniteLoops,
@@ -178,8 +179,7 @@ public class RRController extends RController{
 		recursiveDefinitionContext.clear();
 		recursiveDefinitionContext.push(false);
 		
-		handledDefinitions.clear();
-		
+		handledDefinitions.clear();		
 	}	
 	
 	public void visit(SElement element) throws SAXException{		
@@ -342,7 +342,7 @@ public class RRController extends RController{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 14 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
@@ -399,7 +399,7 @@ public class RRController extends RController{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+optional.getQName()+"> at "+optional.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 15 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		

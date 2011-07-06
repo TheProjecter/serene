@@ -104,7 +104,7 @@ public class RController implements RestrictingVisitor{
 	boolean reportInfiniteNameClass;//7.3
 		
 	
-	int contentType;
+	int contentType;//7.2
 	
 	SereneArrayList<SPattern> texts;
 	boolean choiceContext;
@@ -136,16 +136,19 @@ public class RController implements RestrictingVisitor{
 		
 		texts = new SereneArrayList<SPattern>();
 	}
-		
+	
 	
 	public void control(SimplifiedModel simplifiedModel)throws SAXException{		
 		init(simplifiedModel);		
 		if(topPatterns != null && topPatterns.length != 0){//to catch situations where start element was missing
 			for(SPattern topPattern : topPatterns){
-				if(topPattern != null)topPattern.accept(this);
+				if(topPattern != null){
+                    open();
+                    topPattern.accept(this);
+                    close();
+                }
 			}
 		}
-		close();
 	}
 	void init(SimplifiedModel simplifiedModel){
 		topPatterns = simplifiedModel.getStartTopPattern();
@@ -155,7 +158,7 @@ public class RController implements RestrictingVisitor{
 		
 		handledDefinitions.clear();
         definitionsContentTypes.clear();
-
+        
 		attributeContext = false;
 		attributesPath.clear();
 		
@@ -180,15 +183,16 @@ public class RController implements RestrictingVisitor{
 		choiceContext = false;
 		choiceContainsText = false;
 		
-		elementNamingController = pool.getElementNamingController();
+		contentType = ContentType.EMPTY;
+	}
+    void open(){
+        elementNamingController = pool.getElementNamingController();
 		attributeNamingController = pool.getAttributeNamingController();
 		
 		elementLimitationNamingController = pool.getElementLimitationNamingController();
 		attributeLimitationNamingController = pool.getAttributeLimitationNamingController();
-		
-		contentType = ContentType.EMPTY;
-	}
-	void close() throws SAXException{
+    }
+	void close() throws SAXException{		
 		elementNamingController.control();
 		elementNamingController.recycle();
 		
@@ -248,7 +252,7 @@ public class RController implements RestrictingVisitor{
 
 	//------------------
 	//  !!! subclass !!!
-	public void visit(SElement element) throws SAXException{	
+	public void visit(SElement element) throws SAXException{		
 		if(attributeContext){
 			// error 7.1.1	
 			String message = "Restrictions 7.1.1 error. Forbiden path:"
@@ -401,7 +405,7 @@ public class RController implements RestrictingVisitor{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+attribute.getQName()+"> at "+attribute.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 1 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
@@ -426,7 +430,8 @@ public class RController implements RestrictingVisitor{
 		}		
 		reportInfiniteNameClass = oldReportInfiniteNameClass;		
 		
-		attributeNamingController.add(attribute, nameClass);
+        //ISSUE 45, 46
+		if(!attributeContext)attributeNamingController.add(attribute, nameClass);
 
 		boolean oldAttributeContext = attributeContext;
 		attributeContext = true;
@@ -543,7 +548,7 @@ public class RController implements RestrictingVisitor{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+interleave.getQName()+"> at "+interleave.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 2 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
@@ -561,14 +566,14 @@ public class RController implements RestrictingVisitor{
 			if(moreInterleaveMoreContext){
 				// Serene limitation
 				//System.out.println("Serene DOES NOT SUPPORT "+interleave);
-				String message = "Unsupported schema configuration. For the moment, Serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
+				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
 				ArrayList<SPattern> path = morePath.doublePeek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+					message += "\n\t"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
 				}
 				path = morePath.peek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+					message += "\n\t"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
 				}			
 				message += ".";		
 				//System.out.println(message);
@@ -658,7 +663,7 @@ public class RController implements RestrictingVisitor{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+group.getQName()+"> at "+group.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 3 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
@@ -676,14 +681,14 @@ public class RController implements RestrictingVisitor{
 			if(moreInterleaveMoreContext){							
 				// Serene limitation
 				// System.out.println("Serene DOES NOT SUPPORT "+group);
-				String message = "Unsupported schema configuration. For the moment, Serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
+				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
 				ArrayList<SPattern> path = morePath.doublePeek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+					message += "\n\t"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
 				}
 				path = morePath.peek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+					message += "\n\t"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
 				}			
 				message += ".";		
 				//System.out.println(message);
@@ -750,7 +755,7 @@ public class RController implements RestrictingVisitor{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 4 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
@@ -805,7 +810,7 @@ public class RController implements RestrictingVisitor{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+oneOrMore.getQName()+"> at "+oneOrMore.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 5 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
@@ -860,7 +865,7 @@ public class RController implements RestrictingVisitor{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+optional.getQName()+"> at "+optional.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 6 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
@@ -903,7 +908,7 @@ public class RController implements RestrictingVisitor{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+mixed.getQName()+"> at "+mixed.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 7 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
@@ -922,14 +927,14 @@ public class RController implements RestrictingVisitor{
 			if(moreInterleaveMoreContext){
 				// Serene limitation
 				//System.out.println("Serene DOES NOT SUPPORT "+mixed);
-				String message = "Unsupported schema configuration. For the moment, Serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
+				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
 				ArrayList<SPattern> path = morePath.doublePeek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+					message += "\n\t"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
 				}
 				path = morePath.peek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+					message += "\n\t"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
 				}			
 				message += ".";		
 				//System.out.println(message);
@@ -1033,7 +1038,7 @@ public class RController implements RestrictingVisitor{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+list.getQName()+"> at "+list.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 8 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
@@ -1075,14 +1080,14 @@ public class RController implements RestrictingVisitor{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"The start of schema <"+empty.getQName()+"> at "+empty.getLocation()+" is not expected to result in an <empty> component.";
-			//System.out.println(message);
+			//System.out.println(" 9 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(attributeContext){
 			// Serene limitation
-			String message = "Unsupported schema configuration. For the moment, Serene does not support <empty> in the context of <attribute>, path: "				
-				+"\n\t<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation()
-				+"\n\t<"+empty.getQName()+"> at "+empty.getLocation()+".";		
+			String message = "Unsupported schema configuration. For the moment serene does not support <empty> in the context of <attribute>, path: "				
+				+"\n\t"+attributesPath.peek().getQName()+" at "+attributesPath.peek().getLocation()
+				+"\n\t"+empty.getQName()+" at "+empty.getLocation()+".";		
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));			
 		}
@@ -1112,7 +1117,7 @@ public class RController implements RestrictingVisitor{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+text.getQName()+"> at "+text.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 10 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
@@ -1146,7 +1151,7 @@ public class RController implements RestrictingVisitor{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+value.getQName()+"> at "+value.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 11 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		contentType = ContentType.SIMPLE;
@@ -1156,7 +1161,7 @@ public class RController implements RestrictingVisitor{
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
 			+"Element <"+data.getQName()+"> at "+data.getLocation()+" is not expected as start of the schema.";
-			//System.out.println(message);
+			//System.out.println(" 13 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
@@ -1164,7 +1169,7 @@ public class RController implements RestrictingVisitor{
 		startContext = false;
 		
 		dataPath.push(data);
-		
+
 		SimplifiedComponent[] exceptPattern = data.getExceptPattern();
 		if(exceptPattern != null) next(exceptPattern);
 		
