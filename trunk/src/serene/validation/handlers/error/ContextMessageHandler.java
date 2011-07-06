@@ -749,9 +749,9 @@ public class ContextMessageHandler implements ErrorCatcher{
 				}
 			}
 			APattern[] increasedCDef = new APattern[++misplacedSize];
-			System.arraycopy(misplacedContext, 0, increasedCDef, 0, misplacedIndex);
+			System.arraycopy(misplacedContext, 0, increasedCDef, 0, ++misplacedIndex);
 			misplacedContext = increasedCDef;
-			misplacedContext[++misplacedIndex] = contextDefinition;
+			misplacedContext[misplacedIndex] = contextDefinition;
 			
 			String[] increasedSSI = new String[misplacedSize];
 			System.arraycopy(misplacedStartSystemId, 0, increasedSSI, 0, misplacedIndex);
@@ -1090,7 +1090,12 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousCharsSystemIdEE[ambiguousCharsIndexEE] = systemId;
 		ambiguousCharsLineNumberEE[ambiguousCharsIndexEE] = lineNumber;
 		ambiguousCharsColumnNumberEE[ambiguousCharsIndexEE] = columnNumber;
-		ambiguousCharsDefinitionEE[ambiguousCharsIndexEE] = possibleDefinitions;
+		ambiguousCharsDefinitionEE[ambiguousCharsIndexEE] = possibleDefinitions;	
+		
+		
+		String message = "Ambiguous content. Chars "
+						+qName+" at "+systemId+":"+lineNumber+":"+columnNumber
+						+" cannot be uniquely resolved to one definition. Candidates "+Arrays.toString(possibleDefinitions);
 	}
 	
 	
