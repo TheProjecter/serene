@@ -1,6 +1,6 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\simplification\attribute412\withNameClass\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\simplification\attribute412\withNameClass\schema.rng
 
 
 

@@ -1,11 +1,11 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\unit\reduce\limitReduce\orderReduce\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\reduce\limitReduce\orderReduce\schema.rng
 
 
 
 TESTED DOCUMENT document1.xml
 
-file:///C:/works/serene.0.5/testSuite/tests/unit/reduce/limitReduce/orderReduce/document1.xml:28:8 Syntax error. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/reduce/limitReduce/orderReduce/schema.rng:23:26 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/orderReduce/document1.xml:28:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/orderReduce/schema.rng:23:26 contains errors: 
 Missing compositor content.
-In the document structure starting at file:///C:/works/serene.0.5/testSuite/tests/unit/reduce/limitReduce/orderReduce/document1.xml:22:7, corresponding to definition <group> at file:/C:/works/serene.0.5/testSuite/tests/unit/reduce/limitReduce/orderReduce/schema.rng:26:13, expected one or more occurrences corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/reduce/limitReduce/orderReduce/schema.rng:38:29, found 1. 
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/orderReduce/document1.xml:22:7, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/orderReduce/schema.rng:26:13, expected one or more occurrences corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/orderReduce/schema.rng:38:29, found 1. 

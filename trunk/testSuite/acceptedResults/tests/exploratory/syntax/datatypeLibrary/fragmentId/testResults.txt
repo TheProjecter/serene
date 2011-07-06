@@ -1,21 +1,21 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\syntax\datatypeLibrary\fragmentId\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\syntax\datatypeLibrary\fragmentId\schema.rng
 
-file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:26:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:26:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
 Unresolved by content.
 Validation  of candidate definitions resulted in errors:
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
-	file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:26:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
+	file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:26:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
 	Illegal datatype.
-	Value of attribute datatypeLibrary at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:23:54 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute. Fragment identifier.
+	Value of attribute datatypeLibrary at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:23:54 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute. Fragment identifier.
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute first error: 
-	file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:26:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
+	file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:26:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
 	Illegal datatype.
-	Value of attribute datatypeLibrary at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:23:54 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute. Fragment identifier.
+	Value of attribute datatypeLibrary at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:23:54 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute. Fragment identifier.
 
-file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:27:14 Warning. Element <rng:start> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: start generates warning: 
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:27:14 Warning. Element <rng:start> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: start generates warning: 
 Ambiguous content.
-Element <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:23:54 cannot be resolved by in context validation, possible definitions: 
+Element <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/datatypeLibrary/fragmentId/schema.rng:23:54 cannot be resolved by in context validation, possible definitions: 
 <element> at RELAXNG Specification 3.Full Syntax: element with name class child
 <element> at RELAXNG Specification 3.Full Syntax: element with name attribute.

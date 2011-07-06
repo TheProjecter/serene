@@ -1,7 +1,7 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\documentationElement\incorrectPosition\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\compatibility\documentationElement\incorrectPosition\schema.rng
 
-file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/documentationElement/incorrectPosition/schema.rng:24:44 DTD compatibility error. Misplaced documentation element.
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/documentationElement/incorrectPosition/schema.rng:24:44 DTD compatibility error. Misplaced documentation element.
 
-file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/documentationElement/incorrectPosition/schema.rng:25:44 DTD compatibility error. Misplaced documentation element.
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/documentationElement/incorrectPosition/schema.rng:25:44 DTD compatibility error. Misplaced documentation element.

@@ -1,6 +1,6 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\unit\reduce\choiceReset\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\reduce\choiceReset\schema.rng
 
 
 

@@ -1,13 +1,13 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\attributeDefaultValue\idAttributeDefaultValue\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\compatibility\attributeDefaultValue\idAttributeDefaultValue\schema.rng
 
-null:-1:-1 DTD compatibility warning. Default value of attribute definition at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/idAttributeDefaultValue/schema.rng:49:54 with the ID-type ID is the same as the default value of attribute definition at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/idAttributeDefaultValue/schema.rng:35:54 with the ID-type ID.
+null:-1:-1 DTD compatibility warning. Default value of attribute definition at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/idAttributeDefaultValue/schema.rng:49:54 with the ID-type ID is the same as the default value of attribute definition at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/idAttributeDefaultValue/schema.rng:35:54 with the ID-type ID.
 
-null:-1:-1 DTD compatibility warning. No corresponding attribute of ID-type ID for attribute definition at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/idAttributeDefaultValue/schema.rng:38:60 with the ID-type IDREF.
+null:-1:-1 DTD compatibility warning. No corresponding attribute of ID-type ID for attribute definition at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/idAttributeDefaultValue/schema.rng:38:60 with the ID-type IDREF.
 
-null:-1:-1 DTD compatibility warning. No corresponding attribute of ID-type ID for attribute definition at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/idAttributeDefaultValue/schema.rng:52:60 with the ID-type IDREF.
+null:-1:-1 DTD compatibility warning. No corresponding attribute of ID-type ID for attribute definition at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/idAttributeDefaultValue/schema.rng:52:60 with the ID-type IDREF.
 
-null:-1:-1 DTD compatibility warning. No corresponding attribute of ID-type ID for token "idrefs" in the value of attribute definition at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/idAttributeDefaultValue/schema.rng:41:68 with the ID-type IDREFS.
+null:-1:-1 DTD compatibility warning. No corresponding attribute of ID-type ID for token "idrefs" in the value of attribute definition at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/idAttributeDefaultValue/schema.rng:41:68 with the ID-type IDREFS.
 
-null:-1:-1 DTD compatibility warning. No corresponding attribute of ID-type ID for token "idrefs" in the value of attribute definition at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/compatibility/attributeDefaultValue/idAttributeDefaultValue/schema.rng:55:68 with the ID-type IDREFS.
+null:-1:-1 DTD compatibility warning. No corresponding attribute of ID-type ID for token "idrefs" in the value of attribute definition at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/idAttributeDefaultValue/schema.rng:55:68 with the ID-type IDREFS.

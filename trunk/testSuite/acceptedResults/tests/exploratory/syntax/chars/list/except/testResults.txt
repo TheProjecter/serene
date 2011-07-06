@@ -1,11 +1,11 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\syntax\chars\list\except\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\syntax\chars\list\except\schema.rng
 
 
 
 TESTED DOCUMENT document1.xml
 
-file:///C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/list/except/document1.xml:21:25 Syntax error. Element <root> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/list/except/schema.rng:23:16 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/except/document1.xml:21:25 Syntax error. Element <root> corresponding to definition <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/except/schema.rng:23:16 contains errors: 
 Excepted token.
-List token bar at file:///C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/list/except/document1.xml:21:18 matches a value excepted by schema definition rng:data at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/list/except/schema.rng:27:29.
+List token bar at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/except/document1.xml:21:18 matches a value excepted by schema definition rng:data at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/except/schema.rng:27:29.

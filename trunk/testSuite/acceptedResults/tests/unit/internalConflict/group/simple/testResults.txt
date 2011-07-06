@@ -1,27 +1,27 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\unit\internalConflict\group\simple\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\internalConflict\group\simple\schema.rng
 
 
 
 TESTED DOCUMENT document1.xml
 
-file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document1.xml:23:8 Syntax error. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:23:26 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document1.xml:23:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:23:26 contains errors: 
 Ambiguous content.
-Element <aa> at file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document1.xml:22:7 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:25:26
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:32:14.
+Element <aa> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document1.xml:22:7 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:25:26
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:32:14.
 
 
 
 TESTED DOCUMENT document2.xml
 
-file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document2.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:23:26 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document2.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:23:26 contains errors: 
 Ambiguous content.
-Element <foo> at file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document2.xml:23:8 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:32:14.
+Element <foo> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document2.xml:23:8 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:32:14.
 
 
 
@@ -31,26 +31,26 @@ TESTED DOCUMENT document3.xml
 
 TESTED DOCUMENT document4.xml
 
-file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document4.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:23:26 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document4.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:23:26 contains errors: 
 Excessive content.
-In the document structure starting at file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document4.xml:22:7, corresponding to definition <group> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:24:11,  expected one occurrence corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14, found 2: 
-<bar> at file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document4.xml:23:8
-<bar> at file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document4.xml:24:8.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document4.xml:22:7, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:24:11,  expected one occurrence corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14, found 2: 
+<bar> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document4.xml:23:8
+<bar> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document4.xml:24:8.
 Ambiguous content.
-Element <aa> at file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document4.xml:22:7 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:25:26
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:32:14.
+Element <aa> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document4.xml:22:7 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:25:26
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:32:14.
 
 
 
 TESTED DOCUMENT document5.xml
 
-file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document5.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:23:26 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document5.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:23:26 contains errors: 
 Ambiguous content.
-Element <foo> at file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document5.xml:22:8 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:32:14.
+Element <foo> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document5.xml:22:8 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:32:14.
 
 
 
@@ -60,14 +60,14 @@ TESTED DOCUMENT document6.xml
 
 TESTED DOCUMENT document7.xml
 
-file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document7.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:23:26 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document7.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:23:26 contains errors: 
 Missing content.
-In the document structure starting at file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document7.xml:22:8, corresponding to definition <group> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:24:11, expected one occurrence corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:25:26, found 0.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document7.xml:22:8, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:24:11, expected one occurrence corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:25:26, found 0.
 Ambiguous content.
-Element <foo> at file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document7.xml:23:8 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:32:14.
+Element <foo> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document7.xml:23:8 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:32:14.
 Ambiguous content.
-Element <foo> at file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/document7.xml:24:8 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/group/simple/schema.rng:32:14.
+Element <foo> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document7.xml:24:8 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:32:14.

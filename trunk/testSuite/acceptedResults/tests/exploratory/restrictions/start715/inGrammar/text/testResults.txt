@@ -1,5 +1,5 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\restrictions\start715\inGrammar\text\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\start715\inGrammar\text\schema.rng
 
-null:-1:-1 Restrictions 7.1.5 error. Element <rng:text> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/restrictions/start715/inGrammar/text/schema.rng:5:20 is not expected as start of the schema.
+null:-1:-1 Restrictions 7.1.5 error. Element <rng:text> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/start715/inGrammar/text/schema.rng:5:20 is not expected as start of the schema.

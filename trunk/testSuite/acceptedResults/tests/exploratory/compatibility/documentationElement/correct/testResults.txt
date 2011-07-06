@@ -1,3 +1,3 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\compatibility\documentationElement\correct\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\compatibility\documentationElement\correct\schema.rng

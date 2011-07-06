@@ -1,5 +1,5 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\simplification\datatypes416\value\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\simplification\datatypes416\value\schema.rng
 
-null:-1:-1 Simplification 4.16 error. Datatype error for element <rng:value> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/simplification/datatypes416/value/schema.rng:25:26, datatype library "". Unsupported type: foo
+null:-1:-1 Simplification 4.16 error. Datatype error for element <rng:value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/simplification/datatypes416/value/schema.rng:25:26, datatype library "". Unsupported type: foo

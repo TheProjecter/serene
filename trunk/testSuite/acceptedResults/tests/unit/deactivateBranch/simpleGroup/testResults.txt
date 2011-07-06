@@ -1,6 +1,6 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\unit\deactivateBranch\simpleGroup\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\deactivateBranch\simpleGroup\schema.rng
 
 
 

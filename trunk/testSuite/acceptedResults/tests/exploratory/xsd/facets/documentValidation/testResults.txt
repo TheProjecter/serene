@@ -1,15 +1,15 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\xsd\facets\documentValidation\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\xsd\facets\documentValidation\schema.rng
 
 
 
 TESTED DOCUMENT document1.xml
 
-file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/facets/documentValidation/document1.xml:20:38 Syntax error. Element <token> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/facets/documentValidation/schema.rng:24:43 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/documentValidation/document1.xml:20:38 Syntax error. Element <token> corresponding to definition <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/documentValidation/schema.rng:24:43 contains errors: 
 Illegal datatype.
-Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/facets/documentValidation/document1.xml:20:30 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/facets/documentValidation/schema.rng:26:44. cvc-pattern-valid: Value 'a' is not facet-valid with respect to pattern '\d*' for type 'token'.
+Character content at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/documentValidation/document1.xml:20:30 does not match the datatype required by schema definition <rng:data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/documentValidation/schema.rng:26:44. cvc-pattern-valid: Value 'a' is not facet-valid with respect to pattern '\d*' for type 'token'.
 
-file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/facets/documentValidation/document1.xml:22:41 Syntax error. Element <token> corresponding to definition <rng:element> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/facets/documentValidation/schema.rng:24:43 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/documentValidation/document1.xml:22:41 Syntax error. Element <token> corresponding to definition <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/documentValidation/schema.rng:24:43 contains errors: 
 Illegal datatype.
-Character content at file:///C:/works/serene.0.5/testSuite/tests/exploratory/xsd/facets/documentValidation/document1.xml:22:33 does not match the datatype required by schema definition <rng:data> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/xsd/facets/documentValidation/schema.rng:26:44. cvc-length-valid: Value '1234' with length = '4' is not facet-valid with respect to length '3' for type 'token'.
+Character content at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/documentValidation/document1.xml:22:33 does not match the datatype required by schema definition <rng:data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/documentValidation/schema.rng:26:44. cvc-length-valid: Value '1234' with length = '4' is not facet-valid with respect to length '3' for type 'token'.

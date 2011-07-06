@@ -1,5 +1,5 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\restrictions\start715\noGrammar\group\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\start715\noGrammar\group\schema.rng
 
-null:-1:-1 Restrictions 7.1.5 error. Element <group> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/restrictions/start715/noGrammar/group/schema.rng:2:52 is not expected as start of the schema.
+null:-1:-1 Restrictions 7.1.5 error. Element <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/start715/noGrammar/group/schema.rng:2:52 is not expected as start of the schema.
