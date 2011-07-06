@@ -32,7 +32,7 @@ public class DefaultBuilder implements DatatypeBuilder {
 	
 	public void addParameter( String name, String strValue, ValidationContext context )
 			throws DatatypeException {
-		throw new UnsupportedOperationException("Serene does not support param yet.");
+		throw new DatatypeException("Param not allowed.");
 	}
 	
 	public Datatype createDatatype() throws DatatypeException {

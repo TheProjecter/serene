@@ -20,17 +20,18 @@ package serene.datatype.xsd;
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.DatatypeLibraryFactory;
 
+import serene.Constants;
+
 import sereneWrite.MessageWriter;
 
-public class XsdLibraryFactory implements DatatypeLibraryFactory{			
-	String XSD_LIBRARY = "http://www.w3.org/2001/XMLSchema-datatypes";	
+public class XsdLibraryFactory implements DatatypeLibraryFactory{		
 	MessageWriter debugWriter;
 	public XsdLibraryFactory(){}
 	public XsdLibraryFactory(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 	}
 	public XsdLibrary createDatatypeLibrary(String namespace){
-		if(namespace.equals(XSD_LIBRARY)){
+		if(namespace.equals(Constants.XSD_DATATYPE_LIBRARY)){
 			return new XsdLibrary(debugWriter);
 		}
 		return null;

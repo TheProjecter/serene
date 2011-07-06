@@ -118,8 +118,7 @@ class SecuritySupport  {
     }
 
     Enumeration getResources(final ClassLoader cl,
-                                           final String name) throws IOException
-    {
+                                           final String name) throws IOException{
         try{
         return (Enumeration)
             AccessController.doPrivileged(new PrivilegedExceptionAction() {
