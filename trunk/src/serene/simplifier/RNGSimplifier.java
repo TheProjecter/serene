@@ -156,7 +156,9 @@ public class RNGSimplifier extends Simplifier{
 		
 	private void simplify()  throws SAXException{		
 		emptyChild = false;
+        emptyComponent = null;
 		notAllowedChild = false;
+        patternChild = false;
 		
 		anyNameContext = false;
 		anyNameExceptContext = false;

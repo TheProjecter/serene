@@ -135,7 +135,9 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 	}
 	void simplify(ArrayList<Definition> definitions) throws SAXException{        
 		emptyChild = false;
+        emptyComponent = null;
 		notAllowedChild = false;
+        patternChild = false;
 		
 		anyNameContext = false;
 		anyNameExceptContext = false;
