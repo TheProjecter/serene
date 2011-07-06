@@ -1,17 +1,17 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\unit\internalConflict\choice\simple\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\internalConflict\choice\simple\schema.rng
 
 
 
 TESTED DOCUMENT document1.xml
 
-file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/choice/simple/document1.xml:23:8 Warning. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:23:26 generates warning: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/document1.xml:23:8 Warning. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:23:26 generates warning: 
 Ambiguous content.
-Element <aa> at file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/choice/simple/document1.xml:22:7 cannot be resolved by in context validation, possible definitions: 
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:25:26
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:28:14
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:32:14.
+Element <aa> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/document1.xml:22:7 cannot be resolved by in context validation, possible definitions: 
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:25:26
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:28:14
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:32:14.
 
 
 
@@ -21,8 +21,8 @@ TESTED DOCUMENT document2.xml
 
 TESTED DOCUMENT document3.xml
 
-file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/choice/simple/document3.xml:23:8 Warning. Element <root> corresponding to definition <element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:23:26 generates warning: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/document3.xml:23:8 Warning. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:23:26 generates warning: 
 Ambiguous content.
-Element <foo> at file:///C:/works/serene.0.5/testSuite/tests/unit/internalConflict/choice/simple/document3.xml:22:8 cannot be resolved by in context validation, possible definitions: 
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:28:14
-<element> at file:/C:/works/serene.0.5/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:32:14.
+Element <foo> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/document3.xml:22:8 cannot be resolved by in context validation, possible definitions: 
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:28:14
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/schema.rng:32:14.

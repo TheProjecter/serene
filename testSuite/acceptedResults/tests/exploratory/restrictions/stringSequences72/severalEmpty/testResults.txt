@@ -1,7 +1,7 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\restrictions\stringSequences72\severalEmpty\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\stringSequences72\severalEmpty\schema.rng
 
-null:-1:-1 Restrictions 7.2 error. In the context of <rng:group> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/stringSequences72/severalEmpty/schema.rng:25:15 several children result in simple content types: 
-	<rng:value> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/stringSequences72/severalEmpty/schema.rng:27:29
-	<rng:value> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/stringSequences72/severalEmpty/schema.rng:28:29.
+null:-1:-1 Restrictions 7.2 error. In the context of <rng:group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/severalEmpty/schema.rng:25:15 several children result in simple content types: 
+	<rng:value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/severalEmpty/schema.rng:27:29
+	<rng:value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/severalEmpty/schema.rng:28:29.

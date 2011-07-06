@@ -1,9 +1,9 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\simplification\datatype43\value\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\simplification\datatype43\value\schema.rng
 
-file:/C:/works/serene.0.5/testSuite/tests/exploratory/simplification/datatype43/value/schema.rng:25:63 Syntax error. Element <rng:value> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: value contains errors: 
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/simplification/datatype43/value/schema.rng:25:63 Syntax error. Element <rng:value> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: value contains errors: 
 Illegal datatype.
-Value of attribute datatypeLibrary at file:/C:/works/serene.0.5/testSuite/tests/exploratory/simplification/datatype43/value/schema.rng:25:48 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute. Relative URI.
+Value of attribute datatypeLibrary at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/simplification/datatype43/value/schema.rng:25:48 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute. Relative URI.
 
-null:-1:-1 Simplification 4.3 error. Attribute datatypeLibrary of element <rng:value> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/simplification/datatype43/value/schema.rng:25:48 specifies an unknown or unsupported datatype library.
+null:-1:-1 Simplification 4.3 error. Attribute datatypeLibrary of element <rng:value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/simplification/datatype43/value/schema.rng:25:48 specifies an unknown or unsupported datatype library.

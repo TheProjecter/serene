@@ -1,5 +1,5 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5.1\testSuite\tests\exploratory\restrictions\start715\noGrammar\mixed\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\start715\noGrammar\mixed\schema.rng
 
-null:-1:-1 Restrictions 7.1.5 error. Element <mixed> at file:/C:/works/serene.0.5.1/testSuite/tests/exploratory/restrictions/start715/noGrammar/mixed/schema.rng:2:52 is not expected as start of the schema.
+null:-1:-1 Restrictions 7.1.5 error. Element <mixed> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/start715/noGrammar/mixed/schema.rng:2:52 is not expected as start of the schema.

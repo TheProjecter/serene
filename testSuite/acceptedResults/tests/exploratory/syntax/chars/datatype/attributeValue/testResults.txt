@@ -1,7 +1,7 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\syntax\chars\datatype\attributeValue\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\syntax\chars\datatype\attributeValue\schema.rng
 
-file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/datatype/attributeValue/schema.rng:27:14 Syntax error. Element <rng:start> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: start contains errors: 
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/datatype/attributeValue/schema.rng:27:14 Syntax error. Element <rng:start> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: start contains errors: 
 Illegal datatype.
-Value of attribute combine at file:/C:/works/serene.0.5/testSuite/tests/exploratory/syntax/chars/datatype/attributeValue/schema.rng:22:27 does not match the datatype required by schema definition <value> at RELAXNG Specification 3.Full Syntax: combine attribute.  Allowed values: "choice", "interleave".
+Value of attribute combine at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/datatype/attributeValue/schema.rng:22:27 does not match the datatype required by schema definition <value> at RELAXNG Specification 3.Full Syntax: combine attribute.  Allowed values: "choice", "interleave".

@@ -1,14 +1,14 @@
 
 
-TESTED SCHEMA C:\works\serene.0.5\testSuite\tests\exploratory\restrictions\stringSequences72\simpleAndComplex\schema.rng
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\stringSequences72\simpleAndComplex\schema.rng
 
-null:-1:-1 Restrictions 7.2 error. In the context of <rng:group> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:25:15 several children result in simple content types: 
-	<rng:value> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:27:29
-	<rng:value> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:28:29.
+null:-1:-1 Restrictions 7.2 error. In the context of <rng:group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:25:15 several children result in simple content types: 
+	<rng:value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:27:29
+	<rng:value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:28:29.
 
-null:-1:-1 Restrictions 7.2 error. In the context of <rng:group> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:25:15 both simple and complex content types were found: 
+null:-1:-1 Restrictions 7.2 error. In the context of <rng:group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:25:15 both simple and complex content types were found: 
 	simple content 
-	<rng:value> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:27:29
-	<rng:value> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:28:29
+	<rng:value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:27:29
+	<rng:value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:28:29
 	complex content 
-	<rng:text> at file:/C:/works/serene.0.5/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:29:16.
+	<rng:text> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/simpleAndComplex/schema.rng:29:16.
