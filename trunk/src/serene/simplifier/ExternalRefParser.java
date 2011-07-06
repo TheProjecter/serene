@@ -53,7 +53,6 @@ import serene.validation.handlers.content.util.ValidationItemLocator;
 import serene.Constants;
 
 import sereneWrite.MessageWriter;
-import sereneWrite.ParsedComponentWriter;
 
 class ExternalRefParser{    
 	XMLReader xmlReader;
@@ -65,7 +64,6 @@ class ExternalRefParser{
 	ErrorDispatcher errorDispatcher;
 	
 	MessageWriter debugWriter;
-	ParsedComponentWriter pcw;
 	
 	ExternalRefParser(XMLReader xmlReader, InternalRNGFactory internalRNGFactory, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
@@ -101,9 +99,7 @@ class ExternalRefParser{
 		BindingModel model = bindingPool.getBindingModel();
 		
 		validatorHandler = schema.newValidatorHandler(model, queue, queuePool);		
-		validatorHandler.setErrorHandler(errorDispatcher);		
-		
-		pcw = new ParsedComponentWriter();
+		validatorHandler.setErrorHandler(errorDispatcher);	
 	}
 	
 	ParsedModel parse(URI uri){	
