@@ -1071,7 +1071,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 			ambiguousCharsColumnNumberEE = new int[ambiguousCharsSizeEE];
 			ambiguousCharsDefinitionEE = new CharsActiveTypeItem[ambiguousCharsSizeEE][];
 		}else if(++ambiguousCharsIndexEE == ambiguousCharsSizeEE){			
-			CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[ambiguousCharsSizeEE][];
+			CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[++ambiguousCharsSizeEE][];
 			System.arraycopy(ambiguousCharsDefinitionEE, 0, increasedDef, 0, ambiguousCharsIndexEE);
 			ambiguousCharsDefinitionEE = increasedDef;
 			
@@ -1090,12 +1090,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousCharsSystemIdEE[ambiguousCharsIndexEE] = systemId;
 		ambiguousCharsLineNumberEE[ambiguousCharsIndexEE] = lineNumber;
 		ambiguousCharsColumnNumberEE[ambiguousCharsIndexEE] = columnNumber;
-		ambiguousCharsDefinitionEE[ambiguousCharsIndexEE] = possibleDefinitions;	
-		
-		
-		String message = "Ambiguous content. Chars "
-						+qName+" at "+systemId+":"+lineNumber+":"+columnNumber
-						+" cannot be uniquely resolved to one definition. Candidates "+Arrays.toString(possibleDefinitions);
+		ambiguousCharsDefinitionEE[ambiguousCharsIndexEE] = possibleDefinitions;
 	}
 	
 	
