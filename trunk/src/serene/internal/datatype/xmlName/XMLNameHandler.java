@@ -80,8 +80,7 @@ public class XMLNameHandler{
 		message = "";		
 		int length = candidate.length();			
 		if (length == 0){
-			message = message + " "+ (messages.get("emptyString"));
-			return;
+			throw new NameInvalidException(messages.get(("emptyString")));
 		}
 		
 		int codePoint = candidate.codePointAt(0);				
@@ -145,9 +144,8 @@ public class XMLNameHandler{
 	public void handleQName(String candidate) throws NameInvalidException, NameReservedException{
 		message = "";		
 		int length = candidate.length();			
-		if (length == 0){				
-			message = message + " "+ (messages.get("emptyString"));
-			return;				
+		if (length == 0){
+			throw new NameInvalidException(messages.get(("emptyString")));
 		}
 		
 		severalColons = false;
