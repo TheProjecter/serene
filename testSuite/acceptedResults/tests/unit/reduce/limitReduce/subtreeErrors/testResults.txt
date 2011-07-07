@@ -8,15 +8,15 @@ TESTED DOCUMENT document1.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document1.xml:25:7 Syntax error. Element <cc> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:33:28 contains errors: 
 Missing content.
-In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document1.xml:25:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:33:28, expected one occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:34:31, found 0.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document1.xml:25:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:33:28, expected 1 occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:34:31, found 0.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document1.xml:26:7 Syntax error. Element <dd> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:38:26 contains errors: 
 Missing content.
-In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document1.xml:26:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:38:26, expected one occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:39:29, found 0.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document1.xml:26:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:38:26, expected 1 occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:39:29, found 0.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document1.xml:28:7 Syntax error. Element <cc> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:33:28 contains errors: 
 Missing content.
-In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document1.xml:28:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:33:28, expected one occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:34:31, found 0.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document1.xml:28:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:33:28, expected 1 occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:34:31, found 0.
 
 
 
@@ -24,7 +24,7 @@ TESTED DOCUMENT document2.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document2.xml:26:7 Syntax error. Element <dd> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:38:26 contains errors: 
 Missing content.
-In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document2.xml:26:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:38:26, expected one occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:39:29, found 0.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document2.xml:26:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:38:26, expected 1 occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:39:29, found 0.
 
 
 
@@ -36,7 +36,7 @@ Value of attribute ccAttribute at file:///D:/sereneProject/svn/workingCopies/ser
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document3.xml:26:7 Syntax error. Element <dd> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:38:26 contains errors: 
 Missing content.
-In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document3.xml:26:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:38:26, expected one occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:39:29, found 0.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document3.xml:26:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:38:26, expected 1 occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:39:29, found 0.
 
 
 
@@ -44,7 +44,7 @@ TESTED DOCUMENT document4.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document4.xml:28:7 Syntax error. Element <cc> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:33:28 contains errors: 
 Missing content.
-In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document4.xml:28:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:33:28, expected one occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:34:31, found 0.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document4.xml:28:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:33:28, expected 1 occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:34:31, found 0.
 
 
 

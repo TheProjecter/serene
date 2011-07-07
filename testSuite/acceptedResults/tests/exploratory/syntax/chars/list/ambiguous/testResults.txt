@@ -8,7 +8,7 @@ TESTED DOCUMENT document1.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/document1.xml:21:25 Syntax error. Element <root> corresponding to definition <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/schema.rng:23:16 contains errors: 
 Illegal ambiguous.
-List token foo at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/document1.xml:21:18 cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors. Possible definitions: 
+List token "foo" at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/document1.xml:21:18 cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors. Possible definitions: 
 <rng:data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/schema.rng:28:30
 <rng:data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/schema.rng:33:30.
 

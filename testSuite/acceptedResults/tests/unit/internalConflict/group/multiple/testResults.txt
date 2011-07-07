@@ -24,7 +24,7 @@ TESTED DOCUMENT document2.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/document2.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:23:26 contains errors: 
 Missing content.
-In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/document2.xml:22:8, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:24:11, expected one or more occurrences corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:26:29, found 0.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/document2.xml:22:8, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:24:11, expected 1 or more occurrences corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:26:29, found 0.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/document2.xml:25:8 Warning. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:23:26 generates warning: 
 Ambiguous content.
@@ -46,7 +46,7 @@ TESTED DOCUMENT document3.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/document3.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:23:26 contains errors: 
 Missing content.
-In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/document3.xml:22:8, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:24:11, expected one or more occurrences corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:26:29, found 0.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/document3.xml:22:8, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:24:11, expected 1 or more occurrences corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:26:29, found 0.
 
 
 
@@ -145,4 +145,4 @@ TESTED DOCUMENT document10.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/document10.xml:24:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:23:26 contains errors: 
 Missing content.
-In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/document10.xml:22:8, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:24:11, expected one or more occurrences corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:26:29, found 0.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/document10.xml:22:8, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:24:11, expected 1 or more occurrences corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/multiple/schema.rng:26:29, found 0.
