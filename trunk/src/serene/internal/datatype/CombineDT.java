@@ -26,7 +26,8 @@ import sereneWrite.MessageWriter;
 
 class CombineDT implements Datatype{
 	public boolean isValid(String str, ValidationContext vc) {
-		if(str.equals("interleave") || str.equals("choice")) return true;
+	    String strtr = str.trim();
+		if(strtr.equals("interleave") || strtr.equals("choice")) return true;
 		return false;
 	}
 	
@@ -37,7 +38,8 @@ class CombineDT implements Datatype{
 	}
 
 	public Object createValue(String str, ValidationContext vc) {
-		return str;
+	    String strtr = str.trim();
+		return strtr;
 	}
 
 	public boolean isContextDependent() {

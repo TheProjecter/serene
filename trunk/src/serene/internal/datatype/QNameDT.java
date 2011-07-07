@@ -33,15 +33,16 @@ class QNameDT implements Datatype{
 		nameHandler = new XMLNameHandler();
 		nameHandler.version("1.0");
 	}
-	public boolean isValid(String str, ValidationContext vc) {		
+	public boolean isValid(String str, ValidationContext vc) {	
+	    String strtr = str.trim();
 		try{
 			// TODO xml version from ValidationContext
-            int colon = str.indexOf(':');                        
+            int colon = strtr.indexOf(':');                        
             if(colon > 0){
-                String prefix = str.substring(0, colon);
+                String prefix = strtr.substring(0, colon);
                 if(vc.resolveNamespacePrefix(prefix) == null) return false;
             }
-			nameHandler.handleQName(str);
+			nameHandler.handleQName(strtr);
 			return true;			
 		}catch(NameInvalidException nie){
 			return false; 
@@ -51,14 +52,15 @@ class QNameDT implements Datatype{
 	}
 
 	public void checkValid(String str, ValidationContext vc) throws DatatypeException {
+	    String strtr = str.trim();
 		try{
 			// TODO xml version from ValidationContext
-            int colon = str.indexOf(':');                        
+            int colon = strtr.indexOf(':');                        
             if(colon > 0){
-                String prefix = str.substring(0, colon);
+                String prefix = strtr.substring(0, colon);
                 if(vc.resolveNamespacePrefix(prefix) == null) throw new DatatypeException("Prefix was not declared.");
             }
-			nameHandler.handleQName(str);						
+			nameHandler.handleQName(strtr);						
 		}catch(NameInvalidException nie){
 			throw new DatatypeException(nie.getMessage()); 
 		}catch(NameReservedException nre){			
@@ -67,7 +69,8 @@ class QNameDT implements Datatype{
 	}
 
 	public Object createValue(String str, ValidationContext vc) {
-		return str;
+	    String strtr = str.trim();
+		return strtr;
 	}
 
 	public boolean isContextDependent() {
