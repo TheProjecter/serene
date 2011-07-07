@@ -43,12 +43,21 @@ class DatatypeLibraryURIDT implements Datatype{
 		if(str.equals(""))return;
 		try{
 			URI uri = new URI(str);
+			boolean relative = false;
+            boolean fragment = false;
 			if(uri.getFragment() != null){
-				throw new DatatypeException("Fragment identifier.");
+                fragment = true;
 			}
 			if(!uri.isAbsolute()){
-				throw new DatatypeException("Relative URI.");
+				relative = true;
 			}
+            if(fragment && relative){
+                throw new DatatypeException("Relative URI with fragment identifier.");
+            }else if(fragment){
+                throw new DatatypeException("Fragment identifier.");
+            }else if(relative){
+                throw new DatatypeException("Relative URI.");
+            }
 		}catch(URISyntaxException use){
 			throw new DatatypeException(use.getMessage());
 		}
