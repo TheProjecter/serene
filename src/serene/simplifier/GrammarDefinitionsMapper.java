@@ -33,7 +33,6 @@ import org.xml.sax.SAXParseException;
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.DatatypeLibraryFactory;
 
-
 import serene.datatype.MissingLibraryException;
 
 import serene.internal.InternalRNGFactory;
@@ -364,8 +363,9 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 					errorDispatcher.error(new SAXParseException(message, null));
 				}else{
 					//report error define
+                    String reportName = remainingName.substring(0, remainingName.length()-1);//remove marker
 					String message = "Simplification 4.7 error. "
-					+"Included grammar contains no define element with name \""+remainingName+"\"to match the content of "+include.getQName()+" at "+include.getLocation()+":";
+					+"Included grammar contains no define element with name \""+reportName+"\"to match the content of "+include.getQName()+" at "+include.getLocation()+":";
 					ArrayList<Definition> defines = overrideDefinitions.get(remainingName);
 					for(int i = 0; i < defines.size(); i++){
 						message += "\n\t"+defines.get(i).getQName()+" at "+defines.get(i).getLocation();
@@ -526,7 +526,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		String name = define.getName();
 		add:{
 			if(name == null) break add;
-			name = name.trim();
+			name = name.trim()+'*';//add marker to separate define without name attribute from start
 			ArrayList<Definition> defs = currentContextDefinitions.get(name);
 			if(defs == null){
 				defs = new ArrayList<Definition>();

@@ -1403,7 +1403,9 @@ abstract class Simplifier implements SimplifyingVisitor{
         patternChild = true;		
 	}
 	public void visit(Ref ref) throws SAXException{
-		ArrayList<Definition> definitions = getReferencedDefinition(currentGrammar, ref.getName().trim());
+		String name = ref.getName() == null ? "*" : ref.getName().trim()+'*';        
+		ArrayList<Definition> definitions = getReferencedDefinition(currentGrammar, name);
+		
 		
 		if(definitions == null){
 			// error 4.18
@@ -1494,7 +1496,9 @@ abstract class Simplifier implements SimplifyingVisitor{
         patternChild = true;
 	}
 	public void visit(ParentRef parentRef) throws SAXException{
-		ArrayList<Definition> definitions = getReferencedDefinition(previousGrammars.peek(), parentRef.getName().trim());
+		String name = parentRef.getName() == null ? "*" : parentRef.getName().trim()+'*';        
+		ArrayList<Definition> definitions = getReferencedDefinition(previousGrammars.peek(), name);
+        
 		if(definitions == null){
 			// error 4.18
 			String message = "Simplification 4.18 error. "
