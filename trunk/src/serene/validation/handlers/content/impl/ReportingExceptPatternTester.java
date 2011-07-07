@@ -37,6 +37,8 @@ import serene.validation.schema.active.components.AListPattern;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 	
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.stack.StackHandler;
@@ -61,7 +63,6 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 
 	
 	public void handleChars(char[] chars, StructuredDataActiveType type){
-		//System.out.println(new String(chars));
 		totalCharsItemMatches.add(data);//add anyway
 		charsItemMatches.clear();
 		dataMatches.clear();
@@ -85,17 +86,7 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 		if(charsItemMatches.isEmpty()){ //no in the context of matches the except
 			return;
 		}
-				
-		/*
-		old way
-		stackHandler =  type.getStackHandler(this);
-		int matchCount = charsItemMatches.size();
-		if(matchCount == 1){
-			stackHandler.shift(charsItemMatches.get(0));
-		}else{
-			stackHandler = type.getStackHandler(stackHandler, matchCount, this);
-			stackHandler.shiftAllCharsDefinitions(charsItemMatches);
-		}*/
+        
 		stackHandler =  type.getStackHandler(this);
 		int matchesCount = charsItemMatches.size();
 		if(totalCount == 0){
@@ -103,24 +94,17 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 		}else if(totalCount == 1 && matchesCount == 0){
 			throw new IllegalStateException();
 		}else if(totalCount == 1 && matchesCount == 1){
-			// if errors: already reported, that's why error before
-			//just shift
 			stackHandler.shift(charsItemMatches.get(0));
 		}else if(totalCount > 1 && matchesCount == 0){
-			// ambiguity error
-			// shift all for in context validation
 			if(!dataMatches.isEmpty())charsItemMatches.addAll(dataMatches);
 			if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 			if(!listMatches.isEmpty())charsItemMatches.addAll(listMatches);
 			errorCatcher.ambiguousCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 			if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);//use totalCount since everything is shifted
 			stackHandler.shiftAllCharsDefinitions(charsItemMatches);
-		}else if(totalCount > 1 && matchesCount == 1){			
-			//just shift
+		}else if(totalCount > 1 && matchesCount == 1){
 			stackHandler.shift(charsItemMatches.get(0));
-		}else if(totalCount > 1 && matchesCount > 1){
-			// ambiguity warning, later maybe
-			// shift all for in context validation			
+		}else if(totalCount > 1 && matchesCount > 1){	
 			if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);
 			stackHandler.shiftAllCharsDefinitions(charsItemMatches);
 		}
@@ -129,7 +113,6 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 		stackHandler = null;
 		
 		if(hasError)return;		
-		// report except error if it does not have error
 		if(validationItemLocator.isElementContext()){			
 			errorCatcher.characterContentExceptedError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), (AData)type.getParent()); 
 		}else if(validationItemLocator.isAttributeContext()){
@@ -164,17 +147,7 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 		if(charsItemMatches.isEmpty()){ //no in the context of matches the except
 			return;
 		}
-					
-		/*
-		old way
-		stackHandler =  type.getStackHandler(this);
-		int matchCount = charsItemMatches.size();
-		if(matchCount == 1){
-			stackHandler.shift(charsItemMatches.get(0));
-		}else{
-			stackHandler = type.getStackHandler(stackHandler, matchCount, this);
-			stackHandler.shiftAllCharsDefinitions(charsItemMatches);
-		}*/
+        
 		stackHandler =  type.getStackHandler(this);
 		int matchesCount = charsItemMatches.size();
 		if(totalCount == 0){
@@ -182,12 +155,8 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 		}else if(totalCount == 1 && matchesCount == 0){
 			throw new IllegalStateException();
 		}else if(totalCount == 1 && matchesCount == 1){
-			// if errors: already reported, that's why error before
-			//just shift
 			stackHandler.shift(charsItemMatches.get(0));
 		}else if(totalCount > 1 && matchesCount == 0){
-			// ambiguity error
-			// shift all for in context validation
 			if(!dataMatches.isEmpty())charsItemMatches.addAll(dataMatches);
 			if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 			if(!listMatches.isEmpty())charsItemMatches.addAll(listMatches);
@@ -195,11 +164,8 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 			if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);//use totalCount since everything is shifted
 			stackHandler.shiftAllCharsDefinitions(charsItemMatches);
 		}else if(totalCount > 1 && matchesCount == 1){
-			//just shift
 			stackHandler.shift(charsItemMatches.get(0));
-		}else if(totalCount > 1 && matchesCount > 1){
-			// ambiguity warning, later maybe
-			// shift all for in context validation			
+		}else if(totalCount > 1 && matchesCount > 1){	
 			if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);
 			stackHandler.shiftAllCharsDefinitions(charsItemMatches);
 		}
@@ -208,7 +174,6 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 		stackHandler = null;
 		
 		if(hasError)return;		
-		// report except error if it does not have error
 		if(validationItemLocator.isAttributeContext()){
 			errorCatcher.attributeValueExceptedError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), (AData)type.getParent()); 
 		}else if(validationItemLocator.isElementContext()){
@@ -222,20 +187,20 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedElement(String qName, AElement definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousElement(String qName, AElement[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}
 	
 	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAttribute(String qName, AAttribute definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, AAttribute[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}
 	

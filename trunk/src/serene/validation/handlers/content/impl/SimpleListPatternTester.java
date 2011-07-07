@@ -36,6 +36,8 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.stack.StackHandler;
@@ -82,41 +84,20 @@ class SimpleListPatternTester extends ListPatternTesterState{
 			}else if(totalCount == 1 && matchesCount == 0){
 				throw new IllegalStateException();
 			}else if(totalCount == 1 && matchesCount == 1){
-				// if errors: already reported, that's why error before
-				// just shift
-				// TODO 
-				// how do you know if tokenMatch???
 				if(tokenValid) tokenMatch = true;
 				stackHandler.shift(charsItemMatches.get(0));
 			}else if(totalCount > 1 && matchesCount == 0){
-				// ambiguity error
-				// shift all for in context validation
 				if(!dataMatches.isEmpty())charsItemMatches.addAll(dataMatches);
 				if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 				ambiguousListToken(new String(tokens[i]), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 				if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);//use totalCount since everything is shifted
 				stackHandler.shiftAllCharsDefinitions(charsItemMatches);
 			}else if(totalCount > 1 && matchesCount == 1){
-				//just shift
 				stackHandler.shift(charsItemMatches.get(0));
-			}else if(totalCount > 1 && matchesCount > 1){
-				// ambiguity warning, later maybe
-				// shift all for in context validation			
+			}else if(totalCount > 1 && matchesCount > 1){	
 				if(!stackHandler.handlesConflict())  stackHandler = type.getStackHandler(stackHandler, this);
 				stackHandler.shiftAllCharsDefinitions(charsItemMatches);
 			}
-			/* old way
-			int matchCount = charsItemMatches.size();
-			if(matchCount == 0){
-								
-			}else if(matchCount == 1){
-				tokenMatch = true;
-				stackHandler.shift(charsItemMatches.get(0));
-			}else{
-				tokenMatch = true;
-				stackHandler = type.getStackHandler(stackHandler, matchCount, this);
-				stackHandler.shiftAllCharsDefinitions(charsItemMatches);
-			}*/
 						
 			if(hasError)return;
 		}
@@ -165,42 +146,20 @@ class SimpleListPatternTester extends ListPatternTesterState{
 			}else if(totalCount == 1 && matchesCount == 0){
 				throw new IllegalStateException();
 			}else if(totalCount == 1 && matchesCount == 1){
-				// if errors: already reported, that's why error before
-				//just shift
-				// TODO 
-				// how do you know if tokenMatch???
 				if(tokenValid) tokenMatch = true;
 				stackHandler.shift(charsItemMatches.get(0));
 			}else if(totalCount > 1 && matchesCount == 0){
-				// ambiguity error
-				// shift all for in context validation
 				if(!dataMatches.isEmpty())charsItemMatches.addAll(dataMatches);
 				if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 				ambiguousListToken(new String(tokens[i]), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 				if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);//use totalCount since everything is shifted
 				stackHandler.shiftAllCharsDefinitions(charsItemMatches);
 			}else if(totalCount > 1 && matchesCount == 1){
-				//just shift
 				stackHandler.shift(charsItemMatches.get(0));
-			}else if(totalCount > 1 && matchesCount > 1){
-				// ambiguity warning, later maybe
-				// shift all for in context validation			
+			}else if(totalCount > 1 && matchesCount > 1){	
 				if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);
 				stackHandler.shiftAllCharsDefinitions(charsItemMatches);
 			}
-			
-			/* old way
-			int matchCount = charsItemMatches.size();
-			if(matchCount == 0){
-				unexpectedTokenInList((AListPattern)type, value);
-			}else if(matchCount == 1){
-				tokenMatch = true;
-				stackHandler.shift(charsItemMatches.get(0));
-			}else{
-				tokenMatch = true;
-				stackHandler = type.getStackHandler(stackHandler, matchCount, this);
-				stackHandler.shiftAllCharsDefinitions(charsItemMatches);
-			}*/
 			
 			if(hasError)return;
 		}
@@ -225,23 +184,23 @@ class SimpleListPatternTester extends ListPatternTesterState{
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedElement(String qName, AElement definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousElement(String qName, AElement[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}
 	
 	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAttribute(String qName, AAttribute definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, AAttribute[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}
-	
+		
 	
 	
 	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){

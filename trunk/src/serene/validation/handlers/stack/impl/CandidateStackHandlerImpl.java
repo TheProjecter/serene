@@ -18,8 +18,6 @@ package serene.validation.handlers.stack.impl;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.Arrays;
 
 import serene.validation.schema.active.Rule;
@@ -39,8 +37,9 @@ import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 	
-
 import serene.validation.schema.active.ActiveComponentVisitor;
+
+import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.ContextConflictsDescriptor;
@@ -231,7 +230,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 					boolean reportCurrentMisplaced, 
 					boolean reportMissing, 
 					boolean reportIllegal, 
-					boolean reportCompositorContentMissing){		
+					boolean reportCompositorContentMissing){
 		setModifyers(reportExcessive, reportPreviousMisplaced, reportCurrentMisplaced, reportMissing, reportIllegal, reportCompositorContentMissing);
 		setCurrentHandler(element);
 		currentHandler.handleChildShift(element, expectedOrderHandlingCount);
@@ -249,7 +248,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 					boolean reportIllegal, 
 					boolean reportCompositorContentMissing){
 		this.currentInnerPath = innerPath;
-		this.currentResolver = resolver;		
+		this.currentResolver = resolver; 
 		setModifyers(reportExcessive, reportPreviousMisplaced, reportCurrentMisplaced, reportMissing, reportIllegal, reportCompositorContentMissing);		
 		stackConflictsHandler.record(element, resolver, definitionCandidateIndex);		
 		setCurrentHandler(element, innerPath, resolver);
@@ -275,9 +274,10 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 					boolean reportExcessive, 
 					boolean reportMissing, 
 					boolean reportIllegal, 
-					boolean reportCompositorContentMissing){		
+					boolean reportCompositorContentMissing){
 		this.currentInnerPath = innerPath;
 		this.currentResolver = resolver;
+		
 		setModifyers(reportExcessive, reportMissing, reportIllegal, reportCompositorContentMissing);		
 		stackConflictsHandler.record(attribute, resolver, definitionCandidateIndex);
 		setCurrentHandler(attribute, innerPath, resolver);
@@ -291,7 +291,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 					boolean reportCurrentMisplaced, 
 					boolean reportMissing, 
 					boolean reportIllegal, 
-					boolean reportCompositorContentMissing){		
+					boolean reportCompositorContentMissing){
 		setModifyers(reportExcessive, reportPreviousMisplaced, reportCurrentMisplaced, reportMissing, reportIllegal, reportCompositorContentMissing);
 		setCurrentHandler(chars);
 		currentHandler.handleChildShift(chars, expectedOrderHandlingCount);
@@ -312,7 +312,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		this.currentResolver = resolver;
 		setModifyers(reportExcessive, reportPreviousMisplaced, reportCurrentMisplaced, reportMissing, reportIllegal, reportCompositorContentMissing);
 		stackConflictsHandler.record(chars, resolver, definitionCandidateIndex);
-		setCurrentHandler(chars, innerPath, resolver);		
+		setCurrentHandler(chars, innerPath, resolver);
 		currentHandler.handleChildShift(chars, expectedOrderHandlingCount, stackConflictsHandler, resolver);
 		/*stackConflictsHandler.resolveInactiveConflicts();*/		
 	}
@@ -369,7 +369,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		StructureHandler parent = handler.getParentHandler();
 		APattern pattern = (APattern)handler.getRule();		
 		if(parent.handleChildShift(pattern, handler.getStartQName(), handler.getStartSystemId(), handler.getStartLineNumber(), handler.getStartColumnNumber(), stackConflictsHandler)){
-			parent.closeContentStructure(pattern);// must be last so it does not remove location data before error messages
+			parent.closeContentStructure(pattern);// must be last so it doesn't remove location data before error messages
 			currentHandler = parent;
 		}
 	}
@@ -405,7 +405,6 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 			super.reset(handler);
 			return;
 		}
-		//TODO
 		endSubtreeValidation(currentHandler);
 		isCurrentHandlerReseted = true;
 	}
@@ -432,7 +431,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 				shifted = false;
 			}
 		}
-		if(shifted)parent.closeContentStructure(pattern);// must be last so it does not remove location data before error messages
+		if(shifted)parent.closeContentStructure(pattern);// must be last so it doesn't remove location data before error messages
 	}
 	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
 		//System.out.println("************** 6");
@@ -455,14 +454,14 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 				shifted = false;
 			}
 		}
-		if(shifted)parent.closeContentStructure(pattern);// must be last so it does not remove location data before error messages
+		if(shifted)parent.closeContentStructure(pattern);// must be last so it doesn't remove location data before error messages
 	}
 	// override
 	
 	
 	public void endValidation(boolean reportMissing, 
 							boolean reportIllegal, 
-							boolean reportCompositorContentMissing){
+							boolean reportCompositorContentMissing){        
 		endingValidation = true;	
 		setModifyers(reportMissing, reportIllegal, reportCompositorContentMissing);
 		topHandler.handleValidatingReduce();//generates eventual missing content errors, possibly disqualifying		
@@ -584,7 +583,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
             setCurrentHandler(pattern, innerPath, resolver);
             return;
         }
-        currentHandler = result;
+        currentHandler = result;		
 		for(int i = 0; i < innerPath.length; i++){
 			if(innerPath[i] == parent){
 				currentHandler.setConflict(i, innerPath, stackConflictsHandler, resolver);
@@ -612,11 +611,11 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		throw new IllegalStateException();
 		//errorCatcher.unknownElement( qName, systemId, lineNumber, columnNumber);
 	}	
-	public void unexpectedElement(String qName, AElement definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 		//errorCatcher.unexpectedElement( qName, definition, systemId, lineNumber, columnNumber);
 	}	
-	public void unexpectedAmbiguousElement(String qName, AElement[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 		//errorCatcher.unexpectedAmbiguousElement( qName, definition, systemId, lineNumber, columnNumber);
 	}
@@ -625,17 +624,17 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		throw new IllegalStateException();
 		//errorCatcher.unknownAttribute( qName, systemId, lineNumber, columnNumber);
 	}	
-	public void unexpectedAttribute(String qName, AAttribute definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 		//errorCatcher.unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, AAttribute[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 		//errorCatcher.unexpectedAmbiguousAttribute( qName, definition, systemId, lineNumber, columnNumber);
 	}
 	
 		
-	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
+	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){	
 		if(stackConflictsHandler.isConflictRule(definition)){
 			stackConflictsHandler.disqualify(definition);
 			hasDisqualifyingError = true;
@@ -734,7 +733,6 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	
 	public void undeterminedByContent(String qName, String candidateMessages){
 		//errorCatcher.undeterminedByContent(qName, candidateMessages);
-		
 		throw new IllegalStateException();
 	}
 	

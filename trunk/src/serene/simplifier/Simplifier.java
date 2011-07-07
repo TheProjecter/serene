@@ -511,6 +511,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         patternChild = false;        
 	}
 		
+		
 	public void visit(ElementWithNameClass element)  throws SAXException{
 		ParsedComponent[] children = element.getChildren();		
 		        		
@@ -524,6 +525,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         Map<String, String> prefixMapping = element.getXmlns();
         if(prefixMapping != null) startXmlnsContext(prefixMapping);
         
+        int nonEmptyChildrenCount = 0;
 		int notAllowedCount = 0;
         builder.startLevel();
         boolean oldNotAllowedChild = notAllowedChild;
@@ -532,10 +534,12 @@ abstract class Simplifier implements SimplifyingVisitor{
                 notAllowedChild = false;
                 next(children[i]);
                 if(patternChild){
+                    nonEmptyChildrenCount++;
                     if(notAllowedChild){
                         notAllowedCount++;
                     }
                     if(emptyChild){
+                        nonEmptyChildrenCount--;
                         emptyChild = false;
                     }
                 }
@@ -550,6 +554,9 @@ abstract class Simplifier implements SimplifyingVisitor{
             notAllowedElement = true;
 			return;
 		}
+        if(nonEmptyChildrenCount == 0){
+            builder.buildEmpty("empty", emptyComponent.getLocation());
+        }
 		if(builder.getCurrentPatternsCount() > 1){
 			builder.buildReplacementGroup("group added by element simplification", element.getLocation());
 		}
@@ -558,7 +565,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
-        notAllowedElement = false;
+        notAllowedElement = true;
 	}	
 	public void visit(ElementWithNameInstance element)  throws SAXException{
 		ParsedComponent[] children = element.getChildren();
@@ -575,6 +582,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 				
 		builder.startLevel();//children
         
+        int nonEmptyChildrenCount = 0;
         int notAllowedCount = 0;
         boolean oldNotAllowedChild = notAllowedChild;
 		for(int i = 0; i < children.length; i++){
@@ -582,10 +590,12 @@ abstract class Simplifier implements SimplifyingVisitor{
                 notAllowedChild = false; 
                 next(children[i]);
                 if(patternChild){
+                    nonEmptyChildrenCount++;
                     if(notAllowedChild){
                         notAllowedCount++;
                     }
                     if(emptyChild){
+                        nonEmptyChildrenCount--;
                         emptyChild = false;
                     }
                 }
@@ -600,7 +610,10 @@ abstract class Simplifier implements SimplifyingVisitor{
             patternChild = true;
             notAllowedElement = true;
 			return;
-		}		
+		}
+        if(nonEmptyChildrenCount == 0){
+            builder.buildEmpty("empty", emptyComponent.getLocation());
+        }		
 		if(builder.getCurrentPatternsCount() > 1){
 			builder.buildReplacementGroup("group added by element simplification", element.getLocation());
 		}
@@ -619,7 +632,8 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
         notAllowedElement = false;
-	}    
+	}
+    
 	public void visit(AttributeWithNameClass attribute)  throws SAXException{
 		ParsedComponent[] children = attribute.getChildren();		
 		

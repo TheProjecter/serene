@@ -16,8 +16,11 @@ limitations under the License.
 
 package serene.validation.schema.active;
 
+import java.util.List;
+
 import org.relaxng.datatype.ValidationContext;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SExceptPattern;
@@ -139,5 +142,14 @@ public class ActiveModel  implements Reusable{
     
     public ActiveGrammarModel getGrammarModel(){
         return grammarModel;
+    }
+    
+    
+    public void setSimplifiedElementDefinitions(String namespace, String name, List<SimplifiedComponent> unexpectedMatches){
+         grammarModel.setSimplifiedElementDefinitions(namespace, name, unexpectedMatches);
+    }
+    
+    public void setSimplifiedAttributeDefinitions(String namespace, String name, List<SimplifiedComponent> unexpectedMatches){
+         grammarModel.setSimplifiedAttributeDefinitions(namespace, name, unexpectedMatches);
     }
 } 

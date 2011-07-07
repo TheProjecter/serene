@@ -24,6 +24,7 @@ import serene.validation.schema.active.AttributesType;
 import serene.validation.schema.active.DataActiveType;
 import serene.validation.schema.active.StructuredDataActiveType;
 import serene.validation.schema.active.CharsActiveType;
+import serene.validation.schema.active.ActiveModel;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.schema.active.components.AExceptPattern;
 
@@ -33,6 +34,8 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AListPattern;
 import serene.validation.schema.active.components.AText;
+
+import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
@@ -45,13 +48,15 @@ public class MatchHandler{
 	
 	List<AElement> elementMatches;
 	List<AAttribute> attributeMatches;
-		
+	
 	List<AData> datas;
 	List<AValue> values;
 	List<AListPattern> listPatterns;
 	List<AText> texts;
 	
-
+    ActiveModel activeModel;
+    List<SimplifiedComponent> unexpectedMatches;
+    
 	boolean recognizeOutOfContext;
 	
 	public MatchHandler(MessageWriter debugWriter){
@@ -61,33 +66,25 @@ public class MatchHandler{
 		datas = new ArrayList<AData>();
 		values = new ArrayList<AValue>();
 		listPatterns = new ArrayList<AListPattern>();
-		texts = new ArrayList<AText>();		
+		texts = new ArrayList<AText>();
+
+        unexpectedMatches = new ArrayList<SimplifiedComponent>();		
 	}	
 	
-	//TODO init with the definitions and nameClass arrays
-	// for out of context handling 
-	//		loop all definitions
-	//		loop all cached elements(attributes)
-	//		get index, get nameClass
-	//		if match - add to the matches list
-		
+    public void setActiveModel(ActiveModel activeModel){
+        this.activeModel = activeModel;
+    }
 	
-	
-	public List<AElement> matchElement(String namespace, String name){
-		// TODO
-		return elementMatches;
+	public List<SimplifiedComponent> matchElement(String namespace, String name){
+		unexpectedMatches.clear();
+        activeModel.setSimplifiedElementDefinitions(namespace, name, unexpectedMatches);
+		return unexpectedMatches;
 	}
 	
-	public List<AAttribute> matchAttribute(String namespace, String name){
-		// TODO
-		return attributeMatches;
-	}
-	
-	public void setRecognizeOutOfContext(boolean recognizeOutOfContext){
-		this.recognizeOutOfContext = recognizeOutOfContext;
-	}
-	public boolean getRecognizeOutOfContext(){
-		return recognizeOutOfContext;
+	public List<SimplifiedComponent> matchAttribute(String namespace, String name){
+		unexpectedMatches.clear();
+        activeModel.setSimplifiedAttributeDefinitions(namespace, name, unexpectedMatches);
+		return unexpectedMatches;
 	}
 	
 	public List<AElement> matchElement(String namespace, String name, ElementContentType type){		

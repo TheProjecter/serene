@@ -31,7 +31,9 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
-	
+
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.Reusable;
@@ -76,10 +78,10 @@ public class AttributeConflictErrorHandler implements Reusable, ErrorCatcher{
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedElement(String qName, AElement definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousElement(String qName, AElement[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}
 	
@@ -87,10 +89,10 @@ public class AttributeConflictErrorHandler implements Reusable, ErrorCatcher{
 	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAttribute(String qName, AAttribute definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, AAttribute[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}
 			

@@ -3,12 +3,16 @@
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\syntax\general\schema.rng
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:28:21 Syntax error. 
-Unknown element in content.
-Element <rng:ef> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:26:33 is not known in this context.
+Unexpected element.
+Element <rng:ef> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:26:33corresponding to definition:
+<element> at RELAXNG Specification 3.Full Syntax: any element
+is not part of the parent's content model.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:32:21 Syntax error. 
-Unknown element in content.
-Element <rng:ef> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:30:33 is not known in this context.
+Unexpected element.
+Element <rng:ef> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:30:33corresponding to definition:
+<element> at RELAXNG Specification 3.Full Syntax: any element
+is not part of the parent's content model.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:36:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
 Unresolved by content.
@@ -16,21 +20,26 @@ Validation  of candidate definitions resulted in errors:
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
 	file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:36:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
 	Order error.
-	Misplaced elements in the document structure starting at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:25:20, corresponding to definition <group name class, patterns> at RELAXNG Specification 3.Full Syntax:
+	Misplaced elements in the document structure starting at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:25:20, corresponding to definition <group name class, patterns> at RELAXNG Specification 3.Full Syntax: element with name class child:
 	rng:interleave at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:25:20
-	rng:interleave at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:29:20, corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax.
+	rng:interleave at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:29:20, corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax: pattern.
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute first error: 
 	file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:36:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
-	Unknown element in content.
-	Element <rng:name> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:33:38 is not known in this context.
+	Unexpected element.
+	Element <rng:name> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:33:38, corresponding to one of the schema definitions: 
+	<element> at RELAXNG Specification 3.Full Syntax: name
+	<element> at RELAXNG Specification 3.Full Syntax: any element
+	is not part of the parent's content model.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:36:17 Syntax error. 
-Unknown element in content.
-Element <rng:ef> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:24:32 is not known in this context.
+Unexpected element.
+Element <rng:ef> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:24:32corresponding to definition:
+<element> at RELAXNG Specification 3.Full Syntax: any element
+is not part of the parent's content model.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:39:14 Syntax error. Element <rng:start> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: start contains errors: 
 Excessive content.
-In the document structure starting at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:23:16, corresponding to definition <interleave pattern and foreign elements> at RELAXNG Specification 3.Full Syntax,  expected one occurrence corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax, found 3: 
+In the document structure starting at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:23:16, corresponding to definition <interleave pattern and foreign elements> at RELAXNG Specification 3.Full Syntax: pattern content,  expected one occurrence corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax: pattern, found 3: 
 <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:23:16
 <rng:ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:37:30
 <rng:ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:38:30.
@@ -43,15 +52,19 @@ Element <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSui
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:47:35 Syntax error. Element <rng:ref> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: ref contains errors: 
 Illegal datatype.
-Value of attribute name at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:47:35 does not match the datatype required by schema definition <attribute> at RELAXNG Specification 3.Full Syntax: name attribute. Code point(hex) 3a ':' is not a valid name character.
+Value of attribute name at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:47:35 does not match the datatype required by schema definition <attribute> at RELAXNG Specification 3.Full Syntax: name attribute with NCName value. Code point(hex) 3a ':' is not a valid name character.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:48:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
 Unresolved by content.
 Validation  of candidate definitions resulted in errors:
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
 	file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:48:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
-	Unknown attribute in content.
-	Attribute name at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:42:27 is not known in the vocabulary described by the schema.
+	Unexpected attribute.
+	Attribute name at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:42:27, corresponding to one of the definitions: 
+	<attribute> at RELAXNG Specification 3.Full Syntax: name attribute with QName value
+	<attribute> at RELAXNG Specification 3.Full Syntax: name attribute with NCName value
+	<attribute> at RELAXNG Specification 3.Full Syntax: any attribute
+	is not part of the parent's content model.
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute first error: 
 	file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:46:17  Element <rng:choice> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: choice in pattern context contains errors: 
 	Unexpected character content.
@@ -68,24 +81,35 @@ Unresolved by content.
 Validation  of candidate definitions resulted in errors:
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
 	file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:57:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
-	Unknown attribute in content.
-	Attribute name at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:52:34 is not known in the vocabulary described by the schema.
+	Unexpected attribute.
+	Attribute name at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:52:34, corresponding to one of the definitions: 
+	<attribute> at RELAXNG Specification 3.Full Syntax: name attribute with QName value
+	<attribute> at RELAXNG Specification 3.Full Syntax: name attribute with NCName value
+	<attribute> at RELAXNG Specification 3.Full Syntax: any attribute
+	is not part of the parent's content model.
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute first error: 
 	file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:57:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
 	Illegal datatype.
-	Value of attribute name at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:52:34 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: name attribute. Prefix was not declared.
+	Value of attribute name at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:52:34 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: name attribute with QName value. Prefix was not declared.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:66:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
 Unresolved by content.
 Validation  of candidate definitions resulted in errors:
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
 	file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:66:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
-	Unknown attribute in content.
-	Attribute name at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:59:29 is not known in the vocabulary described by the schema.
+	Unexpected attribute.
+	Attribute name at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:59:29, corresponding to one of the definitions: 
+	<attribute> at RELAXNG Specification 3.Full Syntax: name attribute with QName value
+	<attribute> at RELAXNG Specification 3.Full Syntax: name attribute with NCName value
+	<attribute> at RELAXNG Specification 3.Full Syntax: any attribute
+	is not part of the parent's content model.
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute first error: 
 	file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:66:17  Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
-	Unknown element in content.
-	Element <rng:name> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:60:38 is not known in this context.
+	Unexpected element.
+	Element <rng:name> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:60:38, corresponding to one of the schema definitions: 
+	<element> at RELAXNG Specification 3.Full Syntax: name
+	<element> at RELAXNG Specification 3.Full Syntax: any element
+	is not part of the parent's content model.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:68:15 Warning. Element <rng:define> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: define generates warning: 
 Ambiguous content.

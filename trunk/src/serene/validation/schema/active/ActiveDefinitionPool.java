@@ -48,12 +48,18 @@ public class ActiveDefinitionPool implements ActiveDefinitionRecycler{
 		this.grammarModel = grammarModel;
 		this.definitionDirector = definitionDirector;
 		this.componentBuilder = componentBuilder;
-				
+		
+        //if(originalTopPattern == null) throw new NullPointerException();
+        
 		definitionFree = 0;
 		definitionPoolSize = 10;
 		definitions = new ActiveDefinition[definitionPoolSize];
 	}
 
+
+    SPattern getOriginalTopPattern(){
+        return originalTopPattern;
+    }
 	
 	ActiveDefinition getActiveDefinition(){
 		if(definitionFree == 0){

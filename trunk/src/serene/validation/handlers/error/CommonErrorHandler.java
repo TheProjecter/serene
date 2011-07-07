@@ -33,6 +33,8 @@ import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 	
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import sereneWrite.MessageWriter;
@@ -59,22 +61,22 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
 		messageHandler.unknownElement( qName, systemId, lineNumber, columnNumber);		
 	}	
-	public void unexpectedElement(String qName, AElement definition, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unexpectedElement( qName, definition, systemId, lineNumber, columnNumber);
+	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+		messageHandler.unexpectedElement( qName, definition, systemId, lineNumber, columnNumber);	
 	}	
-	public void unexpectedAmbiguousElement(String qName, AElement[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 		messageHandler.unexpectedAmbiguousElement( qName, definition, systemId, lineNumber, columnNumber);
 	}
 	
 	
 	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unknownAttribute( qName, systemId, lineNumber, columnNumber);
+		messageHandler.unknownAttribute( qName, systemId, lineNumber, columnNumber);		
 	}	
-	public void unexpectedAttribute(String qName, AAttribute definition, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);
+	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+		messageHandler.unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);	
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, AAttribute[] definition, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unexpectedAmbiguousAttribute( qName, definition, systemId, lineNumber, columnNumber);
+	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
+		messageHandler.unexpectedAmbiguousAttribute( qName, definition, systemId, lineNumber, columnNumber);	
 	}
 	
 	
