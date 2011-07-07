@@ -137,12 +137,13 @@ abstract class Simplifier implements SimplifyingVisitor{
 	ParsedComponent emptyComponent;
 	boolean notAllowedChild;
     boolean patternChild;
+    boolean notAllowedElement;
     
 	boolean anyNameContext;
 	boolean anyNameExceptContext;
 	boolean nsNameContext;
 	boolean nsNameExceptContext;
-	boolean attributeContext;
+	boolean attributeContext;    
     
     Stack<ArrayList<Param>> paramStack;
     ArrayList<Param> currentParams;
@@ -516,6 +517,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(children == null) {			
 			builder.buildElement(element.getQName(), element.getLocation());
             patternChild = true;
+            notAllowedElement = false;
 			return;
 		}	
         
@@ -545,6 +547,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			builder.clearContent();
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
+            notAllowedElement = true;
 			return;
 		}
 		if(builder.getCurrentPatternsCount() > 1){
@@ -555,6 +558,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
+        notAllowedElement = false;
 	}	
 	public void visit(ElementWithNameInstance element)  throws SAXException{
 		ParsedComponent[] children = element.getChildren();
@@ -562,6 +566,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(children == null) {
 			builder.buildElement(element.getQName(), element.getLocation());
             patternChild = true;
+            notAllowedElement = false;
 			return;
 		}
 
@@ -593,6 +598,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
+            notAllowedElement = true;
 			return;
 		}		
 		if(builder.getCurrentPatternsCount() > 1){
@@ -612,6 +618,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
+        notAllowedElement = false;
 	}    
 	public void visit(AttributeWithNameClass attribute)  throws SAXException{
 		ParsedComponent[] children = attribute.getChildren();		
