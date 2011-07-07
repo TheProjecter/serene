@@ -17,11 +17,13 @@ limitations under the License.
 package serene.validation.schema.active;
 
 import java.util.Map;
+import java.util.List;
 
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.DatatypeException;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SExceptPattern;
@@ -147,4 +149,31 @@ public class ActiveGrammarModel{
 		// is based and checking against the originalTopPattern of the definition
 		return exceptPatternDefinitionPool[index].getActiveDefinition();
 	}
+    
+    public void setSimplifiedElementDefinitions(String namespace, String name, List<SimplifiedComponent> unexpectedMatches){
+        if(elementNameClass == null || elementNameClass.length == 0) return;
+        /*
+        Uses knowledge about the functioning of the ActiveGrammarModelFactory
+        which places the special start element first in the array. 
+        
+        for(int i = 1; i < elementNameClass.length; i++){
+            if(elementNameClass[i].matches(namespace, name)){
+                unexpectedMatches.add(elementDefinitionPool[i].getOriginalTopPattern().getParent());
+            }
+        }*/
+        for(int i = 0; i < elementNameClass.length; i++){
+            if(elementNameClass[i] != null && elementNameClass[i].matches(namespace, name)){
+                unexpectedMatches.add(elementDefinitionPool[i].getOriginalTopPattern().getParent());
+            }
+        }
+    }
+    
+    public void setSimplifiedAttributeDefinitions(String namespace, String name, List<SimplifiedComponent> unexpectedMatches){
+        if(attributeNameClass == null || attributeNameClass.length == 0) return;
+        for(int i = 0; i < attributeNameClass.length; i++){
+            if(attributeNameClass[i].matches(namespace, name)){
+                unexpectedMatches.add(attributeDefinitionPool[i].getOriginalTopPattern().getParent());
+            }
+        }
+    }
 }

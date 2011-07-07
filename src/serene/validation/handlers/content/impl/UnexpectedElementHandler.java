@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.xml.sax.Locator;
 
-import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.content.ElementEventHandler;
 import serene.validation.handlers.content.util.ValidationItemLocator;
@@ -28,12 +28,12 @@ import serene.validation.handlers.content.util.ValidationItemLocator;
 import sereneWrite.MessageWriter;
 
 class UnexpectedElementHandler extends ErrorEEH{
-	AElement element;
+	SimplifiedComponent element;
 	UnexpectedElementHandler(MessageWriter debugWriter){
 		super(debugWriter);		
 	}
 	
-	void init(AElement element, ElementValidationHandler parent){
+	void init(SimplifiedComponent element, ElementValidationHandler parent){
 		this.element = element;
 		this.parent = parent;
 	}
@@ -58,8 +58,8 @@ class UnexpectedElementHandler extends ErrorEEH{
 	public boolean functionalEquivalent(UnexpectedElementHandler other){		
 		return other.functionalEquivalent(element);
 	}
-	private boolean functionalEquivalent(AElement otherAElement){
-		return element.getDefinitionIndex() == otherAElement.getDefinitionIndex(); 
+	private boolean functionalEquivalent(SimplifiedComponent otherSElement){
+		return element == otherSElement; 
 	}
 	public boolean functionalEquivalent(UnexpectedAmbiguousElementHandler other){
 		return false;

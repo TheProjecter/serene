@@ -210,13 +210,15 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         if(contentHandler != null) contentHandler.ignorableWhitespace(ch, start, len);
     }
     
-	public void startDocument()  throws SAXException{	
+	public void startDocument()  throws SAXException{		
 		errorDispatcher.init();
 		documentContext.reset();        
 		validationItemLocator.clear();
 		activeModel = schemaModel.getActiveModel(validationItemLocator, 
 														errorDispatcher);
         if(activeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Due to errors in the schema document, it cannot be used for validation.");
+        
+        matchHandler.setActiveModel(activeModel);
         
         if(level2AttributeDefaultValue){                        
             AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
@@ -229,10 +231,9 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
             if(attributeIdTypeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Feature "+Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE+" cannot be supported.");
             if(attributeIdTypeHandler == null)attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
             else attributeIdTypeHandler.init();
-        }        
-        
+        }
 		elementHandler = eventHandlerPool.getStartValidationHandler(activeModel.getStartElement());
-                
+                        
         defaultNamespace = null;
 		prefixNamespaces.clear();
 		
@@ -348,10 +349,10 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler = parent;		
 		validationItemLocator.closeElement();
         
-        if(contentHandler != null) contentHandler.endElement(namespaceURI, localName, qName);        				
+        if(contentHandler != null) contentHandler.endElement(namespaceURI, localName, qName);
 	}
 	
-	public void endDocument()  throws SAXException {				
+	public void endDocument()  throws SAXException {
 		elementHandler.handleEndElement(locator);
 		elementHandler.recycle();
 		elementHandler = null;

@@ -30,6 +30,8 @@ import serene.util.SpaceCharsHandler;
 
 import serene.validation.handlers.match.MatchHandler;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.CharsActiveType;
 import serene.validation.schema.active.components.APattern;
@@ -116,7 +118,7 @@ class ElementValidationHandler extends ValidatingEEH
 		return parent;
 	}
 	
-	public ComparableEEH handleStartElement(String qName, String namespace, String name){		
+	public ComparableEEH handleStartElement(String qName, String namespace, String name){
 		if(!element.allowsElementContent()) 
 			return getUnexpectedElementHandler(namespace, name);
 				
@@ -136,7 +138,7 @@ class ElementValidationHandler extends ValidatingEEH
 	}	
 
 	protected ComparableEEH getUnexpectedElementHandler(String namespace, String name){
-		List<AElement> elementMatches = matchHandler.matchElement(namespace, name);
+		List<SimplifiedComponent> elementMatches = matchHandler.matchElement(namespace, name);
 		int matchCount = elementMatches.size();
 		if(matchCount == 0){
 			UnknownElementHandler next = pool.getUnknownElementHandler(this);
@@ -182,19 +184,19 @@ class ElementValidationHandler extends ValidatingEEH
 			// TODO
 			// if(contextConflictPool == null)	contextConflictPool = new ContextConflictPool();			
 			// ContextConflictDescriptor ccd = contextConflictPool.getContextConflictDescriptor(attributeMatches);
-			AttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(attributeMatches, this);		
+			AttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(attributeMatches, this);				
 			return next;
 		}		
 	}	
 
 	protected AttributeEventHandler getUnexpectedAttributeHandler(String namespace, String name){
-		List<AAttribute> attributeMatches = matchHandler.matchAttribute(namespace, name);
+		List<SimplifiedComponent> attributeMatches = matchHandler.matchAttribute(namespace, name);
 		int matchCount = attributeMatches.size();
 		if(matchCount == 0){
 			UnknownAttributeHandler next = pool.getUnknownAttributeHandler(this);
 			return next;
 		}else if(matchCount == 1){
-			UnexpectedAttributeHandler next = pool.getUnexpectedAttributeHandler(attributeMatches.get(0), this);	
+			UnexpectedAttributeHandler next = pool.getUnexpectedAttributeHandler(attributeMatches.get(0), this);				
 			return next;
 		}else{					
 			UnexpectedAmbiguousAttributeHandler next = pool.getUnexpectedAmbiguousAttributeHandler(attributeMatches, this);				
@@ -325,11 +327,11 @@ class ElementValidationHandler extends ValidatingEEH
 		if(contextErrorHandler == null)setContextErrorHandler();
 		contextErrorHandler.unknownElement( qName, systemId, lineNumber, columnNumber);
 	}	
-	public void unexpectedElement(String qName, AElement definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 		if(contextErrorHandler == null)setContextErrorHandler();
 		contextErrorHandler.unexpectedElement( qName, definition, systemId, lineNumber, columnNumber);
 	}	
-	public void unexpectedAmbiguousElement(String qName, AElement[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 		if(contextErrorHandler == null)setContextErrorHandler();
 		contextErrorHandler.unexpectedAmbiguousElement( qName, definition, systemId, lineNumber, columnNumber);
 	}
@@ -339,11 +341,11 @@ class ElementValidationHandler extends ValidatingEEH
 		if(contextErrorHandler == null)setContextErrorHandler();
 		contextErrorHandler.unknownAttribute( qName, systemId, lineNumber, columnNumber);
 	}	
-	public void unexpectedAttribute(String qName, AAttribute definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 		if(contextErrorHandler == null)setContextErrorHandler();
 		contextErrorHandler.unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, AAttribute[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 		if(contextErrorHandler == null)setContextErrorHandler();
 		contextErrorHandler.unexpectedAmbiguousAttribute( qName, definition, systemId, lineNumber, columnNumber);
 	}
@@ -422,11 +424,11 @@ class ElementValidationHandler extends ValidatingEEH
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		if(contextErrorHandler == null)setContextErrorHandler();
 		contextErrorHandler.characterContentDatatypeError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
-	}
+	}    
 	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		if(contextErrorHandler == null)setContextErrorHandler();
 		contextErrorHandler.attributeValueDatatypeError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
-	}
+	}    
 	
 	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		if(contextErrorHandler == null)setContextErrorHandler();
@@ -551,3 +553,4 @@ class ElementValidationHandler extends ValidatingEEH
 		}
 	}
 }
+

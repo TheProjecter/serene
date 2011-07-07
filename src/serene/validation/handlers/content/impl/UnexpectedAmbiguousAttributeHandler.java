@@ -19,12 +19,12 @@ package serene.validation.handlers.content.impl;
 import java.util.List;
 import java.util.Arrays;
 
-import serene.validation.schema.active.components.AAttribute;
+import serene.validation.schema.simplified.SimplifiedComponent;
 
 import sereneWrite.MessageWriter;
 
 class UnexpectedAmbiguousAttributeHandler extends ErrorAEH{
-	AAttribute[] attributes;
+	SimplifiedComponent[] attributes;
 	
 	UnexpectedAmbiguousAttributeHandler(MessageWriter debugWriter){
 		super(debugWriter);
@@ -34,12 +34,17 @@ class UnexpectedAmbiguousAttributeHandler extends ErrorAEH{
 		pool.recycle(this);
 	}
 
-	void init(List<AAttribute> attributes, ElementValidationHandler parent){
+	void init(List<SimplifiedComponent> attributes, ElementValidationHandler parent){
 		this.parent = parent;
-		this.attributes = attributes.toArray(new AAttribute[attributes.size()]);
+		this.attributes = attributes.toArray(new SimplifiedComponent[attributes.size()]);
 	}
 	
 	void validateInContext(){		
 		parent.unexpectedAmbiguousAttribute(validationItemLocator.getQName(), Arrays.copyOf(attributes, attributes.length), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+	}
+    
+    public String toString(){
+		return "UnexpectedAmbiguousAttributeHandler attributes "+Arrays.toString(attributes);
+		
 	}	
 }

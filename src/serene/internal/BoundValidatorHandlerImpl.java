@@ -136,10 +136,6 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		xmlnsBinder = new XmlnsBinder(debugWriter);
         
         this.level1DocumentationElement = level1DocumentationElement;
-        
-        activeModel = schemaModel.getActiveModel(validationItemLocator, 
-													errorDispatcher);
-        if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
 	}
     
     
@@ -184,12 +180,15 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	public void skippedEntity(String name){}	
 	public void ignorableWhitespace(char[] ch, int start, int len){}
 	
-	public void startDocument(){
+	public void startDocument(){				
 		errorDispatcher.init();
 		documentContext.reset();
 		validationItemLocator.clear();
 		activeModel = schemaModel.getActiveModel(validationItemLocator, 
 													errorDispatcher);
+        if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
+        matchHandler.setActiveModel(activeModel);
+        
 		bindingModel.index(activeModel.getSElementIndexMap(), activeModel.getSAttributeIndexMap());
 		queue.clear();
 		queue.index(activeModel.getSAttributeIndexMap());
@@ -197,14 +196,15 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		
 		elementHandler = eventHandlerPool.getBoundStartValidationHandler(activeModel.getStartElement(), bindingModel, queue, queuePool);
 			
-		xmlBaseBinder.bind(queue, locator.getSystemId());// must happen last, after queue.newRecord() which is in elementHandler's init, might need to be moved        
-		//Note that locator is only garanteed to pass correct information AFTER
-		//startDocument. The base URI of the document is also passed independently 
-		//to the Simplifier. This needs reviewing. 		
+		xmlBaseBinder.bind(queue, locator.getSystemId());// must happen last, after queue.newRecord() which is in elementHandler's init, might need to be moved  
+		
         if(level1DocumentationElement){
             if(documentationElementHandler == null) documentationElementHandler = new DocumentationElementHandler(errorDispatcher, debugWriter);
             else documentationElementHandler.init();
         }
+		//Note that locator is only garanteed to pass correct information AFTER
+		//startDocument. The base URI of the document is also passed independently 
+		//to the Simplifier. This needs reviewing. 		
 	}			
 	public void setDocumentLocator(Locator locator){
 		this.locator = locator;
@@ -240,9 +240,11 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 			xmlBaseBinder.bind(queue, xmlBase);
 		}
 		elementHandler.handleAttributes(attributes, locator);
-	    if(level1DocumentationElement){
+        
+        if(level1DocumentationElement){
             documentationElementHandler.startElement(namespaceURI, localName, qName, attributes, locator);
-        }	
+        }
+		
 	}		
 	
 	public void endElement(String namespaceURI, 
@@ -316,7 +318,6 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
         throw new SAXNotRecognizedException(name);
     }
 
-    
     public void setFeature(String name, boolean value)
         throws SAXNotRecognizedException, SAXNotSupportedException {
         if (name == null) {

@@ -23,20 +23,20 @@ import org.xml.sax.Locator;
 
 import serene.validation.handlers.content.ElementEventHandler;
 
-import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import sereneWrite.MessageWriter;
 
 class UnexpectedAmbiguousElementHandler extends ErrorEEH{
 	//String qName;
-	AElement[] elements;
+	SimplifiedComponent[] elements;
 	UnexpectedAmbiguousElementHandler(MessageWriter debugWriter){
 		super(debugWriter);	
 	}		
 	
-	void init(List<AElement> elements, ElementValidationHandler parent){
-		this.elements = elements.toArray(new AElement[elements.size()]);
+	void init(List<SimplifiedComponent> elements, ElementValidationHandler parent){
+		this.elements = elements.toArray(new SimplifiedComponent[elements.size()]);
 		this.parent = parent;
 	}
 	
@@ -63,11 +63,11 @@ class UnexpectedAmbiguousElementHandler extends ErrorEEH{
 	public boolean functionalEquivalent(UnexpectedAmbiguousElementHandler other){
 		return other.functionalEquivalent(elements);
 	}
-	private boolean functionalEquivalent(AElement[] otherAElements){
+	private boolean functionalEquivalent(SimplifiedComponent[] otherSElements){
 		int elementsCount = elements.length;
-		if(elementsCount != otherAElements.length)return false;
+		if(elementsCount != otherSElements.length)return false;
 		for(int i = 0; i < elementsCount; i++){
-			if(elements[i].getDefinitionIndex() != otherAElements[i].getDefinitionIndex()) return false;
+			if(elements[i] != otherSElements[i]) return false;
 		}
 		return true;
 	}	
@@ -87,7 +87,7 @@ class UnexpectedAmbiguousElementHandler extends ErrorEEH{
 		return false;
 	}
 	public String toString(){
-		return "UnexpectedElementContextConflictHandler elements "+elements.toString();
+		return "UnexpectedAmbiguousElementHandler elements "+Arrays.toString(elements);
 		
 	}	
 } 

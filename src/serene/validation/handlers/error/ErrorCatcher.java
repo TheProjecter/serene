@@ -29,16 +29,17 @@ import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
 
 public interface ErrorCatcher{	
 	
 	void unknownElement(String qName, String systemId, int lineNumber, int columnNumber);
-	void unexpectedElement(String qName, AElement definition, String systemId, int lineNumber, int columnNumber);
-	void unexpectedAmbiguousElement(String qName, AElement[] possibleDefinition, String systemId, int lineNumber, int columnNumber);
+	void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber);
+	void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] possibleDefinition, String systemId, int lineNumber, int columnNumber);
 		
 	void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber);
-	void unexpectedAttribute(String qName, AAttribute definition, String systemId, int lineNumber, int columnNumber);
-	void unexpectedAmbiguousAttribute(String qName, AAttribute[] possibleDefinition, String systemId, int lineNumber, int columnNumber);
+	void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber);
+	void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] possibleDefinition, String systemId, int lineNumber, int columnNumber);
 		
 	void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper);	
 	void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper);
@@ -60,9 +61,9 @@ public interface ErrorCatcher{
 	
 	void undeterminedByContent(String qName, String candidateMessages);	
 	
-	void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
+	void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);    
 	void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
-	
+    	
 	void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition);
 	void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition);
 	

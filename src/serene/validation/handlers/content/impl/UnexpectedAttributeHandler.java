@@ -16,12 +16,12 @@ limitations under the License.
 
 package serene.validation.handlers.content.impl;
 
-import serene.validation.schema.active.components.AAttribute;
+import serene.validation.schema.simplified.SimplifiedComponent;
 
 import sereneWrite.MessageWriter;
 
 class UnexpectedAttributeHandler extends ErrorAEH{
-	AAttribute attribute;	
+	SimplifiedComponent attribute;	
 	
 	UnexpectedAttributeHandler(MessageWriter debugWriter){
 		super(debugWriter);
@@ -31,12 +31,16 @@ class UnexpectedAttributeHandler extends ErrorAEH{
 		pool.recycle(this);
 	}
 
-	void init(AAttribute attribute, ElementValidationHandler parent){
+	void init(SimplifiedComponent attribute, ElementValidationHandler parent){
 		this.parent = parent;
 		this.attribute = attribute;
 	}
 	
 	void validateInContext(){
 		parent.unexpectedAttribute(validationItemLocator.getQName(), attribute, validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+	}
+
+    public String toString(){
+		return "UnexpectedAttributeHandler "+attribute.toString();
 	}	
 }

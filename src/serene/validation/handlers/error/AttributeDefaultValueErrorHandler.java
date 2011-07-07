@@ -30,6 +30,7 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AData;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SNameClass;
 import serene.validation.schema.simplified.components.SChoicePattern;
@@ -68,13 +69,13 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
         this.location = location;
     }
     
-    public boolean hasError(){
+    /*public boolean hasError(){
         return !messages.isEmpty();
-    }
+    }*/
     
-    public void report() throws SAXException{        
+    public void report() throws SAXException{
         for(String message : messages){
-            errorDispatcher.error(new AttributeDefaultValueException(message, null, null, -1, -1));
+            errorDispatcher.warning(new AttributeDefaultValueException(message, null, null, -1, -1));
         }
     }
     //errorCatcher
@@ -82,10 +83,10 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
         throw new IllegalStateException();
 	}	
-	public void unexpectedElement(String qName, AElement definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
         throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousElement(String qName, AElement[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
         throw new IllegalStateException();
 	}
 	
@@ -93,12 +94,13 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
 	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
         throw new IllegalStateException();
 	}	
-	public void unexpectedAttribute(String qName, AAttribute definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
         throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, AAttribute[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
         throw new IllegalStateException();
 	}
+	
 	
 		
 	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String qName, String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){

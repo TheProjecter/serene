@@ -33,6 +33,8 @@ import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 	
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import sereneWrite.MessageWriter;
 
 /**
@@ -51,18 +53,19 @@ public class DefaultErrorHandler extends AbstractContextErrorHandler{
 		
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
 	}	
-	public void unexpectedElement(String qName, AElement definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 	}	
-	public void unexpectedAmbiguousElement(String qName, AElement[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 	}
 	
 	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
 	}	
-	public void unexpectedAttribute(String qName, AAttribute definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, AAttribute[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 	}
-		
+
+    
 	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
 	}
 	

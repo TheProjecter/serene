@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.relaxng.datatype.ValidationContext;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
@@ -660,7 +662,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 		unrecognizedElementH[unrecognizedElementHFree++] = ueh; 
 	}
 	
-	UnexpectedElementHandler getUnexpectedElementHandler(AElement e, ElementValidationHandler parent){				
+	UnexpectedElementHandler getUnexpectedElementHandler(SimplifiedComponent e, ElementValidationHandler parent){				
 		if(unexpectedElementHFree == 0){
 			UnexpectedElementHandler ueh = new UnexpectedElementHandler(debugWriter);
 			ueh.init(this, validationItemLocator);
@@ -684,7 +686,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 		unexpectedElementH[unexpectedElementHFree++] = ueh; 
 	}
 	
-	UnexpectedAmbiguousElementHandler getUnexpectedAmbiguousElementHandler(List<AElement> elements, ElementValidationHandler parent){		
+	UnexpectedAmbiguousElementHandler getUnexpectedAmbiguousElementHandler(List<SimplifiedComponent> elements, ElementValidationHandler parent){		
 		if(unexpectedAmbiguousEHFree == 0){
 			UnexpectedAmbiguousElementHandler uach = new UnexpectedAmbiguousElementHandler(debugWriter);
 			uach.init(this, validationItemLocator);
@@ -847,7 +849,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 		unrecognizedAttributeH[unrecognizedAttributeHFree++] = ueh; 
 	}
 	
-	UnexpectedAttributeHandler getUnexpectedAttributeHandler(AAttribute a, ElementValidationHandler parent){				
+	UnexpectedAttributeHandler getUnexpectedAttributeHandler(SimplifiedComponent a, ElementValidationHandler parent){				
 		if(unexpectedAttributeHFree == 0){
 			UnexpectedAttributeHandler uah = new UnexpectedAttributeHandler(debugWriter);
 			uah.init(this, validationItemLocator);
@@ -871,7 +873,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 		unexpectedAttributeH[unexpectedAttributeHFree++] = ueh; 
 	}
 	
-	UnexpectedAmbiguousAttributeHandler getUnexpectedAmbiguousAttributeHandler(List<AAttribute> aa, ElementValidationHandler parent){		
+	UnexpectedAmbiguousAttributeHandler getUnexpectedAmbiguousAttributeHandler(List<SimplifiedComponent> aa, ElementValidationHandler parent){		
 		if(unexpectedAmbiguousAHFree == 0){
 			UnexpectedAmbiguousAttributeHandler uach = new UnexpectedAmbiguousAttributeHandler(debugWriter);
 			uach.init(this, validationItemLocator);

@@ -4,4 +4,8 @@ TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\ext
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inSchema/common/schema.rng:27:43 Syntax error. 
 Unexpected element.
-Element <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inSchema/common/schema.rng:27:31corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: value is not part of the parent's content model.
+Element <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inSchema/common/schema.rng:27:31, corresponding to one of the schema definitions: 
+<element> at RELAXNG Specification 3.Full Syntax: element with name class child
+<element> at RELAXNG Specification 3.Full Syntax: element with name attribute
+<element> at RELAXNG Specification 3.Full Syntax: any element
+is not part of the parent's content model.

@@ -28,7 +28,6 @@ import org.relaxng.datatype.DatatypeException;
 import serene.datatype.DatatypeLibraryFinder;
 
 import serene.validation.schema.simplified.components.SPattern;
-//import serene.validation.schema.simplified.components.NameClass;
 import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SAttribute;
 
@@ -80,10 +79,9 @@ import serene.parser.RNGParseBindingPool;
 import serene.bind.AttributeTaskPool;
 import serene.bind.ElementTaskPool;
 
-import serene.Constants;
-
 import sereneWrite.MessageWriter;
 
+import serene.Constants;
 //********************
 // ref indexing legend
 //********************
@@ -94,6 +92,17 @@ import sereneWrite.MessageWriter;
 // foreignElement = 4
 // anyElement = 5
 
+// exceptNameClass = 6
+// nameQNameAttribute = 7
+// nameNCNameAttribute = 8
+// hrefAttribute = 9
+// typeAttribute = 10
+// combineAttribute = 11
+// commonAttributes = 12
+// foreignAttribute = 13
+// anyAttribute = 14
+// defineElement = 15
+// startElement = 16
 
 //********************
 // TODO
@@ -117,7 +126,8 @@ class RNGDirector{
 	
 	private SAttribute ns;
 	private SAttribute datatypeLibrary;
-	private SAttribute name;
+	private SAttribute qName;
+    private SAttribute ncName;
 	private SAttribute combine;
 	private SAttribute type;
 	private SAttribute href;  
@@ -138,8 +148,6 @@ class RNGDirector{
         cl = ss.getContextClassLoader();
         
         if (cl == null) {
-            //cl = ClassLoader.getSystemClassLoader();
-            //use the current class loader
             cl = RNGDirector.class.getClassLoader();
         } 
 
@@ -154,28 +162,44 @@ class RNGDirector{
 	void createModels(SimplifiedComponentBuilder builder)  throws DatatypeException{
 		this.builder = builder;
 		
-		refDefinitionTopPattern = new SPattern[6];
+		refDefinitionTopPattern = new SPattern[17];
 		startElementTaskPool = new HashMap<SElement, ElementTaskPool>();
 		endElementTaskPool = new HashMap<SElement, ElementTaskPool>();
 		attributeTaskPool = new HashMap<SAttribute, AttributeTaskPool>();
 		
 		startLevelPool = new StartLevelPool(debugWriter);
 		
+        
 		startGrammar();
+        
+        defineNameQNameAttribute();
+        defineNameNCNameAttribute();
+        defineHrefAttribute();
+        defineTypeAttribute();
+        defineCombineAttribute();
+        defineCommonAttributes();
+        defineForeignAttributes();
+        defineAnyAttribute();
+        
 		definePattern();
 		defineGrammarContent();
 		defineIncludeContent();
 		defineNameClass();
 		defineForeign();
 		defineAnyElement();
+        
+        defineExceptNameClass();
+        defineDefineElement();
+        defineStartElement();        
 	}
 	
 	SimplifiedModel getRNGModel(){
 		SPattern[] start = {rngStartTopPattern};
-		return new SimplifiedModel(start,
+		SimplifiedModel s = new SimplifiedModel(start,
 									refDefinitionTopPattern,
 									null,
 									debugWriter);
+        return s;
 	}
 	
 	SimplifiedModel getIncludeModel(){
@@ -200,10 +224,10 @@ class RNGDirector{
 	
 	private void startGrammar(){
 		builder.startBuild();	
-		builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax");			
+		builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax: pattern");			
 		SPattern r = builder.getCurrentPattern();
 		rngStartTopPattern = r;
-		externalRefStartTopPattern = r;
+		externalRefStartTopPattern = r;		
 	}
 	
 	private void definePattern() throws DatatypeException{
@@ -231,7 +255,7 @@ class RNGDirector{
 			externalRef();			
 			grammar();
 		}builder.endLevel();
-		builder.buildChoicePattern("choice pattern","RELAXNG Specification 3.Full Syntax");	
+		builder.buildChoicePattern("choice pattern","RELAXNG Specification 3.Full Syntax: pattern");	
 		SPattern[] cp = builder.getAllCurrentPatterns();
 		refDefinitionTopPattern[0] = cp[0];
 	}	
@@ -244,7 +268,7 @@ class RNGDirector{
 			divGrammarContent();
 			include();
 		}builder.endLevel();
-		builder.buildChoicePattern("choice grammar content","RELAXNG Specification 3.Full Syntax");
+		builder.buildChoicePattern("choice grammar content","RELAXNG Specification 3.Full Syntax: grammar content");
 		SPattern[] cp = builder.getAllCurrentPatterns();
 		refDefinitionTopPattern[2] = cp[0];
 	}
@@ -256,7 +280,7 @@ class RNGDirector{
 			define();
 			divIncludeContent();
 		}builder.endLevel();
-		builder.buildChoicePattern("choice include content","RELAXNG Specification 3.Full Syntax");
+		builder.buildChoicePattern("choice include content","RELAXNG Specification 3.Full Syntax: include content");
 		SPattern[] cp = builder.getAllCurrentPatterns();
 		refDefinitionTopPattern[3] = cp[0];
 	}	
@@ -269,7 +293,7 @@ class RNGDirector{
 			nsName();
 			choiceNameClass();
 		}builder.endLevel();
-		builder.buildChoicePattern("choice name class","RELAXNG Specification 3.Full Syntax");
+		builder.buildChoicePattern("choice name class","RELAXNG Specification 3.Full Syntax: name class");
 		SPattern[] cp = builder.getAllCurrentPatterns();
 		refDefinitionTopPattern[1] = cp[0];
 	}
@@ -297,8 +321,6 @@ class RNGDirector{
 			builder.buildAnyName("anyName","RELAXNG Specification 3.Full Syntax: any element");
 		}builder.endLevel();
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: any element");
-		//SPattern[] e = builder.getAllCurrentPatterns();
-		//refDefinitionTopPattern[5] = e[0];
         
         SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
@@ -306,6 +328,175 @@ class RNGDirector{
 		endElementTaskPool.put(e, new ForeignElementTaskPool(any, debugWriter));
 	}
 	
+    private void defineExceptNameClass() throws DatatypeException{
+        builder.startLevel();{
+			builder.startLevel();{				
+				nameClassPlus();
+				commonAttributes();
+				foreignAttributes();
+			}builder.endLevel();
+			builder.buildGroup("attributes and elements group","RELAXNG Specification 3.Full Syntax: except in name class context");
+			builder.buildName(XMLConstants.RELAXNG_NS_URI,"except","name","RELAXNG Specification 3.Full Syntax: except in name class context");
+		}builder.endLevel();
+		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: except in name class context");
+		
+		SElement e = (SElement)builder.getCurrentPattern();
+		startElementTaskPool.put(e, startLevelPool);
+		endElementTaskPool.put(e, new ExceptNameClassPool(ns, datatypeLibrary, foreign, debugWriter));
+        refDefinitionTopPattern[6] = e;
+    }
+    
+    private void defineNameQNameAttribute()  throws DatatypeException{
+        builder.startLevel();{
+			builder.buildName("","name","name","RELAXNG Specification 3.Full Syntax: name attribute with QName value");
+			builder.buildData(internalLibrary.createDatatype("QName"),"data","RELAXNG Specification 3.Full Syntax: name attribute with QName value");
+		}builder.endLevel();
+		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: name attribute with QName value");
+        
+		qName = (SAttribute)builder.getCurrentPattern();
+		attributeTaskPool.put(qName, null);
+        refDefinitionTopPattern[7] = qName;
+    }
+    
+    private void defineNameNCNameAttribute()  throws DatatypeException{
+        builder.startLevel();{
+			builder.buildName("","name","name","RELAXNG Specification 3.Full Syntax: name attribute with NCName value");				
+			builder.buildData(internalLibrary.createDatatype("NCName"),"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value");
+		}builder.endLevel();
+		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value");
+		ncName = (SAttribute)builder.getCurrentPattern();
+		attributeTaskPool.put(ncName, null);
+        refDefinitionTopPattern[8] = ncName;
+    }
+    
+    private void defineHrefAttribute()  throws DatatypeException{
+        builder.startLevel();{
+			builder.buildName("","href","name","RELAXNG Specification 3.Full Syntax: href attribute");
+			builder.buildData(internalLibrary.createDatatype("hrefURI"),"data","RELAXNG Specification 3.Full Syntax: href attribute");
+		}builder.endLevel();
+		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: href attribute");
+		href = (SAttribute)builder.getCurrentPattern();
+		attributeTaskPool.put(href, null);
+        refDefinitionTopPattern[9] = href;
+    }
+    
+    private void defineTypeAttribute()  throws DatatypeException{
+        builder.startLevel();{
+			builder.buildName("","type","name","RELAXNG Specification 3.Full Syntax: type attribute");				
+			builder.buildData(internalLibrary.createDatatype("NCName"),"data","RELAXNG Specification 3.Full Syntax: type attribute");
+		}builder.endLevel();
+		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: type attribute");
+		type = (SAttribute)builder.getCurrentPattern();
+		attributeTaskPool.put(type, null);
+        refDefinitionTopPattern[10] = type;
+    }
+    
+    private void defineCombineAttribute()  throws DatatypeException{
+        builder.startLevel();{
+            builder.buildName("","combine","name","RELAXNG Specification 3.Full Syntax: combine attribute");
+            builder.buildData(internalLibrary.createDatatype("combine"), "value","RELAXNG Specification 3.Full Syntax: combine attribute");
+        }builder.endLevel();
+        builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: combine attribute");
+        combine = (SAttribute)builder.getCurrentPattern();
+        attributeTaskPool.put(combine, null);
+        refDefinitionTopPattern[11] = combine;
+    }
+    
+    private void defineCommonAttributes()  throws DatatypeException{
+        builder.startLevel();{
+            builder.startLevel();{
+                builder.startLevel();{
+                    builder.buildName("","ns","name","RELAXNG Specification 3.Full Syntax: ns attribute");	
+                    builder.buildData(nativeLibrary.createDatatype("token"),"data","RELAXNG Specification 3.Full Syntax: ns attribute");
+                }builder.endLevel();
+                builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: ns attribute");
+                ns = (SAttribute)builder.getCurrentPattern();
+                attributeTaskPool.put(ns, null);		
+            }builder.endLevel();				
+            builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: ns attribute");
+            
+            builder.startLevel();{
+                builder.startLevel();{
+                    builder.buildName("","datatypeLibrary","name","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute");				
+                    builder.buildData(internalLibrary.createDatatype("datatypeLibraryURI"),"data","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute");
+                }builder.endLevel();
+                builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute");
+                datatypeLibrary = (SAttribute)builder.getCurrentPattern();
+                attributeTaskPool.put(datatypeLibrary, null);
+            }builder.endLevel();				
+            builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute");
+        }builder.endLevel();
+        builder.buildGroup("group of datatypeLibrary and ns attributes","RELAXNG Specification 3.Full Syntax: common attributes");
+        
+        SPattern p = builder.getCurrentPattern();
+        refDefinitionTopPattern[12] = p;
+    }
+    
+    private void defineForeignAttributes(){
+        builder.startLevel();{
+			builder.startLevel();{
+				anyNameExceptNullOrRNG();	
+				builder.buildText("text","RELAXNG Specification 3.Full Syntax: foreign attribute");
+			}builder.endLevel();
+			builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: foreign attribute");
+            foreign = (SAttribute)builder.getCurrentPattern();
+			attributeTaskPool.put(foreign, null);	
+		}builder.endLevel();				
+		builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign attribute");
+        
+        SPattern p = builder.getCurrentPattern();
+        refDefinitionTopPattern[13] = p;
+    }
+    
+    private void defineAnyAttribute(){
+        builder.startLevel();{
+			builder.buildAnyName("anyName","RELAXNG Specification 3.Full Syntax: any attribute");
+			builder.buildText("text","RELAXNG Specification 3.Full Syntax: any attribute");
+		}builder.endLevel();
+		builder.buildAttribute("any attribute", "attribute","RELAXNG Specification 3.Full Syntax: any attribute");
+        any = (SAttribute)builder.getCurrentPattern();
+		attributeTaskPool.put(any, null);	
+        refDefinitionTopPattern[14] = any;
+    }
+    
+    private void defineDefineElement() throws DatatypeException{
+        builder.startLevel();{
+			builder.startLevel();{
+				patternPlus();
+				nameAttributeNCName();
+				combineAttributeSquare();
+				commonAttributes();
+				foreignAttributes();
+			}builder.endLevel();
+			builder.buildGroup("attributes and elements group","RELAXNG Specification 3.Full Syntax: define");
+			builder.buildName(XMLConstants.RELAXNG_NS_URI,"define","name","RELAXNG Specification 3.Full Syntax: define");
+		}builder.endLevel();
+		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: define");
+		
+		SElement e = (SElement)builder.getCurrentPattern();
+		startElementTaskPool.put(e, startLevelPool);
+		endElementTaskPool.put(e, new DefinePool(ns, datatypeLibrary, ncName, combine, foreign, debugWriter));        	
+        refDefinitionTopPattern[15] = e;
+    }
+    
+    private void defineStartElement()  throws DatatypeException{
+        builder.startLevel();{
+			builder.startLevel();{				
+				pattern();
+				combineAttributeSquare();
+				commonAttributes();
+				foreignAttributes();
+			}builder.endLevel();
+			builder.buildGroup("attributes and elements group","RELAXNG Specification 3.Full Syntax: start");
+			builder.buildName(XMLConstants.RELAXNG_NS_URI,"start","name","RELAXNG Specification 3.Full Syntax: start");
+		}builder.endLevel();
+		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: start");
+		
+		SElement e = (SElement)builder.getCurrentPattern();
+		startElementTaskPool.put(e, startLevelPool);
+		endElementTaskPool.put(e, new StartPool(ns, datatypeLibrary, combine, foreign, debugWriter));
+        refDefinitionTopPattern[16] = e;
+    }
 	//**************************************************************************
 	//START PATTERN METHODS ****************************************************
 	//**************************************************************************
@@ -341,7 +532,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new ElementWithNameInstancePool(ns, datatypeLibrary, name, foreign, debugWriter));
+		endElementTaskPool.put(e, new ElementWithNameInstancePool(ns, datatypeLibrary, qName, foreign, debugWriter));
 	}
 	
 	private void attributeWithNameClass() throws DatatypeException{
@@ -376,7 +567,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new AttributeWithNameInstancePool(ns, datatypeLibrary, name, foreign, debugWriter));
+		endElementTaskPool.put(e, new AttributeWithNameInstancePool(ns, datatypeLibrary, qName, foreign, debugWriter));
 	}
 	
 	private void group() throws DatatypeException{
@@ -529,7 +720,7 @@ class RNGDirector{
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: ref");
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskPool.put(e, new RefPool(ns, datatypeLibrary, name, foreign, debugWriter));
+		endElementTaskPool.put(e, new RefPool(ns, datatypeLibrary, ncName, foreign, debugWriter));
 	}
 	
 	private void parentRef() throws DatatypeException{
@@ -546,7 +737,7 @@ class RNGDirector{
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: parentRef");
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskPool.put(e, new ParentRefPool(ns, datatypeLibrary, name, foreign, debugWriter));
+		endElementTaskPool.put(e, new ParentRefPool(ns, datatypeLibrary, ncName, foreign, debugWriter));
 	}
 	
 	private void empty() throws DatatypeException{
@@ -673,43 +864,14 @@ class RNGDirector{
 	//**************************************************************************
 	//START TOP COMPONENT METHODS **********************************************
 	//**************************************************************************
+    private void define() throws DatatypeException{
+		builder.buildRef(15,"define","RELAXNG Specification 3.Full Syntax: define");
+    }
+    
 	private void start() throws DatatypeException{
-		builder.startLevel();{
-			builder.startLevel();{				
-				pattern();
-				combineAttributeSquare();
-				commonAttributes();
-				foreignAttributes();
-			}builder.endLevel();
-			builder.buildGroup("attributes and elements group","RELAXNG Specification 3.Full Syntax: start");
-			builder.buildName(XMLConstants.RELAXNG_NS_URI,"start","name","RELAXNG Specification 3.Full Syntax: start");
-		}builder.endLevel();
-		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: start");
-		
-		SElement e = (SElement)builder.getCurrentPattern();
-		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new StartPool(ns, datatypeLibrary, combine, foreign, debugWriter));
+		builder.buildRef(16,"start","RELAXNG Specification 3.Full Syntax: start");
 	}
-	
-	private void define() throws DatatypeException{
-		builder.startLevel();{
-			builder.startLevel();{
-				patternPlus();
-				nameAttributeNCName();
-				combineAttributeSquare();
-				commonAttributes();
-				foreignAttributes();
-			}builder.endLevel();
-			builder.buildGroup("attributes and elements group","RELAXNG Specification 3.Full Syntax: define");
-			builder.buildName(XMLConstants.RELAXNG_NS_URI,"define","name","RELAXNG Specification 3.Full Syntax: define");
-		}builder.endLevel();
-		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: define");
 		
-		SElement e = (SElement)builder.getCurrentPattern();
-		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new DefinePool(ns, datatypeLibrary, name, combine, foreign, debugWriter));
-	}
-	
 	private void divGrammarContent() throws DatatypeException{
 		builder.startLevel();{
 			builder.startLevel();{				
@@ -812,7 +974,7 @@ class RNGDirector{
 			builder.buildGroup("attributes and elements group","RELAXNG Specification 3.Full Syntax: nsName");			
 			builder.buildName(XMLConstants.RELAXNG_NS_URI,"nsName","name","RELAXNG Specification 3.Full Syntax: nsName");
 		}builder.endLevel();
-		builder.buildElement("element","RELAXNG Specification 3.Full Syntax");
+		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: nsName");
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
@@ -856,7 +1018,7 @@ class RNGDirector{
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: param");				
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskPool.put(e, new ParamPool(ns, datatypeLibrary, name, foreign, debugWriter));
+		endElementTaskPool.put(e, new ParamPool(ns, datatypeLibrary, ncName, foreign, debugWriter));
 	}
 	
 	private void exceptPattern() throws DatatypeException{
@@ -877,20 +1039,7 @@ class RNGDirector{
 	}
 	
 	private void exceptNameClass() throws DatatypeException{
-		builder.startLevel();{
-			builder.startLevel();{				
-				nameClassPlus();
-				commonAttributes();
-				foreignAttributes();
-			}builder.endLevel();
-			builder.buildGroup("attributes and elements group","RELAXNG Specification 3.Full Syntax: except in name class context");
-			builder.buildName(XMLConstants.RELAXNG_NS_URI,"except","name","RELAXNG Specification 3.Full Syntax: except in name class context");
-		}builder.endLevel();
-		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: except in name class context");
-		
-		SElement e = (SElement)builder.getCurrentPattern();
-		startElementTaskPool.put(e, startLevelPool);
-		endElementTaskPool.put(e, new ExceptNameClassPool(ns, datatypeLibrary, foreign, debugWriter));
+		builder.buildRef(6,"except name class","RELAXNG Specification 3.Full Syntax: except in name class context");
 	}	
 	//**************************************************************************
 	//END OTHER COMPONENT METHODS **********************************************
@@ -900,60 +1049,19 @@ class RNGDirector{
 	//START COMMON METHODS ****************************************************
 	//**************************************************************************	
 	private void commonAttributes() throws DatatypeException{
-		builder.startLevel();{
-			builder.startLevel();{
-				builder.buildName("","ns","name","RELAXNG Specification 3.Full Syntax: ns attribute");	
-				builder.buildData(nativeLibrary.createDatatype("token"),"data","RELAXNG Specification 3.Full Syntax: ns attribute");
-			}builder.endLevel();
-			builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: ns attribute");
-			ns = (SAttribute)builder.getCurrentPattern();
-			attributeTaskPool.put(ns, null);		
-		}builder.endLevel();				
-		builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: ns attribute");
-		
-		builder.startLevel();{
-			builder.startLevel();{
-				builder.buildName("","datatypeLibrary","name","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute");				
-				builder.buildData(internalLibrary.createDatatype("datatypeLibraryURI"),"data","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute");
-			}builder.endLevel();
-			builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute");
-			datatypeLibrary = (SAttribute)builder.getCurrentPattern();
-			attributeTaskPool.put(datatypeLibrary, null);
-		}builder.endLevel();				
-		builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute");
+		builder.buildRef(12,"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: optional attributes datatypeLibrary and ns");
 	}
 	
 	private void foreignAttributes(){
-		builder.startLevel();{
-			builder.startLevel();{
-				anyNameExceptNullOrRNG();	
-				builder.buildText("text","RELAXNG Specification 3.Full Syntax: foreign attribute");
-			}builder.endLevel();
-			builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: foreign attribute");
-            foreign = (SAttribute)builder.getCurrentPattern();
-			attributeTaskPool.put(foreign, null);	
-		}builder.endLevel();				
-		builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign attribute");
+		builder.buildRef(13,"foreign attributes","RELAXNG Specification 3.Full Syntax: foreign attributes");
 	}
 	
 	private void nameAttributeQName()  throws DatatypeException{
-		builder.startLevel();{
-			builder.buildName("","name","name","RELAXNG Specification 3.Full Syntax: name attribute");
-			builder.buildData(internalLibrary.createDatatype("QName"),"data","RELAXNG Specification 3.Full Syntax: name attribute");
-		}builder.endLevel();
-		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: name attribute");
-		name = (SAttribute)builder.getCurrentPattern();
-		attributeTaskPool.put(name, null);
+		builder.buildRef(7,"name attribute with QName value","RELAXNG Specification 3.Full Syntax: name attribute with QName value");
 	}
 	
 	private void nameAttributeNCName()  throws DatatypeException{
-		builder.startLevel();{
-			builder.buildName("","name","name","RELAXNG Specification 3.Full Syntax: name attribute");				
-			builder.buildData(internalLibrary.createDatatype("NCName"),"attribute","RELAXNG Specification 3.Full Syntax: name attribute");
-		}builder.endLevel();
-		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: name attribute");
-		name = (SAttribute)builder.getCurrentPattern();
-		attributeTaskPool.put(name, null);
+		builder.buildRef(8,"name attribute with NCName value","RELAXNG Specification 3.Full Syntax: name attribute with NCName value");
 	}
 	
 	private void typeAttributeNCNameSquare() throws DatatypeException{
@@ -964,36 +1072,18 @@ class RNGDirector{
 	}
 	
 	private void typeAttributeNCName() throws DatatypeException{
-		builder.startLevel();{
-			builder.buildName("","type","name","RELAXNG Specification 3.Full Syntax: type attribute");				
-			builder.buildData(internalLibrary.createDatatype("NCName"),"data","RELAXNG Specification 3.Full Syntax: type attribute");
-		}builder.endLevel();
-		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: type attribute");
-		type = (SAttribute)builder.getCurrentPattern();
-		attributeTaskPool.put(type, null);
+		builder.buildRef(10,"type attribute","RELAXNG Specification 3.Full Syntax: type attribute");
 	}
 	
 	private void hrefAttribute() throws DatatypeException{
-		builder.startLevel();{
-			builder.buildName("","href","name","RELAXNG Specification 3.Full Syntax: href attribute");
-			builder.buildData(internalLibrary.createDatatype("hrefURI"),"data","RELAXNG Specification 3.Full Syntax: href attribute");
-		}builder.endLevel();
-		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: href attribute");
-		href = (SAttribute)builder.getCurrentPattern();
-		attributeTaskPool.put(href, null);
+		builder.buildRef(9,"href attribute","RELAXNG Specification 3.Full Syntax: href attribute");
 	}
 	
 	private void combineAttributeSquare() throws DatatypeException{
 		builder.startLevel();{
-			builder.startLevel();{
-				builder.buildName("","combine","name","RELAXNG Specification 3.Full Syntax: combine attribute");
-				builder.buildData(internalLibrary.createDatatype("combine"), "value","RELAXNG Specification 3.Full Syntax: combine attribute");
-			}builder.endLevel();
-			builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax: combine attribute");
-			combine = (SAttribute)builder.getCurrentPattern();
-			attributeTaskPool.put(combine, null);
+			builder.buildRef(11,"combine attribute","RELAXNG Specification 3.Full Syntax: combine attribute");
 		}builder.endLevel();				
-		builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: combine attribute");
+		builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: optional combine attribute");
 	}
 	
 	
@@ -1001,53 +1091,53 @@ class RNGDirector{
 	private void nameClassPatternPlus(){		
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(1,"nameClass","RELAXNG Specification 3.Full Syntax");
+				builder.buildRef(1,"nameClass","RELAXNG Specification 3.Full Syntax: name class");
 				builder.startLevel();{
-					builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax");						
+					builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax: pattern");						
 				}builder.endLevel();
-				builder.buildOneOrMore("oneOrMore","RELAXNG Specification 3.Full Syntax");				
+				builder.buildOneOrMore("oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore");				
 			}builder.endLevel();
-			builder.buildGroup("group name class, patterns","RELAXNG Specification 3.Full Syntax");
+			builder.buildGroup("group name class, patterns","RELAXNG Specification 3.Full Syntax: element with name class child");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave name class, patterns group and foreign elements","RELAXNG Specification 3.Full Syntax");		
+		builder.buildInterleave("interleave name class, patterns group and foreign elements","RELAXNG Specification 3.Full Syntax: element with name class child");		
 	}
 	
 	private void patternPlus(){				
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax");
+				builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax: pattern");
 			}builder.endLevel();
-			builder.buildOneOrMore("oneOrMore","RELAXNG Specification 3.Full Syntax");			
+			builder.buildOneOrMore("oneOrMore","RELAXNG Specification 3.Full Syntax: pattern content");			
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave patterns and foreign elements","RELAXNG Specification 3.Full Syntax");	
+		builder.buildInterleave("interleave patterns and foreign elements","RELAXNG Specification 3.Full Syntax: pattern content");	
 	}
 	
 	private void nameClassPatternSquare(){
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(1,"nameClass","RELAXNG Specification 3.Full Syntax");
+				builder.buildRef(1,"nameClass","RELAXNG Specification 3.Full Syntax: name class");
 				builder.startLevel();{
-					builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax");						
+					builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax: pattern");						
 				}builder.endLevel();
-				builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax");
+				builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: optional");
 			}builder.endLevel();
-			builder.buildGroup("group name class, pattern group","RELAXNG Specification 3.Full Syntax");
+			builder.buildGroup("group name class, pattern group","RELAXNG Specification 3.Full Syntax: attribute with name class child");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave name class, pattern group and foreign elements","RELAXNG Specification 3.Full Syntax");		
+		builder.buildInterleave("interleave name class, pattern group and foreign elements","RELAXNG Specification 3.Full Syntax: attribute with name class child");		
 	}
 	
 	private void patternSquare(){				
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax");
+				builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax: pattern");
 			}builder.endLevel();
-			builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax");
+			builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: optional");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave patterns and foreign elements","RELAXNG Specification 3.Full Syntax");	
+		builder.buildInterleave("interleave patterns and foreign elements","RELAXNG Specification 3.Full Syntax: pattern content");	
 	}
 	
 	private void paramStarExceptPatternSquare() throws DatatypeException{
@@ -1056,46 +1146,46 @@ class RNGDirector{
 				builder.startLevel();{
 					param();						
 				}builder.endLevel();
-				builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax");
+				builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax: zeroOrMore");
 				builder.startLevel();{
 					exceptPattern();			
 				}builder.endLevel();
-				builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax");
+				builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: optional");
 			}builder.endLevel();
-			builder.buildGroup("group param except","RELAXNG Specification 3.Full Syntax");
+			builder.buildGroup("group param except","RELAXNG Specification 3.Full Syntax: data");
 			foreignStar();
 		}builder.endLevel();
-		builder.buildInterleave("interleave param, except group and foreign elements","RELAXNG Specification 3.Full Syntax");					
+		builder.buildInterleave("interleave param, except group and foreign elements","RELAXNG Specification 3.Full Syntax: data");					
 	}	
 
 	private void pattern(){
 		builder.startLevel();{
-			builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax");
+			builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax: pattern");
 			foreignStar();
 		}builder.endLevel();
-		builder.buildInterleave("interleave pattern and foreign elements","RELAXNG Specification 3.Full Syntax");
+		builder.buildInterleave("interleave pattern and foreign elements","RELAXNG Specification 3.Full Syntax: pattern content");
 	}
 	
 	private void grammarContentStar(){				
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(2,"grammarContent","RELAXNG Specification 3.Full Syntax");
+				builder.buildRef(2,"grammarContent","RELAXNG Specification 3.Full Syntax: grammar content");
 			}builder.endLevel();
-			builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax");
+			builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax: grammar content");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave grammar content and foreign elements","RELAXNG Specification 3.Full Syntax");	
+		builder.buildInterleave("interleave grammar content and foreign elements","RELAXNG Specification 3.Full Syntax: grammar content");	
 	}
 	
 	private void includeContentStar(){				
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(3,"includeContent","RELAXNG Specification 3.Full Syntax");
+				builder.buildRef(3,"includeContent","RELAXNG Specification 3.Full Syntax: include content");
 			}builder.endLevel();
-			builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax");
+			builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax: include content");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave include content and foreign elements","RELAXNG Specification 3.Full Syntax");	
+		builder.buildInterleave("interleave include content and foreign elements","RELAXNG Specification 3.Full Syntax: include content");	
 	}
 
 	private void exceptNameClassSquare() throws DatatypeException{	
@@ -1103,73 +1193,67 @@ class RNGDirector{
 			builder.startLevel();{
 				exceptNameClass();			
 			}builder.endLevel();
-			builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax");
+			builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: optional");
 			foreignStar();
 		}builder.endLevel();
-		builder.buildInterleave("interleave except and foreign elements","RELAXNG Specification 3.Full Syntax");
+		builder.buildInterleave("interleave except and foreign elements","RELAXNG Specification 3.Full Syntax: infinite name class content");
 	}
 	
 	private void nameClassPlus(){				
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(1,"nameClass","RELAXNG Specification 3.Full Syntax");
+				builder.buildRef(1,"nameClass","RELAXNG Specification 3.Full Syntax: name class");
 			}builder.endLevel();
-			builder.buildOneOrMore("oneOrMore","RELAXNG Specification 3.Full Syntax");
+			builder.buildOneOrMore("oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave name classes and foreign elements","RELAXNG Specification 3.Full Syntax");	
+		builder.buildInterleave("interleave name classes and foreign elements","RELAXNG Specification 3.Full Syntax: name class content");	
 	}
 
 	private void foreignStar(){//zeroOrMore elements from any namespace except rng
 		builder.startLevel();{
-			builder.buildRef(4,"foreignElement","RELAXNG Specification 3.Full Syntax");
+			builder.buildRef(4,"foreignElement","RELAXNG Specification 3.Full Syntax: foreign element");
 		}builder.endLevel();
-		builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax");
+		builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign element");
 	}
 	
 	private void anyNameExceptRNG(){
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildNsName(XMLConstants.RELAXNG_NS_URI,"nsName","RELAXNG Specification 3.Full Syntax");
+				builder.buildNsName(XMLConstants.RELAXNG_NS_URI,"nsName","RELAXNG Specification 3.Full Syntax: nsName");
 			}builder.endLevel();
-			builder.buildExceptNameClass("except","RELAXNG Specification 3.Full Syntax");
+			builder.buildExceptNameClass("except","RELAXNG Specification 3.Full Syntax: except");
 		}builder.endLevel();
-		builder.buildAnyName("anyName","RELAXNG Specification 3.Full Syntax");
+		builder.buildAnyName("anyName","RELAXNG Specification 3.Full Syntax: anyName");
 	}
 	
 	private void anyNameExceptNullOrRNG(){
 		builder.startLevel();{
 			builder.startLevel();{
 				builder.startLevel();{
-					builder.buildNsName(XMLConstants.RELAXNG_NS_URI,"nsName","RELAXNG Specification 3.Full Syntax");
-					builder.buildNsName(XMLConstants.NULL_NS_URI,"nsName","RELAXNG Specification 3.Full Syntax");
+					builder.buildNsName(XMLConstants.RELAXNG_NS_URI,"nsName","RELAXNG Specification 3.Full Syntax: nsName");
+					builder.buildNsName(XMLConstants.NULL_NS_URI,"nsName","RELAXNG Specification 3.Full Syntax: nsName");
 				}builder.endLevel();
-				builder.buildChoiceNameClass("choice","RELAXNG Specification 3.Full Syntax");
+				builder.buildChoiceNameClass("choice","RELAXNG Specification 3.Full Syntax: choice");
 			}builder.endLevel();
-			builder.buildExceptNameClass("except","RELAXNG Specification 3.Full Syntax");
+			builder.buildExceptNameClass("except","RELAXNG Specification 3.Full Syntax: except");
 		}builder.endLevel();
-		builder.buildAnyName("anyName","RELAXNG Specification 3.Full Syntax");
+		builder.buildAnyName("anyName","RELAXNG Specification 3.Full Syntax: anyName");
 	}
 	private void anyContent(){		
 		builder.startLevel();{
 			builder.startLevel();{
 				anyAttribute();
-				builder.buildText("text","RELAXNG Specification 3.Full Syntax");
-				builder.buildRef(5,"anyElement","RELAXNG Specification 3.Full Syntax");
+				builder.buildText("text","RELAXNG Specification 3.Full Syntax: text");
+				builder.buildRef(5,"anyElement","RELAXNG Specification 3.Full Syntax: any element");
 			}builder.endLevel();
-			builder.buildChoicePattern("choice","RELAXNG Specification 3.Full Syntax");
+			builder.buildChoicePattern("choice","RELAXNG Specification 3.Full Syntax: any content");
 		}builder.endLevel();
-		builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax");
+		builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax: any content");
 	}
 	
 	private void anyAttribute(){
-		builder.startLevel();{
-			builder.buildAnyName("anyName","RELAXNG Specification 3.Full Syntax");
-			builder.buildText("text","RELAXNG Specification 3.Full Syntax");
-		}builder.endLevel();
-		builder.buildAttribute(null, "attribute","RELAXNG Specification 3.Full Syntax");
-        any = (SAttribute)builder.getCurrentPattern();
-		attributeTaskPool.put(any, null);	
+		builder.buildRef(14,"any attribute","RELAXNG Specification 3.Full Syntax: any attribute");	
 	}	
 	//**************************************************************************
 	//END COMMON METHODS ******************************************************
