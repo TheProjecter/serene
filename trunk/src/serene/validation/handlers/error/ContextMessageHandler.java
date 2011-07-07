@@ -2356,10 +2356,10 @@ public class ContextMessageHandler implements ErrorCatcher{
 		if(misplacedContext != null){
 			for(int i = 0; i <= misplacedIndex; i++){
 				message += "\n"+prefix+"Order error."
-				+"\n"+prefix+"Misplaced elements in the document structure starting at "+misplacedStartSystemId[i]+":"+misplacedStartLineNumber[i]+":"+misplacedStartColumnNumber[i]+", corresponding to definition <"+misplacedContext[i].getQName()+"> at "+misplacedContext[i].getLocation()+ ":";
+				+"\n"+prefix+"Misplaced content in the document structure starting at "+misplacedStartSystemId[i]+":"+misplacedStartLineNumber[i]+":"+misplacedStartColumnNumber[i]+", corresponding to definition <"+misplacedContext[i].getQName()+"> at "+misplacedContext[i].getLocation()+ ":";
 				for(int j = 0; j < misplacedDefinition[i].length; j++){
 					for(int k = 0; k < misplacedQName[i][j].length; k++){
-						message += "\n"+prefix+misplacedQName[i][j][k]+" at "+misplacedSystemId[i][j][k]+":"+misplacedLineNumber[i][j][k]+":"+misplacedColumnNumber[i][j][k];
+						message += "\n"+prefix+"<"+misplacedQName[i][j][k]+"> at "+misplacedSystemId[i][j][k]+":"+misplacedLineNumber[i][j][k]+":"+misplacedColumnNumber[i][j][k];
 					}
 					message += ", corresponding to definition <"+misplacedDefinition[i][j].getQName()+"> at "+misplacedDefinition[i][j].getLocation();
 				}
@@ -2536,7 +2536,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		if(datatypeCharsSystemIdLP != null){
 			for(int i = 0; i <= datatypeIndexLP; i++){
 				message += "\n"+prefix+"Illegal datatype."
-				+"\n"+prefix+ "List token "+datatypeTokenLP[i]+" at "+datatypeCharsSystemIdLP[i]+":"+datatypeCharsLineNumberLP[i]+":"+datatypeCharsColumnNumberLP[i]
+				+"\n"+prefix+ "List token \""+datatypeTokenLP[i]+"\" at "+datatypeCharsSystemIdLP[i]+":"+datatypeCharsLineNumberLP[i]+":"+datatypeCharsColumnNumberLP[i]
 				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionLP[i].getQName()+"> at "+datatypeCharsDefinitionLP[i].getLocation()+". "
 				+ datatypeErrorMessageLP[i];
 			}
@@ -2545,23 +2545,23 @@ public class ContextMessageHandler implements ErrorCatcher{
 		if(valueCharsSystemIdLP != null){
 			for(int i = 0; i <= valueIndexLP; i++){
 				message += "\n"+prefix+"Illegal value."
-				+"\n"+prefix+ "List token "+valueTokenLP[i]+" at "+valueCharsSystemIdLP[i]+":"+valueCharsLineNumberLP[i]+":"+valueCharsColumnNumberLP[i]
-				+ " does not match the value required by schema definition <" +valueCharsDefinitionLP[i].getQName()+"> at "+valueCharsDefinitionLP[i].getLocation()+".";
+				+"\n"+prefix+ "List token \""+valueTokenLP[i]+"\" at "+valueCharsSystemIdLP[i]+":"+valueCharsLineNumberLP[i]+":"+valueCharsColumnNumberLP[i]
+				+ " does not match the value required by schema definition <"+valueCharsDefinitionLP[i].getQName()+"> at "+valueCharsDefinitionLP[i].getLocation()+".";
 			}
 		}
 		// {27}
 		if(exceptCharsSystemIdLP != null){
 			for(int i = 0; i <= exceptIndexLP; i++){
 				message += "\n"+prefix+"Excepted token."
-				+"\n"+prefix+ "List token "+exceptTokenLP[i]+" at "+exceptCharsSystemIdLP[i]+":"+exceptCharsLineNumberLP[i]+":"+exceptCharsColumnNumberLP[i]
-				+ " matches a value excepted by schema definition <" +exceptCharsDefinitionLP[i].getQName()+"> at "+exceptCharsDefinitionLP[i].getLocation()+".";
+				+"\n"+prefix+ "List token \""+exceptTokenLP[i]+"\" at "+exceptCharsSystemIdLP[i]+":"+exceptCharsLineNumberLP[i]+":"+exceptCharsColumnNumberLP[i]
+				+ " matches a value excepted by schema definition <"+exceptCharsDefinitionLP[i].getQName()+"> at "+exceptCharsDefinitionLP[i].getLocation()+".";
 			}
 		}
 		// {28}
 		if(ambiguousCharsSystemIdEELP != null){
 			for(int i = 0; i <= ambiguousIndexLP; i++){
 				message += "\n"+prefix+"Illegal ambiguous."
-				+"\n"+prefix+ "List token "+ambiguousTokenLP[i]+" at "+ambiguousCharsSystemIdEELP[i]+":"+ambiguousCharsLineNumberEELP[i]+":"+ambiguousCharsColumnNumberEELP[i]
+				+"\n"+prefix+ "List token \""+ambiguousTokenLP[i]+"\" at "+ambiguousCharsSystemIdEELP[i]+":"+ambiguousCharsLineNumberEELP[i]+":"+ambiguousCharsColumnNumberEELP[i]
 				+ " cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors."
 				+ " Possible definitions: ";
 				for(int j = 0; j < ambiguousPossibleDefinitionsLP[i].length; j++){
@@ -2598,14 +2598,14 @@ public class ContextMessageHandler implements ErrorCatcher{
 	   
 	String getExpectedCardinality(int expectedMin, int expectedMax){
 		if(expectedMax == 1){
-			if(expectedMin == 0) return "optional occurrence";
-			else return "one occurrence";
+			if(expectedMin == 0) return "at most 1 occurrence";
+			else return "1 occurrence";
 		}
 		
 		if(expectedMin == 0){
-			return "zero or more occurrences";
+			return "0 or more occurrences";
 		}else{
-			return "one or more occurrences";
+			return "1 or more occurrences";
 		}
 	}
 }

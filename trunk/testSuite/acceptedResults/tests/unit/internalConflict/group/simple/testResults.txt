@@ -33,7 +33,7 @@ TESTED DOCUMENT document4.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document4.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:23:26 contains errors: 
 Excessive content.
-In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document4.xml:22:7, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:24:11,  expected one occurrence corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14, found 2: 
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document4.xml:22:7, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:24:11,  expected 1 occurrence corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14, found 2: 
 <bar> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document4.xml:23:8
 <bar> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document4.xml:24:8.
 Ambiguous content.
@@ -62,7 +62,7 @@ TESTED DOCUMENT document7.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document7.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:23:26 contains errors: 
 Missing content.
-In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document7.xml:22:8, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:24:11, expected one occurrence corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:25:26, found 0.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document7.xml:22:8, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:24:11, expected 1 occurrence corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:25:26, found 0.
 Ambiguous content.
 Element <foo> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document7.xml:23:8 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
 <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/schema.rng:28:14
