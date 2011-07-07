@@ -138,6 +138,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
         emptyComponent = null;
 		notAllowedChild = false;
         patternChild = false;
+        notAllowedElement = false;
 		
 		anyNameContext = false;
 		anyNameExceptContext = false;

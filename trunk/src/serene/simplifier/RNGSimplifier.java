@@ -141,11 +141,15 @@ public class RNGSimplifier extends Simplifier{
 		
 		simplify();
 		SPattern[] sTopPattern = builder.getAllCurrentPatterns();
-		if(sTopPattern == null && (emptyChild || notAllowedChild)){
-			// for the 7.1.5 restrictions on start
-			// TODO make sure it is correct to treat notAllowed like this
-			builder.buildEmpty(topPattern.getQName(), topPattern.getLocation());
-			sTopPattern = builder.getAllCurrentPatterns();			
+		if(sTopPattern == null){
+            if(emptyChild){
+                builder.buildEmpty(topPattern.getQName(), topPattern.getLocation());
+                sTopPattern = builder.getAllCurrentPatterns();
+            }else if(notAllowedElement || notAllowedChild){
+                builder.buildNotAllowed(topPattern.getQName(), topPattern.getLocation());
+                sTopPattern = builder.getAllCurrentPatterns();
+            }
+            
 		}
 		SimplifiedModel simplifiedModel = new SimplifiedModel(sTopPattern, 
 											definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]),
@@ -159,6 +163,7 @@ public class RNGSimplifier extends Simplifier{
         emptyComponent = null;
 		notAllowedChild = false;
         patternChild = false;
+        notAllowedElement = false;
 		
 		anyNameContext = false;
 		anyNameExceptContext = false;

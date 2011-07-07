@@ -182,7 +182,10 @@ class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
 		builder.buildText(text.getQName(), text.getLocation());
 	}
 	public void visit(SNotAllowed notAllowed){
-		builder.buildNotAllowed(notAllowed.getQName(), notAllowed.getLocation());
+        // TODO review, 
+        // NOTE if it changes, endValidation must change too
+        builder.buildEmpty(notAllowed.getQName(), notAllowed.getLocation());
+		//builder.buildNotAllowed(notAllowed.getQName(), notAllowed.getLocation());
 	}
 	public void visit(SRef ref){
 		builder.buildRef(ref.getDefinitionIndex(), grammarModel, ref.getQName(), ref.getLocation());
