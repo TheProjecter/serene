@@ -33,10 +33,11 @@ class NCNameDT implements Datatype{
 		nameHandler = new XMLNameHandler();
 		nameHandler.version("1.0");
 	}
-	public boolean isValid(String str, ValidationContext vc) {		
+	public boolean isValid(String str, ValidationContext vc) {	
+	    String strtr = str.trim();
 		try{
 			// TODO xml version from ValidationContext
-			nameHandler.handleNCName(str);
+			nameHandler.handleNCName(strtr);
 			return true;			
 		}catch(NameInvalidException nie){
 			return false; 
@@ -45,10 +46,11 @@ class NCNameDT implements Datatype{
 		}
 	}
 
-	public void checkValid(String str, ValidationContext vc) throws DatatypeException {		
+	public void checkValid(String str, ValidationContext vc) throws DatatypeException {
+	    String strtr = str.trim();		
 		try{
 			// TODO xml version from ValidationContext
-			nameHandler.handleNCName(str);						
+			nameHandler.handleNCName(strtr);						
 		}catch(NameInvalidException nie){
 			throw new DatatypeException(nie.getMessage()); 
 		}catch(NameReservedException nre){
@@ -57,7 +59,8 @@ class NCNameDT implements Datatype{
 	}
 
 	public Object createValue(String str, ValidationContext vc) {
-		return str;
+	    String strtr = str.trim();
+		return strtr;
 	}
 
 	public boolean isContextDependent() {

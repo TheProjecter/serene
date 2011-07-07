@@ -159,14 +159,16 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 			String c = d.getCombine();
 			
 			if(c == null) nullCombine.add(i);
-			else if(!(c.equals("choice") || c.equals("interleave"))){/*syntax errors, just disregard*/}
-			else{
-				if(combine == null)combine = c;
-				else if(!combine.equals(c)){
-					if(otherCombine == null) otherCombine = new IntList();
-					otherCombine.add(i);
-				}
-			}			
+            else{ 
+                c = c.trim();            
+                if(c.equals("choice") || c.equals("interleave")){
+                    if(combine == null)combine = c;
+                    else if(!combine.equals(c)){
+                        if(otherCombine == null) otherCombine = new IntList();
+                        otherCombine.add(i);
+                    }
+                }
+            }			
 			d.accept(this);
 		}
 		if(nullCombine.size() > 1){
