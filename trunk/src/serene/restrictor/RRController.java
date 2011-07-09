@@ -428,10 +428,11 @@ public class RRController extends RController{
 	
 	public void visit(SRef ref)throws SAXException{		
 		int index = ref.getDefinitionIndex();
+        if(index < 0)return;
 		if(handledDefinitions.contains(index)){
             contentType = definitionsContentTypes.get(definitionTopPatterns[index]);
             return;
-        }
+        }                
 		if(recursionModel.isRecursiveDefinition(index)){			
 			if(recursionModel.isRecursiveReference(ref)){
 				if(isBlindBranch(index)){					

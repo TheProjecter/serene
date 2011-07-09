@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.Collection;
 
 import javax.xml.XMLConstants;
 
@@ -123,7 +124,11 @@ abstract class Simplifier implements SimplifyingVisitor{
 	
 	NamespaceInheritanceHandler namespaceInheritanceHandler;
 	
-	
+	/*
+    Index processed structures (top patterns of external refs and definitions 
+    lists) to keep track of what was already processed. Used to determine 
+    recursions and unprocessed definitions.
+    */
 	ObjectIntHashMap indexes;
 	IntStack referencePath;
 	BooleanList definitionEmptyChild;
@@ -436,6 +441,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(notAllowed){				
             builder.endLevel();
             builder.clearContent();
+            //notAllowedChild = true;
             emptyChild = false;
             namespaceInheritanceHandler.endXmlnsContext(simplificationContext, define);
             notAllowedChild = notAllowed;
@@ -505,6 +511,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(notAllowed){				
             builder.endLevel();
             builder.clearContent();
+            //notAllowedChild = true;
             emptyChild = false;
             namespaceInheritanceHandler.endXmlnsContext(simplificationContext, start);            
             notAllowedChild = notAllowed;
@@ -525,7 +532,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}       
         		
 		builder.endLevel();
-                
+		
         SPattern[] sChildren = builder.getContentPatterns();
         if(sChildren != null){
             for(SPattern sChild : sChildren){
@@ -720,6 +727,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(notAllowed){		
             builder.endLevel();
             builder.clearContent();
+            //notAllowedChild = true;
             emptyChild = false;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             notAllowedChild = notAllowed;
@@ -1427,6 +1435,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 	public void visit(ExternalRef externalRef)  throws SAXException{
 		Pattern docTopPattern = getReferencedPattern(externalRef);		
 		if(docTopPattern == null){
+            builder.buildRef(-1, externalRef.getQName(), externalRef.getLocation());
             patternChild = true;
 			return;
 		}
@@ -1500,8 +1509,10 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(definitions == null){
 			// error 4.18
 			String message = "Simplification 4.18 error. "
-				+"No correspoding define was found for element <"+ref.getQName()+"> at "+ref.getLocation()+".";
+				+"No correspoding definition was found for element <"+ref.getQName()+"> at "+ref.getLocation()+".";
+			
 			errorDispatcher.error(new SAXParseException(message, null));
+            builder.buildRef(-1, ref.getQName(), ref.getLocation());
             patternChild = true;
 			return;
 		}
@@ -1579,6 +1590,8 @@ abstract class Simplifier implements SimplifyingVisitor{
 		notAllowedChild = ds.getNotAllowedChild();
 		definitionNotAllowedChild.set(index, notAllowedChild);
         
+        ds.recycle();
+        
 		referencePath.pop();
 		
 		if(emptyChild || notAllowedChild){
@@ -1599,8 +1612,9 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(definitions == null){
 			// error 4.18
 			String message = "Simplification 4.18 error. "
-				+"No correspoding define was found for element <"+parentRef.getQName()+"> at "+parentRef.getLocation()+".";
+				+"No correspoding definition was found for element <"+parentRef.getQName()+"> at "+parentRef.getLocation()+".";
 			errorDispatcher.error(new SAXParseException(message, null));
+            builder.buildRef(-1, parentRef.getQName(), parentRef.getLocation());
             patternChild = true;
 			return;
 		}
@@ -1645,7 +1659,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		
 		referencePath.push(index);
 		indexes.put(definitions, index);
-		
+        
 		DefinitionSimplifier ds = pool.getDefinitionSimplifier();
 		ds.init(grammarDefinitions,	
 			externalRefs,
@@ -1675,7 +1689,9 @@ abstract class Simplifier implements SimplifyingVisitor{
 		
 		notAllowedChild = ds.getNotAllowedChild();
 		definitionNotAllowedChild.set(index, notAllowedChild);
-		        
+		       
+        ds.recycle();       
+        
 		referencePath.pop();
 		
 		if(emptyChild || notAllowedChild){
@@ -1747,14 +1763,14 @@ abstract class Simplifier implements SimplifyingVisitor{
         
         boolean oldAttributeContext = attributeContext;
         attributeContext = false;
-        
-		builder.startLevel();
+        		
 		if(children != null){
+            builder.startLevel();
             paramStack.push(currentParams);
             currentParams = new ArrayList<Param>();
             next(children);
-        }
-		builder.endLevel();
+            builder.endLevel();
+        }		
 		attributeContext = oldAttributeContext;
 		
 		String type = data.getType();
@@ -1905,8 +1921,12 @@ abstract class Simplifier implements SimplifyingVisitor{
 			// error 4.18
 			String message = "Simplification 4.18 error. "
 				+"No start element was found in the subtree of element <"+grammar.getQName()+"> at "+grammar.getLocation()+".";
-			errorDispatcher.error(new SAXParseException(message, null));
-            patternChild = true;
+			errorDispatcher.error(new SAXParseException(message, null));            
+            simplifyUnreferencedDefines(grammar, start);
+            if(grammar.getParent() != null){
+                builder.buildGrammar(grammar.getQName(), grammar.getLocation());
+                patternChild = true;
+            }            
 			return;
 		}
 		
@@ -1944,6 +1964,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
+            ds.recycle();
             return;
         }
 		
@@ -1952,28 +1973,85 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
+            ds.recycle();
             return;
         }
 		
-		SPattern[] topPattern = ds.getAllCurrentPatterns();		
+		SPattern[] topPattern = ds.getAllCurrentPatterns();
+        
+        ds.recycle();
+		
+        simplifyUnreferencedDefines(grammar, start);
+        
 		if(grammar.getParent() != null){
 			builder.startLevel();
 			builder.addAllToCurrentLevel(topPattern);
 			builder.endLevel();
 			builder.buildGrammar(grammar.getQName(), grammar.getLocation());
+            
+            currentGrammar = previousGrammars.pop();
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
 			return;
 		}
+        
 		builder.addAllToCurrentLevel(topPattern);
-		
+       
 		currentGrammar = previousGrammars.pop();
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
         attributeContext = oldAttributeContext;
 	}
 	
+    private void simplifyUnreferencedDefines(Grammar grammar, ArrayList<Definition> start) throws SAXException{
+        Map<String, ArrayList<Definition>> currentDefinitions = grammarDefinitions.get(grammar);
+        if(currentDefinitions != null){
+            UnreachableDefinitionSimplifier uds = pool.getUnreachableDefinitionSimplifier();
+            uds.init(grammarDefinitions,	
+                    externalRefs,
+                    docParsedModels,
+                    definitionTopPatterns,
+                    namespaceInheritanceHandler,	
+                    componentAsciiDL,
+                    asciiDlDatatypeLibrary,
+                    indexes,
+                    referencePath,
+                    definitionEmptyChild,
+                    definitionNotAllowedChild,
+                    recursionModel,			
+                    grammar,
+                    previousGrammars,
+                    simplificationContext);
+            uds.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
+            uds.setLevel1AttributeIdType(level1AttributeIdType);
+            	
+                
+            Collection<ArrayList<Definition>> definitions = currentDefinitions.values();
+            int NULL = indexes.getNullValue();
+            for(ArrayList<Definition> definition : definitions){
+                if(definition != start){
+                    int index = indexes.get(definition);
+                    if(index == NULL){
+                        uds.simplify(definition);
+                        unreachableDefinitionWarning(definition);
+                    }
+                }            
+            }
+            
+            uds.recycle();
+        }
+    }
+    
+    void unreachableDefinitionWarning(ArrayList<Definition> definitions) throws SAXException{
+        String message = "Simplification 4.19 warning. Unreachable definitions:";
+        for(Definition def : definitions){
+            message += "\n<"+def.getQName()+"> at "+def.getLocation();
+        }
+        message += ".\nRemoved before checking for illegal recursions and restrictions control.";
+        errorDispatcher.warning(new SAXParseException(message, null));
+    }
+    
 	public void visit(Dummy dummy) throws SAXException{
 		ParsedComponent[] children = dummy.getChildren();
 		
@@ -2041,9 +2119,10 @@ abstract class Simplifier implements SimplifyingVisitor{
         attributeContext = oldAttributeContext;
 	}
 
-    public void visit(ForeignComponent fc) throws SAXException{}	
+    public void visit(ForeignComponent fc) throws SAXException{
+	}	
 		
-	private void nextLevel(ParsedComponent[] children)  throws SAXException{
+	void nextLevel(ParsedComponent[] children)  throws SAXException{
 		builder.startLevel();
 		for(ParsedComponent child : children){            
 			child.accept(this);
@@ -2051,53 +2130,53 @@ abstract class Simplifier implements SimplifyingVisitor{
 		builder.endLevel();
 	}
 	
-	private void nextLevel(ParsedComponent child)  throws SAXException{
+	void nextLevel(ParsedComponent child)  throws SAXException{
 		builder.startLevel();
 		child.accept(this);
 		builder.endLevel();
 	}
 	
-	private void next(ParsedComponent[] children)  throws SAXException{
+	void next(ParsedComponent[] children)  throws SAXException{
 		for(ParsedComponent child : children){            
 			child.accept(this);
 		}
 	}
 	
-	private void next(ParsedComponent child)  throws SAXException{
+	void next(ParsedComponent child)  throws SAXException{
 		child.accept(this);
 	}
 	
-	private String getPrefix(String qname){
+	String getPrefix(String qname){
 		int i = qname.indexOf(':'); 
 		if(i<0)return null;
 		return qname.substring(0, i);
 	}
 	
-	private String getLocalPart(String qname){
+	String getLocalPart(String qname){
 		int i = qname.indexOf(':'); 
 		if(i<0)return qname;
 		return qname.substring(i+1);
 	}
 	
-	private ArrayList<Definition> getStart(Grammar grammar){
+	ArrayList<Definition> getStart(Grammar grammar){
 		Map<String, ArrayList<Definition>> definitions = grammarDefinitions.get(grammar);
 		if(definitions == null) return null;
 		return definitions.get(null);
 	}
 		
-	private ArrayList<Definition> getReferencedDefinition(Grammar grammar, String name){
+	ArrayList<Definition> getReferencedDefinition(Grammar grammar, String name){
 		Map<String, ArrayList<Definition>> definitions = grammarDefinitions.get(grammar);
 		if(definitions == null) return null;
 		return definitions.get(name);
 	}
 	
-	private Pattern getReferencedPattern(ExternalRef ref){
+	Pattern getReferencedPattern(ExternalRef ref){
 		URI uri = externalRefs.get(ref);
 		if(uri == null)return null;
 		return docParsedModels.get(uri).getTopPattern();
 	}
 
-    private void startXmlnsContext(Map<String, String> prefixMapping){
+    void startXmlnsContext(Map<String, String> prefixMapping){
         Set<String> prefixes = prefixMapping.keySet();
         for(String prefix : prefixes){
             String namespace = prefixMapping.get(prefix);
@@ -2105,14 +2184,14 @@ abstract class Simplifier implements SimplifyingVisitor{
         }
     }
 
-    private void endXmlnsContext(Map<String, String> prefixMapping){
+    void endXmlnsContext(Map<String, String> prefixMapping){
         Set<String> prefixes = prefixMapping.keySet();
         for(String prefix : prefixes){
             simplificationContext.endPrefixMapping(prefix);
         }
     }
 
-    private String getDefaultValue(AttributeInfo[] foreignAttributes){
+    String getDefaultValue(AttributeInfo[] foreignAttributes){
         for(AttributeInfo attributeInfo : foreignAttributes){
             String uri = attributeInfo.getNamespaceURI(); 
             String ln = attributeInfo.getLocalName();

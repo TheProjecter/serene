@@ -1135,10 +1135,11 @@ public class RController implements RestrictingVisitor{
 	//  !!! subclass !!!
 	public void visit(SRef ref)throws SAXException{
 		int index = ref.getDefinitionIndex();
+        if(index < 0)return;
 		if(handledDefinitions.contains(index)){
             contentType = definitionsContentTypes.get(definitionTopPatterns[index]);
             return;
-        }
+        }        
 		definitionTopPatterns[index].accept(this);		
 		handledDefinitions.add(index);
         definitionsContentTypes.put(definitionTopPatterns[index], contentType);
