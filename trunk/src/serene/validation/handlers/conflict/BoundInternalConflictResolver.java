@@ -87,7 +87,15 @@ public class BoundInternalConflictResolver extends InternalConflictResolver{
 	public void recycle(){
 		targetQueue = null;
 		targetEntry = -1;
-		super.recycle();
+        
+        qualified.clear();		
+		state.reset();
+		state = null;
+		systemId = null;
+		lineNumber = -1;
+		columnNumber = -1;
+		qName = null;
+		pool.recycle(this);
 	}
 	
 	class BoundElementConflict extends ElementConflict{

@@ -86,7 +86,8 @@ class AttributeValidationHandler extends ValidatingAEH{
 			return;
 		}				
 		CharactersEventHandler ceh = pool.getAttributeValueValidationHandler(this, errorCatcher);
-		ceh.handleString(value, (CharsActiveType)attribute, false);		
+		ceh.handleString(value, (CharsActiveType)attribute, false);
+        ceh.recycle();		
 	}
 
 	void validateInContext(){
