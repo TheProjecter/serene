@@ -74,7 +74,7 @@ abstract class ValidatingEEH extends ComparableEEH implements ContextErrorHandle
 	
 	void init(ContextErrorHandlerManager parent){		
 		if(parent != null)parent.transmitState(this);
-		else setValidation();//this is for the first root element}
+		else setValidation();//this is for the first root element
 	}
 	 //errorCatcherManager
 	//--------------------------------------------------------------------------
@@ -186,7 +186,7 @@ abstract class ValidatingEEH extends ComparableEEH implements ContextErrorHandle
 	
 	protected void setContextErrorHandler(){
 		if(contextErrorHandlerId == NONE){
-			validationErrorHandler = null;		
+			contextErrorHandler = null;		
 		}else if(contextErrorHandlerId == VALIDATION){
 			if(validationErrorHandler == null)validationErrorHandler = errorHandlerPool.getValidationErrorHandler();
 			contextErrorHandler = validationErrorHandler;		
