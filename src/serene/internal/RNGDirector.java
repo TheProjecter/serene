@@ -195,7 +195,9 @@ class RNGDirector{
 	
 	SimplifiedModel getRNGModel(){
 		SPattern[] start = {rngStartTopPattern};
-		SimplifiedModel s = new SimplifiedModel(start,
+		SimplifiedModel s = new SimplifiedModel("start",
+                                    "RELAXNG Specification 3.Full Syntax: top of a grammar",
+                                    start,
 									refDefinitionTopPattern,
 									null,
 									debugWriter);
@@ -204,7 +206,9 @@ class RNGDirector{
 	
 	SimplifiedModel getIncludeModel(){
 		SPattern[] start = {includeStartTopPattern};
-		return new SimplifiedModel(start,
+		return new SimplifiedModel("start",
+                                    "RELAXNG Specification 3.Full Syntax: top of an included grammar",
+                                    start,
 									refDefinitionTopPattern,									
 									null,
 									debugWriter);
@@ -212,7 +216,9 @@ class RNGDirector{
 	
 	SimplifiedModel getExternalRefModel(){
 		SPattern[] start = {externalRefStartTopPattern};
-		return new SimplifiedModel(start,
+		return new SimplifiedModel("start",
+                                    "RELAXNG Specification 3.Full Syntax: top of a grammar",
+                                    start,
 									refDefinitionTopPattern,
 									null,
 									debugWriter);

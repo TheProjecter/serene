@@ -16,12 +16,16 @@ limitations under the License.
 
 package serene.validation.handlers.content.impl;
 
+import java.util.Arrays;
+
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import sereneWrite.MessageWriter;
 
+import serene.validation.handlers.error.StartValidationErrorHandler;
+
 class BoundStartValidationHandler extends BoundElementValidationHandler{
-								
+	StartValidationErrorHandler startValidationErrorHandler;							
 	BoundStartValidationHandler(MessageWriter debugWriter){
 		super(debugWriter);		
 	}
@@ -37,18 +41,56 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 		element.releaseDefinition();
 		pool.recycle(this);
 	}
+    
+    public void setValidation(){
+		contextErrorHandlerId = VALIDATION;		
+		storeState();
+		contextErrorHandler = startValidationErrorHandler;		
+	}
+    
+    protected void setContextErrorHandler(){
+		if(contextErrorHandlerId == NONE){
+			contextErrorHandler = null;		
+		}else if(contextErrorHandlerId == VALIDATION){
+			if(startValidationErrorHandler == null)startValidationErrorHandler = errorHandlerPool.getStartValidationErrorHandler();
+			contextErrorHandler = startValidationErrorHandler;		
+		}else{
+			throw new IllegalStateException();
+		}
+	}
+    
 	
 	public void handleEndElement(Locator locator) throws SAXException{		
 		validateContext();
 		reportContextErrors(locator);
 	}
 
+    void reportContextErrors(Locator locator) throws SAXException{
+		if(startValidationErrorHandler != null){
+			startValidationErrorHandler.handle(validationItemLocator.getQName(), element, locator);
+		}
+	}
+    
+    protected void recycleErrorHandlers(){
+		if(externalHandlerHistorySize > 0 ){					
+			Arrays.fill(externalHandlerHistory, null);
+			externalHandlerHistoryIndex = -1;
+		}
+		
+		stateHistoryIndex = 0;
+		contextErrorHandlerId = NONE;
+		
+		if(startValidationErrorHandler != null){
+			startValidationErrorHandler.recycle();
+			startValidationErrorHandler = null;
+		}
+	}
 	//--------------------------------------------------------------------------
 	public String toString(){
 		String s = "";
 		if(stackHandler == null)s= " null";
 		else s= stackHandler.toString();
 		return "BoundStartValidationHandler "+element.toString()+" "+s;
-	}
-	
+	}	
 }
+

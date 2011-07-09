@@ -28,23 +28,41 @@ import sereneWrite.SimplifiedComponentWriter;
 
 public class SimplifiedModel{
 	
+    String startQName;
+    String startLocation;
+    
 	SPattern[] startTopPattern;
 	SPattern[] refDefinitionTopPattern;
 
 	RecursionModel recursionModel;
     
 	MessageWriter debugWriter;
+	SimplifiedComponentWriter writer;
 	
-	public SimplifiedModel(SPattern[] startTopPattern,
+	public SimplifiedModel(String startQName,
+                                String startLocation,
+                                SPattern[] startTopPattern,
 								SPattern[] refDefinitionTopPattern,
 								RecursionModel recursionModel,
 								MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
+        this.startQName = startQName;
+        this.startLocation = startLocation;
 		this.startTopPattern = startTopPattern;
 		this.refDefinitionTopPattern = refDefinitionTopPattern;
 		this.recursionModel = recursionModel;
+        
+		writer = new SimplifiedComponentWriter();
 	}
 	
+    public String getStartQName(){
+        return startQName;
+    }
+    
+    public String getStartLocation(){
+        return startLocation;        
+    }
+    
 	public SPattern[] getStartTopPattern(){
 		return startTopPattern;
 	}

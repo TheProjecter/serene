@@ -194,6 +194,9 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		queue.index(activeModel.getSAttributeIndexMap());
 		queuePool.index(activeModel.getSAttributeIndexMap());
 		
+		// TODO see about this, according to SAX spec the functioning of the Locator 
+        // is not guaranteed here. It seems to work though.
+        validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), "", "document root", "document root");
 		elementHandler = eventHandlerPool.getBoundStartValidationHandler(activeModel.getStartElement(), bindingModel, queue, queuePool);
 			
 		xmlBaseBinder.bind(queue, locator.getSystemId());// must happen last, after queue.newRecord() which is in elementHandler's init, might need to be moved  

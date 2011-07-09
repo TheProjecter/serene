@@ -30,6 +30,11 @@ public class ValidatorErrorHandlerPool implements Reusable{
 	int validationErrorHPoolSize;
 	int validationErrorHFree = 0;
 	ValidationErrorHandler[] validationErrorH;
+    
+    // int startValidationErrorHCreated;
+	int startValidationErrorHPoolSize;
+	int startValidationErrorHFree = 0;
+	StartValidationErrorHandler[] startValidationErrorH;
 	
 	// int conflictErrorHCreated;
 	int conflictErrorHPoolSize;
@@ -62,6 +67,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 
 	public void recycle(){
 		if(validationErrorHFree != 0 ||
+            startValidationErrorHFree != 0 ||
 			conflictErrorHFree != 0 ||
 			commonErrorHFree != 0 ||
 			defaultErrorHFree != 0)
@@ -73,6 +79,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		
 		errorHandlerPool.fill(this,
 							validationErrorH,
+							startValidationErrorH,
 							conflictErrorH,
 							commonErrorH,
 							defaultErrorH,
@@ -81,6 +88,8 @@ public class ValidatorErrorHandlerPool implements Reusable{
 	
 	void setHandlers(int validationErrorHFree,
 					ValidationErrorHandler[] validationErrorH,
+                    int startValidationErrorHFree,
+					StartValidationErrorHandler[] startValidationErrorH,
 					int conflictErrorHFree,
 					ExternalConflictErrorHandler[] conflictErrorH,
 					int commonErrorHFree,
@@ -94,6 +103,13 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		this.validationErrorH = validationErrorH;
 		for(int i = 0; i < validationErrorHFree; i++){	
 			validationErrorH[i].init(this, errorDispatcher);
+		}
+        
+        startValidationErrorHPoolSize = startValidationErrorH.length;
+		this.startValidationErrorHFree = startValidationErrorHFree;
+		this.startValidationErrorH = startValidationErrorH;
+		for(int i = 0; i < startValidationErrorHFree; i++){	
+			startValidationErrorH[i].init(this, errorDispatcher);
 		}
 		
 		conflictErrorHPoolSize = conflictErrorH.length;
@@ -141,6 +157,8 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		// System.out.println("default created " + defaultErrorHCreated);
 		errorHandlerPool.recycle(validationErrorHFree,
 								validationErrorH,
+                                startValidationErrorHFree,
+								startValidationErrorH,
 								conflictErrorHFree,
 								conflictErrorH,
 								commonErrorHFree,
@@ -150,6 +168,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 								attributeConflictErrorHFree,
 								attributeConflictErrorH);
 		validationErrorHFree = 0;
+        startValidationErrorHFree = 0;
 		conflictErrorHFree = 0;
 		commonErrorHFree = 0;
 		defaultErrorHFree = 0;
@@ -179,6 +198,30 @@ public class ValidatorErrorHandlerPool implements Reusable{
 			validationErrorH = increased;
 		}
 		validationErrorH[validationErrorHFree++] = veh;
+	}
+    
+    public StartValidationErrorHandler getStartValidationErrorHandler(){				
+		if(startValidationErrorHFree == 0){
+			// startValidationErrorHCreated++;
+			StartValidationErrorHandler veh = new StartValidationErrorHandler(debugWriter);			 
+			veh.init(this, errorDispatcher);
+			veh.init();
+			return veh;			
+		}else{
+			StartValidationErrorHandler veh = startValidationErrorH[--startValidationErrorHFree];
+			veh.init();
+			return veh;
+		}		
+	}
+	
+	
+	public void recycle(StartValidationErrorHandler veh){
+		if(startValidationErrorHFree == startValidationErrorHPoolSize){
+			StartValidationErrorHandler[] increased = new StartValidationErrorHandler[++startValidationErrorHPoolSize];
+			System.arraycopy(startValidationErrorH, 0, increased, 0, startValidationErrorHFree);
+			startValidationErrorH = increased;
+		}
+		startValidationErrorH[startValidationErrorHFree++] = veh;
 	}
 	
 	public ExternalConflictErrorHandler getExternalConflictErrorHandler(ExternalConflictHandler conflictHandler, int candidateIndex){

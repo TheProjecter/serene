@@ -140,18 +140,27 @@ public class RNGSimplifier extends Simplifier{
 		recursionModel = new RecursionModel(debugWriter);
 		
 		simplify();
-		SPattern[] sTopPattern = builder.getAllCurrentPatterns();
-		if(sTopPattern == null){
+		SPattern[] simplifiedTopPattern = builder.getAllCurrentPatterns();
+		if(simplifiedTopPattern == null){
             if(emptyChild){
                 builder.buildEmpty(topPattern.getQName(), topPattern.getLocation());
-                sTopPattern = builder.getAllCurrentPatterns();
+                simplifiedTopPattern = builder.getAllCurrentPatterns();
             }else if(notAllowedElement || notAllowedChild){
                 builder.buildNotAllowed(topPattern.getQName(), topPattern.getLocation());
-                sTopPattern = builder.getAllCurrentPatterns();
+                simplifiedTopPattern = builder.getAllCurrentPatterns();
             }
             
 		}
-		SimplifiedModel simplifiedModel = new SimplifiedModel(sTopPattern, 
+		if(startQName == null 
+            && simplifiedTopPattern != null 
+            && simplifiedTopPattern.length != 0){
+            startQName = "root of the schema";
+            startLocation = simplifiedTopPattern[0].getLocation();//there can be only one//or none
+        }
+        
+		SimplifiedModel simplifiedModel = new SimplifiedModel(startQName,
+                                            startLocation,
+                                            simplifiedTopPattern, 
 											definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]),
 											recursionModel,
 											debugWriter);
@@ -173,7 +182,10 @@ public class RNGSimplifier extends Simplifier{
 		
 		currentGrammar = null;
 		if(previousGrammars != null)previousGrammars.clear();		
-		
+		    
+        startQName = null;
+        startLocation = null;
+    
 		definitionTopPatterns.clear();
 		builder.startBuild();
 		topPattern.accept(this);	
