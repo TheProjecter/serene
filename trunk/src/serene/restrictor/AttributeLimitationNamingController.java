@@ -60,8 +60,8 @@ class AttributeLimitationNamingController extends LimitationNamingController{
 		// error 7.3
 		String message = "Unsupported schema configuration. "
 		+"For the moment, Serene does not support overlapping name classes in attributes in the context of a <group> that has multiple cardinality and is in the context of an <interleave>:"	
-		+"\n\t<"+a1.getQName()+"> at "+a1.getLocation()
-		+"\n\t<"+a2.getQName()+"> at "+a2.getLocation()+".";
+		+"\n<"+a1.getQName()+"> at "+a1.getLocation()
+		+"\n<"+a2.getQName()+"> at "+a2.getLocation()+".";
 		errorDispatcher.error(new SAXParseException(message, null));
 	}
 	

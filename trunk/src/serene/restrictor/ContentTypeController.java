@@ -80,7 +80,7 @@ class ContentTypeController extends ContentType implements Reusable{
 				+"In the context of <"+context.getQName()+"> at "+context.getLocation()
 				+" several children result in simple content types: ";
 				for(int i = 0; i < simpleContent.size(); i++){
-					message += "\n\t<"+children[simpleContent.get(i)].getQName()+"> at "+children[simpleContent.get(i)].getLocation();
+					message += "\n<"+children[simpleContent.get(i)].getQName()+"> at "+children[simpleContent.get(i)].getLocation();
 				}
 				message +=".";
 				//System.out.println(message);
@@ -92,13 +92,13 @@ class ContentTypeController extends ContentType implements Reusable{
 				String message = "Restrictions 7.2 error. "
 				+"In the context of <"+context.getQName()+"> at "+context.getLocation()
 				+" both simple and complex content types were found: "
-				+"\n\tsimple content ";
+				+"\nsimple content ";
 				for(int i = 0; i < simpleContent.size(); i++){
-					message += "\n\t<"+children[simpleContent.get(i)].getQName()+"> at "+children[simpleContent.get(i)].getLocation();
+					message += "\n<"+children[simpleContent.get(i)].getQName()+"> at "+children[simpleContent.get(i)].getLocation();
 				}
-				message+="\n\tcomplex content ";
+				message+="\ncomplex content ";
 				for(int i = 0; i < complexContent.size(); i++){
-					message += "\n\t<"+children[complexContent.get(i)].getQName()+"> at "+children[complexContent.get(i)].getLocation();
+					message += "\n<"+children[complexContent.get(i)].getQName()+"> at "+children[complexContent.get(i)].getLocation();
 				}
 				message +=".";
 				//System.out.println(message);
@@ -117,7 +117,7 @@ class ContentTypeController extends ContentType implements Reusable{
 			// error 7.2 simple and complex content types in the same context
 			String message = "Restrictions 7.2 error. "
 			+"Simple content type in the context of <"+context.getQName()+"> at "+context.getLocation()+":"
-			+ "\n\t<"+child.getQName()+"> at "+child.getLocation()			
+			+ "\n<"+child.getQName()+"> at "+child.getLocation()			
 			+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));

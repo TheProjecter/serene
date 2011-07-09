@@ -186,7 +186,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 			}
 			for(int i = 0; i < nullCombine.size(); i++){
 				d = definitions.get(nullCombine.get(i));
-				message += "\n\t<"+d.getQName()+"> at "+d.getLocation();
+				message += "\n<"+d.getQName()+"> at "+d.getLocation();
 			}
 			message += ".";
 			errorDispatcher.error(new SAXParseException(message, null));
@@ -201,14 +201,14 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 				message += " start elements with different combine attribute: ";
 			}			
 			String oCombine = combine.equals("choice") ? "interleave" : "choice";
-			String oDefinitions = "\n\t\""+oCombine+"\"";
-			message += "\n\t\""+combine+"\"";
+			String oDefinitions = "\n\""+oCombine+"\"";
+			message += "\n\""+combine+"\"";
 			for(int i = 0; i < definitions.size(); i++){
 				d = definitions.get(i);
 				if(otherCombine.contains(i)){
-					oDefinitions += "\n\t<"+d.getQName()+"> at "+d.getLocation();
+					oDefinitions += "\n<"+d.getQName()+"> at "+d.getLocation();
 				}else{
-					message += "\n\t<"+d.getQName()+"> at "+d.getLocation();
+					message += "\n<"+d.getQName()+"> at "+d.getLocation();
 				}
 			}
 			message += oDefinitions+".";

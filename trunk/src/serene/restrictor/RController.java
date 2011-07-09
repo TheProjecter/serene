@@ -256,16 +256,16 @@ public class RController implements RestrictingVisitor{
 		if(attributeContext){
 			// error 7.1.1	
 			String message = "Restrictions 7.1.1 error. Forbiden path:"
-			+"\n\t<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation()
-			+"\n\t<"+element.getQName()+"> at "+element.getLocation()+".";
+			+"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation()
+			+"\n<"+element.getQName()+"> at "+element.getLocation()+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));			
 		}
 		if(listContext){
 			// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n\t<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n\t<"+element.getQName()+"> at "+element.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
+			+"\n<"+element.getQName()+"> at "+element.getLocation()+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -274,9 +274,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+element.getQName()+"> at "+element.getLocation();
+			message += "\n<"+element.getQName()+"> at "+element.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -367,8 +367,8 @@ public class RController implements RestrictingVisitor{
 		if(attributeContext){
 			// error 7.1.1	
 			String message = "Restrictions 7.1.1 error. Forbiden path:"
-			+"\n\t<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation()
-			+"\n\t<"+attribute.getQName()+"> at "+attribute.getLocation()+".";
+			+"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation()
+			+"\n<"+attribute.getQName()+"> at "+attribute.getLocation()+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}		
@@ -377,16 +377,16 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SPattern> path = morePath.peek();
 			String message = "Restrictions 7.1.2 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+attribute.getQName()+"> at "+attribute.getLocation();
+			message += "\n<"+attribute.getQName()+"> at "+attribute.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(listContext){// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n\t<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n\t<"+attribute.getQName()+"> at "+attribute.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
+			+"\n<"+attribute.getQName()+"> at "+attribute.getLocation()+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -395,9 +395,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+attribute.getQName()+"> at "+attribute.getLocation();
+			message += "\n<"+attribute.getQName()+"> at "+attribute.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -525,8 +525,8 @@ public class RController implements RestrictingVisitor{
 		if(listContext){
 			// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n\t<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n\t<"+interleave.getQName()+"> at "+interleave.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
+			+"\n<"+interleave.getQName()+"> at "+interleave.getLocation()+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -535,9 +535,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+interleave.getQName()+"> at "+interleave.getLocation();
+			message += "\n<"+interleave.getQName()+"> at "+interleave.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -569,11 +569,11 @@ public class RController implements RestrictingVisitor{
 				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
 				ArrayList<SPattern> path = morePath.doublePeek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n\t"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
+					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
 				}
 				path = morePath.peek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n\t"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
+					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
 				}			
 				message += ".";		
 				//System.out.println(message);
@@ -636,7 +636,7 @@ public class RController implements RestrictingVisitor{
 			int last = texts.size()-1;
 			for(int i = textsOffset; i < texts.size(); i++){
 				SPattern text = texts.get(i);
-				message += "\n\t<"+text.getQName()+"> at "+text.getLocation();
+				message += "\n<"+text.getQName()+"> at "+text.getLocation();
 			}
 			message += ".";			
 			//System.out.println(message);
@@ -650,9 +650,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+group.getQName()+"> at "+group.getLocation();
+			message += "\n<"+group.getQName()+"> at "+group.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -684,11 +684,11 @@ public class RController implements RestrictingVisitor{
 				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
 				ArrayList<SPattern> path = morePath.doublePeek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n\t"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
+					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
 				}
 				path = morePath.peek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n\t"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
+					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
 				}			
 				message += ".";		
 				//System.out.println(message);
@@ -745,9 +745,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation();
+			message += "\n<"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -800,9 +800,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+oneOrMore.getQName()+"> at "+oneOrMore.getLocation();
+			message += "\n<"+oneOrMore.getQName()+"> at "+oneOrMore.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -855,9 +855,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+optional.getQName()+"> at "+optional.getLocation();
+			message += "\n<"+optional.getQName()+"> at "+optional.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -888,8 +888,8 @@ public class RController implements RestrictingVisitor{
 		if(listContext){
 			// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n\t<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n\t<"+mixed.getQName()+"> at "+mixed.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
+			+"\n<"+mixed.getQName()+"> at "+mixed.getLocation()+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -898,9 +898,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+mixed.getQName()+"> at "+mixed.getLocation();
+			message += "\n<"+mixed.getQName()+"> at "+mixed.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -930,11 +930,11 @@ public class RController implements RestrictingVisitor{
 				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
 				ArrayList<SPattern> path = morePath.doublePeek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n\t"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
+					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
 				}
 				path = morePath.peek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n\t"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
+					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
 				}			
 				message += ".";		
 				//System.out.println(message);
@@ -1000,9 +1000,9 @@ public class RController implements RestrictingVisitor{
 			int last = texts.size()-1;
 			for(int i = textsOffset; i < texts.size(); i++){
 				SPattern text = texts.get(i);
-				message += "\n\t<"+text.getQName()+"> at "+text.getLocation();
+				message += "\n<"+text.getQName()+"> at "+text.getLocation();
 			}			
-			message += "\n\tdefault text pattern of <"+mixed.getQName()+"> at "+mixed.getLocation()+".";
+			message += "\ndefault text pattern of <"+mixed.getQName()+"> at "+mixed.getLocation()+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 			
@@ -1018,8 +1018,8 @@ public class RController implements RestrictingVisitor{
 		if(listContext){
 			// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n\t<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n\t<"+list.getQName()+"> at "+list.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
+			+"\n<"+list.getQName()+"> at "+list.getLocation()+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -1028,9 +1028,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+list.getQName()+"> at "+list.getLocation();
+			message += "\n<"+list.getQName()+"> at "+list.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -1070,9 +1070,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+empty.getQName()+"> at "+empty.getLocation();
+			message += "\n<"+empty.getQName()+"> at "+empty.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -1086,8 +1086,8 @@ public class RController implements RestrictingVisitor{
 		if(attributeContext){
 			// Serene limitation
 			String message = "Unsupported schema configuration. For the moment serene does not support <empty> in the context of <attribute>, path: "				
-				+"\n\t"+attributesPath.peek().getQName()+" at "+attributesPath.peek().getLocation()
-				+"\n\t"+empty.getQName()+" at "+empty.getLocation()+".";		
+				+"\n"+attributesPath.peek().getQName()+" at "+attributesPath.peek().getLocation()
+				+"\n"+empty.getQName()+" at "+empty.getLocation()+".";		
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));			
 		}
@@ -1097,8 +1097,8 @@ public class RController implements RestrictingVisitor{
 		if(listContext){
 			// error 7.1.3
 			String message = "Restrictions 7.1.3. Forbiden path:"
-			+"\n\t<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n\t<"+text.getQName()+"> at "+text.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
+			+"\n<"+text.getQName()+"> at "+text.getLocation()+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -1107,9 +1107,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+text.getQName()+"> at "+text.getLocation();
+			message += "\n<"+text.getQName()+"> at "+text.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
