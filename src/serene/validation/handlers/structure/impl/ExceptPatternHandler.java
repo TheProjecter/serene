@@ -88,9 +88,9 @@ public class ExceptPatternHandler extends StructureValidationHandler{
 	public void deactivate(){
 		throw new IllegalStateException();
 	}
-    public boolean mayDeactivate(){
-        return true;
-    }
+    public boolean handleDeactivation(){
+		return false;	
+	}
 	public StructureHandler getChildHandler(Rule child){
 		if(!child.getParent().equals(rule)) throw new IllegalArgumentException();
 		if(childStructureHandler == null) childStructureHandler = child.getStructureHandler(errorCatcher, this, stackHandler);

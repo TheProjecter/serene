@@ -47,10 +47,15 @@ public interface StructureHandler extends RuleHandler{
 	*/    
 	void deactivate();
     /**
-    * Asks parent for deactivation permission, called from group to determine   
-    * if it is in the context of interleave.
+    * Called from MultipleChildrenPatternHandler when the subtree cannot be 
+    * reduced. It goes up in the hierarchy untill it meets the next 
+    * MultipleChildrenPatternHandler which will then be set as current handler
+    * in the StackHandler. Returns <code>true</code> when the currentHandler was 
+    * set. If it returns <code>false</code> to a ChoiceHandler this will end the 
+    * subtree validation, instances of MultipleChildrenPatternHandler
+    * will throw IllegalStateException.
     */
-    boolean mayDeactivate();
+    boolean handleDeactivation();
 	StructureHandler getChildHandler(Rule child);	
 	Rule getRule();	
 	

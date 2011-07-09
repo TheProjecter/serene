@@ -71,6 +71,12 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 	//Start StructureHandler----------------------------------------------------------
 	//StructureHandler getParentHandler(); super	
 	//StructureValidationHandler getAncestorOrSelfHandler(Rule rule); super
+    public boolean handleDeactivation(){
+        if(!parent.handleDeactivation()){
+            stackHandler.endSubtreeValidation(this);
+        }
+        return true;
+	}
 	public StructureHandler getChildHandler(Rule child){		
 		if(!child.getParent().equals(rule)) throw new IllegalArgumentException();	
 		if(currentChild != null && currentChild != child){

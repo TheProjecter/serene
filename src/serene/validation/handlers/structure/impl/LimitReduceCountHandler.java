@@ -140,10 +140,9 @@ abstract class LimitReduceCountHandler extends MultipleChildrenPatternHandler im
 	public void deactivate(){
 		throw new IllegalStateException();
 	}
-    public boolean mayDeactivate(){
-        // TODO keep an eye on this
-        return true;
-    }
+    public boolean handleDeactivation(){
+		return false;	
+	}
 	//StructureHandler getChildHandler(Rule child); subclasses	
 	public APattern getRule(){
 		return rule;
