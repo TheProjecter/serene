@@ -28,6 +28,7 @@ public class ContextConflictsDescriptor implements InternalConflictDescriptor{
 	
 	HashSet<ActiveTypeItem> conflictActiveTypeItems;
 	HashSet<Rule> conflictPathRules;
+    HashSet<Rule> conflictPathTops;
 	
 	MessageWriter debugWriter;
 	
@@ -35,19 +36,22 @@ public class ContextConflictsDescriptor implements InternalConflictDescriptor{
 		this.debugWriter = debugWriter;
 		conflictActiveTypeItems = new HashSet<ActiveTypeItem>();
 		conflictPathRules = new HashSet<Rule>();
+        conflictPathTops = new HashSet<Rule>();
 	}
 		
 	
 	public void clear(){
 		conflictActiveTypeItems.clear();
 		conflictPathRules.clear();
+        conflictPathTops.clear();
 	}
 	
 	public void record(ActiveTypeItem pattern, Rule[] path){
-		conflictActiveTypeItems.add(pattern);
-		for(int i = 0; i < path.length; i++){
+		conflictActiveTypeItems.add(pattern);        
+		for(int i = 0; i < path.length-1; i++){
 			conflictPathRules.add(path[i]);
 		}
+        conflictPathTops.add(path[path.length-1]);
 	}
 	
 	
@@ -63,9 +67,11 @@ public class ContextConflictsDescriptor implements InternalConflictDescriptor{
 		return conflictPathRules.contains(rule) || conflictActiveTypeItems.contains(rule);	
 	}
 	
+    public boolean isConflictPathTop(Rule rule){
+        return conflictPathTops.contains(rule);
+    }
 	
 	public String toString(){
-		//return "ContextConflictsDescriptor "+hashCode();
 		return "ContextConflictsDescriptor ";
 	}
 }
