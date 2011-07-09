@@ -50,6 +50,7 @@ abstract class AbstractMultipleChildrenPattern extends SPattern{
 	}
 	
 	public int getChildrenCount(){
+        if(children == null) return 0;
 		return children.length;
 	}	
 	

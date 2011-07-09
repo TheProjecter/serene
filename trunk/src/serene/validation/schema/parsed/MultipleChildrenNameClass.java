@@ -57,6 +57,7 @@ abstract class MultipleChildrenNameClass extends NameClass{
 	}
 	
 	public int getChildrenCount(){
+        if(children == null) return 0;
 		return children.length;
 	}	
 	

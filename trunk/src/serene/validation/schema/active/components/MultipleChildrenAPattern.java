@@ -53,6 +53,7 @@ public abstract class MultipleChildrenAPattern extends AbstractAPattern{
 	}
 	
 	public int getChildrenCount(){
+        if(children == null) return 0;
 		return children.length;
 	}	
 	

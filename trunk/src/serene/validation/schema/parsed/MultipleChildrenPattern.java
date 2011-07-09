@@ -57,6 +57,7 @@ abstract class MultipleChildrenPattern extends Pattern{
 	}
 	
 	public int getChildrenCount(){
+        if(children == null) return 0;
 		return children.length;
 	}	
 	
