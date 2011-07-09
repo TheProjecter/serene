@@ -16,7 +16,6 @@ limitations under the License.
 
 package serene.validation.handlers.structure.impl;
 
-import java.util.HashSet;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.APattern;
@@ -59,12 +58,7 @@ abstract class InnerPatternHandler extends StructureValidationHandler{
 		if(this.rule.equals(rule))return this;
 		else return parent.getAncestorOrSelfHandler(rule);
 	}	
-	public void deactivate(){
-		stackHandler.endSubtreeValidation(this);
-	}
-    public boolean mayDeactivate(){
-        return parent.mayDeactivate();
-    }
+	// void deactivate() subclasses
 	//StructureHandler getChildHandler(Rule child); subclasses	
 	public APattern getRule(){
 		return rule;
@@ -167,7 +161,7 @@ abstract class InnerPatternHandler extends StructureValidationHandler{
 	void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler){
 		setCurrentChildParticleHandler(childPattern);
 		currentChildParticleHandler.handleOccurrence(stackConflictsHandler);
-	}
+	}    
 	// void setStart() super	
 	//End ValidationHandler-----------------------------------------------------------
 	

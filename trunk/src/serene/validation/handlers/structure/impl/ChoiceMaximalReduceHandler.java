@@ -65,6 +65,12 @@ public class ChoiceMaximalReduceHandler extends UCMaximalReduceHandler{
 	//Start StructureHandler----------------------------------------------------------
 	//StructureHandler getParentHandler(); super	
 	//StructureValidationHandler getAncestorOrSelfHandler(Rule rule); super
+    public boolean handleDeactivation(){
+        if(!parent.handleDeactivation()){
+            stackHandler.endSubtreeValidation(this);
+        }
+        return true;
+	}
 	public MaximalReduceHandler getChildHandler(Rule child){		
 		if(!child.getParent().equals(rule)) throw new IllegalArgumentException();
 		if(childStructureHandler == null){

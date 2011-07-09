@@ -50,6 +50,8 @@ public class GrammarMinimalReduceHandler extends UCMinimalReduceHandler{
 	//Start StructureHandler----------------------------------------------------------
 	//StructureHandler getParentHandler(); super	
 	//StructureValidationHandler getAncestorOrSelfHandler(Rule rule); super
+    // void deactivate() super
+    // boolean handleDeactivation() super
 	// StructureHandler getChildHandler(Rule child) super
 	// APattern getRule() super
 	// boolean handleChildShift(AElement element, int expectedOrderHandlingCount) super

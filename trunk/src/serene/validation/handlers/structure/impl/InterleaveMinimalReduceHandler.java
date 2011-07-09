@@ -64,10 +64,6 @@ public class InterleaveMinimalReduceHandler extends MCMinimalReduceHandler{
 	//Start StructureHandler----------------------------------------------------------
 	//StructureHandler getParentHandler(); super	
 	// StructureValidationHandler getAncestorOrSelfHandler(Rule rule) super
-    public boolean mayDeactivate(){
-        stackHandler.setAsCurrentHandler(this);      
-        return false;
-    }
 	// StructureHandler getChildHandler(Rule child) super
 	// APattern getRule() super
 	// boolean handleChildShift(AElement element, int expectedOrderHandlingCount) super

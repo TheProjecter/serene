@@ -109,6 +109,16 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 	//Start StructureHandler----------------------------------------------------------
 	//StructureHandler getParentHandler(); super	
 	// StructureValidationHandler getAncestorOrSelfHandler(Rule rule) super	
+    public void deactivate(){
+        if(isReduceAllowed() && isReduceAcceptable()) stackHandler.endSubtreeValidation(this);
+        else{
+            if(!parent.handleDeactivation()) throw new IllegalStateException();
+        }
+	}
+    public boolean handleDeactivation(){
+		stackHandler.setAsCurrentHandler(this);
+        return true;
+	}
 	public StructureHandler getChildHandler(Rule child){		
 		if(!child.getParent().equals(rule)) throw new IllegalArgumentException();
 		int childIndex = child.getChildIndex();

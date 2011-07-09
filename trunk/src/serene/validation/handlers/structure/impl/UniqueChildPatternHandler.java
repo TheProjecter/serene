@@ -56,6 +56,12 @@ abstract class UniqueChildPatternHandler extends InnerPatternHandler{
 	//Start StructureHandler----------------------------------------------------------
 	//StructureHandler getParentHandler(); super	
 	//StructureValidationHandler getAncestorOrSelfHandler(Rule rule); super
+    public void deactivate(){
+		stackHandler.endSubtreeValidation(this);
+	}
+    public boolean handleDeactivation(){
+		return parent.handleDeactivation();
+	}
 	public StructureHandler getChildHandler(Rule child){		
 		if(!child.getParent().equals(rule)) throw new IllegalArgumentException();
 		if(childStructureHandler == null) childStructureHandler = child.getStructureHandler(errorCatcher, this, stackHandler);
