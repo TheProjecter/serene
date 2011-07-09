@@ -43,14 +43,18 @@ public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerP
 		super(children, ruleHandlerPool, qName, location, debugWriter);
 	}
 
-	public boolean isRequired(){
+	public boolean isRequiredContent(){
 		if(minOccurs == 0) return false;		
 		for(int i = 0; i < children.length; i++){
-			if(!children[i].isRequired())return false;
+			if(!children[i].isRequiredContent())return false;
 		}
 		return true;
 	}
 	
+    boolean requiresBranch(){
+        return false;
+    }
+    
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);
 	}

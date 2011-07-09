@@ -81,6 +81,11 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 		this.index = index;
 		this.grammarModel = grammarModel;		
 		this.stackHandlerPool = stackHandlerPool;
+        
+        allowsDataContent = false;
+        allowsValueContent = false;
+        allowsListPatternContent = false;        
+        allowsTextContent = false;
 	}
 	
 	//ActiveNameClassPointer
@@ -99,7 +104,7 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 	public void assembleDefinition(){		
 		setDefinition();
 		setContextCache();
-		assembleRefDefinitions();	
+		assembleRefDefinitions();				
 	}
 	public void releaseDefinition(){
 		if(child != null){
@@ -122,7 +127,7 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 		
 		contextValues = definition.getValues();
 		if(contextValues != null && contextValues.length != 0) allowsValueContent = true;
-		
+        
 		contextListPatterns = definition.getListPatterns();		
 		if(contextListPatterns != null && contextListPatterns.length != 0) allowsListPatternContent = true;
 		
@@ -170,6 +175,12 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 	//DataActiveType
 	//--------------------------------------------------------------------------
 	public boolean allowsChars(){
+        /*System.out.println("ALLOWS CHARS "+toString());
+        System.out.println("ALLOWS CHARS allowsDataContent "+allowsDataContent);
+        System.out.println("ALLOWS CHARS allowsValueContent "+allowsValueContent);
+        System.out.println("ALLOWS CHARS allowsListPatternContent "+allowsListPatternContent);
+        System.out.println("ALLOWS CHARS allowsTextContent "+allowsTextContent);
+        System.out.println("ALLOWS CHARS child "+child);*/
 		return allowsDataContent 
 				|| allowsValueContent 
 				|| allowsListPatternContent
@@ -254,4 +265,8 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 		return texts;
 	}
 	//--------------------------------------------------------------------------
+    
+    boolean requiresBranch(){
+        return true;
+    } 
 }

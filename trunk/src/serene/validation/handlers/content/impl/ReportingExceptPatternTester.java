@@ -82,7 +82,7 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 		if(!dataMatches.isEmpty())validateData(chars, type);
 		if(!valueMatches.isEmpty())validateValue(chars, type);
 		if(!listMatches.isEmpty())validateListPattern(chars, type);
-				
+        
 		if(charsItemMatches.isEmpty()){ //no in the context of matches the except
 			return;
 		}

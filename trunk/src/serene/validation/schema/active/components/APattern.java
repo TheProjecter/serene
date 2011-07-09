@@ -32,5 +32,7 @@ public interface APattern extends Rule{
 	int getMaxOccurs();
 	ParticleHandler getParticleHandler(ChildEventHandler ceh, ErrorCatcher ec);
 	
-	boolean isRequired();	
+	boolean isRequiredContent();
+    boolean isRequiredBranch();
+	
 }	

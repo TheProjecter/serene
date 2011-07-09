@@ -287,7 +287,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		//System.out.println((++count)+" "+locator.getLineNumber()+" "+qName);
 		char[] charContent = charsBuffer.removeCharsArray();
 		if(charContent.length > 0){			
-			elementHandler.handleCharacters(charContent);		
+			elementHandler.handleInnerCharacters(charContent);		
 			validationItemLocator.closeCharsContent();
 		}
 		validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), namespaceURI, localName, qName);
@@ -341,10 +341,8 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 							String localName, 
 							String qName) throws SAXException{
 		char[] charContent = charsBuffer.removeCharsArray();
-		if(charContent.length > 0){			
-			elementHandler.handleCharacters(charContent);		
-			validationItemLocator.closeCharsContent();
-		}
+		elementHandler.handleLastCharacters(charContent);
+        if(charContent.length > 0)validationItemLocator.closeCharsContent();
 		
 		elementHandler.handleEndElement(locator);
 		ElementEventHandler parent = elementHandler.getParentHandler(); 

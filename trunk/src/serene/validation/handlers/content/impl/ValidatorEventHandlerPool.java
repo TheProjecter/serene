@@ -426,14 +426,14 @@ public class ValidatorEventHandlerPool implements Reusable{
 		this.characterContentHFree = characterContentHFree;
 		this.characterContentH = characterContentH;
 		for(int i = 0; i < characterContentHFree; i++){	
-			characterContentH[i].init(this, validationItemLocator, matchHandler);
+			characterContentH[i].init(this, validationItemLocator, matchHandler, spaceHandler);
 		}
 		
 		attributeValueHPoolSize = attributeValueH.length;
 		this.attributeValueHFree = attributeValueHFree;
 		this.attributeValueH = attributeValueH;
 		for(int i = 0; i < attributeValueHFree; i++){	
-			attributeValueH[i].init(this, validationItemLocator, matchHandler);
+			attributeValueH[i].init(this, validationItemLocator, matchHandler, spaceHandler);
 		}
         
         defaultVAttributeHPoolSize = defaultVAttributeH.length;
@@ -454,7 +454,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 		this.exceptPatternTFree = exceptPatternTFree;
 		this.exceptPatternT = exceptPatternT;
 		for(int i = 0; i < exceptPatternTFree; i++){	
-			exceptPatternT[i].init(this, validationItemLocator, matchHandler);
+			exceptPatternT[i].init(this, validationItemLocator, matchHandler, spaceHandler);
 		}
 		
 		
@@ -984,7 +984,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	CharacterContentValidationHandler getCharacterContentValidationHandler(ElementValidationHandler parent, ErrorCatcher errorCatcher){		
 		if(characterContentHFree == 0){
 			CharacterContentValidationHandler ach = new CharacterContentValidationHandler(debugWriter);
-			ach.init(this, validationItemLocator, matchHandler);
+			ach.init(this, validationItemLocator, matchHandler, spaceHandler);
 			ach.init(parent, validationContext, errorCatcher);
 			return ach;
 		}
@@ -1008,7 +1008,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	AttributeValueValidationHandler getAttributeValueValidationHandler(AttributeValidationHandler parent, ErrorCatcher errorCatcher){		
 		if(attributeValueHFree == 0){
 			AttributeValueValidationHandler ach = new AttributeValueValidationHandler(debugWriter);
-			ach.init(this, validationItemLocator, matchHandler);
+			ach.init(this, validationItemLocator, matchHandler, spaceHandler);
 			ach.init(parent, validationContext, errorCatcher);
 			return ach;
 		}
@@ -1076,7 +1076,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	ExceptPatternTester getExceptPatternTester(AData data, List<CharsActiveTypeItem> totalCharsItemMatches, int totalCount, ErrorCatcher errorCatcher){		
 		if(exceptPatternTFree == 0){
 			ExceptPatternTester ach = new ExceptPatternTester(debugWriter);
-			ach.init(this, validationItemLocator, matchHandler);
+			ach.init(this, validationItemLocator, matchHandler, spaceHandler);
 			ach.init(data, totalCharsItemMatches, totalCount, validationContext, errorCatcher);
 			return ach;
 		}

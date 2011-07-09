@@ -127,8 +127,11 @@ class ElementParallelHandler extends CandidatesEEH{
 	void validateInContext(){
 		state.validateInContext();
 	}		
-	public void handleCharacters(char[] chars){	
-		state.handleCharacters(chars);
+	public void handleInnerCharacters(char[] chars){	
+		state.handleInnerCharacters(chars);
+	}
+    public void handleLastCharacters(char[] chars){	
+		state.handleLastCharacters(chars);
 	}
 
 	public boolean functionalEquivalent(ComparableEEH other){
@@ -194,7 +197,8 @@ class ElementParallelHandler extends CandidatesEEH{
 		abstract void validateContext();	
 		abstract void reportContextErrors(Locator locator) throws SAXException;
 		abstract void validateInContext();
-		abstract void handleCharacters(char[] chars);
+		abstract void handleInnerCharacters(char[] chars);
+        abstract void handleLastCharacters(char[] chars);
 		
 	}
 	
@@ -263,15 +267,25 @@ class ElementParallelHandler extends CandidatesEEH{
 				}
 			}
 		}
-		void handleCharacters(char[] chars){
+		void handleInnerCharacters(char[] chars){
 			//uniqueSample.handleCharacters(chars, validationContext, locator);
 			if(uniqueSample instanceof ValidatingEEH){				
 				ValidatingEEH sample = (ValidatingEEH)uniqueSample;
 				sample.setValidation();
-				sample.handleCharacters(chars);
+				sample.handleInnerCharacters(chars);
 				sample.restorePreviousState();
 			}
 		}
+		void handleLastCharacters(char[] chars){
+			//uniqueSample.handleCharacters(chars, validationContext, locator);
+			if(uniqueSample instanceof ValidatingEEH){				
+				ValidatingEEH sample = (ValidatingEEH)uniqueSample;
+				sample.setValidation();
+				sample.handleLastCharacters(chars);
+				sample.restorePreviousState();
+			}
+		}
+		
 		
 		public String toString(){
 			return contextToString()+ " COMMON";
@@ -322,12 +336,18 @@ class ElementParallelHandler extends CandidatesEEH{
 				if(!candidatesConflictHandler.isDisqualified(i))individualHandlers.get(i).validateInContext();
 			}
 		}	
-		void handleCharacters(char[] chars){
+		void handleInnerCharacters(char[] chars){
 			for(int i = 0; i < individualHandlers.size(); i++){				
-				if(!candidatesConflictHandler.isDisqualified(i)) individualHandlers.get(i).handleCharacters(chars);
+				if(!candidatesConflictHandler.isDisqualified(i)) individualHandlers.get(i).handleInnerCharacters(chars);
 			}
 		}
-				
+		void handleLastCharacters(char[] chars){
+			for(int i = 0; i < individualHandlers.size(); i++){				
+				if(!candidatesConflictHandler.isDisqualified(i)) individualHandlers.get(i).handleLastCharacters(chars);
+			}
+		}
+
+		
 		public String toString(){
 			return contextToString()+" CONFLICT";
 		}

@@ -16,6 +16,9 @@ limitations under the License.
 
 package serene.internal.datatype;
 
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
@@ -33,16 +36,18 @@ class QNameDT implements Datatype{
 		nameHandler = new XMLNameHandler();
 		nameHandler.version("1.0");
 	}
-	public boolean isValid(String str, ValidationContext vc) {	
-	    String strtr = str.trim();
+	public boolean isValid(String str, ValidationContext vc) {		
 		try{
-			// TODO xml version from ValidationContext
-            int colon = strtr.indexOf(':');                        
+			String trimed = str.trim();
+            int colon = trimed.indexOf(':');
+            String prefix = null;
+            String namespace = null;            
             if(colon > 0){
-                String prefix = strtr.substring(0, colon);
-                if(vc.resolveNamespacePrefix(prefix) == null) return false;
-            }
-			nameHandler.handleQName(strtr);
+                prefix = trimed.substring(0, colon);
+                namespace = vc.resolveNamespacePrefix(prefix);
+                if(namespace == null) return false;
+            }          
+			nameHandler.handleQName(trimed);
 			return true;			
 		}catch(NameInvalidException nie){
 			return false; 
@@ -51,26 +56,37 @@ class QNameDT implements Datatype{
 		}
 	}
 
-	public void checkValid(String str, ValidationContext vc) throws DatatypeException {
-	    String strtr = str.trim();
+	public void checkValid(String str, ValidationContext vc) throws DatatypeException{
 		try{
-			// TODO xml version from ValidationContext
-            int colon = strtr.indexOf(':');                        
+			String trimed = str.trim();
+            int colon = trimed.indexOf(':');
+            String prefix = null;
+            String namespace = null;            
             if(colon > 0){
-                String prefix = strtr.substring(0, colon);
-                if(vc.resolveNamespacePrefix(prefix) == null) throw new DatatypeException("Prefix was not declared.");
+                prefix = trimed.substring(0, colon);
+                namespace = vc.resolveNamespacePrefix(prefix);
+                if(namespace == null) throw new DatatypeException("Prefix was not declared.");
             }
-			nameHandler.handleQName(strtr);						
+			nameHandler.handleQName(trimed);						
 		}catch(NameInvalidException nie){
 			throw new DatatypeException(nie.getMessage()); 
-		}catch(NameReservedException nre){			
-			/*throw new DatatypeException(nre.getMessage());*/
+		}catch(NameReservedException nre){
+			//System.out.println(nre);			
+			//throw new DatatypeException(nre.getMessage());
 		}
 	}
 
 	public Object createValue(String str, ValidationContext vc) {
-	    String strtr = str.trim();
-		return strtr;
+        int colonIndex = str.indexOf(':');
+        String prefix = XMLConstants.DEFAULT_NS_PREFIX;
+        String nsURI = XMLConstants.NULL_NS_URI;
+        String localPart = str;
+		if(colonIndex > -1){
+            prefix = str.substring(0, colonIndex);
+            localPart = str.substring(colonIndex+1);
+            nsURI = vc.resolveNamespacePrefix(prefix);
+        }
+        return new QName(nsURI, localPart, prefix);
 	}
 
 	public boolean isContextDependent() {
@@ -85,7 +101,7 @@ class QNameDT implements Datatype{
 		return ID_TYPE_NULL;
 	}
 
-	public boolean sameValue(Object obj1, Object obj2) {
+	public boolean sameValue(Object obj1, Object obj2) {        
 		return obj1.equals(obj2);
 	}
 
@@ -94,7 +110,10 @@ class QNameDT implements Datatype{
 	}
 
 	public DatatypeStreamingValidator createStreamingValidator(ValidationContext vc) {
-		throw new UnsupportedOperationException("Serene does not support streaming validation yet");
+		throw new UnsupportedOperationException("Serene doesn't support streaming validation yet");
 	}
-	
+
+    public String toString(){
+        return "internal QNameDT";
+    }	
 }

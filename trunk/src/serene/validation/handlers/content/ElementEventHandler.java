@@ -32,5 +32,6 @@ public interface ElementEventHandler extends MarkupEventHandler{
 	*/
 	void handleEndElement(Locator locator) throws SAXException;
 	 
-	void handleCharacters(char[] chars);
+	void handleInnerCharacters(char[] chars);
+    void handleLastCharacters(char[] chars);
 }

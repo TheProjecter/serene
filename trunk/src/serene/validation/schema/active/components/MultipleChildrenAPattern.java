@@ -58,13 +58,13 @@ public abstract class MultipleChildrenAPattern extends AbstractAPattern{
 	
 	public boolean isChildRequired(int childIndex){
 		if(children[childIndex] == null)return false;
-		return children[childIndex].isRequired();
+		return children[childIndex].isRequiredContent();
 	}
 	
-	public boolean isRequired(){
+	public boolean isRequiredContent(){
 		if(minOccurs == 0) return false;		
 		for(int i = 0; i < children.length; i++){
-			if(children[i].isRequired())return true;
+			if(children[i].isRequiredContent())return true;
 		}
 		return false;
 	}

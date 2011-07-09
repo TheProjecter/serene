@@ -25,6 +25,18 @@ public class SpaceCharsHandler{
 		this.debugWriter = debugWriter;		
 	}
 	
+    public boolean isSpace(char[] chars){
+        if(chars.length == 0)throw new IllegalArgumentException();
+        for(int i = 0; i < chars.length; i++){
+            char c = chars[i];
+            if(!(c== '\r' 
+			|| c == '\n'
+      		|| c == '\t'
+			|| c == ' '))return false;
+        }
+        return true;
+    }
+    
 	public char[] trimSpace(char[] chars){		
 		int count = chars.length;		
 		if(count == 0) return chars;
@@ -117,10 +129,12 @@ public class SpaceCharsHandler{
 			|| c == ' '){
 				if(!removing){
 					removing = true;
-					char[] token = new char[queueLength];					
-					System.arraycopy(chars, queueOffset, token, 0, queueLength);
-					tokens[tokensCount++] = token;					
-					queueLength = 0;
+                    if(queueLength > 0){ // for when the first character is whitespace
+                        char[] token = new char[queueLength];					
+                        System.arraycopy(chars, queueOffset, token, 0, queueLength);
+                        tokens[tokensCount++] = token;					
+                        queueLength = 0;
+                    }
 				}
 			}
 			else{
@@ -131,19 +145,17 @@ public class SpaceCharsHandler{
 				queueLength++;		
 			}
 		}
-		if(!removing){
+		if(!removing && queueLength > 0){
 			char[] token = new char[queueLength];					
 			System.arraycopy(chars, queueOffset, token, 0, queueLength);
 			tokens[tokensCount++] = token;
 		}
 		
-		char[][] result = new char[tokensCount][];
+		char[][] result = new char[tokensCount][];       
 		for(int i = 0; i< tokensCount; i++){
-			if(tokens[i] != null){
-				char[] newToken = new char[tokens[i].length];
-				System.arraycopy(tokens[i], 0, newToken, 0, tokens[i].length);
-				result[i] = newToken; 
-			}				
+            char[] newToken = new char[tokens[i].length];
+            System.arraycopy(tokens[i], 0, newToken, 0, tokens[i].length);
+            result[i] = newToken; 
 		}
 		
 		return result;

@@ -54,8 +54,7 @@ abstract class ListPatternTesterState extends AbstractCVH  implements ErrorCatch
 	* when an error is detected. Used to check if a token was shifted correctly.
 	*/
 	boolean tokenValid;
-	
-	SpaceCharsHandler spaceHandler;	
+		
 	StackHandler stackHandler;
 	
 	List<CharsActiveTypeItem> totalCharsItemMatches;

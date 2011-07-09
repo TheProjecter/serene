@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package serene.validation.handlers.content.impl;
+package serene.validation.handlers.content;
 
 import serene.validation.handlers.content.AttributeEventHandler;
 
-interface BoundAttributeHandler extends AttributeEventHandler{
+public interface BoundAttributeHandler extends AttributeEventHandler{
 	void attributeBinding(String value);
 }

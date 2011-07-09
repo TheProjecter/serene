@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.active.components.AElement;
 
 import serene.validation.handlers.error.ContextErrorHandlerManager;
+import serene.validation.handlers.content.BoundElementHandler;
 
 import serene.bind.BindingModel;
 import serene.bind.ValidatorQueuePool;

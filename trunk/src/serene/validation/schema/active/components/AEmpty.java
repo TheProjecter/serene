@@ -38,10 +38,14 @@ public class AEmpty extends NoChildrenAPattern{
 		super(ruleHandlerPool, qName, location, debugWriter);
 	}	
 		
-	public boolean isRequired(){
+	public boolean isRequiredContent(){
 		return false;
 	}	
 	
+    public boolean isRequiredBranch(){
+		return false;
+	}
+    
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);
 	}

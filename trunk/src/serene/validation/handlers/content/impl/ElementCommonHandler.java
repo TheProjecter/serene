@@ -74,7 +74,7 @@ class ElementCommonHandler extends UndeterminedEEH{
 		return parent;
 	}
 	
-	public ComparableEEH handleStartElement(String qName, String namespace, String name){
+	public ComparableEEH handleStartElement(String qName, String namespace, String name){		 
 		ElementCommonHandler next = pool.getElementCommonHandler(conflictHandler, candidateCount, this);
 		next.add(uniqueHandler.handleStartElement(qName, namespace, name));
 		return next;
@@ -103,14 +103,16 @@ class ElementCommonHandler extends UndeterminedEEH{
 		uniqueHandler.reportContextErrors(locator);
 	}
 	// called from a larger conflict( another ElementParallelHandler/ElementCommonHandler)
-	void validateInContext(){
-		uniqueHandler.validateInContext();
+	void validateInContext(){		
+		uniqueHandler.validateInContext();		
 	}
 	
-	public void handleCharacters(char[] chars){		
-		uniqueHandler.handleCharacters(chars);
+	public void handleInnerCharacters(char[] chars){		
+		uniqueHandler.handleInnerCharacters(chars);
 	}
-	
+	public void handleLastCharacters(char[] chars){		
+		uniqueHandler.handleLastCharacters(chars);
+	}
 	
 	public boolean functionalEquivalent(ComparableEEH other){
 		return other.functionalEquivalent(this);
