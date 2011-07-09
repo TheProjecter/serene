@@ -27,6 +27,8 @@ import serene.bind.AttributeBinder;
 import serene.bind.BindingModel;
 import serene.bind.Queue;
 
+import serene.Reusable;
+
 import sereneWrite.MessageWriter;
 
 class BoundAttributeValidationHandler extends AttributeValidationHandler implements BoundAttributeHandler{
@@ -48,7 +50,14 @@ class BoundAttributeValidationHandler extends AttributeValidationHandler impleme
 		bindingModel = null;
 		queue = null;
 		entry = -1;
-		super.recycle();
+		
+        if(errorCatcher != parent)((Reusable)errorCatcher).recycle();
+		if(stackHandler != null){
+			stackHandler.recycle();
+			stackHandler = null;
+		}
+        attribute.releaseDefinition();
+		pool.recycle(this);
 	}
 	
 	public void handleAttribute(String value){

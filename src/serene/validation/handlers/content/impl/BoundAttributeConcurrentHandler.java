@@ -60,8 +60,13 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 		bindingModel = null;
 		queue = null;
 		entry = -1;
-		value = null;
-		super.recycle();
+        
+		for(AttributeValidationHandler candidate: candidates){
+			candidate.recycle();
+		}
+		candidatesConflictHandler.reset();
+		candidates.clear();
+		pool.recycle(this);
 	}
 	
 	public void attributeBinding(String value){
