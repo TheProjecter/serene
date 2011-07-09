@@ -177,6 +177,7 @@ class AlternativeSeeker implements SimplifiedComponentVisitor{
 	public void visit(SNotAllowed notAllowed){}
 	public void visit(SRef ref){
 		int index = ref.getDefinitionIndex();
+        if(index < 0)return;
 		if(testIndex == index) return;		
 		if(isProvenIllegalRecursionDefinition(index)){			
 			return;

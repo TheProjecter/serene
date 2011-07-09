@@ -121,4 +121,8 @@ Element <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSui
 <element> at RELAXNG Specification 3.Full Syntax: element with name class child
 <element> at RELAXNG Specification 3.Full Syntax: element with name attribute.
 
+null:-1:-1 Simplification 4.19 warning. Unreachable definitions:
+<rng:define> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:41:34.
+Removed before checking for illegal recursions and restrictions control.
+
 null:-1:-1 Restrictions 7.1.5 error. Element <group added by define simplification> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:51:34 is not expected as start of the schema.

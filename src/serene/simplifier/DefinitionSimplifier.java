@@ -70,6 +70,8 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		this.pool = pool;
 		
 		nullCombine = new IntList();		
+		pcw = new ParsedComponentWriter();
+        
         currentDefinitionTopPatterns = new ArrayList<SPattern>();
 	}
 	
@@ -88,7 +90,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 			IntStack referencePath,
 			BooleanList definitionEmptyChild,
 			BooleanList definitionNotAllowedChild,
-			RecursionModel recursionModel,			
+            RecursionModel recursionModel,
 			Grammar currentGrammar,
 			Stack<Grammar> previousGrammars,
             DocumentSimplificationContext simplificationContext){
@@ -106,8 +108,8 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		this.referencePath = referencePath;
 		this.definitionEmptyChild = definitionEmptyChild;
 		this.definitionNotAllowedChild = definitionNotAllowedChild;
-		this.recursionModel = recursionModel;
-	
+        this.recursionModel = recursionModel;
+        
 		this.currentGrammar = currentGrammar;
 		this.previousGrammars = previousGrammars;
         
@@ -118,8 +120,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		grammarDefinitions = null;	
 		externalRefs = null;
 		docParsedModels = null;	
-		namespaceInheritanceHandler = null;		
-		builder = null;
+		namespaceInheritanceHandler = null;	
 		
 		componentAsciiDL = null;	
 		asciiDlDatatypeLibrary = null;
@@ -137,14 +138,14 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
         emptyComponent = null;
 		notAllowedChild = false;
         patternChild = false;
-        notAllowedElement = false;
-		
+		notAllowedElement = false;
+        
 		anyNameContext = false;
 		anyNameExceptContext = false;
 		nsNameContext = false;
 		nsNameExceptContext = false;
 		attributeContext = false;
-        
+        		
 		combine = null;
 		nullCombine.clear();        
 		if(otherCombine != null) otherCombine.clear();
@@ -152,7 +153,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
         paramStack.clear();
          
 		builder.startBuild();		
-		
+        
         currentDefinitionTopPatterns.clear();		
         String location = "";
 		for(int i = 0; i < definitions.size(); i++){
@@ -169,7 +170,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
                         otherCombine.add(i);
                     }
                 }
-            }			
+            }
             if(i > 0)location += ", "+d.getLocation();
             else location += d.getLocation();
 			d.accept(this);
@@ -212,6 +213,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 			}
 			message += oDefinitions+".";
 			errorDispatcher.error(new SAXParseException(message, null));
+			//System.out.println(message);			
 		}
 		
 		// the current level is that of the definitions,

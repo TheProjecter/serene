@@ -788,6 +788,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             return;
         }
         int index = ref.getDefinitionIndex(); 
+        if(index < 0) return;
         SPattern defTopPattern = refDefinitionTopPattern[index];
         if(defTopPattern != null)defTopPattern.accept(this);
     }

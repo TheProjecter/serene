@@ -23,6 +23,10 @@ class DefinitionSimplifierPool{
 	DefinitionSimplifier[] ds;
 	int dsFree;
 	int dsSize;
+    
+    UnreachableDefinitionSimplifier[] uds;
+	int udsFree;
+	int udsSize;
 	
 	ErrorDispatcher errorDispatcher;
 	MessageWriter debugWriter;
@@ -34,6 +38,10 @@ class DefinitionSimplifierPool{
 		dsFree = 0;
 		dsSize = 5;
 		ds = new DefinitionSimplifier[dsSize];
+        
+        udsFree = 0;
+		udsSize = 5;
+		uds = new UnreachableDefinitionSimplifier[udsSize];
 	}
 	
 	DefinitionSimplifier getDefinitionSimplifier(){
@@ -51,5 +59,23 @@ class DefinitionSimplifierPool{
 			ds = increased;
 		}
 		ds[dsFree++] = simplifier;
+	}
+    
+    
+    UnreachableDefinitionSimplifier getUnreachableDefinitionSimplifier(){
+		if(udsFree == 0){
+			return new UnreachableDefinitionSimplifier(this, errorDispatcher, debugWriter);
+		}else{			
+			return uds[--udsFree];
+		}		
+	}
+	
+	void recycle(UnreachableDefinitionSimplifier simplifier){
+		if(udsFree == udsSize){
+			UnreachableDefinitionSimplifier[] increased = new UnreachableDefinitionSimplifier[++udsSize];
+			System.arraycopy(uds, 0, increased, 0, udsFree);
+			uds = increased;
+		}
+		uds[udsFree++] = simplifier;
 	}
 }
