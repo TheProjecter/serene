@@ -18,6 +18,8 @@ package serene.simplifier;
 
 import java.util.Map;
 
+import javax.xml.XMLConstants;
+
 import serene.validation.schema.parsed.ParsedComponent;
 import serene.validation.schema.parsed.ParsedComponentVisitor;
 
@@ -177,7 +179,7 @@ class NsInheritanceHandler implements ParsedComponentVisitor{
 		if(parent == null ) parent = descendanceMap.get(element);
 		if(parent != null) parent.accept(this);		
 	}	
-	public void visit(ElementWithNameInstance element){		
+	public void visit(ElementWithNameInstance element){
 		ns = element.getNsAttribute();
 		if(ns != null)return;
 		ParsedComponent parent = element.getParent();
@@ -187,14 +189,15 @@ class NsInheritanceHandler implements ParsedComponentVisitor{
 	public void visit(AttributeWithNameClass attribute){
 		ns = attribute.getNsAttribute();
 		if(ns != null)return;
-		/*ParsedComponent parent = attribute.getParent();
+		ParsedComponent parent = attribute.getParent();
 		if(parent == null ) parent = descendanceMap.get(attribute);
-		if(parent != null) parent.accept(this);*/				
+		if(parent != null) parent.accept(this);				
 	}
 	public void visit(AttributeWithNameInstance attribute){				
 		ns = attribute.getNsAttribute();
-		if(ns != null)return;
-		/*ParsedComponent parent = attribute.getParent();
+        if(ns == null)ns = XMLConstants.NULL_NS_URI ;
+		/*if(ns != null)return;
+		ParsedComponent parent = attribute.getParent();
 		if(parent == null ) parent = descendanceMap.get(attribute);
 		if(parent != null) parent.accept(this);*/						
 	}
@@ -326,6 +329,5 @@ class NsInheritanceHandler implements ParsedComponentVisitor{
 		if(parent != null) parent.accept(this);
 	}
     
-    public void visit(ForeignComponent fc){		
-	}
+    public void visit(ForeignComponent fc){}
 }
