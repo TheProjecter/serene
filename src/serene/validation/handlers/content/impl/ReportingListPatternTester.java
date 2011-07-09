@@ -58,20 +58,7 @@ import sereneWrite.MessageWriter;
 // have happened already, that is the match didn't occur at the first tested token,
 // redo the chars matching(keep the Tester in report mode)
 // Go for 2.
-class ReportingListPatternTester extends ListPatternTesterState{
-	
-	/**
-	* In the begining is always false, but it is set to true when a first match 
-	* was encountered, the validation is redone starting from the first token. 
-	* When true, errors are reported. In order to report errors it is also 
-	* necessary that at least one token was matched and shifted correctly, 
-	* otherwise they are not, and the CharactersValidationHandler will report 
-	* unexpected character content(no matches).
-	*/
-	boolean reportError;
-	
-	char[] token;
-	
+class ReportingListPatternTester extends ListPatternTesterState{	
 	ReportingListPatternTester(MessageWriter debugWriter){
 		super(debugWriter);
 		charsItemMatches = new ArrayList<CharsActiveTypeItem>();
@@ -82,15 +69,10 @@ class ReportingListPatternTester extends ListPatternTesterState{
 	public void handleChars(char[] chars, DataActiveType type){	
 		char[][] tokens = spaceHandler.removeSpace(chars);
         if(tokens.length == 0) return;
-        
-        totalCharsItemMatches.add((CharsActiveTypeItem)type);//add anyway
         stackHandler =  type.getStackHandler(this);
-		reportError = false;
-		tokenMatch = false;
 		hasError = false;
 		for(int i = 0; i < tokens.length; i++){
 			token = tokens[i];
-			tokenValid = true; 
 			charsItemMatches.clear();
 			dataMatches.clear();
 			valueMatches.clear();	
@@ -112,7 +94,6 @@ class ReportingListPatternTester extends ListPatternTesterState{
 			}else if(totalCount == 1 && matchesCount == 1){
 				// if errors: already reported, that's why error before
 				// just shift
-				if(tokenValid) tokenMatch = true;
 				stackHandler.shift(charsItemMatches.get(0));
 			}else if(totalCount > 1 && matchesCount == 0){
 				// ambiguity error
@@ -124,32 +105,18 @@ class ReportingListPatternTester extends ListPatternTesterState{
 				stackHandler.shiftAllTokenDefinitions(charsItemMatches, token);
 			}else if(totalCount > 1 && matchesCount == 1){
 				//just shift
-				if(tokenValid) tokenMatch = true;
 				stackHandler.shift(charsItemMatches.get(0));
 			}else if(totalCount > 1 && matchesCount > 1){
 				// ambiguity warning, later maybe
-				// shift all for in context validation	
-				if(tokenValid) tokenMatch = true;
+				// shift all for in context validation
 				if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);
 				stackHandler.shiftAllTokenDefinitions(charsItemMatches, token);
 			}	
-			
-			if(tokenValid && ! reportError){
-				reportError = true;
-				if(hasError){
-					stackHandler.recycle();
-					stackHandler =  type.getStackHandler(this);
-					i = -1;
-				}
-			}
 		}
-		if(tokenMatch == false){// no matches were found for any token
-			return;
-		}
-		
 		stackHandler.endValidation();
 		stackHandler.recycle();
 		stackHandler = null;		
+        totalCharsItemMatches.add((CharsActiveTypeItem)type);
 	}
 	
 	public void handleChars(char[] chars, StructuredDataActiveType type){
@@ -163,16 +130,12 @@ class ReportingListPatternTester extends ListPatternTesterState{
 	public void handleString(String value, DataActiveType type){		
 		char[][] tokens = spaceHandler.removeSpace(value.toCharArray());
         if(tokens.length == 0) return;
-		
-        totalCharsItemMatches.add((CharsActiveTypeItem)type);//add anyway		
+        
 		stackHandler =  type.getStackHandler(this);
         
-		reportError = false;
-		tokenMatch = false;
 		hasError = false;
 		for(int i = 0; i < tokens.length; i++){
 			token = tokens[i];
-			tokenValid = true;
 			charsItemMatches.clear();
 			dataMatches.clear();
 			valueMatches.clear();	
@@ -194,7 +157,6 @@ class ReportingListPatternTester extends ListPatternTesterState{
 			}else if(totalCount == 1 && matchesCount == 1){
 				// if errors: already reported, that's why error before
 				// just shift
-				if(tokenValid) tokenMatch = true;
 				stackHandler.shift(charsItemMatches.get(0));
 			}else if(totalCount > 1 && matchesCount == 0){
 				// ambiguity error
@@ -206,32 +168,19 @@ class ReportingListPatternTester extends ListPatternTesterState{
 				stackHandler.shiftAllTokenDefinitions(charsItemMatches, token);
 			}else if(totalCount > 1 && matchesCount == 1){
 				//just shift
-				if(tokenValid) tokenMatch = true;
 				stackHandler.shift(charsItemMatches.get(0));
 			}else if(totalCount > 1 && matchesCount > 1){
 				// ambiguity warning, later maybe
-				// shift all for in context validation	
-				if(tokenValid) tokenMatch = true;
+				// shift all for in context validation
 				if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);
 				stackHandler.shiftAllTokenDefinitions(charsItemMatches, token);
 			}
-			
-			if(tokenValid && ! reportError){
-				reportError = true;
-				if(hasError){
-					stackHandler.recycle();
-					stackHandler =  type.getStackHandler(this);
-					i = -1;
-				}
-			}
-		}
-		if(tokenMatch == false){// no matches were found for any token
-			return;
-		}
-		
+		}		
 		stackHandler.endValidation();
 		stackHandler.recycle();
-		stackHandler = null;		
+		stackHandler = null;
+        
+        totalCharsItemMatches.add((CharsActiveTypeItem)type);		
 	}
 	public void handleString(String value, StructuredDataActiveType type){
 		throw new IllegalStateException(); // TODO see why this throws exception when is called form the ListPatternTester
@@ -263,39 +212,33 @@ class ReportingListPatternTester extends ListPatternTesterState{
 		
 	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.misplacedElement(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+		errorCatcher.misplacedElement(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
 	}
 		
 	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.misplacedElement(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+		errorCatcher.misplacedElement(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
 	}
 	
 		
 	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+		errorCatcher.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
 	}
 	
 	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.excessiveContent(context, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+		errorCatcher.excessiveContent(context, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
 	}
 	
 	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.missingContent(context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
+		errorCatcher.missingContent(context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
 	}
 	
 	public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.illegalContent(context, startQName, startSystemId, startLineNumber, startColumnNumber);
+		errorCatcher.illegalContent(context, startQName, startSystemId, startLineNumber, startColumnNumber);
 	}
 		
 	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
@@ -308,8 +251,7 @@ class ReportingListPatternTester extends ListPatternTesterState{
 	
 	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.ambiguousCharsContentError(systemId, lineNumber, columnNumber, possibleDefinitions);
+		errorCatcher.ambiguousCharsContentError(systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
@@ -321,46 +263,39 @@ class ReportingListPatternTester extends ListPatternTesterState{
 	}
 	
 	public void ambiguousCharsContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		if(reportError)errorCatcher.ambiguousCharsContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
+		errorCatcher.ambiguousCharsContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void undeterminedByContent(String qName, String candidateMessages){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.undeterminedByContent(qName, candidateMessages);
+		errorCatcher.undeterminedByContent(qName, candidateMessages);
 	}
 	
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.listTokenDatatypeError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		errorCatcher.listTokenDatatypeError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
 	}
 	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.listTokenDatatypeError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		errorCatcher.listTokenDatatypeError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
 	}
 	
 	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-		hasError = true;
-		tokenValid = false;		
-		if(reportError)errorCatcher.listTokenValueError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		hasError = true;		
+		errorCatcher.listTokenValueError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.listTokenValueError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		errorCatcher.listTokenValueError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
 	
 	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.listTokenExceptedError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		errorCatcher.listTokenExceptedError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}	
 	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.listTokenExceptedError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		errorCatcher.listTokenExceptedError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
 	
 	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
@@ -372,13 +307,11 @@ class ReportingListPatternTester extends ListPatternTesterState{
 	
 	public void ambiguousCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.ambiguousListToken(new String(token), systemId, lineNumber, columnNumber, possibleDefinitions);
+		errorCatcher.ambiguousListToken(new String(token), systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	public void ambiguousAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.ambiguousListToken(new String(token), systemId, lineNumber, columnNumber, possibleDefinitions);
+		errorCatcher.ambiguousListToken(new String(token), systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
@@ -392,21 +325,18 @@ class ReportingListPatternTester extends ListPatternTesterState{
 	}
 	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.ambiguousListToken(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		errorCatcher.ambiguousListToken(token, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
-		tokenValid = false;
-        if(reportError)errorCatcher.ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+        errorCatcher.ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
     }    
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		if(reportError)errorCatcher.ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		errorCatcher.ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, possibleDefinitions);
     }
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		hasError = true;
-		tokenValid = false;
-		if(reportError)errorCatcher.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
+		errorCatcher.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
 	}
 }
 	
