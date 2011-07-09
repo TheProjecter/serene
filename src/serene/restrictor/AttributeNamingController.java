@@ -81,8 +81,8 @@ class AttributeNamingController extends NamingController{
 		// error 7.3
 		String message = "Restrictions 7.3 error. "
 		+"In the context of <"+context.getQName()+"> at "+context.getLocation()+" overlaping name classes in attributes: "
-		+"\n\t<"+a1.getQName()+"> at "+a1.getLocation()
-		+"\n\t<"+a2.getQName()+"> at "+a2.getLocation()+".";
+		+"\n<"+a1.getQName()+"> at "+a1.getLocation()
+		+"\n<"+a2.getQName()+"> at "+a2.getLocation()+".";
 		//System.out.println(message);
 		errorDispatcher.error(new SAXParseException(message, null));
 	}

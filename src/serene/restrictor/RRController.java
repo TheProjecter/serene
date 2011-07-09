@@ -186,16 +186,16 @@ public class RRController extends RController{
 		if(attributeContext){
 			// error 7.1.1	
 			String message = "Restrictions 7.1.1 error. Forbiden path:"
-			+"\n\t<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation()
-			+"\n\t<"+element.getQName()+"> at "+element.getLocation()+".";
+			+"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation()
+			+"\n<"+element.getQName()+"> at "+element.getLocation()+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));			
 		}
 		if(listContext){
 			// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n\t<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n\t<"+element.getQName()+"> at "+element.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
+			+"\n<"+element.getQName()+"> at "+element.getLocation()+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -204,9 +204,9 @@ public class RRController extends RController{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+element.getQName()+"> at "+element.getLocation();
+			message += "\n<"+element.getQName()+"> at "+element.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -332,9 +332,9 @@ public class RRController extends RController{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation();
+			message += "\n<"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -389,9 +389,9 @@ public class RRController extends RController{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n\t<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
 			}
-			message += "\n\t<"+optional.getQName()+"> at "+optional.getLocation();
+			message += "\n<"+optional.getQName()+"> at "+optional.getLocation();
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
