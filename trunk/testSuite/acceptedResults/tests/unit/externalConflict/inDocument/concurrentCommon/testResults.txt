@@ -16,7 +16,7 @@ Element <aa> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/test
 
 TESTED DOCUMENT document2.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:27:7 Syntax error.  Element aa could not be resolved to a single schema definition:
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:27:7 Syntax error.  Element <aa> could not be resolved to a single schema definition:
 Unresolved by content.
 Validation  of candidate definitions resulted in errors:
 Candidate definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:25:26 first error: 

@@ -2,7 +2,7 @@
 
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\syntax\datatypeLibrary\invalid\schema.rng
 
-file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/datatypeLibrary/invalid/schema.rng:26:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/datatypeLibrary/invalid/schema.rng:26:17 Syntax error.  Element <rng:element> could not be resolved to a single schema definition:
 Unresolved by content.
 Validation  of candidate definitions resulted in errors:
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 

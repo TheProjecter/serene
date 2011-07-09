@@ -2282,7 +2282,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		String message = "";
 		// {1}
 		if(undeterminedCandidateMessages != null){
-			message +=  " Element "+undeterminedQName+" could not be resolved to a single schema definition:"
+			message +=  " Element <"+undeterminedQName+"> could not be resolved to a single schema definition:"
 						+ "\n"+prefix+"Unresolved by content."
 						+ "\n"+prefix+"Validation  of candidate definitions resulted in errors:"						
 						+ undeterminedCandidateMessages;
