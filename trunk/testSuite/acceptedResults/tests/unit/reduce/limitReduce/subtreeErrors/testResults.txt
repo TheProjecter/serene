@@ -32,7 +32,7 @@ TESTED DOCUMENT document3.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document3.xml:25:25 Syntax error. Element <cc> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:33:28 contains errors: 
 Illegal value.
-Value of attribute ccAttribute at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document3.xml:25:25 does not match the value required by schema definition <value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:47:11.
+Value of attribute "ccAttribute" at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document3.xml:25:25 does not match the value required by schema definition <value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:47:11.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document3.xml:26:7 Syntax error. Element <dd> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:38:26 contains errors: 
 Missing content.
@@ -52,4 +52,4 @@ TESTED DOCUMENT document5.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document5.xml:26:25 Syntax error. Element <dd> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:38:26 contains errors: 
 Illegal value.
-Value of attribute ddAttribute at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document5.xml:26:25 does not match the value required by schema definition <value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:53:11.
+Value of attribute "ddAttribute" at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document5.xml:26:25 does not match the value required by schema definition <value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/schema.rng:53:11.

@@ -179,10 +179,10 @@ public class AttributeConflictErrorHandler implements Reusable, ErrorCatcher{
 		conflictHandler.disqualify(candidateIndex);
 	}
 	
-	public void ambiguousCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
-	public void ambiguousAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 	}
 	

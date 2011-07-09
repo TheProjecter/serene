@@ -322,18 +322,18 @@ class AttributeValidationHandler extends AttributeDefinitionHandler implements E
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void ambiguousCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousCharacterContent(systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.unresolvedCharacterContent(systemId, lineNumber, columnNumber, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
-	public void ambiguousAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousAttributeValue(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.unresolvedAttributeValue(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	

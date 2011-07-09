@@ -226,10 +226,10 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
         messages.add(message);
 	}
 	
-	public void ambiguousCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
-	public void ambiguousAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+location
                         +" does not match attribute pattern."
                         +" Ambiguous value, possible definitions: ";

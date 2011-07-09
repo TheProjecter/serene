@@ -87,7 +87,7 @@ class AttributeValueValidationHandler extends AbstractCVH{
 			if(!dataMatches.isEmpty())charsItemMatches.addAll(dataMatches);
 			if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 			if(!listMatches.isEmpty())charsItemMatches.addAll(listMatches);
-			errorCatcher.ambiguousAttributeValue(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
+			errorCatcher.unresolvedAttributeValue(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 			parent.addChars(charsItemMatches);
 		}else if(totalCount > 1 && matchesCount == 1){
 			//just shift
@@ -117,7 +117,7 @@ class AttributeValueValidationHandler extends AbstractCVH{
 			if(!dataMatches.isEmpty())charsItemMatches.addAll(dataMatches);
 			if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 			if(!listMatches.isEmpty())charsItemMatches.addAll(listMatches);
-			errorCatcher.ambiguousAttributeValue(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
+			errorCatcher.unresolvedAttributeValue(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 			parent.addChars(charsItemMatches);
 		}else if(totalCount > 1 && matchesCount == 1){
 			//just shift
@@ -147,7 +147,7 @@ class AttributeValueValidationHandler extends AbstractCVH{
 			if(!dataMatches.isEmpty())charsItemMatches.addAll(dataMatches);
 			if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 			if(!listMatches.isEmpty())charsItemMatches.addAll(listMatches);
-			errorCatcher.ambiguousAttributeValue(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
+			errorCatcher.unresolvedAttributeValue(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 			parent.addChars(charsItemMatches);
 		}else if(totalCount > 1 && matchesCount == 1){
 			//just shift

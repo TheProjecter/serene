@@ -526,13 +526,13 @@ class ElementValidationHandler extends ValidatingEEH
 		contextErrorHandler[contextErrorHandlerIndex].unexpectedAttributeValue(charsSystemId, charsLineNumber, columnNumber, attributeDefinition);
 	}
 	
-	public void ambiguousCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousCharacterContent(systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].unresolvedCharacterContent(systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
-	public void ambiguousAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousAttributeValue(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].unresolvedAttributeValue(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){

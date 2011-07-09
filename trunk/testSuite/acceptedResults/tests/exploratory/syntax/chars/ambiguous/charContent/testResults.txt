@@ -7,7 +7,7 @@ TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\explorat
 TESTED DOCUMENT document1.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/document1.xml:21:17 Syntax error. Element <root> corresponding to definition <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/schema.rng:23:16 contains errors: 
-Ambiguous character content.
+Unresolved character content.
 Character content at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/document1.xml:21:10 cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors. Possible definitions:
 <rng:data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/schema.rng:26:28
 <rng:data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/schema.rng:31:28.

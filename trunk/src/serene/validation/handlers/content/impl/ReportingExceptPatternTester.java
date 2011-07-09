@@ -99,7 +99,7 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 			if(!dataMatches.isEmpty())charsItemMatches.addAll(dataMatches);
 			if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 			if(!listMatches.isEmpty())charsItemMatches.addAll(listMatches);
-			errorCatcher.ambiguousCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
+			errorCatcher.unresolvedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 			if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);//use totalCount since everything is shifted
 			stackHandler.shiftAllCharsDefinitions(charsItemMatches);
 		}else if(totalCount > 1 && matchesCount == 1){
@@ -160,7 +160,7 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 			if(!dataMatches.isEmpty())charsItemMatches.addAll(dataMatches);
 			if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 			if(!listMatches.isEmpty())charsItemMatches.addAll(listMatches);
-			errorCatcher.ambiguousCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
+			errorCatcher.unresolvedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 			if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);//use totalCount since everything is shifted
 			stackHandler.shiftAllCharsDefinitions(charsItemMatches);
 		}else if(totalCount > 1 && matchesCount == 1){
@@ -286,10 +286,10 @@ class ReportingExceptPatternTester extends ExceptPatternTesterState implements E
 		hasError = true;
 	}
 	
-	public void ambiguousCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
 	}
-	public void ambiguousAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
 	}
 	

@@ -2381,7 +2381,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
         
     
-	public void ambiguousCharacterContent(int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         errorTotalCount++;
 		if(ambiguousSizeCC == 0){
 			ambiguousSizeCC = 1;
@@ -2447,7 +2447,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
     
 	// {24}
-	public void ambiguousAttributeValue(int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         errorTotalCount++;
 		if(ambiguousSizeAV == 0){
 			ambiguousSizeAV = 1;

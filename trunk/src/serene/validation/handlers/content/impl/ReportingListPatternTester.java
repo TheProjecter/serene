@@ -305,11 +305,11 @@ class ReportingListPatternTester extends ListPatternTesterState{
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
 		errorCatcher.ambiguousListToken(new String(token), systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
-	public void ambiguousAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
 		errorCatcher.ambiguousListToken(new String(token), systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
