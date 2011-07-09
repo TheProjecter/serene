@@ -18,6 +18,8 @@ package serene.validation.schema.active.components;
 
 import org.relaxng.datatype.Datatype;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.ActiveGrammarModel;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
@@ -35,14 +37,14 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 import sereneWrite.MessageWriter;
 
 public class AData extends DatatypedCharsAPattern{	
-	AExceptPattern exceptPattern; 			
-	public AData(Datatype datatype, 
+	AExceptPattern exceptPattern;    
+	public AData(Datatype datatype,
 				AExceptPattern exceptPattern,
 				ActiveGrammarModel grammarModel,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				String qName, String location, 
+				SimplifiedComponent simplifiedComponent, 
 				MessageWriter debugWriter){
-		super(datatype, grammarModel, ruleHandlerPool, qName, location, debugWriter);
+		super(datatype, grammarModel, ruleHandlerPool, simplifiedComponent, debugWriter);
 		asParent(exceptPattern);
 	}
 	
@@ -53,7 +55,7 @@ public class AData extends DatatypedCharsAPattern{
 			exceptPattern.setChildIndex(0);
 		}
 	}	
-		
+	
 	public AExceptPattern getExceptPattern(){
 		return exceptPattern;
 	}
@@ -80,7 +82,6 @@ public class AData extends DatatypedCharsAPattern{
 	}
 	
 	public String toString(){
-		//return "AData type "+type+ " min "+minOccurs+" max "+maxOccurs+"  "+hashCode();
 		return "AData datatype "+datatype+ " min "+minOccurs+" max "+maxOccurs+"  ";
 	}
 }

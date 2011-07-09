@@ -19,6 +19,8 @@ package serene.validation.schema.active.components;
 import java.util.List;
 import java.util.Map;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.RuleVisitor;
 import serene.validation.schema.active.DataActiveType;
@@ -65,10 +67,9 @@ public class AListPattern extends UniqueChildAPattern implements DataActiveType,
 	public AListPattern(APattern child,
 					ActiveModelStackHandlerPool stackHandlerPool,
 					ActiveModelRuleHandlerPool ruleHandlerPool,
-					String qName, 
-					String location, 
+					SimplifiedComponent simplifiedComponent, 
 					MessageWriter debugWriter){
-		super(child, ruleHandlerPool, qName, location, debugWriter);
+		super(child, ruleHandlerPool, simplifiedComponent, debugWriter);
 		this.stackHandlerPool = stackHandlerPool;
 	}	
 	

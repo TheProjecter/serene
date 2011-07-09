@@ -19,13 +19,15 @@ package serene.validation.schema.active.components;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import sereneWrite.MessageWriter;
 
 public abstract class CharsAPattern extends NoChildrenAPattern implements CharsActiveTypeItem{ 	 
-	CharsAPattern(ActiveModelRuleHandlerPool ruleHandlerPool, String qName, String location, MessageWriter debugWriter){		
-		super(ruleHandlerPool, qName, location, debugWriter);
+	CharsAPattern(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){		
+		super(ruleHandlerPool, simplifiedComponent, debugWriter);
 	}
 		
 	public String toString(){

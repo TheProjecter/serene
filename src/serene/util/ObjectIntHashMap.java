@@ -212,22 +212,17 @@ public class ObjectIntHashMap{
 	
 	/**
 	* If a mapping exists for the key, it is returned, otherwise a null value is 
-	* return if any was set, or an IllegalArgumentException is thrown.
+	* return if any was set, or an IllegalArgumentException is thrown if no null 
+    * value is available.
 	*/
 	public int get(Object key) {
-		//debugWriter.write("objectIntHashMap START GET "+key);
         int hash = 0;		
         if (key != null) hash = hash(key.hashCode());
-		//debugWriter.write("objectIntHashMap hash "+hash);
-		int bucketIndex = indexFor(hash, hashTable.length);	
-		//debugWriter.write("objectIntHashMap bucketIndex "+bucketIndex+" of "+hashTable.length);
-		//debugWriter.write("objectIntHashMap hashTable "+Arrays.deepToString(hashTable));
-		//debugWriter.write("objectIntHashMap intTable "+Arrays.deepToString(intTable));
+		int bucketIndex = indexFor(hash, hashTable.length);
 		if(hashTable[bucketIndex] == null) return getNullValue();
 		for (int i = 0; i< hashTable[bucketIndex].length; i++) {
 			if (hash == hashTable[bucketIndex][i]) return intTable[bucketIndex][i];
-		}
-		//debugWriter.write("objectIntHashMap END GET "+key);        
+		}        
        return getNullValue();	   
     }
 	
@@ -261,7 +256,7 @@ public class ObjectIntHashMap{
      * Applies a supplemental hash function to a given functionalEquivalenceCode, 
 	 * which defends against poor quality hash functions upon which the
 	 * functionalEquivalenceCode is based. This is critical because the 
-	 * RedundanceHandler uses power-of-two length tables and could otherwise
+	 * ObjectIntHashMap uses power-of-two length tables and could otherwise
 	 * encounter collisions for hash that do not differ in lower bits. 
      */
     private int hash(int h) {
@@ -269,19 +264,17 @@ public class ObjectIntHashMap{
         // constant multiples at each bit position have a bounded
         // number of collisions (approximately 8 at default load factor).
         h ^= (h >>> 20) ^ (h >>> 12);
-        return h ^ (h >>> 7) ^ (h >>> 4);
+        return h ^ (h >>> 7) ^ (h >>> 4);       
     }
 
     /**
      * Returns index for hash.
      */
     private int indexFor(int hash, int length) {
-		//debugWriter.write("objectIntHashMap INDEX FOR "+hash+" "+length+" = "+(hash & (length-1)));
         return hash & (length-1);
     }
 	
 	private void handleSize(){
-		//debugWriter.write("objectIntHashMap HANDLE SIZE "+(size+1)+" "+threshold);
 		if (++size >= threshold)
             resize(2 * hashTable.length);
 	} 
@@ -308,9 +301,8 @@ public class ObjectIntHashMap{
 	}
 	
 	private void resize(int newCapacity) {
-		//debugWriter.write("objectIntHashMap START RESIZE from capacity "+hashTable.length+ " to capacity "+newCapacity);
         int[][] oldHashTable = hashTable;
-		int[][] oldIndexTable = intTable;
+		int[][] oldIntTable = intTable;
         int oldCapacity = oldHashTable.length;
         if (oldCapacity == MAXIMUM_CAPACITY) {
             threshold = Integer.MAX_VALUE;
@@ -320,20 +312,19 @@ public class ObjectIntHashMap{
         hashTable = new int[newCapacity][];
 		intTable = new int[newCapacity][];
 		threshold = (int)(newCapacity * LOAD_FACTOR);
-        transfer(newCapacity, oldHashTable, oldIndexTable);
-        //debugWriter.write("objectIntHashMap "+"END RESIZE");
+        transfer(newCapacity, oldHashTable, oldIntTable);
     }
 	
 	/**
      * Transfers all entries from old tables to the new Tables
      */
-    private void transfer(int newCapacity, int[][] srcHash, int[][] srcIndex) {         
+    private void transfer(int newCapacity, int[][] srcHash, int[][] srcInt) {         
         for (int j = 0; j < srcHash.length; j++) {
             int[] hashBucket = srcHash[j];
-			int[] valuesBucket = srcIndex[j];
+			int[] valuesBucket = srcInt[j];
             if (hashBucket != null) {
                 srcHash[j] = null;
-				srcIndex[j] = null;
+				srcInt[j] = null;
 				for(int i = 0; i < hashBucket.length; i++){
 					int newHashBucketIndex = indexFor(hashBucket[i], newCapacity);
 					handleAdd(newHashBucketIndex, hashBucket[i], valuesBucket[i]);
@@ -345,6 +336,6 @@ public class ObjectIntHashMap{
 	public String toString(){
 		//return "ObjectIntHashMap "+hashCode();
 		return "ObjectIntHashMap "
-					+"values "+Arrays.toString(intTable);
+					+"values "+Arrays.deepToString(intTable);
 	}
 }

@@ -21,8 +21,17 @@ import org.xml.sax.Locator;
 
 import serene.validation.schema.active.components.AElement;
 
-public interface ContextErrorHandler extends ErrorCatcher{	
+import serene.Reusable;
+
+public interface ContextErrorHandler extends Reusable, ExternalConflictErrorCatcher{
+    int NONE = -1;	
+    int ROOT = 0;
+    int ELEMENT = 1;
+    
+    boolean isCandidate();
+    void setCandidate(boolean isCandidate);
+    
 	int getId();
-	void handle(String qName, AElement definition, Locator locator) throws SAXException;
-	void handle(String qName, Locator locator) throws SAXException;	
+	void handle(int contextType, String qName, AElement definition, Locator locator) throws SAXException;
+	void handle(int contextType, String qName, Locator locator) throws SAXException;	
 } 

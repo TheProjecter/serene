@@ -48,19 +48,16 @@ class UnexpectedAmbiguousElementHandler extends ErrorEEH{
 		parent.unexpectedAmbiguousElement(validationItemLocator.getQName(), Arrays.copyOf(elements, elements.length), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
 	}
 	
-	public boolean functionalEquivalent(ComparableEEH other){
+	boolean functionalEquivalent(ComparableEEH other){
 		return other.functionalEquivalent(this);
 	}
-	public boolean functionalEquivalent(ElementValidationHandler other){
+	boolean functionalEquivalent(ElementValidationHandler other){
 		return false;
 	}	
-	public boolean functionalEquivalent(UnrecognizedElementHandler other){
-		return false;
-	}	
-	public boolean functionalEquivalent(UnexpectedElementHandler other){
+	boolean functionalEquivalent(UnexpectedElementHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(UnexpectedAmbiguousElementHandler other){
+	boolean functionalEquivalent(UnexpectedAmbiguousElementHandler other){
 		return other.functionalEquivalent(elements);
 	}
 	private boolean functionalEquivalent(SimplifiedComponent[] otherSElements){
@@ -71,19 +68,19 @@ class UnexpectedAmbiguousElementHandler extends ErrorEEH{
 		}
 		return true;
 	}	
-	public boolean functionalEquivalent(UnknownElementHandler other){
+	boolean functionalEquivalent(UnknownElementHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(ElementDefaultHandler other){
+	boolean functionalEquivalent(ElementDefaultHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(ElementConcurrentHandler other){
+	boolean functionalEquivalent(ElementConcurrentHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(ElementParallelHandler other){
+	boolean functionalEquivalent(ElementParallelHandler other){
 		return false;
 	}		
-	public boolean functionalEquivalent(ElementCommonHandler other){
+	boolean functionalEquivalent(ElementCommonHandler other){
 		return false;
 	}
 	public String toString(){

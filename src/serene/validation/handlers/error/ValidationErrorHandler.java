@@ -17,6 +17,7 @@ limitations under the License.
 package serene.validation.handlers.error;
 
 import java.util.Arrays;
+import java.util.BitSet;
 
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXException;
@@ -43,39 +44,46 @@ import sereneWrite.MessageWriter;
 * at the end of the processing of the corresponding element. 
 */
 public class ValidationErrorHandler extends AbstractContextErrorHandler{
+    ContextMessageHandler messageHandler;
+    
 	public ValidationErrorHandler(MessageWriter debugWriter){
 		super(debugWriter);
 		id = ContextErrorHandlerManager.VALIDATION;
+        messageHandler = new ContextMessageHandler(debugWriter);
 	}
 	
-	public void init(){
-		messageHandler = new ContextMessageHandler(debugWriter);
-	}
 	public void recycle(){
-		pool.recycle(this);
+        messageHandler.clear();
+		pool.recycle(this);        
 	}
-		
+	
+    public boolean isCandidate(){
+        return false;
+    }
+    public void setCandidate(boolean isCandidate){}
+    
+    
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
 		messageHandler.unknownElement( qName, systemId, lineNumber, columnNumber);		
 	}	
 	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unexpectedElement( qName, definition, systemId, lineNumber, columnNumber);
+		messageHandler.unexpectedElement( qName, definition, systemId, lineNumber, columnNumber);	
 	}	
 	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unexpectedAmbiguousElement( qName, definition, systemId, lineNumber, columnNumber);
+		messageHandler.unexpectedAmbiguousElement( qName, definition, systemId, lineNumber, columnNumber);	
 	}
 
 	
 	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unknownAttribute( qName, systemId, lineNumber, columnNumber);
+		messageHandler.unknownAttribute( qName, systemId, lineNumber, columnNumber);		
 	}	
 	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);
+		messageHandler.unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);	
 	}	
 	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unexpectedAmbiguousAttribute( qName, definition, systemId, lineNumber, columnNumber);
+		messageHandler.unexpectedAmbiguousAttribute( qName, definition, systemId, lineNumber, columnNumber);	
 	}
-    
+	
 	
 	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
 		messageHandler.misplacedElement(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
@@ -176,40 +184,33 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
 	}
 	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		messageHandler.ambiguousListToken(token, systemId, lineNumber, columnNumber, possibleDefinitions);
-	}		
+	}	
+    
     public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         messageHandler.ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
     }    
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         messageHandler.ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, possibleDefinitions);
     }
+	
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		messageHandler.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
 	}
-	public void handle(String qName, AElement definition, Locator locator)
+    
+    public  void conflict(MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){
+		messageHandler.conflict(commonMessages, candidatesCount, disqualified, candidateMessages);
+    }
+    
+	public void handle(int contextType, String qName, AElement definition, Locator locator)
 				throws SAXException{
-		String message = messageHandler.getErrorMessage("");		
-		if(!message.equals("")){
-			errorDispatcher.error(new SAXParseException("Syntax error. Element <"+qName+"> corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation()+" contains errors: "+message, locator));
-		}
-		
-		String warningMessage = messageHandler.getWarningMessage("");		
-		if(!warningMessage.equals("")){
-			errorDispatcher.warning(new SAXParseException("Warning. Element <"+qName+"> corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation()+" generates warning: "+warningMessage, locator));
-		}		
+        messageHandler.report(contextType, qName, definition, locator, errorDispatcher, "");
+		messageHandler.clear();
 	}
 	
-	public void handle(String qName, Locator locator)
+	public void handle(int contextType, String qName, Locator locator)
 				throws SAXException{
-		String message = messageHandler.getErrorMessage("");		
-		if(!message.equals("")){
-			errorDispatcher.error(new SAXParseException("Syntax error. "+message, locator));
-		}
-		
-		String warningMessage = messageHandler.getWarningMessage("");		
-		if(!warningMessage.equals("")){
-			errorDispatcher.warning(new SAXParseException("Warning. "+warningMessage, locator));
-		}		
+        messageHandler.report(contextType, qName, null, locator, errorDispatcher, "");
+		messageHandler.clear();
 	}
 	
 	public String toString(){

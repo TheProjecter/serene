@@ -20,6 +20,8 @@ import org.relaxng.datatype.Datatype;
 
 import serene.validation.schema.ComponentBuilder;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ANameClass;
 import serene.validation.schema.active.components.AExceptPattern;
@@ -84,7 +86,7 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 		topLevel = level;
 	}
 
-	public void startLevel(){
+	public void startLevel(){	
 		level = level.getLevelDown();		
 	}	
 	public void endLevel(){		
@@ -155,8 +157,6 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 		Level contentLevel = level.getLevelDown();		
 		return contentLevel.getLastNameClass();
 	}
-			
-		
 	
 	protected void addToCurrentLevel(AExceptPattern ep){
 		level.add(ep);
@@ -183,66 +183,65 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 		Level contentLevel = level.getLevelDown();	
 		return contentLevel.getExceptNameClass();
 	}	
-		
-
+	
 	//**************************************************************************
 	//START PATTERN BUILDING ***************************************************
 	//**************************************************************************
-	public void buildElement(int index, ActiveGrammarModel model, String qName, String location){
-		AElement e = new AElement(index, model, stackHandlerPool, ruleHandlerPool, qName, location, debugWriter);
+	public void buildElement(int index, ActiveGrammarModel model, SimplifiedComponent simplifiedComponent){
+		AElement e = new AElement(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(e);
 	}
-	public void buildAttribute(int index, ActiveGrammarModel model, String qName, String location){
-		AAttribute a = new AAttribute(index, model, stackHandlerPool, ruleHandlerPool, qName, location, debugWriter);
+	public void buildAttribute(int index, ActiveGrammarModel model, SimplifiedComponent simplifiedComponent){
+		AAttribute a = new AAttribute(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(a);
 	}
-	public void buildGroup(String qName, String location){
-		AGroup g = new AGroup(getContentPatterns(), stackHandlerPool, ruleHandlerPool, qName, location, debugWriter);
+	public void buildGroup(SimplifiedComponent simplifiedComponent){
+		AGroup g = new AGroup(getContentPatterns(), stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(g);	
 	}		
-	public void buildInterleave(String qName, String location){
-		AInterleave i = new AInterleave(getContentPatterns(), stackHandlerPool, ruleHandlerPool, qName, location, debugWriter);
+	public void buildInterleave(SimplifiedComponent simplifiedComponent){
+		AInterleave i = new AInterleave(getContentPatterns(), stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(i);	
 	}
-	public void buildChoicePattern(String qName, String location){
-		AChoicePattern cp = new AChoicePattern(getContentPatterns(), ruleHandlerPool, qName, location, debugWriter);
+	public void buildChoicePattern(SimplifiedComponent simplifiedComponent){
+		AChoicePattern cp = new AChoicePattern(getContentPatterns(), ruleHandlerPool, simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(cp);
 	}	
-	public void buildListPattern(String qName, String location){
-		AListPattern lp = new AListPattern(getLastContentPattern(), stackHandlerPool, ruleHandlerPool, qName, location, debugWriter);
+	public void buildListPattern(SimplifiedComponent simplifiedComponent){
+		AListPattern lp = new AListPattern(getLastContentPattern(), stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(lp);
 	}
-	public void buildRef(int definitionIndex, ActiveGrammarModel model, String qName, String location){
-		ARef r = new ARef(definitionIndex, model, ruleHandlerPool, qName, location, debugWriter);
+	public void buildRef(int definitionIndex, ActiveGrammarModel model, SimplifiedComponent simplifiedComponent){
+		ARef r = new ARef(definitionIndex, model, ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(r);
 	}
-	public void buildEmpty(String qName, String location){
-		AEmpty e = new AEmpty(ruleHandlerPool, qName, location, debugWriter);
+	public void buildEmpty(SimplifiedComponent simplifiedComponent){
+		AEmpty e = new AEmpty(ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(e);
 	}
-	public void buildText(String qName, String location){
-		AText t = new AText(ruleHandlerPool, qName, location, debugWriter);
+	public void buildText(SimplifiedComponent simplifiedComponent){
+		AText t = new AText(ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(t);
 	}
-	public void buildValue(String ns, Datatype datatype, String charContent, ActiveGrammarModel model, String qName, String location){
-		AValue v = new AValue(ns, datatype, charContent, model, ruleHandlerPool, qName, location, debugWriter);
+	public void buildValue(String ns, Datatype datatype, String charContent, ActiveGrammarModel model, SimplifiedComponent simplifiedComponent){
+		AValue v = new AValue(ns, datatype, charContent, model, ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(v);
 	}
-	public void buildData(Datatype datatype, ActiveGrammarModel model, String qName, String location){
-		AData d = new AData(datatype, getContentExceptPattern(),  model, ruleHandlerPool, qName, location, debugWriter);
+	public void buildData(Datatype datatype, ActiveGrammarModel model, SimplifiedComponent simplifiedComponent){
+		AData d = new AData(datatype, getContentExceptPattern(),  model, ruleHandlerPool, simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(d);
 	}		
-	public void buildNotAllowed(String qName, String location){
-		ANotAllowed na = new ANotAllowed(ruleHandlerPool, qName, location, debugWriter);
+	public void buildNotAllowed(SimplifiedComponent simplifiedComponent){
+		ANotAllowed na = new ANotAllowed(ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(na);
 	}	
-	public void buildGrammar(String qName, String location){
-		AGrammar g = new AGrammar(getLastContentPattern(), ruleHandlerPool, qName, location, debugWriter);		
+	public void buildGrammar(SimplifiedComponent simplifiedComponent){
+		AGrammar g = new AGrammar(getLastContentPattern(), ruleHandlerPool, simplifiedComponent, debugWriter);		
 		clearContent();
 		addToCurrentLevel(g);
 	}
@@ -254,37 +253,36 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	//START NAME CLASS BUILDING ************************************************
 	//**************************************************************************	
-	public void buildName(String ns, String localPart, String qName, String location){
-		AName n = new AName(ns, localPart, qName, location, debugWriter);
+	public void buildName(String ns, String localPart, SimplifiedComponent simplifiedComponent){
+		AName n = new AName(ns, localPart, simplifiedComponent, debugWriter);
 		addToCurrentLevel(n);
 	}
-	public void buildAnyName(String qName, String location){
-		AAnyName an = new AAnyName(getContentExceptNameClass(), qName, location, debugWriter);
+	public void buildAnyName(SimplifiedComponent simplifiedComponent){
+		AAnyName an = new AAnyName(getContentExceptNameClass(), simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(an);
 	}
-	public void buildNsName(String ns, String qName, String location){
-		ANsName nn = new ANsName(ns, getContentExceptNameClass(), qName, location, debugWriter);
+	public void buildNsName(String ns, SimplifiedComponent simplifiedComponent){
+		ANsName nn = new ANsName(ns, getContentExceptNameClass(), simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(nn);
 	}
-	public void buildChoiceNameClass(String qName, String location){
-		AChoiceNameClass cnc = new AChoiceNameClass(getContentNameClasses(), qName, location, debugWriter);
+	public void buildChoiceNameClass(SimplifiedComponent simplifiedComponent){
+		AChoiceNameClass cnc = new AChoiceNameClass(getContentNameClasses(), simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(cnc);
 	}	
 	//**************************************************************************
 	//END NAME CLASS BUILDING **************************************************
 	//**************************************************************************
-	
 
-	public void buildExceptNameClass(String qName, String location){
-		AExceptNameClass enc = new AExceptNameClass(getLastContentNameClass(), qName, location, debugWriter);
+	public void buildExceptNameClass(SimplifiedComponent simplifiedComponent){
+		AExceptNameClass enc = new AExceptNameClass(getLastContentNameClass(), simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(enc);
 	}
-	public void buildExceptPattern(int index, ActiveGrammarModel model, String qName, String location){
-		AExceptPattern ep = new AExceptPattern(index, model, stackHandlerPool, ruleHandlerPool, qName, location, debugWriter);
+	public void buildExceptPattern(int index, ActiveGrammarModel model, SimplifiedComponent simplifiedComponent){
+		AExceptPattern ep = new AExceptPattern(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(ep);
 	}	
 }  

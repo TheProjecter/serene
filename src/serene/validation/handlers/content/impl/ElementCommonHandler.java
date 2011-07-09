@@ -55,7 +55,7 @@ class ElementCommonHandler extends UndeterminedEEH{
 	public void recycle(){		
 		uniqueHandler.recycle();
 		uniqueHandler = null;
-		recycleErrorHandlers();
+		resetContextErrorHandlerManager();
 		pool.recycle(this);
 	}
 	
@@ -63,10 +63,10 @@ class ElementCommonHandler extends UndeterminedEEH{
 		if(uniqueHandler != null) throw new IllegalStateException();
 		uniqueHandler  = individualHandler;		
 		if(uniqueHandler instanceof ValidatingEEH){			
-			((ValidatingEEH)uniqueHandler).setValidation();
+			((ValidatingEEH)uniqueHandler).setContextErrorHandlerIndex(VALIDATION);
 		}else if(uniqueHandler instanceof ErrorEEH){
 			ElementValidationHandler uniqueHandlerParent = (ElementValidationHandler)uniqueHandler.getParentHandler();			
-			uniqueHandlerParent.setValidation();
+			uniqueHandlerParent.setContextErrorHandlerIndex(VALIDATION);
 		}
 	}
 	
@@ -84,10 +84,14 @@ class ElementCommonHandler extends UndeterminedEEH{
 		uniqueHandler.handleAttributes(attributes, locator);
 	}
 	
-	void handleAttribute(String qName, String namespace, String name, String value){
-		uniqueHandler.handleAttribute(qName, namespace, name, value);
-	}
-	
+    // Used by: 
+    //  - ElementParallelHandler state Conflict,
+    //  - BoundElementParallelHandler state BoundConflict
+    // to build up the AttributeParallelHandler.
+    ComparableAEH getAttributeHandler(String qName, String namespace, String name){
+        return uniqueHandler.getAttributeHandler(qName, namespace, name);
+    }
+    
 	// called from the ValidatorHandlerImpl
 	public void handleEndElement(Locator locator) throws SAXException{
 		uniqueHandler.validateContext();
@@ -114,34 +118,31 @@ class ElementCommonHandler extends UndeterminedEEH{
 		uniqueHandler.handleLastCharacters(chars);
 	}
 	
-	public boolean functionalEquivalent(ComparableEEH other){
+	boolean functionalEquivalent(ComparableEEH other){
 		return other.functionalEquivalent(this);
 	}
-	public boolean functionalEquivalent(ElementValidationHandler other){
+	boolean functionalEquivalent(ElementValidationHandler other){
 		return false;
 	}		
-	public boolean functionalEquivalent(UnrecognizedElementHandler other){
+	boolean functionalEquivalent(UnexpectedElementHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(UnexpectedElementHandler other){
+	boolean functionalEquivalent(UnexpectedAmbiguousElementHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(UnexpectedAmbiguousElementHandler other){
+	boolean functionalEquivalent(UnknownElementHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(UnknownElementHandler other){
+	boolean functionalEquivalent(ElementDefaultHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(ElementDefaultHandler other){
+	boolean functionalEquivalent(ElementConcurrentHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(ElementConcurrentHandler other){
+	boolean functionalEquivalent(ElementParallelHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(ElementParallelHandler other){
-		return false;
-	}
-	public boolean functionalEquivalent(ElementCommonHandler other){		
+	boolean functionalEquivalent(ElementCommonHandler other){		
 		return other.functionalEquivalent(uniqueHandler, conflictHandler);		
 	}
 	

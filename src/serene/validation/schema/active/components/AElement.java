@@ -19,6 +19,8 @@ package serene.validation.schema.active.components;
 import java.util.List;
 import java.util.Arrays;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ANameClass;
@@ -59,15 +61,14 @@ public class AElement extends MarkupAPattern
 				ActiveGrammarModel grammarModel,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				String qName, String location, 
+				SimplifiedComponent simplifiedComponent, 
 				MessageWriter debugWriter){		
 		super(index,
 				null, 
 				grammarModel, 
 				stackHandlerPool, 
 				ruleHandlerPool, 
-				qName, 
-				location, 
+				simplifiedComponent, 
 				debugWriter);		
 		this.index = index;
 		acw = new ActiveComponentWriter();

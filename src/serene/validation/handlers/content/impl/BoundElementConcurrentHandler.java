@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.active.components.AElement;
 
 import serene.validation.handlers.error.ContextErrorHandlerManager;
+
 import serene.validation.handlers.content.BoundElementHandler;
 
 import serene.bind.BindingModel;
@@ -47,6 +48,7 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 	void init(List<AElement> candidateDefinitions,  BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){		
 		this.parent = parent;
 		this.candidateDefinitions = candidateDefinitions;
+        localCandidatesConflictErrorHandler.init(); 
 		init((ContextErrorHandlerManager)parent);
 		this.bindingModel = bindingModel;
 		this.queue = queue;
@@ -55,9 +57,13 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		
 		for(int i = 0; i < candidateDefinitions.size(); i++){			
 			BoundElementValidationHandler candidate = pool.getElementValidationHandler(candidateDefinitions.get(i), parent, bindingModel, queuePool.getQueue(), queuePool);			
-			candidate.setConflict(candidatesConflictHandler, i);
+			candidate.setCandidateIndex(i);
+            candidate.setCandidate(true);
+            candidate.setCandidatesConflictErrorHandler(localCandidatesConflictErrorHandler);
+			candidate.setContextErrorHandlerIndex(CONFLICT);
 			candidates.add(candidate);	
-		}		
+		}
+        localCandidatesConflictErrorHandler.setCandidates(candidateDefinitions);		
 	}
 	
 	public void recycle(){
@@ -67,7 +73,8 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		candidates.clear();	
 		candidateDefinitions.clear();		
 		candidatesConflictHandler.reset();
-		recycleErrorHandlers();
+        localCandidatesConflictErrorHandler.clear();
+		resetContextErrorHandlerManager();
 		
 		parent = null;
 		
@@ -100,7 +107,7 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		//						validate in context will delegate the queue 
 		//						addition to the InternalConflictResolver		
 		int candidatesCount = candidates.size();
-		int qualified = candidatesCount-candidatesConflictHandler.getDisqualifiedCount(); 
+		int qualified = candidatesCount-candidatesConflictHandler.getDisqualifiedCount();
 		if(qualified == 0){
 			for(int i = 0; i < candidatesCount; i++){
 				((BoundElementValidationHandler)candidates.get(i)).elementTasksBinding();
@@ -124,26 +131,37 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		}		
 	}
 	
-	public ComparableEEH handleStartElement(String qName, String namespace, String name){		
-		BoundElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, this, bindingModel,queue, queuePool);					
+	public ComparableEEH handleStartElement(String qName, String namespace, String name){			
+        
+		BoundElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, localCandidatesConflictErrorHandler, this, bindingModel,queue, queuePool);					
 		for(int i = 0; i < candidates.size(); i++){			
 			ComparableEEH candidate = candidates.get(i);
 			next.add(candidate.handleStartElement(qName, namespace, name));			
 		}
+        localCandidatesConflictErrorHandler.endValidationStage();
 		return next;
 	}
 	
+    BoundAttributeParallelHandler getAttributeHandler(String qName, String namespace, String name){
+        BoundAttributeParallelHandler baph = pool.getAttributeParallelHandler(this, candidatesConflictHandler, localCandidatesConflictErrorHandler, bindingModel, queue, queueStartEntry);        
+        for(ElementValidationHandler candidate : candidates){            
+            ComparableAEH aeh = candidate.getAttributeHandler(qName, namespace, name);
+            baph.add(aeh);
+        }
+        return baph;
+    }
+    
 	public void handleEndElement(Locator locator) throws SAXException{		
-		validateContext();
-		reportContextErrors(locator);
-		elementTasksBinding();		
+		validateContext();	
+		reportContextErrors(locator);	
+		elementTasksBinding();			
 		validateInContext();		
 	}	
 	
 	void validateInContext(){
 		int candidatesCount = candidates.size();		
 		int qualifiedCount = candidatesCount - candidatesConflictHandler.getDisqualifiedCount();		
-		if(qualifiedCount == 0){					
+		if(qualifiedCount == 0){
 			// Shift all with errors, hope the parent context disqualifies all but 1
 			// Why shift, they all have errors already, noone in his right mind should bind them??? 
 			// Maybe the parent actually expects one of them and not shifting 
@@ -166,9 +184,9 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 	private HashMap<AElement, Queue> mapCandidateToQueue(){
 		HashMap<AElement, Queue> map = new HashMap<AElement, Queue>();
 		for(int i = 0; i < candidates.size(); i++){
-			if(!candidatesConflictHandler.isDisqualified(i)){				
+			//if(!candidatesConflictHandler.isDisqualified(i)){				
 				map.put(candidateDefinitions.get(i), ((BoundElementValidationHandler)candidates.get(i)).getQueue());
-			}
+			//}
 		}
 		return map;
 	}

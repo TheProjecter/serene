@@ -18,6 +18,11 @@ package serene.validation.handlers.error;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.BitSet;
+
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.SAXException;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.APattern;
@@ -34,391 +39,15 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import sereneWrite.MessageWriter;
 
-public class ContextMessageHandler implements ErrorCatcher{	
-	String qName;
-	AElement definition;
-	String systemId;
-	int lineNumber;
-	int columnNumber;
-
-	// {1}
-	String undeterminedQName;
-	String undeterminedCandidateMessages;
-		
-	// {2}
-	String[] unknownElementQName;
-	String[] unknownElementSystemId;
-	int[] unknownElementLineNumber;
-	int[] unknownElementColumnNumber;
-	int unknownElementIndex;
-	int unknownElementSize;	
-	
-	// {3}
-	String[] unexpectedElementQName;
-	SimplifiedComponent[] unexpectedElementDefinition;
-	String[] unexpectedElementSystemId;
-	int[] unexpectedElementLineNumber;
-	int[] unexpectedElementColumnNumber;
-	int unexpectedElementIndex;
-	int unexpectedElementSize;
-	
-	// {4}
-	String[] unexpectedAmbiguousElementQName;
-	SimplifiedComponent[][] unexpectedAmbiguousElementDefinition;
-	String[] unexpectedAmbiguousElementSystemId;
-	int[] unexpectedAmbiguousElementLineNumber;
-	int[] unexpectedAmbiguousElementColumnNumber;
-	int unexpectedAmbiguousElementIndex;
-	int unexpectedAmbiguousElementSize;
-	
-	// {5}
-	String[] unknownAttributeQName;
-	String[] unknownAttributeSystemId;
-	int[] unknownAttributeLineNumber;
-	int[] unknownAttributeColumnNumber;
-	int unknownAttributeIndex;
-	int unknownAttributeSize;	
-	
-	// {6}
-	String[] unexpectedAttributeQName;
-	SimplifiedComponent[] unexpectedAttributeDefinition;
-	String[] unexpectedAttributeSystemId;
-	int[] unexpectedAttributeLineNumber;
-	int[] unexpectedAttributeColumnNumber;
-	int unexpectedAttributeIndex;
-	int unexpectedAttributeSize;
-	
-	// {7}
-	String[] unexpectedAmbiguousAttributeQName;
-	SimplifiedComponent[][] unexpectedAmbiguousAttributeDefinition;
-	String[] unexpectedAmbiguousAttributeSystemId;
-	int[] unexpectedAmbiguousAttributeLineNumber;
-	int[] unexpectedAmbiguousAttributeColumnNumber;
-	int unexpectedAmbiguousAttributeIndex;
-	int unexpectedAmbiguousAttributeSize;
-	
-	
-	// {8}
-	APattern[] misplacedContext;
-	String[] misplacedStartSystemId;
-	int[] misplacedStartLineNumber;
-	int[] misplacedStartColumnNumber;
-	APattern[][] misplacedDefinition;
-	String[][][] misplacedQName;	
-	String[][][] misplacedSystemId;
-	int[][][] misplacedLineNumber;
-	int[][][] misplacedColumnNumber;
-	int misplacedIndex;
-	int misplacedSize;
-
-	// {9}
-	Rule[] excessiveContext;
-	String[] excessiveStartSystemId;
-	int[] excessiveStartLineNumber;
-	int[] excessiveStartColumnNumber;
-	APattern[] excessiveDefinition;
-	String[][] excessiveQName;
-	String[][] excessiveSystemId;
-	int[][] excessiveLineNumber;
-	int[][] excessiveColumnNumber;
-	int excessiveIndex;
-	int excessiveSize;
-	
-	// {10}
-	Rule[] missingContext;
-	String[] missingStartSystemId;
-	int[] missingStartLineNumber;
-	int[] missingStartColumnNumber;
-	APattern[] missingDefinition;
-	int[] missingExpected;
-	int[] missingFound;
-	String[][] missingQName;
-	String[][] missingSystemId;
-	int[][] missingLineNumber;
-	int[][] missingColumnNumber;
-	int missingIndex;
-	int missingSize;
-	
-	
-	// {11}
-	Rule[] illegalContext;
-	String[] illegalQName;
-	String[] illegalStartSystemId;
-	int[] illegalStartLineNumber;
-	int[] illegalStartColumnNumber;	
-	int illegalIndex;
-	int illegalSize;
-	
-	// {12}
-	String[] ambiguousElementQNameEE;
-	String[] ambiguousElementSystemIdEE;
-	int[] ambiguousElementLineNumberEE;
-	int[] ambiguousElementColumnNumberEE;
-	AElement[][] ambiguousElementDefinitionEE;
-	int ambiguousElementIndexEE;
-	int ambiguousElementSizeEE;
-
-	// {13}
-	String[] ambiguousAttributeQNameEE;
-	String[] ambiguousAttributeSystemIdEE;
-	int[] ambiguousAttributeLineNumberEE;
-	int[] ambiguousAttributeColumnNumberEE;
-	AAttribute[][] ambiguousAttributeDefinitionEE;
-	int ambiguousAttributeIndexEE;
-	int ambiguousAttributeSizeEE;
-
-	// {14}
-	String[] ambiguousCharsSystemIdEE;
-	int[] ambiguousCharsLineNumberEE;
-	int[] ambiguousCharsColumnNumberEE;
-	CharsActiveTypeItem[][] ambiguousCharsDefinitionEE;
-	int ambiguousCharsIndexEE;
-	int ambiguousCharsSizeEE;
-	
-	
-	// {w1}
-	String[] ambiguousElementQNameWW;
-	String[] ambiguousElementSystemIdWW;
-	int[] ambiguousElementLineNumberWW;
-	int[] ambiguousElementColumnNumberWW;
-	AElement[][] ambiguousElementDefinitionWW;
-	int ambiguousElementIndexWW;
-	int ambiguousElementSizeWW;
-
-	// {w2}
-	String[] ambiguousAttributeQNameWW;
-	String[] ambiguousAttributeSystemIdWW;
-	int[] ambiguousAttributeLineNumberWW;
-	int[] ambiguousAttributeColumnNumberWW;
-	AAttribute[][] ambiguousAttributeDefinitionWW;
-	int ambiguousAttributeIndexWW;
-	int ambiguousAttributeSizeWW;
-
-	// {w3}
-	String[] ambiguousCharsSystemIdWW;
-	int[] ambiguousCharsLineNumberWW;
-	int[] ambiguousCharsColumnNumberWW;
-	CharsActiveTypeItem[][] ambiguousCharsDefinitionWW;
-	int ambiguousCharsIndexWW;
-	int ambiguousCharsSizeWW;
-	
-	
-	// {15}
-	String datatypeElementQNameCC[];
-	String datatypeCharsSystemIdCC[];//CC character content
-	int datatypeCharsLineNumberCC[];
-	int datatypeCharsColumnNumberCC[];
-	DatatypedActiveTypeItem datatypeCharsDefinitionCC[];
-	String datatypeErrorMessageCC[];
-	int datatypeIndexCC;
-	int datatypeSizeCC;
-	
-	// {16}
-	String datatypeAttributeQNameAV[];
-	String datatypeCharsSystemIdAV[];//AV attribute value
-	int datatypeCharsLineNumberAV[];
-	int datatypeCharsColumnNumberAV[];
-	DatatypedActiveTypeItem datatypeCharsDefinitionAV[];
-	String datatypeErrorMessageAV[];
-	int datatypeIndexAV;
-	int datatypeSizeAV;
-   
-	
-	// {17}
-	String valueElementQNameCC[];
-	String valueCharsSystemIdCC[];//CC character content
-	int valueCharsLineNumberCC[];
-	int valueCharsColumnNumberCC[];
-	AValue valueCharsDefinitionCC[];
-	int valueIndexCC;
-	int valueSizeCC;
-	
-	// {18}
-	String valueAttributeQNameAV[];
-	String valueCharsSystemIdAV[];//AV attribute value
-	int valueCharsLineNumberAV[];
-	int valueCharsColumnNumberAV[];
-	AValue valueCharsDefinitionAV[];
-	int valueIndexAV;
-	int valueSizeAV;
-	
-	// {19}
-	String exceptElementQNameCC[];
-	String exceptCharsSystemIdCC[];//CC character content
-	int exceptCharsLineNumberCC[];
-	int exceptCharsColumnNumberCC[];
-	AData exceptCharsDefinitionCC[];
-	int exceptIndexCC;
-	int exceptSizeCC;
-	
-	// {20}
-	String exceptAttributeQNameAV[];
-	String exceptCharsSystemIdAV[];//AV attribute except
-	int exceptCharsLineNumberAV[];
-	int exceptCharsColumnNumberAV[];
-	AData exceptCharsDefinitionAV[];
-	int exceptIndexAV;
-	int exceptSizeAV;
-	
-	// {21}
-	String unexpectedCharsSystemIdCC[];//CC character content
-	int unexpectedCharsLineNumberCC[];
-	int unexpectedCharsColumnNumberCC[];
-	AElement unexpectedContextDefinitionCC[];
-	int unexpectedIndexCC;
-	int unexpectedSizeCC;
-	
-	// {22}
-	String unexpectedCharsSystemIdAV[];//AV attribute unexpected
-	int unexpectedCharsLineNumberAV[];
-	int unexpectedCharsColumnNumberAV[];
-	AAttribute unexpectedContextDefinitionAV[];
-	int unexpectedIndexAV;
-	int unexpectedSizeAV;
-	
-	
-	// {23}
-	String ambiguousCharsSystemIdEECC[];//CC character content
-	int ambiguousCharsLineNumberEECC[];
-	int ambiguousCharsColumnNumberEECC[];
-	CharsActiveTypeItem ambiguousPossibleDefinitionsCC[][];
-	int ambiguousIndexCC;
-	int ambiguousSizeCC;
-	
-	// {24}
-	String ambiguousAttributeQNameEEAV[];
-	String ambiguousCharsSystemIdEEAV[];//AV attribute ambiguous
-	int ambiguousCharsLineNumberEEAV[];
-	int ambiguousCharsColumnNumberEEAV[];
-	CharsActiveTypeItem ambiguousPossibleDefinitionsAV[][];
-	int ambiguousIndexAV;
-	int ambiguousSizeAV;
-	
-	
-	// {25}
-	String datatypeTokenLP[];//LP list pattern
-	String datatypeCharsSystemIdLP[];
-	int datatypeCharsLineNumberLP[];
-	int datatypeCharsColumnNumberLP[];
-	DatatypedActiveTypeItem datatypeCharsDefinitionLP[];
-	String datatypeErrorMessageLP[];
-	int datatypeIndexLP;
-	int datatypeSizeLP;
-    	
-	// {26}
-	String valueTokenLP[];//LP list pattern
-	String valueCharsSystemIdLP[];
-	int valueCharsLineNumberLP[];
-	int valueCharsColumnNumberLP[];
-	AValue valueCharsDefinitionLP[];
-	int valueIndexLP;
-	int valueSizeLP;
-	
-	// {27}
-	String exceptTokenLP[];//LP list pattern
-	String exceptCharsSystemIdLP[];
-	int exceptCharsLineNumberLP[];
-	int exceptCharsColumnNumberLP[];
-	AData exceptCharsDefinitionLP[];
-	int exceptIndexLP;
-	int exceptSizeLP;
-	
-	// {28}
-	String ambiguousTokenLP[];//LP list pattern
-	String ambiguousCharsSystemIdEELP[];
-	int ambiguousCharsLineNumberEELP[];
-	int ambiguousCharsColumnNumberEELP[];
-	CharsActiveTypeItem ambiguousPossibleDefinitionsLP[][];
-	int ambiguousIndexLP;
-	int ambiguousSizeLP;
+public class ContextMessageHandler  extends AbstractMessageHandler implements ExternalConflictErrorCatcher{	
     
-    // {28_1}
-	String ambiguousTokenLPICE[];//LPICE list pattern in context validation error
-	String ambiguousCharsSystemIdEELPICE[];
-	int ambiguousCharsLineNumberEELPICE[];
-	int ambiguousCharsColumnNumberEELPICE[];
-	CharsActiveTypeItem ambiguousPossibleDefinitionsLPICE[][];
-	int ambiguousIndexLPICE;
-	int ambiguousSizeLPICE;
-    
-    
-    // {28_2}
-	String ambiguousTokenLPICW[];//LPICW list pattern in context validation warning
-	String ambiguousCharsSystemIdEELPICW[];
-	int ambiguousCharsLineNumberEELPICW[];
-	int ambiguousCharsColumnNumberEELPICW[];
-	CharsActiveTypeItem ambiguousPossibleDefinitionsLPICW[][];
-	int ambiguousIndexLPICW;
-	int ambiguousSizeLPICW;
-	
-	// {29}
-	Rule[] missingCompositorContentContext;
-	String[] missingCompositorContentStartSystemId;
-	int[] missingCompositorContentStartLineNumber;
-	int[] missingCompositorContentStartColumnNumber;
-	APattern[] missingCompositorContentDefinition;
-	int[] missingCompositorContentExpected;
-	int[] missingCompositorContentFound;
-	int missingCompositorContentIndex;
-	int missingCompositorContentSize;
-	
-	MessageWriter debugWriter;
-	
 	public ContextMessageHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-				
-		unknownElementSize = 0;
-		unexpectedElementSize = 0;
-		unexpectedAmbiguousElementSize = 0;
-		misplacedSize = 0;
-		excessiveSize = 0;		
-		missingSize = 0;	
-		illegalSize = 0;
-		unknownAttributeSize = 0;		
-		unexpectedAttributeSize = 0;
-		unexpectedAmbiguousAttributeSize = 0;
-		ambiguousElementSizeEE = 0;
-		ambiguousAttributeSizeEE = 0;
-		ambiguousCharsSizeEE = 0;
-		
-		ambiguousElementSizeWW = 0;
-		ambiguousAttributeSizeWW = 0;
-		ambiguousCharsSizeWW = 0;
-		
-		
-		datatypeSizeCC = 0;
-		datatypeSizeAV = 0;
-		valueSizeCC = 0;
-		valueSizeAV = 0;
-		exceptSizeCC = 0;
-		exceptSizeAV = 0;
-		unexpectedSizeCC = 0;
-		unexpectedSizeAV = 0;
-		ambiguousSizeCC = 0;
-		ambiguousSizeAV = 0;
-		datatypeSizeLP = 0;
-		valueSizeLP = 0;
-		exceptSizeLP = 0;
-		ambiguousSizeLP = 0;
-		ambiguousSizeLPICE = 0;
-        ambiguousSizeLPICW = 0;
-        
-		missingCompositorContentSize = 0;
+		super(debugWriter);
+        conflictResolutionId = RESOLVED;        
 	}	
-	    
-	public void setContextQName(String qName){
-		this.qName = qName;
-	}	
-	public void setContextLocation(String systemId, int lineNumber, int columnNumber){
-		this.systemId = systemId;
-		this.lineNumber = lineNumber;
-		this.columnNumber = columnNumber;		
-	}
-	public void setContextDefinition(AElement definition){
-		this.definition = definition;
-	}
-	
+    
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
+        errorTotalCount++;
 		if(unknownElementSize == 0){
 			unknownElementSize = 1;
 			unknownElementIndex = 0;	
@@ -447,9 +76,11 @@ public class ContextMessageHandler implements ErrorCatcher{
 		unknownElementSystemId[unknownElementIndex] = systemId;
 		unknownElementLineNumber[unknownElementIndex] = lineNumber;
 		unknownElementColumnNumber[unknownElementIndex] = columnNumber;
+		
 	}
 	
     public void clearUnknownElement(){
+        errorTotalCount -= unknownElementSize; 
         unknownElementSize = 0;
         unknownElementIndex = -1;	
         unknownElementQName = null;			
@@ -459,6 +90,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     }
 	
 	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+        errorTotalCount++;
 		if(unexpectedElementSize == 0){
 			unexpectedElementSize = 1;
 			unexpectedElementIndex = 0;	
@@ -493,9 +125,11 @@ public class ContextMessageHandler implements ErrorCatcher{
 		unexpectedElementSystemId[unexpectedElementIndex] = systemId;
 		unexpectedElementLineNumber[unexpectedElementIndex] = lineNumber;
 		unexpectedElementColumnNumber[unexpectedElementIndex] = columnNumber;
+		
 	}
 		
 	public void clearUnexpectedElement(){
+        errorTotalCount -= unexpectedElementSize;
         unexpectedElementSize = 0;
         unexpectedElementIndex = -1;	
         unexpectedElementQName = null;
@@ -507,6 +141,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     
     
 	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
+        errorTotalCount++;
 		if(unexpectedAmbiguousElementSize == 0){
 			unexpectedAmbiguousElementSize = 1;
 			unexpectedAmbiguousElementIndex = 0;	
@@ -541,9 +176,11 @@ public class ContextMessageHandler implements ErrorCatcher{
 		unexpectedAmbiguousElementSystemId[unexpectedAmbiguousElementIndex] = systemId;
 		unexpectedAmbiguousElementLineNumber[unexpectedAmbiguousElementIndex] = lineNumber;
 		unexpectedAmbiguousElementColumnNumber[unexpectedAmbiguousElementIndex] = columnNumber;
+		
 	}
 	
 	public void clearUnexpectedAmbiguousElement(){
+        errorTotalCount -= unexpectedAmbiguousElementSize;
         unexpectedAmbiguousElementSize = 0;
         unexpectedAmbiguousElementIndex = -1;	
         unexpectedAmbiguousElementQName = null;
@@ -556,6 +193,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 	
 	
 	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
+        errorTotalCount++;
 		if(unknownAttributeSize == 0){
 			unknownAttributeSize = 1;
 			unknownAttributeIndex = 0;	
@@ -584,8 +222,10 @@ public class ContextMessageHandler implements ErrorCatcher{
 		unknownAttributeSystemId[unknownAttributeIndex] = systemId;
 		unknownAttributeLineNumber[unknownAttributeIndex] = lineNumber;
 		unknownAttributeColumnNumber[unknownAttributeIndex] = columnNumber;
+		
 	}
 	public void clearUnknownAttribute(){
+        errorTotalCount -= unknownAttributeSize;
         unknownAttributeSize = 0;
         unknownAttributeIndex = -1;	
         unknownAttributeQName = null;			
@@ -595,6 +235,8 @@ public class ContextMessageHandler implements ErrorCatcher{
     }
 	
 	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+        
+        errorTotalCount++;
 		if(unexpectedAttributeSize == 0){
 			unexpectedAttributeSize = 1;
 			unexpectedAttributeIndex = 0;	
@@ -629,8 +271,10 @@ public class ContextMessageHandler implements ErrorCatcher{
 		unexpectedAttributeSystemId[unexpectedAttributeIndex] = systemId;
 		unexpectedAttributeLineNumber[unexpectedAttributeIndex] = lineNumber;
 		unexpectedAttributeColumnNumber[unexpectedAttributeIndex] = columnNumber;
+		
 	}
 	public void clearUnexpectedAttribute(){
+        errorTotalCount -= unexpectedAttributeSize;
         unexpectedAttributeSize = 0;
         unexpectedAttributeIndex = -1;	
         unexpectedAttributeQName = null;
@@ -642,6 +286,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 	
 	
 	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
+        errorTotalCount++;
 		if(unexpectedAmbiguousAttributeSize == 0){
 			unexpectedAmbiguousAttributeSize = 1;
 			unexpectedAmbiguousAttributeIndex = 0;	
@@ -676,8 +321,10 @@ public class ContextMessageHandler implements ErrorCatcher{
 		unexpectedAmbiguousAttributeSystemId[unexpectedAmbiguousAttributeIndex] = systemId;
 		unexpectedAmbiguousAttributeLineNumber[unexpectedAmbiguousAttributeIndex] = lineNumber;
 		unexpectedAmbiguousAttributeColumnNumber[unexpectedAmbiguousAttributeIndex] = columnNumber;
+		
 	}
 	public void clearUnexpectedAmbiguousAttribute(){
+        errorTotalCount -= unexpectedAmbiguousAttributeSize;
         unexpectedAmbiguousAttributeSize = 0;
         unexpectedAmbiguousAttributeIndex = -1;	
         unexpectedAmbiguousAttributeQName = null;
@@ -697,10 +344,11 @@ public class ContextMessageHandler implements ErrorCatcher{
 											int lineNumber, 
 											int columnNumber,
 											APattern sourceDefinition, 
-											APattern reper){//not stored, only used for internal conflict handling				
-		all: {			
-            
+											APattern reper){//not stored, only used for internal conflict handling
+        
+		all: {	           
 			if(misplacedSize == 0){
+                errorTotalCount++;
 				misplacedSize = 1;
 				misplacedIndex = 0;	
 				misplacedContext = new APattern[misplacedSize];	
@@ -791,6 +439,8 @@ public class ContextMessageHandler implements ErrorCatcher{
 					break all;
 				}
 			}
+            
+            errorTotalCount++;
 			APattern[] increasedCDef = new APattern[++misplacedSize];
                                                                   // ISSUE 194 added ++
 			System.arraycopy(misplacedContext, 0, increasedCDef, 0, ++misplacedIndex);
@@ -868,9 +518,10 @@ public class ContextMessageHandler implements ErrorCatcher{
 									columnNumber[i],
 									sourceDefinition[i],
 									reper);
-		}
+		}	
 	}
     public void clearMisplacedElement(){
+        errorTotalCount -= misplacedSize;
         misplacedSize = 0;
         misplacedIndex = -1;	
         misplacedContext = null;	
@@ -893,8 +544,8 @@ public class ContextMessageHandler implements ErrorCatcher{
 									String[] qName, 
 									String[] systemId, 
 									int[] lineNumber, 
-									int[] columnNumber){	
-		if(excessiveSize == 0){
+									int[] columnNumber){
+		if(excessiveSize == 0){            
 			excessiveSize = 1;
 			excessiveIndex = 0;
 			excessiveContext = new APattern[excessiveSize];
@@ -906,7 +557,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 			excessiveSystemId = new String[excessiveSize][];			
 			excessiveLineNumber = new int[excessiveSize][];
 			excessiveColumnNumber = new int[excessiveSize][];			
-		}else if(++excessiveIndex == excessiveSize){			
+		}else if(++excessiveIndex == excessiveSize){
 			APattern[] increasedEC = new APattern[++excessiveSize];
 			System.arraycopy(excessiveContext, 0, increasedEC, 0, excessiveIndex);
 			excessiveContext = increasedEC;
@@ -943,6 +594,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 			System.arraycopy(excessiveColumnNumber, 0, increasedCN, 0, excessiveIndex);
 			excessiveColumnNumber = increasedCN;
 		}
+        errorTotalCount++;
 		excessiveContext[excessiveIndex] = context;
 		excessiveStartSystemId[excessiveIndex] = startSystemId;
 		excessiveStartLineNumber[excessiveIndex] = startLineNumber;
@@ -959,10 +611,13 @@ public class ContextMessageHandler implements ErrorCatcher{
 								String systemId, 
 								int lineNumber,		
 								int columnNumber){
+        boolean recorded = false;
 		for(int i = 0; i < excessiveSize; i++){
 			if(excessiveContext[i].equals(context) &&
 				excessiveDefinition[i].equals(definition)){
-			
+			    
+                recorded =  true;
+                
 				int length = excessiveQName[i].length;
 				String[] increasedQN = new String[(length+1)];
 				System.arraycopy(excessiveQName[i], 0, increasedQN, 0, length);
@@ -989,8 +644,10 @@ public class ContextMessageHandler implements ErrorCatcher{
 				break;
 			}
 		}		
+        if(!recorded) throw new IllegalArgumentException();
 	}
 	public void clearExcessiveContent(){
+        errorTotalCount -= excessiveSize;
         excessiveSize = 0;
         excessiveIndex = -1;
         excessiveContext = null;
@@ -1010,6 +667,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
+        errorTotalCount++;
 		if(ambiguousElementSizeEE == 0){
 			ambiguousElementSizeEE = 1;
 			ambiguousElementIndexEE = 0;	
@@ -1046,6 +704,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousElementDefinitionEE[ambiguousElementIndexEE] = possibleDefinitions;
 	}
 	public void clearAmbiguousElementContentError(){
+        errorTotalCount -= ambiguousElementSizeEE;
         ambiguousElementSizeEE = 0;
         ambiguousElementIndexEE = -1;	
         ambiguousElementQNameEE = null;			
@@ -1061,6 +720,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 									int lineNumber, 
 									int columnNumber, 
 									AAttribute[] possibleDefinitions){
+        errorTotalCount++;
 		if(ambiguousAttributeSizeEE == 0){
 			ambiguousAttributeSizeEE = 1;
 			ambiguousAttributeIndexEE = 0;	
@@ -1094,9 +754,11 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousAttributeSystemIdEE[ambiguousAttributeIndexEE] = systemId;
 		ambiguousAttributeLineNumberEE[ambiguousAttributeIndexEE] = lineNumber;
 		ambiguousAttributeColumnNumberEE[ambiguousAttributeIndexEE] = columnNumber;
-		ambiguousAttributeDefinitionEE[ambiguousAttributeIndexEE] = possibleDefinitions;
+		ambiguousAttributeDefinitionEE[ambiguousAttributeIndexEE] = possibleDefinitions;	
+		
 	}
 	public void clearAmbiguousAttributeContentError(){
+        errorTotalCount -= ambiguousAttributeSizeEE;
         ambiguousAttributeSizeEE = 0;
         ambiguousAttributeIndexEE = -1;	
         ambiguousAttributeQNameEE = null;			
@@ -1110,6 +772,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 									int lineNumber, 
 									int columnNumber, 
 									CharsActiveTypeItem[] possibleDefinitions){
+        errorTotalCount++;
 		if(ambiguousCharsSizeEE == 0){
 			ambiguousCharsSizeEE = 1;
 			ambiguousCharsIndexEE = 0;
@@ -1143,6 +806,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousCharsDefinitionEE[ambiguousCharsIndexEE] = possibleDefinitions;
 	}
     public void clearAmbiguousCharsContentError(){
+        errorTotalCount -= ambiguousCharsSizeEE;
         ambiguousCharsSizeEE = 0;
         ambiguousCharsIndexEE = -1;
         ambiguousCharsSystemIdEE = null;			
@@ -1157,6 +821,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
+        errorTotalCount++;
 		if(ambiguousElementSizeWW == 0){
 			ambiguousElementSizeWW = 1;
 			ambiguousElementIndexWW = 0;	
@@ -1190,9 +855,10 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousElementSystemIdWW[ambiguousElementIndexWW] = systemId;
 		ambiguousElementLineNumberWW[ambiguousElementIndexWW] = lineNumber;
 		ambiguousElementColumnNumberWW[ambiguousElementIndexWW] = columnNumber;
-		ambiguousElementDefinitionWW[ambiguousElementIndexWW] = possibleDefinitions;
+		ambiguousElementDefinitionWW[ambiguousElementIndexWW] = possibleDefinitions;        
 	}
 	public void clearAmbiguousElementContentWarning(){
+        errorTotalCount -= ambiguousElementSizeWW;
         ambiguousElementSizeWW = 0;
         ambiguousElementIndexWW = -1;	
         ambiguousElementQNameWW = null;			
@@ -1207,6 +873,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 									int lineNumber, 
 									int columnNumber, 
 									AAttribute[] possibleDefinitions){
+        errorTotalCount++;
 		if(ambiguousAttributeSizeWW == 0){
 			ambiguousAttributeSizeWW = 1;
 			ambiguousAttributeIndexWW = 0;	
@@ -1243,6 +910,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousAttributeDefinitionWW[ambiguousAttributeIndexWW] = possibleDefinitions;
 	}
 	public void clearAmbiguousAttributeContentWarning(){
+        errorTotalCount -= ambiguousAttributeSizeWW;
         ambiguousAttributeSizeWW = 0;
         ambiguousAttributeIndexWW = -1;	
         ambiguousAttributeQNameWW = null;			
@@ -1256,6 +924,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 									int lineNumber, 
 									int columnNumber, 
 									CharsActiveTypeItem[] possibleDefinitions){
+        errorTotalCount++;
 		if(ambiguousCharsSizeWW == 0){
 			ambiguousCharsSizeWW = 1;
 			ambiguousCharsIndexWW = 0;
@@ -1286,6 +955,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousCharsDefinitionWW[ambiguousCharsIndexWW] = possibleDefinitions;
 	}
 	public void clearAmbiguousCharsContentWarning(){
+        errorTotalCount -= ambiguousCharsSizeWW;
         ambiguousCharsSizeWW = 0;
         ambiguousCharsIndexWW = -1;
         ambiguousCharsSystemIdWW = null;			
@@ -1309,6 +979,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 								String[] systemId, 
 								int[] lineNumber, 
 								int[] columnNumber){
+        errorTotalCount++;
 		if(missingSize == 0){
 			missingSize = 1;
 			missingIndex = 0;
@@ -1379,8 +1050,9 @@ public class ContextMessageHandler implements ErrorCatcher{
 		if(systemId != null)missingSystemId[missingIndex] = systemId;
 		missingLineNumber[missingIndex] = lineNumber;
 		missingColumnNumber[missingIndex] = columnNumber;
-	}
+    }
 	public void clearMissingContent(){
+        errorTotalCount -= missingSize;
         missingSize = 0;
         missingIndex = -1;
         missingContext = null;
@@ -1401,6 +1073,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 							String startSystemId, 
 							int startLineNumber, 
 							int startColumnNumber){
+        errorTotalCount++;
 		if(illegalSize == 0){
 			illegalSize = 1;
 			illegalIndex = 0;
@@ -1437,6 +1110,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		illegalStartColumnNumber[illegalIndex] = startColumnNumber;
 	}
 	public void clearIllegalContent(){
+        errorTotalCount -= illegalSize;
         illegalSize = 0;
         illegalIndex = -1;
         illegalContext = null;
@@ -1447,16 +1121,19 @@ public class ContextMessageHandler implements ErrorCatcher{
     }
         
 	public void undeterminedByContent(String qName, String candidateMessages){
+        errorTotalCount++;
 		undeterminedQName = qName;
 		undeterminedCandidateMessages = candidateMessages;
 	}
     public void clearUndeterminedByContent(){
+        errorTotalCount--;
         undeterminedQName = null;
 		undeterminedCandidateMessages = null;
     }
 	
     // {15}
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+        errorTotalCount++;
 		if(datatypeSizeCC == 0){
 			datatypeSizeCC = 1;
 			datatypeIndexCC = 0;
@@ -1496,9 +1173,10 @@ public class ContextMessageHandler implements ErrorCatcher{
 		datatypeCharsLineNumberCC[datatypeIndexCC] = charsLineNumber;
 		datatypeCharsColumnNumberCC[datatypeIndexCC] = columnNumber;
 		datatypeCharsDefinitionCC[datatypeIndexCC] = charsDefinition;
-		datatypeErrorMessageCC[datatypeIndexCC] = datatypeErrorMessage;
+		datatypeErrorMessageCC[datatypeIndexCC] = datatypeErrorMessage;        
 	}
 	public void clearCharacterContentDatatypeError(){
+        errorTotalCount -= datatypeSizeCC;
         datatypeSizeCC = 0;
         datatypeIndexCC = -1;
         datatypeElementQNameCC = null;
@@ -1511,6 +1189,7 @@ public class ContextMessageHandler implements ErrorCatcher{
         
     //{16}
 	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+        errorTotalCount++;
 		if(datatypeSizeAV == 0){
 			datatypeSizeAV = 1;
 			datatypeIndexAV = 0;
@@ -1553,6 +1232,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		datatypeErrorMessageAV[datatypeIndexAV] = datatypeErrorMessage;
 	}
 	public void clearAttributeValueDatatypeError(){
+        errorTotalCount -= datatypeSizeAV;
         datatypeSizeAV = 0;
         datatypeIndexAV = -1;
         datatypeAttributeQNameAV = null;
@@ -1565,6 +1245,7 @@ public class ContextMessageHandler implements ErrorCatcher{
         
         
 	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+        errorTotalCount++;
 		if(valueSizeCC == 0){
 			valueSizeCC = 1;
 			valueIndexCC = 0;
@@ -1601,6 +1282,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		valueCharsDefinitionCC[valueIndexCC] = charsDefinition;
 	}
     public void clearCharacterContentValueError(){
+        errorTotalCount -= valueSizeCC;
         valueSizeCC = 0;
         valueIndexCC = -1;
         valueElementQNameCC = null;
@@ -1611,6 +1293,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     }
     
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+        errorTotalCount++;
 		if(valueSizeAV == 0){
 			valueSizeAV = 1;
 			valueIndexAV = 0;
@@ -1647,6 +1330,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		valueCharsDefinitionAV[valueIndexAV] = charsDefinition;
 	}
 	public void clearAttributeValueValueError(){
+        errorTotalCount -= valueSizeAV;
         valueSizeAV = 0;
         valueIndexAV = -1;
         valueAttributeQNameAV = null;
@@ -1658,6 +1342,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     
     
 	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+        errorTotalCount++;
 		if(exceptSizeCC == 0){
 			exceptSizeCC = 1;
 			exceptIndexCC = 0;
@@ -1694,6 +1379,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		exceptCharsDefinitionCC[exceptIndexCC] = charsDefinition;
 	}
     public void clearCharacterContentExceptedError(){
+        errorTotalCount -= exceptSizeCC;
         exceptSizeCC = 0;
         exceptIndexCC = -1;
         exceptElementQNameCC = null;
@@ -1704,6 +1390,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     }
     
 	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+        errorTotalCount++;
 		if(exceptSizeAV == 0){
 			exceptSizeAV = 1;
 			exceptIndexAV = 0;
@@ -1740,6 +1427,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		exceptCharsDefinitionAV[exceptIndexAV] = charsDefinition;
 	}
 	public void clearAttributeValueExceptedError(){
+        errorTotalCount -= exceptSizeAV;
         exceptSizeAV = 0;
         exceptIndexAV = -1;
         exceptAttributeQNameAV = null;
@@ -1749,7 +1437,8 @@ public class ContextMessageHandler implements ErrorCatcher{
         exceptCharsDefinitionAV = null;
     }
     
-	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){				
+	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
+        errorTotalCount++;
 		if(unexpectedSizeCC == 0){
 			unexpectedSizeCC = 1;
 			unexpectedIndexCC = 0;		
@@ -1780,6 +1469,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		unexpectedContextDefinitionCC[unexpectedIndexCC] = elementDefinition;
 	}
     public void clearUnexpectedCharacterContent(){
+        errorTotalCount -= unexpectedSizeCC;
         unexpectedSizeCC = 0;
         unexpectedIndexCC = -1;		
         unexpectedCharsSystemIdCC = null;
@@ -1789,6 +1479,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     }
     
 	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
+        errorTotalCount++;
 		if(unexpectedSizeAV == 0){
 			unexpectedSizeAV = 1;
 			unexpectedIndexAV = 0;		
@@ -1819,6 +1510,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		unexpectedContextDefinitionAV[unexpectedIndexAV] = attributeDefinition;
 	}
 	public void clearUnexpectedAttributeValue(){
+        errorTotalCount -= unexpectedSizeAV;
         unexpectedSizeAV = 0;
         unexpectedIndexAV = -1;		
         unexpectedCharsSystemIdAV = null;
@@ -1828,6 +1520,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     }
     
 	public void ambiguousCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        errorTotalCount++;
 		if(ambiguousSizeCC == 0){
 			ambiguousSizeCC = 1;
 			ambiguousIndexCC = 0;		
@@ -1858,6 +1551,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousPossibleDefinitionsCC[ambiguousIndexCC] = possibleDefinitions;
 	}
     public void clearAmbiguousCharacterContent(){
+        errorTotalCount -= ambiguousSizeCC;
         ambiguousSizeCC = 0;
         ambiguousIndexCC = -1;		
         ambiguousCharsSystemIdEECC = null;
@@ -1868,6 +1562,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     
 	// {24}
 	public void ambiguousAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        errorTotalCount++;
 		if(ambiguousSizeAV == 0){
 			ambiguousSizeAV = 1;
 			ambiguousIndexAV = 0;
@@ -1904,6 +1599,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousPossibleDefinitionsAV[ambiguousIndexAV] = possibleDefinitions;
 	}
 	public void clearAmbiguousAttributeValue(){
+        errorTotalCount -= ambiguousSizeAV;
         ambiguousSizeAV = 0;
         ambiguousIndexAV = -1;
         ambiguousAttributeQNameEEAV = null;
@@ -1916,6 +1612,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     
     // {25}
 	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+        errorTotalCount++;
 		if(datatypeSizeLP == 0){
 			datatypeSizeLP = 1;
 			datatypeIndexLP = 0;
@@ -1958,6 +1655,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		datatypeErrorMessageLP[datatypeIndexLP] = datatypeErrorMessage;
 	}
     public void clearListTokenDatatypeError(){
+        errorTotalCount -= datatypeSizeLP;
         datatypeSizeLP = 0;
         datatypeIndexLP = -1;
         datatypeTokenLP = null;
@@ -1970,6 +1668,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     
         
 	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+        errorTotalCount++;
 		if(valueSizeLP == 0){
 			valueSizeLP = 1;
 			valueIndexLP = 0;
@@ -2006,6 +1705,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		valueCharsDefinitionLP[valueIndexLP] = charsDefinition;
 	}
     public void clearListTokenValueError(){
+        errorTotalCount -= valueSizeLP;
         valueSizeLP = 0;
         valueIndexLP = -1;
         valueTokenLP = null;
@@ -2016,6 +1716,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     }
     
 	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+        errorTotalCount++;
 		if(exceptSizeLP == 0){
 			exceptSizeLP = 1;
 			exceptIndexLP = 0;
@@ -2052,6 +1753,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		exceptCharsDefinitionLP[exceptIndexLP] = charsDefinition;
 	}
     public void clearListTokenExceptedError(){
+        errorTotalCount -= exceptSizeLP;
         exceptSizeLP = 0;
         exceptIndexLP = -1;
         exceptTokenLP = null;
@@ -2063,6 +1765,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     
     
 	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        errorTotalCount++;
 		if(ambiguousSizeLP == 0){
 			ambiguousSizeLP = 1;
 			ambiguousIndexLP = 0;
@@ -2099,6 +1802,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousPossibleDefinitionsLP[ambiguousIndexLP] = possibleDefinitions;
 	}
     public void clearAmbiguousListToken(){
+        errorTotalCount -= ambiguousSizeLP;
         ambiguousSizeLP = 0;
         ambiguousIndexLP = -1;
         ambiguousTokenLP = null;
@@ -2107,9 +1811,9 @@ public class ContextMessageHandler implements ErrorCatcher{
         ambiguousCharsColumnNumberEELP = null;
         ambiguousPossibleDefinitionsLP = null;
     }
-    
-    
+        
     public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        errorTotalCount++;
         if(ambiguousSizeLPICE == 0){
 			ambiguousSizeLPICE = 1;
 			ambiguousIndexLPICE = 0;
@@ -2146,6 +1850,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousPossibleDefinitionsLPICE[ambiguousIndexLPICE] = possibleDefinitions;
     }
     public void clearAmbiguousListTokenInContextError(){
+        errorTotalCount -= ambiguousSizeLPICE;
         ambiguousSizeLPICE = 0;
         ambiguousIndexLPICE = -1;
         ambiguousTokenLPICE = null;
@@ -2156,6 +1861,7 @@ public class ContextMessageHandler implements ErrorCatcher{
     }
     
     public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        errorTotalCount++;
         if(ambiguousSizeLPICW == 0){
 			ambiguousSizeLPICW = 1;
 			ambiguousIndexLPICW = 0;
@@ -2192,6 +1898,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 		ambiguousPossibleDefinitionsLPICW[ambiguousIndexLPICW] = possibleDefinitions;
     }    
     public void clearAmbiguousListTokenInContextWarning(){
+        errorTotalCount -= ambiguousSizeLPICW;
         ambiguousSizeLPICW = 0;
         ambiguousIndexLPICW = -1;
         ambiguousTokenLPICW = null;
@@ -2200,7 +1907,6 @@ public class ContextMessageHandler implements ErrorCatcher{
         ambiguousCharsColumnNumberEELPICW = null;
         ambiguousPossibleDefinitionsLPICW = null;
     }
-        
     
 	public void missingCompositorContent(Rule context, 
 								String startSystemId, 
@@ -2209,6 +1915,7 @@ public class ContextMessageHandler implements ErrorCatcher{
 								APattern definition, 
 								int expected, 
 								int found){
+        errorTotalCount++;
 		if(missingCompositorContentSize == 0){
 			missingCompositorContentSize = 1;
 			missingCompositorContentIndex = 0;
@@ -2257,7 +1964,10 @@ public class ContextMessageHandler implements ErrorCatcher{
 		missingCompositorContentExpected[missingCompositorContentIndex] = expected;
 		missingCompositorContentFound[missingCompositorContentIndex] = found;
 	}	
+    
+    
 	public void clearMissingCompositorContent(){
+        errorTotalCount -= missingCompositorContentSize;
         missingCompositorContentSize = 0;
         missingCompositorContentIndex = -1;
         missingCompositorContentContext = null;
@@ -2268,8 +1978,160 @@ public class ContextMessageHandler implements ErrorCatcher{
         missingCompositorContentExpected = null;
         missingCompositorContentFound = null;
     }
+    
+    
+    public  void conflict(MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter[] candidateMessages){
+        errorTotalCount++;
+        this.candidatesCount = candidatesCount;
+        this.commonMessages = commonMessages;
+        this.disqualified = disqualified;
+        this.candidateMessages = candidateMessages;
+    }
+    
+    public void clearConflict(){
+        errorTotalCount--;
+        candidatesCount = -1;
+        commonMessages = null;
+        disqualified = null;
+        candidateMessages = null;
+    }
 	
-    public void clear(){      
+    int getErrorMessageCount(){
+        return errorTotalCount;
+    }    
+    
+    void clearLastMessage(int errorId){		
+        if(errorId == UNKNOWN_ELEMENT){
+            if(unknownElementIndex < 0) throw new IllegalArgumentException();
+            unknownElementIndex--;
+            errorTotalCount--;            
+        }else if(errorId == UNEXPECTED_ELEMENT){        
+            if(unexpectedElementIndex < 0) throw new IllegalArgumentException();
+            unexpectedElementIndex--;
+            errorTotalCount--;
+        }else if(errorId == UNEXPECTED_AMBIGUOUS_ELEMENT){
+            if(unexpectedAmbiguousElementIndex < 0) throw new IllegalArgumentException();
+            unexpectedAmbiguousElementIndex--;
+            errorTotalCount--;
+        }else if(errorId == UNKNOWN_ATTRIBUTE){
+            if(unknownAttributeIndex < 0) throw new IllegalArgumentException();
+            unknownAttributeIndex--;
+            errorTotalCount--;
+        }else if(errorId == UNEXPECTED_ATTRIBUTE){
+            if(unexpectedAttributeIndex < 0) throw new IllegalArgumentException();
+            unexpectedAttributeIndex--;
+            errorTotalCount--;
+        }else if(errorId == UNEXPECTED_AMBIGUOUS_ATTRIBUTE){
+            if(unexpectedAmbiguousAttributeIndex < 0) throw new IllegalArgumentException();
+            unexpectedAmbiguousAttributeIndex--;
+            errorTotalCount--;
+        }else if(errorId == MISPLACED_ELEMENT){
+            if(misplacedIndex < 0) throw new IllegalArgumentException();
+            misplacedIndex--;
+            errorTotalCount--;
+        }else if(errorId == EXCESSIVE_CONTENT){
+            if(excessiveIndex < 0) throw new IllegalArgumentException();
+            excessiveIndex--;
+            errorTotalCount--;
+        }else if(errorId == AMBIGUOUS_ELEMENT_CONTENT_ERROR){
+            if(ambiguousElementIndexEE < 0) throw new IllegalArgumentException();
+            ambiguousElementIndexEE--;
+            errorTotalCount--;
+        }else if(errorId == AMBIGUOUS_ATTRIBUTE_CONTENT_ERROR){
+            if(ambiguousAttributeIndexEE < 0) throw new IllegalArgumentException();
+            ambiguousAttributeIndexEE--;
+            errorTotalCount--;
+        }else if(errorId == AMBIGUOUS_CHARS_CONTENT_ERROR){
+            if(ambiguousCharsIndexEE < 0) throw new IllegalArgumentException();
+            ambiguousCharsIndexEE--;
+            errorTotalCount--;
+        }else if(errorId == MISSING_CONTENT){
+            if(missingIndex < 0) throw new IllegalArgumentException();
+            missingIndex--;	  
+            errorTotalCount--;
+        }else if(errorId == ILLEGAL_CONTENT){
+            if(illegalIndex < 0) throw new IllegalArgumentException();
+            illegalIndex--;
+            errorTotalCount--;
+        }else if(errorId == UNDETERMINED_BY_CONTENT){
+            if(undeterminedQName == null) throw new IllegalArgumentException();
+            undeterminedQName = null;
+            undeterminedCandidateMessages = null;
+            errorTotalCount--;
+        }else if(errorId == CHARACTER_CONTENT_DATATYPE_ERROR){
+            if(datatypeIndexCC < 0) throw new IllegalArgumentException();
+            datatypeIndexCC--;
+            errorTotalCount--;
+        }else if(errorId == ATTRIBUTE_VALUE_DATATYPE_ERROR){
+            if(datatypeIndexAV < 0) throw new IllegalArgumentException();
+            datatypeIndexAV--;
+            errorTotalCount--;
+        }else if(errorId == CHARACTER_CONTENT_VALUE_ERROR){
+            if(valueIndexCC < 0) throw new IllegalArgumentException();
+            valueIndexCC--;
+            errorTotalCount--;
+        }else if(errorId == ATTRIBUTE_VALUE_VALUE_ERROR){
+            if(valueIndexAV < 0) throw new IllegalArgumentException();
+            valueIndexAV--;
+            errorTotalCount--;
+        }else if(errorId == CHARACTER_CONTENT_EXCEPTED_ERROR){
+            if(exceptIndexCC < 0) throw new IllegalArgumentException();
+            exceptIndexCC--;
+            errorTotalCount--;
+        }else if(errorId == ATTRIBUTE_VALUE_EXCEPTED_ERROR){
+            if(exceptIndexAV < 0) throw new IllegalArgumentException();
+            exceptIndexAV--;
+            errorTotalCount--;
+        }else if(errorId == UNEXPECTED_CHARACTER_CONTENT){
+            if(unexpectedIndexCC < 0) throw new IllegalArgumentException();
+            unexpectedIndexCC--;
+            errorTotalCount--;
+        }else if(errorId == UNEXPECTED_ATTRIBUTE_VALUE){
+            if(unexpectedIndexAV < 0) throw new IllegalArgumentException();
+            unexpectedIndexAV--;
+            errorTotalCount--;
+        }else if(errorId == AMBIGUOUS_CHARACTER_CONTENT){
+            if(ambiguousIndexCC < 0) throw new IllegalArgumentException();
+            ambiguousIndexCC--;
+            errorTotalCount--;
+        }else if(errorId == AMBIGUOUS_ATTRIBUTE_VALUE){
+            if(ambiguousIndexAV < 0) throw new IllegalArgumentException();
+            ambiguousIndexAV--;
+            errorTotalCount--;
+        }else if(errorId == LIST_TOKEN_DATATYPE_ERROR){
+            if(datatypeIndexLP < 0) throw new IllegalArgumentException();
+            datatypeIndexLP--;
+            errorTotalCount--;
+        }else if(errorId == LIST_TOKEN_VALUE_ERROR){
+            if(valueIndexLP < 0) throw new IllegalArgumentException();
+            valueIndexLP--;
+            errorTotalCount--;
+        }else if(errorId == LIST_TOKEN_EXCEPTED_ERROR){
+            if(exceptIndexLP < 0) throw new IllegalArgumentException();
+            exceptIndexLP--;
+            errorTotalCount--;
+        }else if(errorId == AMBIGUOUS_LIST_TOKEN){
+            if(ambiguousIndexLP < 0) throw new IllegalArgumentException();
+            ambiguousIndexLP--;
+            errorTotalCount--;
+        }else if(errorId == AMBIGUOUS_LIST_TOKEN_IN_CONTEXT_ERROR){
+            if(ambiguousIndexLPICE < 0) throw new IllegalArgumentException();
+            ambiguousIndexLPICE--;
+            errorTotalCount--;
+        }else if(errorId == MISSING_COMPOSITOR_CONTENT){
+            if(missingCompositorContentIndex < 0) throw new IllegalArgumentException();
+            missingCompositorContentIndex--;
+            errorTotalCount--;
+        }else if(errorId == CONFLICT){
+            if(disqualified == null) throw new IllegalArgumentException();
+            clearConflict();
+        }else{
+            throw new IllegalArgumentException();
+        }
+    }
+    
+    
+    public void clear(){
         // TODO check sizes to only clear when full
         // and refactor the creation of new instances in the ErrorHandlers
         clearUnknownElement();
@@ -2302,453 +2164,23 @@ public class ContextMessageHandler implements ErrorCatcher{
         clearListTokenDatatypeError();
         clearListTokenValueError();
         clearListTokenExceptedError();
-        clearAmbiguousListToken();        
+        clearAmbiguousListToken();
         clearAmbiguousListTokenInContextError();
         clearAmbiguousListTokenInContextWarning();
         clearMissingCompositorContent();
-    }
-    
-    public void clearErrors(){      
-        // TODO check sizes
-        clearUnknownElement();
-		clearUnexpectedElement();
-		clearUnexpectedAmbiguousElement();
-		clearUnknownAttribute();
-        clearUnexpectedAttribute();
-        clearUnexpectedAmbiguousAttribute();        
-        clearMisplacedElement();
-        clearExcessiveContent();
-        clearAmbiguousElementContentError();
-        clearAmbiguousAttributeContentError();
-        clearAmbiguousCharsContentError();
-        clearMissingContent();
-        clearIllegalContent();
-        clearUndeterminedByContent();
-        clearCharacterContentDatatypeError();        
-        clearAttributeValueDatatypeError();        
-        clearCharacterContentValueError();
-        clearAttributeValueValueError();
-        clearCharacterContentExceptedError();
-        clearAttributeValueExceptedError();
-        clearUnexpectedCharacterContent();
-        clearUnexpectedAttributeValue();
-        clearAmbiguousCharacterContent();
-        clearAmbiguousAttributeValue();
-        clearListTokenDatatypeError();        
-        clearListTokenValueError();
-        clearListTokenExceptedError();
-        clearAmbiguousListToken();        
-        clearAmbiguousListTokenInContextError();
-        clearMissingCompositorContent();
-    }
-    
-    public void clearWarnings(){      
-        // TODO check sizes
-        clearAmbiguousElementContentWarning();
-        clearAmbiguousAttributeContentWarning();
-        clearAmbiguousCharsContentWarning();
-        clearAmbiguousListTokenInContextWarning();
-    }
-    
-	public  String getWarningMessage(String prefix){
-		String message = "";
-		// {w1}
-		if(ambiguousElementQNameWW != null){
-			for(int i = 0; i <= ambiguousElementIndexWW; i++){
-				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Element <"+ambiguousElementQNameWW[i] + "> at "+ambiguousElementSystemIdWW[i]+":"+ambiguousElementLineNumberWW[i]+":"+ambiguousElementColumnNumberWW[i]
-						+" cannot be resolved by in context validation, possible definitions: ";
-				for(int j = 0; j < ambiguousElementDefinitionWW[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousElementDefinitionWW[i][j].getQName()+"> at "+ambiguousElementDefinitionWW[i][j].getLocation();
-				}
-				message += ".";
-			}
-		}
-		// {w2}
-		if(ambiguousAttributeQNameWW != null){
-			for(int i = 0; i <= ambiguousAttributeIndexWW; i++){
-				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Attribute "+ambiguousAttributeQNameWW[i] + " at "+ambiguousAttributeSystemIdWW[i]+":"+ambiguousAttributeLineNumberWW[i]+":"+ambiguousAttributeColumnNumberWW[i]
-						+" cannot be resolved by in context validation, possible definitions: ";
-				for(int j = 0; j < ambiguousAttributeDefinitionWW[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousAttributeDefinitionWW[i][j].getQName()+"> at "+ambiguousAttributeDefinitionWW[i][j].getLocation();
-				}
-				message += ".";
-			}
-		}
-		// {w3}
-		if(ambiguousCharsDefinitionWW != null){
-			for(int i = 0; i <= ambiguousCharsIndexWW; i++){
-				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Chars at "+ambiguousCharsSystemIdWW[i]+":"+ambiguousCharsLineNumberWW[i]+":"+ambiguousCharsColumnNumberWW[i]
-						+" cannot be resolved by in context validation, possible definitions: ";
-				for(int j = 0; j < ambiguousCharsDefinitionWW[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousCharsDefinitionWW[i][j].getQName()+"> at "+ambiguousCharsDefinitionWW[i][j].getLocation();
-				}
-				message += ".";
-			}
-		}
-        // {28_2}
-        if(ambiguousCharsSystemIdEELPICW != null){
-			for(int i = 0; i <= ambiguousIndexLPICW; i++){
-				message += "\n"+prefix+"Ambiguous list token."
-				+"\n"+prefix+ "List token \""+ambiguousTokenLPICW[i]+"\" at "+ambiguousCharsSystemIdEELPICW[i]+":"+ambiguousCharsLineNumberEELPICW[i]+":"+ambiguousCharsColumnNumberEELPICW[i]
-				+ " cannot be resolved by in context validation to one schema definition."
-				+ " Possible definitions: ";
-				for(int j = 0; j < ambiguousPossibleDefinitionsLPICW[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLPICW[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLPICW[i][j].getLocation();
-				}
-				message += ".";
-			}
-		}
-		return message;
-	}
-	
-	public  String getLocatedWarningMessage(){
-		return "TODO";
-	}
-	
-	public  String getErrorMessage(String prefix){
-		String message = "";
-		// {1}
-		if(undeterminedCandidateMessages != null){
-			message +=  " Element <"+undeterminedQName+"> could not be resolved to a single schema definition:"
-						+ "\n"+prefix+"Unresolved by content."
-						+ "\n"+prefix+"Validation  of candidate definitions resulted in errors:"						
-						+ undeterminedCandidateMessages;
-			return message;
-		}
-		// {2}
-		if(unknownElementQName != null){
-			for(int i = 0; i <= unknownElementIndex; i++){
-				message += "\n"+prefix+"Unknown element."
-				+"\n"+prefix+"Element <"+unknownElementQName[i]+"> at "+unknownElementSystemId[i]+":"+unknownElementLineNumber[i]+":"+unknownElementColumnNumber[i]
-				+" is not known in the vocabulary described by the schema.";
-			}
-		}	
-		// {3}
-		if(unexpectedElementQName != null){
-			for(int i = 0; i <= unexpectedElementIndex; i++){
-				message += "\n"+prefix+"Unexpected element."
-                +"\n"+prefix+"Element <"+unexpectedElementQName[i]+"> at "+unexpectedElementSystemId[i]+":"+unexpectedElementLineNumber[i]+":"+unexpectedElementColumnNumber[i]+"corresponding to definition:"
-                +"\n"+prefix+"<"+unexpectedElementDefinition[i].getQName()+"> at "+unexpectedElementDefinition[i].getLocation()
-                +"\n"+prefix+"is not part of the parent's content model." ;
-			}
-		}
-		// {4}
-		if(unexpectedAmbiguousElementQName != null){
-			for(int i = 0; i <= unexpectedAmbiguousElementIndex; i++){
-				String definitions = "";
-				for(int j = 0; j < unexpectedAmbiguousElementDefinition[i].length; j++ ){
-					definitions += "\n"+prefix+"<"+unexpectedAmbiguousElementDefinition[i][j].getQName()+"> at "+unexpectedAmbiguousElementDefinition[i][j].getLocation();
-				}
-				message += "\n"+prefix+"Unexpected element."
-						+"\n"+prefix+"Element <"+unexpectedAmbiguousElementQName[i]+"> at "+unexpectedAmbiguousElementSystemId[i]+":"+unexpectedAmbiguousElementLineNumber[i]+":"+unexpectedAmbiguousElementColumnNumber[i]
-						+", corresponding to one of the schema definitions: "
-                        +definitions						
-						+"\n"+prefix+"is not part of the parent's content model." ;
-			}
-		}
-		// {5}
-		if(unknownAttributeQName != null){
-			for(int i = 0; i <= unknownAttributeIndex; i++){
-				message += "\n"+prefix+"Unknown attribute."
-				+"\n"+prefix+"Attribute "+unknownAttributeQName[i]+" at "+unknownAttributeSystemId[i]+":"+unknownAttributeLineNumber[i]+":"+unknownAttributeColumnNumber[i]
-				+" is not known in the vocabulary described by the schema.";
-			}
-		}	
-		// {6}
-		if(unexpectedAttributeQName != null){
-			for(int i = 0; i <= unexpectedAttributeIndex; i++){
-				message += "\n"+prefix+"Unexpected attribute."
-						+"\n"+prefix+"Attribute "+unexpectedAttributeQName[i]+" at "+unexpectedAttributeSystemId[i]+":"+unexpectedAttributeLineNumber[i]+":"+unexpectedAttributeColumnNumber[i]+"corresponding to definition" 
-                        +"\n"+prefix+"<"+unexpectedAttributeDefinition[i].getQName()+"> at "+unexpectedAttributeDefinition[i].getLocation()
-                        +"\n"+prefix+"is not part of the parent's content model." ;
-			}
-		}
-		// {7}
-		if(unexpectedAmbiguousAttributeQName != null){
-			for(int i = 0; i <= unexpectedAmbiguousAttributeIndex; i++){
-				String definitions = "";
-				for(int j = 0; j < unexpectedAmbiguousAttributeDefinition[i].length; j++ ){
-					definitions += "\n"+prefix+"<"+unexpectedAmbiguousAttributeDefinition[i][j].getQName()+"> at "+unexpectedAmbiguousAttributeDefinition[i][j].getLocation();
-				}
-				message += "\n"+prefix+"Unexpected attribute."
-						+"\n"+prefix+"Attribute "+unexpectedAmbiguousAttributeQName[i]+" at "+unexpectedAmbiguousAttributeSystemId[i]+":"+unexpectedAmbiguousAttributeLineNumber[i]+":"+unexpectedAmbiguousAttributeColumnNumber[i]
-						+", corresponding to one of the definitions: "
-                        +definitions						
-						+"\n"+prefix+"is not part of the parent's content model." ;
-			}
-		}
-
-		
-		// {8}
-		if(misplacedContext != null){
-			for(int i = 0; i <= misplacedIndex; i++){
-				message += "\n"+prefix+"Order error."
-				+"\n"+prefix+"Misplaced content in the document structure starting at "+misplacedStartSystemId[i]+":"+misplacedStartLineNumber[i]+":"+misplacedStartColumnNumber[i]+", corresponding to definition <"+misplacedContext[i].getQName()+"> at "+misplacedContext[i].getLocation()+ ":";
-				for(int j = 0; j < misplacedDefinition[i].length; j++){
-					for(int k = 0; k < misplacedQName[i][j].length; k++){
-						message += "\n"+prefix+"<"+misplacedQName[i][j][k]+"> at "+misplacedSystemId[i][j][k]+":"+misplacedLineNumber[i][j][k]+":"+misplacedColumnNumber[i][j][k];
-					}
-					message += ", corresponding to definition <"+misplacedDefinition[i][j].getQName()+"> at "+misplacedDefinition[i][j].getLocation();
-				}
-				message += ".";				
-			}
-		}
-		// {9}
-		if(excessiveContext != null){
-			for(int i = 0; i <= excessiveIndex; i++){
-				message += "\n"+prefix+"Excessive content."
-						+"\n"+prefix+"In the document structure starting at "+excessiveStartSystemId[i]+":"+excessiveStartLineNumber[i]+":"+excessiveStartColumnNumber[i]+", corresponding to definition <"+excessiveContext[i].getQName()+"> at "+excessiveContext[i].getLocation()+", "
-						+" expected "+getExpectedCardinality(excessiveDefinition[i].getMinOccurs(), excessiveDefinition[i].getMaxOccurs())+" corresponding to definition <"+excessiveDefinition[i].getQName()+"> at "+excessiveDefinition[i].getLocation()+", found "+excessiveQName[i].length+": ";
-				for(int j = 0; j < excessiveQName[i].length; j++){
-					message += "\n"+prefix+"<"+excessiveQName[i][j]+"> at "+excessiveSystemId[i][j]+":"+excessiveLineNumber[i][j]+":"+excessiveColumnNumber[i][j];
-				}
-				message += ".";
-			}
-		}
-		// {10}
-		if(missingContext != null){
-			for(int i = 0; i <= missingIndex; i++){
-				int found = missingFound[i];				
-				if(found > 0){
-					message += "\n"+prefix+"Missing content."
-							+"\n"+prefix+"In the document structure starting at "+missingStartSystemId[i]+":"+missingStartLineNumber[i]+":"+missingStartColumnNumber[i]+", corresponding to definition <"+missingContext[i].getQName()+"> at "+missingContext[i].getLocation()+", "
-							+"expected "+getExpectedCardinality(missingDefinition[i].getMinOccurs(), missingDefinition[i].getMaxOccurs())+" corresponding to definition <"+missingDefinition[i].getQName()+"> at "+missingDefinition[i].getLocation()+", found "+found+": ";
-					for(int j = 0; j < missingQName[i].length; i++){
-						message += "\n"+prefix+"<"+missingQName[i][j]+"> at "+missingSystemId[i][j]+":"+missingLineNumber[i][j]+":"+missingColumnNumber[i][j];
-					}
-				}else{
-					message += "\n"+prefix+"Missing content."
-							+"\n"+prefix+"In the document structure starting at "+missingStartSystemId[i]+":"+missingStartLineNumber[i]+":"+missingStartColumnNumber[i]+", corresponding to definition <"+missingContext[i].getQName()+"> at "+missingContext[i].getLocation()+", "
-							+"expected "+getExpectedCardinality(missingDefinition[i].getMinOccurs(), missingDefinition[i].getMaxOccurs())+" corresponding to definition <"+missingDefinition[i].getQName()+"> at "+missingDefinition[i].getLocation()+", found "+found;
-				}
-				message += ".";
-			}			
-		}		
-		// {11}
-		if(illegalContext != null){
-			for(int i = 0; i <= illegalIndex; i++){
-				message += "\n"+prefix+"Illegal content."
-							+"\n"+prefix+"The document structure starting with <"+illegalQName[i] +"> at "+illegalStartSystemId[i]+":"+illegalStartLineNumber[i]+":"+illegalStartColumnNumber[i]+" does not match schema definition <"+illegalContext[i].getQName()+"> at "+illegalContext[i].getLocation()+".";
-			}			
-		}
-		// {12}
-		if(ambiguousElementQNameEE != null){
-			for(int i = 0; i <= ambiguousElementIndexEE; i++){
-				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Element <"+ambiguousElementQNameEE[i] + "> at "+ambiguousElementSystemIdEE[i]+":"+ambiguousElementLineNumberEE[i]+":"+ambiguousElementColumnNumberEE[i]
-						+" cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: ";
-				for(int j = 0; j < ambiguousElementDefinitionEE[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousElementDefinitionEE[i][j].getQName()+"> at "+ambiguousElementDefinitionEE[i][j].getLocation();
-				}
-				message += ".";
-			}
-		}
-		// {13}
-		if(ambiguousAttributeQNameEE != null){
-			for(int i = 0; i <= ambiguousAttributeIndexEE; i++){
-				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Attribute "+ambiguousAttributeQNameEE[i] + " at "+ambiguousAttributeSystemIdEE[i]+":"+ambiguousAttributeLineNumberEE[i]+":"+ambiguousAttributeColumnNumberEE[i]
-						+" cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: ";
-				for(int j = 0; j < ambiguousAttributeDefinitionEE[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousAttributeDefinitionEE[i][j].getQName()+"> at "+ambiguousAttributeDefinitionEE[i][j].getLocation();
-				}
-				message += ".";
-			}
-		}
-		// {14}
-		if(ambiguousCharsDefinitionEE != null){
-			for(int i = 0; i <= ambiguousCharsIndexEE; i++){
-				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Chars at "+ambiguousCharsSystemIdEE[i]+":"+ambiguousCharsLineNumberEE[i]+":"+ambiguousCharsColumnNumberEE[i]
-						+" cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: ";
-				for(int j = 0; j < ambiguousCharsDefinitionEE[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousCharsDefinitionEE[i][j].getQName()+"> at "+ambiguousCharsDefinitionEE[i][j].getLocation();
-				}
-				message += ".";
-			}
-		}
-		// {15}
-		if(datatypeCharsSystemIdCC != null){
-			for(int i = 0; i <= datatypeIndexCC; i++){
-				message += "\n"+prefix+"Illegal datatype."
-				+"\n"+prefix+ "Character content at "+datatypeCharsSystemIdCC[i]+":"+datatypeCharsLineNumberCC[i]+":"+datatypeCharsColumnNumberCC[i]
-				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionCC[i].getQName()+"> at "+datatypeCharsDefinitionCC[i].getLocation()+". "
-				+ datatypeErrorMessageCC[i];
-			}
-		}
-		// {16}
-		if(datatypeCharsSystemIdAV != null){
-			for(int i = 0; i <= datatypeIndexAV; i++){
-				message += "\n"+prefix+"Illegal datatype."
-				+"\n"+prefix+ "Value of attribute "+datatypeAttributeQNameAV[i]+" at "+datatypeCharsSystemIdAV[i]+":"+datatypeCharsLineNumberAV[i]+":"+datatypeCharsColumnNumberAV[i]
-				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionAV[i].getQName()+"> at "+datatypeCharsDefinitionAV[i].getLocation()+". "
-				+ datatypeErrorMessageAV[i];
-			}
-		}
-		// {17}
-		if(valueCharsSystemIdCC != null){
-			for(int i = 0; i <= valueIndexCC; i++){
-				message += "\n"+prefix+"Illegal value."
-				+"\n"+prefix+ "Character content at "+valueCharsSystemIdCC[i]+":"+valueCharsLineNumberCC[i]+":"+valueCharsColumnNumberCC[i]
-				+ " does not match the value required by schema definition <" +valueCharsDefinitionCC[i].getQName()+"> at "+valueCharsDefinitionCC[i].getLocation()+".";
-			}
-		}
-		// {18}
-		if(valueCharsSystemIdAV != null){
-			for(int i = 0; i <= valueIndexAV; i++){
-				message += "\n"+prefix+"Illegal value."
-				+"\n"+prefix+ "Value of attribute "+valueAttributeQNameAV[i]+" at "+valueCharsSystemIdAV[i]+":"+valueCharsLineNumberAV[i]+":"+valueCharsColumnNumberAV[i]
-				+ " does not match the value required by schema definition <" +valueCharsDefinitionAV[i].getQName()+"> at "+valueCharsDefinitionAV[i].getLocation()+".";
-			}
-		}
-		// {19}
-		if(exceptCharsSystemIdCC != null){
-			for(int i = 0; i <= exceptIndexCC; i++){
-				message += "\n"+prefix+"Excepted character content."
-				+"\n"+prefix+ "Character content at "+exceptCharsSystemIdCC[i]+":"+exceptCharsLineNumberCC[i]+":"+exceptCharsColumnNumberCC[i]
-				+ " matches a value excepted by schema definition <" +exceptCharsDefinitionCC[i].getQName()+"> at "+exceptCharsDefinitionCC[i].getLocation()+".";
-			}
-		}
-		// {20}
-		if(exceptCharsSystemIdAV != null){
-			for(int i = 0; i <= exceptIndexAV; i++){
-				message += "\n"+prefix+"Excepted attribute value"
-				+"\n"+prefix+ "Value of attribute "+exceptAttributeQNameAV[i]+" at "+exceptCharsSystemIdAV[i]+":"+exceptCharsLineNumberAV[i]+":"+exceptCharsColumnNumberAV[i]
-				+ " matches a value excepted by schema definition <" +exceptCharsDefinitionAV[i].getQName()+"> at "+exceptCharsDefinitionAV[i].getLocation()+".";
-			}
-		}
-		// {21}
-		if(unexpectedCharsSystemIdCC != null){
-			for(int i = 0; i <= unexpectedIndexCC; i++){
-				message += "\n"+prefix+"Unexpected character content."
-				+"\n"+prefix+ "Character content at "+unexpectedCharsSystemIdCC[i]+":"+unexpectedCharsLineNumberCC[i]+":"+unexpectedCharsColumnNumberCC[i]
-				+ " is not allowed by the element's schema definition <" +unexpectedContextDefinitionCC[i].getQName()+"> at "+unexpectedContextDefinitionCC[i].getLocation()+".";
-			}
-		}
-		// {22}
-		if(unexpectedCharsSystemIdAV != null){
-			for(int i = 0; i <= unexpectedIndexAV; i++){
-				message += "\n"+prefix+"Unexpected attribute unexpected."
-				+"\n"+prefix+ "Value of attribute "+unexpectedAttributeQName[i]+" at "+unexpectedCharsSystemIdAV[i]+":"+unexpectedCharsLineNumberAV[i]+":"+unexpectedCharsColumnNumberAV[i]
-				+ " is not allowed by the attributes's schema definition <" +unexpectedContextDefinitionAV[i].getQName()+"> at "+unexpectedContextDefinitionAV[i].getLocation()+".";
-			}
-		}
-		// {23}
-		if(ambiguousCharsSystemIdEECC != null){
-			for(int i = 0; i <= ambiguousIndexCC; i++){
-				message += "\n"+prefix+"Ambiguous character content."
-				+"\n"+prefix+ "Character content at "+ambiguousCharsSystemIdEECC[i]+":"+ambiguousCharsLineNumberEECC[i]+":"+ambiguousCharsColumnNumberEECC[i]
-				+ " cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors."
-				+" Possible definitions:";
-				for(int j = 0; j < ambiguousPossibleDefinitionsCC[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsCC[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsCC[i][j].getLocation();
-				}
-				message += ".";
-			}
-		}
-		// {24}
-		if(ambiguousCharsSystemIdEEAV != null){			
-			for(int i = 0; i <= ambiguousIndexAV; i++){				
-				message += "\n"+prefix+"Ambiguous attribute value."
-				+"\n"+prefix+ "Value of attribute "+ambiguousAttributeQNameEEAV[i]+" at "+ambiguousCharsSystemIdEEAV[i]+":"+ambiguousCharsLineNumberEEAV[i]+":"+ambiguousCharsColumnNumberEEAV[i]
-				+ " cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors."
-				+" Possible definitions:";
-				for(int j = 0; j < ambiguousPossibleDefinitionsAV[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsAV[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsAV[i][j].getLocation();
-				}
-				message += ".";
-			}
-		}
-		// {25}
-		if(datatypeCharsSystemIdLP != null){
-			for(int i = 0; i <= datatypeIndexLP; i++){
-				message += "\n"+prefix+"Illegal datatype."
-				+"\n"+prefix+ "List token \""+datatypeTokenLP[i]+"\" at "+datatypeCharsSystemIdLP[i]+":"+datatypeCharsLineNumberLP[i]+":"+datatypeCharsColumnNumberLP[i]
-				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionLP[i].getQName()+"> at "+datatypeCharsDefinitionLP[i].getLocation()+". "
-				+ datatypeErrorMessageLP[i];
-			}
-		}
-		// {26}
-		if(valueCharsSystemIdLP != null){
-			for(int i = 0; i <= valueIndexLP; i++){
-				message += "\n"+prefix+"Illegal value."
-				+"\n"+prefix+ "List token \""+valueTokenLP[i]+"\" at "+valueCharsSystemIdLP[i]+":"+valueCharsLineNumberLP[i]+":"+valueCharsColumnNumberLP[i]
-				+ " does not match the value required by schema definition <"+valueCharsDefinitionLP[i].getQName()+"> at "+valueCharsDefinitionLP[i].getLocation()+".";
-			}
-		}
-		// {27}
-		if(exceptCharsSystemIdLP != null){
-			for(int i = 0; i <= exceptIndexLP; i++){
-				message += "\n"+prefix+"Excepted token."
-				+"\n"+prefix+ "List token \""+exceptTokenLP[i]+"\" at "+exceptCharsSystemIdLP[i]+":"+exceptCharsLineNumberLP[i]+":"+exceptCharsColumnNumberLP[i]
-				+ " matches a value excepted by schema definition <"+exceptCharsDefinitionLP[i].getQName()+"> at "+exceptCharsDefinitionLP[i].getLocation()+".";
-			}
-		}
-		// {28}
-		if(ambiguousCharsSystemIdEELP != null){
-			for(int i = 0; i <= ambiguousIndexLP; i++){
-				message += "\n"+prefix+"Illegal ambiguous."
-				+"\n"+prefix+ "List token \""+ambiguousTokenLP[i]+"\" at "+ambiguousCharsSystemIdEELP[i]+":"+ambiguousCharsLineNumberEELP[i]+":"+ambiguousCharsColumnNumberEELP[i]
-				+ " cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors."
-				+ " Possible definitions: ";
-				for(int j = 0; j < ambiguousPossibleDefinitionsLP[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLP[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLP[i][j].getLocation();
-				}
-				message += ".";
-			}
-		}
-		// {28_1}
-        if(ambiguousCharsSystemIdEELPICE != null){
-			for(int i = 0; i <= ambiguousIndexLPICE; i++){
-				message += "\n"+prefix+"Ambiguous list token."
-				+"\n"+prefix+ "List token \""+ambiguousTokenLPICE[i]+"\" at "+ambiguousCharsSystemIdEELPICE[i]+":"+ambiguousCharsLineNumberEELPICE[i]+":"+ambiguousCharsColumnNumberEELPICE[i]
-				+ " cannot be resolved by in context validation to one schema definition, all candidates resulted in errors."
-				+ " Possible definitions: ";
-				for(int j = 0; j < ambiguousPossibleDefinitionsLPICE[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLPICE[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLPICE[i][j].getLocation();
-				}
-				message += ".";
-			}
-		}
+        clearConflict();
         
-		// {29}
-		if(missingCompositorContentContext != null){
-			for(int i = 0; i <= missingCompositorContentIndex; i++){
-				message += "\n"+prefix+"Missing compositor content."
-						+"\n"+prefix+"In the document structure starting at "+missingCompositorContentStartSystemId[i]+":"+missingCompositorContentStartLineNumber[i]+":"+missingCompositorContentStartColumnNumber[i]+", corresponding to definition <"+missingCompositorContentContext[i].getQName()+"> at "+missingCompositorContentContext[i].getLocation()+", "
-						+"expected "+getExpectedCardinality(missingCompositorContentDefinition[i].getMinOccurs(), missingCompositorContentDefinition[i].getMaxOccurs())+" corresponding to definition <"+missingCompositorContentDefinition[i].getQName()+"> at "+missingCompositorContentDefinition[i].getLocation()+", found "+missingCompositorContentFound[i]+". ";
-			}			
-		}		
-		return message;
-	}
-	public String getLocatedErrorMessage(String prefix){
-		
-		if(definition == null){
-			return prefix+systemId+":"+lineNumber+":"+columnNumber+getErrorMessage(prefix);
-		}
-		return prefix+systemId+":"+lineNumber+":"+columnNumber+"  Element <"+qName+"> corresponding to definition <"+definition.getQName() +"> at "+definition.getLocation()+" contains errors: "+getErrorMessage(prefix);
-	}
-	
-	public  String getFatalErrorMessage(){
-		return "TODO";
-	}
-	public  String getLocatedFatalErrorMessage(){
-		return "TODO";
-	}	
-	   
-	String getExpectedCardinality(int expectedMin, int expectedMax){
-		if(expectedMax == 1){
-			if(expectedMin == 0) return "at most 1 occurrence";
-			else return "1 occurrence";
-		}
-		
-		if(expectedMin == 0){
-			return "0 or more occurrences";
-		}else{
-			return "1 or more occurrences";
-		}
-	}
+        errorTotalCount = 0;
+        
+        parent = null;
+    
+        qName = null;
+        definition = null;
+        systemId = null;
+        lineNumber = -1;
+        columnNumber = -1;
+        conflictResolutionId = RESOLVED;
+    }
+    
+    
 }

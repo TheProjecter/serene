@@ -31,7 +31,7 @@ import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-public interface ErrorCatcher{	
+public interface ErrorCatcher extends ErrorType{	
 	
 	void unknownElement(String qName, String systemId, int lineNumber, int columnNumber);
 	void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber);
@@ -80,7 +80,7 @@ public interface ErrorCatcher{
 	void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition);
 	void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition);
 	void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
-	
+    
     void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
 	void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
     

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.HashMap;
 
 import serene.validation.schema.active.components.AAttribute;
+
 import serene.validation.handlers.content.BoundAttributeHandler;
 
 import serene.bind.BindingModel;
@@ -48,7 +49,7 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 			// At the end of attribute handling only the number of qualified 
 			// candidates left is assesed and the appropriate addAttribute() 
 			// is called.
-			BoundAttributeValidationHandler candidate = pool.getAttributeValidationHandler(candidateDefinitions.get(i), parent, errorHandlerPool.getAttributeConflictErrorHandler(candidatesConflictHandler, i), bindingModel, queue, entry);
+			BoundCandidateAttributeValidationHandler candidate = pool.getCandidateAttributeValidationHandler(candidateDefinitions.get(i), parent, localCandidatesConflictErrorHandler, i, bindingModel, queue, entry);
 			candidates.add(candidate);
 		}		
 		this.bindingModel = bindingModel;
@@ -60,22 +61,23 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 		bindingModel = null;
 		queue = null;
 		entry = -1;
-        
-		for(AttributeValidationHandler candidate: candidates){
+		value = null;
+		
+        for(CandidateAttributeValidationHandler candidate: candidates){
 			candidate.recycle();
 		}
-		candidatesConflictHandler.reset();
+		localCandidatesConflictHandler.reset();
 		candidates.clear();
 		pool.recycle(this);
 	}
 	
 	public void attributeBinding(String value){
 		int candidatesCount = candidates.size();
-		int qualified = candidatesCount-candidatesConflictHandler.getDisqualifiedCount(); 
+		int qualified = candidatesCount-localCandidatesConflictHandler.getDisqualifiedCount(); 
 		if(qualified == 0)return;		
 		if(qualified == 1){
-			int qual = candidatesConflictHandler.getNextQualified(0);
-			BoundAttributeValidationHandler cc = (BoundAttributeValidationHandler)candidates.get(qual);
+			int qual = localCandidatesConflictHandler.getNextQualified(0);
+			BoundCandidateAttributeValidationHandler cc = (BoundCandidateAttributeValidationHandler)candidates.get(qual);
 			cc.attributeBinding(value);
 		}else{
 			this.value = value; 
@@ -90,7 +92,7 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 
 	void validateInContext(){
 		int candidatesCount = candidates.size();		
-		int qualifiedCount = candidatesCount - candidatesConflictHandler.getDisqualifiedCount();		
+		int qualifiedCount = candidatesCount - localCandidatesConflictHandler.getDisqualifiedCount();		
 		if(qualifiedCount == 0){						
 			// Shift all with errors, hope the parent context disqualifies all but 1
 			// Why shift, they all have errors already??? 
@@ -98,20 +100,20 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 			// results in a fake error.			
 			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitions, value, queue, entry, mapCandidateToBinder());
 		}else if(qualifiedCount == 1){			
-			AAttribute qAttribute = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
+			AAttribute qAttribute = candidateDefinitions.get(localCandidatesConflictHandler.getNextQualified(0));
 			parent.addAttribute(qAttribute);
 		}else if(qualifiedCount > 1){
 			// TODO Maybe a warning
 			// Shift all without errors, hope the parent conflict disqualifies all but one			
-			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitions, candidatesConflictHandler, value, queue, entry, mapCandidateToBinder());
+			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitions, localCandidatesConflictHandler, value, queue, entry, mapCandidateToBinder());
 		}
 	}	
 	
 	private HashMap<AAttribute, AttributeBinder> mapCandidateToBinder(){
 		HashMap<AAttribute, AttributeBinder> map = new HashMap<AAttribute, AttributeBinder>();
 		for(int i = 0; i < candidates.size(); i++){
-			if(!candidatesConflictHandler.isDisqualified(i)){				
-				map.put(candidateDefinitions.get(i), ((BoundAttributeValidationHandler)candidates.get(i)).getBinder());
+			if(!localCandidatesConflictHandler.isDisqualified(i)){				
+				map.put(candidateDefinitions.get(i), ((BoundCandidateAttributeValidationHandler)candidates.get(i)).getBinder());
 			}
 		}
 		return map;

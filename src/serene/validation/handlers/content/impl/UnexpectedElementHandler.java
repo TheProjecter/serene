@@ -46,37 +46,34 @@ class UnexpectedElementHandler extends ErrorEEH{
 		parent.unexpectedElement(validationItemLocator.getQName(), element, validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
 	}
 	
-	public boolean functionalEquivalent(ComparableEEH other){
+	boolean functionalEquivalent(ComparableEEH other){
 		return other.functionalEquivalent(this);
 	}
-	public boolean functionalEquivalent(ElementValidationHandler other){
+	boolean functionalEquivalent(ElementValidationHandler other){
 		return false;
 	}		
-	public boolean functionalEquivalent(UnrecognizedElementHandler other){
-		return false;
-	}
-	public boolean functionalEquivalent(UnexpectedElementHandler other){		
+	boolean functionalEquivalent(UnexpectedElementHandler other){		
 		return other.functionalEquivalent(element);
 	}
 	private boolean functionalEquivalent(SimplifiedComponent otherSElement){
 		return element == otherSElement; 
 	}
-	public boolean functionalEquivalent(UnexpectedAmbiguousElementHandler other){
+	boolean functionalEquivalent(UnexpectedAmbiguousElementHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(UnknownElementHandler other){
+	boolean functionalEquivalent(UnknownElementHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(ElementDefaultHandler other){
+	boolean functionalEquivalent(ElementDefaultHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(ElementConcurrentHandler other){
+	boolean functionalEquivalent(ElementConcurrentHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(ElementParallelHandler other){
+	boolean functionalEquivalent(ElementParallelHandler other){
 		return false;
 	}	
-	public boolean functionalEquivalent(ElementCommonHandler other){
+	boolean functionalEquivalent(ElementCommonHandler other){
 		return false;
 	}
 	

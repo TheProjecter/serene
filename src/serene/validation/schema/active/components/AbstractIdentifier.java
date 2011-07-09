@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.Identifier;
 import serene.validation.schema.active.ActiveComponent;
 
@@ -24,8 +26,8 @@ import sereneWrite.MessageWriter;
 public abstract class AbstractIdentifier extends AbstractActiveComponent implements Identifier{
 	protected ActiveComponent parent;
 	
-	public AbstractIdentifier(String qName, String location, MessageWriter debugWriter){		
-		super(qName, location, debugWriter);
+	public AbstractIdentifier(SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){		
+		super(simplifiedComponent, debugWriter);
 	}
 
 	void setParent(ActiveComponent parent){		 

@@ -18,7 +18,7 @@ package serene.validation.handlers.content.impl;
 
 import sereneWrite.MessageWriter;
 
-abstract class ValidatingAEH extends AbstractAEH{
+abstract class ValidatingAEH extends ComparableAEH{
 		
 	ValidatingAEH(MessageWriter debugWriter){
 		super(debugWriter);

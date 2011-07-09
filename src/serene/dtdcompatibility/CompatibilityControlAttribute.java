@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.dtdcompatibility;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.ActiveGrammarModel;
 
@@ -27,7 +29,7 @@ import sereneWrite.MessageWriter;
 class CompatibilityControlAttribute extends AAttribute{
     
     CompatibilityControlAttribute(MessageWriter debugWriter){
-            super(-1, null, null, null, null, null, debugWriter);                
+            super(-1, null, null, null, null, debugWriter);                
     }
     
     void init(ActiveGrammarModel grammarModel,
@@ -38,9 +40,8 @@ class CompatibilityControlAttribute extends AAttribute{
         this.ruleHandlerPool = ruleHandlerPool;
     }
     
-    void init(int index, String qName, String location){
-        this.qName = qName;
-        this.location = location;
+    void init(int index, SimplifiedComponent simplifiedComponent){
+        this.simplifiedComponent = simplifiedComponent;
         this.index = index;
     }
     

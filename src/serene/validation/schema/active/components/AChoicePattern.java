@@ -21,6 +21,8 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.RuleVisitor;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
@@ -38,9 +40,9 @@ import sereneWrite.MessageWriter;
 public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerPattern{		
 	public AChoicePattern(APattern[] children,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				String qName, String location, 
+				SimplifiedComponent simplifiedComponent, 
 				MessageWriter debugWriter){		
-		super(children, ruleHandlerPool, qName, location, debugWriter);
+		super(children, ruleHandlerPool, simplifiedComponent, debugWriter);
 	}
 
 	public boolean isRequiredContent(){

@@ -18,6 +18,8 @@ package serene.validation.schema.active.components;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.Identifier;
 
 import sereneWrite.MessageWriter;
@@ -25,9 +27,9 @@ import sereneWrite.MessageWriter;
 public class AExceptNameClass extends AbstractIdentifier{		
 	ANameClass child;
 	public AExceptNameClass(ANameClass child,
-			String qName, String location, 
+			SimplifiedComponent simplifiedComponent, 
 			MessageWriter debugWriter){
-		super(qName, location, debugWriter);
+		super(simplifiedComponent, debugWriter);
 		asParent(child);
 	}	
 	

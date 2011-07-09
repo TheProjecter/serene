@@ -17,6 +17,7 @@ limitations under the License.
 package serene.validation.schema.active.components;
 
 import serene.validation.schema.active.Rule;
+import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.structure.ChildEventHandler;
 import serene.validation.handlers.structure.impl.ParticleHandler;
@@ -33,8 +34,8 @@ public abstract class AbstractAPattern extends AbstractRule implements APattern{
 	protected int minOccurs;
 	protected int maxOccurs;
 	
-	public AbstractAPattern(ActiveModelRuleHandlerPool ruleHandlerPool, String qName, String location, MessageWriter debugWriter){		
-		super(ruleHandlerPool, qName, location, debugWriter);
+	public AbstractAPattern(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){		
+		super(ruleHandlerPool, simplifiedComponent, debugWriter);
 		minOccurs = 1;
 		maxOccurs = 1;
 	}

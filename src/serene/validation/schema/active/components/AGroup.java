@@ -38,6 +38,8 @@ import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 import serene.validation.handlers.stack.impl.MinimalReduceStackHandler;
 import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
@@ -54,9 +56,9 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 	public AGroup(APattern[] children,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				String qName, String location, 
+				SimplifiedComponent simplifiedComponent, 
 				MessageWriter debugWriter){	
-		super(children, ruleHandlerPool, qName, location, debugWriter);
+		super(children, ruleHandlerPool, simplifiedComponent, debugWriter);
 		this.stackHandlerPool = stackHandlerPool;
 	}
 		

@@ -50,9 +50,12 @@ abstract class ErrorEEH extends ComparableEEH{
 		return next;
 	}	
 	public void handleAttributes(Attributes attributes, Locator locator){}	
-	void handleAttribute(String qName, String namespace, String name, String value){}
 	
-	public void handleEndElement(Locator locator){			
+    ComparableAEH getAttributeHandler(String qName, String namespace, String name){
+        return pool.getAttributeDefaultHandler(this);
+    }
+	
+	public void handleEndElement(Locator locator){		
 		// validateContext(locator); unnecessary, does nothing
 		validateInContext();
 	}	
@@ -62,6 +65,7 @@ abstract class ErrorEEH extends ComparableEEH{
 	}
     public void handleLastCharacters(char[] chars){
 	}
+	
 	public String toString(){
 		return "ErrorEEH ";
 	}

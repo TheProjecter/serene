@@ -17,6 +17,7 @@ limitations under the License.
 package serene.validation.handlers.error;
 
 import java.util.Arrays;
+import java.util.BitSet;
 
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXException;
@@ -49,8 +50,13 @@ public class DefaultErrorHandler extends AbstractContextErrorHandler{
 	//public void init(){}
 	public void recycle(){		
 		pool.recycle(this);
+
 	}
-		
+    public boolean isCandidate(){
+        return false;
+    }
+    public void setCandidate(boolean isCandidate){}
+    
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
 	}	
 	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
@@ -64,8 +70,7 @@ public class DefaultErrorHandler extends AbstractContextErrorHandler{
 	}	
 	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 	}
-
-    
+		
 	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
 	}
 	
@@ -78,7 +83,7 @@ public class DefaultErrorHandler extends AbstractContextErrorHandler{
 	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
 	}
 	
-	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){       
 	}
 	
 	public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
@@ -107,7 +112,7 @@ public class DefaultErrorHandler extends AbstractContextErrorHandler{
 	}
 
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-	}
+	}    
 	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 	}
 	
@@ -139,6 +144,7 @@ public class DefaultErrorHandler extends AbstractContextErrorHandler{
 	}
 	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 	}
+    
     public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
     }    
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
@@ -146,12 +152,15 @@ public class DefaultErrorHandler extends AbstractContextErrorHandler{
     
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 	}
+    
+    public  void conflict(MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){
+    }
 	
-	public void handle(String qName, AElement definition, Locator locator)
-				throws SAXException{		
+	public void handle(int contextType, String qName, AElement definition, Locator locator)
+				throws SAXException{
 	}
 	
-	public void handle(String qName, Locator locator)
+	public void handle(int contextType, String qName, Locator locator)
 				throws SAXException{
 	}
 	

@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.RuleVisitor;
 import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.ActiveDefinitionPointer;
@@ -87,9 +89,9 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 	public ARef(int index, 
 					ActiveGrammarModel grammarModel,
 					ActiveModelRuleHandlerPool ruleHandlerPool,
-					String qName, String location, 
+					SimplifiedComponent simplifiedComponent, 
 					MessageWriter debugWriter){
-		super(null, ruleHandlerPool, qName, location, debugWriter);
+		super(null, ruleHandlerPool, simplifiedComponent, debugWriter);
 		this.index = index;
 		this.grammarModel = grammarModel;
 	}
@@ -103,6 +105,11 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 		return child.isRequiredContent();
 	}
 	
+    public int functionalEquivalenceCode(){
+        //return simplifiedComponent.hashCode();
+        return definition.getTopPattern().functionalEquivalenceCode();
+    }
+    
 	//ActiveDefinitionPointer
 	//--------------------------------------------------------------------------
 	public int getDefinitionIndex(){

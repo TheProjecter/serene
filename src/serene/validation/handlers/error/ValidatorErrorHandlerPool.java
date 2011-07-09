@@ -31,11 +31,6 @@ public class ValidatorErrorHandlerPool implements Reusable{
 	int validationErrorHFree = 0;
 	ValidationErrorHandler[] validationErrorH;
     
-    // int startValidationErrorHCreated;
-	int startValidationErrorHPoolSize;
-	int startValidationErrorHFree = 0;
-	StartValidationErrorHandler[] startValidationErrorH;
-	
 	// int conflictErrorHCreated;
 	int conflictErrorHPoolSize;
 	int conflictErrorHFree = 0;
@@ -67,7 +62,6 @@ public class ValidatorErrorHandlerPool implements Reusable{
 
 	public void recycle(){
 		if(validationErrorHFree != 0 ||
-            startValidationErrorHFree != 0 ||
 			conflictErrorHFree != 0 ||
 			commonErrorHFree != 0 ||
 			defaultErrorHFree != 0)
@@ -79,7 +73,6 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		
 		errorHandlerPool.fill(this,
 							validationErrorH,
-							startValidationErrorH,
 							conflictErrorH,
 							commonErrorH,
 							defaultErrorH,
@@ -88,8 +81,6 @@ public class ValidatorErrorHandlerPool implements Reusable{
 	
 	void setHandlers(int validationErrorHFree,
 					ValidationErrorHandler[] validationErrorH,
-                    int startValidationErrorHFree,
-					StartValidationErrorHandler[] startValidationErrorH,
 					int conflictErrorHFree,
 					ExternalConflictErrorHandler[] conflictErrorH,
 					int commonErrorHFree,
@@ -104,14 +95,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		for(int i = 0; i < validationErrorHFree; i++){	
 			validationErrorH[i].init(this, errorDispatcher);
 		}
-        
-        startValidationErrorHPoolSize = startValidationErrorH.length;
-		this.startValidationErrorHFree = startValidationErrorHFree;
-		this.startValidationErrorH = startValidationErrorH;
-		for(int i = 0; i < startValidationErrorHFree; i++){	
-			startValidationErrorH[i].init(this, errorDispatcher);
-		}
-		
+        		
 		conflictErrorHPoolSize = conflictErrorH.length;
 		this.conflictErrorHFree = conflictErrorHFree;
 		this.conflictErrorH = conflictErrorH;
@@ -157,8 +141,6 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		// System.out.println("default created " + defaultErrorHCreated);
 		errorHandlerPool.recycle(validationErrorHFree,
 								validationErrorH,
-                                startValidationErrorHFree,
-								startValidationErrorH,
 								conflictErrorHFree,
 								conflictErrorH,
 								commonErrorHFree,
@@ -168,7 +150,6 @@ public class ValidatorErrorHandlerPool implements Reusable{
 								attributeConflictErrorHFree,
 								attributeConflictErrorH);
 		validationErrorHFree = 0;
-        startValidationErrorHFree = 0;
 		conflictErrorHFree = 0;
 		commonErrorHFree = 0;
 		defaultErrorHFree = 0;
@@ -181,11 +162,9 @@ public class ValidatorErrorHandlerPool implements Reusable{
 			// validationErrorHCreated++;
 			ValidationErrorHandler veh = new ValidationErrorHandler(debugWriter);			 
 			veh.init(this, errorDispatcher);
-			veh.init();
 			return veh;			
 		}else{
 			ValidationErrorHandler veh = validationErrorH[--validationErrorHFree];
-			veh.init();
 			return veh;
 		}		
 	}
@@ -200,40 +179,17 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		validationErrorH[validationErrorHFree++] = veh;
 	}
     
-    public StartValidationErrorHandler getStartValidationErrorHandler(){				
-		if(startValidationErrorHFree == 0){
-			// startValidationErrorHCreated++;
-			StartValidationErrorHandler veh = new StartValidationErrorHandler(debugWriter);			 
-			veh.init(this, errorDispatcher);
-			veh.init();
-			return veh;			
-		}else{
-			StartValidationErrorHandler veh = startValidationErrorH[--startValidationErrorHFree];
-			veh.init();
-			return veh;
-		}		
-	}
 	
-	
-	public void recycle(StartValidationErrorHandler veh){
-		if(startValidationErrorHFree == startValidationErrorHPoolSize){
-			StartValidationErrorHandler[] increased = new StartValidationErrorHandler[++startValidationErrorHPoolSize];
-			System.arraycopy(startValidationErrorH, 0, increased, 0, startValidationErrorHFree);
-			startValidationErrorH = increased;
-		}
-		startValidationErrorH[startValidationErrorHFree++] = veh;
-	}
-	
-	public ExternalConflictErrorHandler getExternalConflictErrorHandler(ExternalConflictHandler conflictHandler, int candidateIndex){
+	public ExternalConflictErrorHandler getExternalConflictErrorHandler(CandidatesConflictErrorHandler candidatesConflictErrorHandler, int candidateIndex, boolean isCandidate){
 		if(conflictErrorHFree == 0){
 			// conflictErrorHCreated++;
 			ExternalConflictErrorHandler eh = new ExternalConflictErrorHandler(debugWriter);
 			eh.init(this, errorDispatcher);
-			eh.init(conflictHandler, candidateIndex);
+			eh.init(candidatesConflictErrorHandler, candidateIndex, isCandidate);
 			return eh;			
 		}else{
 			ExternalConflictErrorHandler eh = conflictErrorH[--conflictErrorHFree];
-			eh.init(conflictHandler, candidateIndex);
+			eh.init(candidatesConflictErrorHandler, candidateIndex, isCandidate);
 			return eh;
 		}		
 	}
@@ -248,16 +204,16 @@ public class ValidatorErrorHandlerPool implements Reusable{
 	}
 	
 	
-	public CommonErrorHandler getCommonErrorHandler(){
+	public CommonErrorHandler getCommonErrorHandler(CandidatesConflictErrorHandler candidatesConflictErrorHandler, boolean isCandidate){
 		if(commonErrorHFree == 0){
 			// commonErrorHCreated++;
 			CommonErrorHandler eh = new CommonErrorHandler(debugWriter);
 			eh.init(this, errorDispatcher);
-			eh.init();
+			eh.init(candidatesConflictErrorHandler, isCandidate);
 			return eh;			
 		}else{
 			CommonErrorHandler eh = commonErrorH[--commonErrorHFree];
-			eh.init();
+			eh.init(candidatesConflictErrorHandler, isCandidate);
 			return eh;
 		}		
 	}

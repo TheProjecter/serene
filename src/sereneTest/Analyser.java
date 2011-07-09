@@ -125,7 +125,7 @@ class Analyser{
 			if(testDirs[i] != null){
 				File standard = getCorrespondingFile(testDirs[i], standardContent);
 				if(standard == null){
-					debugWriter.write("No corresponding directory in acceptedResults.");
+					debugWriter.write("No corresponding directory in acceptedResults: "+testDirs[i]);
 					System.out.println("TESTED DIRECTORY "+testDirs[i]);
 					System.out.println("No corresponding directory in acceptedResults.");
 				}else{
@@ -183,7 +183,7 @@ class Analyser{
 			if(testDirs[i] != null){
 				File standard = getCorrespondingFile(testDirs[i], standardContent);
 				if(standard == null){
-					debugWriter.write("No corresponding directory in acceptedResults.");
+					debugWriter.write("No corresponding directory in acceptedResults: "+testDirs[i]);
 					System.out.println("TESTED DIRECTORY "+testDirs[i]);
 					System.out.println("No corresponding directory in acceptedResults.");
 				}else{

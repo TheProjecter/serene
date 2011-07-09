@@ -22,8 +22,7 @@ import serene.validation.handlers.content.util.ValidationItemLocator;
 import sereneWrite.MessageWriter;
 
 abstract class AbstractAEH implements AttributeEventHandler{
-	ValidationItemLocator validationItemLocator;
-	ElementValidationHandler parent;	
+	ValidationItemLocator validationItemLocator;	
 	ValidatorEventHandlerPool pool;	
 	MessageWriter debugWriter;
 	
@@ -34,15 +33,9 @@ abstract class AbstractAEH implements AttributeEventHandler{
 	void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator){
 		this.pool = pool;
 		this.validationItemLocator = validationItemLocator;
-	}
+	}	
 	
-	void init(ElementValidationHandler parent){
-		this.parent = parent;
-	}
-	
-	public ElementValidationHandler getParentHandler(){
-		return parent;
-	}
+	abstract public ComparableEEH getParentHandler();
 	
 	abstract void validateInContext();	
 }

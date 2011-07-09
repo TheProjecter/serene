@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.ActiveComponent;
 
@@ -24,31 +26,33 @@ import sereneWrite.MessageWriter;
 abstract class AbstractActiveComponent implements ActiveComponent{
 	protected int childIndex;	
 	
-	protected String qName;
-	protected String location;
+	protected SimplifiedComponent simplifiedComponent;
 	
 	protected MessageWriter debugWriter;	
 	
-	AbstractActiveComponent(String qName, String location, MessageWriter debugWriter){		
+	AbstractActiveComponent(SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){		
 		this.debugWriter = debugWriter;	
-		this.qName = qName;
-		this.location = location;
+		this.simplifiedComponent = simplifiedComponent;
 		
 		childIndex = -1;
 	}
 	
 	void setChildIndex(int childIndex){			
-		this.childIndex = childIndex;
+		this.childIndex = childIndex;				
 	}	
 	public int getChildIndex(){
 		return childIndex;
 	}
 	
 	public String getQName(){
-		return qName;
+		return simplifiedComponent.getQName();
 	}
 	
 	public String getLocation(){
-		return location;
+		return simplifiedComponent.getLocation();
 	}	
+    
+    public int functionalEquivalenceCode(){
+        return simplifiedComponent.hashCode();
+    }
 }	

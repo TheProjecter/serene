@@ -19,14 +19,15 @@ package serene.validation.schema.active.components;
 import serene.validation.schema.active.components.AExceptNameClass;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
+import serene.validation.schema.simplified.SimplifiedComponent;
 
 import sereneWrite.MessageWriter;
 
 public class AAnyName extends AbstractWildCard{		
 	public AAnyName(AExceptNameClass child,
-			String qName, String location, 
+			SimplifiedComponent simplifiedComponent, 
 			MessageWriter debugWriter){
-		super(child, qName, location, debugWriter);
+		super(child, simplifiedComponent, debugWriter);
 	}
 	
 	public boolean matches(String namespace, String name){

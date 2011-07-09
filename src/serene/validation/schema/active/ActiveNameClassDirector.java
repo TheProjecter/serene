@@ -77,38 +77,38 @@ class ActiveNameClassDirector implements SimplifiedComponentVisitor{
 										SNameClass originalTopNameClass){
 		this.componentBuilder = componentBuilder;
 		componentBuilder.startBuild();
-		originalTopNameClass.accept(this);
+		if(originalTopNameClass != null)originalTopNameClass.accept(this);
 		return componentBuilder.getCurrentNameClass();
 	}
 	
 	
 	public void visit(SName name){
-		componentBuilder.buildName(name.getNamespaceURI(), name.getLocalPart(), name.getQName(), name.getLocation());
+		componentBuilder.buildName(name.getNamespaceURI(), name.getLocalPart(), name);
 	}
 	public void visit(SAnyName anyName){		
 		SimplifiedComponent child = anyName.getExceptNameClass();
 		if(child != null) nextLevel(child);
-		componentBuilder.buildAnyName(anyName.getQName(), anyName.getLocation());
+		componentBuilder.buildAnyName(anyName);
 	}
 	public void visit(SNsName nsName){
 		SimplifiedComponent child = nsName.getExceptNameClass();
 		if(child != null) nextLevel(child);
-		componentBuilder.buildNsName(nsName.getNamespaceURI(), nsName.getQName(), nsName.getLocation());
+		componentBuilder.buildNsName(nsName.getNamespaceURI(), nsName);
 	}	
 	public void visit(SChoiceNameClass choice){
 		SimplifiedComponent[] children = choice.getChildren();
 		if(children != null) nextLevel(children);
-		componentBuilder.buildChoiceNameClass(choice.getQName(), choice.getLocation());
+		componentBuilder.buildChoiceNameClass(choice);
 	}	
 	
-	    
+	
 	public void visit(SExceptPattern exceptPattern){		
 		throw new IllegalStateException();
 	}
 	public void visit(SExceptNameClass exceptNameClass){
 		SimplifiedComponent child = exceptNameClass.getChild();
 		if(child != null) nextLevel(child);
-		componentBuilder.buildExceptNameClass(exceptNameClass.getQName(), exceptNameClass.getLocation());
+		componentBuilder.buildExceptNameClass(exceptNameClass);
 	}
 		
 	

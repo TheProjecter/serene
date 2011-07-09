@@ -25,13 +25,4 @@ abstract class CandidatesEEH extends ValidatingEEH{
 	CandidatesEEH(MessageWriter debugWriter){
 		super(debugWriter);		
 	}
-	
-	//errorCatcherManager
-	//--------------------------------------------------------------------------
-	public void setCommon(){
-		contextErrorHandlerId = COMMON;		
-		storeState();
-		contextErrorHandler = commonErrorHandler;		
-	}
-	//--------------------------------------------------------------------------
 }

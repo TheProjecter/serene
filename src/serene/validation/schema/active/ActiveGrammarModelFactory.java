@@ -167,7 +167,7 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 																	definitionDirector,
 																	componentBuilder,
 																	debugWriter);
-        startElement = new AElement(elementIndex, model, stackHandlerPool, ruleHandlerPool, simplifiedModel.getStartQName(), simplifiedModel.getStartLocation(), debugWriter);
+        startElement = new AElement(elementIndex, model, stackHandlerPool, ruleHandlerPool, simplifiedModel.getSchemaStart(), debugWriter);
         elementIndex++;
         
         originalTopPattern.accept(this);

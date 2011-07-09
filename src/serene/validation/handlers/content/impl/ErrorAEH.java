@@ -18,8 +18,9 @@ package serene.validation.handlers.content.impl;
 
 import sereneWrite.MessageWriter;
 
-abstract class ErrorAEH extends AbstractAEH{
-		
+abstract class ErrorAEH extends ComparableAEH{
+    ElementValidationHandler parent;
+    
 	ErrorAEH(MessageWriter debugWriter){
 		super(debugWriter);
 	}
@@ -27,5 +28,12 @@ abstract class ErrorAEH extends AbstractAEH{
 	public void handleAttribute(String value){
 		validateInContext();
 	}
+    
+    public void init(ElementValidationHandler parent){
+        this.parent = parent;
+    }
 
+    public ElementValidationHandler getParentHandler(){
+        return parent;
+    }
 }

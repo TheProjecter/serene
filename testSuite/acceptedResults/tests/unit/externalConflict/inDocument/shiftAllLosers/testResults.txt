@@ -6,17 +6,9 @@ TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\ext
 
 TESTED DOCUMENT document1.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/document1.xml:23:7 Syntax error.  Element <aa> could not be resolved to a single schema definition:
-Unresolved by content.
-Validation  of candidate definitions resulted in errors:
-Candidate definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/schema.rng:25:26 first error: 
-	file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/document1.xml:23:7  Element <aa> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/schema.rng:25:26 contains errors: 
-	Missing content.
-	In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/document1.xml:22:6, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/schema.rng:25:26, expected 1 occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/schema.rng:26:29, found 0.
-Candidate definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/schema.rng:28:26 first error: 
-	file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/document1.xml:23:7  Element <aa> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/schema.rng:28:26 contains errors: 
-	Missing content.
-	In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/document1.xml:22:6, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/schema.rng:28:26, expected 1 occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/schema.rng:29:29, found 0.
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/document1.xml:23:7 Syntax error. Ambiguous element <aa> contains errors common to all possible definitions: 
+Missing content.
+In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/document1.xml:22:6, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/schema.rng:25:26, expected 1 occurrence corresponding to definition <ref> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/schema.rng:26:29, found 0.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/document1.xml:24:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/schema.rng:23:26 contains errors: 
 Ambiguous content.

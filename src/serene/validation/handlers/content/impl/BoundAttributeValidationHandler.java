@@ -21,7 +21,8 @@ import org.relaxng.datatype.Datatype;
 import serene.validation.schema.active.components.AAttribute;
 
 import serene.validation.handlers.content.BoundAttributeHandler;
-import serene.validation.handlers.error.ErrorCatcher;
+
+import serene.validation.handlers.error.ContextErrorHandlerManager;
 
 import serene.bind.AttributeBinder;
 import serene.bind.BindingModel;
@@ -39,8 +40,8 @@ class BoundAttributeValidationHandler extends AttributeValidationHandler impleme
 		super(debugWriter);		
 	}
 	
-	void init(AAttribute attribute, ElementValidationHandler parent, ErrorCatcher errorCatcher, BindingModel bindingModel, Queue queue, int entry){
-		super.init(attribute, parent, errorCatcher);
+	void init(AAttribute attribute, ElementValidationHandler parent, ContextErrorHandlerManager contextErrorHandlerManager, BindingModel bindingModel, Queue queue, int entry){
+		super.init(attribute, parent, contextErrorHandlerManager);
 		this.bindingModel = bindingModel;
 		this.queue = queue;
 		this.entry = entry;
@@ -50,8 +51,7 @@ class BoundAttributeValidationHandler extends AttributeValidationHandler impleme
 		bindingModel = null;
 		queue = null;
 		entry = -1;
-		
-        if(errorCatcher != parent)((Reusable)errorCatcher).recycle();
+        
 		if(stackHandler != null){
 			stackHandler.recycle();
 			stackHandler = null;
@@ -68,7 +68,7 @@ class BoundAttributeValidationHandler extends AttributeValidationHandler impleme
 	
 	public void attributeBinding(String value){		
 		int definitionIndex = attribute.getDefinitionIndex();
-		AttributeBinder binder = bindingModel.getAttributeBinder(definitionIndex);		
+		AttributeBinder binder = bindingModel.getAttributeBinder(definitionIndex);
 		if(binder != null){
 			binder.bindAttribute(queue, entry, definitionIndex, validationItemLocator.getNamespaceURI(), validationItemLocator.getLocalName(), validationItemLocator.getQName(), Datatype.ID_TYPE_NULL, value);
 		}

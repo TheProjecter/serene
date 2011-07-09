@@ -18,6 +18,8 @@ package serene.validation.schema.active.components;
 
 import serene.util.IntList;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.ActiveComponent;
 
@@ -38,13 +40,13 @@ abstract class AbstractRule extends AbstractActiveComponent implements Rule{
 	
 	protected ActiveModelRuleHandlerPool ruleHandlerPool;
 	
-	AbstractRule(ActiveModelRuleHandlerPool ruleHandlerPool, String qName, String location, MessageWriter debugWriter){
-		super(qName, location, debugWriter);
+	AbstractRule(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){
+		super(simplifiedComponent, debugWriter);
 		this.ruleHandlerPool = ruleHandlerPool; 
 	}
 
 	void setParent(Rule parent){		 
-		this.parent = parent;
+		this.parent = parent;				
 	}	
 	public Rule getParent(){
 		return parent;
@@ -74,3 +76,4 @@ abstract class AbstractRule extends AbstractActiveComponent implements Rule{
 		return parent.isAncestorInContext(another);
 	}
 }	
+

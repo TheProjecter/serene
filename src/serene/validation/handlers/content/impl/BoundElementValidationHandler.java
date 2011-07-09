@@ -18,6 +18,7 @@ package serene.validation.handlers.content.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -62,19 +63,19 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		startLocationBinding();
 	}
 	
-	public void recycle(){
+	public void recycle(){	
         charContentBuffer.clear();
         charContentSystemId = null;
         charContentPublicId = null;
         charContentLineNumber = -1;
         charContentColumnNumber = -1;
-		hasComplexContent = false;
+        hasComplexContent = false;
         
 		if(stackHandler != null){
 			stackHandler.recycle();
 			stackHandler = null;
 		}
-		recycleErrorHandlers();
+		resetContextErrorHandlerManager();
 		//internalConflicts = null; 
 		if(contextConflictPool != null)contextConflictPool.clear();
 		element.releaseDefinition();
@@ -120,7 +121,8 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		if(binder != null)binder.bind(queue, queueEndEntry);
 	}
 	
-	public ComparableEEH handleStartElement(String qName, String namespace, String name){		
+	public ComparableEEH handleStartElement(String qName, String namespace, String name){
+		
 		if(!element.allowsElementContent()) 
 			return getUnexpectedElementHandler(namespace, name);
 				
@@ -134,28 +136,28 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		}else{	
 			if(contextConflictPool == null)	contextConflictPool = new ContextConflictPool();			
 			ContextConflictDescriptor ccd = contextConflictPool.getContextConflictDescriptor(elementMatches);
-			BoundElementConcurrentHandler next = pool.getElementConcurrentHandler(ccd.getDefinitions(), this, bindingModel, queue, queuePool);
+			BoundElementConcurrentHandler next = pool.getElementConcurrentHandler(ccd.getDefinitions(), this, bindingModel, queue, queuePool);				
 			return next;
 		}		
 	}
 
-	void handleAttribute(String qName, String namespace, String name, String value){
-		if(!element.allowsAttributes()){
-			AttributeEventHandler aeh = getUnexpectedAttributeHandler(namespace, name);
-			aeh.handleAttribute(value);
-			return;
-		}
+	
+    ComparableAEH getAttributeHandler(String qName, String namespace, String name){
+		if(!element.allowsAttributes()) 
+			return getUnexpectedAttributeHandler(namespace, name);
 		List<AAttribute> attributeMatches = matchHandler.matchAttribute(namespace, name, element);
 		int matchCount = attributeMatches.size();
 		if(matchCount == 0){
-			AttributeEventHandler aeh = getUnexpectedAttributeHandler(namespace, name);
-			aeh.handleAttribute(value);			
+			return getUnexpectedAttributeHandler(namespace, name);
 		}else if(matchCount == 1){			
-			BoundAttributeValidationHandler baeh = pool.getAttributeValidationHandler(attributeMatches.get(0), this, this, bindingModel, queue, queueStartEntry);			
-			baeh.handleAttribute(value);		
-		}else{			
-			BoundAttributeConcurrentHandler bach = pool.getAttributeConcurrentHandler(attributeMatches, this, bindingModel, queue, queueStartEntry);
-			bach.handleAttribute(value);
+			BoundAttributeValidationHandler next = pool.getAttributeValidationHandler(attributeMatches.get(0), this, this, bindingModel, queue, queueStartEntry);
+			return next;
+		}else{	
+			// TODO
+			// if(contextConflictPool == null)	contextConflictPool = new ContextConflictPool();			
+			// ContextConflictDescriptor ccd = contextConflictPool.getContextConflictDescriptor(attributeMatches);
+			BoundAttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(attributeMatches, this, bindingModel, queue, queueStartEntry);
+			return next;
 		}		
 	}	
 
@@ -195,8 +197,8 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	}
 
     public void handleLastCharacters(char[] chars){
-        boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);            
-        char[] bufferedContent = charContentBuffer.removeCharsArray();
+        boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
+        char[] bufferedContent = charContentBuffer.getCharsArray();
         boolean isBufferIgnorable = bufferedContent.length == 0 || spaceHandler.isSpace(bufferedContent);
 		if(hasComplexContent){
             if(!isIgnorable && element.allowsTextContent()){
@@ -224,7 +226,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
             }
             
             CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
-            ceh.handleChars(charContentBuffer.removeCharsArray(), (CharsActiveType)element, hasComplexContent);
+            ceh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
             ceh.recycle();
             
             if(chars.length == 0)validationItemLocator.closeCharsContent();
@@ -235,8 +237,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		// Still it would be better to have the "normalized" version resulted 
 		// from the processing done for the validation.
 		// TODO see about what to do if chars validation results in errors
-		characterContentBinding(chars);		
-				
+		characterContentBinding(chars);
 	}	
 	
 	public void handleEndElement(Locator locator) throws SAXException{		

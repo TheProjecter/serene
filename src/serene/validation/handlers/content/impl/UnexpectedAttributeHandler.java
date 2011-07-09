@@ -40,6 +40,34 @@ class UnexpectedAttributeHandler extends ErrorAEH{
 		parent.unexpectedAttribute(validationItemLocator.getQName(), attribute, validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
 	}
 
+    boolean functionalEquivalent(ComparableAEH other){
+        return other.functionalEquivalent(this);
+    }
+    
+    boolean functionalEquivalent(AttributeDefinitionHandler other){
+        return false;
+    }
+	boolean functionalEquivalent(UnexpectedAttributeHandler other){
+        return other.functionalEquivalent(attribute);
+	}
+	private boolean functionalEquivalent(SimplifiedComponent otherSAttribute){
+		return attribute == otherSAttribute; 
+	}
+	boolean functionalEquivalent(UnexpectedAmbiguousAttributeHandler other){
+        return false;
+    }    
+	boolean functionalEquivalent(UnknownAttributeHandler other){
+        return false;
+    }
+	boolean functionalEquivalent(AttributeConcurrentHandler other){
+        return false;        
+	}	
+	boolean functionalEquivalent(AttributeParallelHandler other){
+        return false;
+    }
+    boolean functionalEquivalent(AttributeDefaultHandler other){
+        return false;
+    }
     public String toString(){
 		return "UnexpectedAttributeHandler "+attribute.toString();
 	}	

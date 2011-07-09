@@ -16,6 +16,7 @@ limitations under the License.
 
 package serene.validation.handlers.content.impl;
 
+import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
@@ -23,6 +24,7 @@ import serene.validation.handlers.content.ElementEventHandler;
 import serene.validation.handlers.content.BoundElementHandler;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
+import serene.validation.handlers.error.CandidatesConflictErrorHandler;
 
 import serene.bind.BindingModel;
 import serene.bind.ValidatorQueuePool;
@@ -37,36 +39,40 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 	Queue queue;
 	ValidatorQueuePool queuePool;
 	
-	State boundCommon;
-	State boundConflict;
+	BoundCommon boundCommon;
+	BoundConflict boundConflict;
 	
 	
 	BoundElementParallelHandler(MessageWriter debugWriter){
-		super(debugWriter);	
-		boundCommon = new BoundCommon();
-		boundConflict = new BoundConflict();		
+		super(debugWriter);		
 	}
 
-	void init(ExternalConflictHandler candidatesConflictHandler, CandidatesEEH parent, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){
-		super.init(candidatesConflictHandler, parent);
+    void initStates(){
+        boundCommon = new BoundCommon();
+		boundConflict = new BoundConflict();
+        state = boundCommon;
+    }
+    
+	void init(ExternalConflictHandler candidatesConflictHandler, CandidatesConflictErrorHandler candidatesConflictErrorHandler, CandidatesEEH parent, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){
+		super.init(candidatesConflictHandler, candidatesConflictErrorHandler, parent);
 		this.bindingModel = bindingModel;
 		this.queue = queue;
 		this.queuePool = queuePool;
 		
-		state  = boundCommon;
+		state  = boundCommon;        
 	}
 	
 	public void recycle(){		
 		candidatesConflictHandler = null;
-		uniqueSample = null;
-		
+				
 		for(ElementEventHandler individualHandler : individualHandlers){
 			individualHandler.recycle();
 		}
 		individualHandlers.clear();
-		recycleErrorHandlers();
+		resetContextErrorHandlerManager();
 		
-		state = null;
+        boundCommon.reset();
+		state = boundCommon;
 		parent = null;		
 		
 		bindingModel = null;
@@ -94,11 +100,11 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 	}
 	public void elementTasksBinding(){
 		int individualHandlersCount = individualHandlers.size();
-		int qualified = individualHandlersCount-candidatesConflictHandler.getDisqualifiedCount(); 
+		int qualified = individualHandlersCount-candidatesConflictHandler.getDisqualifiedCount();
 		if(qualified == 0)return;		
 		for(int i = 0; i < individualHandlersCount; i++){
 			ComparableEEH ih = individualHandlers.get(i);
-			if(!candidatesConflictHandler.isDisqualified(i) &&
+			if(//!candidatesConflictHandler.isDisqualified(i) &&
 				ih instanceof BoundElementHandler){
 			((BoundElementHandler)ih).elementTasksBinding();
 			}
@@ -117,116 +123,157 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 	}
 	
 	class BoundCommon extends State{
+        ComparableEEH uniqueSample;
+        boolean isQualifiedSample;
+        
+        void reset(){
+            uniqueSample = null;
+            isQualifiedSample = false;
+        }
+        
 		void add(ComparableEEH individualHandler){
-			if(uniqueSample == null)uniqueSample = individualHandler;
-			else if(!individualHandler.functionalEquivalent(uniqueSample)) state = boundConflict;
-			if(!candidatesConflictHandler.isDisqualified(individualHandlers.size()))uniqueSample = individualHandler;
+			if(uniqueSample == null ){
+                isQualifiedSample = !candidatesConflictHandler.isDisqualified(0);
+                uniqueSample = individualHandler;
+                if(uniqueSample instanceof ValidatingEEH)((ValidatingEEH)uniqueSample).setContextErrorHandlerIndex(COMMON);
+            }else{
+                if(!individualHandler.functionalEquivalent(uniqueSample)){
+                    state = boundConflict;
+                    if(uniqueSample instanceof ValidatingEEH)((ValidatingEEH)uniqueSample).restorePreviousHandler();
+                }else if(!isQualifiedSample && !candidatesConflictHandler.isDisqualified(individualHandlers.size())){
+                    if(uniqueSample instanceof ValidatingEEH){
+                        ((ValidatingEEH)uniqueSample).restorePreviousHandler();
+                        ((ValidatingEEH)individualHandler).setContextErrorHandlerIndex(COMMON);
+                    }
+                    uniqueSample = individualHandler;
+                    isQualifiedSample = true;
+                }
+            }
 			individualHandlers.add(individualHandler);				
 		}
 		ElementParallelHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance){			
-			ElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, instance, bindingModel, queue, queuePool);
+			ElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, candidatesConflictErrorHandler, instance, bindingModel, queue, queuePool);
 			for(int i = 0; i < individualHandlers.size(); i++){	
 				next.add(individualHandlers.get(i).handleStartElement(qName, namespace, name));			
 			}	
 			return next;
-		}	
-		void handleAttribute(String qName, String namespace, String name, String value){		
-			if(uniqueSample instanceof ValidatingEEH){				
-				ValidatingEEH sample = (ValidatingEEH)uniqueSample;
-				sample.setValidation();
-				sample.handleAttribute(qName, namespace, name, value);
-				sample.restorePreviousState();
-				for(int i = 0; i < individualHandlers.size(); i++){					
-					if(!candidatesConflictHandler.isDisqualified(i) &&
-						individualHandlers.get(i) != uniqueSample){
-						ValidatingEEH ih = (ValidatingEEH)individualHandlers.get(i);
-						ih.setDefault();
-						ih.handleAttribute(qName, namespace, name, value);
-						ih.restorePreviousState();
-					}				
-				}
-			}			
 		}
-		void handleEndElement(Locator locator) throws SAXException{			
+        void handleAttributes(Attributes attributes, Locator locator){            
+            /*for(int i = 0; i < attributes.getLength(); i++){
+                String attributeQName = attributes.getQName(i);
+                String attributeNamespace = attributes.getURI(i); 
+                String attributeName = attributes.getLocalName(i);
+                String attributeValue = attributes.getValue(i);
+                validationItemLocator.newAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);
+                //state.handleAttribute(attributeQName, attributeNamespace, attributeName, attributeValue);
+                validationItemLocator.closeAttribute();
+            }*/
+            uniqueSample.handleAttributes(attributes, locator);
+            if(uniqueSample instanceof ValidatingEEH){
+                for(int i = 0; i < individualHandlers.size(); i++){
+                    if(!candidatesConflictHandler.isDisqualified(i)
+                        && !individualHandlers.get(i).equals(uniqueSample)){
+                        ValidatingEEH handler = (ValidatingEEH)individualHandlers.get(i);
+                        handler.setContextErrorHandlerIndex(DEFAULT);
+                        handler.handleAttributes(attributes, locator);
+                        handler.restorePreviousHandler();
+                    }
+                }			
+            }
+		}
+        
+        ComparableAEH getAttributeHandler(String qName, String namespace, String name){
+            return uniqueSample.getAttributeHandler(qName, namespace, name);
+        }
+        
+		void handleEndElement(Locator locator) throws SAXException{
 			validateContext();
 			reportContextErrors(locator);
 			elementTasksBinding();		
 			validateInContext();
 		}
 		void validateContext(){			
-			if(uniqueSample instanceof ValidatingEEH){				
-				ValidatingEEH sample = (ValidatingEEH)uniqueSample;
-				sample.setValidation();
-				sample.validateContext();
-				sample.restorePreviousState();
-			}
+			uniqueSample.validateContext();
 		}
 				
 		void reportContextErrors(Locator locator) throws SAXException{
-			//uniqueSample.reportContextErrors(locator);			
-			if(commonErrorHandler != null)
-				commonErrorHandler.handle(validationItemLocator.getQName(), locator);
-			// TODO make sure it all makes sense, 
-			// you might need to return after common if not null
-			if(uniqueSample instanceof ValidatingEEH){				
-				ValidatingEEH sample = (ValidatingEEH)uniqueSample;
-				sample.setValidation();
-				sample.reportContextErrors(locator);
-				sample.restorePreviousState();
-			}
+			ElementEventHandler uniqueSampleParent = uniqueSample.getParentHandler();
+            if(uniqueSampleParent instanceof ElementValidationHandler){			
+                ElementValidationHandler evhParent = (ElementValidationHandler)uniqueSampleParent;
+                evhParent.setContextErrorHandlerIndex(COMMON);
+                uniqueSample.reportContextErrors(locator);
+                evhParent.restorePreviousHandler();
+            }
 		}
 		
 		void validateInContext(){
-			if(uniqueSample instanceof ErrorEEH){				
-				parent.setCommon();				
-				ElementValidationHandler uniqueSampleParent = (ElementValidationHandler)uniqueSample.getParentHandler();
-				uniqueSampleParent.setExternal(parent.getContextErrorHandler());				
-				uniqueSample.validateInContext();
-				uniqueSampleParent.restorePreviousState();
-				parent.restorePreviousState();
+            if(uniqueSample instanceof ErrorEEH){				
+				ElementEventHandler uniqueSampleParent = uniqueSample.getParentHandler();
+                if(uniqueSampleParent instanceof ElementValidationHandler){
+                    ElementValidationHandler evhParent = (ElementValidationHandler)uniqueSampleParent;
+                    evhParent.setContextErrorHandlerIndex(COMMON);				
+                    uniqueSample.validateInContext();
+                    evhParent.restorePreviousHandler();
+                }
 			}else if(uniqueSample instanceof ValidatingEEH){
 				for(int i = 0; i < individualHandlers.size(); i++){
-					if(!candidatesConflictHandler.isDisqualified(i)){
-						individualHandlers.get(i).validateInContext();
-					}
+					//if(!candidatesConflictHandler.isDisqualified(i)){
+					individualHandlers.get(i).validateInContext();
+					//}
 				}
 			}
 		}
 		void handleInnerCharacters(char[] chars){
-			//uniqueSample.handleCharacters(chars, validationContext, locator);			
-			if(uniqueSample instanceof ValidatingEEH){				
+			uniqueSample.handleInnerCharacters(chars);
+            if(uniqueSample instanceof BoundElementHandler){
+                for(int i = 0; i < individualHandlers.size(); i++){
+                    if(!candidatesConflictHandler.isDisqualified(i)
+                        && !individualHandlers.get(i).equals(uniqueSample)){
+                        ((BoundElementHandler)individualHandlers.get(i)).characterContentBinding(chars);
+                    }
+                }			
+            }
+			/*if(uniqueSample instanceof ValidatingEEH){				
 				ValidatingEEH sample = (ValidatingEEH)uniqueSample;
 				sample.setValidation();
 				sample.handleInnerCharacters(chars);
-				sample.restorePreviousState();
+				sample.restorePreviousHandler();
 				for(int i = 0; i < individualHandlers.size(); i++){					
-					if(!candidatesConflictHandler.isDisqualified(i) &&
+					if(//!candidatesConflictHandler.isDisqualified(i) &&
 						individualHandlers.get(i) != uniqueSample){
 						ValidatingEEH ih = (ValidatingEEH)individualHandlers.get(i);
 						ih.setDefault();
 						ih.handleInnerCharacters(chars);
-						ih.restorePreviousState();
+						ih.restorePreviousHandler();
 					}				
 				}
-			}			
+			}*/			
 		}
         void handleLastCharacters(char[] chars){
-			//uniqueSample.handleCharacters(chars, validationContext, locator);			
-			if(uniqueSample instanceof ValidatingEEH){				
+			uniqueSample.handleLastCharacters(chars);
+            if(uniqueSample instanceof BoundElementHandler){
+                for(int i = 0; i < individualHandlers.size(); i++){
+                    if(!candidatesConflictHandler.isDisqualified(i)
+                        && !individualHandlers.get(i).equals(uniqueSample)){
+                        ((BoundElementHandler)individualHandlers.get(i)).characterContentBinding(chars);
+                    }
+                }			
+            }
+			/*if(uniqueSample instanceof ValidatingEEH){				
 				ValidatingEEH sample = (ValidatingEEH)uniqueSample;
 				sample.setValidation();
 				sample.handleLastCharacters(chars);
-				sample.restorePreviousState();
+				sample.restorePreviousHandler();
 				for(int i = 0; i < individualHandlers.size(); i++){					
-					if(!candidatesConflictHandler.isDisqualified(i) &&
+					if(//!candidatesConflictHandler.isDisqualified(i) &&
 						individualHandlers.get(i) != uniqueSample){
 						ValidatingEEH ih = (ValidatingEEH)individualHandlers.get(i);
 						ih.setDefault();
 						ih.handleLastCharacters(chars);
-						ih.restorePreviousState();
+						ih.restorePreviousHandler();
 					}				
 				}
-			}			
+			}*/			
 		}
 		
 		public String toString(){
@@ -236,7 +283,7 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 	
 	class BoundConflict extends Conflict{		
 		ElementParallelHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance){			
-			ElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, instance, bindingModel, queue, queuePool);
+			ElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, candidatesConflictErrorHandler, instance, bindingModel, queue, queuePool);
 			for(int i = 0; i < individualHandlers.size(); i++){	
 				next.add(individualHandlers.get(i).handleStartElement(qName, namespace, name));			
 			}	

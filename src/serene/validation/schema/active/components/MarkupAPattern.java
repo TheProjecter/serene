@@ -19,6 +19,8 @@ package serene.validation.schema.active.components;
 import java.util.List;
 import java.util.Map;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.CharsActiveType;
 import serene.validation.schema.active.ActiveDefinitionPointer;
@@ -75,9 +77,9 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 				ActiveGrammarModel grammarModel,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				String qName, String location, 
+				SimplifiedComponent simplifiedComponent, 
 				MessageWriter debugWriter){		
-		super(child, ruleHandlerPool, qName, location, debugWriter);
+		super(child, ruleHandlerPool, simplifiedComponent, debugWriter);
 		this.index = index;
 		this.grammarModel = grammarModel;		
 		this.stackHandlerPool = stackHandlerPool;
