@@ -19,6 +19,8 @@ package serene.validation.schema.active.components;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.AbstractAPattern;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import sereneWrite.MessageWriter;
@@ -27,9 +29,9 @@ public abstract class MultipleChildrenAPattern extends AbstractAPattern{
  	protected APattern[] children; 
 	MultipleChildrenAPattern(APattern[] children,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				String qName, String location, 
+				SimplifiedComponent simplifiedComponent, 
 				MessageWriter debugWriter){		
-		super(ruleHandlerPool, qName, location, debugWriter);
+		super(ruleHandlerPool, simplifiedComponent, debugWriter);
 		asParent(children);
 	}
 		

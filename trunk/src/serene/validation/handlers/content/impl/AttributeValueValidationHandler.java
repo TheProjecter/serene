@@ -45,7 +45,7 @@ import serene.validation.handlers.match.MatchHandler;
 import sereneWrite.MessageWriter;
 
 class AttributeValueValidationHandler extends AbstractCVH{
-	AttributeValidationHandler parent;
+	AttributeDefinitionHandler parent;
 	
 	AttributeValueValidationHandler(MessageWriter debugWriter){
 		super(debugWriter);
@@ -56,7 +56,7 @@ class AttributeValueValidationHandler extends AbstractCVH{
 		listMatches = new ArrayList<AListPattern>();
 	}
 	
-	void init(AttributeValidationHandler parent, ValidationContext validationContext, ErrorCatcher errorCatcher){
+	void init(AttributeDefinitionHandler parent, ValidationContext validationContext, ErrorCatcher errorCatcher){
 		this.parent = parent;
 		this.validationContext = validationContext;
 		this.errorCatcher = errorCatcher;
@@ -66,7 +66,7 @@ class AttributeValueValidationHandler extends AbstractCVH{
 		pool.recycle(this);
 	}
 
-	public AttributeValidationHandler getParentHandler(){
+	public AttributeDefinitionHandler getParentHandler(){
 		return parent;
 	}
 	
@@ -75,7 +75,8 @@ class AttributeValueValidationHandler extends AbstractCVH{
 		if(totalCount == 0){
 			throw new IllegalStateException();
 		}else if(totalCount == 1 && matchesCount == 0){
-			throw new IllegalStateException();
+			//throw new IllegalStateException();
+            return; //the input was whitespace and the match was optional 
 		}else if(totalCount == 1 && matchesCount == 1){
 			// if errors: already reported, that's why error before
 			//just shift
@@ -104,7 +105,8 @@ class AttributeValueValidationHandler extends AbstractCVH{
 		if(totalCount == 0){
 			throw new IllegalStateException();
 		}else if(totalCount == 1 && matchesCount == 0){
-			throw new IllegalStateException();
+			//throw new IllegalStateException();
+            return; //the input was whitespace and the match was optional
 		}else if(totalCount == 1 && matchesCount == 1){
 			// if errors: already reported, that's why error before
 			//just shift
@@ -133,7 +135,8 @@ class AttributeValueValidationHandler extends AbstractCVH{
 		if(totalCount == 0){
 			throw new IllegalStateException();
 		}else if(totalCount == 1 && matchesCount == 0){
-			throw new IllegalStateException();
+			//throw new IllegalStateException();
+            return; //the input was whitespace and the match was optional
 		}else if(totalCount == 1 && matchesCount == 1){
 			// if errors: already reported, that's why error before
 			//just shift
@@ -168,3 +171,4 @@ class AttributeValueValidationHandler extends AbstractCVH{
 		return "AttributeValueValidationHandler ";
 	}
 }
+

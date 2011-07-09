@@ -19,6 +19,8 @@ package serene.validation.schema.active.components;
 import java.util.Map;
 import java.util.List;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.RuleVisitor;
 import serene.validation.schema.active.ActiveDefinition;
@@ -73,9 +75,9 @@ public class AExceptPattern extends AbstractRule
 			ActiveGrammarModel grammarModel,
 			ActiveModelStackHandlerPool stackHandlerPool,
 			ActiveModelRuleHandlerPool ruleHandlerPool,
-			String qName, String location, 
+			SimplifiedComponent simplifiedComponent, 
 			MessageWriter debugWriter){
-		super(ruleHandlerPool, qName, location, debugWriter);
+		super(ruleHandlerPool, simplifiedComponent, debugWriter);
 		this.index = index;
 		this.grammarModel = grammarModel;
 		this.stackHandlerPool = stackHandlerPool;		

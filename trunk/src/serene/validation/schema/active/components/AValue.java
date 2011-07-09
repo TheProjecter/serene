@@ -19,6 +19,8 @@ package serene.validation.schema.active.components;
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.ValidationContext;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.ActiveGrammarModel;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
@@ -47,9 +49,9 @@ public class AValue extends DatatypedCharsAPattern{
 					String charContent,
 					ActiveGrammarModel grammarModel, 					
 					ActiveModelRuleHandlerPool ruleHandlerPool,
-					String qName, String location, 
+					SimplifiedComponent simplifiedComponent, 
 					MessageWriter debugWriter){
-		super(datatype, grammarModel, ruleHandlerPool, qName, location, debugWriter);
+		super(datatype, grammarModel, ruleHandlerPool, simplifiedComponent, debugWriter);
 		this.ns = ns;
 		this.charContent = charContent;
 	}

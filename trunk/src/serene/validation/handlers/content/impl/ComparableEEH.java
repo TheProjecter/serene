@@ -27,9 +27,9 @@ abstract class ComparableEEH extends AbstractEEH{
 	}
 	
 	public abstract ComparableEEH handleStartElement(String qName, String namespace, String name);
-	
+	    
 	/**
-	* Answers the need of ElementParallelHandler to determine 
+	* This method must answer the need of ElementParallelHandler to determine 
 	* if the handlers used to process a certain child element occurrence are
 	* functionally identical for all the individual handlers. 
 	* <p> In that case eventual errors will be the same for all individual 
@@ -38,7 +38,6 @@ abstract class ComparableEEH extends AbstractEEH{
 	*/
 	abstract boolean functionalEquivalent(ComparableEEH other);
 	abstract boolean functionalEquivalent(ElementValidationHandler other);
-	abstract boolean functionalEquivalent(UnrecognizedElementHandler other);
 	abstract boolean functionalEquivalent(UnexpectedElementHandler other);
 	abstract boolean functionalEquivalent(UnexpectedAmbiguousElementHandler other);
 	abstract boolean functionalEquivalent(UnknownElementHandler other);

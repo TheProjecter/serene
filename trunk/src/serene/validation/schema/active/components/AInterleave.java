@@ -23,6 +23,8 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.RuleVisitor;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
@@ -54,9 +56,9 @@ public class AInterleave extends MultipleChildrenAPattern implements ACompositor
 	public AInterleave(APattern[] children,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool, 
-				String qName, String location, 
+				SimplifiedComponent simplifiedComponent, 
 				MessageWriter debugWriter){		
-		super(children, ruleHandlerPool, qName, location, debugWriter);
+		super(children, ruleHandlerPool, simplifiedComponent, debugWriter);
 		this.stackHandlerPool = stackHandlerPool;
 	}		
 	

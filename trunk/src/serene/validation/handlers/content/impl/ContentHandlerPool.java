@@ -45,12 +45,7 @@ public class ContentHandlerPool{
 	int startVHPoolSize;
 	int startVHFree;	
 	StartValidationHandler[] startVH;
-	
-	int unrecognizedElementHAverageUse;
-	int unrecognizedElementHPoolSize;
-	int unrecognizedElementHFree;	
-	UnrecognizedElementHandler[] unrecognizedElementH;
-	
+		
 	int unexpectedElementHAverageUse;
 	int unexpectedElementHPoolSize;
 	int unexpectedElementHFree;	
@@ -86,11 +81,6 @@ public class ContentHandlerPool{
 	int elementCommonHFree;
 	ElementCommonHandler[] elementCommonH;
 	
-	int unrecognizedAttributeHAverageUse;
-	int unrecognizedAttributeHPoolSize;
-	int unrecognizedAttributeHFree;	
-	UnrecognizedAttributeHandler[] unrecognizedAttributeH;
-	
 	int unexpectedAttributeHAverageUse;
 	int unexpectedAttributeHPoolSize;
 	int unexpectedAttributeHFree;	
@@ -110,11 +100,26 @@ public class ContentHandlerPool{
 	int attributeVHPoolSize;
 	int attributeVHFree;	
 	AttributeValidationHandler[] attributeVH;
+    
+    int candidateAttributeVHAverageUse;
+	int candidateAttributeVHPoolSize;
+	int candidateAttributeVHFree;	
+	CandidateAttributeValidationHandler[] candidateAttributeVH;
 		
 	int attributeConcurrentHAverageUse;
 	int attributeConcurrentHPoolSize;
 	int attributeConcurrentHFree;
 	AttributeConcurrentHandler[] attributeConcurrentH;
+    
+    int attributeParallelHAverageUse;
+	int attributeParallelHPoolSize;
+	int attributeParallelHFree;
+	AttributeParallelHandler[] attributeParallelH;
+    
+    int attributeDefaultHAverageUse;
+	int attributeDefaultHPoolSize;
+	int attributeDefaultHFree;
+	AttributeDefaultHandler[] attributeDefaultH;
 	
 	int characterContentHAverageUse;
 	int characterContentHPoolSize;
@@ -167,11 +172,21 @@ public class ContentHandlerPool{
 	int boundAttributeVHPoolSize;
 	int boundAttributeVHFree;	
 	BoundAttributeValidationHandler[] boundAttributeVH;
+    
+    int boundCandidateAttributeVHAverageUse;
+	int boundCandidateAttributeVHPoolSize;
+	int boundCandidateAttributeVHFree;	
+	BoundCandidateAttributeValidationHandler[] boundCandidateAttributeVH;
 		
 	int boundAttributeConcurrentHAverageUse;
 	int boundAttributeConcurrentHPoolSize;
 	int boundAttributeConcurrentHFree;
 	BoundAttributeConcurrentHandler[] boundAttributeConcurrentH;
+    
+    int boundAttributeParallelHAverageUse;
+	int boundAttributeParallelHPoolSize;
+	int boundAttributeParallelHFree;
+	BoundAttributeParallelHandler[] boundAttributeParallelH;
 	
 	final int UNUSED = 0;
 	
@@ -194,11 +209,7 @@ public class ContentHandlerPool{
 		startVHFree = 0;
 		startVH = new StartValidationHandler[startVHPoolSize];
 		
-		unrecognizedElementHAverageUse = UNUSED;
-		unrecognizedElementHPoolSize = 3;
-		unrecognizedElementHFree = 0;
-		unrecognizedElementH = new UnrecognizedElementHandler[unrecognizedElementHPoolSize];
-	
+
 		unexpectedElementHAverageUse = UNUSED;
 		unexpectedElementHPoolSize = 3;
 		unexpectedElementHFree = 0;
@@ -233,12 +244,8 @@ public class ContentHandlerPool{
 		elementCommonHPoolSize = 3;
 		elementCommonHFree = 0;
 		elementCommonH = new ElementCommonHandler[elementCommonHPoolSize];		
-		
-		unrecognizedAttributeHAverageUse = UNUSED;
-		unrecognizedAttributeHPoolSize = 3;
-		unrecognizedAttributeHFree = 0;
-		unrecognizedAttributeH = new UnrecognizedAttributeHandler[unrecognizedAttributeHPoolSize];
 	
+
 		unexpectedAttributeHAverageUse = UNUSED;
 		unexpectedAttributeHPoolSize = 3;
 		unexpectedAttributeHFree = 0;
@@ -258,12 +265,28 @@ public class ContentHandlerPool{
 		attributeVHPoolSize = 20;
 		attributeVHFree = 0;
 		attributeVH = new AttributeValidationHandler[attributeVHPoolSize];
+        
+		candidateAttributeVHAverageUse = UNUSED;
+		candidateAttributeVHPoolSize = 20;
+		candidateAttributeVHFree = 0;
+		candidateAttributeVH = new CandidateAttributeValidationHandler[candidateAttributeVHPoolSize];
 		
 		attributeConcurrentHAverageUse = UNUSED;
 		attributeConcurrentHPoolSize = 1;
 		attributeConcurrentHFree = 0;
 		attributeConcurrentH = new AttributeConcurrentHandler[attributeConcurrentHPoolSize];
+        
+        attributeParallelHAverageUse = UNUSED;
+		attributeParallelHPoolSize = 1;
+		attributeParallelHFree = 0;
+		attributeParallelH = new AttributeParallelHandler[attributeParallelHPoolSize];
 		
+        attributeDefaultHAverageUse = UNUSED;
+		attributeDefaultHPoolSize = 1;
+		attributeDefaultHFree = 0;
+		attributeDefaultH = new AttributeDefaultHandler[attributeDefaultHPoolSize];
+        
+        
 		characterContentHAverageUse = UNUSED;
 		characterContentHPoolSize = 1;
 		characterContentHFree = 0;
@@ -315,11 +338,21 @@ public class ContentHandlerPool{
 		boundAttributeVHPoolSize = 20;
 		boundAttributeVHFree = 0;
 		boundAttributeVH = new BoundAttributeValidationHandler[boundAttributeVHPoolSize];
+        
+        boundCandidateAttributeVHAverageUse = UNUSED;
+		boundCandidateAttributeVHPoolSize = 20;
+		boundCandidateAttributeVHFree = 0;
+		boundCandidateAttributeVH = new BoundCandidateAttributeValidationHandler[boundCandidateAttributeVHPoolSize];
 		
 		boundAttributeConcurrentHAverageUse = UNUSED;
 		boundAttributeConcurrentHPoolSize = 1;
 		boundAttributeConcurrentHFree = 0;
 		boundAttributeConcurrentH = new BoundAttributeConcurrentHandler[boundAttributeConcurrentHPoolSize];
+        
+        boundAttributeParallelHAverageUse = UNUSED;
+		boundAttributeParallelHPoolSize = 1;
+		boundAttributeParallelHFree = 0;
+		boundAttributeParallelH = new BoundAttributeParallelHandler[boundAttributeParallelHPoolSize];
 		
 	}
 	
@@ -356,7 +389,6 @@ public class ContentHandlerPool{
 	synchronized void fill(ValidatorEventHandlerPool eventHandlerPool,
 					ElementValidationHandler[] elementVH,
 					StartValidationHandler[] startVH,
-					UnrecognizedElementHandler[] unrecognizedElementH,
 					UnexpectedElementHandler[] unexpectedElementH,
 					UnexpectedAmbiguousElementHandler[] unexpectedAmbiguousEH,
 					UnknownElementHandler[] unknownElementH,
@@ -364,12 +396,14 @@ public class ContentHandlerPool{
 					ElementConcurrentHandler[] elementConcurrentH,
 					ElementParallelHandler[] elementParallelH,
 					ElementCommonHandler[] elementCommonH,
-					UnrecognizedAttributeHandler[] unrecognizedAttributeH,
 					UnexpectedAttributeHandler[] unexpectedAttributeH,
 					UnexpectedAmbiguousAttributeHandler[] unexpectedAmbiguousAH,
 					UnknownAttributeHandler[] unknownAttributeH,
 					AttributeValidationHandler[] attributeVH,
+					CandidateAttributeValidationHandler[] candidateAttributeVH,
 					AttributeConcurrentHandler[] attributeConcurrentH,
+                    AttributeParallelHandler[] attributeParallelH,
+                    AttributeDefaultHandler[] attributeDefaultH,
 					CharacterContentValidationHandler[] characterContentH,					
 					AttributeValueValidationHandler[] attributeValueH,
                     DefaultValueAttributeValidationHandler[] defaultVAttributeH,
@@ -380,7 +414,9 @@ public class ContentHandlerPool{
 					BoundElementConcurrentHandler[] boundElementConcurrentH,
 					BoundElementParallelHandler[] boundElementParallelH,
 					BoundAttributeValidationHandler[] boundAttributeVH,
-					BoundAttributeConcurrentHandler[] boundAttributeConcurrentH){
+					BoundCandidateAttributeValidationHandler[] boundCandidateAttributeVH,
+					BoundAttributeConcurrentHandler[] boundAttributeConcurrentH,
+					BoundAttributeParallelHandler[] boundAttributeParallelH){
 	
 		int elementVHFillCount;
 		if(elementVH == null || elementVH.length < elementVHAverageUse)
@@ -408,19 +444,7 @@ public class ContentHandlerPool{
 		System.arraycopy(this.startVH, startVHFree, 
 							startVH, 0, startVHFillCount);
 		
-
-		int unrecognizedElementHFillCount;
-		if(unrecognizedElementH == null || unrecognizedElementH.length < unrecognizedElementHAverageUse)
-			unrecognizedElementH = new UnrecognizedElementHandler[unrecognizedElementHAverageUse];		
-		if(unrecognizedElementHFree > unrecognizedElementHAverageUse){
-			unrecognizedElementHFillCount = unrecognizedElementHAverageUse;
-			unrecognizedElementHFree = unrecognizedElementHFree - unrecognizedElementHAverageUse;
-		}else{
-			unrecognizedElementHFillCount = unrecognizedElementHFree;
-			unrecognizedElementHFree = 0;
-		}		
-		System.arraycopy(this.unrecognizedElementH, unrecognizedElementHFree, 
-							unrecognizedElementH, 0, unrecognizedElementHFillCount);
+	
 		
 		int unexpectedElementHFillCount;
 		if(unexpectedElementH == null || unexpectedElementH.length < unexpectedElementHAverageUse)
@@ -513,18 +537,7 @@ public class ContentHandlerPool{
 		System.arraycopy(this.elementCommonH, elementCommonHFree, 
 							elementCommonH, 0, elementCommonHFillCount);
 		
-		int unrecognizedAttributeHFillCount;
-		if(unrecognizedAttributeH == null || unrecognizedAttributeH.length < unrecognizedAttributeHAverageUse)
-			unrecognizedAttributeH = new UnrecognizedAttributeHandler[unrecognizedAttributeHAverageUse];		
-		if(unrecognizedAttributeHFree > unrecognizedAttributeHAverageUse){
-			unrecognizedAttributeHFillCount = unrecognizedAttributeHAverageUse;
-			unrecognizedAttributeHFree = unrecognizedAttributeHFree - unrecognizedAttributeHAverageUse;
-		}else{
-			unrecognizedAttributeHFillCount = unrecognizedAttributeHFree;
-			unrecognizedAttributeHFree = 0;
-		}		
-		System.arraycopy(this.unrecognizedAttributeH, unrecognizedAttributeHFree, 
-							unrecognizedAttributeH, 0, unrecognizedAttributeHFillCount);
+		
 		
 		int unexpectedAttributeHFillCount;
 		if(unexpectedAttributeH == null || unexpectedAttributeH.length < unexpectedAttributeHAverageUse)
@@ -578,6 +591,19 @@ public class ContentHandlerPool{
 		System.arraycopy(this.attributeVH, attributeVHFree, 
 							attributeVH, 0, attributeVHFillCount);
 		
+        int candidateAttributeVHFillCount;
+		if(candidateAttributeVH == null || candidateAttributeVH.length < candidateAttributeVHAverageUse)
+			candidateAttributeVH = new CandidateAttributeValidationHandler[candidateAttributeVHAverageUse];		
+		if(candidateAttributeVHFree > candidateAttributeVHAverageUse){
+			candidateAttributeVHFillCount = candidateAttributeVHAverageUse;
+			candidateAttributeVHFree = candidateAttributeVHFree - candidateAttributeVHAverageUse;
+		}else{
+			candidateAttributeVHFillCount = candidateAttributeVHFree;
+			candidateAttributeVHFree = 0;
+		}		
+		System.arraycopy(this.candidateAttributeVH, candidateAttributeVHFree, 
+							candidateAttributeVH, 0, candidateAttributeVHFillCount);
+		
 		int attributeConcurrentHFillCount;
 		if(attributeConcurrentH == null || attributeConcurrentH.length < attributeConcurrentHAverageUse)
 			attributeConcurrentH = new AttributeConcurrentHandler[attributeConcurrentHAverageUse];		
@@ -590,6 +616,32 @@ public class ContentHandlerPool{
 		}		
 		System.arraycopy(this.attributeConcurrentH, attributeConcurrentHFree, 
 							attributeConcurrentH, 0, attributeConcurrentHFillCount);
+        
+        int attributeParallelHFillCount;
+		if(attributeParallelH == null || attributeParallelH.length < attributeParallelHAverageUse)
+			attributeParallelH = new AttributeParallelHandler[attributeParallelHAverageUse];		
+		if(attributeParallelHFree > attributeParallelHAverageUse){
+			attributeParallelHFillCount = attributeParallelHAverageUse;
+			attributeParallelHFree = attributeParallelHFree - attributeParallelHAverageUse;
+		}else{
+			attributeParallelHFillCount = attributeParallelHFree;
+			attributeParallelHFree = 0;
+		}		
+		System.arraycopy(this.attributeParallelH, attributeParallelHFree, 
+							attributeParallelH, 0, attributeParallelHFillCount);
+        
+        int attributeDefaultHFillCount;
+		if(attributeDefaultH == null || attributeDefaultH.length < attributeDefaultHAverageUse)
+			attributeDefaultH = new AttributeDefaultHandler[attributeDefaultHAverageUse];		
+		if(attributeDefaultHFree > attributeDefaultHAverageUse){
+			attributeDefaultHFillCount = attributeDefaultHAverageUse;
+			attributeDefaultHFree = attributeDefaultHFree - attributeDefaultHAverageUse;
+		}else{
+			attributeDefaultHFillCount = attributeDefaultHFree;
+			attributeDefaultHFree = 0;
+		}		
+		System.arraycopy(this.attributeDefaultH, attributeDefaultHFree, 
+							attributeDefaultH, 0, attributeDefaultHFillCount);
 		
 		int characterContentHFillCount;
 		if(characterContentH == null || characterContentH.length < characterContentHAverageUse)
@@ -723,6 +775,19 @@ public class ContentHandlerPool{
 		}		
 		System.arraycopy(this.boundAttributeVH, boundAttributeVHFree, 
 							boundAttributeVH, 0, boundAttributeVHFillCount);
+        
+        int boundCandidateAttributeVHFillCount;
+		if(boundCandidateAttributeVH == null || boundCandidateAttributeVH.length < boundCandidateAttributeVHAverageUse)
+			boundCandidateAttributeVH = new BoundCandidateAttributeValidationHandler[boundCandidateAttributeVHAverageUse];		
+		if(boundCandidateAttributeVHFree > boundCandidateAttributeVHAverageUse){
+			boundCandidateAttributeVHFillCount = boundCandidateAttributeVHAverageUse;
+			boundCandidateAttributeVHFree = boundCandidateAttributeVHFree - boundCandidateAttributeVHAverageUse;
+		}else{
+			boundCandidateAttributeVHFillCount = boundCandidateAttributeVHFree;
+			boundCandidateAttributeVHFree = 0;
+		}		
+		System.arraycopy(this.boundCandidateAttributeVH, boundCandidateAttributeVHFree, 
+							boundCandidateAttributeVH, 0, boundCandidateAttributeVHFillCount);
 		
 		int boundAttributeConcurrentHFillCount;
 		if(boundAttributeConcurrentH == null || boundAttributeConcurrentH.length < boundAttributeConcurrentHAverageUse)
@@ -738,12 +803,24 @@ public class ContentHandlerPool{
 							boundAttributeConcurrentH, 0, boundAttributeConcurrentHFillCount);
 		
 		
+        int boundAttributeParallelHFillCount;
+		if(boundAttributeParallelH == null || boundAttributeParallelH.length < boundAttributeParallelHAverageUse)
+			boundAttributeParallelH = new BoundAttributeParallelHandler[boundAttributeParallelHAverageUse];		
+		if(boundAttributeParallelHFree > boundAttributeParallelHAverageUse){
+			boundAttributeParallelHFillCount = boundAttributeParallelHAverageUse;
+			boundAttributeParallelHFree = boundAttributeParallelHFree - boundAttributeParallelHAverageUse;
+		}else{
+			boundAttributeParallelHFillCount = boundAttributeParallelHFree;
+			boundAttributeParallelHFree = 0;
+		}		
+		System.arraycopy(this.boundAttributeParallelH, boundAttributeParallelHFree, 
+							boundAttributeParallelH, 0, boundAttributeParallelHFillCount);
+		
+        
 		eventHandlerPool.setHandlers(elementVHFillCount,	
 										elementVH,
 										startVHFillCount,	
 										startVH,
-										unrecognizedElementHFillCount,	
-										unrecognizedElementH,
 										unexpectedElementHFillCount,	
 										unexpectedElementH,
 										unexpectedAmbiguousEHFillCount,
@@ -758,8 +835,6 @@ public class ContentHandlerPool{
 										elementParallelH,
 										elementCommonHFillCount,
 										elementCommonH,
-										unrecognizedAttributeHFillCount,	
-										unrecognizedAttributeH,
 										unexpectedAttributeHFillCount,	
 										unexpectedAttributeH,
 										unexpectedAmbiguousAHFillCount,
@@ -768,8 +843,14 @@ public class ContentHandlerPool{
 										unknownAttributeH,
 										attributeVHFillCount,	
 										attributeVH,
+										candidateAttributeVHFillCount,	
+										candidateAttributeVH,
 										attributeConcurrentHFillCount,
 										attributeConcurrentH,
+										attributeParallelHFillCount,
+										attributeParallelH,
+                                        attributeDefaultHFillCount,
+										attributeDefaultH,
 										characterContentHFillCount,
 										characterContentH,
 										attributeValueHFillCount,
@@ -790,16 +871,18 @@ public class ContentHandlerPool{
 										boundElementParallelH,
 										boundAttributeVHFillCount,	
 										boundAttributeVH,
+										boundCandidateAttributeVHFillCount,	
+										boundCandidateAttributeVH,
 										boundAttributeConcurrentHFillCount,
-										boundAttributeConcurrentH);
+										boundAttributeConcurrentH,
+                                        boundAttributeParallelHFillCount,
+										boundAttributeParallelH);
 	}
 	
 	synchronized void recycle(int elementVHAverageUse,	
 							ElementValidationHandler[] elementVH,
 							int startVHAverageUse,	
 							StartValidationHandler[] startVH,
-							int unrecognizedElementHAverageUse,	
-							UnrecognizedElementHandler[] unrecognizedElementH,
 							int unexpectedElementHAverageUse,	
 							UnexpectedElementHandler[] unexpectedElementH,
 							int unexpectedAmbiguousEHAverageUse,
@@ -814,8 +897,6 @@ public class ContentHandlerPool{
 							ElementParallelHandler[] elementParallelH,
 							int elementCommonHAverageUse,
 							ElementCommonHandler[] elementCommonH,
-							int unrecognizedAttributeHAverageUse,	
-							UnrecognizedAttributeHandler[] unrecognizedAttributeH,
 							int unexpectedAttributeHAverageUse,	
 							UnexpectedAttributeHandler[] unexpectedAttributeH,
 							int unexpectedAmbiguousAHAverageUse,
@@ -824,8 +905,14 @@ public class ContentHandlerPool{
 							UnknownAttributeHandler[] unknownAttributeH,
 							int attributeVHAverageUse,	
 							AttributeValidationHandler[] attributeVH,
+							int candidateAttributeVHAverageUse,	
+							CandidateAttributeValidationHandler[] candidateAttributeVH,
 							int attributeConcurrentHAverageUse,
 							AttributeConcurrentHandler[] attributeConcurrentH,
+                            int attributeParallelHAverageUse,
+							AttributeParallelHandler[] attributeParallelH,
+                            int attributeDefaultHAverageUse,
+							AttributeDefaultHandler[] attributeDefaultH,
 							int characterContentHAverageUse,
 							CharacterContentValidationHandler[] characterContentH,
 							int attributeValueHAverageUse,
@@ -846,8 +933,12 @@ public class ContentHandlerPool{
 							BoundElementParallelHandler[] boundElementParallelH,
 							int boundAttributeVHAverageUse,	
 							BoundAttributeValidationHandler[] boundAttributeVH,
+                            int boundCandidateAttributeVHAverageUse,	
+							BoundCandidateAttributeValidationHandler[] boundCandidateAttributeVH,
 							int boundAttributeConcurrentHAverageUse,
-							BoundAttributeConcurrentHandler[] boundAttributeConcurrentH){			
+							BoundAttributeConcurrentHandler[] boundAttributeConcurrentH,
+                            int boundAttributeParallelHAverageUse,
+							BoundAttributeParallelHandler[] boundAttributeParallelH){			
 
 		if(elementVHFree + elementVHAverageUse >= elementVHPoolSize){			 
 			elementVHPoolSize+= elementVHAverageUse;
@@ -873,18 +964,7 @@ public class ContentHandlerPool{
 		else this.startVHAverageUse = startVHAverageUse;
 		// System.out.println("vh "+this.startVHAverageUse);
 		
-		if(unrecognizedElementHFree + unrecognizedElementHAverageUse >= unrecognizedElementHPoolSize){
-			unrecognizedElementHPoolSize+= unrecognizedElementHAverageUse;
-			UnrecognizedElementHandler[] increased = new UnrecognizedElementHandler[unrecognizedElementHPoolSize];
-			System.arraycopy(this.unrecognizedElementH, 0, increased, 0, unrecognizedElementHFree);
-			this.unrecognizedElementH = increased;
-		}
-		System.arraycopy(unrecognizedElementH, 0, this.unrecognizedElementH, unrecognizedElementHFree, unrecognizedElementHAverageUse);
-		unrecognizedElementHFree += unrecognizedElementHAverageUse;
-		if(this.unrecognizedElementHAverageUse != 0)this.unrecognizedElementHAverageUse = (this.unrecognizedElementHAverageUse + unrecognizedElementHAverageUse)/2;
-		else this.unrecognizedElementHAverageUse = unrecognizedElementHAverageUse;
-		// System.out.println("unrecognized "+this.unrecognizedElementHAverageUse);
-		
+
 		if(unexpectedElementHFree + unexpectedElementHAverageUse >= unexpectedElementHPoolSize){
 			unexpectedElementHPoolSize+= unexpectedElementHAverageUse;
 			UnexpectedElementHandler[] increased = new UnexpectedElementHandler[unexpectedElementHPoolSize];
@@ -968,19 +1048,7 @@ public class ContentHandlerPool{
 		if(this.elementCommonHAverageUse != 0)this.elementCommonHAverageUse = (this.elementCommonHAverageUse + elementCommonHAverageUse)/2;
 		else this.elementCommonHAverageUse = elementCommonHAverageUse;
 		// System.out.println("common "+this.elementCommonHAverageUse);
-		
-		
-		if(unrecognizedAttributeHFree + unrecognizedAttributeHAverageUse >= unrecognizedAttributeHPoolSize){
-			unrecognizedAttributeHPoolSize+= unrecognizedAttributeHAverageUse;
-			UnrecognizedAttributeHandler[] increased = new UnrecognizedAttributeHandler[unrecognizedAttributeHPoolSize];
-			System.arraycopy(this.unrecognizedAttributeH, 0, increased, 0, unrecognizedAttributeHFree);
-			this.unrecognizedAttributeH = increased;
-		}
-		System.arraycopy(unrecognizedAttributeH, 0, this.unrecognizedAttributeH, unrecognizedAttributeHFree, unrecognizedAttributeHAverageUse);
-		unrecognizedAttributeHFree += unrecognizedAttributeHAverageUse;
-		if(this.unrecognizedAttributeHAverageUse != 0)this.unrecognizedAttributeHAverageUse = (this.unrecognizedAttributeHAverageUse + unrecognizedAttributeHAverageUse)/2;
-		else this.unrecognizedAttributeHAverageUse = unrecognizedAttributeHAverageUse;
-		// System.out.println("unrecognized "+this.unrecognizedAttributeHAverageUse);
+				
 		
 		if(unexpectedAttributeHFree + unexpectedAttributeHAverageUse >= unexpectedAttributeHPoolSize){
 			unexpectedAttributeHPoolSize+= unexpectedAttributeHAverageUse;
@@ -1029,6 +1097,18 @@ public class ContentHandlerPool{
 		if(this.attributeVHAverageUse != 0)this.attributeVHAverageUse = (this.attributeVHAverageUse + attributeVHAverageUse)/2;
 		else this.attributeVHAverageUse = attributeVHAverageUse;
 		// System.out.println("vh "+this.attributeVHAverageUse);
+        
+        if(candidateAttributeVHFree + candidateAttributeVHAverageUse >= candidateAttributeVHPoolSize){			 
+			candidateAttributeVHPoolSize+= candidateAttributeVHAverageUse;
+			CandidateAttributeValidationHandler[] increased = new CandidateAttributeValidationHandler[candidateAttributeVHPoolSize];
+			System.arraycopy(this.candidateAttributeVH, 0, increased, 0, candidateAttributeVHFree);
+			this.candidateAttributeVH = increased;
+		}
+		System.arraycopy(candidateAttributeVH, 0, this.candidateAttributeVH, candidateAttributeVHFree, candidateAttributeVHAverageUse);
+		candidateAttributeVHFree += candidateAttributeVHAverageUse;
+		if(this.candidateAttributeVHAverageUse != 0)this.candidateAttributeVHAverageUse = (this.candidateAttributeVHAverageUse + candidateAttributeVHAverageUse)/2;
+		else this.candidateAttributeVHAverageUse = candidateAttributeVHAverageUse;
+		// System.out.println("vh "+this.candidateAttributeVHAverageUse);
 		
 		if(attributeConcurrentHFree + attributeConcurrentHAverageUse >= attributeConcurrentHPoolSize){			 
 			attributeConcurrentHPoolSize+= attributeConcurrentHAverageUse;
@@ -1041,6 +1121,30 @@ public class ContentHandlerPool{
 		if(this.attributeConcurrentHAverageUse != 0)this.attributeConcurrentHAverageUse = (this.attributeConcurrentHAverageUse + attributeConcurrentHAverageUse)/2;
 		else this.attributeConcurrentHAverageUse = attributeConcurrentHAverageUse;
 		// System.out.println("vh "+this.attributeConcurrentHAverageUse);
+        
+        if(attributeParallelHFree + attributeParallelHAverageUse >= attributeParallelHPoolSize){			 
+			attributeParallelHPoolSize+= attributeParallelHAverageUse;
+			AttributeParallelHandler[] increased = new AttributeParallelHandler[attributeParallelHPoolSize];
+			System.arraycopy(this.attributeParallelH, 0, increased, 0, attributeParallelHFree);
+			this.attributeParallelH = increased;
+		}
+		System.arraycopy(attributeParallelH, 0, this.attributeParallelH, attributeParallelHFree, attributeParallelHAverageUse);
+		attributeParallelHFree += attributeParallelHAverageUse;
+		if(this.attributeParallelHAverageUse != 0)this.attributeParallelHAverageUse = (this.attributeParallelHAverageUse + attributeParallelHAverageUse)/2;
+		else this.attributeParallelHAverageUse = attributeParallelHAverageUse;
+		// System.out.println("vh "+this.attributeParallelHAverageUse);
+        
+        if(attributeDefaultHFree + attributeDefaultHAverageUse >= attributeDefaultHPoolSize){			 
+			attributeDefaultHPoolSize+= attributeDefaultHAverageUse;
+			AttributeDefaultHandler[] increased = new AttributeDefaultHandler[attributeDefaultHPoolSize];
+			System.arraycopy(this.attributeDefaultH, 0, increased, 0, attributeDefaultHFree);
+			this.attributeDefaultH = increased;
+		}
+		System.arraycopy(attributeDefaultH, 0, this.attributeDefaultH, attributeDefaultHFree, attributeDefaultHAverageUse);
+		attributeDefaultHFree += attributeDefaultHAverageUse;
+		if(this.attributeDefaultHAverageUse != 0)this.attributeDefaultHAverageUse = (this.attributeDefaultHAverageUse + attributeDefaultHAverageUse)/2;
+		else this.attributeDefaultHAverageUse = attributeDefaultHAverageUse;
+		// System.out.println("vh "+this.attributeDefaultHAverageUse);
 		
 		if(characterContentHFree + characterContentHAverageUse >= characterContentHPoolSize){			 
 			characterContentHPoolSize+= characterContentHAverageUse;
@@ -1165,6 +1269,18 @@ public class ContentHandlerPool{
 		if(this.boundAttributeVHAverageUse != 0)this.boundAttributeVHAverageUse = (this.boundAttributeVHAverageUse + boundAttributeVHAverageUse)/2;
 		else this.boundAttributeVHAverageUse = boundAttributeVHAverageUse;
 		// System.out.println("vh "+this.boundAttributeVHAverageUse);
+        
+        if(boundCandidateAttributeVHFree + boundCandidateAttributeVHAverageUse >= boundCandidateAttributeVHPoolSize){			 
+			boundCandidateAttributeVHPoolSize+= boundCandidateAttributeVHAverageUse;
+			BoundCandidateAttributeValidationHandler[] increased = new BoundCandidateAttributeValidationHandler[boundCandidateAttributeVHPoolSize];
+			System.arraycopy(this.boundCandidateAttributeVH, 0, increased, 0, boundCandidateAttributeVHFree);
+			this.boundCandidateAttributeVH = increased;
+		}
+		System.arraycopy(boundCandidateAttributeVH, 0, this.boundCandidateAttributeVH, boundCandidateAttributeVHFree, boundCandidateAttributeVHAverageUse);
+		boundCandidateAttributeVHFree += boundCandidateAttributeVHAverageUse;
+		if(this.boundCandidateAttributeVHAverageUse != 0)this.boundCandidateAttributeVHAverageUse = (this.boundCandidateAttributeVHAverageUse + boundCandidateAttributeVHAverageUse)/2;
+		else this.boundCandidateAttributeVHAverageUse = boundCandidateAttributeVHAverageUse;
+		// System.out.println("vh "+this.boundCandidateAttributeVHAverageUse);
 		
 		if(boundAttributeConcurrentHFree + boundAttributeConcurrentHAverageUse >= boundAttributeConcurrentHPoolSize){			 
 			boundAttributeConcurrentHPoolSize+= boundAttributeConcurrentHAverageUse;
@@ -1177,6 +1293,18 @@ public class ContentHandlerPool{
 		if(this.boundAttributeConcurrentHAverageUse != 0)this.boundAttributeConcurrentHAverageUse = (this.boundAttributeConcurrentHAverageUse + boundAttributeConcurrentHAverageUse)/2;
 		else this.boundAttributeConcurrentHAverageUse = boundAttributeConcurrentHAverageUse;
 		// System.out.println("vh "+this.boundAttributeConcurrentHAverageUse);
+        
+        if(boundAttributeParallelHFree + boundAttributeParallelHAverageUse >= boundAttributeParallelHPoolSize){			 
+			boundAttributeParallelHPoolSize+= boundAttributeParallelHAverageUse;
+			BoundAttributeParallelHandler[] increased = new BoundAttributeParallelHandler[boundAttributeParallelHPoolSize];
+			System.arraycopy(this.boundAttributeParallelH, 0, increased, 0, boundAttributeParallelHFree);
+			this.boundAttributeParallelH = increased;
+		}
+		System.arraycopy(boundAttributeParallelH, 0, this.boundAttributeParallelH, boundAttributeParallelHFree, boundAttributeParallelHAverageUse);
+		boundAttributeParallelHFree += boundAttributeParallelHAverageUse;
+		if(this.boundAttributeParallelHAverageUse != 0)this.boundAttributeParallelHAverageUse = (this.boundAttributeParallelHAverageUse + boundAttributeParallelHAverageUse)/2;
+		else this.boundAttributeParallelHAverageUse = boundAttributeParallelHAverageUse;
+		// System.out.println("vh "+this.boundAttributeParallelHAverageUse);
 		
 	}
 }

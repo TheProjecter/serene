@@ -20,13 +20,15 @@ import serene.validation.schema.active.components.ANameClass;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import sereneWrite.MessageWriter;
 
 public class AName extends ANameClass{	
 	String localPart;
 	String ns;
-	public AName(String ns, String localPart, String qName, String location, MessageWriter debugWriter){
-		super(qName, location, debugWriter);		
+	public AName(String ns, String localPart, SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){
+		super(simplifiedComponent, debugWriter);		
 		this.ns = ns;
 		this.localPart = localPart;		
 	}

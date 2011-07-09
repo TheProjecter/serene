@@ -22,10 +22,9 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import sereneWrite.MessageWriter;
 
-import serene.validation.handlers.error.StartValidationErrorHandler;
+import serene.validation.handlers.error.ContextErrorHandler;
 
-class StartValidationHandler extends ElementValidationHandler{
-	StartValidationErrorHandler startValidationErrorHandler;					
+class StartValidationHandler extends ElementValidationHandler{				
 	StartValidationHandler(MessageWriter debugWriter){
 		super(debugWriter);		
 	}
@@ -35,56 +34,25 @@ class StartValidationHandler extends ElementValidationHandler{
 			stackHandler.recycle();
 			stackHandler = null;
 		}
-		recycleErrorHandlers();
+		resetContextErrorHandlerManager();
 		//internalConflicts = null; 
 		if(contextConflictPool != null)contextConflictPool.clear();
 		element.releaseDefinition();
 		pool.recycle(this);
 	}
     
-	public void setValidation(){
-		contextErrorHandlerId = VALIDATION;		
-		storeState();
-		contextErrorHandler = startValidationErrorHandler;		
-	}
-    
-    protected void setContextErrorHandler(){
-		if(contextErrorHandlerId == NONE){
-			contextErrorHandler = null;		
-		}else if(contextErrorHandlerId == VALIDATION){
-			if(startValidationErrorHandler == null)startValidationErrorHandler = errorHandlerPool.getStartValidationErrorHandler();
-			contextErrorHandler = startValidationErrorHandler;		
-		}else{
-			throw new IllegalStateException();
-		}
-	}
-    
-    
+        
 	public void handleEndElement(Locator locator) throws SAXException{
 		validateContext();
 		reportContextErrors(locator);
 	}
 
     void reportContextErrors(Locator locator) throws SAXException{
-		if(startValidationErrorHandler != null){
-			startValidationErrorHandler.handle(validationItemLocator.getQName(), element, locator);
+		if(contextErrorHandler[contextErrorHandlerIndex] != null){
+			contextErrorHandler[contextErrorHandlerIndex].handle(ContextErrorHandler.ROOT, validationItemLocator.getQName(), element, locator);
 		}
 	}
     
-    protected void recycleErrorHandlers(){
-		if(externalHandlerHistorySize > 0 ){					
-			Arrays.fill(externalHandlerHistory, null);
-			externalHandlerHistoryIndex = -1;
-		}
-		
-		stateHistoryIndex = 0;
-		contextErrorHandlerId = NONE;
-		
-		if(startValidationErrorHandler != null){
-			startValidationErrorHandler.recycle();
-			startValidationErrorHandler = null;
-		}
-	}
 	//--------------------------------------------------------------------------
 	public String toString(){
 		String s = "";

@@ -31,11 +31,6 @@ public class ErrorHandlerPool{
 	int validationErrorHFree;
 	ValidationErrorHandler[] validationErrorH;
     
-    int startValidationErrorHAverageUse;
-	int startValidationErrorHPoolSize;
-	int startValidationErrorHFree;
-	StartValidationErrorHandler[] startValidationErrorH;
-	
 	int conflictErrorHAverageUse;
 	int conflictErrorHPoolSize;
 	int conflictErrorHFree;
@@ -72,11 +67,7 @@ public class ErrorHandlerPool{
 		validationErrorHFree = 0;
 		validationErrorH = new ValidationErrorHandler[validationErrorHPoolSize];
         
-        startValidationErrorHAverageUse = UNUSED;
-		startValidationErrorHPoolSize = 10;
-		startValidationErrorHFree = 0;
-		startValidationErrorH = new StartValidationErrorHandler[startValidationErrorHPoolSize];
-		
+    	
 		conflictErrorHAverageUse = UNUSED;
 		conflictErrorHPoolSize = 10;
 		conflictErrorHFree = 0;
@@ -130,7 +121,6 @@ public class ErrorHandlerPool{
 	
 	synchronized void fill(ValidatorErrorHandlerPool pool,
 						ValidationErrorHandler[] validationErrorH,
-                        StartValidationErrorHandler[] startValidationErrorH,
 						ExternalConflictErrorHandler[] conflictErrorH,
 						CommonErrorHandler[] commonErrorH,
 						DefaultErrorHandler[] defaultErrorH,
@@ -149,19 +139,6 @@ public class ErrorHandlerPool{
 							validationErrorH, 0, validationErrorHFillCount);
         
         
-        int startValidationErrorHFillCount;	
-		if(startValidationErrorH == null || startValidationErrorH.length < startValidationErrorHAverageUse)
-			startValidationErrorH = new StartValidationErrorHandler[startValidationErrorHAverageUse];
-		if(startValidationErrorHFree > startValidationErrorHAverageUse){
-			startValidationErrorHFillCount = startValidationErrorHAverageUse;
-			startValidationErrorHFree = startValidationErrorHFree - startValidationErrorHAverageUse;
-		}else{
-			startValidationErrorHFillCount = startValidationErrorHFree;
-			startValidationErrorHFree = 0;
-		}
-		System.arraycopy(this.startValidationErrorH, startValidationErrorHFree, 
-							startValidationErrorH, 0, startValidationErrorHFillCount);
-		
         
 		int conflictErrorHFillCount;	
 		if(conflictErrorH == null || conflictErrorH.length < conflictErrorHAverageUse)
@@ -217,8 +194,6 @@ public class ErrorHandlerPool{
 		
 		pool.setHandlers(validationErrorHFillCount,
 						validationErrorH,
-                        startValidationErrorHFillCount,
-						startValidationErrorH,
 						conflictErrorHFillCount,
 						conflictErrorH,
 						commonErrorHFillCount,
@@ -231,8 +206,6 @@ public class ErrorHandlerPool{
 		
 	synchronized void recycle(int validationErrorHAverageUse,
 							ValidationErrorHandler[] validationErrorH,
-                            int startValidationErrorHAverageUse,
-							StartValidationErrorHandler[] startValidationErrorH,
 							int conflictErrorHAverageUse,
 							ExternalConflictErrorHandler[] conflictErrorH,
 							int commonErrorHAverageUse,
@@ -253,20 +226,7 @@ public class ErrorHandlerPool{
 		else this.validationErrorHAverageUse = validationErrorHAverageUse;
 		// System.out.println("validationErrorH "+this.validationErrorHAverageUse);
         
-        
-        if(startValidationErrorHFree + startValidationErrorHAverageUse >= startValidationErrorHPoolSize){			 
-			startValidationErrorHPoolSize+= startValidationErrorHAverageUse;
-			StartValidationErrorHandler[] increased = new StartValidationErrorHandler[startValidationErrorHPoolSize];
-			System.arraycopy(this.startValidationErrorH, 0, increased, 0, startValidationErrorHFree);
-			this.startValidationErrorH = increased;
-		}
-		System.arraycopy(startValidationErrorH, 0, this.startValidationErrorH, startValidationErrorHFree, startValidationErrorHAverageUse);
-		startValidationErrorHFree += startValidationErrorHAverageUse;
-		if(this.startValidationErrorHAverageUse != 0)this.startValidationErrorHAverageUse = (this.startValidationErrorHAverageUse + startValidationErrorHAverageUse)/2;
-		else this.startValidationErrorHAverageUse = startValidationErrorHAverageUse;
-		// System.out.println("startValidationErrorH "+this.startValidationErrorHAverageUse);
-        
-				
+        				
 		if(commonErrorHFree + commonErrorHAverageUse >= commonErrorHPoolSize){			 
 			commonErrorHPoolSize+= commonErrorHAverageUse;
 			CommonErrorHandler[] increased = new CommonErrorHandler[commonErrorHPoolSize];

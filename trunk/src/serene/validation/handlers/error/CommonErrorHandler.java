@@ -17,6 +17,7 @@ limitations under the License.
 package serene.validation.handlers.error;
 
 import java.util.Arrays;
+import java.util.BitSet;
 
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXException;
@@ -46,26 +47,43 @@ import sereneWrite.MessageWriter;
 * parents of an ElementParallelHandler in state Common when uniqueSample is instance
 * of ErrorEEH. Errors are reported and are not disqualifying.
 */
-public class CommonErrorHandler extends AbstractContextErrorHandler{	
+public class CommonErrorHandler extends AbstractContextErrorHandler{
+    ContextMessageHandler messageHandler;	
+    CandidatesConflictErrorHandler candidatesConflictErrorHandler;
+    boolean isCandidate;
+    
 	public CommonErrorHandler(MessageWriter debugWriter){
 		super(debugWriter);
 		id = ContextErrorHandlerManager.COMMON;
 	}
 	
 	public void recycle(){
+        isCandidate = false;
+        messageHandler = null;
+        candidatesConflictErrorHandler = null;
 		pool.recycle(this);
 	}
-	public void init(){
-		messageHandler = new ContextMessageHandler(debugWriter);
-	}	
+	public void init(CandidatesConflictErrorHandler candidatesConflictErrorHandler, boolean isCandidate){        
+        this.candidatesConflictErrorHandler = candidatesConflictErrorHandler;
+        this.isCandidate = isCandidate;
+		messageHandler = new ContextMessageHandler(debugWriter);        
+	}
+
+    public boolean isCandidate(){
+        return isCandidate;
+    }
+    public void setCandidate(boolean isCandidate){
+        this.isCandidate = isCandidate;
+    }
+	
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unknownElement( qName, systemId, lineNumber, columnNumber);		
+		messageHandler.unknownElement( qName, systemId, lineNumber, columnNumber);
 	}	
 	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
 		messageHandler.unexpectedElement( qName, definition, systemId, lineNumber, columnNumber);	
 	}	
 	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unexpectedAmbiguousElement( qName, definition, systemId, lineNumber, columnNumber);
+		messageHandler.unexpectedAmbiguousElement( qName, definition, systemId, lineNumber, columnNumber);	
 	}
 	
 	
@@ -180,35 +198,31 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		messageHandler.ambiguousListToken(token, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
+    
     public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		messageHandler.ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
     }    
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		messageHandler.ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, possibleDefinitions);
     }
+    
+    
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		messageHandler.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
 	}
+    
+    public  void conflict(MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){
+		messageHandler.conflict(commonMessages, candidatesCount, disqualified, candidateMessages);
+    }
 	
-	public void handle(String qName, AElement definition, Locator locator)
+	public void handle(int contextType, String qName, AElement definition, Locator locator)
 				throws SAXException{
-		String message = messageHandler.getErrorMessage("");		
-		if(!message.equals("")){
-			errorDispatcher.error(new SAXParseException("Syntax error. Element <"+qName+"> corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation()+" contains errors: "+message, locator));
-		}
-		
-		String warningMessage = messageHandler.getWarningMessage("");		
-		if(!warningMessage.equals("")){
-			errorDispatcher.warning(new SAXParseException("Warning. Element <"+qName+"> corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation()+" generates warning: "+warningMessage, locator));
-		}
+		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, definition, locator, messageHandler, isCandidate);
 	}
 	
-	public void handle(String qName, Locator locator) 
+	public void handle(int contextType, String qName, Locator locator) 
 					throws SAXException{
-		String message = messageHandler.getErrorMessage("");		
-		if(!message.equals("")){
-			errorDispatcher.error(new SAXParseException("Syntax error. "+message, locator));
-		}
+		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, locator, messageHandler, isCandidate);
 	}
 	
 	public String toString(){

@@ -22,6 +22,7 @@ import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 import serene.validation.handlers.error.ContextErrorHandler;
 import serene.validation.handlers.error.ValidationErrorHandler;
 import serene.validation.handlers.error.ExternalConflictErrorHandler;
+import serene.validation.handlers.error.CandidatesConflictErrorHandler;
 import serene.validation.handlers.error.CommonErrorHandler;
 import serene.validation.handlers.error.DefaultErrorHandler;
 import serene.validation.handlers.error.ContextErrorHandlerManager;
@@ -36,35 +37,35 @@ abstract class ValidatingEEH extends ComparableEEH implements ContextErrorHandle
 
 	ValidatorErrorHandlerPool errorHandlerPool;
 	
-	ContextErrorHandler contextErrorHandler;
+	ContextErrorHandler[] contextErrorHandler;
 	
-	ValidationErrorHandler validationErrorHandler;
+	/*ValidationErrorHandler validationErrorHandler;
 	ExternalConflictErrorHandler externalConflictErrorHandler;
 	CommonErrorHandler commonErrorHandler;
-	DefaultErrorHandler defaultErrorHandler;
-	
-	int contextErrorHandlerId;	
-	
-	ExternalConflictHandler externalConflictHandler;
+	DefaultErrorHandler defaultErrorHandler;*/
+	    
+	int contextErrorHandlerIndex;	
+
+    boolean isCandidate; //true when this is a direct candidate, false when it is a descendant of one, or simply not involved in a conflict
 	int candidateIndex;
-	
+	CandidatesConflictErrorHandler candidatesConflictErrorHandler;
+    
 	int[] stateHistory;
 	int stateHistoryIndex;
 	int stateHistorySize;
 		
-	ContextErrorHandler[] externalHandlerHistory;
-	int externalHandlerHistoryIndex;
-	int externalHandlerHistorySize;
 	
 	ValidatingEEH(MessageWriter debugWriter){
 		super(debugWriter);
+        contextErrorHandler = new ContextErrorHandler[HANDLER_COUNT];
+        
 		stateHistorySize = 1;
 		stateHistoryIndex = 0;
-		stateHistory = new int[stateHistorySize];
-		stateHistory[stateHistoryIndex] = NONE;
-		
-		externalHandlerHistoryIndex = -1;
-		externalHandlerHistorySize = 0;	
+		stateHistory = new int[stateHistorySize];		
+        contextErrorHandlerIndex = VALIDATION;
+        storeState();
+        
+        isCandidate = false;
 	}
 	
 	void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator, ValidatorErrorHandlerPool errorHandlerPool){
@@ -72,98 +73,117 @@ abstract class ValidatingEEH extends ComparableEEH implements ContextErrorHandle
 		this.errorHandlerPool = errorHandlerPool;
 	}
 	
-	void init(ContextErrorHandlerManager parent){		
-		if(parent != null)parent.transmitState(this);
-		else setValidation();//this is for the first root element
+	void init(ContextErrorHandlerManager parent){
+        if(parent != null){
+            candidateIndex = parent.getCandidateIndex();
+            candidatesConflictErrorHandler = parent.getCandidatesConflictErrorHandler();
+            contextErrorHandlerIndex = parent.getContextErrorHandlerIndex();
+            storeState();
+        }
 	}
+    
 	 //errorCatcherManager
 	//--------------------------------------------------------------------------
-	public void setNone(){
-		contextErrorHandlerId = NONE;		
+    public void setCandidate(boolean isCandidate){        
+		this.isCandidate = isCandidate;
+    }
+    public boolean isCandidate(){        
+		return isCandidate;
+    }   
+    public void setCandidateIndex(int candidateIndex){        
+		this.candidateIndex = candidateIndex;
+    }
+    public int getCandidateIndex(){        
+		return candidateIndex;
+    }
+    public void setCandidatesConflictErrorHandler(CandidatesConflictErrorHandler candidatesConflictErrorHandler){
+        this.candidatesConflictErrorHandler = candidatesConflictErrorHandler;
+    }
+    public CandidatesConflictErrorHandler getCandidatesConflictErrorHandler(){
+        return candidatesConflictErrorHandler;
+    }
+    
+    public void setContextErrorHandlerIndex(int contextErrorHandlerIndex){
+        if(contextErrorHandlerIndex <= NONE 
+            || contextErrorHandlerIndex >= HANDLER_COUNT)throw new IllegalArgumentException();
+        this.contextErrorHandlerIndex = contextErrorHandlerIndex;
+        storeState();
+    }
+    public int getContextErrorHandlerIndex(){
+        return contextErrorHandlerIndex;
+    }
+    
+    public ContextErrorHandler getContextErrorHandler(){
+		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
+		return contextErrorHandler[contextErrorHandlerIndex];
+	}
+    
+	/*public void setNone(){
+		contextErrorHandlerIndex = NONE;		
 		storeState();
 		contextErrorHandler = null;		
 	}	
 	public void setValidation(){
-		contextErrorHandlerId = VALIDATION;		
+        //System.out.println(" SET VALIDATION ");
+		contextErrorHandlerIndex = VALIDATION;		
 		storeState();
-		contextErrorHandler = validationErrorHandler;		
+		contextErrorHandler = validationErrorHandler;
 	}
-	public void setConflict(ExternalConflictHandler externalConflictHandler, int candidateIndex){
-		this.externalConflictHandler = externalConflictHandler;
-		this.candidateIndex = candidateIndex;
-		contextErrorHandlerId = CONFLICT;
-		 storeState();
+	public void setConflict(){
+        //System.out.println(" SET CONFLICT ");        
+		contextErrorHandlerIndex = CONFLICT;
+		storeState();
+        //if(externalConflictErrorHandler != null) externalConflictErrorHandler.init(candidatesConflictErrorHandler, candidateIndex, isCandidate);
+        // Not necessary because the all contextErrorHandlers are nulled when recycling
+        // so they are only used for one occurrence handling and should not be reinitialized. 
 		contextErrorHandler = externalConflictErrorHandler;
 	}
 	public void setCommon(){
-		throw new IllegalStateException();
+        //System.out.println(" SET COMMON ");
+		contextErrorHandlerIndex = COMMON;		
+		storeState();
+        //if(commonErrorHandler != null) commonErrorHandler.init(candidatesConflictErrorHandler);
+        // Not necessary because the all contextErrorHandlers are nulled when recycling
+        // so they are only used for one occurrence handling and should not be reinitialized.
+		contextErrorHandler = commonErrorHandler;
 	}
 	public void setDefault(){		
-		contextErrorHandlerId = DEFAULT;
+        //System.out.println(" SET DEFAULT ");
+		contextErrorHandlerIndex = DEFAULT;
 		storeState();
 		contextErrorHandler = defaultErrorHandler;
-	}
-	public void setExternal(ContextErrorHandler externalHandler){		
-		contextErrorHandlerId = EXTERNAL;
-		storeState(externalHandler);
-		contextErrorHandler = externalHandler;
-	}	
+	} 
 	public ContextErrorHandler getContextErrorHandler(){
 		if(contextErrorHandler == null)setContextErrorHandler();
 		return contextErrorHandler;
-	}
+	}*/
 	
 	
-	public void restorePreviousState(){
-		contextErrorHandlerId = stateHistory[--stateHistoryIndex];
-		if(contextErrorHandlerId == NONE){
+	public void restorePreviousHandler(){
+        if(--stateHistoryIndex < 0)throw new IllegalStateException();        
+		contextErrorHandlerIndex = stateHistory[stateHistoryIndex];
+		/*if(contextErrorHandlerIndex == NONE){
 			contextErrorHandler = null;		
-		}else if(contextErrorHandlerId == VALIDATION){
-			contextErrorHandler = validationErrorHandler;		
-		}else if(contextErrorHandlerId == CONFLICT){
+		}else if(contextErrorHandlerIndex == VALIDATION){            
+			contextErrorHandler = validationErrorHandler;
+		}else if(contextErrorHandlerIndex == CONFLICT){
 			contextErrorHandler = externalConflictErrorHandler;
-		}else if(contextErrorHandlerId == COMMON){
+		}else if(contextErrorHandlerIndex == COMMON){
 			contextErrorHandler = commonErrorHandler;
-		}else if(contextErrorHandlerId == DEFAULT){
+		}else if(contextErrorHandlerIndex == DEFAULT){
 			contextErrorHandler = defaultErrorHandler;
-		}else if(contextErrorHandlerId == EXTERNAL){
-			contextErrorHandler = externalHandlerHistory[--externalHandlerHistoryIndex];
 		}else{
 			throw new IllegalStateException();
-		}	
+		}*/	
 	}
-	
-	public void transmitState(ContextErrorHandlerManager other){				
-		if(contextErrorHandlerId == NONE){
-			other.setNone();		
-		}else if(contextErrorHandlerId == VALIDATION){
-			other.setValidation();		
-		}else if(contextErrorHandlerId == CONFLICT){
-			other.setConflict(externalConflictHandler, candidateIndex);
-		}else if(contextErrorHandlerId == COMMON){
-			other.setCommon();
-		}else if(contextErrorHandlerId == DEFAULT){
-			other.setDefault();
-		}else if(contextErrorHandlerId == EXTERNAL){
-			other.setExternal(externalHandlerHistory[externalHandlerHistoryIndex]);
-		}else{
-			throw new IllegalStateException();
-		}	
-	}	
-	
-	
+				
 	//--------------------------------------------------------------------------
 	
-	protected void recycleErrorHandlers(){
-		if(externalHandlerHistorySize > 0 ){					
-			Arrays.fill(externalHandlerHistory, null);
-			externalHandlerHistoryIndex = -1;
-		}
-		
+	protected void resetContextErrorHandlerManager(){		
 		stateHistoryIndex = 0;
-		contextErrorHandlerId = NONE;
+		contextErrorHandlerIndex = VALIDATION;
 		
-		if(validationErrorHandler != null){
+		/*if(validationErrorHandler != null){
 			validationErrorHandler.recycle();
 			validationErrorHandler = null;
 		}
@@ -178,29 +198,30 @@ abstract class ValidatingEEH extends ComparableEEH implements ContextErrorHandle
 		if(defaultErrorHandler != null){
 			defaultErrorHandler.recycle();
 			defaultErrorHandler = null;
-		}		
-		externalConflictHandler = null;
-		candidateIndex = 0;
+		}*/
+        for(int i = 0; i < HANDLER_COUNT; i++){
+            if(contextErrorHandler[i] != null){
+                contextErrorHandler[i].recycle();
+                contextErrorHandler[i] = null;
+            }
+        }		
+		candidateIndex = -1;
+        candidatesConflictErrorHandler  = null;
+        isCandidate = false;
 	}
 	
 	
 	protected void setContextErrorHandler(){
-		if(contextErrorHandlerId == NONE){
+		if(contextErrorHandlerIndex == NONE){
 			contextErrorHandler = null;		
-		}else if(contextErrorHandlerId == VALIDATION){
-			if(validationErrorHandler == null)validationErrorHandler = errorHandlerPool.getValidationErrorHandler();
-			contextErrorHandler = validationErrorHandler;		
-		}else if(contextErrorHandlerId == CONFLICT){
-			if(externalConflictErrorHandler == null)externalConflictErrorHandler = errorHandlerPool.getExternalConflictErrorHandler(externalConflictHandler, candidateIndex);
-			contextErrorHandler = externalConflictErrorHandler;
-		}else if(contextErrorHandlerId == COMMON){
-			if(commonErrorHandler == null)commonErrorHandler = errorHandlerPool.getCommonErrorHandler();
-			contextErrorHandler = commonErrorHandler;
-		}else if(contextErrorHandlerId == DEFAULT){
-			if(defaultErrorHandler == null)defaultErrorHandler = errorHandlerPool.getDefaultErrorHandler();
-			contextErrorHandler = defaultErrorHandler;
-		}else if(contextErrorHandlerId == EXTERNAL){
-			contextErrorHandler = externalHandlerHistory[externalHandlerHistoryIndex];
+		}else if(contextErrorHandlerIndex == VALIDATION){
+			if(contextErrorHandler[VALIDATION] == null)contextErrorHandler[VALIDATION] = errorHandlerPool.getValidationErrorHandler();
+		}else if(contextErrorHandlerIndex == CONFLICT){
+			if(contextErrorHandler[CONFLICT] == null)contextErrorHandler[CONFLICT] = errorHandlerPool.getExternalConflictErrorHandler(candidatesConflictErrorHandler, candidateIndex, isCandidate);
+		}else if(contextErrorHandlerIndex == COMMON){
+			if(contextErrorHandler[COMMON] == null)contextErrorHandler[COMMON] = errorHandlerPool.getCommonErrorHandler(candidatesConflictErrorHandler, isCandidate);
+		}else if(contextErrorHandlerIndex == DEFAULT){
+			if(contextErrorHandler[DEFAULT] == null)contextErrorHandler[DEFAULT] = errorHandlerPool.getDefaultErrorHandler();
 		}else{
 			throw new IllegalStateException();
 		}
@@ -212,20 +233,6 @@ abstract class ValidatingEEH extends ComparableEEH implements ContextErrorHandle
 			System.arraycopy(stateHistory, 0, increased, 0, stateHistoryIndex);
 			stateHistory = increased;
 		}
-		stateHistory[stateHistoryIndex] = contextErrorHandlerId;		
-	}
-
-	protected void storeState(ContextErrorHandler externalHandler){		
-		storeState();
-		if(externalHandlerHistorySize == 0){
-			externalHandlerHistorySize = 1;
-			externalHandlerHistoryIndex = 0;
-			externalHandlerHistory = new ContextErrorHandler[externalHandlerHistorySize];						
-		}else if(++externalHandlerHistoryIndex == externalHandlerHistorySize){
-			ContextErrorHandler[] increased = new ContextErrorHandler[++externalHandlerHistorySize];
-			System.arraycopy(externalHandlerHistory, 0, increased, 0, externalHandlerHistoryIndex);
-			externalHandlerHistory = increased;
-		}	
-		externalHandlerHistory[externalHandlerHistoryIndex] = externalHandler;
+		stateHistory[stateHistoryIndex] = contextErrorHandlerIndex;		
 	}
 }

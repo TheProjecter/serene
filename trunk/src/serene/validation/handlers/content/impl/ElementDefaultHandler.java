@@ -57,9 +57,11 @@ class ElementDefaultHandler extends ComparableEEH{
 		depth++;	
 		return this;
 	}	
-	
-	public void handleAttributes(Attributes attributes, Locator locator){}
-	void handleAttribute(String qName, String namespace, String name, String value){}	
+	ComparableAEH getAttributeHandler(String qName, String namespace, String name){
+        return pool.getAttributeDefaultHandler(this);
+    }
+    
+	public void handleAttributes(Attributes attributes, Locator locator){}	
 	public void handleEndElement(Locator locator) throws SAXException{
 	}
 	void validateContext(){}
@@ -70,34 +72,31 @@ class ElementDefaultHandler extends ComparableEEH{
     public void handleLastCharacters(char[] chars){
 	}
 	
-	public boolean functionalEquivalent(ComparableEEH other){
+	boolean functionalEquivalent(ComparableEEH other){
 		return other.functionalEquivalent(this);
 	}
-	public boolean functionalEquivalent(ElementValidationHandler other){
+	boolean functionalEquivalent(ElementValidationHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(UnrecognizedElementHandler other){
+	boolean functionalEquivalent(UnexpectedElementHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(UnexpectedElementHandler other){
+	boolean functionalEquivalent(UnexpectedAmbiguousElementHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(UnexpectedAmbiguousElementHandler other){
+	boolean functionalEquivalent(UnknownElementHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(UnknownElementHandler other){
-		return false;
-	}
-	public boolean functionalEquivalent(ElementDefaultHandler other){
+	boolean functionalEquivalent(ElementDefaultHandler other){
 		return true;
 	}
-	public boolean functionalEquivalent(ElementConcurrentHandler other){
+	boolean functionalEquivalent(ElementConcurrentHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(ElementParallelHandler other){
+	boolean functionalEquivalent(ElementParallelHandler other){
 		return false;
 	}
-	public boolean functionalEquivalent(ElementCommonHandler other){
+	boolean functionalEquivalent(ElementCommonHandler other){
 		return false;
 	}
 	

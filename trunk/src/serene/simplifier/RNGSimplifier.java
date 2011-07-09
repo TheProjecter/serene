@@ -43,6 +43,7 @@ import serene.validation.schema.parsed.Definition;
 import serene.validation.schema.parsed.Grammar;
 import serene.validation.schema.parsed.ExternalRef;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.RecursionModel;
 import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.SimplifiedComponentBuilder;
@@ -139,10 +140,13 @@ public class RNGSimplifier extends Simplifier{
 		
 		recursionModel = new RecursionModel(debugWriter);
 		
+        
 		simplify();
 		SPattern[] simplifiedTopPattern = builder.getAllCurrentPatterns();
 		if(simplifiedTopPattern == null){
             if(emptyChild){
+                // for the 7.1.5 restrictions on start
+                // TODO make sure it is correct to treat notAllowed like this
                 builder.buildEmpty(topPattern.getQName(), topPattern.getLocation());
                 simplifiedTopPattern = builder.getAllCurrentPatterns();
             }else if(notAllowedElement || notAllowedChild){
@@ -151,15 +155,17 @@ public class RNGSimplifier extends Simplifier{
             }
             
 		}
-		if(startQName == null 
+        
+        if(startQName == null 
             && simplifiedTopPattern != null 
             && simplifiedTopPattern.length != 0){
             startQName = "root of the schema";
             startLocation = simplifiedTopPattern[0].getLocation();//there can be only one//or none
         }
         
-		SimplifiedModel simplifiedModel = new SimplifiedModel(startQName,
-                                            startLocation,
+        builder.buildRef(-1, startQName, startLocation);
+        SimplifiedComponent schemaStart = builder.getCurrentPattern();
+		SimplifiedModel simplifiedModel = new SimplifiedModel(schemaStart,
                                             simplifiedTopPattern, 
 											definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]),
 											recursionModel,
@@ -167,13 +173,13 @@ public class RNGSimplifier extends Simplifier{
 		return simplifiedModel;
 	}
 		
-	private void simplify()  throws SAXException{		
+	private void simplify()  throws SAXException{	
 		emptyChild = false;
         emptyComponent = null;
 		notAllowedChild = false;
         patternChild = false;
-        notAllowedElement = false;
-		
+		notAllowedElement = false;
+        
 		anyNameContext = false;
 		anyNameExceptContext = false;
 		nsNameContext = false;
@@ -182,12 +188,12 @@ public class RNGSimplifier extends Simplifier{
 		
 		currentGrammar = null;
 		if(previousGrammars != null)previousGrammars.clear();		
-		    
+		
         startQName = null;
         startLocation = null;
     
 		definitionTopPatterns.clear();
 		builder.startBuild();
-		topPattern.accept(this);	
+		topPattern.accept(this);
 	}		
 }

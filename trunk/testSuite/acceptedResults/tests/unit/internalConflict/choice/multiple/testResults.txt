@@ -6,7 +6,7 @@ TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\int
 
 TESTED DOCUMENT document1.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/document1.xml:25:8 Warning. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/schema.rng:23:26 generates warning: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/document1.xml:25:8 Syntax warning. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/schema.rng:23:26 generates warning: 
 Ambiguous content.
 Element <aa> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/document1.xml:22:7 cannot be resolved by in context validation, possible definitions: 
 <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/schema.rng:26:27
@@ -31,7 +31,7 @@ TESTED DOCUMENT document2.xml
 
 TESTED DOCUMENT document3.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/document3.xml:25:8 Warning. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/schema.rng:23:26 generates warning: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/document3.xml:25:8 Syntax warning. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/schema.rng:23:26 generates warning: 
 Ambiguous content.
 Element <foo> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/document3.xml:22:8 cannot be resolved by in context validation, possible definitions: 
 <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/schema.rng:31:15
@@ -49,7 +49,7 @@ Element <foo> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tes
 
 TESTED DOCUMENT document4.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/document4.xml:24:8 Warning. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/schema.rng:23:26 generates warning: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/document4.xml:24:8 Syntax warning. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/schema.rng:23:26 generates warning: 
 Ambiguous content.
 Element <aa> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/document4.xml:22:7 cannot be resolved by in context validation, possible definitions: 
 <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/schema.rng:31:15

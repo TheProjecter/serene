@@ -16,25 +16,26 @@ limitations under the License.
 
 package serene.validation.handlers.error;
 
-import serene.validation.handlers.conflict.ExternalConflictHandler;
-
 public interface ContextErrorHandlerManager{
-	public static final int NONE = 0;
-	public static final int VALIDATION = 1;
-	public static final int CONFLICT = 2;
-	public static final int DEFAULT = 3;
-	public static final int COMMON = 4;
-	public static final int EXTERNAL = 4;
+	int NONE = -1;
+	int VALIDATION = 0;
+    int COMMON = 1;
+	int CONFLICT = 2;
+	int DEFAULT = 3;	
+    int HANDLER_COUNT = 4;
+    
 	
-	void setNone();
-	void setValidation();
-	void setConflict(ExternalConflictHandler conflictHandler, int candidateIndex);
-	void setCommon();	
-	void setDefault();
-	void setExternal(ContextErrorHandler contextErrorHandler);
-	
-	void restorePreviousState();	
-	void transmitState(ContextErrorHandlerManager other);
+    void setCandidate(boolean isCandidate);
+    boolean isCandidate();
+    void setCandidateIndex(int candidateIndex);
+    int getCandidateIndex();
+    void setCandidatesConflictErrorHandler(CandidatesConflictErrorHandler candidatesConflictErrorHandler);
+    CandidatesConflictErrorHandler getCandidatesConflictErrorHandler();
+    
+    void setContextErrorHandlerIndex(int contextErrorHandlerIndex);
+    int getContextErrorHandlerIndex();
+    
+	void restorePreviousHandler();	
 	
 	ContextErrorHandler getContextErrorHandler();	
 }

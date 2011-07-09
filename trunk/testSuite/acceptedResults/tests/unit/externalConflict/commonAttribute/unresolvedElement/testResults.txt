@@ -1,0 +1,23 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\externalConflict\commonAttribute\unresolvedElement\schema.rng
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/commonAttribute/unresolvedElement/schema.rng:4:11 Syntax error. Element <element> is unresolved by content validation, all candidate definitions resulted in errors:
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
+	Syntax error. Element <element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
+	Missing content.
+	In the document structure starting at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/commonAttribute/unresolvedElement/schema.rng:3:11, corresponding to definition <group name class, patterns> at RELAXNG Specification 3.Full Syntax: element with name class child, expected 1 occurrence corresponding to definition <nameClass> at RELAXNG Specification 3.Full Syntax: name class, found 0.
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
+	Syntax error. Element <element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
+	Missing content.
+	In the document structure starting at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/commonAttribute/unresolvedElement/schema.rng:3:11, corresponding to definition <attributes and elements group> at RELAXNG Specification 3.Full Syntax: element with name attribute, expected 1 occurrence corresponding to definition <name attribute with QName value> at RELAXNG Specification 3.Full Syntax: name attribute with QName value, found 0.
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/commonAttribute/unresolvedElement/schema.rng:4:11 Syntax error. Unresolved element <element> contains errors common to all possible definitions: 
+Illegal datatype.
+Value of attribute datatypeLibrary at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/commonAttribute/unresolvedElement/schema.rng:2:76 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute. Relative URI.
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/commonAttribute/unresolvedElement/schema.rng:5:1 Syntax warning. Warning at the root of the document corresponding to definition <start> at RELAXNG Specification 3.Full Syntax: top of a grammar: 
+Ambiguous content.
+Element <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/commonAttribute/unresolvedElement/schema.rng:2:76 cannot be resolved by in context validation, possible definitions: 
+<element> at RELAXNG Specification 3.Full Syntax: element with name class child
+<element> at RELAXNG Specification 3.Full Syntax: element with name attribute.

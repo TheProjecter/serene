@@ -18,12 +18,14 @@ package serene.validation.schema.active.components;
 
 import serene.validation.schema.active.Identifier;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import sereneWrite.MessageWriter;
 
 public abstract class ANameClass extends AbstractIdentifier{	
 		
-	public ANameClass(String qName, String location, MessageWriter debugWriter){
-		super(qName, location, debugWriter);
+	public ANameClass(SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){
+		super(simplifiedComponent, debugWriter);
 	}	
 		
 	public String toString(){

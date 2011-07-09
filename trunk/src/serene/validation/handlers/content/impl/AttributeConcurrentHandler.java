@@ -24,28 +24,33 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
+import serene.validation.handlers.error.CandidatesConflictErrorHandler;
 
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import sereneWrite.MessageWriter;
 
 class AttributeConcurrentHandler extends ValidatingAEH{
+    ElementValidationHandler parent;	
+    
+    
 	List<AAttribute> candidateDefinitions;
-	List<AttributeValidationHandler> candidates;
-	ExternalConflictHandler candidatesConflictHandler;
+	List<CandidateAttributeValidationHandler> candidates;
+	ExternalConflictHandler localCandidatesConflictHandler;
+    CandidatesConflictErrorHandler localCandidatesConflictErrorHandler; 
 	ValidatorErrorHandlerPool errorHandlerPool;
 	
 	AttributeConcurrentHandler(MessageWriter debugWriter){
 		super(debugWriter);
-		candidates = new ArrayList<AttributeValidationHandler>(3);		
-		candidatesConflictHandler = new ExternalConflictHandler(debugWriter);
+		candidates = new ArrayList<CandidateAttributeValidationHandler>(3);		
+		localCandidatesConflictHandler = new ExternalConflictHandler(debugWriter);
 	}
 		
 	public void recycle(){
-		for(AttributeValidationHandler candidate: candidates){
+		for(CandidateAttributeValidationHandler candidate: candidates){
 			candidate.recycle();
 		}
-		candidatesConflictHandler.reset();
+		localCandidatesConflictHandler.reset();
 		candidates.clear();
 		pool.recycle(this);
 	}
@@ -59,25 +64,29 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 		this.parent = parent;
 		this.candidateDefinitions = candidateDefinitions; 
 		for(int i = 0; i < candidateDefinitions.size(); i++){						
-			// To each candidate set an ConflictErrorHandler that knows the ExternalConflictHandler
+			// To each candidate set a ConflictErrorHandler that knows the ExternalConflictHandler
 			// and the candidate index. Errors will not be handled and reported.
 			// At the end of attribute handling only the number of qualified 
 			// candidates left is assesed and the appropriate addAttribute() 
 			// is called.
-			AttributeValidationHandler candidate = pool.getAttributeValidationHandler(candidateDefinitions.get(i), parent, errorHandlerPool.getAttributeConflictErrorHandler(candidatesConflictHandler, i));
+			CandidateAttributeValidationHandler candidate = pool.getCandidateAttributeValidationHandler(candidateDefinitions.get(i), parent, localCandidatesConflictErrorHandler, i);
 			candidates.add(candidate);
 		}		
 	}
 	
+    public ElementValidationHandler getParentHandler(){
+        return parent;
+    }
+    
 	void validateValue(String value){
 		for(int i = 0; i < candidates.size(); i++){
-			if(!candidatesConflictHandler.isDisqualified(i))candidates.get(i).validateValue(value);
+			candidates.get(i).validateValue(value);
 		}
 	}
 
 	void validateInContext(){
 		int candidatesCount = candidates.size();		
-		int qualifiedCount = candidatesCount - candidatesConflictHandler.getDisqualifiedCount();		
+		int qualifiedCount = candidatesCount - localCandidatesConflictHandler.getDisqualifiedCount();		
 		if(qualifiedCount == 0){						
 			// Shift all with errors, hope the parent context disqualifies all but 1
 			// Why shift, they all have errors already??? 
@@ -85,15 +94,49 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 			// results in a fake error.			
 			parent.addAttribute(candidateDefinitions);
 		}else if(qualifiedCount == 1){			
-			AAttribute qAttribute = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
+			AAttribute qAttribute = candidateDefinitions.get(localCandidatesConflictHandler.getNextQualified(0));
 			parent.addAttribute(qAttribute);
 		}else if(qualifiedCount > 1){
 			// TODO Maybe a warning
 			// Shift all without errors, hope the parent conflict disqualifies all but one
-			parent.addAttribute(candidateDefinitions, candidatesConflictHandler);
+			parent.addAttribute(candidateDefinitions, localCandidatesConflictHandler);
 		}
 	}
 
+    boolean functionalEquivalent(ComparableAEH other){
+        return other.functionalEquivalent(this);
+    }
+    
+    boolean functionalEquivalent(AttributeDefinitionHandler other){
+        return false;
+    }
+	boolean functionalEquivalent(UnexpectedAttributeHandler other){
+        return false;
+    }
+	boolean functionalEquivalent(UnexpectedAmbiguousAttributeHandler other){
+        return false;
+    }
+	boolean functionalEquivalent(UnknownAttributeHandler other){
+        return false;
+    }
+	boolean functionalEquivalent(AttributeConcurrentHandler other){
+        return other.functionalEquivalent(candidates);
+	}    
+	private boolean functionalEquivalent(List<CandidateAttributeValidationHandler> otherCandidates){
+		int candidatesCount = candidates.size();
+		if(candidatesCount != otherCandidates.size()) return false;
+		for(int i = 0; i < candidatesCount; i++){
+			if(!candidates.get(i).functionalEquivalent(otherCandidates.get(i))) return false;
+		}
+		return true;
+	}
+	boolean functionalEquivalent(AttributeParallelHandler other){
+        return false;
+    }
+    boolean functionalEquivalent(AttributeDefaultHandler other){
+        return false;
+    }
+    
 	public String toString(){
 		return "AttributeConcurrentHandler candidates "+candidates;
 	}	

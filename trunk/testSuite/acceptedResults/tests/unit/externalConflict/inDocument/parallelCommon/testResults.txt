@@ -16,7 +16,7 @@ Element <aa> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/test
 
 TESTED DOCUMENT document2.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/document2.xml:26:8 Syntax error. Element <bb> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/schema.rng:36:24 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/document2.xml:27:7 Syntax error. Element <bb> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/schema.rng:36:24 contains errors: 
 Unexpected character content.
 Character content at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/document2.xml:24:10 is not allowed by the element's schema definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/schema.rng:36:24.
 

@@ -20,15 +20,17 @@ import serene.validation.schema.active.components.ANameClass;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import sereneWrite.MessageWriter;
 
 public class AChoiceNameClass extends ANameClass{	
 	ANameClass[] children;
 	
 	public AChoiceNameClass(ANameClass[] children,
-						String qName, String location, 
+						SimplifiedComponent simplifiedComponent, 
 						MessageWriter debugWriter){
-		super(qName, location, debugWriter);
+		super(simplifiedComponent, debugWriter);
 		asParent(children);
 	}
 	

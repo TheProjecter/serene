@@ -23,5 +23,10 @@ public interface ActiveComponent extends Component{
 	void accept(ActiveComponentVisitor v);	
 	String getQName();
 	String getLocation();
-	
+    /**
+    * Returns the hash code of the corresponding SimplifiedComponent. Watch out 
+    * for recursive definitions, regardless of the depth of the ActiveComponent
+    * the code will be the same.
+    */
+	int functionalEquivalenceCode();
 }

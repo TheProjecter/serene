@@ -523,7 +523,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 isRequiredBranch.add(true);
                 needsOptionalChoice.add(true);
                 
-                ccAttribute.init(grammarModel.getIndex(attribute), attribute.getQName(), attribute.getLocation());
+                ccAttribute.init(grammarModel.getIndex(attribute), attribute);
                 defaultValueErrorHandler.setAttribute(attribute.getQName(), attribute.getLocation());                
                 defaultValueHandler.init(ccAttribute, defaultValueErrorHandler);
                 defaultValueHandler.handleAttribute(defaultValue);

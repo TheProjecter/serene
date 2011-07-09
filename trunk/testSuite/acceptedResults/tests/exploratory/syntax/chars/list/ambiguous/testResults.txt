@@ -12,7 +12,7 @@ List token "foo" at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/
 <rng:data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/schema.rng:28:30
 <rng:data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/schema.rng:33:30.
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/document1.xml:21:25 Warning. Element <root> corresponding to definition <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/schema.rng:23:16 generates warning: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/document1.xml:21:25 Syntax warning. Element <root> corresponding to definition <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/schema.rng:23:16 generates warning: 
 Ambiguous list token.
 List token "foo" at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/document1.xml:21:18 cannot be resolved by in context validation to one schema definition. Possible definitions: 
 <rng:data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/ambiguous/schema.rng:28:30

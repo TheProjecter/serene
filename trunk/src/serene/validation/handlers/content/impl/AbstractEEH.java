@@ -39,8 +39,8 @@ abstract class AbstractEEH implements ElementEventHandler{
 		this.pool = pool;
 		this.validationItemLocator = validationItemLocator;
 	}	
-	
-	abstract void handleAttribute(String qName, String namespace, String name, String value);
+    
+	abstract ComparableAEH getAttributeHandler(String qName, String namespace, String name);
 	abstract void validateContext();
 	abstract void reportContextErrors(Locator locator) throws SAXException;
 	abstract void validateInContext();	

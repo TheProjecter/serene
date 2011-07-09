@@ -42,7 +42,41 @@ class UnexpectedAmbiguousAttributeHandler extends ErrorAEH{
 	void validateInContext(){		
 		parent.unexpectedAmbiguousAttribute(validationItemLocator.getQName(), Arrays.copyOf(attributes, attributes.length), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
 	}
+ 
+    boolean functionalEquivalent(ComparableAEH other){
+        return other.functionalEquivalent(this);
+    }
     
+    boolean functionalEquivalent(AttributeDefinitionHandler other){
+        return false;
+    }
+	boolean functionalEquivalent(UnexpectedAttributeHandler other){
+        return false;
+    }
+	boolean functionalEquivalent(UnexpectedAmbiguousAttributeHandler other){
+        return other.functionalEquivalent(attributes);
+    }
+	private boolean functionalEquivalent(SimplifiedComponent[] otherSAttributes){
+		int attributesCount = attributes.length;
+		if(attributesCount != otherSAttributes.length)return false;
+		for(int i = 0; i < attributesCount; i++){
+			if(attributes[i] != otherSAttributes[i]) return false;
+		}
+		return true;
+	}
+    
+	boolean functionalEquivalent(UnknownAttributeHandler other){
+        return false;
+    }
+	boolean functionalEquivalent(AttributeConcurrentHandler other){
+        return false;        
+	}	
+	boolean functionalEquivalent(AttributeParallelHandler other){
+        return false;
+    }    
+    boolean functionalEquivalent(AttributeDefaultHandler other){
+        return false;
+    }
     public String toString(){
 		return "UnexpectedAmbiguousAttributeHandler attributes "+Arrays.toString(attributes);
 		

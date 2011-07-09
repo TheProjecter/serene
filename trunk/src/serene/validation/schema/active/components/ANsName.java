@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.components.AExceptNameClass;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
@@ -25,9 +27,9 @@ import sereneWrite.MessageWriter;
 public class ANsName extends AbstractWildCard{		
 	String ns;
 	public ANsName(String ns, AExceptNameClass child,
-			String qName, String location, 
+			SimplifiedComponent simplifiedComponent, 
 			MessageWriter debugWriter){	
-		super(child, qName, location, debugWriter);
+		super(child, simplifiedComponent, debugWriter);
 		this.ns = ns;
 	}
 	

@@ -27,7 +27,9 @@ import org.relaxng.datatype.DatatypeException;
 
 import serene.datatype.DatatypeLibraryFinder;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.components.SPattern;
+//import serene.validation.schema.simplified.components.NameClass;
 import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SAttribute;
 
@@ -148,6 +150,8 @@ class RNGDirector{
         cl = ss.getContextClassLoader();
         
         if (cl == null) {
+            //cl = ClassLoader.getSystemClassLoader();
+            //use the current class loader
             cl = RNGDirector.class.getClassLoader();
         } 
 
@@ -195,8 +199,11 @@ class RNGDirector{
 	
 	SimplifiedModel getRNGModel(){
 		SPattern[] start = {rngStartTopPattern};
-		SimplifiedModel s = new SimplifiedModel("start",
-                                    "RELAXNG Specification 3.Full Syntax: top of a grammar",
+        
+        builder.buildRef(-1, "start", "RELAXNG Specification 3.Full Syntax: top of a grammar");
+        SimplifiedComponent schemaStart = builder.getCurrentPattern();
+        
+		SimplifiedModel s = new SimplifiedModel(schemaStart,
                                     start,
 									refDefinitionTopPattern,
 									null,
@@ -206,8 +213,11 @@ class RNGDirector{
 	
 	SimplifiedModel getIncludeModel(){
 		SPattern[] start = {includeStartTopPattern};
-		return new SimplifiedModel("start",
-                                    "RELAXNG Specification 3.Full Syntax: top of an included grammar",
+        
+        builder.buildRef(-1, "start", "RELAXNG Specification 3.Full Syntax: top of an included grammar");
+        SimplifiedComponent schemaStart = builder.getCurrentPattern();
+        
+		return new SimplifiedModel(schemaStart,
                                     start,
 									refDefinitionTopPattern,									
 									null,
@@ -216,8 +226,11 @@ class RNGDirector{
 	
 	SimplifiedModel getExternalRefModel(){
 		SPattern[] start = {externalRefStartTopPattern};
-		return new SimplifiedModel("start",
-                                    "RELAXNG Specification 3.Full Syntax: top of a grammar",
+        
+        builder.buildRef(-1, "start", "RELAXNG Specification 3.Full Syntax: top of a grammar");
+        SimplifiedComponent schemaStart = builder.getCurrentPattern();
+        
+		return new SimplifiedModel(schemaStart,
                                     start,
 									refDefinitionTopPattern,
 									null,
@@ -327,6 +340,8 @@ class RNGDirector{
 			builder.buildAnyName("anyName","RELAXNG Specification 3.Full Syntax: any element");
 		}builder.endLevel();
 		builder.buildElement("element","RELAXNG Specification 3.Full Syntax: any element");
+		//SPattern[] e = builder.getAllCurrentPatterns();
+		//refDefinitionTopPattern[5] = e[0];
         
         SElement e = (SElement)builder.getCurrentPattern();
 		startElementTaskPool.put(e, startLevelPool);
@@ -1143,7 +1158,7 @@ class RNGDirector{
 			builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: optional");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave patterns and foreign elements","RELAXNG Specification 3.Full Syntax: pattern content");	
+		builder.buildInterleave("interleave pattern and foreign elements","RELAXNG Specification 3.Full Syntax: attribute with name attribute");	
 	}
 	
 	private void paramStarExceptPatternSquare() throws DatatypeException{

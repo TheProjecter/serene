@@ -165,7 +165,8 @@ abstract class Simplifier implements SimplifyingVisitor{
     boolean level1AttributeDefaultValue;
     boolean level1AttributeIdType;
 	boolean replaceMissingDatatypeLibrary;
-     
+
+    
     String startQName;
     String startLocation;
     
@@ -339,6 +340,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			String message = "Simplification 4.16 error. "
 				+"Presence of element <"+anyName.getQName()+"> at "+anyName.getLocation()+" is forbiden in this context.";
 			errorDispatcher.error(new SAXParseException(message, null));
+			// TODO Q: do you need to build a dummy?
             patternChild = false;
 			return;
 		}
@@ -346,7 +348,9 @@ abstract class Simplifier implements SimplifyingVisitor{
 			// 4.16 error
 			String message = "Simplification 4.16 error. "
 				+"Presence of element <"+anyName.getQName()+"> at "+anyName.getLocation()+" is forbiden in this context.";
+				//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
+			// TODO Q: do you need to build a dummy?
             patternChild = false;
 			return;
 		}	
@@ -369,6 +373,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			String message = "Simplification 4.16 error. "
 				+"Presence of element <"+nsName.getQName()+"> at "+nsName.getLocation()+" is forbiden in this context.";
 			errorDispatcher.error(new SAXParseException(message, null));
+			// TODO Q: do you need to build a dummy?
             patternChild = false;
 			return;
 		}        
@@ -380,6 +385,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 				String message = "Simplification 4.16 error. "
 				+"Illegal ns of element <"+nsName.getQName()+"> at "+nsName.getLocation()+".";
 				errorDispatcher.error(new SAXParseException(message, null));
+				// TODO Q: do you need to build a dummy?
                 patternChild = false;
 				return;
 			}
@@ -565,14 +571,16 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(prefixMapping != null) startXmlnsContext(prefixMapping);
         
         int nonEmptyChildrenCount = 0;
+        boolean containsPattern = false;
 		int notAllowedCount = 0;
         builder.startLevel();
-        boolean oldNotAllowedChild = notAllowedChild;
+        boolean oldNotAllowedChild = notAllowedChild;        
 		for(int i = 0; i < children.length; i++){
 			if(children[i] != null){
                 notAllowedChild = false;
                 next(children[i]);
                 if(patternChild){
+                    if(!containsPattern)containsPattern = true;
                     nonEmptyChildrenCount++;
                     if(notAllowedChild){
                         notAllowedCount++;
@@ -594,7 +602,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             attributeContext = oldAttributeContext;
 			return;
 		}
-        if(nonEmptyChildrenCount == 0){
+        if(containsPattern && nonEmptyChildrenCount == 0){
             builder.buildEmpty("empty", emptyComponent.getLocation());
         }
 		if(builder.getCurrentPatternsCount() > 1){
@@ -662,13 +670,20 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(builder.getCurrentPatternsCount() > 1){
 			builder.buildReplacementGroup("group added by element simplification", element.getLocation());
 		}
-		String name = element.getName().trim();
-		String prefix = getPrefix(name);
-		String localPart = getLocalPart(name);
-		String ns;
+        
+		String name = element.getName();
+        String prefix = null;
+		String localPart = null;
+        String ns;
+        if(name != null){
+            name = name.trim();
+            prefix = getPrefix(name);
+            localPart = getLocalPart(name);
+        }
+        
 		if(prefix != null) ns = simplificationContext.resolveNamespacePrefix(prefix);
         else ns = namespaceInheritanceHandler.getNsURI(element);
-		if(ns == null)ns = "";		
+		if(ns == null)ns = "";
 		builder.buildName(ns, localPart, "name", element.getLocation());
 		
 		builder.endLevel();
@@ -742,6 +757,17 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(childrenCount == 0){
             builder.buildText("default text", attribute.getLocation());            
         }else if(emptyCount == childrenCount){
+			/*
+			Replaced with a limitation placed in restrictions control.
+            LATER: 
+            Changed again so it can be used for the validation during 
+            compatibility control independent of whether the schema is correct
+            or not. Check for null was added to datatypeMatches() in 
+            DatatypedCharsAPattern.
+            
+			String ns  = namespaceInheritanceHandler.getNsURI(attribute);
+			if(ns == null) ns = "";
+			builder.buildValue(ns, null, null, "value", attribute.getLocation());*/
             builder.buildEmpty("empty", emptyComponent.getLocation());
             emptyChild = false;
 		}
@@ -772,19 +798,24 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(children == null) {
 			//4.12
 			builder.buildText("default text", attribute.getLocation());
-			String name = attribute.getName().trim();		
-			String prefix = getPrefix(name);
-			String localPart = getLocalPart(name);
-			String ns;
-			if(prefix != null)ns = simplificationContext.resolveNamespacePrefix(prefix);
-			else ns = namespaceInheritanceHandler.getNsURI(attribute);
-			if(ns == null)ns = "";
-            if(ns.equals("") && localPart.equals("xmlns")){				 
-				// 4.16 error
-				String message = "Simplification 4.16 error. "
-				+"Illegal character content of attribute name of element <"+attribute.getQName()+"> at "+attribute.getLocation()+".";
-				errorDispatcher.error(new SAXParseException(message, null));
-			}
+            String name = attribute.getName();
+            String prefix = null;
+            String localPart = null;            
+            if(name != null){                
+                name = name.trim();
+                prefix = getPrefix(name);
+                localPart = getLocalPart(name);                
+            }
+            String ns;
+            if(prefix != null)ns = simplificationContext.resolveNamespacePrefix(prefix);
+            else ns = namespaceInheritanceHandler.getNsURI(attribute);
+            if(ns == null)ns = "";
+            if(localPart != null && ns.equals("") && localPart.equals("xmlns")){				 
+                // 4.16 error
+                String message = "Simplification 4.16 error. "
+                +"Illegal value of name attribute of element <"+attribute.getQName()+"> at "+attribute.getLocation()+".";
+                errorDispatcher.error(new SAXParseException(message, null));
+            }
 			if(ns.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)){
 				// 4.16 error
 				String message = "Simplification 4.16 error. "
@@ -845,29 +876,45 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(childrenCount == 0){
             builder.buildText("default text", attribute.getLocation());            
         }else if(emptyCount == childrenCount){
+			/*
+			Replaced with a limitation placed in restrictions control.
+            LATER: 
+            Changed again so it can be used for the validation during 
+            compatibility control independent of whether the schema is correct
+            or not. Check for null was added to datatypeMatches() in 
+            DatatypedCharsAPattern.
+            
+			String ns  = namespaceInheritanceHandler.getNsURI(attribute);
+			if(ns == null) ns = "";
+			builder.buildValue(ns, null, null, "value", attribute.getLocation());*/
             builder.buildEmpty("empty", emptyComponent.getLocation());
             emptyChild = false;
 		}				
 		
-		String name = attribute.getName().trim();		
-		String prefix = getPrefix(name);
-		String localPart = getLocalPart(name);
-		String ns;
-		if(prefix != null)ns = simplificationContext.resolveNamespacePrefix(prefix);
-		else ns = namespaceInheritanceHandler.getNsURI(attribute);
-		if(ns == null)ns = "";
-		if(ns.equals("") && localPart.equals("xmlns")){				 
-			// 4.16 error
-			String message = "Simplification 4.16 error. "
-			+"Illegal value of name attribute of element <"+attribute.getQName()+"> at "+attribute.getLocation()+".";
-			errorDispatcher.error(new SAXParseException(message, null));
-		}
-		if(ns.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)){
-			// 4.16 error
-			String message = "Simplification 4.16 error. "
-			+"Illegal ns of element <"+attribute.getQName()+"> at "+attribute.getLocation()+".";
-			errorDispatcher.error(new SAXParseException(message, null));
-		}		
+		String name = attribute.getName();
+        String prefix = null;
+        String localPart = null;        
+        if(name != null){
+            name = name.trim();
+            prefix  = getPrefix(name);
+            localPart = getLocalPart(name);            
+        }
+        String ns;
+        if(prefix != null)ns = simplificationContext.resolveNamespacePrefix(prefix);
+        else ns = namespaceInheritanceHandler.getNsURI(attribute);
+        if(ns == null)ns = "";
+        if(localPart != null && ns.equals("") && localPart.equals("xmlns")){				 
+            // 4.16 error
+            String message = "Simplification 4.16 error. "
+            +"Illegal value of name attribute of element <"+attribute.getQName()+"> at "+attribute.getLocation()+".";
+            errorDispatcher.error(new SAXParseException(message, null));
+        }
+        if(ns.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)){
+            // 4.16 error
+            String message = "Simplification 4.16 error. "
+            +"Illegal ns of attribute name of element <"+attribute.getQName()+"> at "+attribute.getLocation()+".";
+            errorDispatcher.error(new SAXParseException(message, null));
+        } 		
 		builder.buildName(ns, localPart, "name", attribute.getLocation());
 		
 		builder.endLevel();
@@ -931,7 +978,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			emptyChild = false;
             patternChild = true;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
-            attributeContext = oldAttributeContext; 
+            attributeContext = oldAttributeContext;  
 			return;
 		}
         notAllowedChild = oldNotAllowedChild;
@@ -1437,6 +1484,9 @@ abstract class Simplifier implements SimplifyingVisitor{
 	public void visit(ExternalRef externalRef)  throws SAXException{
 		Pattern docTopPattern = getReferencedPattern(externalRef);		
 		if(docTopPattern == null){
+			// ? error ?
+			// or was that reported already
+			// YES it was
             builder.buildRef(-1, externalRef.getQName(), externalRef.getLocation());
             patternChild = true;
 			return;
@@ -1922,12 +1972,13 @@ abstract class Simplifier implements SimplifyingVisitor{
 	
 	public void visit(Grammar grammar) throws SAXException{		
 		ArrayList<Definition> start = getStart(grammar);		
-		if(start == null){
+		if(start == null || start.isEmpty()){
 			// error 4.18
 			String message = "Simplification 4.18 error. "
 				+"No start element was found in the subtree of element <"+grammar.getQName()+"> at "+grammar.getLocation()+".";
+				//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));            
-            simplifyUnreferencedDefines(grammar, start);
+            simplifyUnreachableDefines(grammar, start);
             if(grammar.getParent() != null){
                 builder.buildGrammar(grammar.getQName(), grammar.getLocation());
                 patternChild = true;
@@ -1986,7 +2037,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         
         ds.recycle();
 		
-        simplifyUnreferencedDefines(grammar, start);
+        simplifyUnreachableDefines(grammar, start);
         
 		if(grammar.getParent() != null){
 			builder.startLevel();
@@ -2002,21 +2053,21 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}
         
 		builder.addAllToCurrentLevel(topPattern);
-        
+       
         startQName = start.get(0).getQName();
         startLocation = ""; 
         for(int i = 0; i < start.size(); i++){
             if(i == 0) startLocation += start.get(i).getLocation();
             else startLocation += ", "+start.get(i).getLocation();
         }
-       
+                
 		currentGrammar = previousGrammars.pop();
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
         attributeContext = oldAttributeContext;
 	}
 	
-    private void simplifyUnreferencedDefines(Grammar grammar, ArrayList<Definition> start) throws SAXException{
+    private void simplifyUnreachableDefines(Grammar grammar, ArrayList<Definition> start) throws SAXException{
         Map<String, ArrayList<Definition>> currentDefinitions = grammarDefinitions.get(grammar);
         if(currentDefinitions != null){
             UnreachableDefinitionSimplifier uds = pool.getUnreachableDefinitionSimplifier();

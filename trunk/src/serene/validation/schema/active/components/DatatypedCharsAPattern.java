@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
@@ -35,17 +37,21 @@ public abstract class DatatypedCharsAPattern extends CharsAPattern implements Da
 	DatatypedCharsAPattern(Datatype datatype,
 				ActiveGrammarModel grammarModel,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				String qName, String location, 
+				SimplifiedComponent simplifiedComponent, 
 				MessageWriter debugWriter){		
-		super(ruleHandlerPool, qName, location, debugWriter);
+		super(ruleHandlerPool, simplifiedComponent, debugWriter);
 		this.datatype = datatype;
 		this.grammarModel = grammarModel;
 	}
 		
+    public Datatype getDatatype(){
+        return datatype;
+    }
+    
 	//DatatypedActiveTypeItem
 	//--------------------------------------------------------------------------
 	public void datatypeMatches(String value, ValidationContext validationContext) throws DatatypeException{
-        if(datatype == null) throw new DatatypeException(" No datatype definition.");		
+        if(datatype == null) throw new DatatypeException(" No datatype definition.");
 		datatype.checkValid(value, validationContext);
 	}
 	public void datatypeMatches(char[] chars, ValidationContext validationContext) throws DatatypeException{

@@ -55,6 +55,7 @@ import serene.validation.schema.active.util.ContextCacheMaker;
 import serene.util.ObjectIntHashMap;
 
 import sereneWrite.MessageWriter;
+//import sereneWrite.ActiveComponentWriter;
 
 class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
 	
@@ -63,10 +64,12 @@ class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
 	ActiveComponentBuilder builder;
 	ActiveGrammarModel grammarModel;
 	
+	//ActiveComponentWriter acw;
 	MessageWriter debugWriter;
 	
 	ActiveDefinitionDirector(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
+		//acw = new ActiveComponentWriter();
 		cacheMaker = new ContextCacheMaker(debugWriter);
 	}
 	
@@ -100,12 +103,12 @@ class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
 	
 	
 	public void visit(SExceptPattern exceptPattern){		
-		builder.buildExceptPattern(grammarModel.getIndex(exceptPattern), grammarModel, exceptPattern.getQName(), exceptPattern.getLocation());
+		builder.buildExceptPattern(grammarModel.getIndex(exceptPattern), grammarModel, exceptPattern);
 	}
 	public void visit(SExceptNameClass exceptNameClass){
 		SimplifiedComponent child = exceptNameClass.getChild();
 		if(child != null) nextLevel(child);
-		builder.buildExceptNameClass(exceptNameClass.getQName(), exceptNameClass.getLocation());
+		builder.buildExceptNameClass(exceptNameClass);
 	}
 		
 	public void visit(SName name){
@@ -123,25 +126,25 @@ class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
 	
 	
 	public void visit(SElement element){	
-		builder.buildElement(grammarModel.getIndex(element), grammarModel, element.getQName(), element.getLocation());
+		builder.buildElement(grammarModel.getIndex(element), grammarModel, element);
 	}	
 	public void visit(SAttribute attribute){	
-		builder.buildAttribute(grammarModel.getIndex(attribute), grammarModel, attribute.getQName(), attribute.getLocation());
+		builder.buildAttribute(grammarModel.getIndex(attribute), grammarModel, attribute);
 	}
 	public void visit(SChoicePattern choice){
 		SimplifiedComponent[] children = choice.getChildren();
 		if(children != null) nextLevel(children);
-		builder.buildChoicePattern(choice.getQName(), choice.getLocation());
+		builder.buildChoicePattern(choice);
 	}
 	public void visit(SInterleave interleave){
 		SimplifiedComponent[] children = interleave.getChildren();
 		if(children != null) nextLevel(children);
-		builder.buildInterleave(interleave.getQName(), interleave.getLocation());
+		builder.buildInterleave(interleave);
 	}
 	public void visit(SGroup group){
 		SimplifiedComponent[] children = group.getChildren();
 		if(children != null) nextLevel(children);
-		builder.buildGroup(group.getQName(), group.getLocation());
+		builder.buildGroup(group);
 	}
 	public void visit(SZeroOrMore zeroOrMore){
 		SimplifiedComponent child = zeroOrMore.getChild();
@@ -166,42 +169,42 @@ class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
 		builder.startLevel();
 		SimplifiedComponent child = mixed.getChild();
 		if(child != null) next(child);
-		builder.buildText(mixed.getQName(), mixed.getLocation());
+		builder.buildText(mixed);
 		builder.endLevel();
-		builder.buildInterleave(mixed.getQName(), mixed.getLocation());
+		builder.buildInterleave(mixed);
 	}	
 	public void visit(SListPattern list){
 		SimplifiedComponent child = list.getChild();
 		if(child != null) nextLevel(child);
-		builder.buildListPattern(list.getQName(), list.getLocation());
+		builder.buildListPattern(list);
 	}	
 	public void visit(SEmpty empty){
-		builder.buildEmpty(empty.getQName(), empty.getLocation());
+		builder.buildEmpty(empty);
 	}
 	public void visit(SText text){
-		builder.buildText(text.getQName(), text.getLocation());
+		builder.buildText(text);
 	}
 	public void visit(SNotAllowed notAllowed){
         // TODO review, 
         // NOTE if it changes, endValidation must change too
-        builder.buildEmpty(notAllowed.getQName(), notAllowed.getLocation());
+        builder.buildEmpty(notAllowed);
 		//builder.buildNotAllowed(notAllowed.getQName(), notAllowed.getLocation());
 	}
 	public void visit(SRef ref){
-		builder.buildRef(ref.getDefinitionIndex(), grammarModel, ref.getQName(), ref.getLocation());
+		builder.buildRef(ref.getDefinitionIndex(), grammarModel, ref);
 	}
 	public void visit(SValue value){
-		builder.buildValue(value.getNamespaceURI(), value.getDatatype(), value.getCharContent(), grammarModel, value.getQName(), value.getLocation());	
+		builder.buildValue(value.getNamespaceURI(), value.getDatatype(), value.getCharContent(), grammarModel, value);	
 	}
 	public void visit(SData data){	
 		SimplifiedComponent[] exceptPattern = data.getExceptPattern();
 		if(exceptPattern != null) nextLevel(exceptPattern);
-		builder.buildData(data.getDatatype(), grammarModel, data.getQName(), data.getLocation());
+		builder.buildData(data.getDatatype(), grammarModel, data);
 	}	
 	public void visit(SGrammar grammar){
 		SimplifiedComponent child = grammar.getChild();
 		if(child != null) nextLevel(child);
-		builder.buildGrammar(grammar.getQName(), grammar.getLocation());
+		builder.buildGrammar(grammar);
 	}
 		
 	public void visit(SDummy dummy){

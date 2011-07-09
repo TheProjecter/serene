@@ -12,7 +12,7 @@ Character content at file:///D:/sereneProject/svn/workingCopies/serene/testSuite
 <rng:data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/schema.rng:26:28
 <rng:data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/schema.rng:31:28.
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/document1.xml:21:17 Warning. Element <root> corresponding to definition <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/schema.rng:23:16 generates warning: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/document1.xml:21:17 Syntax warning. Element <root> corresponding to definition <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/schema.rng:23:16 generates warning: 
 Ambiguous content.
 Chars at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/document1.xml:21:10 cannot be resolved by in context validation, possible definitions: 
 <rng:data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/ambiguous/charContent/schema.rng:26:28
