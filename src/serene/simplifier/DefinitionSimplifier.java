@@ -70,8 +70,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		this.pool = pool;
 		
 		nullCombine = new IntList();		
-		pcw = new ParsedComponentWriter();
-				
+        currentDefinitionTopPatterns = new ArrayList<SPattern>();
 	}
 	
 	public void setReplaceMissingDatatypeLibrary(boolean value){
@@ -154,6 +153,8 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
          
 		builder.startBuild();		
 		
+        currentDefinitionTopPatterns.clear();		
+        String location = "";
 		for(int i = 0; i < definitions.size(); i++){
 			Definition d = definitions.get(i);
 			String c = d.getCombine();
@@ -169,6 +170,8 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
                     }
                 }
             }			
+            if(i > 0)location += ", "+d.getLocation();
+            else location += d.getLocation();
 			d.accept(this);
 		}
 		if(nullCombine.size() > 1){
@@ -209,19 +212,18 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 			}
 			message += oDefinitions+".";
 			errorDispatcher.error(new SAXParseException(message, null));
-			//System.out.println(message);			
 		}
 		
 		// the current level is that of the definitions,
 		// they were not built, so combine can be handled directly
 		if(combine != null){
 			if(combine.equals("choice")){
-				builder.buildChoicePattern("combine choice", null);
+				builder.buildChoicePattern("combine choice", location, currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]));
 			}else if(combine.equals("interleave")){
-				builder.buildInterleave("combine interleave", null);
+				builder.buildInterleave("combine interleave", location, currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]));
 			}
 		}else{
-			SPattern[] p = builder.getContentPatterns();
+			SPattern[] p = currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]);
 			builder.clearContent();
 			builder.addAllToCurrentLevel(p);
 		}

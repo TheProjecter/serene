@@ -132,6 +132,8 @@ abstract class Simplifier implements SimplifyingVisitor{
 		
 	Grammar currentGrammar;
 	Stack<Grammar> previousGrammars;
+    
+    ArrayList<SPattern> currentDefinitionTopPatterns;
 	
 	boolean emptyChild;
 	ParsedComponent emptyComponent;
@@ -457,6 +459,13 @@ abstract class Simplifier implements SimplifyingVisitor{
 			builder.buildReplacementGroup("group added by define simplification", define.getLocation());			
 		}		
 		builder.endLevel();
+        
+        SPattern p = builder.getLastContentPattern();
+        if( p != null){
+            currentDefinitionTopPatterns.add(p);
+            builder.clearContent();
+        }
+        
         namespaceInheritanceHandler.endXmlnsContext(simplificationContext, define);
         patternChild = false;
         attributeContext = oldAttributeContext;
@@ -516,6 +525,15 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}       
         		
 		builder.endLevel();
+                
+        SPattern[] sChildren = builder.getContentPatterns();
+        if(sChildren != null){
+            for(SPattern sChild : sChildren){
+                currentDefinitionTopPatterns.add(sChild);
+            }
+            builder.clearContent();
+        }
+        
         namespaceInheritanceHandler.endXmlnsContext(simplificationContext, start);
         patternChild = false;        
         attributeContext = oldAttributeContext;
