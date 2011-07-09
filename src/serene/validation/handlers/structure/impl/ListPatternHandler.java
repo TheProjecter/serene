@@ -430,7 +430,12 @@ public class ListPatternHandler extends StructureValidationHandler{
 			return true;
 		}
 		public void childOpen(){
-			throw new IllegalStateException();
+			//throw new IllegalStateException();
+			// It is possible to have this in cases when the child of list pattern
+			// is handled by a UniqueChildPatternHandler (choice, ref , etc)
+			// and after that was reduced excessive content is started. It would
+			// be the initial childOpen event fired from the NoContent state of 
+			// the new childStructureHandler.
 		}
 		public void requiredChildSatisfied(){
 			throw new IllegalStateException();
