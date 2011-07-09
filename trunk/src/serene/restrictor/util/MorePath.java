@@ -96,6 +96,14 @@ public class MorePath{
 		}		
 		return path.remove(path.size()-1);
 	}
+    
+    public SPattern peekItem(){
+		ArrayList<SPattern> path = pathes.get(size-1);
+		if(path == null){
+			throw new IllegalStateException();
+		}		
+		return path.get(path.size()-1);
+	}
 		
 	public ArrayList<SPattern> pop(){		
 		return pathes.get(--size);

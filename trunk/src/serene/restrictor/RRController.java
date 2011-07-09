@@ -28,35 +28,14 @@ import serene.util.IntList;
 import serene.util.IntStack;
 import serene.util.BooleanStack;
 
-import serene.validation.schema.simplified.components.SNameClass;
 import serene.validation.schema.simplified.components.SPattern;
-import serene.validation.schema.simplified.components.SExceptPattern;
-import serene.validation.schema.simplified.components.SExceptNameClass;
-
+import serene.validation.schema.simplified.components.SNameClass;
 
 import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SChoicePattern;
-import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SGroup;
 import serene.validation.schema.simplified.components.SZeroOrMore;
-import serene.validation.schema.simplified.components.SOneOrMore;
 import serene.validation.schema.simplified.components.SOptional;
-import serene.validation.schema.simplified.components.SListPattern;
-import serene.validation.schema.simplified.components.SEmpty;
-import serene.validation.schema.simplified.components.SText;
-import serene.validation.schema.simplified.components.SNotAllowed;
 import serene.validation.schema.simplified.components.SRef;
-import serene.validation.schema.simplified.components.SData;
-import serene.validation.schema.simplified.components.SValue;
-import serene.validation.schema.simplified.components.SGrammar;
-import serene.validation.schema.simplified.components.SMixed;
-
-
-import serene.validation.schema.simplified.components.SName;
-import serene.validation.schema.simplified.components.SAnyName;
-import serene.validation.schema.simplified.components.SNsName;
-import serene.validation.schema.simplified.components.SChoiceNameClass;
 
 import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.RecursionModel;
@@ -199,7 +178,7 @@ public class RRController extends RController{
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -229,8 +208,11 @@ public class RRController extends RController{
 		boolean oldListContext = listContext;
 		listContext = false;
 		
-		boolean oldExceptPatternContext = exceptPatternContext;
-		exceptPatternContext = false;
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		exceptPatternContext714 = false;
+        
+        boolean oldExceptPatternContext72 = exceptPatternContext72;
+		exceptPatternContext72 = false;
 		
 		boolean oldStartContext = startContext;
 		startContext = false;
@@ -249,7 +231,14 @@ public class RRController extends RController{
 		
 		elementNamingController = pool.getElementNamingController();
 		attributeNamingController = pool.getAttributeNamingController();
-				
+		
+        elementLimitationNamingController.add(element, nameClass);
+		ElementLimitationNamingController oldELNC = elementLimitationNamingController;
+		AttributeLimitationNamingController oldALNC = attributeLimitationNamingController;
+		
+		elementLimitationNamingController = pool.getElementLimitationNamingController();
+		attributeLimitationNamingController = pool.getAttributeLimitationNamingController();
+		
 		if(recursiveDefinitionContext.peek())
 		for(int i = 0; i < definitionCount; i++){
 			if(loopElement.get(i) != null)loopElement.get(i).push(true);
@@ -271,13 +260,22 @@ public class RRController extends RController{
 		elementNamingController.recycle();
 		elementNamingController = oldENC;
 		
+        attributeLimitationNamingController.control();
+		attributeLimitationNamingController.recycle();
+		attributeLimitationNamingController = oldALNC;
+		
+		elementLimitationNamingController.control();
+		elementLimitationNamingController.recycle();
+		elementLimitationNamingController = oldELNC;
+        
 		attributeContext = oldAttributeContext;		
 		moreContext = oldMoreContext;
 		moreInterleaveContext = oldMoreInterleaveContext;
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;				
 		moreMultiChildrenContext = oldMoreMultiChildrenContext;		
 		listContext = oldListContext;
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
+        exceptPatternContext72 = oldExceptPatternContext72;
 		startContext = oldStartContext;		
 		moreAttributeContext = oldMoreAttributeContext;
 		
@@ -290,6 +288,9 @@ public class RRController extends RController{
 		elementNamingController.start(choice);
 		attributeNamingController.start(choice);
 		
+        elementLimitationNamingController.start(choice);
+		attributeLimitationNamingController.start(choice);
+        
 		boolean oldChoiceContext = choiceContext;
 		choiceContext = true;
 		
@@ -320,6 +321,9 @@ public class RRController extends RController{
 		elementNamingController.end(choice);
 		attributeNamingController.end(choice);
 		
+        elementLimitationNamingController.end(choice);
+		attributeLimitationNamingController.end(choice);
+        
 		if(choiceContainsText)texts.add(choice);
 		
 		choiceContext = oldChoiceContext;
@@ -327,7 +331,7 @@ public class RRController extends RController{
 	}
 	
 	public void visit(SZeroOrMore zeroOrMore)throws SAXException{
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -355,12 +359,15 @@ public class RRController extends RController{
 		
 		if(moreInterleaveContext) moreInterleaveMoreContext = true;		
 		
-		boolean oldExceptPatternContext = exceptPatternContext;
-		exceptPatternContext = false;
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		exceptPatternContext714 = false;
 		
 		boolean oldStartContext = startContext;
 		startContext = false;
 		
+        elementLimitationNamingController.start(zeroOrMore);
+		attributeLimitationNamingController.start(zeroOrMore);
+        
 		if(recursiveDefinitionContext.peek())
 		for(int i = 0; i < definitionCount; i++){
 			if(loopOptional.get(i) != null)loopOptional.get(i).push(true);
@@ -374,17 +381,20 @@ public class RRController extends RController{
 			if(loopOptional.get(i) != null)loopOptional.get(i).pop();
 		}
 		
+        elementLimitationNamingController.end(zeroOrMore);
+		attributeLimitationNamingController.end(zeroOrMore);
+        
 		moreContext = oldMoreContext;
 		morePath.pop();
 		moreInterleaveContext = oldMoreInterleaveContext;
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
 		
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
 	}
 	
 	public void visit(SOptional optional) throws SAXException{
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -403,8 +413,8 @@ public class RRController extends RController{
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
-		boolean oldExceptPatternContext = exceptPatternContext;
-		exceptPatternContext = false;
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		exceptPatternContext714 = false;
 		
 		boolean oldStartContext = startContext;
 		startContext = false;
@@ -422,17 +432,17 @@ public class RRController extends RController{
 			if(loopOptional.get(i) != null)loopOptional.get(i).pop();
 		}
 		
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
 	}
 	
 	public void visit(SRef ref)throws SAXException{		
 		int index = ref.getDefinitionIndex();
-        if(index < 0)return;
+        if(index < 0) return;
 		if(handledDefinitions.contains(index)){
             contentType = definitionsContentTypes.get(definitionTopPatterns[index]);
             return;
-        }                
+        }
 		if(recursionModel.isRecursiveDefinition(index)){			
 			if(recursionModel.isRecursiveReference(ref)){
 				if(isBlindBranch(index)){					
@@ -491,7 +501,6 @@ public class RRController extends RController{
 			definitionTopPatterns[index].accept(this);
 			handledDefinitions.add(index);
             definitionsContentTypes.put(definitionTopPatterns[index], contentType);
-			return;
 		}		
 	}
 	private boolean isBlindBranch(int index){
