@@ -108,22 +108,14 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 	
 	public ActiveGrammarModel createActiveGrammarModel(SimplifiedModel simplifiedModel,													
 													ActiveModelRuleHandlerPool ruleHandlerPool,
-													ActiveModelStackHandlerPool stackHandlerPool){		
-		SPattern start = simplifiedModel.getStartTopPattern()[0];
-		SPattern[] refDefTops = simplifiedModel.getRefDefinitionTopPattern();
-				
-		model = new ActiveGrammarModel(debugWriter);
-		
+													ActiveModelStackHandlerPool stackHandlerPool){
 		init(stackHandlerPool, ruleHandlerPool);
-		
-		createStart(start, stackHandlerPool, ruleHandlerPool);
+		model = new ActiveGrammarModel(debugWriter);
+        
+		createStart(simplifiedModel, stackHandlerPool, ruleHandlerPool);
+        
+        SPattern[] refDefTops = simplifiedModel.getRefDefinitionTopPattern();
 		createRecord(refDefTops);
-		
-		start.accept(this);
-		for(SPattern refDefTop : refDefTops){
-			if(refDefTop != null)//check for empty or notAllowed, the place was created anyway  
-                refDefTop.accept(this);
-		}
 				
 		model.init(startElement, 
 					refDefinitions,
@@ -164,7 +156,9 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 		exceptPatternDefinitions = new ActiveDefinitionPool[exceptPatternSize];
 	}
 	
-	private void createStart(SPattern originalTopPattern, ActiveModelStackHandlerPool stackHandlerPool, ActiveModelRuleHandlerPool ruleHandlerPool){
+	private void createStart(SimplifiedModel simplifiedModel, ActiveModelStackHandlerPool stackHandlerPool, ActiveModelRuleHandlerPool ruleHandlerPool){
+        SPattern originalTopPattern = simplifiedModel.getStartTopPattern()[0];
+        
 		if(elementIndex == elementSize) increaseElementSize();	
         selementIndexMap.put(null, elementIndex);
 		elementNameClasses[elementIndex] = null;		
@@ -173,9 +167,10 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 																	definitionDirector,
 																	componentBuilder,
 																	debugWriter);
-        startElement = new AElement(elementIndex, model, stackHandlerPool, ruleHandlerPool, "start", null, debugWriter);
+        startElement = new AElement(elementIndex, model, stackHandlerPool, ruleHandlerPool, simplifiedModel.getStartQName(), simplifiedModel.getStartLocation(), debugWriter);
         elementIndex++;
         
+        originalTopPattern.accept(this);
 	}
 	
 	private void createRecord(SPattern[] originalTopPatterns){
@@ -187,13 +182,18 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 																	componentBuilder,
 																	debugWriter);
 		}
+        
+        for(SPattern originalTopPattern : originalTopPatterns){
+			if(originalTopPattern != null)//check for empty or notAllowed, the place was created anyway  
+                originalTopPattern.accept(this);
+		}
 	}
 	
 	private void createRecord(SElement originalElement){        
 		if(elementIndex == elementSize) increaseElementSize();
 		selementIndexMap.put(originalElement, elementIndex);
 		elementNameClasses[elementIndex] = nameClassDirector.createActiveNameClass(componentBuilder,
-																	originalElement.getNameClass()); 
+																	originalElement.getNameClass());       
 		elementDefinitions[elementIndex++] = new ActiveDefinitionPool(originalElement.getChild(),
 																	model,
 																	definitionDirector,
@@ -205,7 +205,8 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 		if(attributeIndex == attributeSize) increaseAttributeSize();		
 		sattributeIndexMap.put(originalAttribute, attributeIndex);
 		attributeNameClasses[attributeIndex] = nameClassDirector.createActiveNameClass(componentBuilder,
-																	originalAttribute.getNameClass());       
+																	originalAttribute.getNameClass());
+       
 		attributeDefinitions[attributeIndex++] = new ActiveDefinitionPool(originalAttribute.getChildren()[0],
 																	model,
 																	definitionDirector,
@@ -296,6 +297,5 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 	}
 	
 	public void visit(SDummy dummy){
-		
 	}
 }

@@ -57,7 +57,8 @@ public class ElementHandler extends StructureValidationHandler{
 	void init(AElement element, ErrorCatcher errorCatcher, StackHandler stackHandler){
 		this.rule = element;
 		this.stackHandler = stackHandler;
-		this.errorCatcher = errorCatcher;
+		this.errorCatcher = errorCatcher;	
+        setStart();
 	}
 		
 	public void recycle(){
@@ -159,12 +160,17 @@ public class ElementHandler extends StructureValidationHandler{
 	
 	
 	// TODO 
-	// Review this, the functionality should be moved in a method that does not
-	// have "reduce" in the name since this handler does not really get reduced.
+	// Review this, the functionality should be moved in a method that doesn't
+	// have "reduce" in the name since this handler doesn't really get reduced.
 	public void handleValidatingReduce(){		
-		if(starttSystemId == null)setStart();
+		// if(starttSystemId == null)setStart();
 		// it means either there was no content of any kind to trigger the setStart()
 		// or for some reason there is no location data, in any case it can't be wrong
+        // LATER: 
+        // It can also mean that there was some unexpected content that was 
+        // handled at the level of the ValidationEventHandler. 
+        // This means that it would be handy for ElementHandler to have some way 
+        // of setting the start when they are created.
 		 
 		// - reduce first any childStructureHandler present 
 		//		-> updates the childParticleHandler		 
@@ -180,7 +186,8 @@ public class ElementHandler extends StructureValidationHandler{
 				childParticleHandler.reportMissing(rule, starttSystemId, starttLineNumber, starttColumnNumber);
 			}
 		}else{
-			if(rule.isChildRequired()){				
+			if(rule.isChildRequired()){
+				//System.out.println("element handler "+rule);				
 				APattern child = rule.getChild();				
 				int minOccurs = child.getMinOccurs();
 				errorCatcher.missingContent(rule, starttSystemId, starttLineNumber, starttColumnNumber, child, minOccurs, 0, null, null, null, null);
@@ -202,7 +209,7 @@ public class ElementHandler extends StructureValidationHandler{
 		// First thought: here is not really the case, there can be only one child.
 		
 		// if there is no corresponding ParticleHandler, get one
-		// if the ParticleHandler does not expect the last occurrence
+		// if the ParticleHandler doesn't expect the last occurrence
 		//				return true
 		// else return false // this cannot be reduced until the content is finished
 		
@@ -293,7 +300,7 @@ public class ElementHandler extends StructureValidationHandler{
 	void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler){
 		setChildParticleHandler(childPattern);
 		childParticleHandler.handleOccurrence(stackConflictsHandler);
-	}
+	}    
 	// void setStart() super	
 	//End ValidationHandler-----------------------------------------------------------
 

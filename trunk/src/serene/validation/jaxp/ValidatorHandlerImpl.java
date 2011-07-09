@@ -232,6 +232,9 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
             if(attributeIdTypeHandler == null)attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
             else attributeIdTypeHandler.init();
         }
+        // TODO see about this, according to SAX spec the functioning of the Locator 
+        // is not guaranteed here. It seems to work though.
+        validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), "", "document root", "document root");
 		elementHandler = eventHandlerPool.getStartValidationHandler(activeModel.getStartElement());
                         
         defaultNamespace = null;
