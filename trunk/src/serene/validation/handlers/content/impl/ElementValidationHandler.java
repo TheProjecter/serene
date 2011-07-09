@@ -554,7 +554,16 @@ class ElementValidationHandler extends ValidatingEEH
 		if(contextErrorHandler == null)setContextErrorHandler();
 		contextErrorHandler.ambiguousListToken(token, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
-	
+    public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+		if(contextErrorHandler == null)setContextErrorHandler();
+		contextErrorHandler.ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+    }
+    
+	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+		if(contextErrorHandler == null)setContextErrorHandler();
+		contextErrorHandler.ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+    }
+		
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		if(contextErrorHandler == null)setContextErrorHandler();
 		contextErrorHandler.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);

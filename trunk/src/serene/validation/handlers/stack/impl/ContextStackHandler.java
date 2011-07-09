@@ -117,7 +117,9 @@ public class ContextStackHandler  implements  StackHandler{
 	public void shiftAllCharsDefinitions(List<CharsActiveTypeItem> charsDefinitions){
 		throw new IllegalStateException();
 	}
-	
+	public void shiftAllTokenDefinitions(List<CharsActiveTypeItem> charsDefinitions, char[] token){
+		throw new IllegalStateException();
+	}
 	
 	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler){
 		throw new IllegalStateException();

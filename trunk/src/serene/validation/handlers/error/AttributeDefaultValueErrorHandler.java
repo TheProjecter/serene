@@ -268,6 +268,27 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
         message += ".";
         messages.add(message);
 	}
+    
+    public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+location
+                        +" does not match attribute pattern."
+                        +" Token \""+token+"\" could not be resolved by in context validation. Possible definitions: ";
+        for(CharsActiveTypeItem definition : possibleDefinitions){
+            message += "\n<"+definition.getQName()+"> at "+definition.getLocation();
+        }
+        message += ".";
+        messages.add(message);
+    }    
+	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+		// String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+location
+                        // +" does not match attribute pattern."
+                        // +" Token \""+token+"\" could not be resolved by in context validation. Possible definitions: ";
+        // for(CharsActiveTypeItem definition : possibleDefinitions){
+            // message += "\n<"+definition.getQName()+"> at "+definition.getLocation();
+        // }
+        // message += ".";
+        // warningMessages.add(message);
+    }
 	
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+location

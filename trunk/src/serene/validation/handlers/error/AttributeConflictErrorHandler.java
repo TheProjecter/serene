@@ -198,6 +198,11 @@ public class AttributeConflictErrorHandler implements Reusable, ErrorCatcher{
 	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 	}
+    public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+		conflictHandler.disqualify(candidateIndex);
+    }    
+	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+    }
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		conflictHandler.disqualify(candidateIndex);
 	}	

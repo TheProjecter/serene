@@ -54,6 +54,7 @@ public interface StackHandler extends FunctionallyEquivalable{
 	
 	void shift(CharsActiveTypeItem chars);	
 	void shiftAllCharsDefinitions(List<CharsActiveTypeItem> charsDefinitions);
+    void shiftAllTokenDefinitions(List<CharsActiveTypeItem> charsDefinitions, char[] token);
 	
 	void reduce(StructureHandler handler);
 	
@@ -64,7 +65,7 @@ public interface StackHandler extends FunctionallyEquivalable{
 	void reset(StructureHandler handler);
 	
 	/**
-	* Used for certain compositors that use block handling for their children
+	* It is used for certain compositors that use block handling for their children
 	* and all the occurrences are reduced at the end. It shifts every occurrence
 	* one by one, setting every time the StructureHandler corresponding to the
 	* pattern.
@@ -72,7 +73,7 @@ public interface StackHandler extends FunctionallyEquivalable{
 	void blockReduce(StructureHandler handler, int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber);
 	
 	/**
-	* Used for certain compositors that use limit handling for their children
+	* It is used for certain compositors that use limit handling for their children
 	* and all the occurrences are reduced at the end. It shifts every occurrence
 	* one by one, setting every time the StructureHandler corresponding to the
 	* pattern. It is not fully implemented and it stops shifting after MIN. This 

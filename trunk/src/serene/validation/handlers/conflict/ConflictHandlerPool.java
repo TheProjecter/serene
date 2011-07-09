@@ -29,6 +29,12 @@ public class ConflictHandlerPool{
 	int internalConflictResolverPoolSize;
 	int internalConflictResolverFree;
 	InternalConflictResolver[] internalConflictResolver;
+    
+    
+    int listTokenConflictResolverAverageUse;
+	int listTokenConflictResolverPoolSize;
+	int listTokenConflictResolverFree;
+	ListTokenConflictResolver[] listTokenConflictResolver;
 	
 	int boundInternalConflictResolverAverageUse;
 	int boundInternalConflictResolverPoolSize;
@@ -39,12 +45,7 @@ public class ConflictHandlerPool{
 	int contextConflictResolverPoolSize;
 	int contextConflictResolverFree;
 	ContextConflictResolver[] contextConflictResolver;
-	
-	/*int internalConflictsDescriptorAverageUse;
-	int internalConflictsDescriptorPoolSize;
-	int internalConflictsDescriptorFree;
-	InternalConflictsDescriptor[] internalConflictsDescriptor;*/
-	
+		
 	final int UNUSED = 0;
 	
 	MessageWriter debugWriter;
@@ -60,6 +61,11 @@ public class ConflictHandlerPool{
 		internalConflictResolverPoolSize = 10;
 		internalConflictResolverFree = 0;
 		internalConflictResolver = new InternalConflictResolver[internalConflictResolverPoolSize];
+        
+        listTokenConflictResolverAverageUse = UNUSED;
+		listTokenConflictResolverPoolSize = 10;
+		listTokenConflictResolverFree = 0;
+		listTokenConflictResolver = new ListTokenConflictResolver[listTokenConflictResolverPoolSize];
 		
 		boundInternalConflictResolverAverageUse = UNUSED;
 		boundInternalConflictResolverPoolSize = 10;
@@ -71,10 +77,6 @@ public class ConflictHandlerPool{
 		contextConflictResolverFree = 0;
 		contextConflictResolver = new ContextConflictResolver[contextConflictResolverPoolSize];
 		
-		/*internalConflictsDescriptorAverageUse = UNUSED;
-		internalConflictsDescriptorPoolSize = 10;
-		internalConflictsDescriptorFree = 0;
-		internalConflictsDescriptor = new InternalConflictsDescriptor[internalConflictsDescriptorPoolSize];*/
 	}
 	
 	public static ConflictHandlerPool getInstance(MessageWriter debugWriter){
@@ -90,6 +92,7 @@ public class ConflictHandlerPool{
 	
 	synchronized void fill(ActiveModelConflictHandlerPool pool,
 					InternalConflictResolver[] internalConflictResolver,
+                    ListTokenConflictResolver[] listTokenConflictResolver,
 					BoundInternalConflictResolver[] boundInternalConflictResolver,
 					ContextConflictResolver[] contextConflictResolver){
 		int internalConflictResolverFillCount;
@@ -104,6 +107,20 @@ public class ConflictHandlerPool{
 		}		
 		System.arraycopy(this.internalConflictResolver, internalConflictResolverFree, 
 							internalConflictResolver, 0, internalConflictResolverFillCount);
+        
+        
+        int listTokenConflictResolverFillCount;
+		if(listTokenConflictResolver == null || listTokenConflictResolver.length < listTokenConflictResolverAverageUse)
+			listTokenConflictResolver = new ListTokenConflictResolver[listTokenConflictResolverAverageUse];
+		if(listTokenConflictResolverFree > listTokenConflictResolverAverageUse){
+			listTokenConflictResolverFillCount = listTokenConflictResolverAverageUse;
+			listTokenConflictResolverFree = listTokenConflictResolverFree - listTokenConflictResolverAverageUse;
+		}else{
+			listTokenConflictResolverFillCount = listTokenConflictResolverFree;
+			listTokenConflictResolverFree = 0;
+		}		
+		System.arraycopy(this.listTokenConflictResolver, listTokenConflictResolverFree, 
+							listTokenConflictResolver, 0, listTokenConflictResolverFillCount);
 		
 		int boundInternalConflictResolverFillCount;
 		if(boundInternalConflictResolver == null || boundInternalConflictResolver.length < boundInternalConflictResolverAverageUse)
@@ -131,33 +148,21 @@ public class ConflictHandlerPool{
 		System.arraycopy(this.contextConflictResolver, contextConflictResolverFree, 
 							contextConflictResolver, 0, contextConflictResolverFillCount);
 		
-		
-		/*int internalConflictsDescriptorFillCount;
-		if(internalConflictsDescriptor == null || internalConflictsDescriptor.length < internalConflictsDescriptorAverageUse)
-			internalConflictsDescriptor = new InternalConflictsDescriptor[internalConflictsDescriptorAverageUse];
-		if(internalConflictsDescriptorFree > internalConflictsDescriptorAverageUse){
-			internalConflictsDescriptorFillCount = internalConflictsDescriptorAverageUse;
-			internalConflictsDescriptorFree = internalConflictsDescriptorFree - internalConflictsDescriptorAverageUse;
-		}else{
-			internalConflictsDescriptorFillCount = internalConflictsDescriptorFree;
-			internalConflictsDescriptorFree = 0;
-		}		
-		System.arraycopy(this.internalConflictsDescriptor, internalConflictsDescriptorFree, 
-							internalConflictsDescriptor, 0, internalConflictsDescriptorFillCount);
-		*/
-		
+				
 		pool.setHandlers(internalConflictResolverFillCount,
 							internalConflictResolver,
+                            listTokenConflictResolverFillCount,
+							listTokenConflictResolver,
 							boundInternalConflictResolverFillCount,
 							boundInternalConflictResolver,
 							contextConflictResolverFillCount,
-							contextConflictResolver/*,
-							internalConflictsDescriptorFillCount,
-							internalConflictsDescriptor*/);
+							contextConflictResolver);
 	}
 	
 	synchronized void recycle(int internalConflictResolverAverageUse,
 						InternalConflictResolver[] internalConflictResolver,
+                        int listTokenConflictResolverAverageUse,
+						ListTokenConflictResolver[] listTokenConflictResolver,
 						int boundInternalConflictResolverAverageUse,
 						BoundInternalConflictResolver[] boundInternalConflictResolver,
 						int contextConflictResolverAverageUse,
@@ -173,6 +178,19 @@ public class ConflictHandlerPool{
 		if(this.internalConflictResolverAverageUse != 0) this.internalConflictResolverAverageUse = (this.internalConflictResolverAverageUse + internalConflictResolverAverageUse)/2;
 		else this.internalConflictResolverAverageUse = internalConflictResolverAverageUse;
 		//System.out.println("internalConflictResolver "+this.internalConflictResolverAverageUse);
+        
+        
+        if(listTokenConflictResolverFree + listTokenConflictResolverAverageUse >= listTokenConflictResolverPoolSize){			 
+			listTokenConflictResolverPoolSize+= listTokenConflictResolverAverageUse;
+			ListTokenConflictResolver[] increased = new ListTokenConflictResolver[listTokenConflictResolverPoolSize];
+			System.arraycopy(this.listTokenConflictResolver, 0, increased, 0, listTokenConflictResolverFree);
+			this.listTokenConflictResolver = increased;
+		}
+		System.arraycopy(listTokenConflictResolver, 0, this.listTokenConflictResolver, listTokenConflictResolverFree, listTokenConflictResolverAverageUse);
+		listTokenConflictResolverFree += listTokenConflictResolverAverageUse;
+		if(this.listTokenConflictResolverAverageUse != 0) this.listTokenConflictResolverAverageUse = (this.listTokenConflictResolverAverageUse + listTokenConflictResolverAverageUse)/2;
+		else this.listTokenConflictResolverAverageUse = listTokenConflictResolverAverageUse;
+		//System.out.println("listTokenConflictResolver "+this.listTokenConflictResolverAverageUse);
 		
 		
 		if(boundInternalConflictResolverFree + boundInternalConflictResolverAverageUse >= boundInternalConflictResolverPoolSize){			 
@@ -198,20 +216,8 @@ public class ConflictHandlerPool{
 		contextConflictResolverFree += contextConflictResolverAverageUse;
 		if(this.contextConflictResolverAverageUse != 0) this.contextConflictResolverAverageUse = (this.contextConflictResolverAverageUse + contextConflictResolverAverageUse)/2;
 		else this.contextConflictResolverAverageUse = contextConflictResolverAverageUse;
-		//System.out.println("contextConflictResolver "+this.contextConflictResolverAverageUse);
+		//System.out.println("contextConflictResolver "+this.contextConflictResolverAverageUse);		
 		
-		/*
-		if(internalConflictsDescriptorFree + internalConflictsDescriptorAverageUse >= internalConflictsDescriptorPoolSize){			 
-			internalConflictsDescriptorPoolSize+= internalConflictsDescriptorAverageUse;
-			InternalConflictsDescriptor[] increased = new InternalConflictsDescriptor[internalConflictsDescriptorPoolSize];
-			System.arraycopy(this.internalConflictsDescriptor, 0, increased, 0, internalConflictsDescriptorFree);
-			this.internalConflictsDescriptor = increased;
-		}
-		System.arraycopy(internalConflictsDescriptor, 0, this.internalConflictsDescriptor, internalConflictsDescriptorFree, internalConflictsDescriptorAverageUse);
-		internalConflictsDescriptorFree += internalConflictsDescriptorAverageUse;
-		if(this.internalConflictsDescriptorAverageUse != 0) this.internalConflictsDescriptorAverageUse = (this.internalConflictsDescriptorAverageUse + internalConflictsDescriptorAverageUse)/2;
-		else this.internalConflictsDescriptorAverageUse = internalConflictsDescriptorAverageUse;
-		//System.out.println("internalConflictsDescriptor "+this.internalConflictsDescriptorAverageUse);*/
 	}
 	
 	public synchronized ActiveModelConflictHandlerPool getActiveModelConflictHandlerPool(){

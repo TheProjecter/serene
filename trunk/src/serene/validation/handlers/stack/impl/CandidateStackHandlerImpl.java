@@ -783,6 +783,12 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
+    public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        throw new IllegalStateException();
+    }    
+	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        throw new IllegalStateException();
+    }
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		if(contextConflictsDescriptor.isConflictRule(definition)){
 			stackConflictsHandler.disqualify(context);//disqualify all since you don't know which is the real cause

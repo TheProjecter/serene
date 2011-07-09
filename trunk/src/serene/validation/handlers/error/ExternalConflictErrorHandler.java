@@ -224,6 +224,14 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.ambiguousListToken(token, systemId, lineNumber, columnNumber, possibleDefinitions);
 		conflictHandler.disqualify(candidateIndex);
 	}
+    public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        messageHandler.ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		conflictHandler.disqualify(candidateIndex);
+    }    
+	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        messageHandler.ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		//conflictHandler.disqualify(candidateIndex);
+    }
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		messageHandler.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
 		conflictHandler.disqualify(candidateIndex);
