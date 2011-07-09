@@ -1168,11 +1168,12 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(notAllowed){				
             builder.endLevel();
             builder.clearContent();
-            notAllowedChild = true;
-            emptyChild = false;
+            notAllowedChild = oldNotAllowedChild;
+            emptyChild = true;
+			emptyComponent = zeroOrMore;
+            if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
-            if(prefixMapping != null) endXmlnsContext(prefixMapping);
             return;
         }
         notAllowedChild = oldNotAllowedChild;
@@ -1303,11 +1304,12 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(notAllowed){				
             builder.endLevel();
             builder.clearContent();
-            notAllowedChild = true;
-            emptyChild = false;
+            notAllowedChild = oldNotAllowedChild;
+            emptyChild = true;
+			emptyComponent = optional;
+            if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
-            if(prefixMapping != null) endXmlnsContext(prefixMapping);
             return;
         }
         notAllowedChild = oldNotAllowedChild;
