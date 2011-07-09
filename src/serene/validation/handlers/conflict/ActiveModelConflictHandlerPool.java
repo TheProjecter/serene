@@ -44,6 +44,11 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	int internalConflictResolverPoolSize;
 	int internalConflictResolverFree = 0;
 	InternalConflictResolver[] internalConflictResolver;
+    
+    int listTokenConflictResolverCreated = 0;
+	int listTokenConflictResolverPoolSize;
+	int listTokenConflictResolverFree = 0;
+	ListTokenConflictResolver[] listTokenConflictResolver;
 	
 	int boundInternalConflictResolverCreated = 0;
 	int boundInternalConflictResolverPoolSize;
@@ -75,9 +80,9 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	}	
 	public void fill(ValidationItemLocator validationItemLocator){
 		this.validationItemLocator = validationItemLocator;
-		
 		pool.fill(this,
 				internalConflictResolver,
+				listTokenConflictResolver,
 				boundInternalConflictResolver,
 				contextConflictResolver/*,
 				internalConflictsDescriptor*/);
@@ -85,6 +90,8 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	
 	void setHandlers(int internalConflictResolverFree,
 				InternalConflictResolver[] internalConflictResolver,
+                int listTokenConflictResolverFree,
+				ListTokenConflictResolver[] listTokenConflictResolver,
 				int boundInternalConflictResolverFree,
 				BoundInternalConflictResolver[] boundInternalConflictResolver,
 				int contextConflictResolverFree,
@@ -96,6 +103,13 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		this.internalConflictResolver = internalConflictResolver;
 		for(int i = 0; i < internalConflictResolverFree; i++){	
 			internalConflictResolver[i].init(this, validationItemLocator);
+		}
+        
+        listTokenConflictResolverPoolSize = listTokenConflictResolver.length;
+		this.listTokenConflictResolverFree = listTokenConflictResolverFree;
+		this.listTokenConflictResolver = listTokenConflictResolver;
+		for(int i = 0; i < listTokenConflictResolverFree; i++){	
+			listTokenConflictResolver[i].init(this, validationItemLocator);
 		}
 		
 		boundInternalConflictResolverPoolSize = boundInternalConflictResolver.length;
@@ -130,6 +144,8 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		
 		pool.recycle(internalConflictResolverFree,
 				internalConflictResolver,
+                listTokenConflictResolverFree,
+				listTokenConflictResolver,
 				boundInternalConflictResolverFree,
 				boundInternalConflictResolver,
 				contextConflictResolverFree,
@@ -138,6 +154,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 				internalConflictsDescriptor*/);
 		
 		internalConflictResolverFree = 0;
+        listTokenConflictResolverFree = 0;
 		boundInternalConflictResolverFree = 0;
 		contextConflictResolverFree = 0;/*
 		internalConflictsDescriptorFree = 0;*/
@@ -165,6 +182,29 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		}
 		internalConflictResolver[internalConflictResolverFree++] = icr;
 	}
+        
+    public ListTokenConflictResolver getListTokenConflictResolver(char[] token){				
+		if(listTokenConflictResolverFree == 0){
+			// listTokenConflictResolverCreated++;
+			ListTokenConflictResolver icr = new ListTokenConflictResolver(debugWriter);
+			icr.init(this, validationItemLocator);
+			icr.init(token);			
+			return icr;			
+		}else{
+			ListTokenConflictResolver icr = listTokenConflictResolver[--listTokenConflictResolverFree];
+			icr.init(token);
+			return icr;
+		}		
+	}
+		
+	public void recycle(ListTokenConflictResolver icr){	
+		if(listTokenConflictResolverFree == listTokenConflictResolverPoolSize){
+			ListTokenConflictResolver[] increased = new ListTokenConflictResolver[++listTokenConflictResolverPoolSize];
+			System.arraycopy(listTokenConflictResolver, 0, increased, 0, listTokenConflictResolverFree);
+			listTokenConflictResolver = increased;
+		}
+		listTokenConflictResolver[listTokenConflictResolverFree++] = icr;
+	}
 	
 	public BoundInternalConflictResolver getBoundInternalConflictResolver(Queue targetQueue,
 																		int targetEntry,
@@ -186,7 +226,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		}		
 	}
 	
-	public BoundInternalConflictResolver getBoundInternalConflictResolver(String namespaceURI, 
+	public BoundInternalConflictResolver getBoundInternalConflictResolver(String namespaceURI,
                                                                     String localName,
                                                                     String qName,
                                                                     String value, 
@@ -197,7 +237,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			// boundInternalConflictResolverCreated++;
 			BoundInternalConflictResolver icr = new BoundInternalConflictResolver(debugWriter);
 			icr.init(this, validationItemLocator);
-			icr.init(namespaceURI, 
+			icr.init(namespaceURI,
                     localName,
                     qName,
                     value, 
@@ -207,7 +247,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			return icr;			
 		}else{
 			BoundInternalConflictResolver icr = boundInternalConflictResolver[--boundInternalConflictResolverFree];
-			icr.init(namespaceURI, 
+			icr.init(namespaceURI,
                     localName,
                     qName,
                     value, 
@@ -247,39 +287,4 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		}
 		contextConflictResolver[contextConflictResolverFree++] = icr;
 	}
-	/*
-	public InternalConflictsDescriptor getInternalConflictsDescriptor(){				
-		if(internalConflictsDescriptorFree == 0){
-			// internalConflictsDescriptorCreated++;
-			InternalConflictsDescriptor cpc = new InternalConflictsDescriptor(debugWriter);
-			cpc.init(this);
-			return cpc;			
-		}else{
-			InternalConflictsDescriptor cpc = internalConflictsDescriptor[--internalConflictsDescriptorFree];			
-			return cpc;
-		}		
-	}
-	
-	public InternalConflictsDescriptor getInternalConflictsDescriptor(Set<ActiveTypeItem> conflictPatterns, Set<Rule> conflictPathRules){				
-		if(internalConflictsDescriptorFree == 0){
-			// internalConflictsDescriptorCreated++;
-			InternalConflictsDescriptor cpc = new InternalConflictsDescriptor(debugWriter);
-			cpc.init(this);
-			cpc.init(conflictPatterns, conflictPathRules);
-			return cpc;			
-		}else{
-			InternalConflictsDescriptor cpc = internalConflictsDescriptor[--internalConflictsDescriptorFree];
-			cpc.init(conflictPatterns, conflictPathRules);			
-			return cpc;
-		}		
-	}
-	
-	public void recycle(InternalConflictsDescriptor icr){		
-		if(internalConflictsDescriptorFree == internalConflictsDescriptorPoolSize){
-			InternalConflictsDescriptor[] increased = new InternalConflictsDescriptor[++internalConflictsDescriptorPoolSize];
-			System.arraycopy(internalConflictsDescriptor, 0, increased, 0, internalConflictsDescriptorFree);
-			internalConflictsDescriptor = increased;
-		}
-		internalConflictsDescriptor[internalConflictsDescriptorFree++] = icr;
-	}*/
 }

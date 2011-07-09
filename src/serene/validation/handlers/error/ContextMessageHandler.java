@@ -331,6 +331,25 @@ public class ContextMessageHandler implements ErrorCatcher{
 	CharsActiveTypeItem ambiguousPossibleDefinitionsLP[][];
 	int ambiguousIndexLP;
 	int ambiguousSizeLP;
+    
+    // {28_1}
+	String ambiguousTokenLPICE[];//LPICE list pattern in context validation error
+	String ambiguousCharsSystemIdEELPICE[];
+	int ambiguousCharsLineNumberEELPICE[];
+	int ambiguousCharsColumnNumberEELPICE[];
+	CharsActiveTypeItem ambiguousPossibleDefinitionsLPICE[][];
+	int ambiguousIndexLPICE;
+	int ambiguousSizeLPICE;
+    
+    
+    // {28_2}
+	String ambiguousTokenLPICW[];//LPICW list pattern in context validation warning
+	String ambiguousCharsSystemIdEELPICW[];
+	int ambiguousCharsLineNumberEELPICW[];
+	int ambiguousCharsColumnNumberEELPICW[];
+	CharsActiveTypeItem ambiguousPossibleDefinitionsLPICW[][];
+	int ambiguousIndexLPICW;
+	int ambiguousSizeLPICW;
 	
 	// {29}
 	Rule[] missingCompositorContentContext;
@@ -381,7 +400,9 @@ public class ContextMessageHandler implements ErrorCatcher{
 		valueSizeLP = 0;
 		exceptSizeLP = 0;
 		ambiguousSizeLP = 0;
-		
+		ambiguousSizeLPICE = 0;
+        ambiguousSizeLPICW = 0;
+        
 		missingCompositorContentSize = 0;
 	}	
 	    
@@ -2087,6 +2108,100 @@ public class ContextMessageHandler implements ErrorCatcher{
         ambiguousPossibleDefinitionsLP = null;
     }
     
+    
+    public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        if(ambiguousSizeLPICE == 0){
+			ambiguousSizeLPICE = 1;
+			ambiguousIndexLPICE = 0;
+			ambiguousTokenLPICE = new String[ambiguousSizeLPICE];
+			ambiguousCharsSystemIdEELPICE = new String[ambiguousSizeLPICE];
+			ambiguousCharsLineNumberEELPICE = new int[ambiguousSizeLPICE];
+			ambiguousCharsColumnNumberEELPICE = new int[ambiguousSizeLPICE];
+			ambiguousPossibleDefinitionsLPICE = new CharsActiveTypeItem[ambiguousSizeLPICE][];
+		}else if(++ambiguousIndexLPICE == ambiguousSizeLPICE){
+			String[] increasedT = new String[++ambiguousSizeLPICE];
+			System.arraycopy(ambiguousTokenLPICE, 0, increasedT, 0, ambiguousIndexLPICE);
+			ambiguousTokenLPICE = increasedT;
+						
+			String[] increasedCSI = new String[ambiguousSizeLPICE];
+			System.arraycopy(ambiguousCharsSystemIdEELPICE, 0, increasedCSI, 0, ambiguousIndexLPICE);
+			ambiguousCharsSystemIdEELPICE = increasedCSI;
+			
+			int[] increasedCLN = new int[ambiguousSizeLPICE];
+			System.arraycopy(ambiguousCharsLineNumberEELPICE, 0, increasedCLN, 0, ambiguousIndexLPICE);
+			ambiguousCharsLineNumberEELPICE = increasedCLN;
+			
+			int[] increasedLPICEN = new int[ambiguousSizeLPICE];
+			System.arraycopy(ambiguousCharsColumnNumberEELPICE, 0, increasedLPICEN, 0, ambiguousIndexLPICE);
+			ambiguousCharsColumnNumberEELPICE = increasedLPICEN;
+			
+			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[ambiguousSizeLPICE][];
+			System.arraycopy(ambiguousPossibleDefinitionsLPICE, 0, increasedPD, 0, ambiguousIndexLPICE);
+			ambiguousPossibleDefinitionsLPICE = increasedPD;			
+		}
+		ambiguousTokenLPICE[ambiguousIndexLPICE] = token;
+		ambiguousCharsSystemIdEELPICE[ambiguousIndexLPICE] = systemId;
+		ambiguousCharsLineNumberEELPICE[ambiguousIndexLPICE] = lineNumber;
+		ambiguousCharsColumnNumberEELPICE[ambiguousIndexLPICE] = columnNumber;
+		ambiguousPossibleDefinitionsLPICE[ambiguousIndexLPICE] = possibleDefinitions;
+    }
+    public void clearAmbiguousListTokenInContextError(){
+        ambiguousSizeLPICE = 0;
+        ambiguousIndexLPICE = -1;
+        ambiguousTokenLPICE = null;
+        ambiguousCharsSystemIdEELPICE = null;
+        ambiguousCharsLineNumberEELPICE = null;
+        ambiguousCharsColumnNumberEELPICE = null;
+        ambiguousPossibleDefinitionsLPICE = null;
+    }
+    
+    public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        if(ambiguousSizeLPICW == 0){
+			ambiguousSizeLPICW = 1;
+			ambiguousIndexLPICW = 0;
+			ambiguousTokenLPICW = new String[ambiguousSizeLPICW];
+			ambiguousCharsSystemIdEELPICW = new String[ambiguousSizeLPICW];
+			ambiguousCharsLineNumberEELPICW = new int[ambiguousSizeLPICW];
+			ambiguousCharsColumnNumberEELPICW = new int[ambiguousSizeLPICW];
+			ambiguousPossibleDefinitionsLPICW = new CharsActiveTypeItem[ambiguousSizeLPICW][];
+		}else if(++ambiguousIndexLPICW == ambiguousSizeLPICW){
+			String[] increasedT = new String[++ambiguousSizeLPICW];
+			System.arraycopy(ambiguousTokenLPICW, 0, increasedT, 0, ambiguousIndexLPICW);
+			ambiguousTokenLPICW = increasedT;
+						
+			String[] increasedCSI = new String[ambiguousSizeLPICW];
+			System.arraycopy(ambiguousCharsSystemIdEELPICW, 0, increasedCSI, 0, ambiguousIndexLPICW);
+			ambiguousCharsSystemIdEELPICW = increasedCSI;
+			
+			int[] increasedCLN = new int[ambiguousSizeLPICW];
+			System.arraycopy(ambiguousCharsLineNumberEELPICW, 0, increasedCLN, 0, ambiguousIndexLPICW);
+			ambiguousCharsLineNumberEELPICW = increasedCLN;
+			
+			int[] increasedLPICWN = new int[ambiguousSizeLPICW];
+			System.arraycopy(ambiguousCharsColumnNumberEELPICW, 0, increasedLPICWN, 0, ambiguousIndexLPICW);
+			ambiguousCharsColumnNumberEELPICW = increasedLPICWN;
+			
+			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[ambiguousSizeLPICW][];
+			System.arraycopy(ambiguousPossibleDefinitionsLPICW, 0, increasedPD, 0, ambiguousIndexLPICW);
+			ambiguousPossibleDefinitionsLPICW = increasedPD;			
+		}
+		ambiguousTokenLPICW[ambiguousIndexLPICW] = token;
+		ambiguousCharsSystemIdEELPICW[ambiguousIndexLPICW] = systemId;
+		ambiguousCharsLineNumberEELPICW[ambiguousIndexLPICW] = lineNumber;
+		ambiguousCharsColumnNumberEELPICW[ambiguousIndexLPICW] = columnNumber;
+		ambiguousPossibleDefinitionsLPICW[ambiguousIndexLPICW] = possibleDefinitions;
+    }    
+    public void clearAmbiguousListTokenInContextWarning(){
+        ambiguousSizeLPICW = 0;
+        ambiguousIndexLPICW = -1;
+        ambiguousTokenLPICW = null;
+        ambiguousCharsSystemIdEELPICW = null;
+        ambiguousCharsLineNumberEELPICW = null;
+        ambiguousCharsColumnNumberEELPICW = null;
+        ambiguousPossibleDefinitionsLPICW = null;
+    }
+        
+    
 	public void missingCompositorContent(Rule context, 
 								String startSystemId, 
 								int startLineNumber, 
@@ -2187,7 +2302,9 @@ public class ContextMessageHandler implements ErrorCatcher{
         clearListTokenDatatypeError();
         clearListTokenValueError();
         clearListTokenExceptedError();
-        clearAmbiguousListToken();
+        clearAmbiguousListToken();        
+        clearAmbiguousListTokenInContextError();
+        clearAmbiguousListTokenInContextWarning();
         clearMissingCompositorContent();
     }
     
@@ -2220,7 +2337,8 @@ public class ContextMessageHandler implements ErrorCatcher{
         clearListTokenDatatypeError();        
         clearListTokenValueError();
         clearListTokenExceptedError();
-        clearAmbiguousListToken();
+        clearAmbiguousListToken();        
+        clearAmbiguousListTokenInContextError();
         clearMissingCompositorContent();
     }
     
@@ -2229,7 +2347,7 @@ public class ContextMessageHandler implements ErrorCatcher{
         clearAmbiguousElementContentWarning();
         clearAmbiguousAttributeContentWarning();
         clearAmbiguousCharsContentWarning();
-        
+        clearAmbiguousListTokenInContextWarning();
     }
     
 	public  String getWarningMessage(String prefix){
@@ -2270,7 +2388,19 @@ public class ContextMessageHandler implements ErrorCatcher{
 				message += ".";
 			}
 		}
-        
+        // {28_2}
+        if(ambiguousCharsSystemIdEELPICW != null){
+			for(int i = 0; i <= ambiguousIndexLPICW; i++){
+				message += "\n"+prefix+"Ambiguous list token."
+				+"\n"+prefix+ "List token \""+ambiguousTokenLPICW[i]+"\" at "+ambiguousCharsSystemIdEELPICW[i]+":"+ambiguousCharsLineNumberEELPICW[i]+":"+ambiguousCharsColumnNumberEELPICW[i]
+				+ " cannot be resolved by in context validation to one schema definition."
+				+ " Possible definitions: ";
+				for(int j = 0; j < ambiguousPossibleDefinitionsLPICW[i].length; j++){
+					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLPICW[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLPICW[i][j].getLocation();
+				}
+				message += ".";
+			}
+		}
 		return message;
 	}
 	
@@ -2570,7 +2700,20 @@ public class ContextMessageHandler implements ErrorCatcher{
 				message += ".";
 			}
 		}
-		
+		// {28_1}
+        if(ambiguousCharsSystemIdEELPICE != null){
+			for(int i = 0; i <= ambiguousIndexLPICE; i++){
+				message += "\n"+prefix+"Ambiguous list token."
+				+"\n"+prefix+ "List token \""+ambiguousTokenLPICE[i]+"\" at "+ambiguousCharsSystemIdEELPICE[i]+":"+ambiguousCharsLineNumberEELPICE[i]+":"+ambiguousCharsColumnNumberEELPICE[i]
+				+ " cannot be resolved by in context validation to one schema definition, all candidates resulted in errors."
+				+ " Possible definitions: ";
+				for(int j = 0; j < ambiguousPossibleDefinitionsLPICE[i].length; j++){
+					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLPICE[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLPICE[i][j].getLocation();
+				}
+				message += ".";
+			}
+		}
+        
 		// {29}
 		if(missingCompositorContentContext != null){
 			for(int i = 0; i <= missingCompositorContentIndex; i++){

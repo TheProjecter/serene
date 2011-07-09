@@ -50,7 +50,7 @@ import sereneWrite.MessageWriter;
 
 	
 class SimpleListPatternTester extends ListPatternTesterState{
-		
+    char[] token;		
 	SimpleListPatternTester(MessageWriter debugWriter){
 		super(debugWriter);
 		charsItemMatches = new ArrayList<CharsActiveTypeItem>();
@@ -66,6 +66,7 @@ class SimpleListPatternTester extends ListPatternTesterState{
         
 		hasError = false;
 		for(int i = 0; i < tokens.length; i++){
+            token = tokens[i];            
 			charsItemMatches.clear();
 			dataMatches.clear();
 			valueMatches.clear();
@@ -77,8 +78,8 @@ class SimpleListPatternTester extends ListPatternTesterState{
 				valueMatches.addAll(matchHandler.getValueMatches(type));
 			}
 			totalCount = dataMatches.size()+valueMatches.size();
-			if(!dataMatches.isEmpty())validateData(tokens[i], type);
-			if(!valueMatches.isEmpty())validateValue(tokens[i], type);			
+			if(!dataMatches.isEmpty())validateData(token, type);
+			if(!valueMatches.isEmpty())validateValue(token, type);			
 			
 			int matchesCount = charsItemMatches.size();
 			if(totalCount == 0){
@@ -88,8 +89,6 @@ class SimpleListPatternTester extends ListPatternTesterState{
 			}else if(totalCount == 1 && matchesCount == 1){
 				// if errors: already reported, that's why error before
 				// just shift
-				// TODO 
-				// how do you know if tokenMatch???
 				if(tokenValid) tokenMatch = true;
 				stackHandler.shift(charsItemMatches.get(0));
 			}else if(totalCount > 1 && matchesCount == 0){
@@ -99,7 +98,7 @@ class SimpleListPatternTester extends ListPatternTesterState{
 				if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 				ambiguousListToken(new String(tokens[i]), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 				if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);//use totalCount since everything is shifted
-				stackHandler.shiftAllCharsDefinitions(charsItemMatches);
+				stackHandler.shiftAllTokenDefinitions(charsItemMatches, token);
 			}else if(totalCount > 1 && matchesCount == 1){
 				//just shift
 				stackHandler.shift(charsItemMatches.get(0));
@@ -107,20 +106,8 @@ class SimpleListPatternTester extends ListPatternTesterState{
 				// ambiguity warning, later maybe
 				// shift all for in context validation			
 				if(!stackHandler.handlesConflict())  stackHandler = type.getStackHandler(stackHandler, this);
-				stackHandler.shiftAllCharsDefinitions(charsItemMatches);
+				stackHandler.shiftAllTokenDefinitions(charsItemMatches, token);
 			}
-			/* old way
-			int matchCount = charsItemMatches.size();
-			if(matchCount == 0){
-								
-			}else if(matchCount == 1){
-				tokenMatch = true;
-				stackHandler.shift(charsItemMatches.get(0));
-			}else{
-				tokenMatch = true;
-				stackHandler = type.getStackHandler(stackHandler, matchCount, this);
-				stackHandler.shiftAllCharsDefinitions(charsItemMatches);
-			}*/
 						
 			if(hasError)return;
 		}
@@ -150,6 +137,7 @@ class SimpleListPatternTester extends ListPatternTesterState{
         stackHandler =  type.getStackHandler(this);
 		hasError = false;
 		for(int i = 0; i < tokens.length; i++){
+            token = tokens[i];
 			charsItemMatches.clear();
 			dataMatches.clear();
 			valueMatches.clear();	
@@ -160,8 +148,8 @@ class SimpleListPatternTester extends ListPatternTesterState{
 				valueMatches.addAll(matchHandler.getValueMatches(type));
 			}
 			totalCount = dataMatches.size()+valueMatches.size();
-			if(!dataMatches.isEmpty())validateData(tokens[i], type);
-			if(!valueMatches.isEmpty())validateValue(tokens[i], type);
+			if(!dataMatches.isEmpty())validateData(token, type);
+			if(!valueMatches.isEmpty())validateValue(token, type);
 			
 			
 			int matchesCount = charsItemMatches.size();
@@ -172,8 +160,6 @@ class SimpleListPatternTester extends ListPatternTesterState{
 			}else if(totalCount == 1 && matchesCount == 1){
 				// if errors: already reported, that's why error before
 				//just shift
-				// TODO 
-				// how do you know if tokenMatch???
 				if(tokenValid) tokenMatch = true;
 				stackHandler.shift(charsItemMatches.get(0));
 			}else if(totalCount > 1 && matchesCount == 0){
@@ -183,7 +169,7 @@ class SimpleListPatternTester extends ListPatternTesterState{
 				if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 				ambiguousListToken(new String(tokens[i]), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 				if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);//use totalCount since everything is shifted
-				stackHandler.shiftAllCharsDefinitions(charsItemMatches);
+				stackHandler.shiftAllTokenDefinitions(charsItemMatches, token);
 			}else if(totalCount > 1 && matchesCount == 1){
 				//just shift
 				stackHandler.shift(charsItemMatches.get(0));
@@ -191,21 +177,8 @@ class SimpleListPatternTester extends ListPatternTesterState{
 				// ambiguity warning, later maybe
 				// shift all for in context validation			
 				if(!stackHandler.handlesConflict()) stackHandler = type.getStackHandler(stackHandler, this);
-				stackHandler.shiftAllCharsDefinitions(charsItemMatches);
+				stackHandler.shiftAllTokenDefinitions(charsItemMatches, token);
 			}
-			
-			/* old way
-			int matchCount = charsItemMatches.size();
-			if(matchCount == 0){
-				unexpectedTokenInList((AListPattern)type, value);
-			}else if(matchCount == 1){
-				tokenMatch = true;
-				stackHandler.shift(charsItemMatches.get(0));
-			}else{
-				tokenMatch = true;
-				stackHandler = type.getStackHandler(stackHandler, matchCount, this);
-				stackHandler.shiftAllCharsDefinitions(charsItemMatches);
-			}*/
 			
 			if(hasError)return;
 		}
@@ -372,7 +345,14 @@ class SimpleListPatternTester extends ListPatternTesterState{
 		hasError = true;
 		tokenValid = false;
 	}
-	
+	public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+		hasError = true;
+        tokenValid = false;
+    }    
+	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+		
+    }
+    
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		hasError = true;
 		tokenValid = false;
