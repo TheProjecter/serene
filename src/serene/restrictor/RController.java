@@ -92,10 +92,11 @@ public class RController implements RestrictingVisitor{
 	boolean moreInterleaveMoreContext;
 	MorePath morePath;
 	
-	boolean listContext;//7.1.3
+	boolean listContext;//7.1.3, 7.2
 	Stack<SListPattern> listsPath;
 	
-	boolean exceptPatternContext;//7.1.4
+	boolean exceptPatternContext714;//7.1.4
+    boolean exceptPatternContext72;//7.2
 	DataPath dataPath;
 	
 	boolean startContext;//7.1.5
@@ -171,9 +172,10 @@ public class RController implements RestrictingVisitor{
 		listContext = false;
 		listsPath.clear();
 		
-		exceptPatternContext = false;
+		exceptPatternContext714 = false;
 		dataPath.clear();
-		
+	    exceptPatternContext72 = false;
+        
 		startContext = true;
 		
 		moreAttributeContext = false;
@@ -182,7 +184,7 @@ public class RController implements RestrictingVisitor{
 		texts.clear();
 		choiceContext = false;
 		choiceContainsText = false;
-		
+				
 		contentType = ContentType.EMPTY;
 	}
     void open(){
@@ -207,15 +209,18 @@ public class RController implements RestrictingVisitor{
 	}	
 	
 	public void visit(SExceptPattern exceptPattern)throws SAXException{
-		boolean oldExceptPatternContext = exceptPatternContext; 
-		exceptPatternContext = true;
+		boolean oldExceptPatternContext714 = exceptPatternContext714; 
+		exceptPatternContext714 = true;
+        boolean oldExceptPatternContext72 = exceptPatternContext72;
+        exceptPatternContext72 = true;
 				
 		dataPath.push(exceptPattern);
 		
 		SimplifiedComponent child = exceptPattern.getChild();
 		if(child != null) child.accept(this);
 				
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
+        exceptPatternContext72 = oldExceptPatternContext72;
 		
 		dataPath.popItem();
 	}
@@ -269,7 +274,7 @@ public class RController implements RestrictingVisitor{
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -299,8 +304,11 @@ public class RController implements RestrictingVisitor{
 		boolean oldListContext = listContext;
 		listContext = false;
 		
-		boolean oldExceptPatternContext = exceptPatternContext;
-		exceptPatternContext = false;
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		exceptPatternContext714 = false;
+        
+        boolean oldExceptPatternContext72 = exceptPatternContext72;
+		exceptPatternContext72 = false;
 		
 		boolean oldStartContext = startContext;
 		startContext = false;
@@ -352,7 +360,8 @@ public class RController implements RestrictingVisitor{
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;				
 		moreMultiChildrenContext = oldMoreMultiChildrenContext;		
 		listContext = oldListContext;
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
+        exceptPatternContext72 = oldExceptPatternContext72;
 		startContext = oldStartContext;		
 		moreAttributeContext = oldMoreAttributeContext;
 		
@@ -390,7 +399,7 @@ public class RController implements RestrictingVisitor{
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -451,8 +460,11 @@ public class RController implements RestrictingVisitor{
 		boolean oldListContext = listContext;		
 		listContext = false;
 		
-		boolean oldExceptPatternContext = exceptPatternContext;
-		exceptPatternContext = false;
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		exceptPatternContext714 = false;
+        
+        boolean oldExceptPatternContext72 = exceptPatternContext72;
+		exceptPatternContext72 = false;
 		
 		boolean oldStartContext = startContext;
 		startContext = false;
@@ -470,7 +482,8 @@ public class RController implements RestrictingVisitor{
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
 		moreMultiChildrenContext = oldMoreMultiChildrenContext;		
 		listContext = oldListContext;
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
+        exceptPatternContext72 = oldExceptPatternContext72;
 		startContext = oldStartContext;
 		moreAttributeContext = oldMoreAttributeContext;
 		
@@ -530,7 +543,7 @@ public class RController implements RestrictingVisitor{
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -585,8 +598,8 @@ public class RController implements RestrictingVisitor{
 		boolean oldListContext = listContext;		
 		listContext = false;
 		
-		boolean oldExceptPatternContext = exceptPatternContext;
-		exceptPatternContext = false;
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		exceptPatternContext714 = false;
 		
 		int textsOffset = texts.size();		
 		
@@ -618,7 +631,7 @@ public class RController implements RestrictingVisitor{
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
 				
 		listContext = oldListContext;
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
 		
 		elementNamingController.end(interleave);
@@ -645,7 +658,7 @@ public class RController implements RestrictingVisitor{
 		}
 	}
 	public void visit(SGroup group) throws SAXException{
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -697,8 +710,8 @@ public class RController implements RestrictingVisitor{
 			}
 		}		
 		
-		boolean oldExceptPatternContext = exceptPatternContext;
-		exceptPatternContext = false;
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		exceptPatternContext714 = false;
 		
 		elementNamingController.start(group);
 		attributeNamingController.start(group);
@@ -733,14 +746,14 @@ public class RController implements RestrictingVisitor{
 		moreInterleaveContext = oldMoreInterleaveContext;
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
 		
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
 	}
 	
 	//------------------
 	//  !!! subclass !!!
 	public void visit(SZeroOrMore zeroOrMore)throws SAXException{
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -768,8 +781,8 @@ public class RController implements RestrictingVisitor{
 		
 		if(moreInterleaveContext) moreInterleaveMoreContext = true;		
 		
-		boolean oldExceptPatternContext = exceptPatternContext;
-		exceptPatternContext = false;
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		exceptPatternContext714 = false;
 		
 		boolean oldStartContext = startContext;
 		startContext = false;
@@ -788,14 +801,14 @@ public class RController implements RestrictingVisitor{
 		moreInterleaveContext = oldMoreInterleaveContext;
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
 			
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
 	}
 	//  !!! subclass !!!
 	//------------------
 	
 	public void visit(SOneOrMore oneOrMore)throws SAXException{
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -823,8 +836,8 @@ public class RController implements RestrictingVisitor{
 		
 		if(moreInterleaveContext) moreInterleaveMoreContext = true;
 			
-		boolean oldExceptPatternContext = exceptPatternContext;
-		exceptPatternContext = false;
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		exceptPatternContext714 = false;
 		
 		boolean oldStartContext = startContext;
 		startContext = false;
@@ -843,14 +856,14 @@ public class RController implements RestrictingVisitor{
 		moreInterleaveContext = oldMoreInterleaveContext;
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
 				
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
 	}
 	
 	//------------------
 	//  !!! subclass !!!
 	public void visit(SOptional optional)throws SAXException{
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -869,8 +882,8 @@ public class RController implements RestrictingVisitor{
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		
-		boolean oldExceptPatternContext = exceptPatternContext;
-		exceptPatternContext = false;
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		exceptPatternContext714 = false;
 		
 		boolean oldStartContext = startContext;
 		startContext = false;
@@ -878,7 +891,7 @@ public class RController implements RestrictingVisitor{
 		SimplifiedComponent child = optional.getChild();
 		if(child != null) child.accept(this);
 		
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
 	}
 	//  !!! subclass !!!
@@ -893,7 +906,7 @@ public class RController implements RestrictingVisitor{
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -946,8 +959,8 @@ public class RController implements RestrictingVisitor{
 		boolean oldListContext = listContext;		
 		listContext = false;
 				
-		boolean oldExceptPatternContext = exceptPatternContext;
-		exceptPatternContext = false;
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		exceptPatternContext714 = false;
 		
 		boolean oldStartContext = startContext;
 		startContext = false;
@@ -987,7 +1000,7 @@ public class RController implements RestrictingVisitor{
 		
 		
 		listContext = oldListContext;
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
 		
 		int textsCount = texts.size()-textsOffset;
@@ -1023,7 +1036,7 @@ public class RController implements RestrictingVisitor{
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -1041,12 +1054,24 @@ public class RController implements RestrictingVisitor{
 			//System.out.println(" 8 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
-		
+		if((moreContext || moreMultiChildrenContext) && !(listContext || exceptPatternContext72)){
+            // error 7.2 simple content type repeated in the context
+			String message = "Restrictions 7.2 error. "
+			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation()+":"
+			+ "\n<"+list.getQName()+"> at "+list.getLocation()			
+			+".";
+			//System.out.println(message);
+			errorDispatcher.error(new SAXParseException(message, null));
+        }
+        
 		boolean oldListContext = listContext;		
 		listContext = true;
 		
-		boolean oldExceptPatternContext = exceptPatternContext;
-		exceptPatternContext = false;
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		exceptPatternContext714 = false;
+        
+        boolean oldExceptPatternContext72 = exceptPatternContext72;
+		exceptPatternContext72 = false;
 		
 		boolean oldStartContext = startContext;
 		startContext = false;
@@ -1057,7 +1082,8 @@ public class RController implements RestrictingVisitor{
 		if(child != null) child.accept(this);
 		
 		listContext = oldListContext;
-		exceptPatternContext = oldExceptPatternContext;
+		exceptPatternContext714 = oldExceptPatternContext714;
+        exceptPatternContext72 = oldExceptPatternContext72;
 		startContext = oldStartContext;
 		
 		listsPath.pop();
@@ -1065,7 +1091,7 @@ public class RController implements RestrictingVisitor{
 		contentType = ContentType.SIMPLE;
 	}	
 	public void visit(SEmpty empty) throws SAXException{
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -1102,7 +1128,7 @@ public class RController implements RestrictingVisitor{
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
-		if(exceptPatternContext){
+		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
@@ -1135,11 +1161,11 @@ public class RController implements RestrictingVisitor{
 	//  !!! subclass !!!
 	public void visit(SRef ref)throws SAXException{
 		int index = ref.getDefinitionIndex();
-        if(index < 0)return;
+        if(index < 0) return;
 		if(handledDefinitions.contains(index)){
             contentType = definitionsContentTypes.get(definitionTopPatterns[index]);
             return;
-        }        
+        }
 		definitionTopPatterns[index].accept(this);		
 		handledDefinitions.add(index);
         definitionsContentTypes.put(definitionTopPatterns[index], contentType);
@@ -1155,6 +1181,15 @@ public class RController implements RestrictingVisitor{
 			//System.out.println(" 11 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
+        if((moreContext || moreMultiChildrenContext) && !(listContext || exceptPatternContext72)){
+            // error 7.2 simple content type repeated in the context
+			String message = "Restrictions 7.2 error. "
+			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation()+":"
+			+ "\n<"+value.getQName()+"> at "+value.getLocation()			
+			+".";
+			//System.out.println(message);
+			errorDispatcher.error(new SAXParseException(message, null));
+        }
 		contentType = ContentType.SIMPLE;
 	}
 	public void visit(SData data)throws SAXException{
@@ -1165,7 +1200,17 @@ public class RController implements RestrictingVisitor{
 			//System.out.println(" 13 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
-		
+		if((moreContext || moreMultiChildrenContext) && !(listContext || exceptPatternContext72)){            
+            System.out.println("RESTRICTION "+data);
+            // error 7.2 simple content type repeated in the context
+			String message = "Restrictions 7.2 error. "
+			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation()+":"
+			+ "\n<"+data.getQName()+"> at "+data.getLocation()			
+			+".";
+			//System.out.println(message);
+			errorDispatcher.error(new SAXParseException(message, null));
+        }
+        
 		boolean oldStartContext = startContext;
 		startContext = false;
 		
