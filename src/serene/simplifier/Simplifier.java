@@ -1888,8 +1888,11 @@ abstract class Simplifier implements SimplifyingVisitor{
                 try{
                     datatypeBuilder.addParameter(param.getName(), param.getCharacterContent(), simplificationContext);
                 }catch(DatatypeException de){
+                    String name = param.getName();
+                    if(name == null) name = "no name";
+                    else name = "name \""+name+"\"";
                     String message = "Simplification 4.16 error. "
-                        +"Parameter with the name \""+param.getName()+"\" at "+param.getLocation()
+                        +"Parameter with "+name+" at "+param.getLocation()
                         +", is not allowed in this context. "
                         +de.getMessage();
                         errorDispatcher.error(new SAXParseException(message, null));

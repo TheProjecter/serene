@@ -2,4 +2,4 @@
 
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\syntax\datatypes\native\param\schema.rng
 
-null:-1:-1 Simplification 4.16 error. Parameter with the name "length" at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/datatypes/native/param/schema.rng:26:42, is not allowed in this context. Native datatypes do not allow parameters.
+null:-1:-1 Simplification 4.16 error. Parameter with name "length" at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/datatypes/native/param/schema.rng:26:42, is not allowed in this context. Native datatypes do not allow parameters.
