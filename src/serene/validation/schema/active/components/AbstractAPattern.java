@@ -58,10 +58,19 @@ public abstract class AbstractAPattern extends AbstractRule implements APattern{
 		return ruleHandlerPool.getParticleHandler(ceh, this, ec);
 	}
 	
-	public boolean isRequired(){
+	public boolean isRequiredContent(){        
 		return minOccurs > 0;
 	}
-	
+	   
+    public boolean isRequiredBranch(){
+        if(parent == null) return minOccurs > 0;
+        return minOccurs > 0 && ((AbstractAPattern)parent).requiresBranch();
+    }
+    
+    boolean requiresBranch(){
+        return minOccurs > 0;
+    }
+    
 	boolean transmitsMultipleCardinality(){
 		return false;
 	}

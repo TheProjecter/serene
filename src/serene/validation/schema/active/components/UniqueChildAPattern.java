@@ -25,9 +25,6 @@ import sereneWrite.MessageWriter;
 
 public abstract class UniqueChildAPattern extends AbstractAPattern{
 	APattern child;
-	/*UniqueChildAPattern(ActiveModelRuleHandlerPool ruleHandlerPool, MessageWriter debugWriter){
-		super(ruleHandlerPool, debugWriter);
-	}*/	
 	
 	public UniqueChildAPattern(APattern child,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
@@ -51,6 +48,6 @@ public abstract class UniqueChildAPattern extends AbstractAPattern{
 	
 	public boolean isChildRequired(){
 		if(child == null)return false;
-		return child.isRequired();
+		return child.isRequiredContent();
 	}
 }

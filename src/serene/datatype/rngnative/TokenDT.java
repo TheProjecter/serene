@@ -60,7 +60,7 @@ class TokenDT implements Datatype{
 		return ID_TYPE_NULL;
 	}
 
-	public boolean sameValue(Object obj1, Object obj2) {
+	public boolean sameValue(Object obj1, Object obj2) {        
 		return obj1.equals(obj2);
 	}
 

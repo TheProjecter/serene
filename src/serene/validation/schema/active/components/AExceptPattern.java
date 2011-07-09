@@ -108,7 +108,7 @@ public class AExceptPattern extends AbstractRule
 	public void assembleDefinition(){
 		setDefinition();
 		setContextCache();
-		assembleRefDefinitions();
+		assembleRefDefinitions();		
 	}
 	public void releaseDefinition(){
 		if(child != null){
@@ -254,7 +254,7 @@ public class AExceptPattern extends AbstractRule
 	
 	public boolean isChildRequired(){
 		if(child == null)return false;
-		return child.isRequired();
+		return child.isRequiredContent();
 	}
 	
 	public ExceptPatternHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){

@@ -111,7 +111,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
 	public void handleEndElement(Locator locator) throws SAXException{		
 		validateContext();
 		reportContextErrors(locator);
-		validateInContext();
+		validateInContext();		
 	}	
 	
 	void validateContext(){
@@ -166,10 +166,16 @@ class ElementConcurrentHandler extends CandidatesEEH{
 			parent.addChildElement(candidateDefinitions, candidatesConflictHandler);
 		}
 	}	
-	public void handleCharacters(char[] chars){		
+	public void handleInnerCharacters(char[] chars){		
 		int candidatesCount = candidates.size();
 		for(int i = 0; i < candidatesCount; i++){
-			if(!candidatesConflictHandler.isDisqualified(i)) candidates.get(i).handleCharacters(chars);
+			if(!candidatesConflictHandler.isDisqualified(i)) candidates.get(i).handleInnerCharacters(chars);
+		}
+	}
+    public void handleLastCharacters(char[] chars){		
+		int candidatesCount = candidates.size();
+		for(int i = 0; i < candidatesCount; i++){
+			if(!candidatesConflictHandler.isDisqualified(i)) candidates.get(i).handleLastCharacters(chars);
 		}
 	}
 	

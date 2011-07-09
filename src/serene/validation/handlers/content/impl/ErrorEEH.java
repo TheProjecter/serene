@@ -58,9 +58,10 @@ abstract class ErrorEEH extends ComparableEEH{
 	}	
 	void validateContext(){}
 	void reportContextErrors(Locator locator) throws SAXException{}
-	public void handleCharacters(char[] chars){
+	public void handleInnerCharacters(char[] chars){
 	}
-	
+    public void handleLastCharacters(char[] chars){
+	}
 	public String toString(){
 		return "ErrorEEH ";
 	}

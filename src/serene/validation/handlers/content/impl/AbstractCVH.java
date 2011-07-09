@@ -42,6 +42,8 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.match.MatchHandler;
 
+import serene.util.SpaceCharsHandler;
+
 import sereneWrite.MessageWriter;
 
 abstract class AbstractCVH implements CharactersEventHandler{
@@ -50,7 +52,8 @@ abstract class AbstractCVH implements CharactersEventHandler{
 	ValidatorEventHandlerPool pool;	
 	
 	MatchHandler matchHandler;
-		
+	SpaceCharsHandler spaceHandler;	
+    
 	List<CharsActiveTypeItem> charsItemMatches;
 	List<AText> textMatches;
 	List<AData> dataMatches;
@@ -69,10 +72,11 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		this.debugWriter = debugWriter;		
 	}
 	
-	void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator, MatchHandler matchHandler){		
+	void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator, MatchHandler matchHandler, SpaceCharsHandler spaceHandler){		
 		this.validationItemLocator = validationItemLocator;		
 		this.pool = pool;
 		this.matchHandler = matchHandler;
+        this.spaceHandler = spaceHandler;
 	}	
 	
 	public MarkupEventHandler getParentHandler(){
@@ -117,28 +121,38 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		if(!dataMatches.isEmpty())validateData(chars, type);
 		if(!valueMatches.isEmpty())validateValue(chars, type);
 		if(!listMatches.isEmpty())validateListPattern(chars, type);
-		
 		handleAddToParent(type);		
 	}
-	public void handleChars(char[] chars, CharsActiveType type){		
+	public void handleChars(char[] chars, CharsActiveType type, boolean isComplexContent){		
 		charsItemMatches.clear();
+        if(isComplexContent){
+            textMatches.clear();
+            if(type.allowsTextContent()){			
+                textMatches.addAll(matchHandler.getTextMatches(type));
+            }
+            totalCount = textMatches.size();
+            charsItemMatches.addAll(textMatches);			
+            handleAddToParent(type);
+            return;
+        }        
 		textMatches.clear();
 		dataMatches.clear();
 		valueMatches.clear();
-		listMatches.clear();		
+		listMatches.clear();        
 		if(type.allowsDataContent()){
 			dataMatches.addAll(matchHandler.getDataMatches(type));
 		}
 		if(type.allowsValueContent()){
 			valueMatches.addAll(matchHandler.getValueMatches(type));
 		}		
-		if(type.allowsTextContent()){			
+		if(!(chars.length == 0 || spaceHandler.isSpace(chars)) && type.allowsTextContent()){			
 			textMatches.addAll(matchHandler.getTextMatches(type));
 		}
 		if(type.allowsListPatternContent()){
 			listMatches.addAll(matchHandler.getListPatternMatches(type));
 		}
-		totalCount = dataMatches.size()+valueMatches.size()+listMatches.size()+textMatches.size();		
+		totalCount = dataMatches.size()+valueMatches.size()+listMatches.size()+textMatches.size();
+        if(totalCount == 0)return;//it means the content allows only text an the input was ignorable 		
 		if(!dataMatches.isEmpty())validateData(chars, type);
 		if(!valueMatches.isEmpty())validateValue(chars, type);
 		if(!listMatches.isEmpty())validateListPattern(chars, type);
@@ -187,8 +201,19 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		
 		handleAddToParent(type);
 	}
-	public void handleString(String value, CharsActiveType type){
-		charsItemMatches.clear();
+	public void handleString(String value, CharsActiveType type, boolean isComplexContent){
+        charsItemMatches.clear();
+        if(isComplexContent){
+            textMatches.clear();
+            if(type.allowsTextContent()){			
+                textMatches.addAll(matchHandler.getTextMatches(type));
+            }
+            totalCount = textMatches.size();
+            charsItemMatches.addAll(textMatches);		
+            handleAddToParent(type);
+            return;
+        }
+		
 		textMatches.clear();
 		dataMatches.clear();
 		valueMatches.clear();
@@ -199,13 +224,14 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		if(type.allowsValueContent()){
 			valueMatches.addAll(matchHandler.getValueMatches(type));
 		}
-		if(type.allowsTextContent()){			
+		if(!(value.length() == 0 || spaceHandler.isSpace(value.toCharArray())) && type.allowsTextContent()){			
 			textMatches.addAll(matchHandler.getTextMatches(type));
 		}
 		if(type.allowsListPatternContent()){
 			listMatches.addAll(matchHandler.getListPatternMatches(type));
 		}
 		totalCount = dataMatches.size()+valueMatches.size()+listMatches.size()+textMatches.size();
+        if(totalCount == 0)return;//it means the content allows only text an the input was ignorable
 		if(!dataMatches.isEmpty())validateData(value, type);
 		if(!valueMatches.isEmpty())validateValue(value, type);
 		if(!listMatches.isEmpty())validateListPattern(value, type);
@@ -224,7 +250,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 					charsItemMatches.add(data);					
 				}else{
 					// test the except
-					// the pattern will be added there					
+					// the pattern will be added there	
 					ExceptPatternTester ept = pool.getExceptPatternTester(data, charsItemMatches, totalCount, errorCatcher);
 					except.assembleDefinition();
 					ept.handleChars(chars, except);
@@ -232,9 +258,8 @@ abstract class AbstractCVH implements CharactersEventHandler{
 					ept.recycle();
 				}
 			}catch(DatatypeException de){
-				//System.out.println(type+" datatype 1 ERROR "+data+" "+new String(chars));
-				//System.out.println(de.getMessage());
-				if(totalCount == 1){
+				if(totalCount == 1
+                    && !((chars.length == 0 || spaceHandler.isSpace(chars)) && !data.isRequiredBranch())){
 					reportDatatypeError(data, de.getMessage());
 					charsItemMatches.add(data);
 				}
@@ -262,7 +287,9 @@ abstract class AbstractCVH implements CharactersEventHandler{
 			}catch(DatatypeException de){
 				//System.out.println(type+" datatype 2 ERROR "+data);
 				//System.out.println(de.getMessage());
-				if(totalCount == 1){
+                char[] chars = value.toCharArray();
+				if(totalCount == 1
+                    && !((chars.length == 0 || spaceHandler.isSpace(chars)) && !data.isRequiredBranch())){
 					reportDatatypeError(data, de.getMessage());
 					charsItemMatches.add(data);
 				}
@@ -275,19 +302,18 @@ abstract class AbstractCVH implements CharactersEventHandler{
 			AValue valuePattern = valueMatches.get(i);
 			try{
 				valuePattern.datatypeMatches(chars, validationContext);
-				if(valuePattern.valueMatches(chars, validationContext)){									
+				if(valuePattern.valueMatches(chars, validationContext)){
 					charsItemMatches.add(valuePattern);
-				}else{					
-					if(totalCount == 1){
+				}else{
+					if(totalCount == 1
+                        && !((chars.length == 0 || spaceHandler.isSpace(chars)) && !valuePattern.isRequiredBranch())){                        
 						reportValueError(valuePattern);
 						charsItemMatches.add(valuePattern);
 					}					
-					//System.out.println(type+" "+new String(chars)+" value // ERROR "+valuePattern);
 				}
 			}catch(DatatypeException de){
-				//System.out.println(type+" datatype 3 ERROR "+valuePattern);
-				//System.out.println(de.getMessage());
-				if(totalCount == 1){
+				if(totalCount == 1
+                    && !((chars.length == 0 || spaceHandler.isSpace(chars)) && !valuePattern.isRequiredBranch())){
 					reportDatatypeError(valuePattern, de.getMessage());
 					charsItemMatches.add(valuePattern);
 				}
@@ -303,7 +329,9 @@ abstract class AbstractCVH implements CharactersEventHandler{
 				if(valuePattern.valueMatches(value, validationContext)){					
 					charsItemMatches.add(valuePattern);
 				}else{
-					if(totalCount == 1){
+                    char[] chars = value.toCharArray();
+					if(totalCount == 1
+                        && !((chars.length == 0 || spaceHandler.isSpace(chars)) && !valuePattern.isRequiredBranch())){                       
 						reportValueError(valuePattern);
 						charsItemMatches.add(valuePattern);
 					}
@@ -312,7 +340,9 @@ abstract class AbstractCVH implements CharactersEventHandler{
 			}catch(DatatypeException de){								
 				//System.out.println(type+" datatype 4 ERROR "+valuePattern);
 				//System.out.println(de.getMessage());
-				if(totalCount == 1){
+                char[] chars = value.toCharArray();
+				if(totalCount == 1
+                    && !((chars.length == 0 || spaceHandler.isSpace(chars)) && !valuePattern.isRequiredBranch())){
 					reportDatatypeError(valuePattern, de.getMessage());
 					charsItemMatches.add(valuePattern);
 				}
@@ -345,3 +375,4 @@ abstract class AbstractCVH implements CharactersEventHandler{
 	abstract void reportDatatypeError(DatatypedActiveTypeItem item, String message);	
 	abstract void reportValueError(AValue value);
 }
+

@@ -60,11 +60,14 @@ class ElementDefaultHandler extends ComparableEEH{
 	
 	public void handleAttributes(Attributes attributes, Locator locator){}
 	void handleAttribute(String qName, String namespace, String name, String value){}	
-	public void handleEndElement(Locator locator) throws SAXException{}
+	public void handleEndElement(Locator locator) throws SAXException{
+	}
 	void validateContext(){}
 	void reportContextErrors(Locator locator) throws SAXException{}
 	void validateInContext(){}
-	public void handleCharacters(char[] chars){
+	public void handleInnerCharacters(char[] chars){
+	}
+    public void handleLastCharacters(char[] chars){
 	}
 	
 	public boolean functionalEquivalent(ComparableEEH other){

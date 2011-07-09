@@ -20,6 +20,8 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
 import serene.validation.handlers.content.ElementEventHandler;
+import serene.validation.handlers.content.BoundElementHandler;
+
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.bind.BindingModel;
@@ -190,19 +192,37 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 				}
 			}
 		}
-		void handleCharacters(char[] chars){
+		void handleInnerCharacters(char[] chars){
 			//uniqueSample.handleCharacters(chars, validationContext, locator);			
 			if(uniqueSample instanceof ValidatingEEH){				
 				ValidatingEEH sample = (ValidatingEEH)uniqueSample;
 				sample.setValidation();
-				sample.handleCharacters(chars);
+				sample.handleInnerCharacters(chars);
 				sample.restorePreviousState();
 				for(int i = 0; i < individualHandlers.size(); i++){					
 					if(!candidatesConflictHandler.isDisqualified(i) &&
 						individualHandlers.get(i) != uniqueSample){
 						ValidatingEEH ih = (ValidatingEEH)individualHandlers.get(i);
 						ih.setDefault();
-						ih.handleCharacters(chars);
+						ih.handleInnerCharacters(chars);
+						ih.restorePreviousState();
+					}				
+				}
+			}			
+		}
+        void handleLastCharacters(char[] chars){
+			//uniqueSample.handleCharacters(chars, validationContext, locator);			
+			if(uniqueSample instanceof ValidatingEEH){				
+				ValidatingEEH sample = (ValidatingEEH)uniqueSample;
+				sample.setValidation();
+				sample.handleLastCharacters(chars);
+				sample.restorePreviousState();
+				for(int i = 0; i < individualHandlers.size(); i++){					
+					if(!candidatesConflictHandler.isDisqualified(i) &&
+						individualHandlers.get(i) != uniqueSample){
+						ValidatingEEH ih = (ValidatingEEH)individualHandlers.get(i);
+						ih.setDefault();
+						ih.handleLastCharacters(chars);
 						ih.restorePreviousState();
 					}				
 				}

@@ -76,7 +76,8 @@ class CharacterContentValidationHandler extends AbstractCVH{
 		if(totalCount == 0){
 			throw new IllegalStateException();
 		}else if(totalCount == 1 && matchesCount == 0){
-			throw new IllegalStateException();
+			//throw new IllegalStateException();
+            return; //the input was whitespace and the match was optional
 		}else if(totalCount == 1 && matchesCount == 1){
 			// if errors: already reported, that's why error before
 			//just shift
@@ -104,7 +105,8 @@ class CharacterContentValidationHandler extends AbstractCVH{
 		if(totalCount == 0){
 			throw new IllegalStateException();
 		}else if(totalCount == 1 && matchesCount == 0){
-			throw new IllegalStateException();
+			//throw new IllegalStateException();
+            return; //the input was whitespace and the match was optional
 		}else if(totalCount == 1 && matchesCount == 1){
 			// if errors: already reported, that's why error before
 			//just shift
@@ -132,7 +134,8 @@ class CharacterContentValidationHandler extends AbstractCVH{
 		if(totalCount == 0){
 			throw new IllegalStateException();
 		}else if(totalCount == 1 && matchesCount == 0){
-			throw new IllegalStateException();
+			//throw new IllegalStateException();
+            return; //the input was whitespace and the match was optional
 		}else if(totalCount == 1 && matchesCount == 1){
 			// if errors: already reported, that's why error before
 			//just shift
@@ -155,13 +158,14 @@ class CharacterContentValidationHandler extends AbstractCVH{
 		}
 	}
 	
-	void reportDatatypeError(DatatypedActiveTypeItem item, String message){
+    void reportDatatypeError(DatatypedActiveTypeItem item, String message){
 		errorCatcher.characterContentDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, message);
 	}
-	
+    
 	void reportValueError(AValue value){
 		errorCatcher.characterContentValueError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value);
 	}
 }
+
 
 

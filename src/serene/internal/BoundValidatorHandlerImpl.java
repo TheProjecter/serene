@@ -230,10 +230,10 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 							String localName, 
 							String qName, 
 							Attributes attributes) throws SAXException{		
-		char[] charContent = charsBuffer.removeCharsArray();
-		elementHandler.handleCharacters(charContent);		
-		if(charContent.length > 0){	
-			validationItemLocator.closeCharsContent();			
+		char[] charContent = charsBuffer.removeCharsArray();		
+		if(charContent.length > 0){			
+			elementHandler.handleInnerCharacters(charContent);		
+			validationItemLocator.closeCharsContent();
 		}
 				
 		validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), namespaceURI, localName, qName);
@@ -254,10 +254,8 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 							String localName, 
 							String qName) throws SAXException{
 		char[] charContent = charsBuffer.removeCharsArray();
-		elementHandler.handleCharacters(charContent);		
-		if(charContent.length > 0){
-			validationItemLocator.closeCharsContent();
-		} 
+		elementHandler.handleLastCharacters(charContent);
+        if(charContent.length > 0)validationItemLocator.closeCharsContent(); 
 		
 		elementHandler.handleEndElement(locator);		
 		ElementEventHandler parent = elementHandler.getParentHandler(); 

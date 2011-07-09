@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.relaxng.datatype.ValidationContext;
+import org.relaxng.datatype.DatatypeException;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.DataActiveType;
@@ -49,7 +50,7 @@ import sereneWrite.MessageWriter;
 // need to be reported or not.
 // Solutions:
 // 1. Store the error messages and refire them later if necessary
-// 2. When a match is found set the ListPatternTester in reporting mode, if error
+// 2. When a match is found set the ListPatternTester in reporting mode, if errors
 // have happened already, that is the match didn't occur at the first tested token,
 // redo the chars matching(keep the Tester in report mode)
 // Go for 2.
@@ -99,7 +100,7 @@ class ListPatternTester extends AbstractCVH{
 	public void handleChars(char[] chars, StructuredDataActiveType type){		
 		state.handleChars(chars, type);
 	}
-	public void handleChars(char[] chars, CharsActiveType type){
+	public void handleChars(char[] chars, CharsActiveType type, boolean isComplexContent){
 		throw new IllegalStateException();
 	}
 		
@@ -110,7 +111,7 @@ class ListPatternTester extends AbstractCVH{
 	public void handleString(String value, StructuredDataActiveType type){
 		state.handleString(value, type);
 	}
-	public void handleString(String value, CharsActiveType type){
+	public void handleString(String value, CharsActiveType type, boolean isComplexContent){
 		throw new IllegalStateException();
 	}
 	

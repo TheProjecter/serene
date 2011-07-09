@@ -27,9 +27,9 @@ public interface CharactersEventHandler extends EventHandler{
 	
 	void handleChars(char[] chars, DataActiveType context);
 	void handleChars(char[] chars, StructuredDataActiveType context);
-	void handleChars(char[] chars, CharsActiveType context);
+	void handleChars(char[] chars, CharsActiveType context, boolean isComplexContent);
 	
 	void handleString(String value, DataActiveType context);
 	void handleString(String value, StructuredDataActiveType context);
-	void handleString(String value, CharsActiveType context);
+	void handleString(String value, CharsActiveType context, boolean isComplexContent);
 }

@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.relaxng.datatype.ValidationContext;
+import org.relaxng.datatype.DatatypeException;
 
 import serene.validation.schema.active.DataActiveType;
 import serene.validation.schema.active.StructuredDataActiveType;
@@ -34,6 +35,8 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import serene.validation.handlers.match.MatchHandler;
+
+import serene.util.SpaceCharsHandler;
 
 import sereneWrite.MessageWriter;
 
@@ -54,10 +57,10 @@ class ExceptPatternTester extends AbstractCVH{
 		pool.recycle(this);
 	}
 	
-	void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator, MatchHandler matchHandler){		
+	void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator, MatchHandler matchHandler, SpaceCharsHandler spaceHandler){		
 		this.pool = pool;
-		simpleState.init(pool, validationItemLocator, matchHandler);
-		reportingState.init(pool, validationItemLocator, matchHandler);
+		simpleState.init(pool, validationItemLocator, matchHandler, spaceHandler);
+		reportingState.init(pool, validationItemLocator, matchHandler, spaceHandler);
 	}	
 	
 	void init(AData data, List<CharsActiveTypeItem> totalCharsItemMatches, int totalCount, ValidationContext validationContext, ErrorCatcher errorCatcher){
@@ -70,10 +73,10 @@ class ExceptPatternTester extends AbstractCVH{
 	public void handleChars(char[] chars, DataActiveType type){
 		throw new IllegalStateException();
 	}
-	public void handleChars(char[] chars, StructuredDataActiveType type){		
+	public void handleChars(char[] chars, StructuredDataActiveType type){	
 		state.handleChars(chars, type);
 	}
-	public void handleChars(char[] chars, CharsActiveType type){
+	public void handleChars(char[] chars, CharsActiveType type, boolean isComplexContent){
 		throw new IllegalStateException();
 	}
 		
@@ -84,7 +87,7 @@ class ExceptPatternTester extends AbstractCVH{
 	public void handleString(String value, StructuredDataActiveType type){
 		state.handleString(value, type);
 	}
-	public void handleString(String value, CharsActiveType type){
+	public void handleString(String value, CharsActiveType type, boolean isComplexContent){
 		throw new IllegalStateException();
 	}	
 	

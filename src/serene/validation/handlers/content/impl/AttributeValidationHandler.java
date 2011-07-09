@@ -28,6 +28,8 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AListPattern;
 
+import serene.validation.schema.simplified.components.SPattern;
+
 import serene.validation.handlers.match.MatchHandler;
 
 import serene.validation.handlers.stack.StackHandler;
@@ -41,7 +43,7 @@ import serene.Reusable;
 
 import sereneWrite.MessageWriter;
 
-class AttributeValidationHandler extends ValidatingAEH /*implements ErrorCatcher*/{
+class AttributeValidationHandler extends ValidatingAEH{
 	AAttribute attribute;
 	
 	MatchHandler matchHandler;
@@ -78,15 +80,13 @@ class AttributeValidationHandler extends ValidatingAEH /*implements ErrorCatcher
 		stackHandler = attribute.getStackHandler(errorCatcher);
 	}
 	
-	void validateValue(String value){	
-		if(!attribute.allowsChars()){			
-			if(value.length() >0){
-				errorCatcher.unexpectedAttributeValue(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), attribute);
-			}
+	void validateValue(String value){
+		if(!attribute.allowsChars()){
+			errorCatcher.unexpectedAttributeValue(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), attribute);
 			return;
 		}				
 		CharactersEventHandler ceh = pool.getAttributeValueValidationHandler(this, errorCatcher);
-		ceh.handleString(value, (CharsActiveType)attribute);		
+		ceh.handleString(value, (CharsActiveType)attribute, false);		
 	}
 
 	void validateInContext(){
@@ -101,81 +101,7 @@ class AttributeValidationHandler extends ValidatingAEH /*implements ErrorCatcher
 		if(!stackHandler.handlesConflict()) stackHandler = attribute.getStackHandler(stackHandler, errorCatcher);
 		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions);
 	}
-	/*
-	//errorCatcher
-	//--------------------------------------------------------------------------
-	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
-		errorCatcher.unknownElement( qName, systemId, lineNumber, columnNumber);
-	}	
-	public void unexpectedElement(String qName, AElement definition, String systemId, int lineNumber, int columnNumber){
-		errorCatcher.unexpectedElement( qName, definition, systemId, lineNumber, columnNumber);	
-	}	
-	public void unexpectedAmbiguousElement(String qName, AElement[] definition, String systemId, int lineNumber, int columnNumber){
-		errorCatcher.unexpectedAmbiguousElement( qName, definition, systemId, lineNumber, columnNumber);	
-	}
-	
-	
-	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
-		errorCatcher.unknownAttribute( qName, systemId, lineNumber, columnNumber);
-	}	
-	public void unexpectedAttribute(String qName, AAttribute definition, String systemId, int lineNumber, int columnNumber){
-		errorCatcher.unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);	
-	}	
-	public void unexpectedAmbiguousAttribute(String qName, AAttribute[] definition, String systemId, int lineNumber, int columnNumber){
-		errorCatcher.unexpectedAmbiguousAttribute( qName, definition, systemId, lineNumber, columnNumber);	
-	}
-	
-		
-	public void misplacedElement(boolean conflict, APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition){
-		errorCatcher.misplacedElement(conflict, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition);
-	}
-	
-	public void misplacedElement(boolean conflict, APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String qName, String systemId, int lineNumber, int columnNumber, APattern sourceDefinition){
-		errorCatcher.misplacedElement(conflict, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition);
-	}
-	
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
-		errorCatcher.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
-	}
-	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
-		errorCatcher.excessiveContent(context, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
-	}
-	
-	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
-		errorCatcher.missingContent(context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
-	}
-
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		errorCatcher.ambiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
-	}
-
-	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
-		errorCatcher.ambiguousAttributeContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
-	}
-
-	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		errorCatcher.ambiguousCharsContentError(systemId, lineNumber, columnNumber, possibleDefinitions);
-	}
-
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		errorCatcher.ambiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
-	}
-
-	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
-		errorCatcher.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
-	}
-
-	public void ambiguousCharsContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		errorCatcher.ambiguousCharsContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
-	}
-	
-	public void undeterminedByContent(String qName, String candidateMessages){
-		errorCatcher.undeterminedByContent(qName, candidateMessages);
-	}	
-	//--------------------------------------------------------------------------
-	*/
-
+    
 	public String toString(){
 		return "AttributeValidationHandler "+attribute;
 	}	

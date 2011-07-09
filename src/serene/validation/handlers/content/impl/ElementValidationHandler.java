@@ -64,7 +64,14 @@ import sereneWrite.MessageWriter;
 
 class ElementValidationHandler extends ValidatingEEH
 							implements ErrorCatcher{
-								
+    CharsBuffer charContentBuffer;
+    String charContentSystemId;
+    String charContentPublicId;
+    int charContentLineNumber;
+    int charContentColumnNumber;
+    boolean hasComplexContent; 
+    // set to true when allowed text content(not data!), or allowed element 
+    // content (not unexpected!) is encountered								
 		
 	MatchHandler matchHandler;	
 	boolean recognizeOutOfContext;
@@ -80,9 +87,20 @@ class ElementValidationHandler extends ValidatingEEH
 	
 	ElementValidationHandler(MessageWriter debugWriter){
 		super(debugWriter);		
+        charContentLineNumber = -1;
+        charContentColumnNumber = -1;
+        charContentBuffer = new CharsBuffer(debugWriter);
+        hasComplexContent = false;
 	}
 		
 	public void recycle(){		
+        charContentBuffer.clear();
+        charContentSystemId = null;
+        charContentPublicId = null;
+        charContentLineNumber = -1;
+        charContentColumnNumber = -1;
+        hasComplexContent = false;
+        
 		if(stackHandler != null){
 			stackHandler.recycle();
 			stackHandler = null;
@@ -126,10 +144,12 @@ class ElementValidationHandler extends ValidatingEEH
 		int matchCount = elementMatches.size();
 		if(matchCount == 0){
 			return getUnexpectedElementHandler(namespace, name);
-		}else if(matchCount == 1){			
+		}else if(matchCount == 1){
+            hasComplexContent = true;			
 			ElementValidationHandler next = pool.getElementValidationHandler(elementMatches.get(0), this);				
 			return next;
 		}else{	
+            hasComplexContent = true;
 			if(contextConflictPool == null)	contextConflictPool = new ContextConflictPool();			
 			ContextConflictDescriptor ccd = contextConflictPool.getContextConflictDescriptor(elementMatches);
 			ElementConcurrentHandler next = pool.getElementConcurrentHandler(ccd.getDefinitions(), this);				
@@ -228,17 +248,69 @@ class ElementValidationHandler extends ValidatingEEH
 		parent.addChildElement(element);
 	}
 	
-	public void handleCharacters(char[] chars){		
-		if(!element.allowsChars()){			
-			chars = spaceHandler.trimSpace(chars);
-			if(chars.length >0){
-				unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
-			}
-			return;
-		}
-		chars = spaceHandler.trimSpace(chars);//for leading and trailing white space
-		CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
-		ceh.handleChars(chars, (CharsActiveType)element);				
+	public void handleInnerCharacters(char[] chars){
+        boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
+        if(!isIgnorable && element.allowsTextContent()){
+            hasComplexContent = true;
+            CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
+            ceh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
+            ceh.recycle();
+        }else if(!isIgnorable && !element.allowsChars()){
+            unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+        }else{
+            // element.allowsDataContent()
+            //  || element.allowsValueContent()
+            //  || element.allowsListPatternContent()
+            
+            // append the content, it could be that the element following is an error
+            if(chars.length > 0){            
+                charContentBuffer.append(chars, 0, chars.length);
+                if(charContentLineNumber == -1 ){
+                    charContentSystemId = validationItemLocator.getSystemId();
+                    charContentPublicId = validationItemLocator.getPublicId();
+                    charContentLineNumber = validationItemLocator.getLineNumber();
+                    charContentColumnNumber = validationItemLocator.getColumnNumber();
+                }
+            }
+        }        
+	}
+    
+    
+	public void handleLastCharacters(char[] chars){	
+        boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);            
+        char[] bufferedContent = charContentBuffer.removeCharsArray();
+        boolean isBufferIgnorable = bufferedContent.length == 0 || spaceHandler.isSpace(bufferedContent);
+		if(hasComplexContent){            
+            if(!isIgnorable && element.allowsTextContent()){
+                CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
+                ceh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
+                ceh.recycle();
+            }else if(!isIgnorable || !isBufferIgnorable){
+                unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+            }
+        }else{
+            if(!element.allowsChars()){
+                if(!isIgnorable || !isBufferIgnorable){
+                    unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+                }
+                return;
+            }
+            
+            // append the content, it could be that the element following is an error            
+            if(chars.length > 0) charContentBuffer.append(chars, 0, chars.length);
+            
+            // see that the right location is used in the messages
+            if(charContentLineNumber != -1){
+                if(chars.length > 0)validationItemLocator.closeCharsContent();
+                validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
+            }
+            
+            CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
+            ceh.handleChars(charContentBuffer.removeCharsArray(), (CharsActiveType)element, hasComplexContent);
+            ceh.recycle();
+            
+            if(chars.length == 0)validationItemLocator.closeCharsContent();
+        }				
 	}
 	
 	

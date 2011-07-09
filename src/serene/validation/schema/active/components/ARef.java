@@ -98,9 +98,9 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 	* Throws a NullPointerException if the definition is not assembled. 
 	* This means the method can only be used during validation.
 	*/
-	public boolean isRequired(){
+	public boolean isRequiredContent(){
 		if(minOccurs == 0) return false;		
-		return child.isRequired();
+		return child.isRequiredContent();
 	}
 	
 	//ActiveDefinitionPointer
@@ -412,4 +412,5 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 		return s;
 	}
 }
+
 

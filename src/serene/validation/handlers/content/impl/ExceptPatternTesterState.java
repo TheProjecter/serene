@@ -19,6 +19,7 @@ package serene.validation.handlers.content.impl;
 import java.util.List;
 
 import org.relaxng.datatype.ValidationContext;
+import org.relaxng.datatype.DatatypeException;
 
 import serene.validation.schema.active.DataActiveType;
 import serene.validation.schema.active.StructuredDataActiveType;
@@ -58,7 +59,7 @@ abstract class ExceptPatternTesterState extends AbstractCVH  implements ErrorCat
 	public void handleChars(char[] chars, DataActiveType type){
 		throw new IllegalStateException();
 	}
-	public void handleChars(char[] chars, CharsActiveType type){
+	public void handleChars(char[] chars, CharsActiveType type, boolean isComplexContent){
 		throw new IllegalStateException();
 	}
 		
@@ -66,7 +67,7 @@ abstract class ExceptPatternTesterState extends AbstractCVH  implements ErrorCat
 	public void handleString(String value, DataActiveType type){
 		throw new IllegalStateException();
 	}	
-	public void handleString(String value, CharsActiveType type){
+	public void handleString(String value, CharsActiveType type, boolean isComplexContent){
 		throw new IllegalStateException();
 	}
 	
@@ -82,7 +83,7 @@ abstract class ExceptPatternTesterState extends AbstractCVH  implements ErrorCat
 		throw new IllegalStateException();
 	}
 	
-	void reportDatatypeError(DatatypedActiveTypeItem item, String message){
+    void reportDatatypeError(DatatypedActiveTypeItem item, String message){
 		if(validationItemLocator.isAttributeContext()){
 			attributeValueDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, message);
 		}else if(validationItemLocator.isElementContext()){

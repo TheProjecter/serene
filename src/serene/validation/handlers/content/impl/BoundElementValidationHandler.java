@@ -31,6 +31,7 @@ import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.content.AttributeEventHandler;
 import serene.validation.handlers.content.CharactersEventHandler;
+import serene.validation.handlers.content.BoundElementHandler;
 
 import serene.bind.BindingModel;
 import serene.bind.ValidatorQueuePool;
@@ -61,7 +62,14 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		startLocationBinding();
 	}
 	
-	public void recycle(){		
+	public void recycle(){
+        charContentBuffer.clear();
+        charContentSystemId = null;
+        charContentPublicId = null;
+        charContentLineNumber = -1;
+        charContentColumnNumber = -1;
+		hasComplexContent = false;
+        
 		if(stackHandler != null){
 			stackHandler.recycle();
 			stackHandler = null;
@@ -151,24 +159,83 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		}		
 	}	
 
-	public void handleCharacters(char[] chars){		
-		if(!element.allowsChars()){
-			chars = spaceHandler.trimSpace(chars);
-			if(chars.length >0){				
-				unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
-			}
-			return;
-		}
+	public void handleInnerCharacters(char[] chars){		
+		boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
+        if(!isIgnorable && element.allowsTextContent()){
+            hasComplexContent = true;
+            CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
+            ceh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
+            ceh.recycle();
+        }else if(!isIgnorable && ! element.allowsChars()){
+            unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+        }else{
+            // element.allowsDataContent()
+            //  || element.allowsValueContent()
+            //  || element.allowsListPatternContent()
+            
+            // append the content, it could be that the element following is an error
+            if(chars.length > 0){            
+                charContentBuffer.append(chars, 0, chars.length);
+                if(charContentLineNumber == -1 ){
+                    charContentSystemId = validationItemLocator.getSystemId();
+                    charContentPublicId = validationItemLocator.getPublicId();
+                    charContentLineNumber = validationItemLocator.getLineNumber();
+                    charContentColumnNumber = validationItemLocator.getColumnNumber();
+                }
+            }
+        }    
 		// Character content binding is not done by the InternalConflictResolver 
 		// because there are no differences between different internal pattern
 		// configurations, the text is added anyway.
 		// Still it would be better to have the "normalized" version resulted 
 		// from the processing done for the validation.
 		// TODO see about what to do if chars validation results in errors
-		chars = spaceHandler.trimSpace(chars);
+		characterContentBinding(chars);	
+				
+	}
+
+    public void handleLastCharacters(char[] chars){
+        boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);            
+        char[] bufferedContent = charContentBuffer.removeCharsArray();
+        boolean isBufferIgnorable = bufferedContent.length == 0 || spaceHandler.isSpace(bufferedContent);
+		if(hasComplexContent){
+            if(!isIgnorable && element.allowsTextContent()){
+                CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
+                ceh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
+                ceh.recycle();
+            }else if(!isIgnorable || !isBufferIgnorable){
+                unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+            }
+        }else{
+            if(!element.allowsChars()){
+                if(!isIgnorable || !isBufferIgnorable){
+                    unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+                }
+                return;
+            }
+            
+            // append the content, it could be that the element following is an error            
+            if(chars.length > 0) charContentBuffer.append(chars, 0, chars.length);
+            
+            // see that the right location is used in the messages
+            if(charContentLineNumber != -1){
+                if(chars.length > 0)validationItemLocator.closeCharsContent();
+                validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
+            }
+            
+            CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
+            ceh.handleChars(charContentBuffer.removeCharsArray(), (CharsActiveType)element, hasComplexContent);
+            ceh.recycle();
+            
+            if(chars.length == 0)validationItemLocator.closeCharsContent();
+        }
+		// Character content binding is not done by the InternalConflictResolver 
+		// because there are no differences between different internal pattern
+		// configurations, the text is added anyway.
+		// Still it would be better to have the "normalized" version resulted 
+		// from the processing done for the validation.
+		// TODO see about what to do if chars validation results in errors
 		characterContentBinding(chars);		
-		CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);		
-		ceh.handleChars(chars, (CharsActiveType)element);		
 				
 	}	
 	

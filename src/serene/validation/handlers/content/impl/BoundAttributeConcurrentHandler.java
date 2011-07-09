@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.HashMap;
 
 import serene.validation.schema.active.components.AAttribute;
+import serene.validation.handlers.content.BoundAttributeHandler;
 
 import serene.bind.BindingModel;
 import serene.bind.AttributeBinder;

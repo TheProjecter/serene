@@ -44,10 +44,10 @@ public class AGrammar extends UniqueChildAPattern implements AInnerPattern{
 		super(child, ruleHandlerPool, qName, location, debugWriter);
 	}
 		
-	public boolean isRequired(){
+	public boolean isRequiredContent(){
 		if(minOccurs == 0) return false;
 		if(child != null)
-			return child.isRequired();
+			return child.isRequiredContent();
 		return false;		
 	}
 	

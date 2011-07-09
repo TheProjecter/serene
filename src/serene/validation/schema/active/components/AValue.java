@@ -39,8 +39,11 @@ public class AValue extends DatatypedCharsAPattern{
 	String ns;
 	String charContent;
 	
-	public AValue(String ns, 					
-					Datatype datatype,
+    boolean isSpace;
+    boolean isSpaceAssessed;
+        
+	public AValue(String ns, 		
+                    Datatype datatype, 
 					String charContent,
 					ActiveGrammarModel grammarModel, 					
 					ActiveModelRuleHandlerPool ruleHandlerPool,
@@ -51,17 +54,23 @@ public class AValue extends DatatypedCharsAPattern{
 		this.charContent = charContent;
 	}
 
-	public boolean valueMatches(char[] chars, ValidationContext validationContext){				
-		if(chars == null) return charContent == null;
-		else if(charContent == null) return false;
-		String value = new String(chars);
-		return value.equals(charContent);
+	public boolean valueMatches(char[] chars, ValidationContext validationContext){
+		Object o1 = datatype.createValue(charContent, validationContext);
+        Object o2 = datatype.createValue(new String(chars), validationContext);
+		return datatype.sameValue(o1, o2);
 	}
-	public boolean valueMatches(String value, ValidationContext validationContext){		
-		if(value == null) return charContent == null;
-		else if(charContent == null) return false;
-		return value.equals(charContent);
+	public boolean valueMatches(String value, ValidationContext validationContext){        
+        Object o1 = datatype.createValue(charContent, validationContext);
+        Object o2 = datatype.createValue(value, validationContext);
+		return datatype.sameValue(o1, o2);
 	}
+    public boolean isSpaceOnly(){
+        if(isSpaceAssessed)return isSpace;
+        isSpaceAssessed = true;
+        String v = charContent.trim();
+        isSpace = v.equals("");
+        return isSpace;
+    }
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);
 	}
@@ -80,6 +89,6 @@ public class AValue extends DatatypedCharsAPattern{
 	}
 	
 	public String toString(){
-		return "AValue datatype "+datatype+" charContent "+charContent + " min "+minOccurs+" max "+maxOccurs;
+		return "AValue datatype "+datatype+ " min "+minOccurs+" max "+maxOccurs+" /"+charContent+"/";
 	}
 }
