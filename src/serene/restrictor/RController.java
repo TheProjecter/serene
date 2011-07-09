@@ -87,6 +87,7 @@ public class RController implements RestrictingVisitor{
 	
 	boolean moreContext;//7.1.2	
 	boolean moreMultiChildrenContext;//7.1.2	
+    boolean hasSeveralChildren; // 7.1.2 applies to interleave and group
 	// interleave limitation 
 	boolean moreInterleaveContext;
 	boolean moreInterleaveMoreContext;
@@ -165,6 +166,8 @@ public class RController implements RestrictingVisitor{
 		
 		moreContext = false;		
 		moreMultiChildrenContext = false;
+        hasSeveralChildren = false;
+        
 		moreInterleaveContext = false;
 		moreInterleaveMoreContext = false;
 		morePath.clear();
@@ -301,6 +304,9 @@ public class RController implements RestrictingVisitor{
 		boolean oldMoreMultiChildrenContext = moreMultiChildrenContext;
 		moreMultiChildrenContext = false;
 		
+        boolean oldHasSeveralChildren = hasSeveralChildren;
+        hasSeveralChildren = false;
+        
 		boolean oldListContext = listContext;
 		listContext = false;
 		
@@ -358,7 +364,8 @@ public class RController implements RestrictingVisitor{
 		moreContext = oldMoreContext;
 		moreInterleaveContext = oldMoreInterleaveContext;
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;				
-		moreMultiChildrenContext = oldMoreMultiChildrenContext;		
+		moreMultiChildrenContext = oldMoreMultiChildrenContext;
+        hasSeveralChildren = oldHasSeveralChildren;		
 		listContext = oldListContext;
 		exceptPatternContext714 = oldExceptPatternContext714;
         exceptPatternContext72 = oldExceptPatternContext72;
@@ -382,16 +389,24 @@ public class RController implements RestrictingVisitor{
 			errorDispatcher.error(new SAXParseException(message, null));
 		}		
 		if(moreMultiChildrenContext){
-			// error 7.1.2
-			ArrayList<SPattern> path = morePath.peek();
-			String message = "Restrictions 7.1.2 error. Forbiden path: ";
-			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
-			}
-			message += "\n<"+attribute.getQName()+"> at "+attribute.getLocation();
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
-		}
+            if(hasSeveralChildren){
+                // error 7.1.2
+                ArrayList<SPattern> path = morePath.peek();
+                String message = "Restrictions 7.1.2 error. Forbiden path: ";
+                for(int i = 0; i < path.size(); i++){
+                    message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+                }
+                message += "\n<"+attribute.getQName()+"> at "+attribute.getLocation();
+                //System.out.println(message);
+                errorDispatcher.error(new SAXParseException(message, null));
+            }else{
+                 moreAttributeContext = true;
+            }
+		}else{
+            if(moreContext) moreAttributeContext = true;
+            else moreAttributeContext = false;
+        }        
+        
 		if(listContext){// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
 			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
@@ -419,9 +434,7 @@ public class RController implements RestrictingVisitor{
 		}
 		
 		boolean oldMoreAttributeContext = moreAttributeContext;
-		if(moreContext) moreAttributeContext = true;
-		else moreAttributeContext = false;
-					
+							
 		boolean oldReportInfiniteNameClass = reportInfiniteNameClass;
 		reportInfiniteNameClass = false;
 				
@@ -457,6 +470,9 @@ public class RController implements RestrictingVisitor{
 		boolean oldMoreMultiChildrenContext = moreMultiChildrenContext;
 		moreMultiChildrenContext = false;
 		
+        boolean oldHasSeveralChildren = hasSeveralChildren;
+        hasSeveralChildren = false;
+        
 		boolean oldListContext = listContext;		
 		listContext = false;
 		
@@ -480,7 +496,8 @@ public class RController implements RestrictingVisitor{
 		moreContext = oldMoreContext;
 		moreInterleaveContext = oldMoreInterleaveContext;
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
-		moreMultiChildrenContext = oldMoreMultiChildrenContext;		
+		moreMultiChildrenContext = oldMoreMultiChildrenContext;
+        hasSeveralChildren = oldHasSeveralChildren;		
 		listContext = oldListContext;
 		exceptPatternContext714 = oldExceptPatternContext714;
         exceptPatternContext72 = oldExceptPatternContext72;
@@ -567,11 +584,15 @@ public class RController implements RestrictingVisitor{
 		
 		boolean oldMoreContext = moreContext;
 		boolean oldMoreMultiChildrenContext = moreMultiChildrenContext;
-		
+		boolean oldHasSeveralChildren = hasSeveralChildren;
+        
 		boolean oldMoreInterleaveContext = moreInterleaveContext;
 		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
 				
-		if(moreContext){
+        if(interleave.getChildrenCount() > 1)hasSeveralChildren = true;
+        else hasSeveralChildren = false;
+        
+		if(moreContext){            
 			moreMultiChildrenContext = true;
 			morePath.push(interleave);
 			moreContext = false;
@@ -627,6 +648,7 @@ public class RController implements RestrictingVisitor{
 		if(moreMultiChildrenContext) morePath.popItem();
 		moreContext = oldMoreContext;
 		moreMultiChildrenContext = oldMoreMultiChildrenContext;
+        hasSeveralChildren = oldHasSeveralChildren;
 		moreInterleaveContext = oldMoreInterleaveContext;
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
 				
@@ -683,10 +705,14 @@ public class RController implements RestrictingVisitor{
 		
 		boolean oldMoreContext = moreContext;
 		boolean oldMoreMultiChildrenContext = moreMultiChildrenContext;
-		
+		boolean oldHasSeveralChildren =hasSeveralChildren;
+        
 		boolean oldMoreInterleaveContext = moreInterleaveContext;
 		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
 		
+        if(group.getChildrenCount() > 1)hasSeveralChildren = true;
+        else hasSeveralChildren = false;
+        
 		if(moreContext){
 			moreMultiChildrenContext = true;
 			morePath.push(group);
@@ -743,6 +769,7 @@ public class RController implements RestrictingVisitor{
 		if(moreMultiChildrenContext) morePath.popItem();
 		moreContext = oldMoreContext;
 		moreMultiChildrenContext = oldMoreMultiChildrenContext;
+        hasSeveralChildren = oldHasSeveralChildren;
 		moreInterleaveContext = oldMoreInterleaveContext;
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
 		
@@ -928,10 +955,13 @@ public class RController implements RestrictingVisitor{
 		
 		boolean oldMoreContext = moreContext;
 		boolean oldMoreMultiChildrenContext = moreMultiChildrenContext;
+        boolean oldHasSeveralChildren = hasSeveralChildren;
+        hasSeveralChildren = true;        
 		
 		boolean oldMoreInterleaveContext = moreInterleaveContext;
 		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
-				
+		
+		
 		if(moreContext){
 			moreMultiChildrenContext = true;
 			morePath.push(mixed);
@@ -995,6 +1025,7 @@ public class RController implements RestrictingVisitor{
 		if(moreMultiChildrenContext) morePath.popItem();
 		moreContext = oldMoreContext;
 		moreMultiChildrenContext = oldMoreMultiChildrenContext;
+        hasSeveralChildren = oldHasSeveralChildren;
 		moreInterleaveContext = oldMoreInterleaveContext;
 		moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
 		

@@ -24,8 +24,8 @@ limitations under the License.
 			<rng:name ns="www.example.com"> root </rng:name>
 			<rng:oneOrMore>
 				<rng:group>
-					<rng:attribute name ="a2">
-					</rng:attribute>
+					<rng:attribute name ="a1"/>
+					<rng:attribute name ="a2"/>
 				</rng:group>
 			</rng:oneOrMore>
 		</rng:element>
