@@ -44,17 +44,7 @@ import sereneWrite.MessageWriter;
 
 abstract class ListPatternTesterState extends AbstractCVH  implements ErrorCatcher{
 	boolean hasError;	
-	/**
-	* Set to true every time a token has at least a match in the context of the 
-	* ListPattern. 
-	*/	
-	boolean tokenMatch;
-	/**
-	* Set to true at the beginig of every token's validation and to false 
-	* when an error is detected. Used to check if a token was shifted correctly.
-	*/
-	boolean tokenValid;
-		
+    char[] token;
 	StackHandler stackHandler;
 	
 	List<CharsActiveTypeItem> totalCharsItemMatches;

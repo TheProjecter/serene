@@ -50,7 +50,7 @@ import sereneWrite.MessageWriter;
 
 	
 class SimpleListPatternTester extends ListPatternTesterState{
-    char[] token;		
+    		
 	SimpleListPatternTester(MessageWriter debugWriter){
 		super(debugWriter);
 		charsItemMatches = new ArrayList<CharsActiveTypeItem>();
@@ -70,7 +70,6 @@ class SimpleListPatternTester extends ListPatternTesterState{
 			charsItemMatches.clear();
 			dataMatches.clear();
 			valueMatches.clear();
-			tokenValid = true; 
 			if(type.allowsDataContent()){
 				dataMatches.addAll(matchHandler.getDataMatches(type));
 			}
@@ -89,7 +88,6 @@ class SimpleListPatternTester extends ListPatternTesterState{
 			}else if(totalCount == 1 && matchesCount == 1){
 				// if errors: already reported, that's why error before
 				// just shift
-				if(tokenValid) tokenMatch = true;
 				stackHandler.shift(charsItemMatches.get(0));
 			}else if(totalCount > 1 && matchesCount == 0){
 				// ambiguity error
@@ -111,9 +109,6 @@ class SimpleListPatternTester extends ListPatternTesterState{
 						
 			if(hasError)return;
 		}
-		if(tokenMatch == false){// no matches were found for any token
-			return;
-		}		
 		stackHandler.endValidation();
 		stackHandler.recycle();
 		stackHandler = null;
@@ -160,7 +155,6 @@ class SimpleListPatternTester extends ListPatternTesterState{
 			}else if(totalCount == 1 && matchesCount == 1){
 				// if errors: already reported, that's why error before
 				//just shift
-				if(tokenValid) tokenMatch = true;
 				stackHandler.shift(charsItemMatches.get(0));
 			}else if(totalCount > 1 && matchesCount == 0){
 				// ambiguity error
@@ -182,9 +176,6 @@ class SimpleListPatternTester extends ListPatternTesterState{
 			
 			if(hasError)return;
 		}
-		if(tokenMatch == false){// no matches were found for any token
-			return;
-		}		
 		stackHandler.endValidation();
 		stackHandler.recycle();
 		stackHandler = null;
@@ -225,33 +216,27 @@ class SimpleListPatternTester extends ListPatternTesterState{
 	
 	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
 		hasError = true;
-		tokenValid = false;
 	}
 	
 	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
 		hasError = true;
-		tokenValid = false;
 	}
 	
 	
 	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
 		hasError = true;
-		tokenValid = false;
 	}
 	
 	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
 		hasError = true;
-		tokenValid = false;
 	}
 	
 	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
 		hasError = true;
-		tokenValid = false;
 	}
 	
 	public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
 		hasError = true;
-		tokenValid = false;
 	}
 		
 	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
@@ -264,7 +249,6 @@ class SimpleListPatternTester extends ListPatternTesterState{
 	
 	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
-		tokenValid = false;
 	}
 	
 	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
@@ -280,74 +264,58 @@ class SimpleListPatternTester extends ListPatternTesterState{
 	
 	public void undeterminedByContent(String qName, String candidateMessages){
 		hasError = true;
-		tokenValid = false;
 	}
 	
 	
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		hasError = true;
-		tokenValid = false;
 	}
 	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		hasError = true;
-		tokenValid = false;
 	}
 	
 	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		hasError = true;
-		tokenValid = false;
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		hasError = true;
-		tokenValid = false;
 	}
 	
 	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
 		hasError = true;
-		tokenValid = false;
 	}	
 	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
 		hasError = true;
-		tokenValid = false;
 	}
 	
 	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
 		hasError = true;
-		tokenValid = false;
 	}	
 	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
 		hasError = true;
-		tokenValid = false;
 	}
 	
 	public void ambiguousCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
-		tokenValid = false;
 	}
 	public void ambiguousAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
-		tokenValid = false;
 	}
 	
 	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		hasError = true;
-		tokenValid = false;
 	}
 	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		hasError = true;
-		tokenValid = false;
 	}
 	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
 		hasError = true;
-		tokenValid = false;
 	}
 	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
-		tokenValid = false;
 	}
 	public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
-        tokenValid = false;
     }    
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		
@@ -355,7 +323,6 @@ class SimpleListPatternTester extends ListPatternTesterState{
     
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		hasError = true;
-		tokenValid = false;
 	}
 }
 	
