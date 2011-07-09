@@ -402,28 +402,28 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void ambiguousCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         if(isCandidate){
             int functionalEquivalenceCode = 0;
             for(int i = 0; i < possibleDefinitions.length; i++){
                 functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
             }
-            messageHandler.ambiguousCharacterContent(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
-            candidatesConflictErrorHandler.ambiguousCharacterContent(candidateIndex, functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedCharacterContent(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
+            candidatesConflictErrorHandler.unresolvedCharacterContent(candidateIndex, functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousCharacterContent(-1, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedCharacterContent(-1, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
-	public void ambiguousAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         if(isCandidate){
             int functionalEquivalenceCode = attributeQName.hashCode();
             for(int i = 0; i < possibleDefinitions.length; i++){
                 functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
             }
-            messageHandler.ambiguousAttributeValue(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
-            candidatesConflictErrorHandler.ambiguousAttributeValue(candidateIndex, functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedAttributeValue(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            candidatesConflictErrorHandler.unresolvedAttributeValue(candidateIndex, functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousAttributeValue(-1, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedAttributeValue(-1, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	

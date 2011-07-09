@@ -804,19 +804,19 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         }
 	}
     
-	public void ambiguousCharacterContent(int candidateIndex, int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int candidateIndex, int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         recordError(AMBIGUOUS_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex);
 	    if(mustRecordErrorMessage(AMBIGUOUS_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex)){
-            localMessageHandler.ambiguousCharacterContent(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
+            localMessageHandler.unresolvedCharacterContent(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
             setErrorMessageRecorded(AMBIGUOUS_CHARACTER_CONTENT, functionalEquivalenceCode);
         }
 	}
     
 	// {24}
-	public void ambiguousAttributeValue(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         recordError(AMBIGUOUS_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex);
 	    if(mustRecordErrorMessage(AMBIGUOUS_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex)){
-            localMessageHandler.ambiguousAttributeValue(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            localMessageHandler.unresolvedAttributeValue(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
             setErrorMessageRecorded(AMBIGUOUS_ATTRIBUTE_VALUE, functionalEquivalenceCode);
         }
 	}        

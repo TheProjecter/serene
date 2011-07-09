@@ -88,7 +88,7 @@ class CharacterContentValidationHandler extends AbstractCVH{
 			if(!dataMatches.isEmpty())charsItemMatches.addAll(dataMatches);
 			if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 			if(!listMatches.isEmpty())charsItemMatches.addAll(listMatches);
-			errorCatcher.ambiguousCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
+			errorCatcher.unresolvedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 			parent.addChars(charsItemMatches);
 		}else if(totalCount > 1 && matchesCount == 1){
 			//just shift
@@ -117,7 +117,7 @@ class CharacterContentValidationHandler extends AbstractCVH{
 			if(!dataMatches.isEmpty())charsItemMatches.addAll(dataMatches);
 			if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 			if(!listMatches.isEmpty())charsItemMatches.addAll(listMatches);
-			errorCatcher.ambiguousCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
+			errorCatcher.unresolvedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 			parent.addChars(charsItemMatches);
 		}else if(totalCount > 1 && matchesCount == 1){
 			//just shift
@@ -146,7 +146,7 @@ class CharacterContentValidationHandler extends AbstractCVH{
 			if(!dataMatches.isEmpty())charsItemMatches.addAll(dataMatches);
 			if(!valueMatches.isEmpty())charsItemMatches.addAll(valueMatches);
 			if(!listMatches.isEmpty())charsItemMatches.addAll(listMatches);
-			errorCatcher.ambiguousCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
+			errorCatcher.unresolvedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), charsItemMatches.toArray(new CharsActiveTypeItem[matchesCount]));
 			parent.addChars(charsItemMatches);
 		}else if(totalCount > 1 && matchesCount == 1){
 			//just shift			

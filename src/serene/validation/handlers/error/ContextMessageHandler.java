@@ -1,19 +1,3 @@
-/*
-Copyright 2010 Radu Cernuta 
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package serene.validation.handlers.error;
 
 import java.util.Arrays;
@@ -76,7 +60,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		unknownElementSystemId[unknownElementIndex] = systemId;
 		unknownElementLineNumber[unknownElementIndex] = lineNumber;
 		unknownElementColumnNumber[unknownElementIndex] = columnNumber;
-		
 	}
 	
     public void clearUnknownElement(){
@@ -125,7 +108,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		unexpectedElementSystemId[unexpectedElementIndex] = systemId;
 		unexpectedElementLineNumber[unexpectedElementIndex] = lineNumber;
 		unexpectedElementColumnNumber[unexpectedElementIndex] = columnNumber;
-		
 	}
 		
 	public void clearUnexpectedElement(){
@@ -176,7 +158,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		unexpectedAmbiguousElementSystemId[unexpectedAmbiguousElementIndex] = systemId;
 		unexpectedAmbiguousElementLineNumber[unexpectedAmbiguousElementIndex] = lineNumber;
 		unexpectedAmbiguousElementColumnNumber[unexpectedAmbiguousElementIndex] = columnNumber;
-		
 	}
 	
 	public void clearUnexpectedAmbiguousElement(){
@@ -222,7 +203,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		unknownAttributeSystemId[unknownAttributeIndex] = systemId;
 		unknownAttributeLineNumber[unknownAttributeIndex] = lineNumber;
 		unknownAttributeColumnNumber[unknownAttributeIndex] = columnNumber;
-		
 	}
 	public void clearUnknownAttribute(){
         errorTotalCount -= unknownAttributeSize;
@@ -271,7 +251,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		unexpectedAttributeSystemId[unexpectedAttributeIndex] = systemId;
 		unexpectedAttributeLineNumber[unexpectedAttributeIndex] = lineNumber;
 		unexpectedAttributeColumnNumber[unexpectedAttributeIndex] = columnNumber;
-		
 	}
 	public void clearUnexpectedAttribute(){
         errorTotalCount -= unexpectedAttributeSize;
@@ -321,7 +300,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		unexpectedAmbiguousAttributeSystemId[unexpectedAmbiguousAttributeIndex] = systemId;
 		unexpectedAmbiguousAttributeLineNumber[unexpectedAmbiguousAttributeIndex] = lineNumber;
 		unexpectedAmbiguousAttributeColumnNumber[unexpectedAmbiguousAttributeIndex] = columnNumber;
-		
 	}
 	public void clearUnexpectedAmbiguousAttribute(){
         errorTotalCount -= unexpectedAmbiguousAttributeSize;
@@ -518,7 +496,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 									columnNumber[i],
 									sourceDefinition[i],
 									reper);
-		}	
+		}
 	}
     public void clearMisplacedElement(){
         errorTotalCount -= misplacedSize;
@@ -603,7 +581,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		excessiveQName[excessiveIndex] = qName;
 		excessiveSystemId[excessiveIndex] = systemId;
 		excessiveLineNumber[excessiveIndex] = lineNumber;
-		excessiveColumnNumber[excessiveIndex] = columnNumber;
+		excessiveColumnNumber[excessiveIndex] = columnNumber;		
+		
+		String excessive = "";
+		for(int i = 0; i < qName.length; i++){
+			excessive+="\n"+systemId[i]+":"+lineNumber[i]+":"+columnNumber[i]+":"+qName[i];
+		}
+		excessive.trim();
 	}   
 	public void excessiveContent(Rule context, 
 								APattern definition, 
@@ -641,6 +625,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 				System.arraycopy(excessiveColumnNumber[i], 0, increasedCN, 0, length);
 				excessiveColumnNumber[i] = increasedCN;
 				excessiveColumnNumber[i][length] = columnNumber;
+								
 				break;
 			}
 		}		
@@ -754,8 +739,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		ambiguousAttributeSystemIdEE[ambiguousAttributeIndexEE] = systemId;
 		ambiguousAttributeLineNumberEE[ambiguousAttributeIndexEE] = lineNumber;
 		ambiguousAttributeColumnNumberEE[ambiguousAttributeIndexEE] = columnNumber;
-		ambiguousAttributeDefinitionEE[ambiguousAttributeIndexEE] = possibleDefinitions;	
-		
+		ambiguousAttributeDefinitionEE[ambiguousAttributeIndexEE] = possibleDefinitions;
 	}
 	public void clearAmbiguousAttributeContentError(){
         errorTotalCount -= ambiguousAttributeSizeEE;
@@ -1519,7 +1503,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         unexpectedContextDefinitionAV = null;
     }
     
-	public void ambiguousCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         errorTotalCount++;
 		if(ambiguousSizeCC == 0){
 			ambiguousSizeCC = 1;
@@ -1561,7 +1545,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
 	// {24}
-	public void ambiguousAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         errorTotalCount++;
 		if(ambiguousSizeAV == 0){
 			ambiguousSizeAV = 1;
@@ -1963,6 +1947,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		missingCompositorContentDefinition[missingCompositorContentIndex] = definition;
 		missingCompositorContentExpected[missingCompositorContentIndex] = expected;
 		missingCompositorContentFound[missingCompositorContentIndex] = found;
+				
 	}	
     
     

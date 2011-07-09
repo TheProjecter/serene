@@ -725,7 +725,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(unknownAttributeQName != null){
 			for(int i = 0; i <= unknownAttributeIndex; i++){
 				message += "\n"+prefix+"Unknown attribute."
-				+"\n"+prefix+"Attribute "+unknownAttributeQName[i]+" at "+unknownAttributeSystemId[i]+":"+unknownAttributeLineNumber[i]+":"+unknownAttributeColumnNumber[i]
+				+"\n"+prefix+"Attribute \""+unknownAttributeQName[i]+"\" at "+unknownAttributeSystemId[i]+":"+unknownAttributeLineNumber[i]+":"+unknownAttributeColumnNumber[i]
 				+" is not known in the vocabulary described by the schema.";
 			}
 		}	
@@ -733,7 +733,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(unexpectedAttributeQName != null){
 			for(int i = 0; i <= unexpectedAttributeIndex; i++){
 				message += "\n"+prefix+"Unexpected attribute."
-						+"\n"+prefix+"Attribute "+unexpectedAttributeQName[i]+" at "+unexpectedAttributeSystemId[i]+":"+unexpectedAttributeLineNumber[i]+":"+unexpectedAttributeColumnNumber[i]+" corresponding to definition <"+unexpectedAttributeDefinition[i].getQName()+"> at "+unexpectedAttributeDefinition[i].getLocation()+" is not part of the parent's content model." ;
+						+"\n"+prefix+"Attribute \""+unexpectedAttributeQName[i]+"\" at "+unexpectedAttributeSystemId[i]+":"+unexpectedAttributeLineNumber[i]+":"+unexpectedAttributeColumnNumber[i]+" corresponding to definition <"+unexpectedAttributeDefinition[i].getQName()+"> at "+unexpectedAttributeDefinition[i].getLocation()+" is not part of the parent's content model." ;
 			}
 		}
 		// {7}
@@ -744,7 +744,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 					definitions += "\n"+prefix+"<"+unexpectedAmbiguousAttributeDefinition[i][j].getQName()+"> at "+unexpectedAmbiguousAttributeDefinition[i][j].getLocation();
 				}
 				message += "\n"+prefix+"Unexpected attribute."
-						+"\n"+prefix+"Attribute "+unexpectedAmbiguousAttributeQName[i]+" at "+unexpectedAmbiguousAttributeSystemId[i]+":"+unexpectedAmbiguousAttributeLineNumber[i]+":"+unexpectedAmbiguousAttributeColumnNumber[i]
+						+"\n"+prefix+"Attribute \""+unexpectedAmbiguousAttributeQName[i]+"\" at "+unexpectedAmbiguousAttributeSystemId[i]+":"+unexpectedAmbiguousAttributeLineNumber[i]+":"+unexpectedAmbiguousAttributeColumnNumber[i]
 						+", corresponding to one of the definitions: "
                         +definitions						
 						+"\n"+prefix+"is not part of the parent's content model." ;
@@ -820,7 +820,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(ambiguousAttributeQNameEE != null){
 			for(int i = 0; i <= ambiguousAttributeIndexEE; i++){
 				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Attribute "+ambiguousAttributeQNameEE[i] + " at "+ambiguousAttributeSystemIdEE[i]+":"+ambiguousAttributeLineNumberEE[i]+":"+ambiguousAttributeColumnNumberEE[i]
+						+"\n"+prefix+"Attribute \""+ambiguousAttributeQNameEE[i] + "\" at "+ambiguousAttributeSystemIdEE[i]+":"+ambiguousAttributeLineNumberEE[i]+":"+ambiguousAttributeColumnNumberEE[i]
 						+" cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: ";
 				for(int j = 0; j < ambiguousAttributeDefinitionEE[i].length; j++){
 					message += "\n"+prefix+"<"+ambiguousAttributeDefinitionEE[i][j].getQName()+"> at "+ambiguousAttributeDefinitionEE[i][j].getLocation();
@@ -853,7 +853,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(datatypeCharsSystemIdAV != null){
 			for(int i = 0; i <= datatypeIndexAV; i++){
 				message += "\n"+prefix+"Illegal datatype."
-				+"\n"+prefix+ "Value of attribute "+datatypeAttributeQNameAV[i]+" at "+datatypeCharsSystemIdAV[i]+":"+datatypeCharsLineNumberAV[i]+":"+datatypeCharsColumnNumberAV[i]
+				+"\n"+prefix+ "Value of attribute \""+datatypeAttributeQNameAV[i]+"\" at "+datatypeCharsSystemIdAV[i]+":"+datatypeCharsLineNumberAV[i]+":"+datatypeCharsColumnNumberAV[i]
 				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionAV[i].getQName()+"> at "+datatypeCharsDefinitionAV[i].getLocation()+". "
 				+ datatypeErrorMessageAV[i];
 			}
@@ -870,7 +870,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(valueCharsSystemIdAV != null){
 			for(int i = 0; i <= valueIndexAV; i++){
 				message += "\n"+prefix+"Illegal value."
-				+"\n"+prefix+ "Value of attribute "+valueAttributeQNameAV[i]+" at "+valueCharsSystemIdAV[i]+":"+valueCharsLineNumberAV[i]+":"+valueCharsColumnNumberAV[i]
+				+"\n"+prefix+ "Value of attribute \""+valueAttributeQNameAV[i]+"\" at "+valueCharsSystemIdAV[i]+":"+valueCharsLineNumberAV[i]+":"+valueCharsColumnNumberAV[i]
 				+ " does not match the value required by schema definition <" +valueCharsDefinitionAV[i].getQName()+"> at "+valueCharsDefinitionAV[i].getLocation()+".";
 			}
 		}
@@ -886,7 +886,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(exceptCharsSystemIdAV != null){
 			for(int i = 0; i <= exceptIndexAV; i++){
 				message += "\n"+prefix+"Excepted attribute value"
-				+"\n"+prefix+ "Value of attribute "+exceptAttributeQNameAV[i]+" at "+exceptCharsSystemIdAV[i]+":"+exceptCharsLineNumberAV[i]+":"+exceptCharsColumnNumberAV[i]
+				+"\n"+prefix+ "Value of attribute \""+exceptAttributeQNameAV[i]+"\" at "+exceptCharsSystemIdAV[i]+":"+exceptCharsLineNumberAV[i]+":"+exceptCharsColumnNumberAV[i]
 				+ " matches a value excepted by schema definition <" +exceptCharsDefinitionAV[i].getQName()+"> at "+exceptCharsDefinitionAV[i].getLocation()+".";
 			}
 		}
@@ -902,14 +902,14 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(unexpectedCharsSystemIdAV != null){
 			for(int i = 0; i <= unexpectedIndexAV; i++){
 				message += "\n"+prefix+"Unexpected attribute unexpected."
-				+"\n"+prefix+ "Value of attribute "+unexpectedAttributeQName[i]+" at "+unexpectedCharsSystemIdAV[i]+":"+unexpectedCharsLineNumberAV[i]+":"+unexpectedCharsColumnNumberAV[i]
+				+"\n"+prefix+ "Value of attribute \""+unexpectedAttributeQName[i]+"\" at "+unexpectedCharsSystemIdAV[i]+":"+unexpectedCharsLineNumberAV[i]+":"+unexpectedCharsColumnNumberAV[i]
 				+ " is not allowed by the attributes's schema definition <" +unexpectedContextDefinitionAV[i].getQName()+"> at "+unexpectedContextDefinitionAV[i].getLocation()+".";
 			}
 		}
 		// {23}
 		if(ambiguousCharsSystemIdEECC != null){
 			for(int i = 0; i <= ambiguousIndexCC; i++){
-				message += "\n"+prefix+"Ambiguous character content."
+				message += "\n"+prefix+"Unresolved character content."
 				+"\n"+prefix+ "Character content at "+ambiguousCharsSystemIdEECC[i]+":"+ambiguousCharsLineNumberEECC[i]+":"+ambiguousCharsColumnNumberEECC[i]
 				+ " cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors."
 				+" Possible definitions:";
@@ -922,8 +922,8 @@ public class AbstractMessageHandler  implements MessageReporter{
 		// {24}
 		if(ambiguousCharsSystemIdEEAV != null){			
 			for(int i = 0; i <= ambiguousIndexAV; i++){				
-				message += "\n"+prefix+"Ambiguous attribute value."
-				+"\n"+prefix+ "Value of attribute "+ambiguousAttributeQNameEEAV[i]+" at "+ambiguousCharsSystemIdEEAV[i]+":"+ambiguousCharsLineNumberEEAV[i]+":"+ambiguousCharsColumnNumberEEAV[i]
+				message += "\n"+prefix+"Unresolved attribute value."
+				+"\n"+prefix+ "Value of attribute \""+ambiguousAttributeQNameEEAV[i]+"\" at "+ambiguousCharsSystemIdEEAV[i]+":"+ambiguousCharsLineNumberEEAV[i]+":"+ambiguousCharsColumnNumberEEAV[i]
 				+ " cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors."
 				+" Possible definitions:";
 				for(int j = 0; j < ambiguousPossibleDefinitionsAV[i].length; j++){
@@ -1101,7 +1101,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(ambiguousAttributeQNameWW != null){
 			for(int i = 0; i <= ambiguousAttributeIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Attribute "+ambiguousAttributeQNameWW[i] + " at "+ambiguousAttributeSystemIdWW[i]+":"+ambiguousAttributeLineNumberWW[i]+":"+ambiguousAttributeColumnNumberWW[i]
+						+"\n"+prefix+"Attribute \""+ambiguousAttributeQNameWW[i] + "\" at "+ambiguousAttributeSystemIdWW[i]+":"+ambiguousAttributeLineNumberWW[i]+":"+ambiguousAttributeColumnNumberWW[i]
 						+" cannot be resolved by in context validation, possible definitions: ";
 				for(int j = 0; j < ambiguousAttributeDefinitionWW[i].length; j++){
 					message += "\n"+prefix+"<"+ambiguousAttributeDefinitionWW[i][j].getQName()+"> at "+ambiguousAttributeDefinitionWW[i][j].getLocation();
