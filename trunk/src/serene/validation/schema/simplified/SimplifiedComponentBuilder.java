@@ -241,9 +241,17 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		clearContent();
 		addToCurrentLevel(i);
 	}
+    public void buildInterleave(String qName, String location, SPattern[] children){
+		SInterleave i = new SInterleave(children, qName, location, debugWriter);
+		addToCurrentLevel(i);	
+	}
 	public void buildChoicePattern(String qName, String location){
 		SChoicePattern cp = new SChoicePattern(getContentPatterns(), qName, location, debugWriter);
 		clearContent();
+		addToCurrentLevel(cp);
+	}
+    public void buildChoicePattern(String qName, String location, SPattern[] children){
+		SChoicePattern cp = new SChoicePattern(children, qName, location, debugWriter);		
 		addToCurrentLevel(cp);
 	}
     public void buildReplacementChoicePattern(String qName, String location){
