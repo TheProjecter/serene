@@ -14,7 +14,7 @@ Element <rng:ef> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/te
 <element> at RELAXNG Specification 3.Full Syntax: any element
 is not part of the parent's content model.
 
-file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:36:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:36:17 Syntax error.  Element <rng:element> could not be resolved to a single schema definition:
 Unresolved by content.
 Validation  of candidate definitions resulted in errors:
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
@@ -54,7 +54,7 @@ file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/synt
 Illegal datatype.
 Value of attribute name at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:47:35 does not match the datatype required by schema definition <attribute> at RELAXNG Specification 3.Full Syntax: name attribute with NCName value. Code point(hex) 3a ':' is not a valid name character.
 
-file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:48:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:48:17 Syntax error.  Element <rng:element> could not be resolved to a single schema definition:
 Unresolved by content.
 Validation  of candidate definitions resulted in errors:
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
@@ -76,7 +76,7 @@ Element <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSui
 <element> at RELAXNG Specification 3.Full Syntax: element with name class child
 <element> at RELAXNG Specification 3.Full Syntax: element with name attribute.
 
-file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:57:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:57:17 Syntax error.  Element <rng:element> could not be resolved to a single schema definition:
 Unresolved by content.
 Validation  of candidate definitions resulted in errors:
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
@@ -92,7 +92,7 @@ Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element w
 	Illegal datatype.
 	Value of attribute name at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:52:34 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: name attribute with QName value. Prefix was not declared.
 
-file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:66:17 Syntax error.  Element rng:element could not be resolved to a single schema definition:
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:66:17 Syntax error.  Element <rng:element> could not be resolved to a single schema definition:
 Unresolved by content.
 Validation  of candidate definitions resulted in errors:
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child first error: 
