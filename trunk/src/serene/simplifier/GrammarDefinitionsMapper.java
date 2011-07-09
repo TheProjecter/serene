@@ -304,12 +304,6 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 								Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,// definitions of the included Grammar and its descendants
 								Map<Definition, ArrayList<Grammar>> definitionGrammars)// mapping of the definitions in the included Grammar and its descendants to the Grammars they contain
 								throws SAXException{
-		/*System.out.println("includedGrammar "+includedGrammar);
-		System.out.println("contextDefinitions "+contextDefinitions);
-		System.out.println("overrideDefinitions "+overrideDefinitions);
-		System.out.println("grammarDefinitions "+grammarDefinitions);
-		System.out.println("definitionGrammars "+definitionGrammars);
-		System.out.println("**************************************");*/
 		Map<String, ArrayList<Definition>> includedGrammarDefinitions = grammarDefinitions.remove(includedGrammar);
 		Set<String> includedNames = includedGrammarDefinitions.keySet();		
 		for(String name : includedNames){
@@ -347,17 +341,17 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			}
 			contextNameDefinitions.addAll(included);
 		}
-		//check for Simplification 4.7 errors		
 		if(!overrideDefinitions.isEmpty()){
 			Set<String> remainingNames = overrideDefinitions.keySet();			
 			for(String remainingName : remainingNames){
+                //check for Simplification 4.7 errors
 				if(remainingName == null){
 					//report error start
 					String message = "Simplification 4.7 error. "
 					+"Included grammar contains no start element to match the content of "+include.getQName()+" at "+include.getLocation()+":";
 					ArrayList<Definition> starts = overrideDefinitions.get(null);
 					for(int i = 0; i < starts.size(); i++){
-						message += "\n\t"+starts.get(i).getQName()+" at "+starts.get(i).getLocation();
+						message += "\n\t<"+starts.get(i).getQName()+"> at "+starts.get(i).getLocation();
 					}
 					message += ".";
 					errorDispatcher.error(new SAXParseException(message, null));
@@ -368,11 +362,19 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 					+"Included grammar contains no define element with name \""+reportName+"\"to match the content of "+include.getQName()+" at "+include.getLocation()+":";
 					ArrayList<Definition> defines = overrideDefinitions.get(remainingName);
 					for(int i = 0; i < defines.size(); i++){
-						message += "\n\t"+defines.get(i).getQName()+" at "+defines.get(i).getLocation();
+						message += "\n\t<"+defines.get(i).getQName()+"> at "+defines.get(i).getLocation();
 					}
 					message += ".";
 					errorDispatcher.error(new SAXParseException(message, null));
 				}
+                //add to the context
+                ArrayList<Definition> included = overrideDefinitions.get(remainingName);
+                ArrayList<Definition> contextNameDefinitions = contextDefinitions.get(remainingName);
+                if(contextNameDefinitions == null){
+                    contextNameDefinitions = new ArrayList<Definition>();				
+                    contextDefinitions.put(remainingName, contextNameDefinitions);
+                }
+                contextNameDefinitions.addAll(included);
 			}			
 		}		
 		if(!definitionGrammars.isEmpty()){
