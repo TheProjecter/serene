@@ -52,7 +52,7 @@ public class Driver{
 		String s = args[0];
 		String sourceDirName;
 		int optionsStart = 1;
-		if(s.equals("a")){
+		if(s.equals("-a")){
             if(args.length == 1){
                 System.out.println("Usage: java sereneTest.Driver [a] test-directory [-d destination-directory-name] [-r result-file-name] [-x xml-file name]."
                     +"\n"
