@@ -1,10 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 <HEAD>
-	<TITLE>Serene 0.5.2 Documentation</TITLE>
+	<TITLE>Serene 0.5.3 Documentation</TITLE>
 </HEAD>
 <BODY>
-    <H1 CLASS="western">Serene 0.5.2</H1>
+    <H1 CLASS="western">Serene 0.5.3</H1>
     <P>
         <BR>
     </P>
@@ -81,7 +81,7 @@
         <BR>
     </P>
     <P>
-        <B>Serene 0.5.2</B> was developed and tested using Java 5.0, and this 
+        <B>Serene 0.5.3</B> was developed and tested using Java 5.0, and this 
         is the recommended JRE (Java Runtime Environment). Previous versions would 
         not work, later should be fine.
     </P>
@@ -93,7 +93,7 @@
         <BR>
     </P>
     <P>
-        <B>Serene 0.5.2</B> is packaged as a ZIP
+        <B>Serene 0.5.3</B> is packaged as a ZIP
         file, you can extract the ZIP files using the Java jar tool to unpack
         the distribution. 
     </P>
@@ -194,7 +194,7 @@
                 <P>src/</P>
             </TD>
             <TD WIDTH=50%>
-                <P>Directory containing the source files for Serene 0.5.2 validation
+                <P>Directory containing the source files for Serene 0.5.3 validation
                 engine, testing tool and the org.relaxng.datatype API.</P>
             </TD>
         </TR>
@@ -226,7 +226,7 @@
     </TABLE>
     </P>
     <P>
-        In order to use <B>Serene 0.5.2</B> through the JAXP 1.3 Validation
+        In order to use <B>Serene 0.5.3</B> through the JAXP 1.3 Validation
         Framework API you must place the serene.jar file in your class path
         and preserve the original tree structure of the lib directory. If any 
         of the jar files has been moved, you must also explicitly add it to the 
@@ -239,12 +239,10 @@
     <P>
         <BR>
     </P>
-        <B>Serene 0.5.2</B> introduces support for DTD compatibility adding several 
-        new features and some bug fixes. The implementation of all 
-        <CODE>javax.xml.validation.SchemaFactory</CODE> and <CODE>javax.xml.validation.Validator</CODE>
-        methods involving <CODE>javax.xml.transform.Source</CODE> and 
-        <CODE>javax.xml.transform.Result</CODE> has been reviewd.
-    <P>
+         <B>Serene 0.5.3</B> has been tested using the RELAX NG test suite. 
+         As a result, several bugs have been fixed and the handling of conflict
+         and the reporting of errors have been significantly improved.
+    <P>  
         <BR>
     </P>
     <H2><A NAME="noteOnXmlSchemaDatatypesImplementation"/>Note on XML Schema Datatypes Implementation</H2>
@@ -252,7 +250,7 @@
         <BR>
     </P>
     <P>
-        This release implements the XML Schema datatypes by wrapping Apache Xerces2 
+        The XML Schema datatypes are implemented by wrapping Apache Xerces2 
         Java. It comes with version 2.10.0 which has the following limitations:
     </P>
     <P>       
@@ -294,14 +292,13 @@
         <BR>
     </P>
     <P>
-        This release introduces the implementation of the DTD compatibility
-        features. The implementation is independent from the validation implementation
-        and it is possible to control which features and levels are to be processed 
-        from the command line or through the <CODE>setFeature(String name, 
-        boolean value)</CODE> methods of the JAXP validation API.    
-        Furthermore, when a schema document contains errors with impact on the 
-        DTD compatibility handling, implementations of the abstract class
-        <CODE>serene.SereneRecoverableException</CODE> extending 
+        The implementation of the DTD compatibility features is independent from 
+        the validation implementation and it is possible to control which 
+        features and levels are to be processed from the command line or through 
+        the <CODE>setFeature(String name, boolean value)</CODE> methods of the 
+        JAXP validation API. Furthermore, when a schema document contains errors 
+        with impact on the DTD compatibility handling, implementations of the 
+        abstract class <CODE>serene.SereneRecoverableException</CODE> extending 
         <CODE>org.xml.sax.SAXParseException</CODE> are used, so that they can be 
         caught separately and the features set in the 
         <CODE>javax.xml.validation.ValidatorHandler</CODE> and
@@ -480,7 +477,7 @@
         <BR>
     </P>
     <P>
-        The features implemented by <B>Serene 0.5.2</B> are:
+        The features implemented by <B>Serene 0.5.3</B> are:
     </P>
     <P>
         <CODE><B>http://xml.org/sax/features/namespace-prefixes</B></CODE>
@@ -614,7 +611,7 @@
         <BR>
     </P>
     <P>
-        <B>Serene 0.5.2 </B>supports the vendor independent API for RELAX NG datatype 
+        <B>Serene 0.5.3 </B>supports the vendor independent API for RELAX NG datatype 
         libraries developed by James Clark and Kohsuke Kawaguchi, 
         <CODE>org.relaxng.datatypes</CODE>, so you can create your own libraries, 
         pack them as jar files adding the necessary 
@@ -681,15 +678,15 @@
     </P>
     <P>
         After every one of these stages we can
-        end up with 0, 1, or several candidate definition patterns matching
+        end up with <I>0</I>, <I>1</I>, or <I>several</I> candidate definition patterns matching
         the input. 
     </P>
     <P>
-        In case the result is 1 the processing
+        In case the result is <I>1</I> the processing
         goes on normally, with no need for ambiguity handling.
     </P>
     <P>
-        In case the result consists of several patterns in the next stage those 
+        In case the result consists of <I>several</I> patterns in the next stage those 
         will be processed in parallel handlers. Every candidate handler where the 
         processing results in a disqualifying error, that is an error that is not 
         common to all candidates, is disqualified. A new assessment is done at the 
@@ -700,7 +697,7 @@
         definition pattern and informing the user about the remaining candidates.
     </P>
     <P>
-        In case the number of candidates is 0 an error message is always issued. 
+        In case the number of candidates is <I>0</I> an error message is always issued. 
         The processing in this case is different according to the stage. After 
         the <B>initial matching</B> no further processing is done. After <B>pattern 
         matching</B> all candidates go to the next stage in an attempt to see if 
@@ -753,7 +750,7 @@
         <BR>
     </P>
     <P>
-        <B>Serene 0.5.2</B> can be used as a command line tool either directly 
+        <B>Serene 0.5.3</B> can be used as a command line tool either directly 
         by using serene.jar and the -jar option
     </P>
     <P>
@@ -784,14 +781,15 @@
         <BR>
     </P>
     <P>
-        For this release the testing was limited. The test cases used can
-        be found in the testSuite/ directory which contains the actual
+        <B>Serene 0.5.3</B> was tested using the RELAX NG test suite. Also 
+        our own exploratory and unit testing has been extended. Those test 
+        cases can be found in the testSuite/ directory which contains the actual
         schemas and documents used for testing as well as plain text files
         containing the error messages that have been accepted as correct,
         which can be used for regression testing. 
     </P>
     <P>
-        <B>Serene 0.5.2 </B>includes a command line tool that allows you to
+        <B>Serene 0.5.3 </B>includes a command line tool that allows you to
         run the tests yourself either directly by using sereneTest.jar and
         the -jar option
     </P>
@@ -934,7 +932,7 @@
             <P>
                 <CODE>sereneSamples.SourceValidation</CODE> demonstrating the
                 use of a <CODE>javax.xml.validation.Validator</CODE> for RELAX NG
-                through <B>Serene 0.5.2</B> with various implementations of 
+                through <B>Serene 0.5.3</B> with various implementations of 
                 <CODE>javax.xml.transform.Source</CODE>
             </P> 
         <LI>

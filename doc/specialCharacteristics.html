@@ -51,15 +51,15 @@
     </P>
     <P>
         After every one of these stages we can
-        end up with 0, 1, or several candidate definition patterns matching
+        end up with <I>0</I>, <I>1</I>, or <I>several</I> candidate definition patterns matching
         the input. 
     </P>
     <P>
-        In case the result is 1 the processing
+        In case the result is <I>1</I> the processing
         goes on normally, with no need for ambiguity handling.
     </P>
     <P>
-        In case the result consists of several patterns in the next stage those 
+        In case the result consists of <I>several</I> patterns in the next stage those 
         will be processed in parallel handlers. Every candidate handler where the 
         processing results in a disqualifying error, that is an error that is not 
         common to all candidates, is disqualified. A new assessment is done at the 
@@ -70,7 +70,7 @@
         definition pattern and informing the user about the remaining candidates.
     </P>
     <P>
-        In case the number of candidates is 0 an error message is always issued. 
+        In case the number of candidates is <I>0</I> an error message is always issued. 
         The processing in this case is different according to the stage. After 
         the <B>initial matching</B> no further processing is done. After <B>pattern 
         matching</B> all candidates go to the next stage in an attempt to see if 
