@@ -4,6 +4,10 @@
 = Limitations =
 <br>
 
+==Serene 0.5.3==
+
+No changes with this release.
+
 ==Serene 0.5.2==
 
 In this stage of the development there are still several important limitations:
