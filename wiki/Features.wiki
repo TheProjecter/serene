@@ -4,6 +4,10 @@
 = Features =
 <br>
 
+==Serene 0.5.3==
+
+No changes with this release.
+
 ==Serene 0.5.2==
 
 *{{{http://serenerng.org/features//schemaFactory/features/parsedModelSchema}}}*
