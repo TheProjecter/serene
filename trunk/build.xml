@@ -182,7 +182,7 @@ limitations under the License.
         <echo>This was the test build.</echo>
         <echo>Running the test.</echo>
         <java jar="${intLib.dir}/sereneTest.jar" fork="true">
-            <arg value="a"/>
+            <arg value="-a"/>
             <arg value="testSuite"/>
         </java>
     </target>
