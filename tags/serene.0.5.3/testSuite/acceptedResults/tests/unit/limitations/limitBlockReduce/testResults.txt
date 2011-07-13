@@ -1,0 +1,9 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\limitations\limitBlockReduce\schema.rng
+
+null:-1:-1 Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: 
+oneOrMore at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/limitations/limitBlockReduce/schema.rng:24:15
+interleave at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/limitations/limitBlockReduce/schema.rng:25:17
+oneOrMore at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/limitations/limitBlockReduce/schema.rng:26:17
+group added by oneOrMore simplification at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/limitations/limitBlockReduce/schema.rng:26:17.

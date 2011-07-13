@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<TITLE>Special Characteristics</TITLE>
+</HEAD>
+<BODY>
+    <H1>Special Characteristics</H1>
+    <P>
+        <BR>
+    </P>
+    <P>There are two areas <B>Serene</B><SPAN STYLE="font-weight: normal">
+    is mainly concentrating on: the ambiguity and conflicts handling, and
+    the validation messages.</P>
+    <P><BR>
+    </P>
+    <H2><A NAME="ambiguityAndConflictsHandling"/>Ambiguity and Conflicts Handling</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        There are three stages in the resolving
+        of the different components of an xml document with respect to the
+        corresponding RELAX NG schema patterns:
+        <BR>
+        <UL>
+            <LI>
+                <P>
+                    <B>initial matching</B> consists of the matching of an input element
+                    or attribute's name to the name class corresponding to one of the 
+                    definitions allowed by the schema in the respective context. Since 
+                    characters definition patterns (text, data, value, list) do not 
+                    have a name, in this stage, all the characters patterns defined 
+                    within a context are considered a match.
+                </P>
+            <LI>
+                <P>
+                    <B>pattern matching</B> consists of matching of a schema pattern 
+                    to the corresponding occurrence in the document based on the 
+                    content, this is done at the level of element definition pattern, 
+                    attribute definition pattern, characters definition pattern 
+                    (in <B>Serene</B> characters strings are considered to have a 
+                    structure since some patterns may contain <CODE>group</CODE>,
+                    <CODE>oneOrMore</CODE> etc) 
+                </P>
+            <LI>
+                <P>
+                    <B>in context handling</B> consists of handling of an
+                    occurrence as part of the parent's context
+                </P>
+        </UL>
+    </P>
+    <P>
+        After every one of these stages we can
+        end up with <I>0</I>, <I>1</I>, or <I>several</I> candidate definition patterns matching
+        the input. 
+    </P>
+    <P>
+        In case the result is <I>1</I> the processing
+        goes on normally, with no need for ambiguity handling.
+    </P>
+    <P>
+        In case the result consists of <I>several</I> patterns in the next stage those 
+        will be processed in parallel handlers. Every candidate handler where the 
+        processing results in a disqualifying error, that is an error that is not 
+        common to all candidates, is disqualified. A new assessment is done at the 
+        end of every stage and the processing goes on according to the number of
+        remaining candidates(0, 1, or several). If we find ourselves in this case 
+        after the <B>in context handling</B> a warning message is issued stating 
+        that the concerned document component could not be resolved to a single 
+        definition pattern and informing the user about the remaining candidates.
+    </P>
+    <P>
+        In case the number of candidates is <I>0</I> an error message is always issued. 
+        The processing in this case is different according to the stage. After 
+        the <B>initial matching</B> no further processing is done. After <B>pattern 
+        matching</B> all candidates go to the next stage in an attempt to see if 
+        this stage can result in a resolution to one definition. The <B>in context
+        handling</B> is last, so there is no processing after it.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="messages"/>Messages</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene</B> attempts to deliver good, meaningful messages. In
+        the same time it attempts to handle all messages, including error and
+        warning messages resulted from the ambiguity and conflict handling,
+        in a uniform and transparent way. Also the syntax validation for the
+        schema documents and the validation of document syntax are handled
+        transparently using exactly the same algorithm. 
+    </P>
+    <P>
+        In order to achieve all this transparency, an approach was chosen
+        where a distinction is made between the detection, interpretation and
+        reporting of errors. This approach allows to group the messages
+        produced by the disqualifying errors of different candidates during
+        conflict handling and report them in the ambiguity error message, or
+        ambiguity warning message. Another consequence of this approach is
+        the fact that errors produced in an element content, corresponding to
+        a content model, are reported when the end of that element is
+        processed. This means that the location information passed to the
+        SAXParseException is that of the end tag of the element in whose
+        context the error took place. Location information regarding the
+        exact place where the error occurred is provided in the content of
+        the message in a meaningful way.
+    </P>
+    <P>
+        Using exactly the same algorithm for the syntax validation of both
+        schemas and documents and, in the same time, trying to be meaningful
+        means that the messages are always pointing to the rule that has been
+        broken; that is a rule from the RELAX NG syntax specification in the
+        case of schemas, and a pattern from the concerned schema in the case
+        of documents.
+    </P>
+    <P>
+        <BR><BR>
+    </P>
+    <HR>
+    <P>
+        Copyright &copy; 2010 Radu Cernuta
+    </P>
+    <HR>
+</BODY>
+</HTML>

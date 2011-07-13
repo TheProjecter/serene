@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<TITLE>Features</TITLE>
+</HEAD>
+<BODY>
+    <H1>Features</H1>
+    <P>
+        <BR>
+    </P>
+    <P>
+        The features implemented by <B>Serene 0.5.3</B> are:
+    </P>
+    <P>
+        <CODE><B>http://xml.org/sax/features/namespace-prefixes</B></CODE>
+    </P>
+    <P>
+        As per <CODE>javax.xml.validation.ValidatorHandler</CODE>
+        contract, this feature controls how a ValidatorHandler introduces
+        namespace bindings that were not present in the original SAX event
+        stream. When this feature is set to <CODE>true</CODE>, it must make
+        sure that the user's <CODE>ContentHandler</CODE> will see the
+        corresponding <CODE>xmlns*</CODE> attribute in the <CODE>Attributes</CODE>
+        object of the <CODE>ContentHandler.startElement(String,String,String,Attributes)</CODE>
+        callback. Otherwise, <CODE>xmlns*</CODE> attributes must not be added
+        to <CODE>Attributes</CODE> that's passed to the user-specified
+        <CODE>ContentHandler</CODE>. By default it is set to <CODE>false</CODE>.
+        See <A HREF="samples.html">samples</A> for an example.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
+        which, when set to <CODE>true</CODE>, makes sure that any unrecognized or 
+        unsupported datatype library is replaced with the RELAX NG native datatype 
+        library and any datatype from that library is replaced with the <CODE>
+        token</CODE> datatype. By default it is set to <CODE>false</CODE>.    
+    </P>
+    <P>
+        Since <CODE>javax.xml.validation.SchemaFactory</CODE> specification requires 
+        that a non-null <CODE>javax.xml.validation.Schema</CODE> object must be 
+        returned every time regardless whether errors occurred or not during parsing, 
+        and it is the client's responsibility to make sure the returned schema object
+        is usable, <B>Serene</B> uses the abstract class 
+        <CODE>serene.SereneRecoverableException</CODE> which extends
+        <CODE>org.xml.sax.SAXParseException</CODE> and allows to report detected 
+        errors, but in the same time also signal the client when an error
+        was recovered from and the schema object returned is meaningful. In
+        this case the implementing class is <CODE>serene.datatype.MissingLibraryException</CODE>.
+        See <A HREF="#samples">samples</A> for an example.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features//schemaFactory/features/parsedModelSchema</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
+        which, when set to <CODE>true</CODE>, ensures that a reference to the initial 
+        unsimplified parsed schema model is kept in the <CODE>javax.xml.validation.Schema</CODE>. 
+        When set to <CODE>false</CODE>, the parsed model instance is discarded and the
+        memory freed. By default it is set to <CODE>false</CODE>.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/attributeDefaultValue</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
+        which, when set to <CODE>true</CODE>, ensures that the attribute default values
+        present in the schema document are parsed, simplified and it is checked if
+        the <I>compatibility</I> property holds for them. By default it is set to 
+        <CODE>false</CODE>.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/attributeIdType</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>,
+        <CODE>javax.xml.validation.ValidatorHandler</CODE> and <CODE>javax.xml.validation.Validator</CODE>        
+        which, when set to <CODE>true</CODE>, ensures that the ID, IDREF, IDREFS 
+        datatypes from the DTD compatibility datatype library present in the 
+        schema document are parsed, simplified and it is checked if the 
+        <I>compatibility</I> property and the <I>soundness</I> relation hold for them. 
+        By default it is set to <CODE>false</CODE>.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/documentationElement</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
+        which, when set to <CODE>true</CODE>, ensures that, for the documentation
+        elements present in the schema document, it is checked if the <I>compatibility</I> 
+        property holds. By default it is set to <CODE>false</CODE>.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level2/attributeDefaultValue</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.ValidatorHandler</CODE>
+        and <CODE>javax.xml.validation.Validator</CODE>. It is also recognized by the 
+        <CODE>javax.xml.validation.SchemaFactory</CODE> and transmited further throught 
+        the <CODE>javax.xml.validation.Schema</CODE> objects created. When set to 
+        <CODE>true</CODE>, it ensures that the infoset is modified according to the 
+        document input and the attribute default values present in the schema. By 
+        default it is set to <CODE>false</CODE>.
+    </P>
+    <P> 
+        When this feature is set to <CODE>true</CODE> in the 
+        <CODE>javax.xml.validation.SchemaFactory</CODE>, internally also the  
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/attributeDefaultValue</B></CODE>
+        feature is set to <CODE>true</CODE>, so that the necessary internal model is 
+        built from the schema document. When this feature is set to <CODE>true</CODE> 
+        in the <CODE>javax.xml.validation.ValidatorHandler</CODE>, or 
+        <CODE>javax.xml.validation.Validator</CODE>, controls are performed to 
+        ensure that the necessary internal model is present and correct.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level2/attributeIdType</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.ValidatorHandler</CODE>
+        and <CODE>javax.xml.validation.Validator</CODE>. It is also recognized by the 
+        <CODE>javax.xml.validation.SchemaFactory</CODE> and transmited further throught 
+        the <CODE>javax.xml.validation.Schema</CODE> objects created. When set to 
+        <CODE>true</CODE>, it ensures that the infoset is modified according to the 
+        document input and the ID, IDREF, IDREFS attributes present in the schema. 
+        By default it is set to <CODE>false</CODE>.
+    </P>
+    <P> 
+        When this feature is set to <CODE>true</CODE> in the 
+        <CODE>javax.xml.validation.SchemaFactory</CODE>, internally also the  
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/attributeIdType</B></CODE>
+        feature is set to <CODE>true</CODE>, so that the necessary internal model is 
+        built from the schema document. When this feature is set to <CODE>true</CODE> 
+        in the <CODE>javax.xml.validation.ValidatorHandler</CODE>, or 
+        <CODE>javax.xml.validation.Validator</CODE>, controls are performed to 
+        ensure that the necessary internal model is present and correct.
+    </P>
+    <P>
+        <BR><BR>
+    </P>
+    <HR>
+    <P>
+        Copyright &copy; 2010 Radu Cernuta
+    </P>
+    <HR>
+</BODY>
+</HTML>

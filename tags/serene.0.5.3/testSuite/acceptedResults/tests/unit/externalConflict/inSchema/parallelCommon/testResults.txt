@@ -1,0 +1,7 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\externalConflict\inSchema\parallelCommon\schema.rng
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inSchema/parallelCommon/schema.rng:30:17 Syntax error. Element <rng:data> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: data contains errors: 
+Missing content.
+In the document structure starting at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inSchema/parallelCommon/schema.rng:26:17, corresponding to definition <attributes and elements group> at RELAXNG Specification 3.Full Syntax: data, expected 1 occurrence corresponding to definition <type attribute> at RELAXNG Specification 3.Full Syntax: type attribute, found 0.

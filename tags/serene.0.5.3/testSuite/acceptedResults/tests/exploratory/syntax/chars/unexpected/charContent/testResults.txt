@@ -1,0 +1,11 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\syntax\chars\unexpected\charContent\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/unexpected/charContent/document1.xml:21:17 Syntax error. Element <root> corresponding to definition <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/unexpected/charContent/schema.rng:23:16 contains errors: 
+Unexpected character content.
+Character content at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/unexpected/charContent/document1.xml:21:10 is not allowed by the element's schema definition <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/unexpected/charContent/schema.rng:23:16.

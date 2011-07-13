@@ -1,0 +1,27 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\externalConflict\inDocument\parallelCommon\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/document1.xml:27:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/schema.rng:23:26 contains errors: 
+Ambiguous content.
+Element <aa> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/document1.xml:22:6 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/schema.rng:25:26
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/schema.rng:28:26.
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/document2.xml:27:7 Syntax error. Element <bb> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/schema.rng:36:24 contains errors: 
+Unexpected character content.
+Character content at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/document2.xml:24:10 is not allowed by the element's schema definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/schema.rng:36:24.
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/document2.xml:28:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/schema.rng:23:26 contains errors: 
+Ambiguous content.
+Element <aa> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/document2.xml:22:6 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/schema.rng:25:26
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/parallelCommon/schema.rng:28:26.

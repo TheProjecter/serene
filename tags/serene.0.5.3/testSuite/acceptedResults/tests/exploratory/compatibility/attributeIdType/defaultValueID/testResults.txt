@@ -1,0 +1,9 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\compatibility\attributeIdType\defaultValueID\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeIdType/defaultValueID/document1.xml:21:22 Soundness error. Value of attribute barId with the ID-type ID is the same as  value of attribute fooId at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeIdType/defaultValueID/document1.xml:20:11 with the ID-type ID.

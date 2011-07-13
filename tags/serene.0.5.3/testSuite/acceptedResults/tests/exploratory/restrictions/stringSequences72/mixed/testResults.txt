@@ -1,0 +1,6 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\stringSequences72\mixed\schema.rng
+
+null:-1:-1 Restrictions 7.2 error. Simple content type in the context of <rng:mixed> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/mixed/schema.rng:25:15:
+<group added by mixed simplification> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/mixed/schema.rng:25:15.

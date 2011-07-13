@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0">
+    <start>
+        <element name="root">
+            <interleave>
+                <group>
+                    <element name="aa">
+                        <empty/>
+                    </element>
+                    <ref name="elementBB"/>
+                </group>
+                <ref name="elementCC"/>
+          </interleave>
+        </element>
+    </start>
+    
+    <define name="elementBB">
+        <element name="bb">
+            <empty/>
+        </element>
+    </define>
+    
+    <define name="elementCC">
+        <element name="cc">
+            <empty/>
+        </element>
+    </define>
+</grammar>
