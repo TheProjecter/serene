@@ -295,7 +295,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 			validationItemLocator.closeCharsContent();
 		}
 		validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), namespaceURI, localName, qName);
-		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName);
+		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName, restrictToFileName);
 		elementHandler.handleAttributes(attributes, locator);
         
         

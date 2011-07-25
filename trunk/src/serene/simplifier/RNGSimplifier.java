@@ -161,17 +161,7 @@ public class RNGSimplifier extends Simplifier{
             
 		}
         
-        if(startQName == null 
-            && simplifiedTopPattern != null 
-            && simplifiedTopPattern.length != 0){
-            startQName = "root of the schema";
-            startLocation = simplifiedTopPattern[0].getLocation(restrictToFileName);//there can be only one//or none
-        }
-        
-        builder.buildRef(-1, startQName, startLocation);
-        SimplifiedComponent schemaStart = builder.getCurrentPattern();
-		SimplifiedModel simplifiedModel = new SimplifiedModel(schemaStart,
-                                            simplifiedTopPattern, 
+		SimplifiedModel simplifiedModel = new SimplifiedModel(simplifiedTopPattern, 
 											definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]),
 											recursionModel,
 											debugWriter);
@@ -194,9 +184,6 @@ public class RNGSimplifier extends Simplifier{
 		currentGrammar = null;
 		if(previousGrammars != null)previousGrammars.clear();		
 		
-        startQName = null;
-        startLocation = null;
-    
 		definitionTopPatterns.clear();
 		builder.startBuild();
 		topPattern.accept(this);

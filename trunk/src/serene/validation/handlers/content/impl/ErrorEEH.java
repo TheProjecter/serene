@@ -45,7 +45,7 @@ abstract class ErrorEEH extends ComparableEEH{
 		return parent;
 	}
 	
-	public ComparableEEH handleStartElement(String qName, String namespace, String name){
+	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
 		ElementDefaultHandler next = pool.getElementDefaultHandler(this);		
 		return next;
 	}	

@@ -92,8 +92,8 @@ class ElementParallelHandler extends CandidatesEEH{
 	public ValidatingEEH getParentHandler(){
 		return parent;			
 	}
-	public ComparableEEH handleStartElement(String qName, String namespace, String name){		 
-		ComparableEEH next = state.handleStartElement(qName, namespace, name, this);
+	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{		 
+		ComparableEEH next = state.handleStartElement(qName, namespace, name, this, restrictToFileName);
 		return next;
 	}
 	
@@ -188,7 +188,7 @@ class ElementParallelHandler extends CandidatesEEH{
 	}
 	abstract class State{
 		abstract void add(ComparableEEH individualHandler);
-		abstract ComparableEEH handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance);	
+		abstract ComparableEEH handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance, boolean restrictToFileName) throws SAXException;	
 		abstract void handleAttributes(Attributes attributes, Locator locator);
         abstract ComparableAEH getAttributeHandler(String qName, String namespace, String name);
 		abstract void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException;
@@ -232,9 +232,9 @@ class ElementParallelHandler extends CandidatesEEH{
 					
 			individualHandlers.add(individualHandler);	
 		}
-		ElementCommonHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance){			
+		ElementCommonHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance, boolean restrictToFileName) throws SAXException{			
 			ElementCommonHandler next = pool.getElementCommonHandler(candidatesConflictHandler, individualHandlers.size(), instance);
-			next.add(uniqueSample.handleStartElement(qName, namespace, name));
+			next.add(uniqueSample.handleStartElement(qName, namespace, name, restrictToFileName));
 			return next;
 		}
 		void handleAttributes(Attributes attributes, Locator locator){
@@ -306,10 +306,10 @@ class ElementParallelHandler extends CandidatesEEH{
 		void add(ComparableEEH individualHandler){					
 			individualHandlers.add(individualHandler);	
 		}
-		ElementParallelHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance){			
+		ElementParallelHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance, boolean restrictToFileName) throws SAXException{			
 			ElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, candidatesConflictErrorHandler, instance);
 			for(int i = 0; i < individualHandlers.size(); i++){	
-				next.add(individualHandlers.get(i).handleStartElement(qName, namespace, name));			
+				next.add(individualHandlers.get(i).handleStartElement(qName, namespace, name, restrictToFileName));			
 			}	
 			return next;
 		}

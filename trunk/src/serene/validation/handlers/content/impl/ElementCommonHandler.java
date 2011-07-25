@@ -74,9 +74,9 @@ class ElementCommonHandler extends UndeterminedEEH{
 		return parent;
 	}
 	
-	public ComparableEEH handleStartElement(String qName, String namespace, String name){		 
+	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{		 
 		ElementCommonHandler next = pool.getElementCommonHandler(conflictHandler, candidateCount, this);
-		next.add(uniqueHandler.handleStartElement(qName, namespace, name));
+		next.add(uniqueHandler.handleStartElement(qName, namespace, name, restrictToFileName));
 		return next;
 	}
 	

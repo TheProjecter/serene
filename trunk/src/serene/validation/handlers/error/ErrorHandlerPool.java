@@ -45,6 +45,11 @@ public class ErrorHandlerPool{
 	int defaultErrorHPoolSize;
 	int defaultErrorHFree;
 	DefaultErrorHandler[] defaultErrorH;
+    
+    int startErrorHAverageUse;
+	int startErrorHPoolSize;
+	int startErrorHFree;
+	StartErrorHandler[] startErrorH;
 	
 	int attributeConflictErrorHAverageUse;
 	int attributeConflictErrorHPoolSize;
@@ -82,6 +87,11 @@ public class ErrorHandlerPool{
 		defaultErrorHPoolSize = 10;
 		defaultErrorHFree = 0;
 		defaultErrorH = new DefaultErrorHandler[defaultErrorHPoolSize];
+        
+        startErrorHAverageUse = UNUSED;
+		startErrorHPoolSize = 10;
+		startErrorHFree = 0;
+		startErrorH = new StartErrorHandler[startErrorHPoolSize];
 		
 		attributeConflictErrorHAverageUse = UNUSED;
 		attributeConflictErrorHPoolSize = 10;
@@ -124,6 +134,7 @@ public class ErrorHandlerPool{
 						ExternalConflictErrorHandler[] conflictErrorH,
 						CommonErrorHandler[] commonErrorH,
 						DefaultErrorHandler[] defaultErrorH,
+						StartErrorHandler[] startErrorH,
 						AttributeConflictErrorHandler[] attributeConflictErrorH){
 		int validationErrorHFillCount;	
 		if(validationErrorH == null || validationErrorH.length < validationErrorHAverageUse)
@@ -178,6 +189,19 @@ public class ErrorHandlerPool{
 		}
 		System.arraycopy(this.defaultErrorH, defaultErrorHFree, 
 							defaultErrorH, 0, defaultErrorHFillCount);
+        
+        int startErrorHFillCount;	
+		if(startErrorH == null || startErrorH.length < startErrorHAverageUse)
+			startErrorH = new StartErrorHandler[startErrorHAverageUse];
+		if(startErrorHFree > startErrorHAverageUse){
+			startErrorHFillCount = startErrorHAverageUse;
+			startErrorHFree = startErrorHFree - startErrorHAverageUse;
+		}else{
+			startErrorHFillCount = startErrorHFree;
+			startErrorHFree = 0;
+		}
+		System.arraycopy(this.startErrorH, startErrorHFree, 
+							startErrorH, 0, startErrorHFillCount);
 		
 		int attributeConflictErrorHFillCount;	
 		if(attributeConflictErrorH == null || attributeConflictErrorH.length < attributeConflictErrorHAverageUse)
@@ -200,6 +224,8 @@ public class ErrorHandlerPool{
 						commonErrorH,
 						defaultErrorHFillCount,
 						defaultErrorH,
+						startErrorHFillCount,
+						startErrorH,
 						attributeConflictErrorHFillCount,
 						attributeConflictErrorH);
 	}
@@ -212,6 +238,8 @@ public class ErrorHandlerPool{
 							CommonErrorHandler[] commonErrorH,
 							int defaultErrorHAverageUse,
 							DefaultErrorHandler[] defaultErrorH,
+							int startErrorHAverageUse,
+							StartErrorHandler[] startErrorH,
 							int attributeConflictErrorHAverageUse,
 							AttributeConflictErrorHandler[] attributeConflictErrorH){
 		if(validationErrorHFree + validationErrorHAverageUse >= validationErrorHPoolSize){			 
@@ -262,6 +290,18 @@ public class ErrorHandlerPool{
 		if(this.defaultErrorHAverageUse != 0)this.defaultErrorHAverageUse = (this.defaultErrorHAverageUse + defaultErrorHAverageUse)/2;
 		else this.defaultErrorHAverageUse = defaultErrorHAverageUse;
 		// System.out.println("defaultErrorH "+this.defaultErrorHAverageUse);
+        
+        if(startErrorHFree + startErrorHAverageUse >= startErrorHPoolSize){			 
+			startErrorHPoolSize+= startErrorHAverageUse;
+			StartErrorHandler[] increased = new StartErrorHandler[startErrorHPoolSize];
+			System.arraycopy(this.startErrorH, 0, increased, 0, startErrorHFree);
+			this.startErrorH = increased;
+		}
+		System.arraycopy(startErrorH, 0, this.startErrorH, startErrorHFree, startErrorHAverageUse);
+		startErrorHFree += startErrorHAverageUse;
+		if(this.startErrorHAverageUse != 0)this.startErrorHAverageUse = (this.startErrorHAverageUse + startErrorHAverageUse)/2;
+		else this.startErrorHAverageUse = startErrorHAverageUse;
+		// System.out.println("startErrorH "+this.startErrorHAverageUse);
 		
 		if(attributeConflictErrorHFree + attributeConflictErrorHAverageUse >= attributeConflictErrorHPoolSize){			 
 			attributeConflictErrorHPoolSize+= attributeConflictErrorHAverageUse;

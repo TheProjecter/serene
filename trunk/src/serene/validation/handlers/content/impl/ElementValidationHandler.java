@@ -139,7 +139,7 @@ class ElementValidationHandler extends ValidatingEEH
 		return parent;
 	}
 	
-	public ComparableEEH handleStartElement(String qName, String namespace, String name){
+	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
 		
 		if(!element.allowsElementContent()) 
 			return getUnexpectedElementHandler(namespace, name);

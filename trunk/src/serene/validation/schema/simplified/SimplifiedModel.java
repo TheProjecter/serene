@@ -27,8 +27,6 @@ import sereneWrite.MessageWriter;
 import sereneWrite.SimplifiedComponentWriter;
 
 public class SimplifiedModel{
-	
-    SimplifiedComponent schemaStart;
     
 	SPattern[] startTopPattern;
 	SPattern[] refDefinitionTopPattern;
@@ -36,33 +34,17 @@ public class SimplifiedModel{
 	RecursionModel recursionModel;
     
 	MessageWriter debugWriter;
-	SimplifiedComponentWriter writer;
 	
-	public SimplifiedModel(SimplifiedComponent schemaStart,
-                                SPattern[] startTopPattern,
+	public SimplifiedModel(SPattern[] startTopPattern,
 								SPattern[] refDefinitionTopPattern,
 								RecursionModel recursionModel,
 								MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
-        this.schemaStart = schemaStart;
 		this.startTopPattern = startTopPattern;
 		this.refDefinitionTopPattern = refDefinitionTopPattern;
 		this.recursionModel = recursionModel;
-        
-		writer = new SimplifiedComponentWriter();
 	}
 	
-    /*public String getStartQName(){
-        return startQName;
-    }
-    
-    public String getStartLocation(){
-        return startLocation;        
-    }*/
-    
-    public SimplifiedComponent getSchemaStart(){
-        return schemaStart;
-    }
     
 	public SPattern[] getStartTopPattern(){
 		return startTopPattern;

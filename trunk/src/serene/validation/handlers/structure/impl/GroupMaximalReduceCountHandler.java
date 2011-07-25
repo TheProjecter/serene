@@ -349,7 +349,11 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	}			
 	//End InnerPattern------------------------------------------------------------------
 	
-	boolean handleOrderReduce(APattern sourceDefinition){	
+	 boolean handleOrderCheckedReduce(APattern sourceDefinition){		
+		throw new IllegalStateException();
+	}
+    
+    boolean handleOrderUncheckedReduce(APattern sourceDefinition){		
 		throw new IllegalStateException();
 	}
 	

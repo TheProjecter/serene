@@ -94,11 +94,11 @@ class ElementConcurrentHandler extends CandidatesEEH{
 	public ElementEventHandler getParentHandler(){
 		return parent;
 	}
-	public ComparableEEH handleStartElement(String qName, String namespace, String name){		
+	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{		
 		ElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, localCandidatesConflictErrorHandler, this);					
 		for(int i = 0; i < candidates.size(); i++){			
 			ComparableEEH candidate = candidates.get(i);
-			next.add(candidate.handleStartElement(qName, namespace, name));			
+			next.add(candidate.handleStartElement(qName, namespace, name, restrictToFileName));			
 		}
         localCandidatesConflictErrorHandler.endValidationStage();
 		return next;

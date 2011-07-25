@@ -167,11 +167,6 @@ abstract class Simplifier implements SimplifyingVisitor{
 	boolean replaceMissingDatatypeLibrary;
     boolean restrictToFileName;
     
-    String startQName;
-    String startLocation;
-    
-    
-    
 	MessageWriter debugWriter;
 	ParsedComponentWriter pcw;
 	
@@ -2064,13 +2059,6 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}
         
 		builder.addAllToCurrentLevel(topPattern);
-       
-        startQName = start.get(0).getQName();
-        startLocation = ""; 
-        for(int i = 0; i < start.size(); i++){
-            if(i == 0) startLocation += start.get(i).getLocation();
-            else startLocation += ", "+start.get(i).getLocation();
-        }
                 
 		currentGrammar = previousGrammars.pop();
         if(prefixMapping != null) endXmlnsContext(prefixMapping);

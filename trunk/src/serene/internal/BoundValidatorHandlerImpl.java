@@ -240,7 +240,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		}
 				
 		validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), namespaceURI, localName, qName);
-		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName);		
+		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName, restrictToFileName);		
 		String xmlBase = attributes.getValue(XMLConstants.XML_NS_URI, "base");		
 		if(xmlBase != null){
 			xmlBaseBinder.bind(queue, xmlBase);

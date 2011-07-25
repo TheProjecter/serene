@@ -200,11 +200,7 @@ class RNGDirector{
 	SimplifiedModel getRNGModel(){
 		SPattern[] start = {rngStartTopPattern};
         
-        builder.buildRef(-1, "start", "RELAXNG Specification 3.Full Syntax: top of a grammar");
-        SimplifiedComponent schemaStart = builder.getCurrentPattern();
-        
-		SimplifiedModel s = new SimplifiedModel(schemaStart,
-                                    start,
+		SimplifiedModel s = new SimplifiedModel(start,
 									refDefinitionTopPattern,
 									null,
 									debugWriter);
@@ -214,11 +210,7 @@ class RNGDirector{
 	SimplifiedModel getIncludeModel(){
 		SPattern[] start = {includeStartTopPattern};
         
-        builder.buildRef(-1, "start", "RELAXNG Specification 3.Full Syntax: top of an included grammar");
-        SimplifiedComponent schemaStart = builder.getCurrentPattern();
-        
-		return new SimplifiedModel(schemaStart,
-                                    start,
+		return new SimplifiedModel(start,
 									refDefinitionTopPattern,									
 									null,
 									debugWriter);
@@ -227,11 +219,7 @@ class RNGDirector{
 	SimplifiedModel getExternalRefModel(){
 		SPattern[] start = {externalRefStartTopPattern};
         
-        builder.buildRef(-1, "start", "RELAXNG Specification 3.Full Syntax: top of a grammar");
-        SimplifiedComponent schemaStart = builder.getCurrentPattern();
-        
-		return new SimplifiedModel(schemaStart,
-                                    start,
+		return new SimplifiedModel(start,
 									refDefinitionTopPattern,
 									null,
 									debugWriter);

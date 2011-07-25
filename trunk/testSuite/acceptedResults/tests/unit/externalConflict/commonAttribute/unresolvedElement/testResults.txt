@@ -16,7 +16,7 @@ file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalCon
 Illegal datatype.
 Value of attribute "datatypeLibrary" at schema.rng:2:76 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute. Relative URI.
 
-file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/commonAttribute/unresolvedElement/schema.rng:5:1 Syntax warning. Warning at the root of the document corresponding to definition <start> at RELAXNG Specification 3.Full Syntax: top of a grammar: 
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/commonAttribute/unresolvedElement/schema.rng:5:1 Syntax warning. Warning at the root of the document: 
 Ambiguous content.
 Element <element> at schema.rng:2:76 cannot be resolved by in context validation, possible definitions: 
 <element> at RELAXNG Specification 3.Full Syntax: element with name class child

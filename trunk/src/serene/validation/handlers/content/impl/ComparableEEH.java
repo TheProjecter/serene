@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.handlers.content.impl;
 
+import org.xml.sax.SAXException;
+
 import serene.validation.handlers.content.ElementEventHandler;
 
 import sereneWrite.MessageWriter;
@@ -26,7 +28,7 @@ abstract class ComparableEEH extends AbstractEEH{
 		super(debugWriter);
 	}
 	
-	public abstract ComparableEEH handleStartElement(String qName, String namespace, String name);
+	public abstract ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException;
 	    
 	/**
 	* This method must answer the need of ElementParallelHandler to determine 

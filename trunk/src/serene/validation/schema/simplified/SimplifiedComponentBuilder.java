@@ -17,6 +17,8 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.ArrayList;
+
 import org.relaxng.datatype.Datatype;
 
 import serene.validation.schema.ComponentBuilder;
@@ -241,8 +243,8 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		clearContent();
 		addToCurrentLevel(i);
 	}
-    public void buildInterleave(String qName, String location, SPattern[] children){
-		SInterleave i = new SInterleave(children, qName, location, debugWriter);
+    public void buildInterleave(String qName, ArrayList<String> allLocations, SPattern[] children){
+		SInterleave i = new SInterleave(children, qName, allLocations, debugWriter);
 		addToCurrentLevel(i);	
 	}
 	public void buildChoicePattern(String qName, String location){
@@ -250,8 +252,8 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		clearContent();
 		addToCurrentLevel(cp);
 	}
-    public void buildChoicePattern(String qName, String location, SPattern[] children){
-		SChoicePattern cp = new SChoicePattern(children, qName, location, debugWriter);		
+    public void buildChoicePattern(String qName, ArrayList<String> allLocations, SPattern[] children){
+		SChoicePattern cp = new SChoicePattern(children, qName, allLocations, debugWriter);		
 		addToCurrentLevel(cp);
 	}
     public void buildReplacementChoicePattern(String qName, String location){

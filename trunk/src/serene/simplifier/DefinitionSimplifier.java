@@ -155,7 +155,8 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		builder.startBuild();		
         
         currentDefinitionTopPatterns.clear();		
-        String location = "";
+        //String location = "";
+        ArrayList<String> allLocations = new ArrayList<String>();
 		for(int i = 0; i < definitions.size(); i++){
 			Definition d = definitions.get(i);
 			String c = d.getCombine();
@@ -171,8 +172,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
                     }
                 }
             }
-            if(i > 0)location += ", "+d.getLocation();
-            else location += d.getLocation();
+            allLocations.add(d.getLocation());
 			d.accept(this);
 		}
 		if(nullCombine.size() > 1){
@@ -220,9 +220,9 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		// they were not built, so combine can be handled directly
 		if(combine != null){
 			if(combine.equals("choice")){
-				builder.buildChoicePattern("combine choice", location, currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]));
+				builder.buildChoicePattern("combine choice", allLocations, currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]));
 			}else if(combine.equals("interleave")){
-				builder.buildInterleave("combine interleave", location, currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]));
+				builder.buildInterleave("combine interleave", allLocations, currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]));
 			}
 		}else{
 			SPattern[] p = currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]);
