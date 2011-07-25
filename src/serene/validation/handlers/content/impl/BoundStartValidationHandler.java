@@ -42,14 +42,14 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 	}
     
 	
-	public void handleEndElement(Locator locator) throws SAXException{		
+	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{		
 		validateContext();
-		reportContextErrors(locator);
+		reportContextErrors(restrictToFileName, locator);
 	}
 
-    void reportContextErrors(Locator locator) throws SAXException{
+    void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
 		if(contextErrorHandler[contextErrorHandlerIndex] != null){
-			contextErrorHandler[contextErrorHandlerIndex].handle(ContextErrorHandler.ROOT, validationItemLocator.getQName(), element, locator);
+			contextErrorHandler[contextErrorHandlerIndex].handle(ContextErrorHandler.ROOT, validationItemLocator.getQName(), element, restrictToFileName, locator);
 		}
 	}
 	//--------------------------------------------------------------------------

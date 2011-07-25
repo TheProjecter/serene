@@ -10,43 +10,43 @@ TESTED DOCUMENT document1.xml
 
 TESTED DOCUMENT document2.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document2.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:2:65 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document2.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Order error.
-Misplaced content in the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document2.xml:3:10, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:3:10:
-<bb> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document2.xml:3:10, corresponding to definition <choice> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:7:17.
+Misplaced content in the document structure starting at document2.xml:3:10, corresponding to definition <group> at schema.rng:3:10:
+<bb> at document2.xml:3:10, corresponding to definition <choice> at schema.rng:7:17.
 
 
 
 TESTED DOCUMENT document3.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document3.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:2:65 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document3.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Order error.
-Misplaced content in the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document3.xml:3:10, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:3:10:
-<dd> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document3.xml:5:10, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:20:28.
+Misplaced content in the document structure starting at document3.xml:3:10, corresponding to definition <group> at schema.rng:3:10:
+<dd> at document3.xml:5:10, corresponding to definition <element> at schema.rng:20:28.
 
 
 
 TESTED DOCUMENT document4.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document4.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:2:65 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document4.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Order error.
-Misplaced content in the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document4.xml:3:10, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:3:10:
-<dd> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document4.xml:4:10, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:20:28.
+Misplaced content in the document structure starting at document4.xml:3:10, corresponding to definition <group> at schema.rng:3:10:
+<dd> at document4.xml:4:10, corresponding to definition <element> at schema.rng:20:28.
 
 
 
 TESTED DOCUMENT document5.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document5.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:2:65 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document5.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Order error.
-Misplaced content in the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document5.xml:4:10, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:8:20:
-<cc> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document5.xml:4:10, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:12:36.
+Misplaced content in the document structure starting at document5.xml:4:10, corresponding to definition <group> at schema.rng:8:20:
+<cc> at document5.xml:4:10, corresponding to definition <element> at schema.rng:12:36.
 
 
 
 TESTED DOCUMENT document6.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document6.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:2:65 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document6.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Order error.
-Misplaced content in the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document6.xml:3:10, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:3:10:
-<bb> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/document6.xml:3:10, corresponding to definition <choice> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/choiceGroup/schema.rng:7:17.
+Misplaced content in the document structure starting at document6.xml:3:10, corresponding to definition <group> at schema.rng:3:10:
+<bb> at document6.xml:3:10, corresponding to definition <choice> at schema.rng:7:17.

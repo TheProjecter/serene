@@ -134,7 +134,8 @@ public class RNGSchemaFactory extends SchemaFactory{
     private boolean level2AttributeIdType;
     private boolean level1DocumentationElement;	
 	private boolean replaceMissingDatatypeLibrary;
-	private boolean parsedModelSchema;	
+	private boolean parsedModelSchema;
+    private boolean restrictToFileName;	
 	
 	ErrorDispatcher errorDispatcher;
 
@@ -181,6 +182,7 @@ public class RNGSchemaFactory extends SchemaFactory{
         level1DocumentationElement = true;
 		replaceMissingDatatypeLibrary = true;
 		parsedModelSchema = false;
+        restrictToFileName = true;
 	}
 	
 	private void initDefaultProperties(){		
@@ -188,7 +190,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 	
 		
 	private void createParser()  throws DatatypeException{
-		internalRNGFactory = InternalRNGFactory.getInstance(level1DocumentationElement, debugWriter);
+		internalRNGFactory = InternalRNGFactory.getInstance(level1DocumentationElement, restrictToFileName, debugWriter);
 		
 		parsedComponentBuilder = new ParsedComponentBuilder(debugWriter);
 		
@@ -218,14 +220,19 @@ public class RNGSchemaFactory extends SchemaFactory{
 		BindingModel model = bindingPool.getBindingModel();
 		
 		validatorHandler = schema.newValidatorHandler(model, queue, queuePool);
-		//validatorHandler = rngSchema.newValidatorHandler();
 		validatorHandler.setErrorHandler(errorDispatcher);		
+        try{
+            validatorHandler.setFeature(Constants.RESTRICT_TO_FILE_NAME_FEATURE, restrictToFileName);
+		}catch (SAXNotRecognizedException e) {
+            e.printStackTrace();
+        }catch (SAXNotSupportedException e) {
+            e.printStackTrace();
+        }
 
 		
 		
 		try{
-			xmlReader = XMLReaderFactory.createXMLReader();
-			//TODO see that the features are correctly set			
+			xmlReader = XMLReaderFactory.createXMLReader();		
 			try {
 				xmlReader.setFeature("http://xml.org/sax/features/namespaces", true);			
 				xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);		
@@ -243,9 +250,11 @@ public class RNGSchemaFactory extends SchemaFactory{
 		simplifier.setReplaceMissingDatatypeLibrary(replaceMissingDatatypeLibrary);
         simplifier.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
         simplifier.setLevel1AttributeIdType(level1AttributeIdType);
+        simplifier.setRestrictToFileName(restrictToFileName);
 	}
 	private void createRestrictionController(){
 		restrictionController = new RestrictionController(errorDispatcher, debugWriter);
+        restrictionController.setRestrictToFileName(restrictToFileName);
 	}
     private void createCompatibilityHandler(){
         try{
@@ -254,6 +263,7 @@ public class RNGSchemaFactory extends SchemaFactory{
             ValidationItemLocator vil = (ValidationItemLocator)validatorHandler.getProperty(Constants.ITEM_LOCATOR_PROPERTY);
             ControllerPool cp = (ControllerPool)restrictionController.getProperty(Constants.CONTROLLER_POOL_PROPERTY);
             compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, vil, errorDispatcher, debugWriter);
+            compatibilityHandler.setRestrictToFileName(restrictToFileName);
         }catch (SAXNotRecognizedException e) {
             e.printStackTrace();
         }catch (SAXNotSupportedException e) {
@@ -319,6 +329,13 @@ public class RNGSchemaFactory extends SchemaFactory{
             internalRNGFactory.setLevel1DocumentationElement(level1DocumentationElement);
             validatorHandler.setFeature(name, value);
             level1DocumentationElement = value;
+        }else if(name.equals(Constants.RESTRICT_TO_FILE_NAME_FEATURE)){
+            restrictToFileName = value;
+            internalRNGFactory.setRestrictToFileName(restrictToFileName);
+            validatorHandler.setFeature(name, value);
+            simplifier.setRestrictToFileName(restrictToFileName);
+            restrictionController.setRestrictToFileName(restrictToFileName);
+            compatibilityHandler.setRestrictToFileName(restrictToFileName);            
         }else{
             throw new SAXNotRecognizedException("Unknown feature.");
         }
@@ -348,6 +365,8 @@ public class RNGSchemaFactory extends SchemaFactory{
             return level2AttributeIdType;
         }else if(name.equals(Constants.LEVEL1_DOCUMENTATION_ELEMENT_FEATURE)){
             return level1DocumentationElement;
+        }else if(name.equals(Constants.RESTRICT_TO_FILE_NAME_FEATURE)){
+            return restrictToFileName;
         }else{
         	throw new SAXNotRecognizedException("Unknown feature.");
         }
@@ -610,6 +629,7 @@ public class RNGSchemaFactory extends SchemaFactory{
                                         level2AttributeDefaultValue,
                                         level1AttributeIdType,
                                         level2AttributeIdType,
+                                        restrictToFileName,
                                         schemaModel, 
                                         debugWriter);
             return schema;
@@ -660,6 +680,7 @@ public class RNGSchemaFactory extends SchemaFactory{
                                         level2AttributeDefaultValue,
                                         level1AttributeIdType,
                                         level2AttributeIdType,
+                                        restrictToFileName,
                                         schemaModel, 
                                         debugWriter);
 		return schema;

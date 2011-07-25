@@ -121,6 +121,9 @@ public class RController implements RestrictingVisitor{
 	AttributeLimitationNamingController attributeLimitationNamingController;
 	
 	ErrorDispatcher errorDispatcher;
+    
+    boolean restrictToFileName;
+    
 	MessageWriter debugWriter;
 	
 	public RController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
@@ -139,7 +142,14 @@ public class RController implements RestrictingVisitor{
 		texts = new SereneArrayList<SPattern>();
 	}
 	
-	
+	public void setRestrictToFileName(boolean restrictToFileName){
+        this.restrictToFileName = restrictToFileName;
+        if(elementNamingController != null)elementNamingController.setRestrictToFileName(restrictToFileName);
+        if(attributeNamingController != null)attributeNamingController.setRestrictToFileName(restrictToFileName);
+        if(elementLimitationNamingController != null)elementLimitationNamingController.setRestrictToFileName(restrictToFileName);
+        if(attributeLimitationNamingController != null)attributeLimitationNamingController.setRestrictToFileName(restrictToFileName);
+    }    
+    
 	public void control(SimplifiedModel simplifiedModel)throws SAXException{		
 		init(simplifiedModel);		
 		if(topPatterns != null && topPatterns.length != 0){//to catch situations where start element was missing
@@ -192,23 +202,31 @@ public class RController implements RestrictingVisitor{
 	}
     void open(){
         elementNamingController = pool.getElementNamingController();
+        elementNamingController.setRestrictToFileName(restrictToFileName);
 		attributeNamingController = pool.getAttributeNamingController();
+        attributeNamingController.setRestrictToFileName(restrictToFileName);
 		
 		elementLimitationNamingController = pool.getElementLimitationNamingController();
+        elementLimitationNamingController.setRestrictToFileName(restrictToFileName);
 		attributeLimitationNamingController = pool.getAttributeLimitationNamingController();
+        attributeLimitationNamingController.setRestrictToFileName(restrictToFileName);
     }
 	void close() throws SAXException{		
 		elementNamingController.control();
 		elementNamingController.recycle();
+        elementNamingController = null;
 		
 		attributeNamingController.control();
 		attributeNamingController.recycle();
+        attributeNamingController = null;
 		
 		elementLimitationNamingController.control();
 		elementLimitationNamingController.recycle();
+        elementLimitationNamingController = null;
 		
 		attributeLimitationNamingController.control();
-		attributeLimitationNamingController.recycle();		
+		attributeLimitationNamingController.recycle();
+        attributeLimitationNamingController = null;		
 	}	
 	
 	public void visit(SExceptPattern exceptPattern)throws SAXException{
@@ -264,16 +282,16 @@ public class RController implements RestrictingVisitor{
 		if(attributeContext){
 			// error 7.1.1	
 			String message = "Restrictions 7.1.1 error. Forbiden path:"
-			+"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation()
-			+"\n<"+element.getQName()+"> at "+element.getLocation()+".";
+			+"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation(restrictToFileName)
+			+"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));			
 		}
 		if(listContext){
 			// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n<"+element.getQName()+"> at "+element.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
+			+"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -282,9 +300,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+element.getQName()+"> at "+element.getLocation();
+			message += "\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -332,14 +350,18 @@ public class RController implements RestrictingVisitor{
 		AttributeNamingController oldANC = attributeNamingController;
 		
 		elementNamingController = pool.getElementNamingController();
+        elementNamingController.setRestrictToFileName(restrictToFileName);        
 		attributeNamingController = pool.getAttributeNamingController();
-		
+		attributeNamingController.setRestrictToFileName(restrictToFileName);
+        
 		elementLimitationNamingController.add(element, nameClass);
 		ElementLimitationNamingController oldELNC = elementLimitationNamingController;
 		AttributeLimitationNamingController oldALNC = attributeLimitationNamingController;
 		
 		elementLimitationNamingController = pool.getElementLimitationNamingController();
+        elementLimitationNamingController.setRestrictToFileName(restrictToFileName);
 		attributeLimitationNamingController = pool.getAttributeLimitationNamingController();
+        elementLimitationNamingController.setRestrictToFileName(restrictToFileName);
 				
 		SimplifiedComponent child = element.getChild();
 		if(child != null) child.accept(this);
@@ -383,8 +405,8 @@ public class RController implements RestrictingVisitor{
 		if(attributeContext){
 			// error 7.1.1	
 			String message = "Restrictions 7.1.1 error. Forbiden path:"
-			+"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation()
-			+"\n<"+attribute.getQName()+"> at "+attribute.getLocation()+".";
+			+"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation(restrictToFileName)
+			+"\n<"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}		
@@ -394,9 +416,9 @@ public class RController implements RestrictingVisitor{
                 ArrayList<SPattern> path = morePath.peek();
                 String message = "Restrictions 7.1.2 error. Forbiden path: ";
                 for(int i = 0; i < path.size(); i++){
-                    message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+                    message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
                 }
-                message += "\n<"+attribute.getQName()+"> at "+attribute.getLocation();
+                message += "\n<"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName);
                 //System.out.println(message);
                 errorDispatcher.error(new SAXParseException(message, null));
             }else{
@@ -409,8 +431,8 @@ public class RController implements RestrictingVisitor{
         
 		if(listContext){// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n<"+attribute.getQName()+"> at "+attribute.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
+			+"\n<"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -419,16 +441,16 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+attribute.getQName()+"> at "+attribute.getLocation();
+			message += "\n<"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+attribute.getQName()+"> at "+attribute.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 1 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -444,7 +466,7 @@ public class RController implements RestrictingVisitor{
 		if(reportInfiniteNameClass){
 			//error 7.3
 			String message = "Restrictions 7.3 error. "
-			+" Attribute <"+attribute.getQName()+"> at "+attribute.getLocation() 
+			+" Attribute <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName) 
 			+" uses infinite name class without being repeated.";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
@@ -555,8 +577,8 @@ public class RController implements RestrictingVisitor{
 		if(listContext){
 			// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n<"+interleave.getQName()+"> at "+interleave.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
+			+"\n<"+interleave.getQName()+"> at "+interleave.getLocation(restrictToFileName)+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -565,9 +587,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+interleave.getQName()+"> at "+interleave.getLocation();
+			message += "\n<"+interleave.getQName()+"> at "+interleave.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -577,7 +599,7 @@ public class RController implements RestrictingVisitor{
 			startContext = false;
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+interleave.getQName()+"> at "+interleave.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+interleave.getQName()+"> at "+interleave.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 2 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -603,11 +625,11 @@ public class RController implements RestrictingVisitor{
 				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
 				ArrayList<SPattern> path = morePath.doublePeek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
+					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
 				}
 				path = morePath.peek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
+					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
 				}			
 				message += ".";		
 				//System.out.println(message);
@@ -636,6 +658,7 @@ public class RController implements RestrictingVisitor{
 				next(children);
 			}else{
 				ContentTypeController cth = pool.getContentTypeController();
+                cth.setRestrictToFileName(restrictToFileName);
 				for(int i = 0; i < children.length; i++){            
 					children[i].accept(this);
 					cth.add(i, contentType);					
@@ -667,11 +690,11 @@ public class RController implements RestrictingVisitor{
 			// report error 7.4
 			// remove all the records starting with offset
 			String message = "Restrictions error 7.4. "
-			+ "Several text patterns in the context of <"+interleave.getQName()+"> at "+interleave.getLocation()+":";
+			+ "Several text patterns in the context of <"+interleave.getQName()+"> at "+interleave.getLocation(restrictToFileName)+":";
 			int last = texts.size()-1;
 			for(int i = textsOffset; i < texts.size(); i++){
 				SPattern text = texts.get(i);
-				message += "\n<"+text.getQName()+"> at "+text.getLocation();
+				message += "\n<"+text.getQName()+"> at "+text.getLocation(restrictToFileName);
 			}
 			message += ".";			
 			//System.out.println(message);
@@ -685,9 +708,9 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+group.getQName()+"> at "+group.getLocation();
+			message += "\n<"+group.getQName()+"> at "+group.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -697,7 +720,7 @@ public class RController implements RestrictingVisitor{
 			startContext = false;
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+group.getQName()+"> at "+group.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+group.getQName()+"> at "+group.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 3 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -723,11 +746,11 @@ public class RController implements RestrictingVisitor{
 				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
 				ArrayList<SPattern> path = morePath.doublePeek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
+					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
 				}
 				path = morePath.peek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
+					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
 				}			
 				message += ".";		
 				//System.out.println(message);
@@ -751,6 +774,7 @@ public class RController implements RestrictingVisitor{
 				next(children);
 			}else{
 				ContentTypeController cth = pool.getContentTypeController();
+                cth.setRestrictToFileName(restrictToFileName);
 				for(int i = 0; i < children.length; i++){            
 					children[i].accept(this);
 					cth.add(i, contentType);					
@@ -785,16 +809,16 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation();
+			message += "\n<"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 4 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -840,16 +864,16 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+oneOrMore.getQName()+"> at "+oneOrMore.getLocation();
+			message += "\n<"+oneOrMore.getQName()+"> at "+oneOrMore.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+oneOrMore.getQName()+"> at "+oneOrMore.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+oneOrMore.getQName()+"> at "+oneOrMore.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 5 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -895,16 +919,16 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+optional.getQName()+"> at "+optional.getLocation();
+			message += "\n<"+optional.getQName()+"> at "+optional.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+optional.getQName()+"> at "+optional.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+optional.getQName()+"> at "+optional.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 6 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -928,8 +952,8 @@ public class RController implements RestrictingVisitor{
 		if(listContext){
 			// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n<"+mixed.getQName()+"> at "+mixed.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
+			+"\n<"+mixed.getQName()+"> at "+mixed.getLocation(restrictToFileName)+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -938,16 +962,16 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+mixed.getQName()+"> at "+mixed.getLocation();
+			message += "\n<"+mixed.getQName()+"> at "+mixed.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+mixed.getQName()+"> at "+mixed.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+mixed.getQName()+"> at "+mixed.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 7 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -973,11 +997,11 @@ public class RController implements RestrictingVisitor{
 				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
 				ArrayList<SPattern> path = morePath.doublePeek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
+					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
 				}
 				path = morePath.peek();
 				for(int i = 0; i < path.size(); i++){
-					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(); 
+					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
 				}			
 				message += ".";		
 				//System.out.println(message);
@@ -1009,6 +1033,7 @@ public class RController implements RestrictingVisitor{
 				child.accept(this);
 			}else{
 				ContentTypeController cth = pool.getContentTypeController();
+                cth.setRestrictToFileName(restrictToFileName);
 				child.accept(this);
 				cth.add(0, contentType);							
 				contentType = cth.handle(mixed, child, ContentType.COMPLEX);
@@ -1040,13 +1065,13 @@ public class RController implements RestrictingVisitor{
 			// add default text of current mixed at the end			
 			// remove all the records starting with offset
 			String message = "Restrictions error 7.4. "
-			+ "Several text patterns in the context of <"+mixed.getQName()+"> at "+mixed.getLocation()+":";
+			+ "Several text patterns in the context of <"+mixed.getQName()+"> at "+mixed.getLocation(restrictToFileName)+":";
 			int last = texts.size()-1;
 			for(int i = textsOffset; i < texts.size(); i++){
 				SPattern text = texts.get(i);
-				message += "\n<"+text.getQName()+"> at "+text.getLocation();
+				message += "\n<"+text.getQName()+"> at "+text.getLocation(restrictToFileName);
 			}			
-			message += "\ndefault text pattern of <"+mixed.getQName()+"> at "+mixed.getLocation()+".";
+			message += "\ndefault text pattern of <"+mixed.getQName()+"> at "+mixed.getLocation(restrictToFileName)+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 			
@@ -1062,8 +1087,8 @@ public class RController implements RestrictingVisitor{
 		if(listContext){
 			// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n<"+list.getQName()+"> at "+list.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
+			+"\n<"+list.getQName()+"> at "+list.getLocation(restrictToFileName)+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -1072,24 +1097,24 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+list.getQName()+"> at "+list.getLocation();
+			message += "\n<"+list.getQName()+"> at "+list.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+list.getQName()+"> at "+list.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+list.getQName()+"> at "+list.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 8 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if((moreContext || moreMultiChildrenContext) && !(listContext || exceptPatternContext72)){
             // error 7.2 simple content type repeated in the context
 			String message = "Restrictions 7.2 error. "
-			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation()+":"
-			+ "\n<"+list.getQName()+"> at "+list.getLocation()			
+			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation(restrictToFileName)+":"
+			+ "\n<"+list.getQName()+"> at "+list.getLocation(restrictToFileName)			
 			+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
@@ -1127,24 +1152,24 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+empty.getQName()+"> at "+empty.getLocation();
+			message += "\n<"+empty.getQName()+"> at "+empty.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"The start of schema <"+empty.getQName()+"> at "+empty.getLocation()+" is not expected to result in an <empty> component.";
+			+"The start of schema <"+empty.getQName()+"> at "+empty.getLocation(restrictToFileName)+" is not expected to result in an <empty> component.";
 			//System.out.println(" 9 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(attributeContext){
 			// Serene limitation
 			String message = "Unsupported schema configuration. For the moment serene does not support <empty> in the context of <attribute>, path: "				
-				+"\n"+attributesPath.peek().getQName()+" at "+attributesPath.peek().getLocation()
-				+"\n"+empty.getQName()+" at "+empty.getLocation()+".";		
+				+"\n"+attributesPath.peek().getQName()+" at "+attributesPath.peek().getLocation(restrictToFileName)
+				+"\n"+empty.getQName()+" at "+empty.getLocation(restrictToFileName)+".";		
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));			
 		}
@@ -1154,8 +1179,8 @@ public class RController implements RestrictingVisitor{
 		if(listContext){
 			// error 7.1.3
 			String message = "Restrictions 7.1.3. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n<"+text.getQName()+"> at "+text.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
+			+"\n<"+text.getQName()+"> at "+text.getLocation(restrictToFileName)+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -1164,16 +1189,16 @@ public class RController implements RestrictingVisitor{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+text.getQName()+"> at "+text.getLocation();
+			message += "\n<"+text.getQName()+"> at "+text.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+text.getQName()+"> at "+text.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+text.getQName()+"> at "+text.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 10 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -1208,15 +1233,15 @@ public class RController implements RestrictingVisitor{
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+value.getQName()+"> at "+value.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+value.getQName()+"> at "+value.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 11 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
         if((moreContext || moreMultiChildrenContext) && !(listContext || exceptPatternContext72)){
             // error 7.2 simple content type repeated in the context
 			String message = "Restrictions 7.2 error. "
-			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation()+":"
-			+ "\n<"+value.getQName()+"> at "+value.getLocation()			
+			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation(restrictToFileName)+":"
+			+ "\n<"+value.getQName()+"> at "+value.getLocation(restrictToFileName)			
 			+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
@@ -1227,7 +1252,7 @@ public class RController implements RestrictingVisitor{
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+data.getQName()+"> at "+data.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+data.getQName()+"> at "+data.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 13 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -1235,8 +1260,8 @@ public class RController implements RestrictingVisitor{
             System.out.println("RESTRICTION "+data);
             // error 7.2 simple content type repeated in the context
 			String message = "Restrictions 7.2 error. "
-			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation()+":"
-			+ "\n<"+data.getQName()+"> at "+data.getLocation()			
+			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation(restrictToFileName)+":"
+			+ "\n<"+data.getQName()+"> at "+data.getLocation(restrictToFileName)			
 			+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));

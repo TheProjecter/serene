@@ -224,9 +224,9 @@ class ElementValidationHandler extends ValidatingEEH
 		}		
 	}	
 
-	public void handleEndElement(Locator locator) throws SAXException{		
+	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{		
 		validateContext();
-		reportContextErrors(locator);
+		reportContextErrors(restrictToFileName, locator);
 		validateInContext();
 	}
 	
@@ -236,10 +236,10 @@ class ElementValidationHandler extends ValidatingEEH
 			stackHandler.endValidation();
 		}		
 	}
-	void reportContextErrors(Locator locator) throws SAXException{
+	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
         for(int i = 0; i < HANDLER_COUNT; i++){
             if(contextErrorHandler[i] != null){            
-                contextErrorHandler[i].handle(ContextErrorHandler.ELEMENT, validationItemLocator.getQName(), element, locator);
+                contextErrorHandler[i].handle(ContextErrorHandler.ELEMENT, validationItemLocator.getQName(), element, restrictToFileName, locator);
             }
         }
 	}

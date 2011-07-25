@@ -186,7 +186,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 			}
 			for(int i = 0; i < nullCombine.size(); i++){
 				d = definitions.get(nullCombine.get(i));
-				message += "\n<"+d.getQName()+"> at "+d.getLocation();
+				message += "\n<"+d.getQName()+"> at "+d.getLocation(restrictToFileName);
 			}
 			message += ".";
 			errorDispatcher.error(new SAXParseException(message, null));
@@ -206,9 +206,9 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 			for(int i = 0; i < definitions.size(); i++){
 				d = definitions.get(i);
 				if(otherCombine.contains(i)){
-					oDefinitions += "\n<"+d.getQName()+"> at "+d.getLocation();
+					oDefinitions += "\n<"+d.getQName()+"> at "+d.getLocation(restrictToFileName);
 				}else{
-					message += "\n<"+d.getQName()+"> at "+d.getLocation();
+					message += "\n<"+d.getQName()+"> at "+d.getLocation(restrictToFileName);
 				}
 			}
 			message += oDefinitions+".";

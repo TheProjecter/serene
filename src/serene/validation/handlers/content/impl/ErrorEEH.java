@@ -55,12 +55,12 @@ abstract class ErrorEEH extends ComparableEEH{
         return pool.getAttributeDefaultHandler(this);
     }
 	
-	public void handleEndElement(Locator locator){		
+	public void handleEndElement(boolean restrictToFileName, Locator locator){		
 		// validateContext(locator); unnecessary, does nothing
 		validateInContext();
 	}	
 	void validateContext(){}
-	void reportContextErrors(Locator locator) throws SAXException{}
+	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{}
 	public void handleInnerCharacters(char[] chars){
 	}
     public void handleLastCharacters(char[] chars){

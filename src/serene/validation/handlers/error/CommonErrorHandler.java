@@ -215,12 +215,12 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.conflict(commonMessages, candidatesCount, disqualified, candidateMessages);
     }
 	
-	public void handle(int contextType, String qName, AElement definition, Locator locator)
+	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 				throws SAXException{
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, definition, locator, messageHandler, isCandidate);
 	}
 	
-	public void handle(int contextType, String qName, Locator locator) 
+	public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator) 
 					throws SAXException{
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, locator, messageHandler, isCandidate);
 	}

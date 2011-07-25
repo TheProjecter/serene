@@ -37,13 +37,14 @@ public interface Constants{
     String NATIVE_DATATYPE_LIBRARY = "";    
 	String TOKEN_DT = "token";
     
-    String NAMESPACES_PREFIXES_SAX_FEATURE = "http://xml.org/sax/features/namespace-prefixes";
-    String PARSED_MODEL_SCHEMA_FEATURE = "http://serenerng.org/features//schemaFactory/features/parsedModelSchema";
-    String REPLACE_MISSING_LIBRARY_FEATURE = "http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary";
     
     String DTD_COMPATIBILITY_ANNOTATIONS_NAMESPACE = "http://relaxng.org/ns/compatibility/annotations/1.0";
     String DTD_COMPATIBILITY_DEFAULT_VALUE = "defaultValue";
     String DTD_COMPATIBILITY_DOCUMENTATION = "documentation";
+    
+    String NAMESPACES_PREFIXES_SAX_FEATURE = "http://xml.org/sax/features/namespace-prefixes";
+    String PARSED_MODEL_SCHEMA_FEATURE = "http://serenerng.org/features//schemaFactory/features/parsedModelSchema";
+    String REPLACE_MISSING_LIBRARY_FEATURE = "http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary";
     
     String LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level1/attributeDefaultValue";
     String LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level2/attributeDefaultValue";
@@ -52,4 +53,6 @@ public interface Constants{
     String LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level2/attributeIdType";
     
     String LEVEL1_DOCUMENTATION_ELEMENT_FEATURE = "http://serenerng.org/features/DTDCompatibility/level1/documentationElement";
+    
+    String RESTRICT_TO_FILE_NAME_FEATURE = "http://serenerng.org/features/restrictToFileName";
 }

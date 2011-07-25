@@ -16,7 +16,6 @@ limitations under the License.
 
 package serene.validation.jaxp;
 
-//import java.util.Arrays;
 import java.util.Stack;
 import java.util.HashMap;
 import java.util.Map;
@@ -99,6 +98,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
     boolean level1AttributeIdType;
     boolean level2AttributeIdType;
     boolean level1AttributeIdTypeMemo;
+    boolean restrictToFileName;
         
     AttributeDefaultValueHandler attributeDefaultValueHandler;
     AttributeIdTypeHandler attributeIdTypeHandler;
@@ -110,13 +110,13 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
     
     final boolean noModification = true;
 	MessageWriter debugWriter;	
-	//int count = 0;
 	public ValidatorHandlerImpl(boolean secureProcessing,                            
                             boolean namespacePrefixes,
                             boolean level1AttributeDefaultValue,
                             boolean level2AttributeDefaultValue,
                             boolean level1AttributeIdType,
                             boolean level2AttributeIdType,
+                            boolean restrictToFileName,
                             ValidatorEventHandlerPool eventHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
 							SchemaModel schemaModel,
@@ -130,6 +130,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         this.level1AttributeIdType = level1AttributeIdType;
         this.level2AttributeIdType = level2AttributeIdType;
         level1AttributeIdTypeMemo = level1AttributeIdType;
+        this.restrictToFileName = restrictToFileName;
 		this.eventHandlerPool = eventHandlerPool;	
 		this.errorHandlerPool = errorHandlerPool;
 				
@@ -229,7 +230,10 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         if(level1AttributeIdType || level2AttributeIdType){
             AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
             if(attributeIdTypeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Feature "+Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE+" cannot be supported.");
-            if(attributeIdTypeHandler == null)attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+            if(attributeIdTypeHandler == null){
+                attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+                attributeIdTypeHandler.setRestrictToFileName(restrictToFileName);
+            }
             else attributeIdTypeHandler.init();
         }
         // TODO see about this, according to SAX spec the functioning of the Locator 
@@ -344,7 +348,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler.handleLastCharacters(charContent);
         if(charContent.length > 0)validationItemLocator.closeCharsContent();
 		
-		elementHandler.handleEndElement(locator);
+		elementHandler.handleEndElement(restrictToFileName, locator);
 		ElementEventHandler parent = elementHandler.getParentHandler(); 
 		elementHandler.recycle();
 		elementHandler = parent;		
@@ -354,7 +358,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 	}
 	
 	public void endDocument()  throws SAXException {
-		elementHandler.handleEndElement(locator);
+		elementHandler.handleEndElement(restrictToFileName, locator);
 		elementHandler.recycle();
 		elementHandler = null;
 		activeModel.recycle();
@@ -403,6 +407,9 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
                     attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
                 }
             }
+        }else if(name.equals(Constants.RESTRICT_TO_FILE_NAME_FEATURE)){
+            restrictToFileName = value;
+            attributeIdTypeHandler.setRestrictToFileName(restrictToFileName);
         }else{
             throw new SAXNotRecognizedException(name);
         }
@@ -420,6 +427,8 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
             return level1AttributeIdType;
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE)){
             return level2AttributeIdType;
+        }else if(name.equals(Constants.RESTRICT_TO_FILE_NAME_FEATURE)){
+            return restrictToFileName;                        
         }else{
             throw new SAXNotRecognizedException(name);
         }

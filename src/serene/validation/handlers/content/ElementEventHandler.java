@@ -30,7 +30,7 @@ public interface ElementEventHandler extends MarkupEventHandler{
 	* Performes validation of the context and shift for correct and well 
 	* determined occurrences of elements. 
 	*/
-	void handleEndElement(Locator locator) throws SAXException;
+	void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException;
 	 
 	void handleInnerCharacters(char[] chars);
     void handleLastCharacters(char[] chars);

@@ -6,10 +6,10 @@ TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\red
 
 TESTED DOCUMENT document1.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/excessiveChild/document1.xml:26:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/excessiveChild/schema.rng:23:26 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/excessiveChild/document1.xml:26:8 Syntax error. Element <root> corresponding to definition <element> at schema.rng:23:26 contains errors: 
 Missing content.
-In the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/excessiveChild/document1.xml:25:7, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/excessiveChild/schema.rng:25:12, expected 1 or more occurrences corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/excessiveChild/schema.rng:30:28, found 0.
+In the document structure starting at document1.xml:25:7, corresponding to definition <group> at schema.rng:25:12, expected 1 or more occurrences corresponding to definition <element> at schema.rng:30:28, found 0.
 Ambiguous content.
-Element <aa> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/excessiveChild/document1.xml:25:7 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
-<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/excessiveChild/schema.rng:26:27
-<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/excessiveChild/schema.rng:34:27.
+Element <aa> at document1.xml:25:7 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at schema.rng:26:27
+<element> at schema.rng:34:27.

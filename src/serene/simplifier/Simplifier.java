@@ -165,10 +165,12 @@ abstract class Simplifier implements SimplifyingVisitor{
     boolean level1AttributeDefaultValue;
     boolean level1AttributeIdType;
 	boolean replaceMissingDatatypeLibrary;
-
+    boolean restrictToFileName;
     
     String startQName;
     String startLocation;
+    
+    
     
 	MessageWriter debugWriter;
 	ParsedComponentWriter pcw;
@@ -195,7 +197,10 @@ abstract class Simplifier implements SimplifyingVisitor{
     public void setLevel1AttributeIdType(boolean value){
         level1AttributeIdType = value;
     }
-        
+    
+    public void setRestrictToFileName(boolean restrictToFileName){
+        this.restrictToFileName = restrictToFileName;
+    }    
 	public void visit(Include include){
 		throw new IllegalStateException();
 	}
@@ -318,13 +323,13 @@ abstract class Simplifier implements SimplifyingVisitor{
 			if(ns.equals("") && localPart.equals("xmlns")){				 
 				// 4.16 error
 				String message = "Simplification 4.16 error. "
-				+"Illegal character content of element <"+name.getQName()+"> at "+name.getLocation()+".";
+				+"Illegal character content of element <"+name.getQName()+"> at "+name.getLocation(restrictToFileName)+".";
 				errorDispatcher.error(new SAXParseException(message, null));
 			}
 			if(ns.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)){
 				// 4.16 error
 				String message = "Simplification 4.16 error. "
-				+"Illegal ns of element <"+name.getQName()+"> at "+name.getLocation()+".";
+				+"Illegal ns of element <"+name.getQName()+"> at "+name.getLocation(restrictToFileName)+".";
 				errorDispatcher.error(new SAXParseException(message, null));
 			}
 		}
@@ -338,7 +343,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(anyNameExceptContext){
 			// 4.16 error
 			String message = "Simplification 4.16 error. "
-				+"Presence of element <"+anyName.getQName()+"> at "+anyName.getLocation()+" is forbiden in this context.";
+				+"Presence of element <"+anyName.getQName()+"> at "+anyName.getLocation(restrictToFileName)+" is forbiden in this context.";
 			errorDispatcher.error(new SAXParseException(message, null));
 			// TODO Q: do you need to build a dummy?
             patternChild = false;
@@ -347,7 +352,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(nsNameExceptContext){
 			// 4.16 error
 			String message = "Simplification 4.16 error. "
-				+"Presence of element <"+anyName.getQName()+"> at "+anyName.getLocation()+" is forbiden in this context.";
+				+"Presence of element <"+anyName.getQName()+"> at "+anyName.getLocation(restrictToFileName)+" is forbiden in this context.";
 				//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 			// TODO Q: do you need to build a dummy?
@@ -371,7 +376,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(nsNameExceptContext){
 			// 4.16 error
 			String message = "Simplification 4.16 error. "
-				+"Presence of element <"+nsName.getQName()+"> at "+nsName.getLocation()+" is forbiden in this context.";
+				+"Presence of element <"+nsName.getQName()+"> at "+nsName.getLocation(restrictToFileName)+" is forbiden in this context.";
 			errorDispatcher.error(new SAXParseException(message, null));
 			// TODO Q: do you need to build a dummy?
             patternChild = false;
@@ -383,7 +388,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			if(ns.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)){
 				// 4.16 error
 				String message = "Simplification 4.16 error. "
-				+"Illegal ns of element <"+nsName.getQName()+"> at "+nsName.getLocation()+".";
+				+"Illegal ns of element <"+nsName.getQName()+"> at "+nsName.getLocation(restrictToFileName)+".";
 				errorDispatcher.error(new SAXParseException(message, null));
 				// TODO Q: do you need to build a dummy?
                 patternChild = false;
@@ -813,13 +818,13 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(localPart != null && ns.equals("") && localPart.equals("xmlns")){				 
                 // 4.16 error
                 String message = "Simplification 4.16 error. "
-                +"Illegal value of name attribute of element <"+attribute.getQName()+"> at "+attribute.getLocation()+".";
+                +"Illegal value of name attribute of element <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+".";
                 errorDispatcher.error(new SAXParseException(message, null));
             }
 			if(ns.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)){
 				// 4.16 error
 				String message = "Simplification 4.16 error. "
-				+"Illegal ns of attribute name of element <"+attribute.getQName()+"> at "+attribute.getLocation()+".";
+				+"Illegal ns of attribute name of element <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+".";
 				errorDispatcher.error(new SAXParseException(message, null));
 			}            
 			builder.buildName(ns, localPart, "name", attribute.getLocation());
@@ -906,13 +911,13 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(localPart != null && ns.equals("") && localPart.equals("xmlns")){				 
             // 4.16 error
             String message = "Simplification 4.16 error. "
-            +"Illegal value of name attribute of element <"+attribute.getQName()+"> at "+attribute.getLocation()+".";
+            +"Illegal value of name attribute of element <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+".";
             errorDispatcher.error(new SAXParseException(message, null));
         }
         if(ns.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)){
             // 4.16 error
             String message = "Simplification 4.16 error. "
-            +"Illegal ns of attribute name of element <"+attribute.getQName()+"> at "+attribute.getLocation()+".";
+            +"Illegal ns of attribute name of element <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+".";
             errorDispatcher.error(new SAXParseException(message, null));
         } 		
 		builder.buildName(ns, localPart, "name", attribute.getLocation());
@@ -978,7 +983,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			emptyChild = false;
             patternChild = true;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
-            attributeContext = oldAttributeContext;  
+            attributeContext = oldAttributeContext; 
 			return;
 		}
         notAllowedChild = oldNotAllowedChild;
@@ -1300,16 +1305,17 @@ abstract class Simplifier implements SimplifyingVisitor{
                     }
                 }
             }			
-		}		
+		}
+       
         if(notAllowed){				
             builder.endLevel();
             builder.clearContent();
             notAllowedChild = oldNotAllowedChild;
             emptyChild = true;
-			emptyComponent = optional;
-            if(prefixMapping != null) endXmlnsContext(prefixMapping);
+            emptyComponent = optional;
             patternChild = true;
             attributeContext = oldAttributeContext;
+            if(prefixMapping != null) endXmlnsContext(prefixMapping);
             return;
         }
         notAllowedChild = oldNotAllowedChild;
@@ -1563,7 +1569,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(definitions == null){
 			// error 4.18
 			String message = "Simplification 4.18 error. "
-				+"No correspoding definition was found for element <"+ref.getQName()+"> at "+ref.getLocation()+".";
+				+"No correspoding definition was found for element <"+ref.getQName()+"> at "+ref.getLocation(restrictToFileName)+".";
 			
 			errorDispatcher.error(new SAXParseException(message, null));
             builder.buildRef(-1, ref.getQName(), ref.getLocation());
@@ -1632,6 +1638,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		
         ds.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
         ds.setLevel1AttributeIdType(level1AttributeIdType);
+        ds.setRestrictToFileName(restrictToFileName);
 		ds.simplify(definitions);
 		        
         
@@ -1666,7 +1673,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(definitions == null){
 			// error 4.18
 			String message = "Simplification 4.18 error. "
-				+"No correspoding definition was found for element <"+parentRef.getQName()+"> at "+parentRef.getLocation()+".";
+				+"No correspoding definition was found for element <"+parentRef.getQName()+"> at "+parentRef.getLocation(restrictToFileName)+".";
 			errorDispatcher.error(new SAXParseException(message, null));
             builder.buildRef(-1, parentRef.getQName(), parentRef.getLocation());
             patternChild = true;
@@ -1733,6 +1740,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		
         ds.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
         ds.setLevel1AttributeIdType(level1AttributeIdType);
+        ds.setRestrictToFileName(restrictToFileName);
 		ds.simplify(definitions);
 		
 		SPattern topPattern = ds.getCurrentPattern();
@@ -1794,14 +1802,14 @@ abstract class Simplifier implements SimplifyingVisitor{
 			if(datatype == null){
 				// error 4.16				
 				String message = "Simplification 4.16 error. "
-				+"For element <"+value.getQName()+"> at "+value.getLocation()
+				+"For element <"+value.getQName()+"> at "+value.getLocation(restrictToFileName)
 				+"the datatype specified by type attribute, \""+type+"\", is not known "
 				+"in the corresponding datatype library \""+value.getDatatypeLibrary()+"\".";
 				errorDispatcher.error(new SAXParseException(message, null));
 			}
 		}catch(DatatypeException de){
 			String message = "Simplification 4.16 error. "
-				+"Datatype error for element <"+value.getQName()+"> at "+value.getLocation()
+				+"Datatype error for element <"+value.getQName()+"> at "+value.getLocation(restrictToFileName)
 				+", datatype library \""+value.getDatatypeLibrary()+"\". "
 				+de.getMessage();
 				errorDispatcher.error(new SAXParseException(message, null));
@@ -1869,14 +1877,14 @@ abstract class Simplifier implements SimplifyingVisitor{
 			datatype = datatypeLibrary.createDatatype(type);
 			if(datatype == null){
 				String message = "Simplification 4.16 error. "
-				+"For element <"+data.getQName()+"> at "+data.getLocation()
+				+"For element <"+data.getQName()+"> at "+data.getLocation(restrictToFileName)
 				+"the datatype specified by type attribute, \""+type+"\", is not known "
 				+"in the corresponding datatype library \""+data.getDatatypeLibrary()+"\".";
 				errorDispatcher.error(new SAXParseException(message, null));
 			}
 		}catch(DatatypeException de){
 			String message = "Simplification 4.16 error. "
-				+"Datatype error for element <"+data.getQName()+"> at "+data.getLocation()
+				+"Datatype error for element <"+data.getQName()+"> at "+data.getLocation(restrictToFileName)
 				+", datatype library \""+data.getDatatypeLibrary()+"\". "
 				+de.getMessage();
 				errorDispatcher.error(new SAXParseException(message, null));
@@ -1901,14 +1909,14 @@ abstract class Simplifier implements SimplifyingVisitor{
             datatypeBuilder = datatypeLibrary.createDatatypeBuilder(type);            		
 			if(datatypeBuilder == null){
 				String message = "Simplification 4.16 error. "
-				+"For element <"+data.getQName()+"> at "+data.getLocation()
+				+"For element <"+data.getQName()+"> at "+data.getLocation(restrictToFileName)
 				+"the datatype specified by type attribute, \""+type+"\", is not known "
 				+"in the corresponding datatype library \""+data.getDatatypeLibrary()+"\".";
 				errorDispatcher.error(new SAXParseException(message, null));
 			}
 		}catch(DatatypeException de){
 			String message = "Simplification 4.16 error. "
-				+"Datatype error for element <"+data.getQName()+"> at "+data.getLocation()
+				+"Datatype error for element <"+data.getQName()+"> at "+data.getLocation(restrictToFileName)
 				+", datatype library \""+data.getDatatypeLibrary()+"\". "
 				+de.getMessage();
 				errorDispatcher.error(new SAXParseException(message, null));
@@ -1944,7 +1952,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                     if(name == null) name = "no name";
                     else name = "name \""+name+"\"";
                     String message = "Simplification 4.16 error. "
-                        +"Parameter with "+name+" at "+param.getLocation()
+                        +"Parameter with "+name+" at "+param.getLocation(restrictToFileName)
                         +", is not allowed in this context. "
                         +de.getMessage();
                         errorDispatcher.error(new SAXParseException(message, null));
@@ -1977,7 +1985,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(start == null || start.isEmpty()){
 			// error 4.18
 			String message = "Simplification 4.18 error. "
-				+"No start element was found in the subtree of element <"+grammar.getQName()+"> at "+grammar.getLocation()+".";
+				+"No start element was found in the subtree of element <"+grammar.getQName()+"> at "+grammar.getLocation(restrictToFileName)+".";
 				//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));            
             simplifyUnreachableDefines(grammar, start);
@@ -2015,6 +2023,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             simplificationContext);
 		ds.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
         ds.setLevel1AttributeIdType(level1AttributeIdType);
+        ds.setRestrictToFileName(restrictToFileName);
 		ds.simplify(start);		
 		
 		notAllowedChild = ds.getNotAllowedChild();
@@ -2090,7 +2099,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                     simplificationContext);
             uds.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
             uds.setLevel1AttributeIdType(level1AttributeIdType);
-            	
+            uds.setRestrictToFileName(restrictToFileName);            	
                 
             Collection<ArrayList<Definition>> definitions = currentDefinitions.values();
             int NULL = indexes.getNullValue();
@@ -2111,7 +2120,7 @@ abstract class Simplifier implements SimplifyingVisitor{
     void unreachableDefinitionWarning(ArrayList<Definition> definitions) throws SAXException{
         String message = "Simplification 4.19 warning. Unreachable definitions:";
         for(Definition def : definitions){
-            message += "\n<"+def.getQName()+"> at "+def.getLocation();
+            message += "\n<"+def.getQName()+"> at "+def.getLocation(restrictToFileName);
         }
         message += ".\nRemoved before checking for illegal recursions and restrictions control.";
         errorDispatcher.warning(new SAXParseException(message, null));

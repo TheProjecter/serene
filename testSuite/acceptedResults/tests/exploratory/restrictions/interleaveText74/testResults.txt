@@ -2,36 +2,36 @@
 
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\interleaveText74\schema.rng
 
-null:-1:-1 Restrictions error 7.4. Several text patterns in the context of <rng:mixed> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:30:16:
-<rng:text> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:33:18
-default text pattern of <rng:mixed> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:30:16.
+null:-1:-1 Restrictions error 7.4. Several text patterns in the context of <rng:mixed> at schema.rng:30:16:
+<rng:text> at schema.rng:33:18
+default text pattern of <rng:mixed> at schema.rng:30:16.
 
-null:-1:-1 Restrictions error 7.4. Several text patterns in the context of <rng:interleave> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:28:20:
-<rng:text> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:29:16
-<rng:text> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:38:17
-<rng:text> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:40:17
-<rng:choice> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:42:17.
+null:-1:-1 Restrictions error 7.4. Several text patterns in the context of <rng:interleave> at schema.rng:28:20:
+<rng:text> at schema.rng:29:16
+<rng:text> at schema.rng:38:17
+<rng:text> at schema.rng:40:17
+<rng:choice> at schema.rng:42:17.
 
-null:-1:-1 Restrictions 7.3 error. In the context of <rng:interleave> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:28:20 overlaping name classes in attributes: 
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:31:32
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:39:32.
+null:-1:-1 Restrictions 7.3 error. In the context of <rng:interleave> at schema.rng:28:20 overlaping name classes in attributes: 
+<rng:attribute> at schema.rng:31:32
+<rng:attribute> at schema.rng:39:32.
 
-null:-1:-1 Restrictions 7.3 error. In the context of <rng:interleave> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:28:20 overlaping name classes in attributes: 
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:31:32
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:44:32.
+null:-1:-1 Restrictions 7.3 error. In the context of <rng:interleave> at schema.rng:28:20 overlaping name classes in attributes: 
+<rng:attribute> at schema.rng:31:32
+<rng:attribute> at schema.rng:44:32.
 
-null:-1:-1 Restrictions 7.3 error. In the context of <group added by element simplification> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:26:16 overlaping name classes in attributes: 
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:31:32
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:52:32.
+null:-1:-1 Restrictions 7.3 error. In the context of <group added by element simplification> at schema.rng:26:16 overlaping name classes in attributes: 
+<rng:attribute> at schema.rng:31:32
+<rng:attribute> at schema.rng:52:32.
 
-null:-1:-1 Restrictions 7.3 error. In the context of <rng:interleave> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:28:20 overlaping name classes in attributes: 
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:39:32
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:44:32.
+null:-1:-1 Restrictions 7.3 error. In the context of <rng:interleave> at schema.rng:28:20 overlaping name classes in attributes: 
+<rng:attribute> at schema.rng:39:32
+<rng:attribute> at schema.rng:44:32.
 
-null:-1:-1 Restrictions 7.3 error. In the context of <group added by element simplification> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:26:16 overlaping name classes in attributes: 
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:39:32
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:52:32.
+null:-1:-1 Restrictions 7.3 error. In the context of <group added by element simplification> at schema.rng:26:16 overlaping name classes in attributes: 
+<rng:attribute> at schema.rng:39:32
+<rng:attribute> at schema.rng:52:32.
 
-null:-1:-1 Restrictions 7.3 error. In the context of <group added by element simplification> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:26:16 overlaping name classes in attributes: 
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:44:32
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/interleaveText74/schema.rng:52:32.
+null:-1:-1 Restrictions 7.3 error. In the context of <group added by element simplification> at schema.rng:26:16 overlaping name classes in attributes: 
+<rng:attribute> at schema.rng:44:32
+<rng:attribute> at schema.rng:52:32.

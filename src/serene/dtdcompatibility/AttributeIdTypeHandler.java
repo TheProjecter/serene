@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import java.io.File;
+
 import javax.xml.stream.Location;
 import javax.xml.stream.events.Attribute;
 
@@ -61,6 +63,8 @@ public class AttributeIdTypeHandler{
     ArrayList<String> errorTokens;
 
     ErrorDispatcher errorDispatcher;
+
+    boolean restrictToFileName;
     
     MessageWriter debugWriter;
     
@@ -69,6 +73,8 @@ public class AttributeIdTypeHandler{
                                 MessageWriter debugWriter){
         this.debugWriter = debugWriter;
         this.errorDispatcher = errorDispatcher;
+        if(errorDispatcher == null) throw new NullPointerException();
+        
         this.attributeIdTypeModel = attributeIdTypeModel;
         
         idAttributes = new HashMap<String, NameLocationInfo>();
@@ -80,6 +86,10 @@ public class AttributeIdTypeHandler{
     public void init(){
         idAttributes.clear();
         refAttributes.clear();
+    }
+  
+    public void setRestrictToFileName(boolean restrictToFileName){
+        this.restrictToFileName = restrictToFileName;
     }
     
     public AttributeIdTypeModel getAttributeIdTypeModel(){
@@ -116,7 +126,7 @@ public class AttributeIdTypeHandler{
                                                                                             debugWriter)); 
                     if(previousId != null){
                         String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
-                        previousId.getQName()+" at "+previousId.getSystemId()+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
+                        previousId.getQName()+" at "+getLocation(previousId.getSystemId())+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
                         errorDispatcher.error(new AttributeIdTypeException(message, publicId, systemId, lineNumber, columnNumber));
                     }
                 }else if(idType == Datatype.ID_TYPE_IDREF || idType == Datatype.ID_TYPE_IDREFS){
@@ -177,7 +187,7 @@ public class AttributeIdTypeHandler{
                                                                                             debugWriter)); 
                     if(previousId != null){
                         String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
-                        previousId.getQName()+" at "+previousId.getSystemId()+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
+                        previousId.getQName()+" at "+getLocation(previousId.getSystemId())+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
                         errorDispatcher.error(new AttributeIdTypeException(message, publicId, systemId, lineNumber, columnNumber));
                     }
                 }else if(idType == Datatype.ID_TYPE_IDREF){
@@ -254,7 +264,7 @@ public class AttributeIdTypeHandler{
                                                                                             debugWriter)); 
                     if(previousId != null){
                         String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
-                        previousId.getQName()+" at "+previousId.getSystemId()+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
+                        previousId.getQName()+" at "+getLocation(previousId.getSystemId())+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
                         errorDispatcher.error(new AttributeIdTypeException(message, publicId, systemId, lineNumber, columnNumber));
                     }
                 }else if(idType == Datatype.ID_TYPE_IDREF){
@@ -319,7 +329,7 @@ public class AttributeIdTypeHandler{
                                                                                             debugWriter)); 
                     if(previousId != null){
                         String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
-                        previousId.getQName()+" at "+previousId.getSystemId()+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
+                        previousId.getQName()+" at "+getLocation(previousId.getSystemId())+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
                         errorDispatcher.error(new AttributeIdTypeException(message, publicId, systemId, lineNumber, columnNumber));
                     }
                 }else if(idType == Datatype.ID_TYPE_IDREF || idType == Datatype.ID_TYPE_IDREFS){
@@ -380,7 +390,7 @@ public class AttributeIdTypeHandler{
                                                                                             debugWriter)); 
                     if(previousId != null){
                         String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
-                        previousId.getQName()+" at "+previousId.getSystemId()+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
+                        previousId.getQName()+" at "+getLocation(previousId.getSystemId())+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
                         errorDispatcher.error(new AttributeIdTypeException(message, publicId, systemId, lineNumber, columnNumber));
                     }
                 }else if(idType == Datatype.ID_TYPE_IDREF || idType == Datatype.ID_TYPE_IDREFS){
@@ -408,7 +418,7 @@ public class AttributeIdTypeHandler{
             String value = attribute.getValue();
             if(idType == Datatype.ID_TYPE_IDREF){
                 if(!idAttributes.containsKey(value)){
-                    String message = "Soundness error. No corresponding attribute of ID-type ID for attribute "+attribute.getQName()+" at "+attribute.getSystemId()+":"+attribute.getLineNumber()+":"+attribute.getColumnNumber()+" with the ID-type IDREF.";
+                    String message = "Soundness error. No corresponding attribute of ID-type ID for attribute "+attribute.getQName()+" at "+getLocation(attribute.getSystemId())+":"+attribute.getLineNumber()+":"+attribute.getColumnNumber()+" with the ID-type IDREF.";
                     errorDispatcher.error(new AttributeIdTypeException(message, locator));
                 }
             }else if(idType == Datatype.ID_TYPE_IDREFS){
@@ -421,7 +431,7 @@ public class AttributeIdTypeHandler{
                     }
                 }
                 if(errorTokens.size() == 1){
-                    String message = "Soundness error. No corresponding attribute of ID-type ID for token \""+errorTokens.get(0)+"\" in the value of attribute "+attribute.getQName()+" at "+attribute.getSystemId()+":"+attribute.getLineNumber()+":"+attribute.getColumnNumber()+" with the ID-type IDREFS.";
+                    String message = "Soundness error. No corresponding attribute of ID-type ID for token \""+errorTokens.get(0)+"\" in the value of attribute "+attribute.getQName()+" at "+getLocation(attribute.getSystemId())+":"+attribute.getLineNumber()+":"+attribute.getColumnNumber()+" with the ID-type IDREFS.";
                     errorDispatcher.error(new AttributeIdTypeException(message, locator));
                 }else if(errorTokens.size() > 1){
                     String tokens = "";
@@ -430,10 +440,17 @@ public class AttributeIdTypeHandler{
                         tokens += "\""+errorTokens.get(j)+"\", ";
                     }
                     tokens += "\""+errorTokens.get(lastToken)+"\"";
-                    String message = "Soundness error. No corresponding attributes of ID-type ID for tokens "+tokens+" in the value of attribute "+attribute.getQName()+" at "+attribute.getSystemId()+":"+attribute.getLineNumber()+":"+attribute.getColumnNumber()+" with the ID-type IDREFS.";
+                    String message = "Soundness error. No corresponding attributes of ID-type ID for tokens "+tokens+" in the value of attribute "+attribute.getQName()+" at "+getLocation(attribute.getSystemId())+":"+attribute.getLineNumber()+":"+attribute.getColumnNumber()+" with the ID-type IDREFS.";
                     errorDispatcher.error(new AttributeIdTypeException(message, locator));
                 }
             }
         }
+    }
+
+    private String getLocation(String systemId){     
+        if(systemId == null || !restrictToFileName)return systemId;
+        int nameIndex = systemId.lastIndexOf(File.separatorChar)+1;
+        if(nameIndex == 0) nameIndex = systemId.lastIndexOf('/')+1;
+        return systemId.substring(nameIndex);	
     }    
 }

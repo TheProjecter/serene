@@ -158,16 +158,7 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 			}	
 			return next;
 		}
-        void handleAttributes(Attributes attributes, Locator locator){            
-            /*for(int i = 0; i < attributes.getLength(); i++){
-                String attributeQName = attributes.getQName(i);
-                String attributeNamespace = attributes.getURI(i); 
-                String attributeName = attributes.getLocalName(i);
-                String attributeValue = attributes.getValue(i);
-                validationItemLocator.newAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);
-                //state.handleAttribute(attributeQName, attributeNamespace, attributeName, attributeValue);
-                validationItemLocator.closeAttribute();
-            }*/
+        void handleAttributes(Attributes attributes, Locator locator){
             uniqueSample.handleAttributes(attributes, locator);
             if(uniqueSample instanceof ValidatingEEH){
                 for(int i = 0; i < individualHandlers.size(); i++){
@@ -186,9 +177,9 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
             return uniqueSample.getAttributeHandler(qName, namespace, name);
         }
         
-		void handleEndElement(Locator locator) throws SAXException{
+		void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{
 			validateContext();
-			reportContextErrors(locator);
+			reportContextErrors(restrictToFileName, locator);
 			elementTasksBinding();		
 			validateInContext();
 		}
@@ -196,12 +187,12 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 			uniqueSample.validateContext();
 		}
 				
-		void reportContextErrors(Locator locator) throws SAXException{
+		void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
 			ElementEventHandler uniqueSampleParent = uniqueSample.getParentHandler();
             if(uniqueSampleParent instanceof ElementValidationHandler){			
                 ElementValidationHandler evhParent = (ElementValidationHandler)uniqueSampleParent;
                 evhParent.setContextErrorHandlerIndex(COMMON);
-                uniqueSample.reportContextErrors(locator);
+                uniqueSample.reportContextErrors(restrictToFileName, locator);
                 evhParent.restorePreviousHandler();
             }
 		}
@@ -233,21 +224,6 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
                     }
                 }			
             }
-			/*if(uniqueSample instanceof ValidatingEEH){				
-				ValidatingEEH sample = (ValidatingEEH)uniqueSample;
-				sample.setValidation();
-				sample.handleInnerCharacters(chars);
-				sample.restorePreviousHandler();
-				for(int i = 0; i < individualHandlers.size(); i++){					
-					if(//!candidatesConflictHandler.isDisqualified(i) &&
-						individualHandlers.get(i) != uniqueSample){
-						ValidatingEEH ih = (ValidatingEEH)individualHandlers.get(i);
-						ih.setDefault();
-						ih.handleInnerCharacters(chars);
-						ih.restorePreviousHandler();
-					}				
-				}
-			}*/			
 		}
         void handleLastCharacters(char[] chars){
 			uniqueSample.handleLastCharacters(chars);
@@ -258,22 +234,7 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
                         ((BoundElementHandler)individualHandlers.get(i)).characterContentBinding(chars);
                     }
                 }			
-            }
-			/*if(uniqueSample instanceof ValidatingEEH){				
-				ValidatingEEH sample = (ValidatingEEH)uniqueSample;
-				sample.setValidation();
-				sample.handleLastCharacters(chars);
-				sample.restorePreviousHandler();
-				for(int i = 0; i < individualHandlers.size(); i++){					
-					if(//!candidatesConflictHandler.isDisqualified(i) &&
-						individualHandlers.get(i) != uniqueSample){
-						ValidatingEEH ih = (ValidatingEEH)individualHandlers.get(i);
-						ih.setDefault();
-						ih.handleLastCharacters(chars);
-						ih.restorePreviousHandler();
-					}				
-				}
-			}*/			
+            }			
 		}
 		
 		public String toString(){
@@ -289,9 +250,9 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 			}	
 			return next;
 		}
-		void handleEndElement(Locator locator) throws SAXException{
+		void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{
 			validateContext();
-			reportContextErrors(locator);
+			reportContextErrors(restrictToFileName, locator);
 			elementTasksBinding();		
 			validateInContext();
 		}

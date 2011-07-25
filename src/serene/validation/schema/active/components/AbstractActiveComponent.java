@@ -38,7 +38,7 @@ abstract class AbstractActiveComponent implements ActiveComponent{
 	}
 	
 	void setChildIndex(int childIndex){			
-		this.childIndex = childIndex;				
+		this.childIndex = childIndex;
 	}	
 	public int getChildIndex(){
 		return childIndex;
@@ -48,8 +48,8 @@ abstract class AbstractActiveComponent implements ActiveComponent{
 		return simplifiedComponent.getQName();
 	}
 	
-	public String getLocation(){
-		return simplifiedComponent.getLocation();
+	public String getLocation(boolean restrictToFileName){
+		return simplifiedComponent.getLocation(restrictToFileName);
 	}	
     
     public int functionalEquivalenceCode(){

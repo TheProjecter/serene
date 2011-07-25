@@ -18,6 +18,8 @@ package serene.restrictor;
 
 import java.util.ArrayList;
 
+import java.io.File;
+
 import org.xml.sax.SAXException;
 
 import serene.util.IntList;
@@ -58,10 +60,10 @@ abstract class NamingController extends CompositionController{
 	* name classes.
 	*/
 	ArrayList<SPattern> namedPatterns;
-	
-	
-	OverlapController overlapController; 
 		
+	OverlapController overlapController; 
+	
+    boolean restrictToFileName;
 	
 	NamingController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
 		super(pool, errorDispatcher, debugWriter);
@@ -70,6 +72,10 @@ abstract class NamingController extends CompositionController{
 		namedPatterns = new ArrayList<SPattern>();
 	}
 	
+    public void setRestrictToFileName(boolean value){
+        restrictToFileName = value;
+    }
+    
 	void start(SOptional optional){
 		throw new IllegalStateException();
 	}
@@ -177,5 +183,5 @@ abstract class NamingController extends CompositionController{
 		}
 	}	
 	
-	abstract void reportError(SPattern context, int i, int j) throws SAXException;
+	abstract void reportError(SPattern context, int i, int j) throws SAXException; 
 }

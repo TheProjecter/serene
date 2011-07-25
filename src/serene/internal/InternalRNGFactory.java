@@ -59,13 +59,16 @@ public class InternalRNGFactory{
 	StartLevelPool startPool;
 	DummyPool dummyPool;
 
-    boolean level1DocumentationElement;	
+    boolean level1DocumentationElement;
+    boolean restrictToFileName;
+	
 	MessageWriter debugWriter;
 	
-	private InternalRNGFactory(boolean level1DocumentationElement, MessageWriter debugWriter) throws DatatypeException{		
+	private InternalRNGFactory(boolean level1DocumentationElement, boolean restrictToFileName, MessageWriter debugWriter) throws DatatypeException{		
 		super();		
 		this.debugWriter = debugWriter;
         this.level1DocumentationElement = level1DocumentationElement;
+        this.restrictToFileName = restrictToFileName;
 		
 		builder = new SimplifiedComponentBuilder(debugWriter);
 		
@@ -86,11 +89,16 @@ public class InternalRNGFactory{
         this.level1DocumentationElement = level1DocumentationElement;
     }
     
-	public static InternalRNGFactory getInstance(boolean level1DocumentationElement, MessageWriter debugWriter)  throws DatatypeException{
+    public void setRestrictToFileName(boolean restrictToFileName){
+        this.restrictToFileName = restrictToFileName;    
+    }
+    
+    
+	public static InternalRNGFactory getInstance(boolean level1DocumentationElement, boolean restrictToFileName, MessageWriter debugWriter)  throws DatatypeException{
 		if(instance == null){
 			synchronized(InternalRNGFactory.class){
 				if(instance == null){
-					instance = new InternalRNGFactory(level1DocumentationElement, debugWriter); 
+					instance = new InternalRNGFactory(level1DocumentationElement, restrictToFileName, debugWriter); 
 				}
 			}
 		}
@@ -106,7 +114,8 @@ public class InternalRNGFactory{
 		ValidationModel vm = new ValidationModelImpl(null, rngModel, debugWriter); 
         SchemaModel sm = new SchemaModel(vm, null, debugWriter); 
 		InternalRNGSchema schema = new InternalRNGSchema(false,
-                                        level1DocumentationElement,
+                                        level1DocumentationElement,                                        
+                                        restrictToFileName,
                                         sm, 
 										debugWriter);					
 		return schema;
@@ -117,6 +126,7 @@ public class InternalRNGFactory{
         SchemaModel sm = new SchemaModel(vm, null, debugWriter);
 		InternalRNGSchema schema = new InternalRNGSchema(false,
                                         level1DocumentationElement,
+                                        restrictToFileName,
                                         sm,
 										debugWriter);		
 		return schema;
@@ -127,6 +137,7 @@ public class InternalRNGFactory{
         SchemaModel sm = new SchemaModel(vm, null, debugWriter);
 		InternalRNGSchema schema = new InternalRNGSchema(false,
                                         level1DocumentationElement,
+                                        restrictToFileName,
                                         sm,
 										debugWriter);		
 		return schema;

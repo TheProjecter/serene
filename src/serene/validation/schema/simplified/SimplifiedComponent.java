@@ -26,5 +26,5 @@ public interface SimplifiedComponent extends Component{
 	void accept(RestrictingVisitor v) throws SAXException;
 	
 	String getQName();
-	String getLocation();
+	String getLocation(boolean restrictToFileName);
 }

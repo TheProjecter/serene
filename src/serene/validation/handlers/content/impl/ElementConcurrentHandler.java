@@ -87,29 +87,6 @@ class ElementConcurrentHandler extends CandidatesEEH{
 		
 		pool.recycle(this);
 	}
-		
-    /*protected void setContextErrorHandler(){
-		if(contextErrorHandlerId == NONE){
-			contextErrorHandler = null;		
-		}else if(contextErrorHandlerId == VALIDATION){
-			//if(validationErrorHandler == null)validationErrorHandler = errorHandlerPool.getValidationErrorHandler();
-			//contextErrorHandler = validationErrorHandler;
-            throw new IllegalStateException();
-		}else if(contextErrorHandlerId == CONFLICT){
-			if(externalConflictErrorHandler == null)externalConflictErrorHandler = errorHandlerPool.getExternalConflictErrorHandler(localCandidatesConflictErrorHandler, candidateIndex, isCandidate);			
-            contextErrorHandler = externalConflictErrorHandler;
-		}else if(contextErrorHandlerId == COMMON){
-			throw new IllegalStateException();
-		}else if(contextErrorHandlerId == DEFAULT){
-			//if(defaultErrorHandler == null)defaultErrorHandler = errorHandlerPool.getDefaultErrorHandler();
-			//contextErrorHandler = defaultErrorHandler;
-            throw new IllegalStateException();
-		}else if(contextErrorHandlerId == EXTERNAL){
-			contextErrorHandler = externalHandlerHistory[externalHandlerHistoryIndex];
-		}else{
-			throw new IllegalStateException();
-		}
-	}*/
     
     
 	//elementHandler	
@@ -151,9 +128,9 @@ class ElementConcurrentHandler extends CandidatesEEH{
         return aph;
     }
     
-	public void handleEndElement(Locator locator) throws SAXException{		
+	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{		
 		validateContext();
-		reportContextErrors(locator);
+		reportContextErrors(restrictToFileName, locator);
 		validateInContext();		
 	}	
 	
@@ -165,10 +142,10 @@ class ElementConcurrentHandler extends CandidatesEEH{
 		}        
         localCandidatesConflictErrorHandler.endValidationStage();
 	}		
-	void reportContextErrors(Locator locator) throws SAXException{
+	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
         for(int i = 0; i < candidates.size(); i++){
 			//if(!candidatesConflictHandler.isDisqualified(i))
-            candidates.get(i).reportContextErrors(locator);
+            candidates.get(i).reportContextErrors(restrictToFileName, locator);
 		}        
         localCandidatesConflictErrorHandler.endValidationStage(); 
         localCandidatesConflictErrorHandler.endContextValidation();
@@ -176,7 +153,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
         boolean mustReport = localCandidatesConflictErrorHandler.mustReport();        
         if(mustReport){
             if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-            localCandidatesConflictErrorHandler.handle(ContextErrorHandler.ELEMENT, validationItemLocator.getQName(), locator, contextErrorHandler[contextErrorHandlerIndex]);
+            localCandidatesConflictErrorHandler.handle(ContextErrorHandler.ELEMENT, validationItemLocator.getQName(), restrictToFileName, locator, contextErrorHandler[contextErrorHandlerIndex]);
         }
 	}
 	void validateInContext(){

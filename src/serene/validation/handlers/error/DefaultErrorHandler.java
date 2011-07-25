@@ -156,16 +156,15 @@ public class DefaultErrorHandler extends AbstractContextErrorHandler{
     public  void conflict(MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){
     }
 	
-	public void handle(int contextType, String qName, AElement definition, Locator locator)
+	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 				throws SAXException{
 	}
 	
-	public void handle(int contextType, String qName, Locator locator)
+	public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator)
 				throws SAXException{
 	}
 	
 	public String toString(){
-		//return "ValidationErrorHandler "+hashCode();
 		return "ValidationErrorHandler ";
 	}
 }

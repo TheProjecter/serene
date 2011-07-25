@@ -33,10 +33,10 @@ interface MessageReporter{
     
     void setParent(MessageReporter parent);
     
-    void report(int contextType, String qName, AElement definition, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException;
-    void report(Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException;
-    String getCandidateErrorMessage(String prefix);
-    String getErrorMessage(String prefix);
+    void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException;
+    void report(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException;
+    String getCandidateErrorMessage(String prefix, boolean restrictToFileName);
+    String getErrorMessage(String prefix, boolean restrictToFileName);
     
     void setConflictResolutionId(int conflictResolutionId);
 }

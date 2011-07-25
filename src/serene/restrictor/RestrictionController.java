@@ -18,34 +18,50 @@ package serene.restrictor;
 
 import org.xml.sax.SAXException;
 
+import serene.Constants;
+
 import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.RecursionModel;
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import serene.Constants;
-
 import sereneWrite.MessageWriter;
 
 public class RestrictionController{
+    
 	RRController rrController;
 	RController rController;
 		
     ControllerPool controllerPool;
     ErrorDispatcher errorDispatcher;
+    
+    boolean restrictToFileName;
+    
 	MessageWriter debugWriter;
 	
 	public RestrictionController(ErrorDispatcher errorDispatcher, MessageWriter debugWriter){		
 		this.debugWriter = debugWriter;
 		this.errorDispatcher = errorDispatcher;
-        controllerPool = new ControllerPool(errorDispatcher, debugWriter); 
+        controllerPool = new ControllerPool(errorDispatcher, debugWriter);
 	}
 	
+    public void setRestrictToFileName(boolean restrictToFileName){
+        this.restrictToFileName = restrictToFileName;
+        if(rrController != null)rrController.setRestrictToFileName(restrictToFileName);
+        if(rController != null)rController.setRestrictToFileName(restrictToFileName);
+    }
+    
 	public void control(SimplifiedModel simplifiedModel)throws SAXException{
 		if(simplifiedModel.hasRecursions()){
-            if(rrController == null) rrController = new RRController(controllerPool, errorDispatcher, debugWriter);
+            if(rrController == null){
+                rrController = new RRController(controllerPool, errorDispatcher, debugWriter);
+                rrController.setRestrictToFileName(restrictToFileName);
+            }
 			rrController.control(simplifiedModel);
 		}else{
-            if(rController == null) rController = new RController(controllerPool, errorDispatcher, debugWriter);
+            if(rController == null){
+                rController = new RController(controllerPool, errorDispatcher, debugWriter);
+                rController.setRestrictToFileName(restrictToFileName);
+            }
 			rController.control(simplifiedModel);
 		}
 	}

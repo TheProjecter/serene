@@ -41,11 +41,17 @@ class CompetitionSimetryController{
     
     MessageWriter debugWriter;
     
+    boolean restrictToFileName;
+    
     CompetitionSimetryController(ControllerPool controllerPool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
         this.debugWriter = debugWriter;
         this.errorDispatcher = errorDispatcher;
         records = new ArrayList<ElementRecord>();
         overlapController = new OverlapController(controllerPool, debugWriter);
+    }
+    
+    public void setRestrictToFileName(boolean value){
+        restrictToFileName = value;
     }
     
     void clear(){
@@ -70,8 +76,8 @@ class CompetitionSimetryController{
                                     break; // attribute handling done, move to next
                                 }else{
                                     String message = "DTD compatibility error. Competing element definitions contain attribute definitions with the same name and different default values:"
-                                    +"\n<"+element.getQName()+"> at "+element.getLocation()+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation()+" without default value;"
-                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+" and default value \""+recordDefaultValue+"\".";
+                                    +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+" without default value;"
+                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName)+" and default value \""+recordDefaultValue+"\".";
                                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                                     break; // attribute handling done, move to next
                                 }
@@ -80,14 +86,14 @@ class CompetitionSimetryController{
                                     break; // attribute handling done, move to next 
                                 }else if(recordDefaultValue == null){
                                     String message = "DTD compatibility error. Competing element definitions contain attribute definitions with the same name and different default values:"
-                                    +"\n<"+element.getQName()+"> at "+element.getLocation()+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation()+" and default value \""+defaultValue+"\";"
-                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+" without default value .";
+                                    +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+" and default value \""+defaultValue+"\";"
+                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName)+" without default value .";
                                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                                     break; // attribute handling done, move to next
                                 }else{
                                     String message = "DTD compatibility error. Competing element definitions contain attribute definitions with the same name and different default values:"
-                                    +"\n<"+element.getQName()+"> at "+element.getLocation()+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation()+" and default value \""+defaultValue+"\";"
-                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+" and default value \""+recordDefaultValue+"\".";
+                                    +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+" and default value \""+defaultValue+"\";"
+                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName)+" and default value \""+recordDefaultValue+"\".";
                                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                                     break; // attribute handling done, move to next                                    
                                 }
@@ -96,8 +102,8 @@ class CompetitionSimetryController{
                     }
                     if(!foundCorrespondent){
                         String message = "DTD compatibility error. Competing element definitions without corresponding attribute definitions with default values:"
-                                +"\n<"+element.getQName()+"> at "+element.getLocation()+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation()
-                                +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" without corresponding attribute definition.";
+                                +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)
+                                +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" without corresponding attribute definition.";
                         errorDispatcher.error(new AttributeDefaultValueException(message, null));
                     }                    
                 }
@@ -114,8 +120,8 @@ class CompetitionSimetryController{
                         }
                         if(!foundCorrespondent){
                             String message = "DTD compatibility error. Competing element definitions without corresponding attribute definitions with default values:"
-                                    +"\n<"+element.getQName()+"> at "+element.getLocation()+" without corresponding attribute definition."
-                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation();
+                                    +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" without corresponding attribute definition."
+                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName);
                             errorDispatcher.error(new AttributeDefaultValueException(message, null));
                         }
                     }
@@ -133,7 +139,7 @@ class CompetitionSimetryController{
         for(ElementRecord record : records){
             SNameClass recordNameClass = record.element.getNameClass();
             if(overlapController.overlap(nameClass, recordNameClass)){
-                //Handle both default value and id type
+                //Handle both default value and ID-type
                 for(int i = 0; i < attributes.size(); i++){
                     SAttribute attribute = attributes.get(i);
                     String defaultValue = attribute.getDefaultValue();
@@ -149,34 +155,31 @@ class CompetitionSimetryController{
                                 if(recordDefaultValue == null){  
                                 }else{
                                     String message = "DTD compatibility error. Competing element definitions contain attribute definitions with the same name and different default values:"
-                                    +"\n<"+element.getQName()+"> at "+element.getLocation()+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation()+" without default value;"
-                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+" and default value \""+recordDefaultValue+"\".";
+                                    +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+" without default value;"
+                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName)+" and default value \""+recordDefaultValue+"\".";
                                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                                 }
                             }else{
                                 if(recordDefaultValue != null && recordDefaultValue.equals(defaultValue)){
                                 }else if(recordDefaultValue == null){
                                     String message = "DTD compatibility error. Competing element definitions contain attribute definitions with the same name and different default values:"
-                                    +"\n<"+element.getQName()+"> at "+element.getLocation()+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation()+" and default value \""+defaultValue+"\";"
-                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+" without default value .";
+                                    +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+" and default value \""+defaultValue+"\";"
+                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName)+" without default value .";
                                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                                 }else{
                                     String message = "DTD compatibility error. Competing element definitions contain attribute definitions with the same name and different default values:"
-                                    +"\n<"+element.getQName()+"> at "+element.getLocation()+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation()+" and default value \""+defaultValue+"\";"
-                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+" and default value \""+recordDefaultValue+"\".";
+                                    +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+" and default value \""+defaultValue+"\";"
+                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName)+" and default value \""+recordDefaultValue+"\".";
                                     errorDispatcher.error(new AttributeDefaultValueException(message, null));          
                                 }
                             }
                             
-                            if(attributeIdTypes.isEmpty()){
-                                System.out.println(attributes);                             
-                            }
                             int attributeIdType = attributeIdTypes.get(i);
                             int recordAttributeIdType = record.attributeIdTypes.get(j);
                             if(attributeIdType != recordAttributeIdType){
-                                String message = "DTD compatibility error. Competing attribute definitions specify attribute values with different id types:"
-                                    +"\n<"+attribute.getQName()+"> at "+attribute.getLocation()+";"
-                                    +"\n<"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+".";
+                                String message = "DTD compatibility error. Competing attribute definitions specify attribute values with different ID-types:"
+                                    +"\n<"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+";"
+                                    +"\n<"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName)+".";
                                     errorDispatcher.error(new AttributeIdTypeException(message, null));
                                     break; // attribute handling done, move to next
                             }
@@ -184,17 +187,17 @@ class CompetitionSimetryController{
                             int attributeIdType = attributeIdTypes.get(i);
                             int recordAttributeIdType = record.attributeIdTypes.get(j);
                             if(attributeIdType != recordAttributeIdType){
-                                String message = "DTD compatibility error. Competing attribute definitions specify attribute values with different id types:"
-                                    +"\n<"+attribute.getQName()+"> at "+attribute.getLocation()+";"
-                                    +"\n<"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+".";
+                                String message = "DTD compatibility error. Competing attribute definitions specify attribute values with different ID-types:"
+                                    +"\n<"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+";"
+                                    +"\n<"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName)+".";
                                     errorDispatcher.error(new AttributeIdTypeException(message, null));
                             }
                         }
                     }
                     if(!foundCorrespondent){
                         String message = "DTD compatibility error. Competing element definitions without corresponding attribute definitions with default values:"
-                                +"\n<"+element.getQName()+"> at "+element.getLocation()+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation()
-                                +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" without corresponding attribute definition.";
+                                +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)
+                                +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" without corresponding attribute definition.";
                         errorDispatcher.error(new AttributeDefaultValueException(message, null));
                     }                    
                 }
@@ -211,8 +214,8 @@ class CompetitionSimetryController{
                         }
                         if(!foundCorrespondent){
                             String message = "DTD compatibility error. Competing element definitions without corresponding attribute definitions with default values:"
-                                    +"\n<"+element.getQName()+"> at "+element.getLocation()+" without corresponding attribute definition."
-                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation()+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation();
+                                    +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" without corresponding attribute definition."
+                                    +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName);
                             errorDispatcher.error(new AttributeDefaultValueException(message, null));
                         }
                     }
@@ -229,9 +232,9 @@ class CompetitionSimetryController{
                             int attributeIdType = attributeIdTypes.get(i);
                             int recordAttributeIdType = record.attributeIdTypes.get(j);
                             if(attributeIdType != recordAttributeIdType){
-                                String message = "DTD compatibility error. Competing attribute definitions specify attribute values with different id types:"
-                                    +"\n<"+attribute.getQName()+"> at "+attribute.getLocation()+";"
-                                    +"\n<"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+".";
+                                String message = "DTD compatibility error. Competing attribute definitions specify attribute values with different ID-types:"
+                                    +"\n<"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+";"
+                                    +"\n<"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName)+".";
                                     errorDispatcher.error(new AttributeIdTypeException(message, null));
                                     break; // attribute handling done, move to next
                             }
@@ -258,9 +261,9 @@ class CompetitionSimetryController{
                     int attributeIdType = attributeIdTypes.get(i);
                     int recordAttributeIdType = record.attributeIdTypes.get(j);
                     if(attributeIdType != recordAttributeIdType){
-                        String message = "DTD compatibility error. Competing attribute definitions specify attribute values with different id types:"
-                            +"\n<"+attribute.getQName()+"> at "+attribute.getLocation()+";"
-                            +"\n<"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation()+".";
+                        String message = "DTD compatibility error. Competing attribute definitions specify attribute values with different ID-types:"
+                            +"\n<"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+";"
+                            +"\n<"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName)+".";
                             errorDispatcher.error(new AttributeIdTypeException(message, null));
                             break; // attribute handling done, move to next
                     }

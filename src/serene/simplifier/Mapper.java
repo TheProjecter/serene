@@ -30,6 +30,8 @@ import org.xml.sax.SAXException;
 import org.relaxng.datatype.DatatypeLibrary;
 import org.relaxng.datatype.DatatypeLibraryFactory;
 
+import serene.datatype.DatatypeLibraryFinder;
+
 import serene.internal.InternalRNGFactory;
 
 import serene.validation.schema.parsed.ParsedModel;
@@ -39,7 +41,6 @@ import serene.validation.schema.parsed.Definition;
 import serene.validation.schema.parsed.Grammar;
 import serene.validation.schema.parsed.ExternalRef;
 
-import serene.datatype.DatatypeLibraryFinder;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -87,6 +88,10 @@ class Mapper{
 		grammarDefinitionsMapper.setReplaceMissingDatatypeLibrary(value);
 	}
 	
+    void setRestrictToFileName(boolean restrictToFileName){
+        grammarDefinitionsMapper.setRestrictToFileName(restrictToFileName);
+    }
+    
 	void map(URI base,
 			Pattern topPattern,
 			Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,	

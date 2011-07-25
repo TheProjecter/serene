@@ -2,34 +2,34 @@
 
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\naming74\element\schema.rng
 
-null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:25:20 overlaping name classes in elements: 
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:26:28
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:46:19.
+null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at schema.rng:25:20 overlaping name classes in elements: 
+<rng:element> at schema.rng:26:28
+<rng:element> at schema.rng:46:19.
 
-null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:25:20 overlaping name classes in elements: 
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:26:28
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:62:19.
+null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at schema.rng:25:20 overlaping name classes in elements: 
+<rng:element> at schema.rng:26:28
+<rng:element> at schema.rng:62:19.
 
-null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:25:20 overlaping name classes in elements: 
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:29:28
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:46:19.
+null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at schema.rng:25:20 overlaping name classes in elements: 
+<rng:element> at schema.rng:29:28
+<rng:element> at schema.rng:46:19.
 
-null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:25:20 overlaping name classes in elements: 
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:32:28
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:46:19.
+null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at schema.rng:25:20 overlaping name classes in elements: 
+<rng:element> at schema.rng:32:28
+<rng:element> at schema.rng:46:19.
 
-null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:25:20 overlaping name classes in elements: 
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:32:28
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:62:19.
+null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at schema.rng:25:20 overlaping name classes in elements: 
+<rng:element> at schema.rng:32:28
+<rng:element> at schema.rng:62:19.
 
-null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:25:20 overlaping name classes in elements: 
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:36:19
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:46:19.
+null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at schema.rng:25:20 overlaping name classes in elements: 
+<rng:element> at schema.rng:36:19
+<rng:element> at schema.rng:46:19.
 
-null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:25:20 overlaping name classes in elements: 
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:36:19
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:56:19.
+null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at schema.rng:25:20 overlaping name classes in elements: 
+<rng:element> at schema.rng:36:19
+<rng:element> at schema.rng:56:19.
 
-null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:25:20 overlaping name classes in elements: 
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:46:19
-<rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/naming74/element/schema.rng:62:19.
+null:-1:-1 Restrictions 7.4 error. In the context of <rng:interleave> at schema.rng:25:20 overlaping name classes in elements: 
+<rng:element> at schema.rng:46:19
+<rng:element> at schema.rng:62:19.

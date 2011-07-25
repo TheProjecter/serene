@@ -117,6 +117,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	String currentDatatypeLibrary;
 	
 	boolean replaceMissingDatatypeLibrary;
+    boolean restrictToFileName;
     
     DocumentSimplificationContext simplificationContext;
 	
@@ -144,6 +145,10 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		this.replaceMissingDatatypeLibrary = value;
 	}
 	
+    void setRestrictToFileName(boolean restrictToFileName){
+        this.restrictToFileName = restrictToFileName;
+    }
+    
 	void map(URI xmlBaseUri,
 			Pattern topPattern,
 			Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,
@@ -207,24 +212,29 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		}catch(URISyntaxException e){			
 			// report 4.5 error
 			String message = "Simplification 4.5 error. "
-			+"Illegal href attribute value in <"+include.getQName()+"> at "+include.getLocation()+": "
+			+"Illegal href attribute value in <"+include.getQName()+"> at "+include.getLocation(restrictToFileName)+": "
 			+"\n"+e.getMessage(); 
+			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 			xmlBaseUri = oldBase;
 			return;
 		}
 		if(hrefURI.getFragment() != null){
 			String message = "Simplification 4.5 error. "
-			+"Illegal href attribute value in <"+include.getQName()+"> at "+include.getLocation()+": "
+			+"Illegal href attribute value in <"+include.getQName()+"> at "+include.getLocation(restrictToFileName)+": "
 			+"\n"+"Fragment identifier present";
+			//System.out.println(message);
+			// report 4.5 error
 			errorDispatcher.error(new SAXParseException(message, null));
 			xmlBaseUri = oldBase;
 			return;
 		}
 		if(inclusionPath.contains(hrefURI)){
 			String message = "Simplification 4.6 error. "
-			+"Illegal href attribute value in <"+include.getQName()+"> at "+include.getLocation()+": "
+			+"Illegal href attribute value in <"+include.getQName()+"> at "+include.getLocation(restrictToFileName)+": "
 			+"\n"+"Recursive inclusion.";
+			//System.out.println(message);
+			// report 4.6 error
 			errorDispatcher.error(new SAXParseException(message, null));
 			xmlBaseUri = oldBase;
 			return; 
@@ -299,6 +309,12 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 								Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,// definitions of the included Grammar and its descendants
 								Map<Definition, ArrayList<Grammar>> definitionGrammars)// mapping of the definitions in the included Grammar and its descendants to the Grammars they contain
 								throws SAXException{
+		/*System.out.println("includedGrammar "+includedGrammar);
+		System.out.println("contextDefinitions "+contextDefinitions);
+		System.out.println("overrideDefinitions "+overrideDefinitions);
+		System.out.println("grammarDefinitions "+grammarDefinitions);
+		System.out.println("definitionGrammars "+definitionGrammars);
+		System.out.println("**************************************");*/
 		Map<String, ArrayList<Definition>> includedGrammarDefinitions = grammarDefinitions.remove(includedGrammar);
 		Set<String> includedNames = includedGrammarDefinitions.keySet();		
 		for(String name : includedNames){
@@ -343,10 +359,10 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 				if(remainingName == null){
 					//report error start
 					String message = "Simplification 4.7 error. "
-					+"Included grammar contains no start element to match the content of <"+include.getQName()+"> at "+include.getLocation()+":";
+					+"Included grammar contains no start element to match the content of <"+include.getQName()+"> at "+include.getLocation(restrictToFileName)+":";
 					ArrayList<Definition> starts = overrideDefinitions.get(null);
 					for(int i = 0; i < starts.size(); i++){
-						message += "\n<"+starts.get(i).getQName()+"> at "+starts.get(i).getLocation();
+						message += "\n<"+starts.get(i).getQName()+"> at "+starts.get(i).getLocation(restrictToFileName);
 					}
 					message += ".";
 					errorDispatcher.error(new SAXParseException(message, null));
@@ -354,10 +370,10 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 					//report error define
                     String reportName = remainingName.substring(0, remainingName.length()-1);//remove marker
 					String message = "Simplification 4.7 error. "
-					+"Included grammar contains no definition with name \""+reportName+"\" to match the content of <"+include.getQName()+"> at "+include.getLocation()+":";
+					+"Included grammar contains no definition with name \""+reportName+"\" to match the content of <"+include.getQName()+"> at "+include.getLocation(restrictToFileName)+":";
 					ArrayList<Definition> defines = overrideDefinitions.get(remainingName);
 					for(int i = 0; i < defines.size(); i++){
-						message += "\n<"+defines.get(i).getQName()+"> at "+defines.get(i).getLocation();
+						message += "\n<"+defines.get(i).getQName()+"> at "+defines.get(i).getLocation(restrictToFileName);
 					}
 					message += ".";
 					errorDispatcher.error(new SAXParseException(message, null));
@@ -406,6 +422,16 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		}
 	}
 	public void visit(ExceptNameClass exceptNameClass){
+		// normally this is not necessary since all the descendants are name classes
+		// and no external references of any kind are possible any more
+		/*URI oldBase = xmlBaseUri;
+		String xmlBase = exceptNameClass.getXmlBaseAttribute();
+		if(xmlBase != null) resolve(xmlBase); 
+		
+		ParsedComponent[] children = exceptNameClass.getChildren();
+		if(children != null) next(children);
+
+		xmlBaseUri = oldBase;*/		
 	}
 	public void visit(DivGrammarContent div) throws SAXException{
 		String dla = div.getDatatypeLibraryAttribute();
@@ -458,10 +484,41 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		
 	public void visit(Name name){}
 	public void visit(AnyName anyName){
+		// normally this is not necessary since all the descendants are name classes
+		// and no external references of any kind are possible any more
+		/*URI oldBase = xmlBaseUri;
+		String xmlBase = anyName.getXmlBaseAttribute();
+		if(xmlBase != null) resolve(xmlBase); 
+		
+		ParsedComponent child = anyName.getChild();
+		if(child != null) next(child);		
+		
+		xmlBaseUri = oldBase;*/		
+		
 	}
 	public void visit(NsName nsName){
+		// normally this is not necessary since all the descendants are name classes
+		// and no external references of any kind are possible any more
+		/*URI oldBase = xmlBaseUri;
+		String xmlBase = nsName.getXmlBaseAttribute();
+		if(xmlBase != null) resolve(xmlBase); 
+		
+		ParsedComponent child = nsName.getChild();
+		if(child != null) next(child);		
+		
+		xmlBaseUri = oldBase;*/
 	}
 	public void visit(ChoiceNameClass choice){
+		// normally this is not necessary since all the descendants are name classes
+		// and no external references of any kind are possible any more
+		/*URI oldBase = xmlBaseUri;
+		String xmlBase = choice.getXmlBaseAttribute();
+		if(xmlBase != null) resolve(xmlBase); 
+		
+		ParsedComponent[] children = choice.getChildren();
+		if(children != null) next(children);
+		
+		xmlBaseUri = oldBase;*/
 	}	
 	
 	public void visit(Define define) throws SAXException{
@@ -852,7 +909,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		}catch(URISyntaxException e){			
 			// report 4.5 error
 			String message = "Simplification 4.5 error. "
-			+"Illegal href attribute value in <"+externalRef.getQName()+"> at "+externalRef.getLocation()+": "
+			+"Illegal href attribute value in <"+externalRef.getQName()+"> at "+externalRef.getLocation(restrictToFileName)+": "
 			+"\n"+e.getMessage(); 
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
@@ -861,7 +918,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		}
 		if(hrefURI.getFragment() != null){
 			String message = "Simplification 4.5 error. "
-			+"Illegal href attribute value in <"+externalRef.getQName()+"> at "+externalRef.getLocation()+": "
+			+"Illegal href attribute value in <"+externalRef.getQName()+"> at "+externalRef.getLocation(restrictToFileName)+": "
 			+"\n"+"Fragment identifier present";
 			//System.out.println(message);
 			// report 4.5 error
@@ -1005,7 +1062,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			return true;
 		}catch(URISyntaxException use){
 			String message = "Simplification 4.1 error. "
-			+ "Could not resolve xml:base URI defined at element <"+c.getQName()+"> at "+c.getLocation()+". "
+			+ "Could not resolve xml:base URI defined at element <"+c.getQName()+"> at "+c.getLocation(restrictToFileName)+". "
 			+ use.getMessage();			
 			errorDispatcher.error(new SAXParseException(message, null));
 			return false;
@@ -1019,8 +1076,12 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		try{
 			dl = new URI(value); 
 		}catch(URISyntaxException e){
-			// syntax error, same as relative URI, or fragment identifier
-			// should have been reported already			
+			// Syntax error, same as relative URI, or fragment identifier
+			// should have been reported already.
+            // But the relative URI, or fragment identifier do not result in 
+            // error, so they do return a non null string here, resulting in 
+            // unknown datatype error. And untransparent behaviour.
+            // TODO
 			return null;
 		}
 		return dl.toASCIIString();
@@ -1032,8 +1093,9 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		DatatypeLibrary datatypeLibrary = datatypeLibraryFactory.createDatatypeLibrary(currentDatatypeLibrary);
 		asciiDlDatatypeLibrary.put(currentDatatypeLibrary, datatypeLibrary);
 		if(datatypeLibrary == null){
+			//System.out.println("error 4.3 unknown or unsupported DatatypeLibrary");
 			String message = "Simplification 4.3 error. "
-			+"Attribute datatypeLibrary of element <"+c.getQName()+"> at "+c.getLocation()+" specifies an unknown or unsupported datatype library.";
+			+"Attribute datatypeLibrary of element <"+c.getQName()+"> at "+c.getLocation(restrictToFileName)+" specifies an unknown or unsupported datatype library.";
 			if(replaceMissingDatatypeLibrary){
 				errorDispatcher.error(new MissingLibraryException(message, null));
 			}else{

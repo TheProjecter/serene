@@ -2,5 +2,5 @@
 
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\stringSequences72\repeatedSimple\data\schema.rng
 
-null:-1:-1 Restrictions 7.2 error. Repeated simple content type in the context of <oneOrMore> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/repeatedSimple/data/schema.rng:3:16:
-<data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/stringSequences72/repeatedSimple/data/schema.rng:5:33.
+null:-1:-1 Restrictions 7.2 error. Repeated simple content type in the context of <oneOrMore> at schema.rng:3:16:
+<data> at schema.rng:5:33.

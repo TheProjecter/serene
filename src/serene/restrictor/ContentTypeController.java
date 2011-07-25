@@ -37,6 +37,8 @@ class ContentTypeController extends ContentType implements Reusable{
 	ControllerPool pool;	
 	ErrorDispatcher errorDispatcher;
 	
+    boolean restrictToFileName;
+    
 	MessageWriter messageWriter;
 	
 	ContentTypeController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter messageWriter){
@@ -54,6 +56,10 @@ class ContentTypeController extends ContentType implements Reusable{
 		pool.recycle(this);
 	}
 	
+    public void setRestrictToFileName(boolean value){
+        restrictToFileName = value;
+    }
+    
 	void add(int childIndex, int contentType){
 		switch (contentType){
 			case ERROR:
@@ -77,10 +83,10 @@ class ContentTypeController extends ContentType implements Reusable{
 			if(simpleContent.size() > 1){
 				// error 7.2 several simple content types in the same context
 				String message = "Restrictions 7.2 error. "
-				+"In the context of <"+context.getQName()+"> at "+context.getLocation()
+				+"In the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)
 				+" several children result in simple content types: ";
 				for(int i = 0; i < simpleContent.size(); i++){
-					message += "\n<"+children[simpleContent.get(i)].getQName()+"> at "+children[simpleContent.get(i)].getLocation();
+					message += "\n<"+children[simpleContent.get(i)].getQName()+"> at "+children[simpleContent.get(i)].getLocation(restrictToFileName);
 				}
 				message +=".";
 				//System.out.println(message);
@@ -90,15 +96,15 @@ class ContentTypeController extends ContentType implements Reusable{
 			if(!complexContent.isEmpty()){
 				// error 7.2 simple and complex content types in the same context
 				String message = "Restrictions 7.2 error. "
-				+"In the context of <"+context.getQName()+"> at "+context.getLocation()
+				+"In the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)
 				+" both simple and complex content types were found: "
 				+"\nsimple content ";
 				for(int i = 0; i < simpleContent.size(); i++){
-					message += "\n<"+children[simpleContent.get(i)].getQName()+"> at "+children[simpleContent.get(i)].getLocation();
+					message += "\n<"+children[simpleContent.get(i)].getQName()+"> at "+children[simpleContent.get(i)].getLocation(restrictToFileName);
 				}
 				message+="\ncomplex content ";
 				for(int i = 0; i < complexContent.size(); i++){
-					message += "\n<"+children[complexContent.get(i)].getQName()+"> at "+children[complexContent.get(i)].getLocation();
+					message += "\n<"+children[complexContent.get(i)].getQName()+"> at "+children[complexContent.get(i)].getLocation(restrictToFileName);
 				}
 				message +=".";
 				//System.out.println(message);
@@ -116,8 +122,8 @@ class ContentTypeController extends ContentType implements Reusable{
 		if(!simpleContent.isEmpty()){
 			// error 7.2 simple and complex content types in the same context
 			String message = "Restrictions 7.2 error. "
-			+"Simple content type in the context of <"+context.getQName()+"> at "+context.getLocation()+":"
-			+ "\n<"+child.getQName()+"> at "+child.getLocation()			
+			+"Simple content type in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+":"
+			+ "\n<"+child.getQName()+"> at "+child.getLocation(restrictToFileName)			
 			+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));

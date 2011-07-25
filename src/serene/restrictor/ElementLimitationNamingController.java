@@ -56,9 +56,9 @@ class ElementLimitationNamingController extends LimitationNamingController{
 		SPattern e2 = namedPatterns.get(j);		
 		// error 7.4
 		String message = "Unsupported schema configuration. "
-		+"For the moment, Serene does not support overlapping name classes in elements in the context of a <group> that has multiple cardinality and is in the context of an <interleave>:"	
-		+"\n<"+e1.getQName()+"> at "+e1.getLocation()
-		+"\n<"+e2.getQName()+"> at "+e2.getLocation()+".";
+		+"For the moment serene does not support overlapping name classes in elements in the context of a <group> that has multiple cardinality and is in the context of an <interleave>:"	
+		+"\n<"+e1.getQName()+"> at "+e1.getLocation(restrictToFileName)
+		+"\n<"+e2.getQName()+"> at "+e2.getLocation(restrictToFileName)+".";
 		errorDispatcher.error(new SAXParseException(message, null));
 	}
 
