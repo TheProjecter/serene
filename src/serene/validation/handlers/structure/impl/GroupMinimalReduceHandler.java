@@ -95,8 +95,7 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 	//Start StructureHandler----------------------------------------------------------
 	//StructureHandler getParentHandler(); super	
 	// StructureValidationHandler getAncestorOrSelfHandler(Rule rule) super
-    // void deactivate() super
-    // boolean handleDeactivation() super
+    // void deactivate()super
 	// StructureHandler getChildHandler(Rule child) super
 	// APattern getRule() super
 	// boolean handleChildShift(AElement element, int expectedOrderHandlingCount) super
@@ -116,18 +115,21 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 									
 		if(newChildIndex < childIndex[lastCorrectChildIndexIndex]){			
 			// add here the reduce/reset part if the contentHandler is satisfied and reduction acceptable			
-			// return; the error is neihter located nor reported
-			if(handleOrderReduce(sourceDefinition)){					
-				return false;
-			}
+			// return; the error is neihter located nor reported			
 			
 			if(newChildIndex < childIndex[lastCorrectChildIndexIndex-1]){
-				//newChildIndex is misplaced								
+				//newChildIndex is misplaced							
+                if(handleOrderUncheckedReduce(sourceDefinition)){					
+                    return false;
+                }
 				orderIndex = CURRENT_MISPLACED;
 				reper = childDefinition[lastCorrectChildIndexIndex]; 				
 				// do not store, it cannot be used for comparisons
 			}else if(newChildIndex == childIndex[lastCorrectChildIndexIndex-1]){				
 				// childIndex[lastCorrectChildIndexIndex] is misplaced
+                if(handleOrderCheckedReduce(sourceDefinition)){					
+                    return false;
+                }
 				orderIndex = PREVIOUS_MISPLACED;
 				
 				reper = child;
@@ -142,6 +144,9 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 				addLastCorrectChildIndex(sourceDefinition);
 			}else{
 				//childIndex[lastCorrectChildIndexIndex] is misplaced
+                if(handleOrderCheckedReduce(sourceDefinition)){					
+                    return false;
+                }
 				orderIndex = PREVIOUS_MISPLACED;				
 				
 				reper = child;
@@ -362,21 +367,23 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 	}			
 	//End InnerPattern------------------------------------------------------------------
 	
-	boolean handleOrderReduce(APattern sourceDefinition){
-		// TODO 
-		// Test for the order handling after shift
-		// In the handleChidShift(item, orderHCount) the handling of order 
-		// was originally after the effective shift, changed for before 
-		// without testing!!! 
-		// handleReset();
-		// handleChildShift(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), validationItemLocator.getQName(), child);
+	
+    boolean handleOrderCheckedReduce(APattern sourceDefinition){		
 		if(isReduceAllowed() && isReduceAcceptable()){
-			handleReshift(sourceDefinition);
+			handleReshift(sourceDefinition);			
 			return true;
-		}
+		}		
 		return false;
 	}
-	
+    
+    boolean handleOrderUncheckedReduce(APattern sourceDefinition){		
+		if(isReduceAcceptable()){
+			handleValidatingReshift(sourceDefinition);			
+			return true;
+		}		
+		return false;
+	}
+    
 	private void setState(StackHandler stackHandler, 
 							ErrorCatcher errorCatcher,
 							ParticleHandler[] cph, 

@@ -16,7 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-
 <root>
 	<aa/>
 	<bb/>
@@ -24,4 +23,7 @@ limitations under the License.
 	<dd/>
 	<cc/>
 	<aa/>
+    <bb/>
+	<cc/>
+	<dd/>
 </root>
