@@ -215,7 +215,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         return false;
     }
 
-    public void handle(int contextType, String qName, Locator locator, ContextErrorHandler contextErrorHandler) throws SAXException{
+    public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator, ContextErrorHandler contextErrorHandler) throws SAXException{
         if(localMessageHandler.getErrorMessageCount() > 0){
             delayMessageReporter(contextType, qName, locator, localMessageHandler, false);
         }        
@@ -238,7 +238,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         }        
                 
         contextErrorHandler.conflict(commonMessages, candidatesCount, conflictHandler.getDisqualified(), candidateDelayedMessages);
-        contextErrorHandler.handle(contextType, qName, locator);        
+        contextErrorHandler.handle(contextType, qName, restrictToFileName, locator);        
     }   
         
     void recordError(int errorId, int errorFunctionalEquivalenceCode, int candidateIndex){       

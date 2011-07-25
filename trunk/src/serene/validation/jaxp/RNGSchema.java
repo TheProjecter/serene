@@ -32,6 +32,7 @@ public class RNGSchema extends BaseSchema{
     boolean level2AttributeDefaultValue;
 	boolean level1AttributeIdType;
     boolean level2AttributeIdType;
+    boolean restrictToFileName;
     
 	public RNGSchema(boolean secureProcessing,
                     boolean namespacePrefixes,
@@ -39,6 +40,7 @@ public class RNGSchema extends BaseSchema{
                     boolean level2AttributeDefaultValue,
                     boolean level1AttributeIdType,
                     boolean level2AttributeIdType,
+                    boolean restrictToFileName,
                     SchemaModel schemaModel,
                     MessageWriter debugWriter){
 		super(secureProcessing, schemaModel, debugWriter);
@@ -47,6 +49,7 @@ public class RNGSchema extends BaseSchema{
         this.level2AttributeDefaultValue = level2AttributeDefaultValue;
         this.level1AttributeIdType = level1AttributeIdType;
         this.level2AttributeIdType = level2AttributeIdType;
+        this.restrictToFileName = restrictToFileName;
 	}
 	
 	
@@ -57,6 +60,7 @@ public class RNGSchema extends BaseSchema{
                                     level2AttributeDefaultValue,
                                     level1AttributeIdType,
                                     level2AttributeIdType,
+                                    restrictToFileName,
                                     newValidatorHandler(), 
                                     debugWriter);
 	}
@@ -68,9 +72,10 @@ public class RNGSchema extends BaseSchema{
                                         level2AttributeDefaultValue,
                                         level1AttributeIdType,
                                         level2AttributeIdType,
+                                        restrictToFileName,
                                         contentHandlerPool.getValidatorEventHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										schemaModel,
 										debugWriter);
-	}	   
+	}
 }

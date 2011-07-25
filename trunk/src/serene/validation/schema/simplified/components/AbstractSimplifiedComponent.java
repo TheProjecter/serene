@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.schema.simplified.components;
 
+import java.io.File;
+
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 import serene.validation.schema.simplified.SimplifiedComponent;
 
@@ -38,7 +40,7 @@ abstract class AbstractSimplifiedComponent implements SimplifiedComponent{
 	}
 
 	void setParent(SimplifiedComponent parent){		 
-		this.parent = parent;
+		this.parent = parent;				
 	}
 	
 	public SimplifiedComponent getParent(){
@@ -56,7 +58,10 @@ abstract class AbstractSimplifiedComponent implements SimplifiedComponent{
 	public String getQName(){
 		return qName;
 	}
-	public String getLocation(){
-		return location;
+	public String getLocation(boolean restrictToFileName){
+        if(location == null || !restrictToFileName)return location;
+        int nameIndex = location.lastIndexOf(File.separatorChar)+1;
+        if(nameIndex == 0) nameIndex = location.lastIndexOf('/')+1;
+        return location.substring(nameIndex);
 	}
 }	

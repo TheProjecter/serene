@@ -2,4 +2,4 @@
 
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\start715\noGrammar\oneOrMore\schema.rng
 
-null:-1:-1 Restrictions 7.1.5 error. Element <oneOrMore> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/start715/noGrammar/oneOrMore/schema.rng:2:56 is not expected as start of the schema.
+null:-1:-1 Restrictions 7.1.5 error. Element <oneOrMore> at schema.rng:2:56 is not expected as start of the schema.

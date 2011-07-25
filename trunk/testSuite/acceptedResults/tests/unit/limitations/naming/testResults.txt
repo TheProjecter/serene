@@ -2,6 +2,6 @@
 
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\limitations\naming\schema.rng
 
-null:-1:-1 Unsupported schema configuration. For the moment, Serene does not support overlapping name classes in elements in the context of a <group> that has multiple cardinality and is in the context of an <interleave>:
-<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/limitations/naming/schema.rng:27:28
-<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/limitations/naming/schema.rng:33:28.
+null:-1:-1 Unsupported schema configuration. For the moment serene does not support overlapping name classes in elements in the context of a <group> that has multiple cardinality and is in the context of an <interleave>:
+<element> at schema.rng:27:28
+<element> at schema.rng:33:28.

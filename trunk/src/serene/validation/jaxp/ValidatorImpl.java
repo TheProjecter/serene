@@ -108,6 +108,7 @@ class ValidatorImpl extends Validator{
     boolean level2AttributeDefaultValue;
     boolean level1AttributeIdType;
     boolean level2AttributeIdType;
+    boolean restrictToFileName;
     
     //boolean defaultSecureProcessing; can't be changed anyway
     boolean defaultNamespacePrefixes;
@@ -115,6 +116,7 @@ class ValidatorImpl extends Validator{
     boolean defaultLevel2AttributeDefaultValue;
     //boolean defaultLevel1AttributeIdType; can't be changed anyway
     boolean defaultLevel2AttributeIdType;
+    boolean defaultRestrictToFileName;
     
 	ValidatorImpl(boolean secureProcessing,                            
                     boolean namespacePrefixes,
@@ -122,6 +124,7 @@ class ValidatorImpl extends Validator{
                     boolean level2AttributeDefaultValue,
                     boolean level1AttributeIdType,
                     boolean level2AttributeIdType,
+                    boolean restrictToFileName,
                     ValidatorHandler validatorHandler, 
                     MessageWriter debugWriter){
 		this.debugWriter = debugWriter;		
@@ -132,12 +135,16 @@ class ValidatorImpl extends Validator{
         this.level2AttributeDefaultValue = level2AttributeDefaultValue;
         this.level1AttributeIdType = level1AttributeIdType;
         this.level2AttributeIdType = level2AttributeIdType;
+        this.restrictToFileName = restrictToFileName;
+        
         //defaultSecureProcessing = secureProcessing;
         defaultNamespacePrefixes = namespacePrefixes;
         //defaultLevel1AttributeDefaultValue = level1AttributeDefaultValue;
         defaultLevel2AttributeDefaultValue = level2AttributeDefaultValue;
         //defaultLevel1AttributeIdType = level1AttributeIdType;
         defaultLevel2AttributeIdType = level2AttributeIdType;
+        
+        defaultRestrictToFileName = restrictToFileName;
         
 		this.validatorHandler = validatorHandler;
         
@@ -150,10 +157,12 @@ class ValidatorImpl extends Validator{
         namespacePrefixes = defaultNamespacePrefixes;
         level2AttributeDefaultValue = defaultLevel2AttributeDefaultValue;
         level2AttributeIdType = defaultLevel2AttributeIdType;
+        restrictToFileName = defaultRestrictToFileName;
         try{
             validatorHandler.setFeature(Constants.NAMESPACES_PREFIXES_SAX_FEATURE, defaultNamespacePrefixes);
             validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE, defaultLevel2AttributeDefaultValue);
             validatorHandler.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, defaultLevel2AttributeIdType);
+            validatorHandler.setFeature(Constants.RESTRICT_TO_FILE_NAME_FEATURE, defaultRestrictToFileName);
         }catch(SAXNotRecognizedException e){
             e.printStackTrace();
         }catch(SAXNotSupportedException e){
@@ -170,6 +179,8 @@ class ValidatorImpl extends Validator{
             level2AttributeDefaultValue = value;                        
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE)){
             level2AttributeIdType = value;                        
+        }else if(name.equals(Constants.RESTRICT_TO_FILE_NAME_FEATURE)){
+            restrictToFileName = value;                        
         }else{
             throw new SAXNotRecognizedException(name);
         }
@@ -185,6 +196,8 @@ class ValidatorImpl extends Validator{
             return level2AttributeDefaultValue;
         }else if(name.equals(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE)){
             return level2AttributeIdType;                        
+        }else if(name.equals(Constants.RESTRICT_TO_FILE_NAME_FEATURE)){
+            return restrictToFileName;                        
         }else{
             throw new SAXNotRecognizedException(name);
         }        

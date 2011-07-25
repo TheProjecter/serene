@@ -6,8 +6,8 @@ TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\explorat
 
 TESTED DOCUMENT document1.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeIdType/soundness/document1.xml:22:19 Soundness error. Value of attribute id with the ID-type ID is the same as  value of attribute id at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeIdType/soundness/document1.xml:20:19 with the ID-type ID.
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeIdType/soundness/document1.xml:22:19 Soundness error. Value of attribute id with the ID-type ID is the same as  value of attribute id at document1.xml:20:19 with the ID-type ID.
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeIdType/soundness/document1.xml:29:1 Soundness error. No corresponding attribute of ID-type ID for attribute idref at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeIdType/soundness/document1.xml:24:22 with the ID-type IDREF.
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeIdType/soundness/document1.xml:29:1 Soundness error. No corresponding attribute of ID-type ID for attribute idref at document1.xml:24:22 with the ID-type IDREF.
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeIdType/soundness/document1.xml:29:1 Soundness error. No corresponding attribute of ID-type ID for token "cc" in the value of attribute idrefs at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeIdType/soundness/document1.xml:27:29 with the ID-type IDREFS.
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeIdType/soundness/document1.xml:29:1 Soundness error. No corresponding attribute of ID-type ID for token "cc" in the value of attribute idrefs at document1.xml:27:29 with the ID-type IDREFS.

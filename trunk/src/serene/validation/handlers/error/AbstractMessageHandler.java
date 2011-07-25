@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.BitSet;
 
+import java.io.File;
+
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXException;
@@ -457,24 +459,24 @@ public class AbstractMessageHandler  implements MessageReporter{
     
     
     
-    public void report(int contextType, String qName, AElement definition, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    public void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         this.contextType = contextType;
         this.qName = qName;
         this.definition = definition;
-                
+        
         if(parent != null){
             // System.out.println("REPORT PARENT 1 "+qName);
-            parent.report(locator, errorDispatcher, prefix);//parent should have been located, else illegal state
+            parent.report(restrictToFileName, locator, errorDispatcher, prefix);//parent should have been located, else illegal state
         }
                 
         //do the conflict
         if(disqualified != null){            
-            handleConflict(contextType, qName, locator, errorDispatcher, prefix);
+            handleConflict(contextType, qName, restrictToFileName, locator, errorDispatcher, prefix);
             
             // report common as any other errors            
             if(commonMessages != null){
                 // System.out.println("REPORT COMMON 1 "+qName+" "+commonMessages.hashCode());
-                commonMessages.report(locator, errorDispatcher, prefix);                
+                commonMessages.report(restrictToFileName, locator, errorDispatcher, prefix);                
             }
             
             return;
@@ -482,49 +484,49 @@ public class AbstractMessageHandler  implements MessageReporter{
         
         // System.out.println(hashCode()+" LOCAL MESSAGE 1 "+getValidationErrorMessage(""));
         
-        String errorMessage = getValidationErrorMessage(prefix);
+        String errorMessage = getValidationErrorMessage(prefix, restrictToFileName);
         errorMessage = errorMessage.trim();
         if(errorMessage != null && !errorMessage.equals("")) errorDispatcher.error(new SAXParseException(errorMessage, locator));
         
-        String warningMessage = getValidationWarningMessage(prefix);
+        String warningMessage = getValidationWarningMessage(prefix, restrictToFileName);
         warningMessage = warningMessage.trim();
         if(warningMessage != null && !warningMessage.equals("")) errorDispatcher.warning(new SAXParseException(warningMessage, locator));
     }
     
-    private void handleConflict(int contextType, String qName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    private void handleConflict(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         int qualified = candidatesCount - disqualified.cardinality();
         
         if(qualified == 0){
-            reportUnresolved(contextType, qName, locator, errorDispatcher, prefix);
+            reportUnresolved(contextType, qName, restrictToFileName, locator, errorDispatcher, prefix);
         }else if(qualified == 1){
-            reportResolved(contextType, qName, locator, errorDispatcher, prefix);
+            reportResolved(contextType, qName, restrictToFileName, locator, errorDispatcher, prefix);
         }else{
-            reportAmbiguous(contextType, qName, locator, errorDispatcher, prefix);
+            reportAmbiguous(contextType, qName, restrictToFileName, locator, errorDispatcher, prefix);
         }
     }
     
-    private void reportUnresolved(int contextType, String qName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    private void reportUnresolved(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         String message = ""; 
         for(int i = 0; i < candidatesCount; i++){
-            message += candidateMessages[i].getCandidateErrorMessage(prefix);
+            message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
         }
         if(!message.equals(""))errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, locator));
         else throw new IllegalStateException();
     }
     
-    private void reportResolved(int contextType, String qName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    private void reportResolved(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         //System.out.println(hashCode()+" REPORT RESOLVED 1 "+disqualified);
         int qualifiedIndex = disqualified.nextClearBit(0);        
         //System.out.println("qualifiedIndex "+qualifiedIndex);
-        if(candidateMessages != null && candidateMessages[qualifiedIndex] != null) candidateMessages[qualifiedIndex].report(locator, errorDispatcher, prefix);        
+        if(candidateMessages != null && candidateMessages[qualifiedIndex] != null) candidateMessages[qualifiedIndex].report(restrictToFileName, locator, errorDispatcher, prefix);        
     }
     
-    private void reportAmbiguous(int contextType, String qName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    private void reportAmbiguous(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         String message = ""; 
         for(int i = 0; i < candidatesCount; i++){
             //System.out.println(disqualified+" "+candidateMessages);
             if(!disqualified.get(i) && candidateMessages != null && candidateMessages[i] != null){
-                 message += candidateMessages[i].getCandidateErrorMessage(prefix);            
+                 message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);            
             }
         }
         if(!message.equals("")){            
@@ -532,67 +534,67 @@ public class AbstractMessageHandler  implements MessageReporter{
         }        
     }
         
-    public void report(Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    public void report(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         //System.out.println(hashCode()+" REPORT 2 "+qName+"  "+getErrorMessageCount());                        
         if(parent != null){
             //System.out.println("REPORT PARENT 2 "+qName);
-            parent.report(locator, errorDispatcher, prefix);//parent should have been located, else illegal state            
+            parent.report(restrictToFileName, locator, errorDispatcher, prefix);//parent should have been located, else illegal state            
         }
         
         //do the conflict
         if(disqualified != null){
-            handleConflict(locator, errorDispatcher, prefix);
+            handleConflict(restrictToFileName, locator, errorDispatcher, prefix);
             
             // report common as any other errors            
             if(commonMessages != null){
                 //System.out.println("REPORT COMMON 2 "+qName);
-                commonMessages.report(locator, errorDispatcher, prefix);                
+                commonMessages.report(restrictToFileName, locator, errorDispatcher, prefix);                
             }
             return;
         }
         
         //System.out.println(hashCode()+" LOCAL MESSAGE 2 "+getValidationErrorMessage(""));
         
-        String errorMessage = getValidationErrorMessage(prefix);
+        String errorMessage = getValidationErrorMessage(prefix, restrictToFileName);
         errorMessage = errorMessage.trim();
         if(errorMessage != null && !errorMessage.equals("")) errorDispatcher.error(new SAXParseException(errorMessage, locator));
         
-        String warningMessage = getValidationWarningMessage(prefix);
+        String warningMessage = getValidationWarningMessage(prefix, restrictToFileName);
         warningMessage = warningMessage.trim();
         if(warningMessage != null && !warningMessage.equals("")) errorDispatcher.warning(new SAXParseException(warningMessage, locator));
     }
     
-    private void handleConflict(Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    private void handleConflict(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         int qualified = candidatesCount - disqualified.cardinality();
         
         if(qualified == 0){
-            reportUnresolved(locator, errorDispatcher, prefix);
+            reportUnresolved(restrictToFileName, locator, errorDispatcher, prefix);
         }else if(qualified == 1){
-            reportResolved(locator, errorDispatcher, prefix);
+            reportResolved(restrictToFileName, locator, errorDispatcher, prefix);
         }else{
-            reportAmbiguous(locator, errorDispatcher, prefix);
+            reportAmbiguous(restrictToFileName, locator, errorDispatcher, prefix);
         }
     }
     
-    private void reportUnresolved(Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    private void reportUnresolved(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         String message = "";
         for(int i = 0; i < candidatesCount; i++){
-            message += candidateMessages[i].getCandidateErrorMessage(prefix);
+            message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
         }
         if(!message.equals(""))errorDispatcher.error(new SAXParseException(prefix+"Syntax error.Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, locator));
     }
     
-    private void reportResolved(Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    private void reportResolved(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         //System.out.println(hashCode()+" REPORT RESOLVED 2 "+disqualified);
         int qualifiedIndex = disqualified.nextClearBit(0);
         //System.out.println("qualifiedIndex "+qualifiedIndex);
-        if(candidateMessages != null && candidateMessages[qualifiedIndex] != null) candidateMessages[qualifiedIndex].report(locator, errorDispatcher, prefix);
+        if(candidateMessages != null && candidateMessages[qualifiedIndex] != null) candidateMessages[qualifiedIndex].report(restrictToFileName, locator, errorDispatcher, prefix);
     }
     
-    private void reportAmbiguous(Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    private void reportAmbiguous(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         String message = ""; 
         for(int i = 0; i < candidatesCount; i++){
-            if(!disqualified.get(i)  && candidateMessages != null && candidateMessages[i] != null)message += candidateMessages[i].getCandidateErrorMessage(prefix);
+            if(!disqualified.get(i)  && candidateMessages != null && candidateMessages[i] != null)message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
         }
         message = message.trim();
         if(!message.equals("")){
@@ -606,30 +608,30 @@ public class AbstractMessageHandler  implements MessageReporter{
         
     
 	
-    public String getCandidateErrorMessage(String prefix){
+    public String getCandidateErrorMessage(String prefix, boolean restrictToFileName){
 		if(definition == null){
 			throw new IllegalStateException();
 		}
         String message = "";
         
         String localPrefix = prefix+"\t";
-        String localMessage = getErrorMessage(localPrefix); 
+        String localMessage = getErrorMessage(localPrefix, restrictToFileName); 
         
         if(!localMessage.equals("")){
             if(parent != null){
-                String parentMessage = parent.getErrorMessage(localPrefix); 
+                String parentMessage = parent.getErrorMessage(localPrefix, restrictToFileName); 
                 if(!parentMessage.equals(""))
-                    message = "\n"+prefix+"Candidate definition <"+definition.getQName() +"> at "+definition.getLocation()+" contains errors: "
+                    message = "\n"+prefix+"Candidate definition <"+definition.getQName() +"> at "+definition.getLocation(restrictToFileName)+" contains errors: "
                             + parentMessage;
             }else{                
-                message = "\n"+prefix+"Candidate definition <"+definition.getQName() +"> at "+definition.getLocation()+" contains errors: ";                
+                message = "\n"+prefix+"Candidate definition <"+definition.getQName() +"> at "+definition.getLocation(restrictToFileName)+" contains errors: ";                
             }
             message += localMessage; 
         }else{
             if(parent != null){
-                String parentMessage = parent.getErrorMessage(prefix); 
+                String parentMessage = parent.getErrorMessage(prefix, restrictToFileName); 
                 if(!parentMessage.equals(""))
-                    message = "\n"+prefix+"Candidate definition <"+definition.getQName() +"> at "+definition.getLocation()+" contains errors: "
+                    message = "\n"+prefix+"Candidate definition <"+definition.getQName() +"> at "+definition.getLocation(restrictToFileName)+" contains errors: "
                             + parentMessage;
             }
         }
@@ -637,49 +639,49 @@ public class AbstractMessageHandler  implements MessageReporter{
 	}
        	
     
-	public String getErrorMessage(String prefix){
+	public String getErrorMessage(String prefix, boolean restrictToFileName){
 		String message = "";		
         if(disqualified != null){
-            message += getConflictErrorMessage(prefix);
+            message += getConflictErrorMessage(prefix, restrictToFileName);
         }else{
-            message += getValidationErrorMessage(prefix);
+            message += getValidationErrorMessage(prefix, restrictToFileName);
         }
         return message;
     }
     
-    private String getConflictErrorMessage(String prefix){
+    private String getConflictErrorMessage(String prefix, boolean restrictToFileName){
         int qualified = candidatesCount - disqualified.cardinality();
         
         if(qualified == 0){
-            return getUnresolvedMessage(prefix);
+            return getUnresolvedMessage(prefix, restrictToFileName);
         }else if(qualified == 1){
-            return getResolvedMessage(prefix);
+            return getResolvedMessage(prefix, restrictToFileName);
         }else{
-            return getAmbiguousMessage(prefix);
+            return getAmbiguousMessage(prefix, restrictToFileName);
         }
     }
     
-    private String getUnresolvedMessage(String prefix){        
+    private String getUnresolvedMessage(String prefix, boolean restrictToFileName){        
         String message = "";
         for(int i = 0; i < candidatesCount; i++){
-            message += candidateMessages[i].getCandidateErrorMessage(prefix);
+            message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
         }
         message = message.trim();
         if(!message.equals(""))return "\n"+prefix+"Syntax error.Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message;
         return message;
     }
     
-    private String getResolvedMessage(String prefix){
+    private String getResolvedMessage(String prefix, boolean restrictToFileName){
         int qualifiedIndex = disqualified.nextClearBit(0);
-        if(candidateMessages != null && candidateMessages[qualifiedIndex] != null)  return candidateMessages[qualifiedIndex].getErrorMessage(prefix);
+        if(candidateMessages != null && candidateMessages[qualifiedIndex] != null)  return candidateMessages[qualifiedIndex].getErrorMessage(prefix, restrictToFileName);
         return null;
     }
     
-    private String getAmbiguousMessage(String prefix){
+    private String getAmbiguousMessage(String prefix, boolean restrictToFileName){
         String message = "";
         for(int i = 0; i < candidatesCount; i++){
             if(!disqualified.get(i)){
-                message += candidateMessages[i].getCandidateErrorMessage(prefix);                
+                message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);                
             }
         }
         message = message.trim();
@@ -690,13 +692,13 @@ public class AbstractMessageHandler  implements MessageReporter{
     }
     
     
-    private String getValidationErrorMessage(String prefix){
+    private String getValidationErrorMessage(String prefix, boolean restrictToFileName){
 		// {2}
         String message = "";
 		if(unknownElementQName != null){
 			for(int i = 0; i <= unknownElementIndex; i++){
 				message += "\n"+prefix+"Unknown element."
-				+"\n"+prefix+"Element <"+unknownElementQName[i]+"> at "+unknownElementSystemId[i]+":"+unknownElementLineNumber[i]+":"+unknownElementColumnNumber[i]
+				+"\n"+prefix+"Element <"+unknownElementQName[i]+"> at "+getLocation(restrictToFileName, unknownElementSystemId[i])+":"+unknownElementLineNumber[i]+":"+unknownElementColumnNumber[i]
 				+" is not known in the vocabulary described by the schema.";
 			}
 		}	
@@ -704,7 +706,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(unexpectedElementQName != null){
 			for(int i = 0; i <= unexpectedElementIndex; i++){
 				message += "\n"+prefix+"Unexpected element."
-                +"\n"+prefix+"Element <"+unexpectedElementQName[i]+"> at "+unexpectedElementSystemId[i]+":"+unexpectedElementLineNumber[i]+":"+unexpectedElementColumnNumber[i]+" corresponding to definition: <"+unexpectedElementDefinition[i].getQName()+"> at "+unexpectedElementDefinition[i].getLocation()+" is not part of the parent's content model." ;
+                +"\n"+prefix+"Element <"+unexpectedElementQName[i]+"> at "+getLocation(restrictToFileName, unexpectedElementSystemId[i])+":"+unexpectedElementLineNumber[i]+":"+unexpectedElementColumnNumber[i]+" corresponding to definition: <"+unexpectedElementDefinition[i].getQName()+"> at "+unexpectedElementDefinition[i].getLocation(restrictToFileName)+" is not part of the parent's content model." ;
 			}
 		}
 		// {4}
@@ -712,10 +714,10 @@ public class AbstractMessageHandler  implements MessageReporter{
 			for(int i = 0; i <= unexpectedAmbiguousElementIndex; i++){
 				String definitions = "";
 				for(int j = 0; j < unexpectedAmbiguousElementDefinition[i].length; j++ ){
-					definitions += "\n"+prefix+"<"+unexpectedAmbiguousElementDefinition[i][j].getQName()+"> at "+unexpectedAmbiguousElementDefinition[i][j].getLocation();
+					definitions += "\n"+prefix+"<"+unexpectedAmbiguousElementDefinition[i][j].getQName()+"> at "+unexpectedAmbiguousElementDefinition[i][j].getLocation(restrictToFileName);
 				}
 				message += "\n"+prefix+"Unexpected element."
-						+"\n"+prefix+"Element <"+unexpectedAmbiguousElementQName[i]+"> at "+unexpectedAmbiguousElementSystemId[i]+":"+unexpectedAmbiguousElementLineNumber[i]+":"+unexpectedAmbiguousElementColumnNumber[i]
+						+"\n"+prefix+"Element <"+unexpectedAmbiguousElementQName[i]+"> at "+getLocation(restrictToFileName, unexpectedAmbiguousElementSystemId[i])+":"+unexpectedAmbiguousElementLineNumber[i]+":"+unexpectedAmbiguousElementColumnNumber[i]
 						+", corresponding to one of the schema definitions: "
                         +definitions						
 						+"\n"+prefix+"is not part of the parent's content model." ;
@@ -725,7 +727,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(unknownAttributeQName != null){
 			for(int i = 0; i <= unknownAttributeIndex; i++){
 				message += "\n"+prefix+"Unknown attribute."
-				+"\n"+prefix+"Attribute \""+unknownAttributeQName[i]+"\" at "+unknownAttributeSystemId[i]+":"+unknownAttributeLineNumber[i]+":"+unknownAttributeColumnNumber[i]
+				+"\n"+prefix+"Attribute \""+unknownAttributeQName[i]+"\" at "+getLocation(restrictToFileName, unknownAttributeSystemId[i])+":"+unknownAttributeLineNumber[i]+":"+unknownAttributeColumnNumber[i]
 				+" is not known in the vocabulary described by the schema.";
 			}
 		}	
@@ -733,7 +735,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(unexpectedAttributeQName != null){
 			for(int i = 0; i <= unexpectedAttributeIndex; i++){
 				message += "\n"+prefix+"Unexpected attribute."
-						+"\n"+prefix+"Attribute \""+unexpectedAttributeQName[i]+"\" at "+unexpectedAttributeSystemId[i]+":"+unexpectedAttributeLineNumber[i]+":"+unexpectedAttributeColumnNumber[i]+" corresponding to definition <"+unexpectedAttributeDefinition[i].getQName()+"> at "+unexpectedAttributeDefinition[i].getLocation()+" is not part of the parent's content model." ;
+						+"\n"+prefix+"Attribute \""+unexpectedAttributeQName[i]+"\" at "+getLocation(restrictToFileName, unexpectedAttributeSystemId[i])+":"+unexpectedAttributeLineNumber[i]+":"+unexpectedAttributeColumnNumber[i]+" corresponding to definition <"+unexpectedAttributeDefinition[i].getQName()+"> at "+unexpectedAttributeDefinition[i].getLocation(restrictToFileName)+" is not part of the parent's content model." ;
 			}
 		}
 		// {7}
@@ -741,10 +743,10 @@ public class AbstractMessageHandler  implements MessageReporter{
 			for(int i = 0; i <= unexpectedAmbiguousAttributeIndex; i++){
 				String definitions = "";
 				for(int j = 0; j < unexpectedAmbiguousAttributeDefinition[i].length; j++ ){
-					definitions += "\n"+prefix+"<"+unexpectedAmbiguousAttributeDefinition[i][j].getQName()+"> at "+unexpectedAmbiguousAttributeDefinition[i][j].getLocation();
+					definitions += "\n"+prefix+"<"+unexpectedAmbiguousAttributeDefinition[i][j].getQName()+"> at "+unexpectedAmbiguousAttributeDefinition[i][j].getLocation(restrictToFileName);
 				}
 				message += "\n"+prefix+"Unexpected attribute."
-						+"\n"+prefix+"Attribute \""+unexpectedAmbiguousAttributeQName[i]+"\" at "+unexpectedAmbiguousAttributeSystemId[i]+":"+unexpectedAmbiguousAttributeLineNumber[i]+":"+unexpectedAmbiguousAttributeColumnNumber[i]
+						+"\n"+prefix+"Attribute \""+unexpectedAmbiguousAttributeQName[i]+"\" at "+getLocation(restrictToFileName, unexpectedAmbiguousAttributeSystemId[i])+":"+unexpectedAmbiguousAttributeLineNumber[i]+":"+unexpectedAmbiguousAttributeColumnNumber[i]
 						+", corresponding to one of the definitions: "
                         +definitions						
 						+"\n"+prefix+"is not part of the parent's content model." ;
@@ -756,12 +758,12 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(misplacedContext != null){
 			for(int i = 0; i <= misplacedIndex; i++){
 				message += "\n"+prefix+"Order error."
-				+"\n"+prefix+"Misplaced content in the document structure starting at "+misplacedStartSystemId[i]+":"+misplacedStartLineNumber[i]+":"+misplacedStartColumnNumber[i]+", corresponding to definition <"+misplacedContext[i].getQName()+"> at "+misplacedContext[i].getLocation()+ ":";
+				+"\n"+prefix+"Misplaced content in the document structure starting at "+getLocation(restrictToFileName, misplacedStartSystemId[i])+":"+misplacedStartLineNumber[i]+":"+misplacedStartColumnNumber[i]+", corresponding to definition <"+misplacedContext[i].getQName()+"> at "+misplacedContext[i].getLocation(restrictToFileName)+ ":";
 				for(int j = 0; j < misplacedDefinition[i].length; j++){
 					for(int k = 0; k < misplacedQName[i][j].length; k++){
-						message += "\n"+prefix+"<"+misplacedQName[i][j][k]+"> at "+misplacedSystemId[i][j][k]+":"+misplacedLineNumber[i][j][k]+":"+misplacedColumnNumber[i][j][k];
+						message += "\n"+prefix+"<"+misplacedQName[i][j][k]+"> at "+getLocation(restrictToFileName, misplacedSystemId[i][j][k])+":"+misplacedLineNumber[i][j][k]+":"+misplacedColumnNumber[i][j][k];
 					}
-					message += ", corresponding to definition <"+misplacedDefinition[i][j].getQName()+"> at "+misplacedDefinition[i][j].getLocation();
+					message += ", corresponding to definition <"+misplacedDefinition[i][j].getQName()+"> at "+misplacedDefinition[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";				
 			}
@@ -770,10 +772,10 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(excessiveContext != null){
 			for(int i = 0; i <= excessiveIndex; i++){
 				message += "\n"+prefix+"Excessive content."
-						+"\n"+prefix+"In the document structure starting at "+excessiveStartSystemId[i]+":"+excessiveStartLineNumber[i]+":"+excessiveStartColumnNumber[i]+", corresponding to definition <"+excessiveContext[i].getQName()+"> at "+excessiveContext[i].getLocation()+", "
-						+" expected "+getExpectedCardinality(excessiveDefinition[i].getMinOccurs(), excessiveDefinition[i].getMaxOccurs())+" corresponding to definition <"+excessiveDefinition[i].getQName()+"> at "+excessiveDefinition[i].getLocation()+", found "+excessiveQName[i].length+": ";
+						+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, excessiveStartSystemId[i])+":"+excessiveStartLineNumber[i]+":"+excessiveStartColumnNumber[i]+", corresponding to definition <"+excessiveContext[i].getQName()+"> at "+excessiveContext[i].getLocation(restrictToFileName)+", "
+						+" expected "+getExpectedCardinality(excessiveDefinition[i].getMinOccurs(), excessiveDefinition[i].getMaxOccurs())+" corresponding to definition <"+excessiveDefinition[i].getQName()+"> at "+excessiveDefinition[i].getLocation(restrictToFileName)+", found "+excessiveQName[i].length+": ";
 				for(int j = 0; j < excessiveQName[i].length; j++){
-					message += "\n"+prefix+"<"+excessiveQName[i][j]+"> at "+excessiveSystemId[i][j]+":"+excessiveLineNumber[i][j]+":"+excessiveColumnNumber[i][j];
+					message += "\n"+prefix+"<"+excessiveQName[i][j]+"> at "+getLocation(restrictToFileName, excessiveSystemId[i][j])+":"+excessiveLineNumber[i][j]+":"+excessiveColumnNumber[i][j];
 				}
 				message += ".";
 			}
@@ -784,15 +786,15 @@ public class AbstractMessageHandler  implements MessageReporter{
 				int found = missingFound[i];				
 				if(found > 0){
 					message += "\n"+prefix+"Missing content."
-							+"\n"+prefix+"In the document structure starting at "+missingStartSystemId[i]+":"+missingStartLineNumber[i]+":"+missingStartColumnNumber[i]+", corresponding to definition <"+missingContext[i].getQName()+"> at "+missingContext[i].getLocation()+", "
-							+"expected "+getExpectedCardinality(missingDefinition[i].getMinOccurs(), missingDefinition[i].getMaxOccurs())+" corresponding to definition <"+missingDefinition[i].getQName()+"> at "+missingDefinition[i].getLocation()+", found "+found+": ";
+							+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, missingStartSystemId[i])+":"+missingStartLineNumber[i]+":"+missingStartColumnNumber[i]+", corresponding to definition <"+missingContext[i].getQName()+"> at "+missingContext[i].getLocation(restrictToFileName)+", "
+							+"expected "+getExpectedCardinality(missingDefinition[i].getMinOccurs(), missingDefinition[i].getMaxOccurs())+" corresponding to definition <"+missingDefinition[i].getQName()+"> at "+missingDefinition[i].getLocation(restrictToFileName)+", found "+found+": ";
 					for(int j = 0; j < missingQName[i].length; i++){
-						message += "\n"+prefix+"<"+missingQName[i][j]+"> at "+missingSystemId[i][j]+":"+missingLineNumber[i][j]+":"+missingColumnNumber[i][j];
+						message += "\n"+prefix+"<"+missingQName[i][j]+"> at "+getLocation(restrictToFileName, missingSystemId[i][j])+":"+missingLineNumber[i][j]+":"+missingColumnNumber[i][j];
 					}
 				}else{
 					message += "\n"+prefix+"Missing content."
-							+"\n"+prefix+"In the document structure starting at "+missingStartSystemId[i]+":"+missingStartLineNumber[i]+":"+missingStartColumnNumber[i]+", corresponding to definition <"+missingContext[i].getQName()+"> at "+missingContext[i].getLocation()+", "
-							+"expected "+getExpectedCardinality(missingDefinition[i].getMinOccurs(), missingDefinition[i].getMaxOccurs())+" corresponding to definition <"+missingDefinition[i].getQName()+"> at "+missingDefinition[i].getLocation()+", found "+found;
+							+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, missingStartSystemId[i])+":"+missingStartLineNumber[i]+":"+missingStartColumnNumber[i]+", corresponding to definition <"+missingContext[i].getQName()+"> at "+missingContext[i].getLocation(restrictToFileName)+", "
+							+"expected "+getExpectedCardinality(missingDefinition[i].getMinOccurs(), missingDefinition[i].getMaxOccurs())+" corresponding to definition <"+missingDefinition[i].getQName()+"> at "+missingDefinition[i].getLocation(restrictToFileName)+", found "+found;
 				}
 				message += ".";
 			}			
@@ -801,17 +803,17 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(illegalContext != null){
 			for(int i = 0; i <= illegalIndex; i++){
 				message += "\n"+prefix+"Illegal content."
-							+"\n"+prefix+"The document structure starting with <"+illegalQName[i] +"> at "+illegalStartSystemId[i]+":"+illegalStartLineNumber[i]+":"+illegalStartColumnNumber[i]+" does not match schema definition <"+illegalContext[i].getQName()+"> at "+illegalContext[i].getLocation()+".";
+							+"\n"+prefix+"The document structure starting with <"+illegalQName[i] +"> at "+getLocation(restrictToFileName, illegalStartSystemId[i])+":"+illegalStartLineNumber[i]+":"+illegalStartColumnNumber[i]+" does not match schema definition <"+illegalContext[i].getQName()+"> at "+illegalContext[i].getLocation(restrictToFileName)+".";
 			}			
 		}
 		// {12}
 		if(ambiguousElementQNameEE != null){
 			for(int i = 0; i <= ambiguousElementIndexEE; i++){
 				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Element <"+ambiguousElementQNameEE[i] + "> at "+ambiguousElementSystemIdEE[i]+":"+ambiguousElementLineNumberEE[i]+":"+ambiguousElementColumnNumberEE[i]
+						+"\n"+prefix+"Element <"+ambiguousElementQNameEE[i] + "> at "+getLocation(restrictToFileName, ambiguousElementSystemIdEE[i])+":"+ambiguousElementLineNumberEE[i]+":"+ambiguousElementColumnNumberEE[i]
 						+" cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: ";
 				for(int j = 0; j < ambiguousElementDefinitionEE[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousElementDefinitionEE[i][j].getQName()+"> at "+ambiguousElementDefinitionEE[i][j].getLocation();
+					message += "\n"+prefix+"<"+ambiguousElementDefinitionEE[i][j].getQName()+"> at "+ambiguousElementDefinitionEE[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -820,10 +822,10 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(ambiguousAttributeQNameEE != null){
 			for(int i = 0; i <= ambiguousAttributeIndexEE; i++){
 				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Attribute \""+ambiguousAttributeQNameEE[i] + "\" at "+ambiguousAttributeSystemIdEE[i]+":"+ambiguousAttributeLineNumberEE[i]+":"+ambiguousAttributeColumnNumberEE[i]
+						+"\n"+prefix+"Attribute \""+ambiguousAttributeQNameEE[i] + "\" at "+getLocation(restrictToFileName, ambiguousAttributeSystemIdEE[i])+":"+ambiguousAttributeLineNumberEE[i]+":"+ambiguousAttributeColumnNumberEE[i]
 						+" cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: ";
 				for(int j = 0; j < ambiguousAttributeDefinitionEE[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousAttributeDefinitionEE[i][j].getQName()+"> at "+ambiguousAttributeDefinitionEE[i][j].getLocation();
+					message += "\n"+prefix+"<"+ambiguousAttributeDefinitionEE[i][j].getQName()+"> at "+ambiguousAttributeDefinitionEE[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -832,10 +834,10 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(ambiguousCharsDefinitionEE != null){
 			for(int i = 0; i <= ambiguousCharsIndexEE; i++){
 				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Chars at "+ambiguousCharsSystemIdEE[i]+":"+ambiguousCharsLineNumberEE[i]+":"+ambiguousCharsColumnNumberEE[i]
+						+"\n"+prefix+"Chars at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEE[i])+":"+ambiguousCharsLineNumberEE[i]+":"+ambiguousCharsColumnNumberEE[i]
 						+" cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: ";
 				for(int j = 0; j < ambiguousCharsDefinitionEE[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousCharsDefinitionEE[i][j].getQName()+"> at "+ambiguousCharsDefinitionEE[i][j].getLocation();
+					message += "\n"+prefix+"<"+ambiguousCharsDefinitionEE[i][j].getQName()+"> at "+ambiguousCharsDefinitionEE[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -844,8 +846,8 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(datatypeCharsSystemIdCC != null){
 			for(int i = 0; i <= datatypeIndexCC; i++){
 				message += "\n"+prefix+"Illegal datatype."
-				+"\n"+prefix+ "Character content at "+datatypeCharsSystemIdCC[i]+":"+datatypeCharsLineNumberCC[i]+":"+datatypeCharsColumnNumberCC[i]
-				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionCC[i].getQName()+"> at "+datatypeCharsDefinitionCC[i].getLocation()+". "
+				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, datatypeCharsSystemIdCC[i])+":"+datatypeCharsLineNumberCC[i]+":"+datatypeCharsColumnNumberCC[i]
+				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionCC[i].getQName()+"> at "+datatypeCharsDefinitionCC[i].getLocation(restrictToFileName)+". "
 				+ datatypeErrorMessageCC[i];
 			}
 		}
@@ -853,8 +855,8 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(datatypeCharsSystemIdAV != null){
 			for(int i = 0; i <= datatypeIndexAV; i++){
 				message += "\n"+prefix+"Illegal datatype."
-				+"\n"+prefix+ "Value of attribute \""+datatypeAttributeQNameAV[i]+"\" at "+datatypeCharsSystemIdAV[i]+":"+datatypeCharsLineNumberAV[i]+":"+datatypeCharsColumnNumberAV[i]
-				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionAV[i].getQName()+"> at "+datatypeCharsDefinitionAV[i].getLocation()+". "
+				+"\n"+prefix+ "Value of attribute \""+datatypeAttributeQNameAV[i]+"\" at "+getLocation(restrictToFileName, datatypeCharsSystemIdAV[i])+":"+datatypeCharsLineNumberAV[i]+":"+datatypeCharsColumnNumberAV[i]
+				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionAV[i].getQName()+"> at "+datatypeCharsDefinitionAV[i].getLocation(restrictToFileName)+". "
 				+ datatypeErrorMessageAV[i];
 			}
 		}
@@ -862,59 +864,59 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(valueCharsSystemIdCC != null){
 			for(int i = 0; i <= valueIndexCC; i++){
 				message += "\n"+prefix+"Illegal value."
-				+"\n"+prefix+ "Character content at "+valueCharsSystemIdCC[i]+":"+valueCharsLineNumberCC[i]+":"+valueCharsColumnNumberCC[i]
-				+ " does not match the value required by schema definition <" +valueCharsDefinitionCC[i].getQName()+"> at "+valueCharsDefinitionCC[i].getLocation()+".";
+				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, valueCharsSystemIdCC[i])+":"+valueCharsLineNumberCC[i]+":"+valueCharsColumnNumberCC[i]
+				+ " does not match the value required by schema definition <" +valueCharsDefinitionCC[i].getQName()+"> at "+valueCharsDefinitionCC[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {18}
 		if(valueCharsSystemIdAV != null){
 			for(int i = 0; i <= valueIndexAV; i++){
 				message += "\n"+prefix+"Illegal value."
-				+"\n"+prefix+ "Value of attribute \""+valueAttributeQNameAV[i]+"\" at "+valueCharsSystemIdAV[i]+":"+valueCharsLineNumberAV[i]+":"+valueCharsColumnNumberAV[i]
-				+ " does not match the value required by schema definition <" +valueCharsDefinitionAV[i].getQName()+"> at "+valueCharsDefinitionAV[i].getLocation()+".";
+				+"\n"+prefix+ "Value of attribute \""+valueAttributeQNameAV[i]+"\" at "+getLocation(restrictToFileName, valueCharsSystemIdAV[i])+":"+valueCharsLineNumberAV[i]+":"+valueCharsColumnNumberAV[i]
+				+ " does not match the value required by schema definition <" +valueCharsDefinitionAV[i].getQName()+"> at "+valueCharsDefinitionAV[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {19}
 		if(exceptCharsSystemIdCC != null){
 			for(int i = 0; i <= exceptIndexCC; i++){
 				message += "\n"+prefix+"Excepted character content."
-				+"\n"+prefix+ "Character content at "+exceptCharsSystemIdCC[i]+":"+exceptCharsLineNumberCC[i]+":"+exceptCharsColumnNumberCC[i]
-				+ " matches a value excepted by schema definition <" +exceptCharsDefinitionCC[i].getQName()+"> at "+exceptCharsDefinitionCC[i].getLocation()+".";
+				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, exceptCharsSystemIdCC[i])+":"+exceptCharsLineNumberCC[i]+":"+exceptCharsColumnNumberCC[i]
+				+ " matches a value excepted by schema definition <" +exceptCharsDefinitionCC[i].getQName()+"> at "+exceptCharsDefinitionCC[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {20}
 		if(exceptCharsSystemIdAV != null){
 			for(int i = 0; i <= exceptIndexAV; i++){
 				message += "\n"+prefix+"Excepted attribute value"
-				+"\n"+prefix+ "Value of attribute \""+exceptAttributeQNameAV[i]+"\" at "+exceptCharsSystemIdAV[i]+":"+exceptCharsLineNumberAV[i]+":"+exceptCharsColumnNumberAV[i]
-				+ " matches a value excepted by schema definition <" +exceptCharsDefinitionAV[i].getQName()+"> at "+exceptCharsDefinitionAV[i].getLocation()+".";
+				+"\n"+prefix+ "Value of attribute \""+exceptAttributeQNameAV[i]+"\" at "+getLocation(restrictToFileName, exceptCharsSystemIdAV[i])+":"+exceptCharsLineNumberAV[i]+":"+exceptCharsColumnNumberAV[i]
+				+ " matches a value excepted by schema definition <" +exceptCharsDefinitionAV[i].getQName()+"> at "+exceptCharsDefinitionAV[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {21}
 		if(unexpectedCharsSystemIdCC != null){
 			for(int i = 0; i <= unexpectedIndexCC; i++){
 				message += "\n"+prefix+"Unexpected character content."
-				+"\n"+prefix+ "Character content at "+unexpectedCharsSystemIdCC[i]+":"+unexpectedCharsLineNumberCC[i]+":"+unexpectedCharsColumnNumberCC[i]
-				+ " is not allowed by the element's schema definition <" +unexpectedContextDefinitionCC[i].getQName()+"> at "+unexpectedContextDefinitionCC[i].getLocation()+".";
+				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, unexpectedCharsSystemIdCC[i])+":"+unexpectedCharsLineNumberCC[i]+":"+unexpectedCharsColumnNumberCC[i]
+				+ " is not allowed by the element's schema definition <" +unexpectedContextDefinitionCC[i].getQName()+"> at "+unexpectedContextDefinitionCC[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {22}
 		if(unexpectedCharsSystemIdAV != null){
 			for(int i = 0; i <= unexpectedIndexAV; i++){
 				message += "\n"+prefix+"Unexpected attribute unexpected."
-				+"\n"+prefix+ "Value of attribute \""+unexpectedAttributeQName[i]+"\" at "+unexpectedCharsSystemIdAV[i]+":"+unexpectedCharsLineNumberAV[i]+":"+unexpectedCharsColumnNumberAV[i]
-				+ " is not allowed by the attributes's schema definition <" +unexpectedContextDefinitionAV[i].getQName()+"> at "+unexpectedContextDefinitionAV[i].getLocation()+".";
+				+"\n"+prefix+ "Value of attribute \""+unexpectedAttributeQName[i]+"\" at "+getLocation(restrictToFileName, unexpectedCharsSystemIdAV[i])+":"+unexpectedCharsLineNumberAV[i]+":"+unexpectedCharsColumnNumberAV[i]
+				+ " is not allowed by the attributes's schema definition <" +unexpectedContextDefinitionAV[i].getQName()+"> at "+unexpectedContextDefinitionAV[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {23}
 		if(ambiguousCharsSystemIdEECC != null){
 			for(int i = 0; i <= ambiguousIndexCC; i++){
 				message += "\n"+prefix+"Unresolved character content."
-				+"\n"+prefix+ "Character content at "+ambiguousCharsSystemIdEECC[i]+":"+ambiguousCharsLineNumberEECC[i]+":"+ambiguousCharsColumnNumberEECC[i]
+				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEECC[i])+":"+ambiguousCharsLineNumberEECC[i]+":"+ambiguousCharsColumnNumberEECC[i]
 				+ " cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors."
 				+" Possible definitions:";
 				for(int j = 0; j < ambiguousPossibleDefinitionsCC[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsCC[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsCC[i][j].getLocation();
+					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsCC[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsCC[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -923,11 +925,11 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(ambiguousCharsSystemIdEEAV != null){			
 			for(int i = 0; i <= ambiguousIndexAV; i++){				
 				message += "\n"+prefix+"Unresolved attribute value."
-				+"\n"+prefix+ "Value of attribute \""+ambiguousAttributeQNameEEAV[i]+"\" at "+ambiguousCharsSystemIdEEAV[i]+":"+ambiguousCharsLineNumberEEAV[i]+":"+ambiguousCharsColumnNumberEEAV[i]
+				+"\n"+prefix+ "Value of attribute \""+ambiguousAttributeQNameEEAV[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEEAV[i])+":"+ambiguousCharsLineNumberEEAV[i]+":"+ambiguousCharsColumnNumberEEAV[i]
 				+ " cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors."
 				+" Possible definitions:";
 				for(int j = 0; j < ambiguousPossibleDefinitionsAV[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsAV[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsAV[i][j].getLocation();
+					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsAV[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsAV[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -936,8 +938,8 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(datatypeCharsSystemIdLP != null){
 			for(int i = 0; i <= datatypeIndexLP; i++){
 				message += "\n"+prefix+"Illegal datatype."
-				+"\n"+prefix+ "List token \""+datatypeTokenLP[i]+"\" at "+datatypeCharsSystemIdLP[i]+":"+datatypeCharsLineNumberLP[i]+":"+datatypeCharsColumnNumberLP[i]
-				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionLP[i].getQName()+"> at "+datatypeCharsDefinitionLP[i].getLocation()+". "
+				+"\n"+prefix+ "List token \""+datatypeTokenLP[i]+"\" at "+getLocation(restrictToFileName, datatypeCharsSystemIdLP[i])+":"+datatypeCharsLineNumberLP[i]+":"+datatypeCharsColumnNumberLP[i]
+				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionLP[i].getQName()+"> at "+datatypeCharsDefinitionLP[i].getLocation(restrictToFileName)+". "
 				+ datatypeErrorMessageLP[i];
 			}
 		}
@@ -945,27 +947,27 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(valueCharsSystemIdLP != null){
 			for(int i = 0; i <= valueIndexLP; i++){
 				message += "\n"+prefix+"Illegal value."
-				+"\n"+prefix+ "List token \""+valueTokenLP[i]+"\" at "+valueCharsSystemIdLP[i]+":"+valueCharsLineNumberLP[i]+":"+valueCharsColumnNumberLP[i]
-				+ " does not match the value required by schema definition <"+valueCharsDefinitionLP[i].getQName()+"> at "+valueCharsDefinitionLP[i].getLocation()+".";
+				+"\n"+prefix+ "List token \""+valueTokenLP[i]+"\" at "+getLocation(restrictToFileName, valueCharsSystemIdLP[i])+":"+valueCharsLineNumberLP[i]+":"+valueCharsColumnNumberLP[i]
+				+ " does not match the value required by schema definition <"+valueCharsDefinitionLP[i].getQName()+"> at "+valueCharsDefinitionLP[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {27}
 		if(exceptCharsSystemIdLP != null){
 			for(int i = 0; i <= exceptIndexLP; i++){
 				message += "\n"+prefix+"Excepted token."
-				+"\n"+prefix+ "List token \""+exceptTokenLP[i]+"\" at "+exceptCharsSystemIdLP[i]+":"+exceptCharsLineNumberLP[i]+":"+exceptCharsColumnNumberLP[i]
-				+ " matches a value excepted by schema definition <"+exceptCharsDefinitionLP[i].getQName()+"> at "+exceptCharsDefinitionLP[i].getLocation()+".";
+				+"\n"+prefix+ "List token \""+exceptTokenLP[i]+"\" at "+getLocation(restrictToFileName, exceptCharsSystemIdLP[i])+":"+exceptCharsLineNumberLP[i]+":"+exceptCharsColumnNumberLP[i]
+				+ " matches a value excepted by schema definition <"+exceptCharsDefinitionLP[i].getQName()+"> at "+exceptCharsDefinitionLP[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {28}
 		if(ambiguousCharsSystemIdEELP != null){
 			for(int i = 0; i <= ambiguousIndexLP; i++){
 				message += "\n"+prefix+"Illegal ambiguous."
-				+"\n"+prefix+ "List token \""+ambiguousTokenLP[i]+"\" at "+ambiguousCharsSystemIdEELP[i]+":"+ambiguousCharsLineNumberEELP[i]+":"+ambiguousCharsColumnNumberEELP[i]
+				+"\n"+prefix+ "List token \""+ambiguousTokenLP[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEELP[i])+":"+ambiguousCharsLineNumberEELP[i]+":"+ambiguousCharsColumnNumberEELP[i]
 				+ " cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors."
 				+ " Possible definitions: ";
 				for(int j = 0; j < ambiguousPossibleDefinitionsLP[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLP[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLP[i][j].getLocation();
+					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLP[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLP[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -975,11 +977,11 @@ public class AbstractMessageHandler  implements MessageReporter{
         if(ambiguousCharsSystemIdEELPICE != null){
 			for(int i = 0; i <= ambiguousIndexLPICE; i++){
 				message += "\n"+prefix+"Ambiguous list token."
-				+"\n"+prefix+ "List token \""+ambiguousTokenLPICE[i]+"\" at "+ambiguousCharsSystemIdEELPICE[i]+":"+ambiguousCharsLineNumberEELPICE[i]+":"+ambiguousCharsColumnNumberEELPICE[i]
+				+"\n"+prefix+ "List token \""+ambiguousTokenLPICE[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEELPICE[i])+":"+ambiguousCharsLineNumberEELPICE[i]+":"+ambiguousCharsColumnNumberEELPICE[i]
 				+ " cannot be resolved by in context validation to one schema definition, all candidates resulted in errors."
 				+ " Possible definitions: ";
 				for(int j = 0; j < ambiguousPossibleDefinitionsLPICE[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLPICE[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLPICE[i][j].getLocation();
+					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLPICE[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLPICE[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -989,27 +991,27 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(missingCompositorContentContext != null){
 			for(int i = 0; i <= missingCompositorContentIndex; i++){
 				message += "\n"+prefix+"Missing compositor content."
-						+"\n"+prefix+"In the document structure starting at "+missingCompositorContentStartSystemId[i]+":"+missingCompositorContentStartLineNumber[i]+":"+missingCompositorContentStartColumnNumber[i]+", corresponding to definition <"+missingCompositorContentContext[i].getQName()+"> at "+missingCompositorContentContext[i].getLocation()+", "
-						+"expected "+getExpectedCardinality(missingCompositorContentDefinition[i].getMinOccurs(), missingCompositorContentDefinition[i].getMaxOccurs())+" corresponding to definition <"+missingCompositorContentDefinition[i].getQName()+"> at "+missingCompositorContentDefinition[i].getLocation()+", found "+missingCompositorContentFound[i]+". ";
+						+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, missingCompositorContentStartSystemId[i])+":"+missingCompositorContentStartLineNumber[i]+":"+missingCompositorContentStartColumnNumber[i]+", corresponding to definition <"+missingCompositorContentContext[i].getQName()+"> at "+missingCompositorContentContext[i].getLocation(restrictToFileName)+", "
+						+"expected "+getExpectedCardinality(missingCompositorContentDefinition[i].getMinOccurs(), missingCompositorContentDefinition[i].getMaxOccurs())+" corresponding to definition <"+missingCompositorContentDefinition[i].getQName()+"> at "+missingCompositorContentDefinition[i].getLocation(restrictToFileName)+", found "+missingCompositorContentFound[i]+". ";
 			}			
 		}
 
 
         if(!message.equals("")){            
-            message = getErrorIntro(prefix) + message;
+            message = getErrorIntro(prefix, restrictToFileName) + message;
         }
 		
 		return message;
 	} 
     
-    private String getErrorIntro(String prefix){
+    private String getErrorIntro(String prefix, boolean restrictToFileName){
         String intro = "";        
         if(contextType == ContextErrorHandler.ELEMENT){
             if(conflictResolutionId == RESOLVED){
                 if(definition == null){
                     intro = "\n"+prefix+"Syntax error. Element <"+qName+"> contains errors: ";
                 }else{
-                    intro = "\n"+prefix+"Syntax error. Element <"+qName+"> corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation()+" contains errors: ";
+                    intro = "\n"+prefix+"Syntax error. Element <"+qName+"> corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation(restrictToFileName)+" contains errors: ";
                 }
             }else if(conflictResolutionId == AMBIGUOUS){
                 intro = "\n"+prefix+"Syntax error. Ambiguous element <"+qName+"> contains errors common to all possible definitions: ";
@@ -1022,7 +1024,7 @@ public class AbstractMessageHandler  implements MessageReporter{
                 if(definition == null){
                     intro = "\n"+prefix+"Syntax error. Error at the root of the document: ";
                 }else{
-                    intro = "\n"+prefix+"Syntax error. Error at the root of the document corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation()+": ";
+                    intro = "\n"+prefix+"Syntax error. Error at the root of the document corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation(restrictToFileName)+": ";
                 }
             }else if(conflictResolutionId == AMBIGUOUS){
                 intro = "\n"+prefix+"Syntax error. Error at the ambiguous root of the document common to all possible definitions: ";
@@ -1035,14 +1037,14 @@ public class AbstractMessageHandler  implements MessageReporter{
         return intro;
     }
     
-    private String getWarningIntro(String prefix){        
+    private String getWarningIntro(String prefix, boolean restrictToFileName){        
         String intro = "";        
         if(contextType == ContextErrorHandler.ELEMENT){
             if(conflictResolutionId == RESOLVED){
                 if(definition == null){
                     intro = "\n"+prefix+"Syntax warning. Element <"+qName+"> generates warning: ";
                 }else{
-                    intro = "\n"+prefix+"Syntax warning. Element <"+qName+"> corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation()+" generates warning: ";
+                    intro = "\n"+prefix+"Syntax warning. Element <"+qName+"> corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation(restrictToFileName)+" generates warning: ";
                 }
             }else if(conflictResolutionId == AMBIGUOUS){
                 intro = "\n"+prefix+"Syntax warning. Ambiguous element <"+qName+"> generates warnings common to all possible definitions: ";
@@ -1056,7 +1058,7 @@ public class AbstractMessageHandler  implements MessageReporter{
                 if(definition == null){
                     intro = "\n"+prefix+"Syntax warning. Warning at the root of the document: ";
                 }else{
-                    intro = "\n"+prefix+"Syntax warning. Warning at the root of the document corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation()+": ";
+                    intro = "\n"+prefix+"Syntax warning. Warning at the root of the document corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation(restrictToFileName)+": ";
                 }
             }else if(conflictResolutionId == AMBIGUOUS){
                 intro = "\n"+prefix+"Syntax warning. Warning at the ambiguous root of the document common to all possible definitions: ";
@@ -1083,16 +1085,16 @@ public class AbstractMessageHandler  implements MessageReporter{
 	}
     
     
-    private String getValidationWarningMessage(String prefix){
+    private String getValidationWarningMessage(String prefix, boolean restrictToFileName){
 		String message = "";
 		// {w1}
 		if(ambiguousElementQNameWW != null){
 			for(int i = 0; i <= ambiguousElementIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Element <"+ambiguousElementQNameWW[i] + "> at "+ambiguousElementSystemIdWW[i]+":"+ambiguousElementLineNumberWW[i]+":"+ambiguousElementColumnNumberWW[i]
+						+"\n"+prefix+"Element <"+ambiguousElementQNameWW[i] + "> at "+getLocation(restrictToFileName, ambiguousElementSystemIdWW[i])+":"+ambiguousElementLineNumberWW[i]+":"+ambiguousElementColumnNumberWW[i]
 						+" cannot be resolved by in context validation, possible definitions: ";
 				for(int j = 0; j < ambiguousElementDefinitionWW[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousElementDefinitionWW[i][j].getQName()+"> at "+ambiguousElementDefinitionWW[i][j].getLocation();
+					message += "\n"+prefix+"<"+ambiguousElementDefinitionWW[i][j].getQName()+"> at "+ambiguousElementDefinitionWW[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -1101,10 +1103,10 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(ambiguousAttributeQNameWW != null){
 			for(int i = 0; i <= ambiguousAttributeIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Attribute \""+ambiguousAttributeQNameWW[i] + "\" at "+ambiguousAttributeSystemIdWW[i]+":"+ambiguousAttributeLineNumberWW[i]+":"+ambiguousAttributeColumnNumberWW[i]
+						+"\n"+prefix+"Attribute \""+ambiguousAttributeQNameWW[i] + "\" at "+getLocation(restrictToFileName, ambiguousAttributeSystemIdWW[i])+":"+ambiguousAttributeLineNumberWW[i]+":"+ambiguousAttributeColumnNumberWW[i]
 						+" cannot be resolved by in context validation, possible definitions: ";
 				for(int j = 0; j < ambiguousAttributeDefinitionWW[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousAttributeDefinitionWW[i][j].getQName()+"> at "+ambiguousAttributeDefinitionWW[i][j].getLocation();
+					message += "\n"+prefix+"<"+ambiguousAttributeDefinitionWW[i][j].getQName()+"> at "+ambiguousAttributeDefinitionWW[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -1113,10 +1115,10 @@ public class AbstractMessageHandler  implements MessageReporter{
 		if(ambiguousCharsDefinitionWW != null){
 			for(int i = 0; i <= ambiguousCharsIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Chars at "+ambiguousCharsSystemIdWW[i]+":"+ambiguousCharsLineNumberWW[i]+":"+ambiguousCharsColumnNumberWW[i]
+						+"\n"+prefix+"Chars at "+getLocation(restrictToFileName, ambiguousCharsSystemIdWW[i])+":"+ambiguousCharsLineNumberWW[i]+":"+ambiguousCharsColumnNumberWW[i]
 						+" cannot be resolved by in context validation, possible definitions: ";
 				for(int j = 0; j < ambiguousCharsDefinitionWW[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousCharsDefinitionWW[i][j].getQName()+"> at "+ambiguousCharsDefinitionWW[i][j].getLocation();
+					message += "\n"+prefix+"<"+ambiguousCharsDefinitionWW[i][j].getQName()+"> at "+ambiguousCharsDefinitionWW[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -1126,24 +1128,31 @@ public class AbstractMessageHandler  implements MessageReporter{
         if(ambiguousCharsSystemIdEELPICW != null){
 			for(int i = 0; i <= ambiguousIndexLPICW; i++){
 				message += "\n"+prefix+"Ambiguous list token."
-				+"\n"+prefix+ "List token \""+ambiguousTokenLPICW[i]+"\" at "+ambiguousCharsSystemIdEELPICW[i]+":"+ambiguousCharsLineNumberEELPICW[i]+":"+ambiguousCharsColumnNumberEELPICW[i]
+				+"\n"+prefix+ "List token \""+ambiguousTokenLPICW[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEELPICW[i])+":"+ambiguousCharsLineNumberEELPICW[i]+":"+ambiguousCharsColumnNumberEELPICW[i]
 				+ " cannot be resolved by in context validation to one schema definition."
 				+ " Possible definitions: ";
 				for(int j = 0; j < ambiguousPossibleDefinitionsLPICW[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLPICW[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLPICW[i][j].getLocation();
+					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLPICW[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLPICW[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
 		}
          
         if(!message.equals("")){            
-            message = getWarningIntro(prefix) + message;
+            message = getWarningIntro(prefix, restrictToFileName) + message;
         }
         
 		return message;
 	}	
     
     public String toString(){
-        return "AbstractMessageHandler "+getErrorMessage("");
+        return "AbstractMessageHandler "+getErrorMessage("", true);
+    }
+    
+    private String getLocation(boolean restrictToFileName, String systemId){     
+        if(systemId == null || !restrictToFileName)return systemId;
+        int nameIndex = systemId.lastIndexOf(File.separatorChar)+1;
+        if(nameIndex == 0) nameIndex = systemId.lastIndexOf('/')+1;
+        return systemId.substring(nameIndex);	
     }
 }

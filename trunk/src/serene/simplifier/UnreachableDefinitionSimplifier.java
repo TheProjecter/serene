@@ -111,7 +111,7 @@ class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
 			}
 			for(int i = 0; i < nullCombine.size(); i++){
 				d = definitions.get(nullCombine.get(i));
-				message += "\n<"+d.getQName()+"> at "+d.getLocation();
+				message += "\n<"+d.getQName()+"> at "+d.getLocation(restrictToFileName);
 			}
 			message += ".";
 			errorDispatcher.error(new SAXParseException(message, null));
@@ -131,13 +131,14 @@ class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
 			for(int i = 0; i < definitions.size(); i++){
 				d = definitions.get(i);
 				if(otherCombine.contains(i)){
-					oDefinitions += "\n<"+d.getQName()+"> at "+d.getLocation();
+					oDefinitions += "\n<"+d.getQName()+"> at "+d.getLocation(restrictToFileName);
 				}else{
-					message += "\n<"+d.getQName()+"> at "+d.getLocation();
+					message += "\n<"+d.getQName()+"> at "+d.getLocation(restrictToFileName);
 				}
 			}
 			message += oDefinitions+".";
 			errorDispatcher.error(new SAXParseException(message, null));
+			//System.out.println(message);			
 		}	
         
         // the current level is that of the definitions,
@@ -146,32 +147,36 @@ class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
 	}
         
     public void visit(Ref ref) throws SAXException{
-        builder.buildRef(-1, ref.getQName(), ref.getLocation());
-        patternChild = true;
-        
         String name = ref.getName() == null ? "*" : ref.getName().trim()+'*';
 		ArrayList<Definition> definitions = getReferencedDefinition(currentGrammar, name);
 		
 		if(definitions == null){
 			// error 4.18
 			String message = "Simplification 4.18 error. "
-				+"No correspoding definition was found for element <"+ref.getQName()+"> at "+ref.getLocation()+".";
+				+"No correspoding definition was found for element <"+ref.getQName()+"> at "+ref.getLocation(restrictToFileName)+".";
 			errorDispatcher.error(new SAXParseException(message, null));
+            patternChild = true;
+			return;
 		}
+		
+        builder.buildRef(-1, ref.getQName(), ref.getLocation());
+        patternChild = true;
 	}
     
 	public void visit(ParentRef parentRef) throws SAXException{
-        builder.buildRef(-1, parentRef.getQName(), parentRef.getLocation());
-        patternChild = true;
-        
         String name = parentRef.getName() == null ? "*" : parentRef.getName().trim()+'*';        
 		ArrayList<Definition> definitions = getReferencedDefinition(previousGrammars.peek(), name);
         
 		if(definitions == null){
 			// error 4.18
 			String message = "Simplification 4.18 error. "
-				+"No correspoding definition was found for element <"+parentRef.getQName()+"> at "+parentRef.getLocation()+".";
+				+"No correspoding definition was found for element <"+parentRef.getQName()+"> at "+parentRef.getLocation(restrictToFileName)+".";
 			errorDispatcher.error(new SAXParseException(message, null));
-		}       		
+            patternChild = true;
+			return;
+		}
+        
+        builder.buildRef(-1, parentRef.getQName(), parentRef.getLocation());
+        patternChild = true;        		
 	}
 }

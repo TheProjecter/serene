@@ -3,11 +3,11 @@
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\more712\schema.rng
 
 null:-1:-1 Restrictions 7.1.2 error. Forbiden path: 
-<rng:oneOrMore> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/more712/schema.rng:25:19
-<rng:group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/more712/schema.rng:26:16
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/more712/schema.rng:27:33
+<rng:oneOrMore> at schema.rng:25:19
+<rng:group> at schema.rng:26:16
+<rng:attribute> at schema.rng:27:33
 
 null:-1:-1 Restrictions 7.1.2 error. Forbiden path: 
-<rng:oneOrMore> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/more712/schema.rng:25:19
-<rng:group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/more712/schema.rng:26:16
-<rng:attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/restrictions/more712/schema.rng:28:33
+<rng:oneOrMore> at schema.rng:25:19
+<rng:group> at schema.rng:26:16
+<rng:attribute> at schema.rng:28:33

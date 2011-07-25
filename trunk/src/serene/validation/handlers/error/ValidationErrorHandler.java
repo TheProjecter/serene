@@ -201,15 +201,15 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.conflict(commonMessages, candidatesCount, disqualified, candidateMessages);
     }
     
-	public void handle(int contextType, String qName, AElement definition, Locator locator)
+	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 				throws SAXException{
-        messageHandler.report(contextType, qName, definition, locator, errorDispatcher, "");
+        messageHandler.report(contextType, qName, definition, restrictToFileName, locator, errorDispatcher, "");
 		messageHandler.clear();
 	}
 	
-	public void handle(int contextType, String qName, Locator locator)
+	public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator)
 				throws SAXException{
-        messageHandler.report(contextType, qName, null, locator, errorDispatcher, "");
+        messageHandler.report(contextType, qName, null, restrictToFileName, locator, errorDispatcher, "");
 		messageHandler.clear();
 	}
 	

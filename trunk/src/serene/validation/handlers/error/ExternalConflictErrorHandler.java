@@ -522,12 +522,12 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
     }
     
-	public void handle(int contextType, String qName, AElement definition, Locator locator)
+	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 					throws SAXException{				
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, definition, locator, messageHandler, candidateIndex);
 	}
 	
-	public void handle(int contextType, String qName, Locator locator)
+	public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator)
 					throws SAXException{
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, locator, messageHandler, candidateIndex);
 	}

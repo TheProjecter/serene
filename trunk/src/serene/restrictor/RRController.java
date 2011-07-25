@@ -129,7 +129,7 @@ public class RRController extends RController{
 						SRef ref = refs.get(j);
 						// error 4.19
 						String message = "Simplification 4.19 error. "
-						 +"No element definition in recursion loop path for element <"+ref.getQName()+"> at "+ref.getLocation()+".";
+						 +"No element definition in recursion loop path for element <"+ref.getQName()+"> at "+ref.getLocation(restrictToFileName)+".";
 						// System.out.println(message);
 						errorDispatcher.error(new SAXParseException(message, null));
 					}
@@ -145,7 +145,7 @@ public class RRController extends RController{
 						SRef ref = refs.get(j);
 						// error 4.19
 						String message = "Simplification 4.19 error. "
-						 +"Infinite recursion loop for element <"+ref.getQName()+"> at "+ref.getLocation()+".";
+						 +"Infinite recursion loop for element <"+ref.getQName()+"> at "+ref.getLocation(restrictToFileName)+".";
 						 // System.out.println(message);
 						 errorDispatcher.error(new SAXParseException(message, null));
 					}
@@ -186,16 +186,16 @@ public class RRController extends RController{
 		if(attributeContext){
 			// error 7.1.1	
 			String message = "Restrictions 7.1.1 error. Forbiden path:"
-			+"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation()
-			+"\n<"+element.getQName()+"> at "+element.getLocation()+".";
+			+"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation(restrictToFileName)
+			+"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));			
 		}
 		if(listContext){
 			// error 7.1.3
 			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation()
-			+"\n<"+element.getQName()+"> at "+element.getLocation()+".";
+			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
+			+"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+".";
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -204,9 +204,9 @@ public class RRController extends RController{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+element.getQName()+"> at "+element.getLocation();
+			message += "\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -361,16 +361,16 @@ public class RRController extends RController{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation();
+			message += "\n<"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 14 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
@@ -424,16 +424,16 @@ public class RRController extends RController{
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
 			String message = "Restrictions 7.1.4 error. Forbiden path: ";
 			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(); 
+				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
 			}
-			message += "\n<"+optional.getQName()+"> at "+optional.getLocation();
+			message += "\n<"+optional.getQName()+"> at "+optional.getLocation(restrictToFileName);
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
 		if(startContext){
 			// error 7.1.5
 			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+optional.getQName()+"> at "+optional.getLocation()+" is not expected as start of the schema.";
+			+"Element <"+optional.getQName()+"> at "+optional.getLocation(restrictToFileName)+" is not expected as start of the schema.";
 			//System.out.println(" 15 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}

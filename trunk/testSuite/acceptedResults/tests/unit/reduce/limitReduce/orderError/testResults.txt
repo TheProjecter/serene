@@ -6,7 +6,7 @@ TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\red
 
 TESTED DOCUMENT document1.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/orderError/document1.xml:26:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/orderError/schema.rng:23:26 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/orderError/document1.xml:26:8 Syntax error. Element <root> corresponding to definition <element> at schema.rng:23:26 contains errors: 
 Order error.
-Misplaced content in the document structure starting at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/orderError/document1.xml:22:7, corresponding to definition <group> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/orderError/schema.rng:26:13:
-<bb> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/orderError/document1.xml:24:7, corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/orderError/schema.rng:33:29.
+Misplaced content in the document structure starting at document1.xml:22:7, corresponding to definition <group> at schema.rng:26:13:
+<bb> at document1.xml:24:7, corresponding to definition <element> at schema.rng:33:29.

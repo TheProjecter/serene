@@ -93,9 +93,9 @@ class ElementCommonHandler extends UndeterminedEEH{
     }
     
 	// called from the ValidatorHandlerImpl
-	public void handleEndElement(Locator locator) throws SAXException{
+	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{
 		uniqueHandler.validateContext();
-		uniqueHandler.reportContextErrors(locator);
+		uniqueHandler.reportContextErrors(restrictToFileName, locator);
 		uniqueHandler.validateInContext();
 	}
 	// called from a larger conflict( another ElementParallelHandler/ElementCommonHandler)
@@ -103,8 +103,8 @@ class ElementCommonHandler extends UndeterminedEEH{
 		uniqueHandler.validateContext();
 	}
 	// called from a larger conflict( another ElementParallelHandler/ElementCommonHandler)
-	void reportContextErrors(Locator locator) throws SAXException{
-		uniqueHandler.reportContextErrors(locator);
+	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
+		uniqueHandler.reportContextErrors(restrictToFileName, locator);
 	}
 	// called from a larger conflict( another ElementParallelHandler/ElementCommonHandler)
 	void validateInContext(){		

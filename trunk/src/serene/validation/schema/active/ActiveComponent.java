@@ -22,7 +22,7 @@ public interface ActiveComponent extends Component{
 	ActiveComponent getParent();	
 	void accept(ActiveComponentVisitor v);	
 	String getQName();
-	String getLocation();
+	String getLocation(boolean restrictToFileName);
     /**
     * Returns the hash code of the corresponding SimplifiedComponent. Watch out 
     * for recursive definitions, regardless of the depth of the ActiveComponent

@@ -3,9 +3,9 @@
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\simplification\combine417\noCombine\schema.rng
 
 null:-1:-1 Simplification 4.17 error. Several start elements without combine attribute: 
-<rng:start> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/simplification/combine417/noCombine/testExternalRef.rng:23:13
-<rng:start> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/simplification/combine417/noCombine/testInclude.rng:23:13.
+<rng:start> at testExternalRef.rng:23:13
+<rng:start> at testInclude.rng:23:13.
 
-null:-1:-1 Simplification 4.19 error. Infinite recursion loop for element <rng:parentRef> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/simplification/combine417/noCombine/testInclude.rng:26:38.
+null:-1:-1 Simplification 4.19 error. Infinite recursion loop for element <rng:parentRef> at testInclude.rng:26:38.
 
-null:-1:-1 Simplification 4.19 error. Infinite recursion loop for element <rng:parentRef> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/simplification/combine417/noCombine/testInclude.rng:27:38.
+null:-1:-1 Simplification 4.19 error. Infinite recursion loop for element <rng:parentRef> at testInclude.rng:27:38.

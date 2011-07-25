@@ -2,14 +2,14 @@
 
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\xsd\facets\schemaPresence\schema.rng
 
-null:-1:-1 Simplification 4.16 error. Parameter with name "maxLength" at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/schemaPresence/schema.rng:27:49, is not allowed in this context. minLength-less-than-equal-to-maxLength: In the definition of token, value of minLength = '6' must be < value of maxLength = '5'.
+null:-1:-1 Simplification 4.16 error. Parameter with name "maxLength" at schema.rng:27:49, is not allowed in this context. minLength-less-than-equal-to-maxLength: In the definition of token, value of minLength = '6' must be < value of maxLength = '5'.
 
-null:-1:-1 Simplification 4.16 error. Parameter with name "totalDigits" at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/schemaPresence/schema.rng:32:51, is not allowed in this context. cos-applicable-facets: Facet 'totalDigits' is not allowed by type token.
+null:-1:-1 Simplification 4.16 error. Parameter with name "totalDigits" at schema.rng:32:51, is not allowed in this context. cos-applicable-facets: Facet 'totalDigits' is not allowed by type token.
 
-null:-1:-1 Simplification 4.16 error. Parameter with name "fractionDigits" at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/schemaPresence/schema.rng:33:54, is not allowed in this context. cos-applicable-facets: Facet 'fractionDigits' is not allowed by type token.
+null:-1:-1 Simplification 4.16 error. Parameter with name "fractionDigits" at schema.rng:33:54, is not allowed in this context. cos-applicable-facets: Facet 'fractionDigits' is not allowed by type token.
 
-null:-1:-1 Simplification 4.16 error. Parameter with name "fractionDigits" at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/schemaPresence/schema.rng:39:54, is not allowed in this context. fractionDigits-totalDigits: In the definition of decimal, the value '6' for the facet 'fractionDigits' is invalid, because the value must be <= the value for 'totalDigits' which is '3'.
+null:-1:-1 Simplification 4.16 error. Parameter with name "fractionDigits" at schema.rng:39:54, is not allowed in this context. fractionDigits-totalDigits: In the definition of decimal, the value '6' for the facet 'fractionDigits' is invalid, because the value must be <= the value for 'totalDigits' which is '3'.
 
-null:-1:-1 Simplification 4.16 error. Parameter with name "maxInclusive" at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/schemaPresence/schema.rng:51:52, is not allowed in this context. minInclusive-less-than-equal-to-maxInclusive: In the definition of gMonth, minInclusive value = '--07' must be <= maxInclusive value = '--05'.
+null:-1:-1 Simplification 4.16 error. Parameter with name "maxInclusive" at schema.rng:51:52, is not allowed in this context. minInclusive-less-than-equal-to-maxInclusive: In the definition of gMonth, minInclusive value = '--07' must be <= maxInclusive value = '--05'.
 
-null:-1:-1 Simplification 4.16 error. Parameter with name "length" at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/xsd/facets/schemaPresence/schema.rng:57:46, is not allowed in this context. length-minLength-maxLength.2.2.a: For type token, it is an error for the base to not have a maxLength facet if the current restriction has the maxLength facet and the current restriction or base has the length facet. 
+null:-1:-1 Simplification 4.16 error. Parameter with name "length" at schema.rng:57:46, is not allowed in this context. length-minLength-maxLength.2.2.a: For type token, it is an error for the base to not have a maxLength facet if the current restriction has the maxLength facet and the current restriction or base has the length facet. 

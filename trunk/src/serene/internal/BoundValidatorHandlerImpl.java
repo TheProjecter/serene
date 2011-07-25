@@ -99,6 +99,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	XmlnsBinder xmlnsBinder;
 
     boolean level1DocumentationElement;
+    boolean restrictToFileName;
     DocumentationElementHandler documentationElementHandler;
 	
 	BoundValidatorHandlerImpl(ValidatorEventHandlerPool eventHandlerPool,
@@ -108,6 +109,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 							Queue queue,
 							ValidatorQueuePool queuePool,
                             boolean level1DocumentationElement,
+                            boolean restrictToFileName,                            
 							MessageWriter debugWriter){
 	    this.debugWriter = debugWriter;
 		
@@ -136,6 +138,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		xmlnsBinder = new XmlnsBinder(debugWriter);
         
         this.level1DocumentationElement = level1DocumentationElement;
+        this.restrictToFileName = restrictToFileName;
 	}
     
     
@@ -257,7 +260,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler.handleLastCharacters(charContent);
         if(charContent.length > 0)validationItemLocator.closeCharsContent(); 
 		
-		elementHandler.handleEndElement(locator);		
+		elementHandler.handleEndElement(restrictToFileName, locator);	
 		ElementEventHandler parent = elementHandler.getParentHandler(); 
 		elementHandler.recycle();
 		elementHandler = parent;
@@ -268,7 +271,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	}
 	
 	public void endDocument() throws SAXException{
-		elementHandler.handleEndElement(locator);
+		elementHandler.handleEndElement(restrictToFileName, locator);
 		elementHandler.recycle();
 		elementHandler = null;
 		activeModel.recycle();
@@ -325,6 +328,8 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
             throw new NullPointerException();
         }else if(name.equals(Constants.LEVEL1_DOCUMENTATION_ELEMENT_FEATURE)){
             level1DocumentationElement = value;
+        }else if(name.equals(Constants.RESTRICT_TO_FILE_NAME_FEATURE)){
+            restrictToFileName = value;                        
         }else{
             throw new SAXNotRecognizedException(name);
         }
@@ -336,6 +341,8 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
             throw new NullPointerException();
         }else if(name.equals(Constants.LEVEL1_DOCUMENTATION_ELEMENT_FEATURE)){
             return level1DocumentationElement;
+        }else if(name.equals(Constants.RESTRICT_TO_FILE_NAME_FEATURE)){
+            return restrictToFileName;                        
         }else{
             throw new SAXNotRecognizedException(name);
         }

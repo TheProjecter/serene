@@ -6,11 +6,11 @@ TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\ext
 
 TESTED DOCUMENT document1.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document1.xml:27:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:23:26 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document1.xml:27:8 Syntax error. Element <root> corresponding to definition <element> at schema.rng:23:26 contains errors: 
 Ambiguous content.
-Element <aa> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document1.xml:22:6 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
-<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:25:26
-<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:28:26.
+Element <aa> at document1.xml:22:6 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at schema.rng:25:26
+<element> at schema.rng:28:26.
 
 
 
@@ -18,10 +18,10 @@ TESTED DOCUMENT document2.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:27:7 Syntax error. Ambiguous element <aa> contains errors common to all possible definitions: 
 Unexpected character content.
-Character content at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:22:12 is not allowed by the element's schema definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:25:26.
+Character content at document2.xml:22:12 is not allowed by the element's schema definition <element> at schema.rng:25:26.
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:28:8 Syntax error. Element <root> corresponding to definition <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:23:26 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:28:8 Syntax error. Element <root> corresponding to definition <element> at schema.rng:23:26 contains errors: 
 Ambiguous content.
-Element <aa> at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/document2.xml:22:6 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
-<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:25:26
-<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/concurrentCommon/schema.rng:28:26.
+Element <aa> at document2.xml:22:6 cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: 
+<element> at schema.rng:25:26
+<element> at schema.rng:28:26.

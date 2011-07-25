@@ -40,12 +40,15 @@ import sereneWrite.MessageWriter;
 
 public class InternalRNGSchema extends BaseSchema{		
     boolean level1DocumentationElement;	
+    boolean restrictToFileName;
 	public InternalRNGSchema(boolean secureProcessing,
                     boolean level1DocumentationElement,
+                    boolean restrictToFileName,
                     SchemaModel schemaModel,
                     MessageWriter debugWriter){
 		super(secureProcessing, schemaModel, debugWriter);
         this.level1DocumentationElement = level1DocumentationElement;
+        this.restrictToFileName = restrictToFileName;
 	}
     
     public Validator newValidator(){
@@ -64,6 +67,7 @@ public class InternalRNGSchema extends BaseSchema{
 										queue,
 										queuePool,
                                         level1DocumentationElement,
+                                        restrictToFileName,
 										debugWriter);
 	}    
 }

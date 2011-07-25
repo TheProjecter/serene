@@ -67,6 +67,7 @@ import serene.validation.schema.simplified.components.SAnyName;
 import serene.validation.schema.simplified.components.SNsName;
 import serene.validation.schema.simplified.components.SChoiceNameClass;
 
+
 import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.RecursionModel;
 import serene.validation.schema.simplified.SimplifiedComponent;
@@ -118,6 +119,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
         
     boolean level1AttributeDefaultValue;
     boolean level1AttributeIdType;
+    boolean restrictToFileName;
     
     CompatibilityControlAttribute ccAttribute;
     DefaultValueAttributeHandler defaultValueHandler;
@@ -227,6 +229,12 @@ public class CompatibilityHandler implements RestrictingVisitor{
         level1AttributeIdType = value;
     }
     
+    public void setRestrictToFileName(boolean value){
+        restrictToFileName = value;
+        simetryController.setRestrictToFileName(restrictToFileName);
+        defaultValueErrorHandler.setRestrictToFileName(restrictToFileName);
+    }
+    
     public SchemaModel handle(ValidationModel validationModel) throws SAXException{     
         SimplifiedModel simplifiedModel = validationModel.getSimplifiedModel();
         if(simplifiedModel == null)return new SchemaModel(validationModel, new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
@@ -307,7 +315,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             SAttribute attribute = idrefAttributes.get(i);
             String defaultValue = attribute.getDefaultValue();
             if(!idAttributes.containsKey(defaultValue)){
-                String message = "DTD compatibility warning. No corresponding attribute of ID-type ID for attribute definition at "+attribute.getLocation()+" with the ID-type IDREF.";
+                String message = "DTD compatibility warning. No corresponding attribute of ID-type ID for attribute definition at "+attribute.getLocation(restrictToFileName)+" with the ID-type IDREF.";
                 errorDispatcher.warning(new AttributeIdTypeException(message, null));
             }
         }
@@ -323,7 +331,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 }
             }
             if(errorTokens.size() == 1){
-                String message = "DTD compatibility warning. No corresponding attribute of ID-type ID for token \""+errorTokens.get(0)+"\" in the value of attribute definition at "+attribute.getLocation()+" with the ID-type IDREFS.";
+                String message = "DTD compatibility warning. No corresponding attribute of ID-type ID for token \""+errorTokens.get(0)+"\" in the value of attribute definition at "+attribute.getLocation(restrictToFileName)+" with the ID-type IDREFS.";
                 errorDispatcher.warning(new AttributeIdTypeException(message, null));
             }else if(errorTokens.size() > 1){
                 String tokens = "";
@@ -332,7 +340,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                     tokens += "\""+errorTokens.get(j)+"\", ";
                 }
                 tokens += "\""+errorTokens.get(lastToken)+"\"";
-                String message = "DTD compatibility warning. No corresponding attribute of ID-type ID for tokens \""+tokens+"\" in the default value of attribute definition at "+attribute.getLocation()+" with the ID-type IDREFS.";
+                String message = "DTD compatibility warning. No corresponding attribute of ID-type ID for tokens \""+tokens+"\" in the default value of attribute definition at "+attribute.getLocation(restrictToFileName)+" with the ID-type IDREFS.";
                 errorDispatcher.warning(new AttributeIdTypeException(message, null));
             }
         }
@@ -421,10 +429,10 @@ public class CompatibilityHandler implements RestrictingVisitor{
                     for(int i = 0; i < currentAttributesList.size(); i++){
                         SAttribute attr = currentAttributesList.get(i);
                         if(attr.getDefaultValue() != null){
-                            attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation();
+                            attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation(restrictToFileName);
                         }
                     }                                        
-                    String message = "DTD compatibility error. Default value not allowed for attribute definitions in the content model of an element definition without a <name> name class, <"+element.getQName()+"> at "+element.getLocation()+" :"+attributes+".";
+                    String message = "DTD compatibility error. Default value not allowed for attribute definitions in the content model of an element definition without a <name> name class, <"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" :"+attributes+".";
                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                 }
                 
@@ -434,12 +442,12 @@ public class CompatibilityHandler implements RestrictingVisitor{
                     if(isRequiredBranch.get(i)){
                         hasRequiredBranch = true;
                         SAttribute attr = currentAttributesList.get(i);
-                        attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation();
+                        attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation(restrictToFileName);
                     }
                 }
                 
                 if(hasRequiredBranch){                    
-                    String message = "DTD compatibility error. Default value not allowed for required attribute definitions in the content model of <"+element.getQName()+"> at "+element.getLocation()+" :"
+                    String message = "DTD compatibility error. Default value not allowed for required attribute definitions in the content model of <"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" :"
                                     +attributes+".";
                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                 }
@@ -467,9 +475,9 @@ public class CompatibilityHandler implements RestrictingVisitor{
                         String attributes = "";
                         for(int i = 0; i < currentIdAttributesList.size(); i++){
                             SAttribute attr = currentIdAttributesList.get(i);
-                            attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation();
+                            attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation(restrictToFileName);
                         }                                        
-                        String message = "DTD compatibility error. Attribute definitions in the content model of an element definition without a <name> name class, <"+element.getQName()+"> at "+element.getLocation()+" may not have non-null ID-type: "+attributes+".";
+                        String message = "DTD compatibility error. Attribute definitions in the content model of an element definition without a <name> name class, <"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" may not have non-null ID-type: "+attributes+".";
                         errorDispatcher.error(new AttributeIdTypeException(message, null));
                     }else{
                         SName name = (SName)element.getNameClass();
@@ -483,9 +491,9 @@ public class CompatibilityHandler implements RestrictingVisitor{
                         String attributes = "";
                         for(int i = 0; i < currentIdAttributesList.size(); i++){
                             SAttribute attr = currentIdAttributesList.get(i);
-                            attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation();
+                            attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation(restrictToFileName);
                         }                                        
-                        String message = "DTD compatibility error. Attribute definitions in the content model of an element definition without a <name> name class, <"+element.getQName()+"> at "+element.getLocation()+" may not have non-null ID-type: "+attributes+".";
+                        String message = "DTD compatibility error. Attribute definitions in the content model of an element definition without a <name> name class, <"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" may not have non-null ID-type: "+attributes+".";
                         errorDispatcher.error(new AttributeIdTypeException(message, null));
                     }else{
                         SName name = (SName)nameClass;
@@ -524,7 +532,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 needsOptionalChoice.add(true);
                 
                 ccAttribute.init(grammarModel.getIndex(attribute), attribute);
-                defaultValueErrorHandler.setAttribute(attribute.getQName(), attribute.getLocation());                
+                defaultValueErrorHandler.setAttribute(attribute.getQName(), attribute.getLocation(restrictToFileName));                
                 defaultValueHandler.init(ccAttribute, defaultValueErrorHandler);
                 defaultValueHandler.handleAttribute(defaultValue);
                 defaultValueHandler.reset();
@@ -552,7 +560,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 SNameClass nc = attribute.getNameClass();                
                 nc.accept(this);                
                 if(!hasName){
-                    String message = "DTD compatibility error. Default value not allowed for an attribute definition without a <name> name class, <"+attribute.getQName()+"> at "+attribute.getLocation()+" .";
+                    String message = "DTD compatibility error. Default value not allowed for an attribute definition without a <name> name class, <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+" .";
                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                 }else{
                     SName name = (SName)nc;
@@ -569,7 +577,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                     if(idType == Datatype.ID_TYPE_ID){
                         if(idAttributes.containsKey(defaultValue)){
                             SAttribute correspondent = idAttributes.get(defaultValue);
-                            String message = "DTD compatibility warning. Default value of attribute definition at "+attribute.getLocation()+" with the ID-type ID is the same as the default value of attribute definition at "+correspondent.getLocation()+" with the ID-type ID.";
+                            String message = "DTD compatibility warning. Default value of attribute definition at "+attribute.getLocation(restrictToFileName)+" with the ID-type ID is the same as the default value of attribute definition at "+correspondent.getLocation(restrictToFileName)+" with the ID-type ID.";
                             errorDispatcher.warning(new SAXParseException(message, null));
                         }else{
                             idAttributes.put(defaultValue, attribute);
@@ -591,7 +599,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             if(idType != Datatype.ID_TYPE_NULL){
                 if(level1AttributeDefaultValue && defaultedAttributeContext){
                     if(!hasName) {
-                        String message = "DTD compatibility error. Attribute definition without a <name> name class, <"+attribute.getQName()+"> at "+attribute.getLocation()+" may not have non-null ID-type.";
+                        String message = "DTD compatibility error. Attribute definition without a <name> name class, <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+" may not have non-null ID-type.";
                         errorDispatcher.error(new AttributeIdTypeException(message, null));
                     }else{
                         SNameClass nc = attribute.getNameClass();
@@ -610,7 +618,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                                                     idType,
                                                     debugWriter));
                     }else{
-                        String message = "DTD compatibility error. Attribute definition without a <name> name class, <"+attribute.getQName()+"> at "+attribute.getLocation()+" may not have non-null ID-type.";
+                        String message = "DTD compatibility error. Attribute definition without a <name> name class, <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+" may not have non-null ID-type.";
                         errorDispatcher.error(new AttributeIdTypeException(message, null));
                     }
                 }
@@ -648,12 +656,12 @@ public class CompatibilityHandler implements RestrictingVisitor{
                     for(;attributesOffset < needsOptionalChoice.size(); attributesOffset++){
                         if(needsOptionalChoice.get(attributesOffset)){
                             SAttribute attr = currentAttributesList.get(attributesOffset);
-                            attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation();
+                            attributes += "\n<"+attr.getQName()+"> at "+attr.getLocation(restrictToFileName);
                             
                             isRequiredBranch.set(attributesOffset, false);//needs no more checking, an error was reported already
                         }
                     }
-                    String message = "DTD compatibility error. Default value not allowed for attribute definitions in the context of a choice without <empty> alternative, <"+choice.getQName()+"> at "+choice.getLocation()+" :"+attributes+".";
+                    String message = "DTD compatibility error. Default value not allowed for attribute definitions in the context of a choice without <empty> alternative, <"+choice.getQName()+"> at "+choice.getLocation(restrictToFileName)+" :"+attributes+".";
                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                 }
             }else{
@@ -806,7 +814,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             
             if(!attributeContext){
                 if(idType != Datatype.ID_TYPE_NULL){
-                    String message = "DTD compatibility error. Definition <"+value.getQName()+"> at "+value.getLocation()+" specifying the content of element <"+currentElement.getQName()+"> at "+currentElement.getLocation() +" may not have a non-null ID-type.";
+                    String message = "DTD compatibility error. Definition <"+value.getQName()+"> at "+value.getLocation(restrictToFileName)+" specifying the content of element <"+currentElement.getQName()+"> at "+currentElement.getLocation(restrictToFileName) +" may not have a non-null ID-type.";
                     errorDispatcher.error(new AttributeIdTypeException(message, null));
                 }
             }else{
@@ -829,7 +837,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             
             if(!attributeContext){
                 if(idType != Datatype.ID_TYPE_NULL){
-                    String message = "DTD compatibility error. Definition <"+data.getQName()+"> at "+data.getLocation()+" specifying the content of element <"+currentElement.getQName()+"> at "+currentElement.getLocation() +" may not have a non-null ID-type.";
+                    String message = "DTD compatibility error. Definition <"+data.getQName()+"> at "+data.getLocation(restrictToFileName)+" specifying the content of element <"+currentElement.getQName()+"> at "+currentElement.getLocation(restrictToFileName) +" may not have a non-null ID-type.";
                     errorDispatcher.error(new AttributeIdTypeException(message, null));
                 }
             }else{
@@ -841,6 +849,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
 		SimplifiedComponent child = grammar.getChild();
 		if(child != null) child.accept(this);
 	}
+    
     
     public void visit(SDummy dummy)throws SAXException{
 		SimplifiedComponent[] children = dummy.getChildren();

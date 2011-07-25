@@ -64,7 +64,7 @@ public class RNGSimplifier extends Simplifier{
 	Mapper mapper;
 	Stack<URI> inclusionPath;
 	
-	
+    
 	public RNGSimplifier(XMLReader xmlReader, InternalRNGFactory internalRNGFactory, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
 		super(errorDispatcher, debugWriter);
 				
@@ -100,7 +100,12 @@ public class RNGSimplifier extends Simplifier{
 		replaceMissingDatatypeLibrary =  value;
 		mapper.setReplaceMissingDatatypeLibrary(value);
 	}
-	
+    
+    public void setRestrictToFileName(boolean restrictToFileName){
+        this.restrictToFileName = restrictToFileName;
+        mapper.setRestrictToFileName(restrictToFileName);
+    } 
+    
 	public SimplifiedModel simplify(URI base, ParsedModel parsedModel)  throws SAXException{
         if(parsedModel == null) return null;
         
@@ -160,7 +165,7 @@ public class RNGSimplifier extends Simplifier{
             && simplifiedTopPattern != null 
             && simplifiedTopPattern.length != 0){
             startQName = "root of the schema";
-            startLocation = simplifiedTopPattern[0].getLocation();//there can be only one//or none
+            startLocation = simplifiedTopPattern[0].getLocation(restrictToFileName);//there can be only one//or none
         }
         
         builder.buildRef(-1, startQName, startLocation);

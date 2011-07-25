@@ -81,9 +81,9 @@ class ElementNamingController extends NamingController{
 		SPattern e2 = namedPatterns.get(j);		
 		// error 7.4
 		String message = "Restrictions 7.4 error. "
-		+"In the context of <"+context.getQName()+"> at "+context.getLocation()+" overlaping name classes in elements: "
-		+"\n<"+e1.getQName()+"> at "+e1.getLocation()
-		+"\n<"+e2.getQName()+"> at "+e2.getLocation()+".";
+		+"In the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+" overlaping name classes in elements: "
+		+"\n<"+e1.getQName()+"> at "+e1.getLocation(restrictToFileName)
+		+"\n<"+e2.getQName()+"> at "+e2.getLocation(restrictToFileName)+".";
 		//System.out.println(message);
 		errorDispatcher.error(new SAXParseException(message, null));
 	}

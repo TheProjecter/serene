@@ -6,6 +6,6 @@ TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\explorat
 
 TESTED DOCUMENT document1.xml
 
-file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/value/attributeValue/document1.xml:21:24 Syntax error. Element <root> corresponding to definition <rng:element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/value/attributeValue/schema.rng:23:16 contains errors: 
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/value/attributeValue/document1.xml:21:24 Syntax error. Element <root> corresponding to definition <rng:element> at schema.rng:23:16 contains errors: 
 Illegal value.
-Value of attribute "attribute" at file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/value/attributeValue/document1.xml:21:24 does not match the value required by schema definition <rng:value> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/value/attributeValue/schema.rng:26:16.
+Value of attribute "attribute" at document1.xml:21:24 does not match the value required by schema definition <rng:value> at schema.rng:26:16.

@@ -47,7 +47,7 @@ class AttributeNamingController extends NamingController{
 		
 		pool.recycle(this);
 	}
-	
+	   
 	void start(SInterleave interleave){
 		namedPatterns.add(null);
 		nameClasses.add(null);
@@ -79,10 +79,11 @@ class AttributeNamingController extends NamingController{
 		SPattern a1 = namedPatterns.get(i);
 		SPattern a2 = namedPatterns.get(j);		
 		// error 7.3
+        
 		String message = "Restrictions 7.3 error. "
-		+"In the context of <"+context.getQName()+"> at "+context.getLocation()+" overlaping name classes in attributes: "
-		+"\n<"+a1.getQName()+"> at "+a1.getLocation()
-		+"\n<"+a2.getQName()+"> at "+a2.getLocation()+".";
+		+"In the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+" overlaping name classes in attributes: "
+		+"\n<"+a1.getQName()+"> at "+a1.getLocation(restrictToFileName)
+		+"\n<"+a2.getQName()+"> at "+a2.getLocation(restrictToFileName)+".";
 		//System.out.println(message);
 		errorDispatcher.error(new SAXParseException(message, null));
 	}

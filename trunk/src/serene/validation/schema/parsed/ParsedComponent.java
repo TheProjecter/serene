@@ -19,6 +19,8 @@ package serene.validation.schema.parsed;
 
 import java.util.Map;
 
+import java.io.File;
+
 import org.xml.sax.SAXException;
 
 import serene.util.AttributeInfo;
@@ -129,14 +131,19 @@ public abstract class ParsedComponent implements Component{
 	public String getLocation(){
 		return location;
 	}
+    public String getLocation(boolean restrictToFileName){
+        if(location == null || !restrictToFileName)return location;
+        int nameIndex = location.lastIndexOf(File.separatorChar)+1;
+        if(nameIndex == 0) nameIndex = location.lastIndexOf('/')+1;
+        return location.substring(nameIndex);
+	}
     
-
 	void setParent(ParsedComponent parent){		 
-		this.parent = parent;
+		this.parent = parent;				
 	}
 	
 	
 	void setChildIndex(int childIndex){			
-		this.childIndex = childIndex;
+		this.childIndex = childIndex;			
 	}
 }	

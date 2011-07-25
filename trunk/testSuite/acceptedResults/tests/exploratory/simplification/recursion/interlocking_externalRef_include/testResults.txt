@@ -2,6 +2,6 @@
 
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\simplification\recursion\interlocking_externalRef_include\schema.rng
 
-null:-1:-1 Simplification 4.19 error. Infinite recursion loop for element <rng:parentRef> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/simplification/recursion/interlocking_externalRef_include/testInclude.rng:26:38.
+null:-1:-1 Simplification 4.19 error. Infinite recursion loop for element <rng:parentRef> at testInclude.rng:26:38.
 
-null:-1:-1 Simplification 4.19 error. Infinite recursion loop for element <rng:parentRef> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/simplification/recursion/interlocking_externalRef_include/testInclude.rng:27:38.
+null:-1:-1 Simplification 4.19 error. Infinite recursion loop for element <rng:parentRef> at testInclude.rng:27:38.
