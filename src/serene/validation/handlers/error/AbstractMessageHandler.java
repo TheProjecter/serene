@@ -485,12 +485,16 @@ public class AbstractMessageHandler  implements MessageReporter{
         // System.out.println(hashCode()+" LOCAL MESSAGE 1 "+getValidationErrorMessage(""));
         
         String errorMessage = getValidationErrorMessage(prefix, restrictToFileName);
-        errorMessage = errorMessage.trim();
-        if(errorMessage != null && !errorMessage.equals("")) errorDispatcher.error(new SAXParseException(errorMessage, locator));
+        if(errorMessage != null){
+            errorMessage = errorMessage.trim();
+            if(!errorMessage.equals("")) errorDispatcher.error(new SAXParseException(errorMessage, locator));
+        }
         
         String warningMessage = getValidationWarningMessage(prefix, restrictToFileName);
-        warningMessage = warningMessage.trim();
-        if(warningMessage != null && !warningMessage.equals("")) errorDispatcher.warning(new SAXParseException(warningMessage, locator));
+        if(warningMessage != null){
+            warningMessage = warningMessage.trim();
+            if(!warningMessage.equals("")) errorDispatcher.warning(new SAXParseException(warningMessage, locator));
+        }
     }
     
     private void handleConflict(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
@@ -556,12 +560,16 @@ public class AbstractMessageHandler  implements MessageReporter{
         //System.out.println(hashCode()+" LOCAL MESSAGE 2 "+getValidationErrorMessage(""));
         
         String errorMessage = getValidationErrorMessage(prefix, restrictToFileName);
-        errorMessage = errorMessage.trim();
-        if(errorMessage != null && !errorMessage.equals("")) errorDispatcher.error(new SAXParseException(errorMessage, locator));
+        if(errorMessage != null){
+            errorMessage = errorMessage.trim();
+            if(!errorMessage.equals("")) errorDispatcher.error(new SAXParseException(errorMessage, locator));
+        }
         
         String warningMessage = getValidationWarningMessage(prefix, restrictToFileName);
-        warningMessage = warningMessage.trim();
-        if(warningMessage != null && !warningMessage.equals("")) errorDispatcher.warning(new SAXParseException(warningMessage, locator));
+        if(warningMessage != null){
+            warningMessage = warningMessage.trim();
+            if(!warningMessage.equals("")) errorDispatcher.warning(new SAXParseException(warningMessage, locator));
+        }
     }
     
     private void handleConflict(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
@@ -692,7 +700,7 @@ public class AbstractMessageHandler  implements MessageReporter{
     }
     
     
-    private String getValidationErrorMessage(String prefix, boolean restrictToFileName){
+    String getValidationErrorMessage(String prefix, boolean restrictToFileName){
 		// {2}
         String message = "";
 		if(unknownElementQName != null){
@@ -1004,7 +1012,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 		return message;
 	} 
     
-    private String getErrorIntro(String prefix, boolean restrictToFileName){
+    String getErrorIntro(String prefix, boolean restrictToFileName){
         String intro = "";        
         if(contextType == ContextErrorHandler.ELEMENT){
             if(conflictResolutionId == RESOLVED){
@@ -1037,7 +1045,7 @@ public class AbstractMessageHandler  implements MessageReporter{
         return intro;
     }
     
-    private String getWarningIntro(String prefix, boolean restrictToFileName){        
+    String getWarningIntro(String prefix, boolean restrictToFileName){        
         String intro = "";        
         if(contextType == ContextErrorHandler.ELEMENT){
             if(conflictResolutionId == RESOLVED){
@@ -1071,7 +1079,7 @@ public class AbstractMessageHandler  implements MessageReporter{
         return intro;
     }
     
-	private String getExpectedCardinality(int expectedMin, int expectedMax){
+	String getExpectedCardinality(int expectedMin, int expectedMax){
 		if(expectedMax == 1){
 			if(expectedMin == 0) return "at most 1 occurrence";
 			else return "1 occurrence";
@@ -1085,7 +1093,7 @@ public class AbstractMessageHandler  implements MessageReporter{
 	}
     
     
-    private String getValidationWarningMessage(String prefix, boolean restrictToFileName){
+    String getValidationWarningMessage(String prefix, boolean restrictToFileName){
 		String message = "";
 		// {w1}
 		if(ambiguousElementQNameWW != null){

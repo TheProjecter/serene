@@ -24,7 +24,7 @@ import sereneWrite.MessageWriter;
 
 public interface ElementEventHandler extends MarkupEventHandler{
 	ElementEventHandler getParentHandler();	
-	ElementEventHandler handleStartElement(String qName, String namespace, String name);
+	ElementEventHandler handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException;
 	void handleAttributes(Attributes attributes, Locator locator);
 	/**
 	* Performes validation of the context and shift for correct and well 
@@ -34,4 +34,5 @@ public interface ElementEventHandler extends MarkupEventHandler{
 	 
 	void handleInnerCharacters(char[] chars);
     void handleLastCharacters(char[] chars);
+    
 }

@@ -151,10 +151,10 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
             }
 			individualHandlers.add(individualHandler);				
 		}
-		ElementParallelHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance){			
+		ElementParallelHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance, boolean restrictToFileName) throws SAXException{			
 			ElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, candidatesConflictErrorHandler, instance, bindingModel, queue, queuePool);
 			for(int i = 0; i < individualHandlers.size(); i++){	
-				next.add(individualHandlers.get(i).handleStartElement(qName, namespace, name));			
+				next.add(individualHandlers.get(i).handleStartElement(qName, namespace, name, restrictToFileName));			
 			}	
 			return next;
 		}
@@ -243,10 +243,10 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 	}
 	
 	class BoundConflict extends Conflict{		
-		ElementParallelHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance){			
+		ElementParallelHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance, boolean restrictToFileName) throws SAXException{			
 			ElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, candidatesConflictErrorHandler, instance, bindingModel, queue, queuePool);
 			for(int i = 0; i < individualHandlers.size(); i++){	
-				next.add(individualHandlers.get(i).handleStartElement(qName, namespace, name));			
+				next.add(individualHandlers.get(i).handleStartElement(qName, namespace, name, restrictToFileName));			
 			}	
 			return next;
 		}

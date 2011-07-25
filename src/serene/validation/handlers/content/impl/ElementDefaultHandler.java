@@ -53,7 +53,7 @@ class ElementDefaultHandler extends ComparableEEH{
 		return this;
 	}
 	
-	public ComparableEEH handleStartElement(String qName, String namespace, String name){
+	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
 		depth++;	
 		return this;
 	}	

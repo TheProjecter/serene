@@ -17,10 +17,15 @@ limitations under the License.
 package serene.validation.handlers.content.impl;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import sereneWrite.MessageWriter;
+
+import serene.validation.schema.simplified.SimplifiedComponent;
+
+import serene.validation.schema.active.components.AElement;
 
 import serene.validation.handlers.error.ContextErrorHandler;
 
@@ -41,7 +46,55 @@ class StartValidationHandler extends ElementValidationHandler{
 		pool.recycle(this);
 	}
     
-        
+      
+    protected void setContextErrorHandler(){
+		if(contextErrorHandlerIndex == NONE){
+			contextErrorHandler = null;		
+		}else if(contextErrorHandlerIndex == VALIDATION){
+			if(contextErrorHandler[VALIDATION] == null)contextErrorHandler[VALIDATION] = errorHandlerPool.getStartErrorHandler();
+		}else{
+			throw new IllegalStateException();
+		}
+	}
+    
+    
+    public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
+		if(!element.allowsElementContent()){
+			handleUnexpectedElementHandler(namespace, name, restrictToFileName);
+            reportContextErrors(restrictToFileName, validationItemLocator);
+            return pool.getElementDefaultHandler(this);            
+        }            
+		List<AElement> elementMatches = matchHandler.matchElement(namespace, name, element);
+		int matchCount = elementMatches.size();
+		if(matchCount == 0){
+			handleUnexpectedElementHandler(namespace, name, restrictToFileName);
+            reportContextErrors(restrictToFileName, validationItemLocator);
+            return pool.getElementDefaultHandler(this);   
+		}else if(matchCount == 1){		
+            hasComplexContent = true;
+			ElementValidationHandler next = pool.getElementValidationHandler(elementMatches.get(0), this);				
+			return next;
+		}else{
+            hasComplexContent = true;
+			if(contextConflictPool == null)	contextConflictPool = new ContextConflictPool();			
+			ContextConflictDescriptor ccd = contextConflictPool.getContextConflictDescriptor(elementMatches);
+			ElementConcurrentHandler next = pool.getElementConcurrentHandler(ccd.getDefinitions(), this);				
+			return next;
+		}		
+	}
+    
+    void handleUnexpectedElementHandler(String namespace, String name, boolean restrictToFileName) throws SAXException{
+		List<SimplifiedComponent> elementMatches = matchHandler.matchElement(namespace, name);
+		int matchCount = elementMatches.size();
+		if(matchCount == 0){			            
+			unknownElement(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+		}else if(matchCount == 1){
+            unexpectedElement(validationItemLocator.getQName(), elementMatches.get(0), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+		}else{
+            unexpectedAmbiguousElement(validationItemLocator.getQName(), elementMatches.toArray(new SimplifiedComponent[elementMatches.size()]), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+		}
+	}
+    
 	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{
 		validateContext();
 		reportContextErrors(restrictToFileName, locator);

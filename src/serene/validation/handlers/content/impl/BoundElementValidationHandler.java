@@ -121,7 +121,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		if(binder != null)binder.bind(queue, queueEndEntry);
 	}
 	
-	public ComparableEEH handleStartElement(String qName, String namespace, String name){
+	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
 		
 		if(!element.allowsElementContent()) 
 			return getUnexpectedElementHandler(namespace, name);

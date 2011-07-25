@@ -176,7 +176,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			if(nativeDL == null){
 				//System.out.println("error 4.3 unknown or unsupported DatatypeLibrary");
 				String message = "Simplification 4.3 error. "
-				+"Native datatype libarary is unknown or unsupported.";				
+				+"Native datatype library is unknown or unsupported.";				
 				errorDispatcher.error(new SAXParseException(message, null));
 			}
 		}

@@ -131,12 +131,12 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		}		
 	}
 	
-	public ComparableEEH handleStartElement(String qName, String namespace, String name){			
+	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{			
         
 		BoundElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, localCandidatesConflictErrorHandler, this, bindingModel,queue, queuePool);					
 		for(int i = 0; i < candidates.size(); i++){			
 			ComparableEEH candidate = candidates.get(i);
-			next.add(candidate.handleStartElement(qName, namespace, name));			
+			next.add(candidate.handleStartElement(qName, namespace, name, restrictToFileName));			
 		}
         localCandidatesConflictErrorHandler.endValidationStage();
 		return next;
