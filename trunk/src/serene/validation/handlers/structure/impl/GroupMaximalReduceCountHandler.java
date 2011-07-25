@@ -107,7 +107,7 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	public void handleValidatingReduce(){
 		// This method might need to go to subclasses to support the handling 
 		// of content that is too incomplete to even support one child reduce
-		// (discrete cardinalities).
+		// (discrete cardinalities).		
 		int started = -1;
 		int reduced = -1;
 		for(int i = 0; i < size; i++){	
@@ -269,16 +269,7 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	
 	
 	//Start ValidationHandler---------------------------------------------------------	
-	/*void handleParticleShift(String systemId, int lineNumber, int columnNumber, String qName, APattern childPattern){
-		setAcceptableCurrentChildParticleHandler(childPattern);
-		currentChildParticleHandler.handleOccurrence(qName, systemId, lineNumber, columnNumber);
-	}	
-	void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver){
-		throw new UnsupportedOperationException();
-	}
-	void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler){
-		throw new UnsupportedOperationException();
-	}*/
+	
 	// boolean acceptsMDescendentReduce(APattern p) super		
 	// void setStart() super	
 	//End ValidationHandler-----------------------------------------------------------
@@ -349,7 +340,7 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	}			
 	//End InnerPattern------------------------------------------------------------------
 	
-	 boolean handleOrderCheckedReduce(APattern sourceDefinition){		
+	boolean handleOrderCheckedReduce(APattern sourceDefinition){		
 		throw new IllegalStateException();
 	}
     
@@ -361,7 +352,7 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 		throw new IllegalStateException();
 	}
 	/**
-	* Checks if the starting of a new occurrence for the child input does not
+	* Checks if the starting of a new occurrence for the child input doesn't
 	* introduce an order error that would go undetected by the double handler
 	* and could mask occurrence errors. Returns true if the present started
 	* count of the child in question is lower that the started count of any 
@@ -391,7 +382,7 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 		return true;
 	}
 		
-	void handleCurrentChildReduce(){
+	void handleCurrentChildReduce(){	
 		APattern pattern = currentChildParticleHandler.getRule();
 		int childIndex = pattern.getChildIndex();	
 		int started = startedCountList.get(childIndex);
@@ -407,7 +398,7 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 		}
 		// If the particleHandler is not saturated it is not removed. It remains
 		// for the case when a the input consists of a child of the same kind of 
-		// child and the situation of the previous siblings does not allow the 
+		// child and the situation of the previous siblings doesn't allow the 
 		// creation of a new occurrence. This will be packed on the same 
 		// ParticleHandler.
 		if(childParticleHandlers[childIndex].getIndex() == CardinalityHandler.SATURATED){

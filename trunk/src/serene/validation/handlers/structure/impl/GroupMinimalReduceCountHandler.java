@@ -286,7 +286,11 @@ public class GroupMinimalReduceCountHandler extends MinimalReduceCountHandler{
 	}			
 	//End InnerPattern------------------------------------------------------------------
 	
-	boolean handleOrderReduce(APattern sourceDefinition){		
+	 boolean handleOrderCheckedReduce(APattern sourceDefinition){		
+		throw new IllegalStateException();
+	}
+    
+    boolean handleOrderUncheckedReduce(APattern sourceDefinition){		
 		throw new IllegalStateException();
 	}	
 	boolean handleExcessiveChildReduce(){

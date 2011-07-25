@@ -291,6 +291,11 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 	void handleReshift(APattern pattern){
 		stackHandler.reshift(this, pattern);
 	}
+    
+    void handleValidatingReshift(APattern pattern){
+		stackHandler.validatingReshift(this, pattern);
+	}
+    
 	void closeContentStructure(){
 		for(int i = 0; i < size; i++){			
 			if(childStructureHandlers[i] != null){

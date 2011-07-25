@@ -52,6 +52,10 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 	int correctChildIndexesSize;
 	
 	GroupHandler original;
+    
+    //ISSUE 194
+    boolean needFurtherOrderHandling;
+    
 	GroupHandler(MessageWriter debugWriter){
 		super(debugWriter);
 	
@@ -68,6 +72,9 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		childLineNumber = new int[correctChildIndexesSize][];
 		childColumnNumber = new int[correctChildIndexesSize][];
 		childSourceDefinition = new APattern[correctChildIndexesSize][];
+        
+        //ISSUE 194
+        needFurtherOrderHandling = true;
 	}
 
 	void init(AGroup group, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
@@ -85,9 +92,11 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 	}
 	
 	public void recycle(){
+        //ISSUE 194
+        needFurtherOrderHandling = true;
 		original = null;
 		setEmptyState();	
-		recycler.recycle(this);
+		recycler.recycle(this);        
 	}	
 	
 	
@@ -96,7 +105,6 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 	//StructureHandler getParentHandler(); super	
 	// StructureValidationHandler getAncestorOrSelfHandler(Rule rule) super
     // void deactivate() super
-    // boolean handleDeactivation() super
 	// StructureHandler getChildHandler(Rule child) super
 	// APattern getRule() super
 	// boolean handleChildShift(AElement element, int expectedOrderHandlingCount) super
@@ -118,17 +126,20 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		if(newChildIndex < childIndex[lastCorrectChildIndexIndex]){			
 			// add here the reduce/reset part if the contentHandler is satisfied and reduction acceptable			
 			// return; the error is neihter located nor reported
-			if(handleOrderReduce(sourceDefinition)){					
-				return false;
-			}
-			
+						
 			if(newChildIndex < childIndex[lastCorrectChildIndexIndex-1]){
-				//newChildIndex is misplaced								
+				//newChildIndex is misplaced
+                if(handleOrderUncheckedReduce(sourceDefinition)){					
+                    return false;
+                }
 				orderIndex = CURRENT_MISPLACED;
 				reper = childDefinition[lastCorrectChildIndexIndex]; 				
 				// do not store, it cannot be used for comparisons
 			}else if(newChildIndex == childIndex[lastCorrectChildIndexIndex-1]){				
 				// childIndex[lastCorrectChildIndexIndex] is misplaced
+                if(handleOrderCheckedReduce(sourceDefinition)){					
+                    return false;
+                }
 				orderIndex = PREVIOUS_MISPLACED;
 				
 				reper = child;
@@ -143,6 +154,9 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 				addLastCorrectChildIndex(sourceDefinition);
 			}else{
 				//childIndex[lastCorrectChildIndexIndex] is misplaced
+                if(handleOrderCheckedReduce(sourceDefinition)){					
+                    return false;
+                }
 				orderIndex = PREVIOUS_MISPLACED;				
 				
 				reper = child;
@@ -161,7 +175,9 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		}else{			
 			addLastCorrectChildIndex(newChildIndex, child, sourceDefinition);					
 		}
-		if(--expectedOrderHandlingCount > 0){		
+		if(--expectedOrderHandlingCount > 0 /*&& //ISSUE 194
+                                                /*needFurtherOrderHandling*/){
+		    needFurtherOrderHandling = false;
 			if(parent.handleContentOrder(expectedOrderHandlingCount, rule, sourceDefinition)){
 				// report errors
 				String contextSystemId;
@@ -264,7 +280,7 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		int[] prevLineNumber = null; 
 		int[] prevColumnNumber = null; 
 		APattern[] prevSourceDefinition = null;
-					
+
 		
 		if(stackConflictsHandler != null && stackConflictsHandler.isConflictRule(child)){
 			stackConflictsHandler.record(child, (AGroup)rule, resolver);
@@ -272,17 +288,21 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		if(newChildIndex < childIndex[lastCorrectChildIndexIndex]){			
 			// add here the reduce/reset part if the contentHandler is satisfied and reduction acceptable			
 			// return; the error is neihter located nor reported
-			if(handleOrderReduce(sourceDefinition)){					
-				return false;
-			}
-			
+						
 			if(newChildIndex < childIndex[lastCorrectChildIndexIndex-1]){
-				//newChildIndex is misplaced								
+				//newChildIndex is misplaced
+                if(handleOrderUncheckedReduce(sourceDefinition)){					
+                    return false;
+                }
+                
 				orderIndex = CURRENT_MISPLACED;
 				reper = childDefinition[lastCorrectChildIndexIndex]; 				
 				// do not store, it cannot be used for comparisons
 			}else if(newChildIndex == childIndex[lastCorrectChildIndexIndex-1]){				
 				// childIndex[lastCorrectChildIndexIndex] is misplaced
+                if(handleOrderCheckedReduce(sourceDefinition)){					
+                    return false;
+                }
 				orderIndex = PREVIOUS_MISPLACED;
 				
 				reper = child;
@@ -297,6 +317,9 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 				addLastCorrectChildIndex(sourceDefinition);
 			}else{
 				//childIndex[lastCorrectChildIndexIndex] is misplaced
+                if(handleOrderCheckedReduce(sourceDefinition)){					
+                    return false;
+                }
 				orderIndex = PREVIOUS_MISPLACED;				
 				
 				reper = child;
@@ -519,9 +542,17 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 	}			
 	//End InnerPattern------------------------------------------------------------------
 	
-	boolean handleOrderReduce(APattern sourceDefinition){		
+	boolean handleOrderCheckedReduce(APattern sourceDefinition){		
 		if(isReduceAllowed() && isReduceAcceptable()){
 			handleReshift(sourceDefinition);			
+			return true;
+		}		
+		return false;
+	}
+    
+    boolean handleOrderUncheckedReduce(APattern sourceDefinition){		
+		if(isReduceAcceptable()){
+			handleValidatingReshift(sourceDefinition);			
 			return true;
 		}		
 		return false;
