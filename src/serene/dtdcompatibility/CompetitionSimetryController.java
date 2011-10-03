@@ -220,14 +220,14 @@ class CompetitionSimetryController{
                         }
                     }
                 }
-            }else{
+            }else{                
                 //Handle only the idType.
                 for(int i = 0; i < attributes.size(); i++){
                     SAttribute attribute = attributes.get(i);
                     SNameClass attributeNC = attribute.getNameClass();
                     for(int j = 0; j < record.attributes.size(); j++){
                         SAttribute recordAttribute = record.attributes.get(j);
-                        SNameClass recordAttributeNC = recordAttribute.getNameClass();                            
+                        SNameClass recordAttributeNC = recordAttribute.getNameClass();
                         if(overlapController.overlap(attributeNC, recordAttributeNC)){
                             int attributeIdType = attributeIdTypes.get(i);
                             int recordAttributeIdType = record.attributeIdTypes.get(j);
