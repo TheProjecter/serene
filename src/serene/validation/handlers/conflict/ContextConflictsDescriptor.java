@@ -72,6 +72,9 @@ public class ContextConflictsDescriptor implements InternalConflictDescriptor{
     }
 	
 	public String toString(){
-		return "ContextConflictsDescriptor ";
+		return "ContextConflictsDescriptor "
+		+"\nitems "+conflictActiveTypeItems
+		+"\nrules "+conflictPathRules
+        +"\ntops "+conflictPathTops;
 	}
 }

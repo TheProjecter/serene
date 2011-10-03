@@ -962,7 +962,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 								String[] qName, 
 								String[] systemId, 
 								int[] lineNumber, 
-								int[] columnNumber){
+								int[] columnNumber){	    
         errorTotalCount++;
 		if(missingSize == 0){
 			missingSize = 1;
@@ -1034,6 +1034,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		if(systemId != null)missingSystemId[missingIndex] = systemId;
 		missingLineNumber[missingIndex] = lineNumber;
 		missingColumnNumber[missingIndex] = columnNumber;
+		//throw new IllegalStateException();
     }
 	public void clearMissingContent(){
         errorTotalCount -= missingSize;

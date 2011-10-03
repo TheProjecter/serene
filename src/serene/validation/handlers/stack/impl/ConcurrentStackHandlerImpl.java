@@ -28,6 +28,7 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
+import serene.validation.schema.active.components.ActiveTypeItem;
 
 import serene.validation.handlers.stack.CandidateStackHandler;
 import serene.validation.handlers.stack.ConcurrentStackHandler;
@@ -226,13 +227,12 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		resolvers.add(resolver);		
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
+		recordInConflictDescriptor(elementDefinitions, innerPathes);
 		int lastQualifiedIndex = elementDefinitions.size()-1;
-		
+		    
 		for(int i = 0; i < lastQualifiedIndex; i++){				
 			AElement element = elementDefinitions.get(i);			
 			resolver.addCandidate(element);			
-			
-			contextConflictsDescriptor.record(element, innerPathes[i]);
 			
 			for(int j = 0; j < temporary.size(); j++){
 				CandidateStackHandler temp = temporary.get(j);
@@ -267,8 +267,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		AElement element = elementDefinitions.get(lastQualifiedIndex);
 		
 		resolver.addCandidate(element);
-		
-		contextConflictsDescriptor.record(element, innerPathes[lastQualifiedIndex]);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
@@ -317,13 +315,12 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		resolvers.add(resolver);		
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
+		recordInConflictDescriptor(elementDefinitions, innerPathes);
 		int lastQualifiedIndex = elementDefinitions.size()-1;
 		
 		for(int i = 0; i < lastQualifiedIndex; i++){				
 			AElement element = elementDefinitions.get(i);			
 			resolver.addCandidate(element);			
-			
-			contextConflictsDescriptor.record(element, innerPathes[i]);
 			
 			for(int j = 0; j < temporary.size(); j++){
 				CandidateStackHandler temp = temporary.get(j);
@@ -358,8 +355,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		AElement element = elementDefinitions.get(lastQualifiedIndex);
 		
 		resolver.addCandidate(element);
-		
-		contextConflictsDescriptor.record(element, innerPathes[lastQualifiedIndex]);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
@@ -408,6 +403,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
+		recordInConflictDescriptor(elementDefinitions, innerPathes);
 		int lastQualifiedIndex = conflictHandler.getPreviousQualified(elementDefinitions.size());
 		//int shifts = 0;
 		//int redundant = 0;
@@ -418,11 +414,8 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 				
 				resolver.addCandidate(element);
 				
-				contextConflictsDescriptor.record(element, innerPathes[i]);
-				
 				for(int j = 0; j < temporary.size(); j++){
 					//shifts++;
-					//System.out.println(shifts+"  "+element+" "+resolver);
 					CandidateStackHandler temp = temporary.get(j);
 					if(temp != null){
 						CandidateStackHandler candidate = temp.getCopy();
@@ -461,11 +454,8 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		
 		resolver.addCandidate(element);
 		
-		contextConflictsDescriptor.record(element, innerPathes[lastQualifiedIndex]);
-		
 		for(int j = 0; j < temporary.size(); j++){			
 			//shifts++;
-			//System.out.println(shifts+"  "+element+" "+resolver);
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
 				temp.shift(element,
@@ -514,6 +504,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
+		recordInConflictDescriptor(elementDefinitions, innerPathes);
 		int lastQualifiedIndex = conflictHandler.getPreviousQualified(elementDefinitions.size());
 		
 		for(int i = 0; i < lastQualifiedIndex; i++){
@@ -521,8 +512,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 				AElement element = elementDefinitions.get(i);
 				
 				resolver.addCandidate(element);
-				
-				contextConflictsDescriptor.record(element, innerPathes[i]);
 				
 				for(int j = 0; j < temporary.size(); j++){
 					CandidateStackHandler temp = temporary.get(j);
@@ -559,8 +548,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		AElement element = elementDefinitions.get(lastQualifiedIndex);
 		
 		resolver.addCandidate(element);
-		
-		contextConflictsDescriptor.record(element, innerPathes[lastQualifiedIndex]);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
@@ -640,14 +627,14 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
+		recordInConflictDescriptor(attributeDefinitions, innerPathes);
 		int lastQualifiedIndex = attributeDefinitions.size()-1;
+		
 		for(int i = 0; i < lastQualifiedIndex; i++){				
 			AAttribute attribute = attributeDefinitions.get(i);
 			
 			resolver.addCandidate(attribute);
 						
-			contextConflictsDescriptor.record(attribute, innerPathes[i]);
-			
 			for(int j = 0; j < temporary.size(); j++){
 				CandidateStackHandler temp = temporary.get(j);
 				if(temp != null){
@@ -679,8 +666,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		AAttribute attribute = attributeDefinitions.get(lastQualifiedIndex);
 		
 		resolver.addCandidate(attribute);
-		
-		contextConflictsDescriptor.record(attribute, innerPathes[lastQualifiedIndex]);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
@@ -731,14 +716,14 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
+		recordInConflictDescriptor(attributeDefinitions, innerPathes);
 		int lastQualifiedIndex = attributeDefinitions.size()-1;
+		
 		for(int i = 0; i < lastQualifiedIndex; i++){				
 			AAttribute attribute = attributeDefinitions.get(i);
 			
 			resolver.addCandidate(attribute);
 						
-			contextConflictsDescriptor.record(attribute, innerPathes[i]);
-			
 			for(int j = 0; j < temporary.size(); j++){
 				CandidateStackHandler temp = temporary.get(j);
 				if(temp != null){
@@ -770,8 +755,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		AAttribute attribute = attributeDefinitions.get(lastQualifiedIndex);
 		
 		resolver.addCandidate(attribute);
-		
-		contextConflictsDescriptor.record(attribute, innerPathes[lastQualifiedIndex]);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
@@ -816,14 +799,14 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
+		recordInConflictDescriptor(attributeDefinitions, innerPathes);
 		int lastQualifiedIndex = conflictHandler.getPreviousQualified(attributeDefinitions.size());
+		
 		for(int i = 0; i < lastQualifiedIndex; i++){
 			if(!conflictHandler.isDisqualified(i)){
 				AAttribute attribute = attributeDefinitions.get(i);
 				
 				resolver.addCandidate(attribute);
-				
-				contextConflictsDescriptor.record(attribute, innerPathes[i]);
 				
 				for(int j = 0; j < temporary.size(); j++){
 					CandidateStackHandler temp = temporary.get(j);
@@ -857,8 +840,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		AAttribute attribute = attributeDefinitions.get(lastQualifiedIndex);
 		
 		resolver.addCandidate(attribute);
-		
-		contextConflictsDescriptor.record(attribute, innerPathes[lastQualifiedIndex]);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
@@ -907,14 +888,14 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
+		recordInConflictDescriptor(attributeDefinitions, innerPathes);
 		int lastQualifiedIndex = conflictHandler.getPreviousQualified(attributeDefinitions.size());
+		
 		for(int i = 0; i < lastQualifiedIndex; i++){
 			if(!conflictHandler.isDisqualified(i)){
 				AAttribute attribute = attributeDefinitions.get(i);
 				
 				resolver.addCandidate(attribute);
-				
-				contextConflictsDescriptor.record(attribute, innerPathes[i]);
 				
 				for(int j = 0; j < temporary.size(); j++){
 					CandidateStackHandler temp = temporary.get(j);
@@ -948,8 +929,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		AAttribute attribute = attributeDefinitions.get(lastQualifiedIndex);
 		
 		resolver.addCandidate(attribute);
-		
-		contextConflictsDescriptor.record(attribute, innerPathes[lastQualifiedIndex]);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
@@ -1031,13 +1010,13 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
+		recordInConflictDescriptor(charsDefinitions, innerPathes);
 		int lastQualifiedIndex = charsDefinitions.size()-1;
+		
 		for(int i = 0; i < lastQualifiedIndex; i++){				
 			CharsActiveTypeItem chars = charsDefinitions.get(i);
 		
 			resolver.addCandidate(chars);
-			
-			contextConflictsDescriptor.record(chars, innerPathes[i]);
 			
 			for(int j = 0; j < temporary.size(); j++){
 				CandidateStackHandler temp = temporary.get(j);
@@ -1072,8 +1051,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		CharsActiveTypeItem chars = charsDefinitions.get(lastQualifiedIndex);
 		
 		resolver.addCandidate(chars);
-		
-		contextConflictsDescriptor.record(chars, innerPathes[lastQualifiedIndex]);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
@@ -1122,13 +1099,13 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
+		recordInConflictDescriptor(charsDefinitions, innerPathes);
 		int lastQualifiedIndex = charsDefinitions.size()-1;
+		
 		for(int i = 0; i < lastQualifiedIndex; i++){				
 			CharsActiveTypeItem chars = charsDefinitions.get(i);
 		
 			resolver.addCandidate(chars);
-			
-			contextConflictsDescriptor.record(chars, innerPathes[i]);
 			
 			for(int j = 0; j < temporary.size(); j++){
 				CandidateStackHandler temp = temporary.get(j);
@@ -1163,8 +1140,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		CharsActiveTypeItem chars = charsDefinitions.get(lastQualifiedIndex);
 		
 		resolver.addCandidate(chars);
-		
-		contextConflictsDescriptor.record(chars, innerPathes[lastQualifiedIndex]);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
@@ -1260,6 +1235,12 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			if(candidate != null)fec+=candidate.functionalEquivalenceCode();
 		}
 		return fec;
+	}
+	
+	private void recordInConflictDescriptor(List<? extends ActiveTypeItem> conflictItems, Rule[][] innerPathes){
+	    for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(conflictItems.get(i), innerPathes[i]);
+	    }	
 	}
 	
 	public String toString(){
