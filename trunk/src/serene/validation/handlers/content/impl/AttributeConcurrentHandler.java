@@ -19,6 +19,8 @@ package serene.validation.handlers.content.impl;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.xml.sax.SAXException;
+
 import serene.validation.schema.active.components.AAttribute;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
@@ -78,7 +80,7 @@ class AttributeConcurrentHandler extends ValidatingAEH{
         return parent;
     }
     
-	void validateValue(String value){
+	void validateValue(String value) throws SAXException{
 		for(int i = 0; i < candidates.size(); i++){
 			candidates.get(i).validateValue(value);
 		}

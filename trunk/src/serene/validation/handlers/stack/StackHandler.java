@@ -19,6 +19,8 @@ package serene.validation.handlers.stack;
 import java.util.List;
 import java.util.Map;
 
+import org.xml.sax.SAXException;
+
 import serene.bind.Queue;
 import serene.bind.AttributeBinder;
 
@@ -32,6 +34,8 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.ConflictMessageReporter;
+
 import serene.validation.handlers.structure.StructureHandler;
 
 public interface StackHandler extends FunctionallyEquivalable{	
@@ -41,10 +45,10 @@ public interface StackHandler extends FunctionallyEquivalable{
 	// It might also be necessary to make sure you set the right type of handler
 	// to the concrete structure handlers.
 	void shift(AElement element);	
-	void shiftAllElements(List<AElement> elementDefinitions);	
-	void shiftAllElements(List<AElement> elementDefinitions, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues);	
-	void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler);
-	void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues);
+	void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter);	
+	void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues);	
+	void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter);
+	void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues);
 	
 	void shift(AAttribute attribute);	
 	void shiftAllAttributes(List<AAttribute> attributeDefinitions);
@@ -90,7 +94,7 @@ public interface StackHandler extends FunctionallyEquivalable{
 	* this method makes it possible to reduce StructureHandlers that are not active.
 	* During the execution of this method missing content errors are determined.
 	*/
-	void endValidation();
+	void endValidation() throws SAXException;
 	/**
 	* Used when a subtree of the StructureHandler tree handled by this StackHandler
 	* must be reduced. The argument represents the top of the subtree and it must 

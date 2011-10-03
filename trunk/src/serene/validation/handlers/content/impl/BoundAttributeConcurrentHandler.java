@@ -19,6 +19,8 @@ package serene.validation.handlers.content.impl;
 import java.util.List;
 import java.util.HashMap;
 
+import org.xml.sax.SAXException;
+
 import serene.validation.schema.active.components.AAttribute;
 
 import serene.validation.handlers.content.BoundAttributeHandler;
@@ -84,7 +86,7 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 		}
 	}
 	
-	public void handleAttribute(String value){
+	public void handleAttribute(String value) throws SAXException{
 		validateValue(value);
 		attributeBinding(value);
 		validateInContext();

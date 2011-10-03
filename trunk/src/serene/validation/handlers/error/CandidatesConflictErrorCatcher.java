@@ -96,7 +96,14 @@ interface CandidatesConflictErrorCatcher extends ErrorType{
 								int lineNumber,		
 								int columnNumber);    
     
-	void ambiguousElementContentError(int candidateIndex, int functionalEquivalenceCode, 
+	void unresolvedAmbiguousElementContentError(int candidateIndex, int functionalEquivalenceCode, 
+                                    String qName, 
+									String systemId, 
+									int lineNumber, 
+									int columnNumber, 
+									AElement[] possibleDefinitions);
+	
+	void unresolvedUnresolvedElementContentError(int candidateIndex, int functionalEquivalenceCode, 
                                     String qName, 
 									String systemId, 
 									int lineNumber, 
@@ -116,7 +123,8 @@ interface CandidatesConflictErrorCatcher extends ErrorType{
 									int columnNumber, 
 									CharsActiveTypeItem[] possibleDefinitions);
 
-    void ambiguousElementContentWarning(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
+    void ambiguousUnresolvedElementContentWarning(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
+    void ambiguousAmbiguousElementContentWarning(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
 	void ambiguousAttributeContentWarning(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions);
 	void ambiguousCharsContentWarning(int candidateIndex, int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);	
 	

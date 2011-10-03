@@ -53,6 +53,7 @@ import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 import serene.validation.handlers.error.ContextErrorHandlerManager;
 import serene.validation.handlers.error.ContextErrorHandler;
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
@@ -170,7 +171,7 @@ class ElementValidationHandler extends ValidatingEEH
 		}		
 	}	
 	
-	public void handleAttributes(Attributes attributes, Locator locator){
+	public void handleAttributes(Attributes attributes, Locator locator) throws SAXException{
 		for(int i = 0; i < attributes.getLength(); i++){
 			String attributeQName = attributes.getQName(i);
 			String attributeNamespace = attributes.getURI(i); 
@@ -221,7 +222,7 @@ class ElementValidationHandler extends ValidatingEEH
 		validateInContext();
 	}
 	
-	void validateContext() {        
+	void validateContext() throws SAXException{        
 		//end validation
 		if(stackHandler != null){
 			stackHandler.endValidation();
@@ -238,7 +239,7 @@ class ElementValidationHandler extends ValidatingEEH
 		parent.addChildElement(element);
 	}
 	
-	public void handleInnerCharacters(char[] chars){
+	public void handleInnerCharacters(char[] chars) throws SAXException{
         boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
         if(!isIgnorable && element.allowsTextContent()){
             hasComplexContent = true;
@@ -264,7 +265,7 @@ class ElementValidationHandler extends ValidatingEEH
             }
         }        
 	}
-	public void handleLastCharacters(char[] chars){	
+	public void handleLastCharacters(char[] chars) throws SAXException {	
         boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);            
         char[] bufferedContent = charContentBuffer.getCharsArray();
         boolean isBufferIgnorable = bufferedContent.length == 0 || spaceHandler.isSpace(bufferedContent);
@@ -307,14 +308,14 @@ class ElementValidationHandler extends ValidatingEEH
 		stackHandler.shift(element);
 	}
 	
-	void addChildElement(List<AElement> candidateDefinitions){
+	void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllElements(candidateDefinitions);
+		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter);
 	}
 	
-	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler){
+	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler);
+		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter);
 	}	
 	
 	void addAttribute(AAttribute attribute){
@@ -442,9 +443,14 @@ class ElementValidationHandler extends ValidatingEEH
 		contextErrorHandler[contextErrorHandlerIndex].illegalContent(context, startQName, startSystemId, startLineNumber, startColumnNumber);
 	}
 	
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
+	
+	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
+		contextErrorHandler[contextErrorHandlerIndex].unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 
 	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
@@ -458,9 +464,14 @@ class ElementValidationHandler extends ValidatingEEH
 	}
 
 	
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
+	
+	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
+		contextErrorHandler[contextErrorHandlerIndex].ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 
 	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
@@ -556,6 +567,11 @@ class ElementValidationHandler extends ValidatingEEH
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
+	}
+	
+	public void internalConflict(ConflictMessageReporter conflictMessageReporter) throws SAXException{
+	    if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
+		contextErrorHandler[contextErrorHandlerIndex].internalConflict(conflictMessageReporter);
 	}
 	//--------------------------------------------------------------------------
 	public String toString(){

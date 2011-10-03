@@ -123,7 +123,11 @@ public class AttributeConflictErrorHandler implements Reusable, ErrorCatcher{
 		conflictHandler.disqualify(candidateIndex);
 	}
 	
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		conflictHandler.disqualify(candidateIndex);
+	}
+	
+	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 	}
 	
@@ -136,7 +140,11 @@ public class AttributeConflictErrorHandler implements Reusable, ErrorCatcher{
 	}
 	
 	
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		conflictHandler.disqualify(candidateIndex);
+	}
+	
+	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 	}
 	
@@ -206,8 +214,10 @@ public class AttributeConflictErrorHandler implements Reusable, ErrorCatcher{
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		conflictHandler.disqualify(candidateIndex);
 	}	
-
-	
+	public void internalConflict(ConflictMessageReporter conflictMessageReporter){
+	    throw new IllegalStateException();
+    }
+ 	
 	public String toString(){
 		//return "AttributeConflictErrorHandler "+hashCode()+" candidate "+candidateIndex+" in conflict "+conflictHandler.toString();
 		return "AttributeConflictErrorHandler candidate "+candidateIndex+" in conflict "+conflictHandler.toString();

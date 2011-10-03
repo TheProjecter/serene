@@ -158,7 +158,7 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 			}	
 			return next;
 		}
-        void handleAttributes(Attributes attributes, Locator locator){
+        void handleAttributes(Attributes attributes, Locator locator) throws SAXException{
             uniqueSample.handleAttributes(attributes, locator);
             if(uniqueSample instanceof ValidatingEEH){
                 for(int i = 0; i < individualHandlers.size(); i++){
@@ -183,7 +183,7 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 			elementTasksBinding();		
 			validateInContext();
 		}
-		void validateContext(){			
+		void validateContext() throws SAXException{			
 			uniqueSample.validateContext();
 		}
 				
@@ -206,15 +206,15 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
                     uniqueSample.validateInContext();
                     evhParent.restorePreviousHandler();
                 }
-			}else if(uniqueSample instanceof ValidatingEEH){
-				for(int i = 0; i < individualHandlers.size(); i++){
+			}else if(uniqueSample instanceof ValidatingEEH){			    
+				for(int i = 0; i < individualHandlers.size(); i++){				    
 					//if(!candidatesConflictHandler.isDisqualified(i)){
 					individualHandlers.get(i).validateInContext();
 					//}
 				}
 			}
 		}
-		void handleInnerCharacters(char[] chars){
+		void handleInnerCharacters(char[] chars) throws SAXException{
 			uniqueSample.handleInnerCharacters(chars);
             if(uniqueSample instanceof BoundElementHandler){
                 for(int i = 0; i < individualHandlers.size(); i++){
@@ -225,7 +225,7 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
                 }			
             }
 		}
-        void handleLastCharacters(char[] chars){
+        void handleLastCharacters(char[] chars) throws SAXException{
 			uniqueSample.handleLastCharacters(chars);
             if(uniqueSample instanceof BoundElementHandler){
                 for(int i = 0; i < individualHandlers.size(); i++){

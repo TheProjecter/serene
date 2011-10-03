@@ -27,8 +27,29 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
 	public ContextMessageHandler(MessageWriter debugWriter){
 		super(debugWriter);
-        conflictResolutionId = RESOLVED;        
 	}	
+    
+	
+	public ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher){
+        return new ConflictMessageReporter(parent,
+                                    contextType,
+                                    qName,
+                                    definition,
+                                    publicId, 
+                                    systemId,
+                                    lineNumber,
+                                    columnNumber,
+                                    conflictResolutionId,
+                                    restrictToFileName,
+                                    commonMessages,
+                                    candidatesCount,
+                                    disqualified,
+                                    candidateMessages,
+                                    errorDispatcher,                                    
+                                    debugWriter);
+    }
+    
+    
     
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
         errorTotalCount++;
@@ -647,56 +668,109 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
     
-	public void ambiguousElementContentError(String qName, 
+	public void unresolvedAmbiguousElementContentError(String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
         errorTotalCount++;
-		if(ambiguousElementSizeEE == 0){
-			ambiguousElementSizeEE = 1;
-			ambiguousElementIndexEE = 0;	
-			ambiguousElementQNameEE = new String[ambiguousElementSizeEE];			
-			ambiguousElementSystemIdEE = new String[ambiguousElementSizeEE];			
-			ambiguousElementLineNumberEE = new int[ambiguousElementSizeEE];
-			ambiguousElementColumnNumberEE = new int[ambiguousElementSizeEE];
-			ambiguousElementDefinitionEE = new AElement[ambiguousElementSizeEE][];
-		}else if(++ambiguousElementIndexEE == ambiguousElementSizeEE){			
-			String[] increasedQN = new String[++ambiguousElementSizeEE];
-			System.arraycopy(ambiguousElementQNameEE, 0, increasedQN, 0, ambiguousElementIndexEE);
-			ambiguousElementQNameEE = increasedQN;
+		if(unresolvedAmbiguousElementSizeEE == 0){
+			unresolvedAmbiguousElementSizeEE = 1;
+			unresolvedAmbiguousElementIndexEE = 0;	
+			unresolvedAmbiguousElementQNameEE = new String[unresolvedAmbiguousElementSizeEE];			
+			unresolvedAmbiguousElementSystemIdEE = new String[unresolvedAmbiguousElementSizeEE];			
+			unresolvedAmbiguousElementLineNumberEE = new int[unresolvedAmbiguousElementSizeEE];
+			unresolvedAmbiguousElementColumnNumberEE = new int[unresolvedAmbiguousElementSizeEE];
+			unresolvedAmbiguousElementDefinitionEE = new AElement[unresolvedAmbiguousElementSizeEE][];
+		}else if(++unresolvedAmbiguousElementIndexEE == unresolvedAmbiguousElementSizeEE){			
+			String[] increasedQN = new String[++unresolvedAmbiguousElementSizeEE];
+			System.arraycopy(unresolvedAmbiguousElementQNameEE, 0, increasedQN, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementQNameEE = increasedQN;
 			
-			AElement[][] increasedDef = new AElement[ambiguousElementSizeEE][];
-			System.arraycopy(ambiguousElementDefinitionEE, 0, increasedDef, 0, ambiguousElementIndexEE);
-			ambiguousElementDefinitionEE = increasedDef;
+			AElement[][] increasedDef = new AElement[unresolvedAmbiguousElementSizeEE][];
+			System.arraycopy(unresolvedAmbiguousElementDefinitionEE, 0, increasedDef, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementDefinitionEE = increasedDef;
 			
-			String[] increasedSI = new String[ambiguousElementSizeEE];
-			System.arraycopy(ambiguousElementSystemIdEE, 0, increasedSI, 0, ambiguousElementIndexEE);
-			ambiguousElementSystemIdEE = increasedSI;
+			String[] increasedSI = new String[unresolvedAmbiguousElementSizeEE];
+			System.arraycopy(unresolvedAmbiguousElementSystemIdEE, 0, increasedSI, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementSystemIdEE = increasedSI;
 						
-			int[] increasedLN = new int[ambiguousElementSizeEE];
-			System.arraycopy(ambiguousElementLineNumberEE, 0, increasedLN, 0, ambiguousElementIndexEE);
-			ambiguousElementLineNumberEE = increasedLN;
+			int[] increasedLN = new int[unresolvedAmbiguousElementSizeEE];
+			System.arraycopy(unresolvedAmbiguousElementLineNumberEE, 0, increasedLN, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementLineNumberEE = increasedLN;
 			
-			int[] increasedCN = new int[ambiguousElementSizeEE];
-			System.arraycopy(ambiguousElementColumnNumberEE, 0, increasedCN, 0, ambiguousElementIndexEE);
-			ambiguousElementColumnNumberEE = increasedCN;
+			int[] increasedCN = new int[unresolvedAmbiguousElementSizeEE];
+			System.arraycopy(unresolvedAmbiguousElementColumnNumberEE, 0, increasedCN, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementColumnNumberEE = increasedCN;
 		}
-		ambiguousElementQNameEE[ambiguousElementIndexEE] = qName;		
-		ambiguousElementSystemIdEE[ambiguousElementIndexEE] = systemId;
-		ambiguousElementLineNumberEE[ambiguousElementIndexEE] = lineNumber;
-		ambiguousElementColumnNumberEE[ambiguousElementIndexEE] = columnNumber;
-		ambiguousElementDefinitionEE[ambiguousElementIndexEE] = possibleDefinitions;
+		unresolvedAmbiguousElementQNameEE[unresolvedAmbiguousElementIndexEE] = qName;		
+		unresolvedAmbiguousElementSystemIdEE[unresolvedAmbiguousElementIndexEE] = systemId;
+		unresolvedAmbiguousElementLineNumberEE[unresolvedAmbiguousElementIndexEE] = lineNumber;
+		unresolvedAmbiguousElementColumnNumberEE[unresolvedAmbiguousElementIndexEE] = columnNumber;
+		unresolvedAmbiguousElementDefinitionEE[unresolvedAmbiguousElementIndexEE] = possibleDefinitions;
 	}
-	public void clearAmbiguousElementContentError(){
-        errorTotalCount -= ambiguousElementSizeEE;
-        ambiguousElementSizeEE = 0;
-        ambiguousElementIndexEE = -1;	
-        ambiguousElementQNameEE = null;			
-        ambiguousElementSystemIdEE = null;			
-        ambiguousElementLineNumberEE = null;
-        ambiguousElementColumnNumberEE = null;
-        ambiguousElementDefinitionEE = null;
+	public void clearUnresolvedAmbiguousElementContentError(){
+        errorTotalCount -= unresolvedAmbiguousElementSizeEE;
+        unresolvedAmbiguousElementSizeEE = 0;
+        unresolvedAmbiguousElementIndexEE = -1;	
+        unresolvedAmbiguousElementQNameEE = null;			
+        unresolvedAmbiguousElementSystemIdEE = null;			
+        unresolvedAmbiguousElementLineNumberEE = null;
+        unresolvedAmbiguousElementColumnNumberEE = null;
+        unresolvedAmbiguousElementDefinitionEE = null;
+    }
+    
+    
+    public void unresolvedUnresolvedElementContentError(String qName, 
+									String systemId, 
+									int lineNumber, 
+									int columnNumber, 
+									AElement[] possibleDefinitions){
+        errorTotalCount++;
+		if(unresolvedUnresolvedElementSizeEE == 0){
+			unresolvedUnresolvedElementSizeEE = 1;
+			unresolvedUnresolvedElementIndexEE = 0;	
+			unresolvedUnresolvedElementQNameEE = new String[unresolvedUnresolvedElementSizeEE];			
+			unresolvedUnresolvedElementSystemIdEE = new String[unresolvedUnresolvedElementSizeEE];			
+			unresolvedUnresolvedElementLineNumberEE = new int[unresolvedUnresolvedElementSizeEE];
+			unresolvedUnresolvedElementColumnNumberEE = new int[unresolvedUnresolvedElementSizeEE];
+			unresolvedUnresolvedElementDefinitionEE = new AElement[unresolvedUnresolvedElementSizeEE][];
+		}else if(++unresolvedUnresolvedElementIndexEE == unresolvedUnresolvedElementSizeEE){			
+			String[] increasedQN = new String[++unresolvedUnresolvedElementSizeEE];
+			System.arraycopy(unresolvedUnresolvedElementQNameEE, 0, increasedQN, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementQNameEE = increasedQN;
+			
+			AElement[][] increasedDef = new AElement[unresolvedUnresolvedElementSizeEE][];
+			System.arraycopy(unresolvedUnresolvedElementDefinitionEE, 0, increasedDef, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementDefinitionEE = increasedDef;
+			
+			String[] increasedSI = new String[unresolvedUnresolvedElementSizeEE];
+			System.arraycopy(unresolvedUnresolvedElementSystemIdEE, 0, increasedSI, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementSystemIdEE = increasedSI;
+						
+			int[] increasedLN = new int[unresolvedUnresolvedElementSizeEE];
+			System.arraycopy(unresolvedUnresolvedElementLineNumberEE, 0, increasedLN, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementLineNumberEE = increasedLN;
+			
+			int[] increasedCN = new int[unresolvedUnresolvedElementSizeEE];
+			System.arraycopy(unresolvedUnresolvedElementColumnNumberEE, 0, increasedCN, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementColumnNumberEE = increasedCN;
+		}
+		unresolvedUnresolvedElementQNameEE[unresolvedUnresolvedElementIndexEE] = qName;		
+		unresolvedUnresolvedElementSystemIdEE[unresolvedUnresolvedElementIndexEE] = systemId;
+		unresolvedUnresolvedElementLineNumberEE[unresolvedUnresolvedElementIndexEE] = lineNumber;
+		unresolvedUnresolvedElementColumnNumberEE[unresolvedUnresolvedElementIndexEE] = columnNumber;
+		unresolvedUnresolvedElementDefinitionEE[unresolvedUnresolvedElementIndexEE] = possibleDefinitions;
+	}
+	public void clearUnresolvedUnresolvedElementContentError(){
+        errorTotalCount -= unresolvedUnresolvedElementSizeEE;
+        unresolvedUnresolvedElementSizeEE = 0;
+        unresolvedUnresolvedElementIndexEE = -1;	
+        unresolvedUnresolvedElementQNameEE = null;			
+        unresolvedUnresolvedElementSystemIdEE = null;			
+        unresolvedUnresolvedElementLineNumberEE = null;
+        unresolvedUnresolvedElementColumnNumberEE = null;
+        unresolvedUnresolvedElementDefinitionEE = null;
     }
     
     
@@ -800,56 +874,109 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }	
 	
 	
-	public void ambiguousElementContentWarning(String qName, 
+	public void ambiguousUnresolvedElementContentWarning(String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
         errorTotalCount++;
-		if(ambiguousElementSizeWW == 0){
-			ambiguousElementSizeWW = 1;
-			ambiguousElementIndexWW = 0;	
-			ambiguousElementQNameWW = new String[ambiguousElementSizeWW];			
-			ambiguousElementSystemIdWW = new String[ambiguousElementSizeWW];			
-			ambiguousElementLineNumberWW = new int[ambiguousElementSizeWW];
-			ambiguousElementColumnNumberWW = new int[ambiguousElementSizeWW];
-			ambiguousElementDefinitionWW = new AElement[ambiguousElementSizeWW][];
-		}else if(++ambiguousElementIndexWW == ambiguousElementSizeWW){			
-			String[] increasedQN = new String[++ambiguousElementSizeWW];
-			System.arraycopy(ambiguousElementQNameWW, 0, increasedQN, 0, ambiguousElementIndexWW);
-			ambiguousElementQNameWW = increasedQN;
+		if(ambiguousUnresolvedElementSizeWW == 0){
+			ambiguousUnresolvedElementSizeWW = 1;
+			ambiguousUnresolvedElementIndexWW = 0;	
+			ambiguousUnresolvedElementQNameWW = new String[ambiguousUnresolvedElementSizeWW];			
+			ambiguousUnresolvedElementSystemIdWW = new String[ambiguousUnresolvedElementSizeWW];			
+			ambiguousUnresolvedElementLineNumberWW = new int[ambiguousUnresolvedElementSizeWW];
+			ambiguousUnresolvedElementColumnNumberWW = new int[ambiguousUnresolvedElementSizeWW];
+			ambiguousUnresolvedElementDefinitionWW = new AElement[ambiguousUnresolvedElementSizeWW][];
+		}else if(++ambiguousUnresolvedElementIndexWW == ambiguousUnresolvedElementSizeWW){			
+			String[] increasedQN = new String[++ambiguousUnresolvedElementSizeWW];
+			System.arraycopy(ambiguousUnresolvedElementQNameWW, 0, increasedQN, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementQNameWW = increasedQN;
 			
-			AElement[][] increasedDef = new AElement[ambiguousElementSizeWW][];
-			System.arraycopy(ambiguousElementDefinitionWW, 0, increasedDef, 0, ambiguousElementIndexWW);
-			ambiguousElementDefinitionWW = increasedDef;
+			AElement[][] increasedDef = new AElement[ambiguousUnresolvedElementSizeWW][];
+			System.arraycopy(ambiguousUnresolvedElementDefinitionWW, 0, increasedDef, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementDefinitionWW = increasedDef;
 			
-			String[] increasedSI = new String[ambiguousElementSizeWW];
-			System.arraycopy(ambiguousElementSystemIdWW, 0, increasedSI, 0, ambiguousElementIndexWW);
-			ambiguousElementSystemIdWW = increasedSI;
+			String[] increasedSI = new String[ambiguousUnresolvedElementSizeWW];
+			System.arraycopy(ambiguousUnresolvedElementSystemIdWW, 0, increasedSI, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementSystemIdWW = increasedSI;
 						
-			int[] increasedLN = new int[ambiguousElementSizeWW];
-			System.arraycopy(ambiguousElementLineNumberWW, 0, increasedLN, 0, ambiguousElementIndexWW);
-			ambiguousElementLineNumberWW = increasedLN;
+			int[] increasedLN = new int[ambiguousUnresolvedElementSizeWW];
+			System.arraycopy(ambiguousUnresolvedElementLineNumberWW, 0, increasedLN, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementLineNumberWW = increasedLN;
 			
-			int[] increasedCN = new int[ambiguousElementSizeWW];
-			System.arraycopy(ambiguousElementColumnNumberWW, 0, increasedCN, 0, ambiguousElementIndexWW);
-			ambiguousElementColumnNumberWW = increasedCN;
+			int[] increasedCN = new int[ambiguousUnresolvedElementSizeWW];
+			System.arraycopy(ambiguousUnresolvedElementColumnNumberWW, 0, increasedCN, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementColumnNumberWW = increasedCN;
 		}
-		ambiguousElementQNameWW[ambiguousElementIndexWW] = qName;		
-		ambiguousElementSystemIdWW[ambiguousElementIndexWW] = systemId;
-		ambiguousElementLineNumberWW[ambiguousElementIndexWW] = lineNumber;
-		ambiguousElementColumnNumberWW[ambiguousElementIndexWW] = columnNumber;
-		ambiguousElementDefinitionWW[ambiguousElementIndexWW] = possibleDefinitions;        
+		ambiguousUnresolvedElementQNameWW[ambiguousUnresolvedElementIndexWW] = qName;		
+		ambiguousUnresolvedElementSystemIdWW[ambiguousUnresolvedElementIndexWW] = systemId;
+		ambiguousUnresolvedElementLineNumberWW[ambiguousUnresolvedElementIndexWW] = lineNumber;
+		ambiguousUnresolvedElementColumnNumberWW[ambiguousUnresolvedElementIndexWW] = columnNumber;
+		ambiguousUnresolvedElementDefinitionWW[ambiguousUnresolvedElementIndexWW] = possibleDefinitions;        
 	}
-	public void clearAmbiguousElementContentWarning(){
-        errorTotalCount -= ambiguousElementSizeWW;
-        ambiguousElementSizeWW = 0;
-        ambiguousElementIndexWW = -1;	
-        ambiguousElementQNameWW = null;			
-        ambiguousElementSystemIdWW = null;			
-        ambiguousElementLineNumberWW = null;
-        ambiguousElementColumnNumberWW = null;
-        ambiguousElementDefinitionWW = null;
+	public void clearAmbiguousUnresolvedElementContentWarning(){
+        errorTotalCount -= ambiguousUnresolvedElementSizeWW;
+        ambiguousUnresolvedElementSizeWW = 0;
+        ambiguousUnresolvedElementIndexWW = -1;	
+        ambiguousUnresolvedElementQNameWW = null;			
+        ambiguousUnresolvedElementSystemIdWW = null;			
+        ambiguousUnresolvedElementLineNumberWW = null;
+        ambiguousUnresolvedElementColumnNumberWW = null;
+        ambiguousUnresolvedElementDefinitionWW = null;
+    }
+    
+    
+    public void ambiguousAmbiguousElementContentWarning(String qName, 
+									String systemId, 
+									int lineNumber, 
+									int columnNumber, 
+									AElement[] possibleDefinitions){
+        errorTotalCount++;
+		if(ambiguousAmbiguousElementSizeWW == 0){
+			ambiguousAmbiguousElementSizeWW = 1;
+			ambiguousAmbiguousElementIndexWW = 0;	
+			ambiguousAmbiguousElementQNameWW = new String[ambiguousAmbiguousElementSizeWW];			
+			ambiguousAmbiguousElementSystemIdWW = new String[ambiguousAmbiguousElementSizeWW];			
+			ambiguousAmbiguousElementLineNumberWW = new int[ambiguousAmbiguousElementSizeWW];
+			ambiguousAmbiguousElementColumnNumberWW = new int[ambiguousAmbiguousElementSizeWW];
+			ambiguousAmbiguousElementDefinitionWW = new AElement[ambiguousAmbiguousElementSizeWW][];
+		}else if(++ambiguousAmbiguousElementIndexWW == ambiguousAmbiguousElementSizeWW){			
+			String[] increasedQN = new String[++ambiguousAmbiguousElementSizeWW];
+			System.arraycopy(ambiguousAmbiguousElementQNameWW, 0, increasedQN, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementQNameWW = increasedQN;
+			
+			AElement[][] increasedDef = new AElement[ambiguousAmbiguousElementSizeWW][];
+			System.arraycopy(ambiguousAmbiguousElementDefinitionWW, 0, increasedDef, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementDefinitionWW = increasedDef;
+			
+			String[] increasedSI = new String[ambiguousAmbiguousElementSizeWW];
+			System.arraycopy(ambiguousAmbiguousElementSystemIdWW, 0, increasedSI, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementSystemIdWW = increasedSI;
+						
+			int[] increasedLN = new int[ambiguousAmbiguousElementSizeWW];
+			System.arraycopy(ambiguousAmbiguousElementLineNumberWW, 0, increasedLN, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementLineNumberWW = increasedLN;
+			
+			int[] increasedCN = new int[ambiguousAmbiguousElementSizeWW];
+			System.arraycopy(ambiguousAmbiguousElementColumnNumberWW, 0, increasedCN, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementColumnNumberWW = increasedCN;
+		}
+		ambiguousAmbiguousElementQNameWW[ambiguousAmbiguousElementIndexWW] = qName;		
+		ambiguousAmbiguousElementSystemIdWW[ambiguousAmbiguousElementIndexWW] = systemId;
+		ambiguousAmbiguousElementLineNumberWW[ambiguousAmbiguousElementIndexWW] = lineNumber;
+		ambiguousAmbiguousElementColumnNumberWW[ambiguousAmbiguousElementIndexWW] = columnNumber;
+		ambiguousAmbiguousElementDefinitionWW[ambiguousAmbiguousElementIndexWW] = possibleDefinitions;        
+	}
+	public void clearAmbiguousAmbiguousElementContentWarning(){
+        errorTotalCount -= ambiguousAmbiguousElementSizeWW;
+        ambiguousAmbiguousElementSizeWW = 0;
+        ambiguousAmbiguousElementIndexWW = -1;	
+        ambiguousAmbiguousElementQNameWW = null;			
+        ambiguousAmbiguousElementSystemIdWW = null;			
+        ambiguousAmbiguousElementLineNumberWW = null;
+        ambiguousAmbiguousElementColumnNumberWW = null;
+        ambiguousAmbiguousElementDefinitionWW = null;
     }
         
 	public void ambiguousAttributeContentWarning(String qName, 
@@ -1966,8 +2093,9 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
     
-    public  void conflict(MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter[] candidateMessages){
+    public  void conflict(int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter[] candidateMessages){
         errorTotalCount++;
+        this.conflictResolutionId = conflictResolutionId;
         this.candidatesCount = candidatesCount;
         this.commonMessages = commonMessages;
         this.disqualified = disqualified;
@@ -1976,6 +2104,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
     public void clearConflict(){
         errorTotalCount--;
+        conflictResolutionId = RESOLVED;
         candidatesCount = -1;
         commonMessages = null;
         disqualified = null;
@@ -2019,9 +2148,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
             if(excessiveIndex < 0) throw new IllegalArgumentException();
             excessiveIndex--;
             errorTotalCount--;
-        }else if(errorId == AMBIGUOUS_ELEMENT_CONTENT_ERROR){
-            if(ambiguousElementIndexEE < 0) throw new IllegalArgumentException();
-            ambiguousElementIndexEE--;
+        }else if(errorId == UNRESOLVED_AMBIGUOUS_ELEMENT_CONTENT_ERROR){
+            if(unresolvedAmbiguousElementIndexEE < 0) throw new IllegalArgumentException();
+            unresolvedAmbiguousElementIndexEE--;
+            errorTotalCount--;
+        }else if(errorId == UNRESOLVED_UNRESOLVED_ELEMENT_CONTENT_ERROR){
+            if(unresolvedUnresolvedElementIndexEE < 0) throw new IllegalArgumentException();
+            unresolvedUnresolvedElementIndexEE--;
             errorTotalCount--;
         }else if(errorId == AMBIGUOUS_ATTRIBUTE_CONTENT_ERROR){
             if(ambiguousAttributeIndexEE < 0) throw new IllegalArgumentException();
@@ -2128,10 +2261,12 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         clearUnexpectedAmbiguousAttribute();        
         clearMisplacedElement();
         clearExcessiveContent();
-        clearAmbiguousElementContentError();
+        clearUnresolvedAmbiguousElementContentError();
+        clearUnresolvedUnresolvedElementContentError();
         clearAmbiguousAttributeContentError();
         clearAmbiguousCharsContentError();
-        clearAmbiguousElementContentWarning();
+        clearAmbiguousUnresolvedElementContentWarning();
+        clearAmbiguousAmbiguousElementContentWarning();
         clearAmbiguousAttributeContentWarning();
         clearAmbiguousCharsContentWarning();
         clearMissingContent();
@@ -2168,5 +2303,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         conflictResolutionId = RESOLVED;
     }
     
-    
+    public void internalConflict(ConflictMessageReporter conflictMessageReporter){
+	    throw new IllegalStateException();
+    }   
 }

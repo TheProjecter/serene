@@ -153,7 +153,11 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
         errorMessages.add(message);
 	}
 	
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+        throw new IllegalStateException();
+	}
+	
+	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
         throw new IllegalStateException();
 	}
 
@@ -173,7 +177,11 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
 	}
 
 	
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		throw new IllegalStateException();
+	}
+	
+	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 
@@ -312,6 +320,10 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
                         +" Expected "+expected+" occurrences of <"+definition.getQName()+"> at "+definition.getLocation(restrictToFileName)+", found "+found+".";
         errorMessages.add(message);
 	}
+	
+	public void internalConflict(ConflictMessageReporter conflictMessageReporter){
+	    throw new IllegalStateException();
+    }
 	//--------------------------------------------------------------------------
     
     public void contextDependentDatatypeError(SPattern pattern){

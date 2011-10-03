@@ -34,11 +34,11 @@ Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element w
 	Missing content.
 	In the document structure starting at schema.rng:25:20, corresponding to definition <attributes and elements group> at RELAXNG Specification 3.Full Syntax: element with name attribute, expected 1 occurrence corresponding to definition <name attribute with QName value> at RELAXNG Specification 3.Full Syntax: name attribute with QName value, found 0.
 
-file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:36:17 Syntax error. Element <rng:interleave> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: interleave contains errors: 
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:28:21 Syntax error. Element <rng:interleave> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: interleave contains errors: 
 Unexpected element.
 Element <rng:ef> at schema.rng:26:33 corresponding to definition: <element> at RELAXNG Specification 3.Full Syntax: any element is not part of the parent's content model.
 
-file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:36:17 Syntax error. Element <rng:interleave> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: interleave contains errors: 
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:32:21 Syntax error. Element <rng:interleave> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: interleave contains errors: 
 Unexpected element.
 Element <rng:ef> at schema.rng:30:33 corresponding to definition: <element> at RELAXNG Specification 3.Full Syntax: any element is not part of the parent's content model.
 
@@ -55,9 +55,7 @@ In the document structure starting at schema.rng:23:16, corresponding to definit
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:39:14 Syntax warning. Element <rng:start> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: start generates warning: 
 Ambiguous content.
-Element <rng:element> at schema.rng:23:16 cannot be resolved by in context validation, possible definitions: 
-<element> at RELAXNG Specification 3.Full Syntax: element with name class child
-<element> at RELAXNG Specification 3.Full Syntax: element with name attribute.
+Element <rng:element> at schema.rng:23:16, unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:48:17 Syntax error. Element <rng:choice> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: choice in pattern context contains errors: 
 Unexpected character content.
@@ -102,9 +100,7 @@ Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element w
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:68:15 Syntax warning. Element <rng:define> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: define generates warning: 
 Ambiguous content.
-Element <rng:element> at schema.rng:59:29 cannot be resolved by in context validation, possible definitions: 
-<element> at RELAXNG Specification 3.Full Syntax: element with name class child
-<element> at RELAXNG Specification 3.Full Syntax: element with name attribute.
+Element <rng:element> at schema.rng:59:29, unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.
 
 null:-1:-1 Simplification 4.18 error. No correspoding definition was found for element <rng:ref> at schema.rng:47:35.
 

@@ -19,6 +19,8 @@ package serene.validation.handlers.content.impl;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.xml.sax.SAXException;
+
 import serene.validation.handlers.content.AttributeEventHandler;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
@@ -78,7 +80,7 @@ class AttributeParallelHandler extends ValidatingAEH{
         state.add(individualHandler);
     }
     
-    public void handleAttribute(String value){
+    public void handleAttribute(String value) throws SAXException{
         state.handleAttribute(value);
     }
     
@@ -125,7 +127,7 @@ class AttributeParallelHandler extends ValidatingAEH{
     }
     abstract class State{
         abstract void add(ComparableAEH individualHandler);
-        abstract void handleAttribute(String value);
+        abstract void handleAttribute(String value) throws SAXException;
     }
     
     class Common extends State{
@@ -173,17 +175,17 @@ class AttributeParallelHandler extends ValidatingAEH{
 			individualHandlers.add(individualHandler);	
         }
         
-        void handleAttribute(String value){
+        void handleAttribute(String value) throws SAXException{
             uniqueSample.handleAttribute(value);            
         }
     }
-    
+    int getHashCode(){return hashCode();}
     class Conflict extends State{
         void add(ComparableAEH individualHandler){
             individualHandlers.add(individualHandler);
         }
         
-        void handleAttribute(String value){
+        void handleAttribute(String value) throws SAXException{
             for(ComparableAEH individualHandler : individualHandlers){
                 individualHandler.handleAttribute(value);
             }

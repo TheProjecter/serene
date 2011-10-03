@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.xml.sax.SAXException;
+
 import org.relaxng.datatype.ValidationContext;
 
 import serene.validation.schema.active.Rule;
@@ -39,6 +41,7 @@ import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.validation.handlers.stack.StackHandler;
 
@@ -66,7 +69,7 @@ class ReportingListPatternTester extends ListPatternTesterState{
 		valueMatches = new ArrayList<AValue>();
 	}
 	
-	public void handleChars(char[] chars, DataActiveType type){	
+	public void handleChars(char[] chars, DataActiveType type) throws SAXException{	
 		char[][] tokens = spaceHandler.removeSpace(chars);
         if(tokens.length == 0) return;
         stackHandler =  type.getStackHandler(this);
@@ -127,7 +130,7 @@ class ReportingListPatternTester extends ListPatternTesterState{
 	}
 		
 	
-	public void handleString(String value, DataActiveType type){		
+	public void handleString(String value, DataActiveType type) throws SAXException{		
 		char[][] tokens = spaceHandler.removeSpace(value.toCharArray());
         if(tokens.length == 0) return;
         
@@ -241,7 +244,11 @@ class ReportingListPatternTester extends ListPatternTesterState{
 		errorCatcher.illegalContent(context, startQName, startSystemId, startLineNumber, startColumnNumber);
 	}
 		
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		throw new IllegalStateException();
+	}
+
+    public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
@@ -254,7 +261,11 @@ class ReportingListPatternTester extends ListPatternTesterState{
 		errorCatcher.ambiguousCharsContentError(systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		throw new IllegalStateException();
+	}
+	
+	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
@@ -338,5 +349,9 @@ class ReportingListPatternTester extends ListPatternTesterState{
 		hasError = true;
 		errorCatcher.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
 	}
+	
+	public void internalConflict(ConflictMessageReporter conflictMessageReporter){
+	    throw new IllegalStateException();
+    }
 }
 	

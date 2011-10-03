@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.xml.sax.SAXException;
+
 import serene.bind.Queue;
 import serene.bind.AttributeBinder;
 
@@ -41,10 +43,17 @@ import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
 import serene.validation.handlers.conflict.InternalConflictResolver;
+import serene.validation.handlers.conflict.ElementConflictResolver;
+import serene.validation.handlers.conflict.AttributeConflictResolver;
+import serene.validation.handlers.conflict.CharsConflictResolver;
+import serene.validation.handlers.conflict.ListTokenConflictResolver;
+import serene.validation.handlers.conflict.BoundElementConflictResolver;
+import serene.validation.handlers.conflict.BoundAttributeConflictResolver;
 import serene.validation.handlers.conflict.ContextConflictsDescriptor;
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.validation.handlers.structure.StructureHandler;
 
@@ -209,7 +218,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		}
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions){
+	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter){
 			
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -223,7 +232,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 				
-		InternalConflictResolver resolver = conflictHandlerPool.getInternalConflictResolver();		
+		ElementConflictResolver resolver = conflictHandlerPool.getUnresolvedElementConflictResolver(conflictMessageReporter);		
 		resolvers.add(resolver);		
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
@@ -297,7 +306,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
+	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
 			
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -311,7 +320,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 				
-		InternalConflictResolver resolver = conflictHandlerPool.getBoundInternalConflictResolver(targetQueue, targetEntry, candidateQueues);		
+		BoundElementConflictResolver resolver = conflictHandlerPool.getBoundUnresolvedElementConflictResolver(conflictMessageReporter, targetQueue, targetEntry, candidateQueues);		
 		resolvers.add(resolver);		
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
@@ -385,7 +394,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler){
+	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
 		
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -399,7 +408,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 				
-		InternalConflictResolver resolver = conflictHandlerPool.getInternalConflictResolver();
+		ElementConflictResolver resolver = conflictHandlerPool.getAmbiguousElementConflictResolver(conflictMessageReporter);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
@@ -486,8 +495,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		}				
 		temporary.clear();
 	}
-	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
-		
+	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
 		reportCurrentMisplaced = true;
@@ -500,7 +508,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 				
-		InternalConflictResolver resolver = conflictHandlerPool.getBoundInternalConflictResolver(targetQueue, targetEntry, candidateQueues);
+		BoundElementConflictResolver resolver = conflictHandlerPool.getBoundAmbiguousElementConflictResolver(conflictMessageReporter, targetQueue, targetEntry, candidateQueues);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
@@ -623,7 +631,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		InternalConflictResolver resolver = conflictHandlerPool.getInternalConflictResolver();
+		AttributeConflictResolver resolver = conflictHandlerPool.getAttributeConflictResolver();
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
@@ -706,7 +714,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		InternalConflictResolver resolver = conflictHandlerPool.getBoundInternalConflictResolver(validationItemLocator.getNamespaceURI(),
+		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundAttributeConflictResolver(validationItemLocator.getNamespaceURI(),
                                                                                  validationItemLocator.getLocalName(),
                                                                                  validationItemLocator.getQName(),
                                                                                  value, 
@@ -795,7 +803,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		InternalConflictResolver resolver = conflictHandlerPool.getInternalConflictResolver();
+		AttributeConflictResolver resolver = conflictHandlerPool.getAttributeConflictResolver();
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
@@ -878,7 +886,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		InternalConflictResolver resolver = conflictHandlerPool.getBoundInternalConflictResolver(validationItemLocator.getNamespaceURI(),
+		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundAttributeConflictResolver(validationItemLocator.getNamespaceURI(),
                                                                                  validationItemLocator.getLocalName(),
                                                                                  validationItemLocator.getQName(),
                                                                                  value, 
@@ -1006,7 +1014,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 				
-		InternalConflictResolver resolver = conflictHandlerPool.getInternalConflictResolver();
+		CharsConflictResolver resolver = conflictHandlerPool.getCharsConflictResolver();
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
@@ -1094,8 +1102,8 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		
 		temporary.addAll(candidates);
 		candidates.clear();
-				
-		InternalConflictResolver resolver = conflictHandlerPool.getListTokenConflictResolver(token);
+			
+		ListTokenConflictResolver resolver = conflictHandlerPool.getListTokenConflictResolver(token);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
@@ -1198,7 +1206,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		throw new IllegalStateException();
 	}
 
-	public void endValidation(){		
+	public void endValidation() throws SAXException{		
 		reportMissing = true;
 		reportIllegal = true;
 		reportCompositorContentMissing = true;

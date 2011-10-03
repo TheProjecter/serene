@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.handlers.content;
 
+import org.xml.sax.SAXException;
+
 import serene.validation.schema.active.DataActiveType;
 import serene.validation.schema.active.StructuredDataActiveType;
 import serene.validation.schema.active.CharsActiveType;
@@ -25,11 +27,11 @@ import sereneWrite.MessageWriter;
 public interface CharactersEventHandler extends EventHandler{	 
 	MarkupEventHandler getParentHandler(); 
 	
-	void handleChars(char[] chars, DataActiveType context);
-	void handleChars(char[] chars, StructuredDataActiveType context);
-	void handleChars(char[] chars, CharsActiveType context, boolean isComplexContent);
+	void handleChars(char[] chars, DataActiveType context) throws SAXException;
+	void handleChars(char[] chars, StructuredDataActiveType context) throws SAXException;
+	void handleChars(char[] chars, CharsActiveType context, boolean isComplexContent) throws SAXException;
 	
-	void handleString(String value, DataActiveType context);
-	void handleString(String value, StructuredDataActiveType context);
-	void handleString(String value, CharsActiveType context, boolean isComplexContent);
+	void handleString(String value, DataActiveType context) throws SAXException;
+	void handleString(String value, StructuredDataActiveType context) throws SAXException;
+	void handleString(String value, CharsActiveType context, boolean isComplexContent) throws SAXException;
 }

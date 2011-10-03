@@ -37,92 +37,45 @@ import sereneWrite.MessageWriter;
 * counts the qualified candidates and when asked to resolve() theconflict if the
 * number is greater than 1, it reports ambiguous content.   
 */
-public class ListTokenConflictResolver extends InternalConflictResolver{
+public class ListTokenConflictResolver extends CharsConflictResolver{
     char[] token;	
 	public ListTokenConflictResolver(MessageWriter debugWriter){				
 		super(debugWriter);
 	}
 	
-    void createStates(){
-		charsConflict = new TokenConflict();		
-	}
-    
 	void init(char[] token){
 		super.init();
         this.token = token;
 	}
     
-	public void recycle(){        
-		qualified.clear();		
-		state.reset();
-		state = null;
-		systemId = null;
-		lineNumber = -1;
-		columnNumber = -1;
-		qName = null;
-        
-        token = null;
-        
+	public void recycle(){
+		reset();
 		pool.recycle(this);
 	}
+	
+	void reset(){		
+		super.reset();        
+        token = null;
+	}
 
-	public void addCandidate(AElement candidate){
-		throw new IllegalStateException();
-	}
-	
-	public void addCandidate(AAttribute candidate){
-		throw new IllegalStateException();
-	}
-	
-	public void addCandidate(CharsActiveTypeItem candidate){
-		if(state == null)state = charsConflict;
-		state.addCandidate(candidate);
-	}
-	
-	
-	class TokenConflict extends State{
-		List<CharsActiveTypeItem> candidateDefinitions;
-		TokenConflict(){
-			candidateDefinitions = new ArrayList<CharsActiveTypeItem>();
-		}
-		void reset(){
-			candidateDefinitions.clear();
-		}
-		void addCandidate(AElement candidate){
-			throw new IllegalStateException();
-		}
-		void addCandidate(AAttribute candidate){
-			throw new IllegalStateException();
-		}
-		void addCandidate(CharsActiveTypeItem candidate){
-			candidateDefinitions.add(candidate);
-		}
-		void resolve(ErrorCatcher errorCatcher){
-			if(qualified.cardinality() == 0){
-				CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
-				errorCatcher.ambiguousListTokenInContextError(new String(token), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
-			}else if(qualified.cardinality() > 1){ 
-				int j = 0;
-				for(int i = 0; i < candidateDefinitions.size(); i++){			
-					if(!qualified.get(j++)){
-						candidateDefinitions.remove(i);
-						i--;
-					}
-				}
-				CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
-				errorCatcher.ambiguousListTokenInContextWarning(new String(token), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
-			}
-		}	
+	public void resolve(ErrorCatcher errorCatcher){
+        if(qualified.cardinality() == 0){
+            CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
+            errorCatcher.ambiguousListTokenInContextError(new String(token), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+        }else if(qualified.cardinality() > 1){ 
+            int j = 0;
+            for(int i = 0; i < candidateDefinitions.size(); i++){			
+                if(!qualified.get(j++)){
+                    candidateDefinitions.remove(i);
+                    i--;
+                }
+            }
+            CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
+            errorCatcher.ambiguousListTokenInContextWarning(new String(token), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+        }
+    }	
 		
-		public String toString(){
-			return "Chars candidates "+candidateDefinitions;
-		}
-	}
-	public String toString(){
-		return "InternalConflictResolver qualified "+qualified+" STATE "+state.toString();
-	}
-	
-	public String outerToString(){
-		return "InternalConflictResolver qualified "+qualified+" STATE "+state.toString();
-	}
+    public String toString(){
+        return "ListTokenConflictResolver candidates "+candidateDefinitions+" qualified "+qualified;
+    }
 }

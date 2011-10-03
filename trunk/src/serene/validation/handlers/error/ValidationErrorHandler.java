@@ -109,8 +109,12 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.illegalContent(context, startQName, startSystemId, startLineNumber, startColumnNumber);
 	}
 	
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		messageHandler.ambiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		messageHandler.unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
+	
+	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		messageHandler.unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
@@ -122,8 +126,12 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
 	}
 	
 	
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		messageHandler.ambiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		messageHandler.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
+	
+	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		messageHandler.ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
@@ -197,21 +205,41 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
 	}
     
-    public  void conflict(MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){
-		messageHandler.conflict(commonMessages, candidatesCount, disqualified, candidateMessages);
+	public void internalConflict(ConflictMessageReporter conflictMessageReporter) throws SAXException{
+        conflictMessageReporter.report();
+    }
+    
+    public  void conflict(int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){        
+		messageHandler.conflict(conflictResolutionId, commonMessages, candidatesCount, disqualified, candidateMessages);
     }
     
 	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 				throws SAXException{
-        messageHandler.report(contextType, qName, definition, restrictToFileName, locator, errorDispatcher, "");
+        messageHandler.report(contextType, qName, definition, restrictToFileName, locator, errorDispatcher/*, ""*/);
 		messageHandler.clear();
 	}
 	
 	public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator)
 				throws SAXException{
-        messageHandler.report(contextType, qName, null, restrictToFileName, locator, errorDispatcher, "");
+        messageHandler.report(contextType, qName, null, restrictToFileName, locator, errorDispatcher/*, ""*/);
 		messageHandler.clear();
 	}
+
+	public void record(int contextType, String qName, boolean restrictToFileName, Locator locator){
+	    messageHandler.setContextQName(qName);
+        messageHandler.setContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
+        messageHandler.setContextType(contextType);
+        messageHandler.setRestrictToFileName(restrictToFileName);
+	}
+	   
+	
+    public int getConflictResolutionId(){
+        return messageHandler.getConflictResolutionId();
+    }
+
+    public ConflictMessageReporter getConflictMessageReporter(){
+        return messageHandler.getConflictMessageReporter(errorDispatcher);
+    } 
 	
 	public String toString(){
 		//return "ValidationErrorHandler "+hashCode();

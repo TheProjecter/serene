@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.handlers.content.impl;
 
+import org.xml.sax.SAXException;
+
 import org.relaxng.datatype.Datatype;
 
 import serene.validation.schema.active.components.AAttribute;
@@ -60,7 +62,7 @@ class BoundAttributeValidationHandler extends AttributeValidationHandler impleme
 		pool.recycle(this);
 	}
 	
-	public void handleAttribute(String value){
+	public void handleAttribute(String value) throws SAXException{
 		validateValue(value);
 		attributeBinding(value);
 		validateInContext();

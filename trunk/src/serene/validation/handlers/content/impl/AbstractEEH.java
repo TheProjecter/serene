@@ -41,7 +41,7 @@ abstract class AbstractEEH implements ElementEventHandler{
 	}	
     
 	abstract ComparableAEH getAttributeHandler(String qName, String namespace, String name);
-	abstract void validateContext();
+	abstract void validateContext() throws SAXException;
 	abstract void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException;
 	abstract void validateInContext();	
 }

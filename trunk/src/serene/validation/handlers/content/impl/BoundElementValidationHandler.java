@@ -35,6 +35,8 @@ import serene.validation.handlers.content.AttributeEventHandler;
 import serene.validation.handlers.content.CharactersEventHandler;
 import serene.validation.handlers.content.BoundElementHandler;
 
+import serene.validation.handlers.error.ConflictMessageReporter; 
+
 import serene.bind.BindingModel;
 import serene.bind.ValidatorQueuePool;
 import serene.bind.Queue;
@@ -155,7 +157,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		}		
 	}	
 
-	public void handleInnerCharacters(char[] chars){		
+	public void handleInnerCharacters(char[] chars) throws SAXException{		
 		boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
         if(!isIgnorable && element.allowsTextContent()){
             hasComplexContent = true;
@@ -190,7 +192,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 				
 	}
 
-    public void handleLastCharacters(char[] chars){
+    public void handleLastCharacters(char[] chars) throws SAXException{
         boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
         char[] bufferedContent = charContentBuffer.getCharsArray();
         boolean isBufferIgnorable = bufferedContent.length == 0 || spaceHandler.isSpace(bufferedContent);
@@ -247,17 +249,17 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	// Only used when conflict exists and is unsolved and it is possible that
 	// in context validation would lead to the resolution of the conflict and 
 	// the binding can happen.
-	void addChildElement(List<AElement> candidateDefinitions, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
+	void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllElements(candidateDefinitions, targetQueue, targetEntry, candidateQueues);
+		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter, targetQueue, targetEntry, candidateQueues);
 	}
 	void addAttribute(List<AAttribute> candidateDefinitions, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
 		stackHandler.shiftAllAttributes(candidateDefinitions, value, queue, entry, attributeBinders);
 	}
-	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
+	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, targetQueue, targetEntry, candidateQueues);
+		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter, targetQueue, targetEntry, candidateQueues);
 	}
 	void addAttribute(List<AAttribute> candidateDefinitions, ExternalConflictHandler conflictHandler, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);

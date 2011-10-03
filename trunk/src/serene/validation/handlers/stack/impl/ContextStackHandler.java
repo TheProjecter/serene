@@ -36,11 +36,11 @@ import serene.validation.schema.active.components.AAttribute;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 import serene.validation.handlers.content.util.ValidationItemLocator;
+
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.validation.handlers.structure.StructureHandler;
-
-
 
 import sereneWrite.MessageWriter;
 
@@ -108,7 +108,7 @@ public class ContextStackHandler  implements  StackHandler{
 		currentHandler.handleChildShift(chars, expectedOrderHandlingCount);		
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions){
+	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter){
 		throw new IllegalStateException();
 	}	
 	public void shiftAllAttributes(List<AAttribute> attributeDefinitions){
@@ -121,14 +121,14 @@ public class ContextStackHandler  implements  StackHandler{
 		throw new IllegalStateException();
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler){
+	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
 		throw new IllegalStateException();
 	}	
 	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, ExternalConflictHandler conflictHandler){
 		throw new IllegalStateException();
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
+	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
 		throw new IllegalStateException();
 	}
 	
@@ -136,7 +136,7 @@ public class ContextStackHandler  implements  StackHandler{
 		throw new IllegalStateException();
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
+	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
 		throw new IllegalStateException();
 	}
 	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, ExternalConflictHandler conflictHandler, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders){

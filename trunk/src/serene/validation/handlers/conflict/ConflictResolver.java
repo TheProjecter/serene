@@ -16,10 +16,12 @@ limitations under the License.
 
 package serene.validation.handlers.conflict;
 
+import org.xml.sax.SAXException;
+
 import serene.Reusable;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
 public interface ConflictResolver extends Reusable{
-	void resolve(ErrorCatcher errorCatcher);
+	void resolve(ErrorCatcher errorCatcher) throws SAXException;
 }

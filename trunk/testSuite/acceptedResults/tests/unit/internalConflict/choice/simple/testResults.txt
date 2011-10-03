@@ -8,7 +8,7 @@ TESTED DOCUMENT document1.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/document1.xml:23:8 Syntax warning. Element <root> corresponding to definition <element> at schema.rng:23:26 generates warning: 
 Ambiguous content.
-Element <aa> at document1.xml:22:7 cannot be resolved by in context validation, possible definitions: 
+Element <aa> at document1.xml:22:7, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
 <element> at schema.rng:25:26
 <element> at schema.rng:28:14
 <element> at schema.rng:32:14.
@@ -23,6 +23,6 @@ TESTED DOCUMENT document3.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/simple/document3.xml:23:8 Syntax warning. Element <root> corresponding to definition <element> at schema.rng:23:26 generates warning: 
 Ambiguous content.
-Element <foo> at document3.xml:22:8 cannot be resolved by in context validation, possible definitions: 
+Element <foo> at document3.xml:22:8, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
 <element> at schema.rng:28:14
 <element> at schema.rng:32:14.

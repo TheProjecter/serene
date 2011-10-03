@@ -18,6 +18,4 @@ Value of attribute "datatypeLibrary" at schema.rng:2:76 does not match the datat
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/commonAttribute/unresolvedElement/schema.rng:5:1 Syntax warning. Warning at the root of the document: 
 Ambiguous content.
-Element <element> at schema.rng:2:76 cannot be resolved by in context validation, possible definitions: 
-<element> at RELAXNG Specification 3.Full Syntax: element with name class child
-<element> at RELAXNG Specification 3.Full Syntax: element with name attribute.
+Element <element> at schema.rng:2:76, unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.

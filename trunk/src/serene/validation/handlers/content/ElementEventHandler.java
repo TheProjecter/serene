@@ -25,14 +25,14 @@ import sereneWrite.MessageWriter;
 public interface ElementEventHandler extends MarkupEventHandler{
 	ElementEventHandler getParentHandler();	
 	ElementEventHandler handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException;
-	void handleAttributes(Attributes attributes, Locator locator);
+	void handleAttributes(Attributes attributes, Locator locator) throws SAXException;
 	/**
 	* Performes validation of the context and shift for correct and well 
 	* determined occurrences of elements. 
 	*/
 	void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException;
 	 
-	void handleInnerCharacters(char[] chars);
-    void handleLastCharacters(char[] chars);
+	void handleInnerCharacters(char[] chars) throws SAXException;
+    void handleLastCharacters(char[] chars) throws SAXException;
     
 }

@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.xml.sax.SAXException;
+
 import serene.validation.schema.active.Rule;
 
 import serene.validation.schema.active.components.APattern;
@@ -47,6 +49,7 @@ import serene.validation.handlers.conflict.StackConflictsHandler;
 import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
 
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
@@ -699,9 +702,14 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		}		
 	}
 	
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		// TODO are you sure it is possible?
-		errorCatcher.ambiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		errorCatcher.unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
+	
+	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		// TODO are you sure it is possible?
+		errorCatcher.unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
@@ -715,9 +723,14 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	}
 
 	
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		// TODO are you sure it is possible?
-		errorCatcher.ambiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		errorCatcher.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
+	
+	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		// TODO are you sure it is possible?
+		errorCatcher.ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
@@ -797,6 +810,10 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 			errorCatcher.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
 			parent.reportedCompositorContentMissing();
 		}
+	}
+	
+	public void internalConflict(ConflictMessageReporter conflictMessageReporter) throws SAXException{
+	    errorCatcher.internalConflict(conflictMessageReporter);
 	}
 	//--------------------------------------------------------------------------	
 	

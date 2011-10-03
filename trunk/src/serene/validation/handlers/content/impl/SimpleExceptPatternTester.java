@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.xml.sax.SAXException;
+
 import org.relaxng.datatype.ValidationContext;
 
 import serene.validation.schema.active.Rule;
@@ -40,6 +42,7 @@ import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.validation.handlers.stack.StackHandler;
 
@@ -61,7 +64,7 @@ class SimpleExceptPatternTester extends ExceptPatternTesterState implements Erro
 		throw new IllegalStateException();
 	}
 	
-	public void handleChars(char[] chars, StructuredDataActiveType type){
+	public void handleChars(char[] chars, StructuredDataActiveType type) throws SAXException{
 		charsItemMatches.clear();
 		dataMatches.clear();
 		valueMatches.clear();
@@ -114,7 +117,7 @@ class SimpleExceptPatternTester extends ExceptPatternTesterState implements Erro
 	}
 		
 		
-	public void handleString(String value, StructuredDataActiveType type){
+	public void handleString(String value, StructuredDataActiveType type) throws SAXException{
 		charsItemMatches.clear();
 		dataMatches.clear();
 		valueMatches.clear();
@@ -213,7 +216,11 @@ class SimpleExceptPatternTester extends ExceptPatternTesterState implements Erro
 	}
 	
 	
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		throw new IllegalStateException();
+	}
+	
+	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
@@ -225,7 +232,11 @@ class SimpleExceptPatternTester extends ExceptPatternTesterState implements Erro
 		hasError = true;
 	}
 	
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		throw new IllegalStateException();
+	}
+	
+	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
@@ -296,4 +307,7 @@ class SimpleExceptPatternTester extends ExceptPatternTesterState implements Erro
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		hasError = true;
 	}
+	public void internalConflict(ConflictMessageReporter conflictMessageReporter){
+	    throw new IllegalStateException();
+    }
 }

@@ -19,6 +19,8 @@ package serene.validation.handlers.content.impl;
 import java.util.Arrays;
 import java.util.List;
 
+import org.xml.sax.SAXException;
+
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.CharsActiveType;
 import serene.validation.schema.active.components.APattern;
@@ -41,7 +43,9 @@ import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.error.ContextErrorHandlerManager;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ContextErrorHandler;
-
+import serene.validation.handlers.error.ConflictMessageReporter;
+   
+	
 import serene.validation.handlers.content.CharactersEventHandler;
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
@@ -86,7 +90,7 @@ class AttributeValidationHandler extends AttributeDefinitionHandler implements E
         return parent;
     }
     
-	void validateValue(String value){
+	void validateValue(String value) throws SAXException{
 		if(!attribute.allowsChars()){
 			unexpectedAttributeValue(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), attribute);
 			return;
@@ -205,11 +209,18 @@ class AttributeValidationHandler extends AttributeDefinitionHandler implements E
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
     
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+        contextErrorHandler.setCandidate(oldIsCandidate);
+	}
+	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	    ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
+        boolean oldIsCandidate = contextErrorHandler.isCandidate();
+        contextErrorHandler.setCandidate(false);
+		contextErrorHandler.unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 
@@ -229,11 +240,19 @@ class AttributeValidationHandler extends AttributeDefinitionHandler implements E
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+        contextErrorHandler.setCandidate(oldIsCandidate);
+	}
+	
+	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+        ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
+        boolean oldIsCandidate = contextErrorHandler.isCandidate();
+        contextErrorHandler.setCandidate(false);
+		contextErrorHandler.ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 
@@ -388,6 +407,10 @@ class AttributeValidationHandler extends AttributeDefinitionHandler implements E
         contextErrorHandler.setCandidate(false);
 		contextErrorHandler.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
         contextErrorHandler.setCandidate(oldIsCandidate);
+	}
+
+	public void internalConflict(ConflictMessageReporter conflictMessageReporter){
+	    throw new IllegalStateException();
 	}	
 	//--------------------------------------------------------------------------
 

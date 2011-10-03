@@ -80,7 +80,7 @@ class ElementCommonHandler extends UndeterminedEEH{
 		return next;
 	}
 	
-	public void handleAttributes(Attributes attributes, Locator locator){		
+	public void handleAttributes(Attributes attributes, Locator locator) throws SAXException{		
 		uniqueHandler.handleAttributes(attributes, locator);
 	}
 	
@@ -99,7 +99,7 @@ class ElementCommonHandler extends UndeterminedEEH{
 		uniqueHandler.validateInContext();
 	}
 	// called from a larger conflict( another ElementParallelHandler/ElementCommonHandler)
-	void validateContext(){
+	void validateContext() throws SAXException{
 		uniqueHandler.validateContext();
 	}
 	// called from a larger conflict( another ElementParallelHandler/ElementCommonHandler)
@@ -111,10 +111,10 @@ class ElementCommonHandler extends UndeterminedEEH{
 		uniqueHandler.validateInContext();		
 	}
 	
-	public void handleInnerCharacters(char[] chars){		
+	public void handleInnerCharacters(char[] chars) throws SAXException{		
 		uniqueHandler.handleInnerCharacters(chars);
 	}
-	public void handleLastCharacters(char[] chars){		
+	public void handleLastCharacters(char[] chars) throws SAXException{		
 		uniqueHandler.handleLastCharacters(chars);
 	}
 	

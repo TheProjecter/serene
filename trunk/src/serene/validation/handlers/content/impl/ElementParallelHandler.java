@@ -98,7 +98,7 @@ class ElementParallelHandler extends CandidatesEEH{
 	}
 	
 	// called from the ValidatorHandlerImpl
-	public void handleAttributes(Attributes attributes, Locator locator){
+	public void handleAttributes(Attributes attributes, Locator locator) throws SAXException{
         state.handleAttributes(attributes, locator);				
 	}
 	
@@ -116,7 +116,7 @@ class ElementParallelHandler extends CandidatesEEH{
 	}	
 	
 	// called from a larger conflict( another ElementParallelHandler/ElementCommonHandler)
-	void validateContext(){
+	void validateContext() throws SAXException{
 		state.validateContext();
 	}
 	// called from a larger conflict( another ElementParallelHandler/ElementCommonHandler)
@@ -127,10 +127,10 @@ class ElementParallelHandler extends CandidatesEEH{
 	void validateInContext(){
 		state.validateInContext();
 	}		
-	public void handleInnerCharacters(char[] chars){	
+	public void handleInnerCharacters(char[] chars) throws SAXException{	
 		state.handleInnerCharacters(chars);
 	}
-    public void handleLastCharacters(char[] chars){	
+    public void handleLastCharacters(char[] chars) throws SAXException{	
 		state.handleLastCharacters(chars);
 	}
 
@@ -189,14 +189,14 @@ class ElementParallelHandler extends CandidatesEEH{
 	abstract class State{
 		abstract void add(ComparableEEH individualHandler);
 		abstract ComparableEEH handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance, boolean restrictToFileName) throws SAXException;	
-		abstract void handleAttributes(Attributes attributes, Locator locator);
+		abstract void handleAttributes(Attributes attributes, Locator locator) throws SAXException;
         abstract ComparableAEH getAttributeHandler(String qName, String namespace, String name);
 		abstract void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException;
-		abstract void validateContext();	
+		abstract void validateContext() throws SAXException;	
 		abstract void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException;
 		abstract void validateInContext();
-		abstract void handleInnerCharacters(char[] chars);
-        abstract void handleLastCharacters(char[] chars);
+		abstract void handleInnerCharacters(char[] chars) throws SAXException;
+        abstract void handleLastCharacters(char[] chars) throws SAXException;
 	}
 	
 	class Common extends State{
@@ -237,7 +237,7 @@ class ElementParallelHandler extends CandidatesEEH{
 			next.add(uniqueSample.handleStartElement(qName, namespace, name, restrictToFileName));
 			return next;
 		}
-		void handleAttributes(Attributes attributes, Locator locator){
+		void handleAttributes(Attributes attributes, Locator locator) throws SAXException{
             uniqueSample.handleAttributes(attributes, locator);
 		}
 		
@@ -255,7 +255,7 @@ class ElementParallelHandler extends CandidatesEEH{
 			validateInContext();
 		}
 		
-		void validateContext(){			
+		void validateContext() throws SAXException{			
 			uniqueSample.validateContext();
 		}
 				
@@ -286,10 +286,10 @@ class ElementParallelHandler extends CandidatesEEH{
 				}
 			}
 		}
-		void handleInnerCharacters(char[] chars){
+		void handleInnerCharacters(char[] chars) throws SAXException{
 			uniqueSample.handleInnerCharacters(chars);
 		}
-		void handleLastCharacters(char[] chars){
+		void handleLastCharacters(char[] chars) throws SAXException{
 			uniqueSample.handleLastCharacters(chars);
 		}
 		
@@ -301,7 +301,7 @@ class ElementParallelHandler extends CandidatesEEH{
 	AttributeParallelHandler getAttributeParallelHandler() {
         return pool.getAttributeParallelHandler(this, candidatesConflictHandler, candidatesConflictErrorHandler);
     }
-    
+    int getHashCode(){return hashCode();}
 	class Conflict extends State{
 		void add(ComparableEEH individualHandler){					
 			individualHandlers.add(individualHandler);	
@@ -313,15 +313,16 @@ class ElementParallelHandler extends CandidatesEEH{
 			}	
 			return next;
 		}
-		void handleAttributes(Attributes attributes, Locator locator){
+		void handleAttributes(Attributes attributes, Locator locator) throws SAXException{
             for(int i = 0; i < attributes.getLength(); i++){
                 String attributeQName = attributes.getQName(i);
                 String attributeNamespace = attributes.getURI(i); 
                 String attributeName = attributes.getLocalName(i);
                 String attributeValue = attributes.getValue(i);
+                
                 validationItemLocator.newAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);			           
-                AttributeParallelHandler aph = getAttributeHandler(attributeQName, attributeNamespace, attributeName);
-                aph.handleAttribute(attributeValue);  
+                AttributeParallelHandler aph = getAttributeHandler(attributeQName, attributeNamespace, attributeName);                
+                aph.handleAttribute(attributeValue);
                 aph.recycle();
                 validationItemLocator.closeAttribute();            
             }	
@@ -331,7 +332,7 @@ class ElementParallelHandler extends CandidatesEEH{
         //  - ElementParallelHandler state Conflict,
         //  - BoundElementParallelHandler state BoundConflict
         // to build up the AttributeParallelHandler.
-        AttributeParallelHandler getAttributeHandler(String qName, String namespace, String name){
+        AttributeParallelHandler getAttributeHandler(String qName, String namespace, String name){            
             AttributeParallelHandler aph = getAttributeParallelHandler();            
             for(ComparableEEH individualHandler : individualHandlers){
                 aph.add(individualHandler.getAttributeHandler(qName, namespace, name));
@@ -345,7 +346,7 @@ class ElementParallelHandler extends CandidatesEEH{
 			validateInContext();
 		}
 		
-		void validateContext(){
+		void validateContext() throws SAXException{
 			for(int i = 0; i < individualHandlers.size(); i++){
 				//if(!candidatesConflictHandler.isDisqualified(i))
                 individualHandlers.get(i).validateContext();				
@@ -363,13 +364,13 @@ class ElementParallelHandler extends CandidatesEEH{
                 individualHandlers.get(i).validateInContext();
 			}
 		}	
-		void handleInnerCharacters(char[] chars){
+		void handleInnerCharacters(char[] chars) throws SAXException{
 			for(int i = 0; i < individualHandlers.size(); i++){				
 				//if(!candidatesConflictHandler.isDisqualified(i)) 
                 individualHandlers.get(i).handleInnerCharacters(chars);
 			}
 		}
-		void handleLastCharacters(char[] chars){
+		void handleLastCharacters(char[] chars) throws SAXException{
 			for(int i = 0; i < individualHandlers.size(); i++){				
 				//if(!candidatesConflictHandler.isDisqualified(i)) 
                 individualHandlers.get(i).handleLastCharacters(chars);

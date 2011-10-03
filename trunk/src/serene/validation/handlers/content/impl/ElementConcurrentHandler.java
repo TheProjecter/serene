@@ -37,6 +37,8 @@ import serene.validation.handlers.error.ContextErrorHandlerManager;
 import serene.validation.handlers.error.ExternalConflictErrorHandler;
 import serene.validation.handlers.error.CandidatesConflictErrorHandler;
 import serene.validation.handlers.error.ContextErrorHandler;
+import serene.validation.handlers.error.MessageReporter;
+import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
@@ -104,18 +106,22 @@ class ElementConcurrentHandler extends CandidatesEEH{
 		return next;
 	}
 	
-	public void handleAttributes(Attributes attributes, Locator locator){
+	public void handleAttributes(Attributes attributes, Locator locator) throws SAXException{
 		for(int i = 0; i < attributes.getLength(); i++){
 			String attributeQName = attributes.getQName(i);
 			String attributeNamespace = attributes.getURI(i); 
 			String attributeName = attributes.getLocalName(i);
 			String attributeValue = attributes.getValue(i);
-			validationItemLocator.newAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);			           
+			
+			validationItemLocator.newAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);
+			
             AttributeParallelHandler aph = getAttributeHandler(attributeQName, attributeNamespace, attributeName);
             aph.handleAttribute(attributeValue);
+            
             localCandidatesConflictErrorHandler.endValidationStage();
-            aph.recycle();
-			validationItemLocator.closeAttribute();            
+                        
+			validationItemLocator.closeAttribute();
+			aph.recycle();            
 		}		
 	}	
 	    
@@ -134,7 +140,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
 		validateInContext();		
 	}	
 	
-	void validateContext(){        
+	void validateContext() throws SAXException{        
 		int candidatesCount = candidates.size();
 		for(int i = 0; i < candidatesCount; i++){
 			//if(!candidatesConflictHandler.isDisqualified(i))
@@ -142,6 +148,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
 		}        
         localCandidatesConflictErrorHandler.endValidationStage();
 	}		
+	
 	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
         for(int i = 0; i < candidates.size(); i++){
 			//if(!candidatesConflictHandler.isDisqualified(i))
@@ -150,31 +157,53 @@ class ElementConcurrentHandler extends CandidatesEEH{
         localCandidatesConflictErrorHandler.endValidationStage(); 
         localCandidatesConflictErrorHandler.endContextValidation();
         
-        boolean mustReport = localCandidatesConflictErrorHandler.mustReport();        
+        boolean mustReport = localCandidatesConflictErrorHandler.mustReport();
         if(mustReport){
             if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
             localCandidatesConflictErrorHandler.handle(ContextErrorHandler.ELEMENT, validationItemLocator.getQName(), restrictToFileName, locator, contextErrorHandler[contextErrorHandlerIndex]);
         }
 	}
-	void validateInContext(){
-		int candidatesCount = candidates.size();		
-		int qualifiedCount = candidatesCount - candidatesConflictHandler.getDisqualifiedCount();		
-		if(qualifiedCount == 0){						
+	
+	
+	void validateInContext(){				
+	    int conflictResolutionIndex = contextErrorHandler[contextErrorHandlerIndex] == null ? getConflictResolutionId() : contextErrorHandler[contextErrorHandlerIndex].getConflictResolutionId();
+	    // TODO !!! PROBLEM
+	    // If the resolved count is greater then 1 and there have been no common 
+	    // errors the conflict resolution state is AMBIGUOUS, but the 
+	    // conflictResolutionIndex delivered by the expression above is RESOLVED.
+	    
+		if(conflictResolutionIndex == MessageReporter.UNRESOLVED){						
 			// Shift all with errors, hope the parent context disqualifies all but 1
 			// Why shift, they all have errors already??? 
 			// Maybe the parent actually expects one of them and not shifting 
 			// results in a fake error.			
-			parent.addChildElement(candidateDefinitions);
-		}else if(qualifiedCount == 1){
+			parent.addChildElement(candidateDefinitions, contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter());
+		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
 			AElement qElement = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
 			parent.addChildElement(qElement);
-		}else if(qualifiedCount > 1){
+		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
 			// TODO Maybe a warning
-			// Shift all without errors, hope the parent conflict disqualifies all but one			
-			parent.addChildElement(candidateDefinitions, candidatesConflictHandler);
+			// Shift all without errors, hope the parent conflict disqualifies all but one
+			ConflictMessageReporter cmr = null;
+			if(contextErrorHandler[contextErrorHandlerIndex] != null) cmr = contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();			
+			parent.addChildElement(candidateDefinitions, candidatesConflictHandler, cmr);
 		}
 	}	
-	public void handleInnerCharacters(char[] chars){		
+	
+	int getConflictResolutionId(){
+		int candidatesCount = candidates.size();		
+		int qualifiedCount = candidatesCount - candidatesConflictHandler.getDisqualifiedCount();		
+		if(qualifiedCount == 0){						
+		    return MessageReporter.UNRESOLVED;
+		}else if(qualifiedCount == 1){
+			return MessageReporter.RESOLVED;
+		}else if(qualifiedCount > 1){
+			return MessageReporter.AMBIGUOUS;
+		}
+		throw new IllegalStateException();
+	}
+	
+	public void handleInnerCharacters(char[] chars) throws SAXException{		
 		int candidatesCount = candidates.size();
 		for(int i = 0; i < candidatesCount; i++){
 			//if(!candidatesConflictHandler.isDisqualified(i)) 
@@ -182,7 +211,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
 		}
         localCandidatesConflictErrorHandler.endValidationStage();
 	}
-    public void handleLastCharacters(char[] chars){		
+    public void handleLastCharacters(char[] chars) throws SAXException{		
 		int candidatesCount = candidates.size();
 		for(int i = 0; i < candidatesCount; i++){
 			//if(!candidatesConflictHandler.isDisqualified(i)) 
@@ -211,7 +240,8 @@ class ElementConcurrentHandler extends CandidatesEEH{
 		return false;
 	}
 	boolean functionalEquivalent(ElementConcurrentHandler other){		
-		return other.functionalEquivalent(candidates);
+		//return other.functionalEquivalent(candidates);
+        return false;		
 	}
 	private boolean functionalEquivalent(List<ElementValidationHandler> otherCandidates){
 		int candidatesCount = candidates.size();

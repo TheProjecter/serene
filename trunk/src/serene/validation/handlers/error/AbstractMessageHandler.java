@@ -42,18 +42,8 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import sereneWrite.MessageWriter;
 
-public class AbstractMessageHandler  implements MessageReporter{	
-    MessageReporter parent;// the handler that is supposed to report before this when delayed in a conflict situation
+public abstract class AbstractMessageHandler  extends AbstractMessageReporter{	
     
-    int contextType;
-	String qName;
-	AElement definition;
-	String systemId;
-	int lineNumber;
-	int columnNumber;
-    
-    int conflictResolutionId;
-
 	// {1}
 	String undeterminedQName;
 	String undeterminedCandidateMessages;
@@ -162,14 +152,23 @@ public class AbstractMessageHandler  implements MessageReporter{
 	int illegalIndex;
 	int illegalSize;
 	
-	// {12}
-	String[] ambiguousElementQNameEE;
-	String[] ambiguousElementSystemIdEE;
-	int[] ambiguousElementLineNumberEE;
-	int[] ambiguousElementColumnNumberEE;
-	AElement[][] ambiguousElementDefinitionEE;
-	int ambiguousElementIndexEE;
-	int ambiguousElementSizeEE;
+	// {12 A}
+	String[] unresolvedAmbiguousElementQNameEE;
+	String[] unresolvedAmbiguousElementSystemIdEE;
+	int[] unresolvedAmbiguousElementLineNumberEE;
+	int[] unresolvedAmbiguousElementColumnNumberEE;
+	AElement[][] unresolvedAmbiguousElementDefinitionEE;
+	int unresolvedAmbiguousElementIndexEE;
+	int unresolvedAmbiguousElementSizeEE;
+	
+	// {12 U}
+	String[] unresolvedUnresolvedElementQNameEE;
+	String[] unresolvedUnresolvedElementSystemIdEE;
+	int[] unresolvedUnresolvedElementLineNumberEE;
+	int[] unresolvedUnresolvedElementColumnNumberEE;
+	AElement[][] unresolvedUnresolvedElementDefinitionEE;
+	int unresolvedUnresolvedElementIndexEE;
+	int unresolvedUnresolvedElementSizeEE;
 
 	// {13}
 	String[] ambiguousAttributeQNameEE;
@@ -189,15 +188,26 @@ public class AbstractMessageHandler  implements MessageReporter{
 	int ambiguousCharsSizeEE;
 	
 	
-	// {w1}
-	String[] ambiguousElementQNameWW;
-	String[] ambiguousElementSystemIdWW;
-	int[] ambiguousElementLineNumberWW;
-	int[] ambiguousElementColumnNumberWW;
-	AElement[][] ambiguousElementDefinitionWW;
-	int ambiguousElementIndexWW;
-	int ambiguousElementSizeWW;
-
+	// {w1 U}
+	String[] ambiguousUnresolvedElementQNameWW;
+	String[] ambiguousUnresolvedElementSystemIdWW;
+	int[] ambiguousUnresolvedElementLineNumberWW;
+	int[] ambiguousUnresolvedElementColumnNumberWW;
+	AElement[][] ambiguousUnresolvedElementDefinitionWW;
+	int ambiguousUnresolvedElementIndexWW;
+	int ambiguousUnresolvedElementSizeWW;
+	
+	// {w1 A}
+	String[] ambiguousAmbiguousElementQNameWW;
+	String[] ambiguousAmbiguousElementSystemIdWW;
+	int[] ambiguousAmbiguousElementLineNumberWW;
+	int[] ambiguousAmbiguousElementColumnNumberWW;
+	AElement[][] ambiguousAmbiguousElementDefinitionWW;
+	int ambiguousAmbiguousElementIndexWW;
+	int ambiguousAmbiguousElementSizeWW;
+	
+	
+	
 	// {w2}
 	String[] ambiguousAttributeQNameWW;
 	String[] ambiguousAttributeSystemIdWW;
@@ -384,11 +394,9 @@ public class AbstractMessageHandler  implements MessageReporter{
     
     
     int errorTotalCount;
-	
-	MessageWriter debugWriter;
-	
+		
 	public AbstractMessageHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+		super(debugWriter);
 				
 		unknownElementSize = 0;
 		unexpectedElementSize = 0;
@@ -400,11 +408,13 @@ public class AbstractMessageHandler  implements MessageReporter{
 		unknownAttributeSize = 0;		
 		unexpectedAttributeSize = 0;
 		unexpectedAmbiguousAttributeSize = 0;
-		ambiguousElementSizeEE = 0;
+		unresolvedAmbiguousElementSizeEE = 0;		
+		unresolvedUnresolvedElementSizeEE = 0;
 		ambiguousAttributeSizeEE = 0;
 		ambiguousCharsSizeEE = 0;
 		
-		ambiguousElementSizeWW = 0;
+		ambiguousUnresolvedElementSizeWW = 0;
+		ambiguousAmbiguousElementSizeWW = 0;
 		ambiguousAttributeSizeWW = 0;
 		ambiguousCharsSizeWW = 0;
 		
@@ -428,78 +438,50 @@ public class AbstractMessageHandler  implements MessageReporter{
 		
 		missingCompositorContentSize = 0;
         
-        errorTotalCount = 0;        
-	}	
-
-
-    public void setConflictResolutionId(int conflictResolutionId){
-        this.conflictResolutionId = conflictResolutionId;
-    }
-	public void setContextType(int contextType){
-        this.contextType = contextType;
-    }    
+        errorTotalCount = 0;   
+	}  
     
-	public void setContextQName(String qName){
-		this.qName = qName;
-	}	
-	public void setContextLocation(String systemId, int lineNumber, int columnNumber){
-		this.systemId = systemId;
-		this.lineNumber = lineNumber;
-		this.columnNumber = columnNumber;		
-	}
-	public void setContextDefinition(AElement definition){
-		this.definition = definition;
-	}
-    
-    
-    public void setParent(MessageReporter parent){
-        if(this.parent != null) throw new IllegalStateException();
-        this.parent = parent;
-    }
-    
-    
-    
-    public void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    public void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
         this.contextType = contextType;
         this.qName = qName;
         this.definition = definition;
         
         if(parent != null){
-            // System.out.println("REPORT PARENT 1 "+qName);
-            parent.report(restrictToFileName, locator, errorDispatcher, prefix);//parent should have been located, else illegal state
+            parent.report(restrictToFileName, locator, errorDispatcher, "");//parent should have been located, else illegal state
         }
                 
         //do the conflict
-        if(disqualified != null){            
-            handleConflict(contextType, qName, restrictToFileName, locator, errorDispatcher, prefix);
-            
+        if(disqualified != null){
+            handleConflict(contextType, qName, restrictToFileName, locator, errorDispatcher, "");            
             // report common as any other errors            
             if(commonMessages != null){
-                // System.out.println("REPORT COMMON 1 "+qName+" "+commonMessages.hashCode());
-                commonMessages.report(restrictToFileName, locator, errorDispatcher, prefix);                
+                commonMessages.report(restrictToFileName, locator, errorDispatcher, "");
             }
             
             return;
         }
         
-        // System.out.println(hashCode()+" LOCAL MESSAGE 1 "+getValidationErrorMessage(""));
-        
-        String errorMessage = getValidationErrorMessage(prefix, restrictToFileName);
+        String errorMessage = getValidationErrorMessage("", restrictToFileName);
         if(errorMessage != null){
             errorMessage = errorMessage.trim();
-            if(!errorMessage.equals("")) errorDispatcher.error(new SAXParseException(errorMessage, locator));
+            if(!errorMessage.equals("")){
+                if(locator != null) errorDispatcher.error(new SAXParseException(errorMessage, locator));
+                else errorDispatcher.error(new SAXParseException(errorMessage, publicId, systemId, lineNumber, columnNumber));
+            }
         }
         
-        String warningMessage = getValidationWarningMessage(prefix, restrictToFileName);
+        String warningMessage = getValidationWarningMessage("", restrictToFileName);
         if(warningMessage != null){
             warningMessage = warningMessage.trim();
-            if(!warningMessage.equals("")) errorDispatcher.warning(new SAXParseException(warningMessage, locator));
+            if(!warningMessage.equals("")){
+                if(locator != null) errorDispatcher.warning(new SAXParseException(warningMessage, locator));
+                else errorDispatcher.warning(new SAXParseException(warningMessage, publicId, systemId, lineNumber, columnNumber));
+            }
         }
     }
     
     private void handleConflict(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         int qualified = candidatesCount - disqualified.cardinality();
-        
         if(qualified == 0){
             reportUnresolved(contextType, qName, restrictToFileName, locator, errorDispatcher, prefix);
         }else if(qualified == 1){
@@ -514,34 +496,32 @@ public class AbstractMessageHandler  implements MessageReporter{
         for(int i = 0; i < candidatesCount; i++){
             message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
         }
-        if(!message.equals(""))errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, locator));
-        else throw new IllegalStateException();
+        if(!message.equals("")){
+            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, locator));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, publicId, systemId, lineNumber, columnNumber));
+        }else throw new IllegalStateException();
     }
     
     private void reportResolved(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
-        //System.out.println(hashCode()+" REPORT RESOLVED 1 "+disqualified);
-        int qualifiedIndex = disqualified.nextClearBit(0);        
-        //System.out.println("qualifiedIndex "+qualifiedIndex);
+        int qualifiedIndex = disqualified.nextClearBit(0);
         if(candidateMessages != null && candidateMessages[qualifiedIndex] != null) candidateMessages[qualifiedIndex].report(restrictToFileName, locator, errorDispatcher, prefix);        
     }
     
     private void reportAmbiguous(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         String message = ""; 
         for(int i = 0; i < candidatesCount; i++){
-            //System.out.println(disqualified+" "+candidateMessages);
             if(!disqualified.get(i) && candidateMessages != null && candidateMessages[i] != null){
                  message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);            
             }
         }
         if(!message.equals("")){            
-            errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
+            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, publicId, systemId, lineNumber, columnNumber));
         }        
     }
         
     public void report(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
-        //System.out.println(hashCode()+" REPORT 2 "+qName+"  "+getErrorMessageCount());                        
         if(parent != null){
-            //System.out.println("REPORT PARENT 2 "+qName);
             parent.report(restrictToFileName, locator, errorDispatcher, prefix);//parent should have been located, else illegal state            
         }
         
@@ -551,24 +531,27 @@ public class AbstractMessageHandler  implements MessageReporter{
             
             // report common as any other errors            
             if(commonMessages != null){
-                //System.out.println("REPORT COMMON 2 "+qName);
                 commonMessages.report(restrictToFileName, locator, errorDispatcher, prefix);                
             }
             return;
         }
-        
-        //System.out.println(hashCode()+" LOCAL MESSAGE 2 "+getValidationErrorMessage(""));
-        
+                
         String errorMessage = getValidationErrorMessage(prefix, restrictToFileName);
         if(errorMessage != null){
             errorMessage = errorMessage.trim();
-            if(!errorMessage.equals("")) errorDispatcher.error(new SAXParseException(errorMessage, locator));
+            if(!errorMessage.equals("")){
+                if(locator != null) errorDispatcher.error(new SAXParseException(errorMessage, locator));
+                else errorDispatcher.error(new SAXParseException(errorMessage, publicId, systemId, lineNumber, columnNumber));
+            }
         }
         
         String warningMessage = getValidationWarningMessage(prefix, restrictToFileName);
         if(warningMessage != null){
             warningMessage = warningMessage.trim();
-            if(!warningMessage.equals("")) errorDispatcher.warning(new SAXParseException(warningMessage, locator));
+            if(!warningMessage.equals("")){
+                if(locator != null) errorDispatcher.warning(new SAXParseException(warningMessage, locator));
+                else errorDispatcher.warning(new SAXParseException(warningMessage, publicId, systemId, lineNumber, columnNumber));
+            }
         }
     }
     
@@ -589,13 +572,14 @@ public class AbstractMessageHandler  implements MessageReporter{
         for(int i = 0; i < candidatesCount; i++){
             message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
         }
-        if(!message.equals(""))errorDispatcher.error(new SAXParseException(prefix+"Syntax error.Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, locator));
+        if(!message.equals("")){
+            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error.Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, locator));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error.Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, publicId, systemId, lineNumber, columnNumber));
+        }
     }
     
     private void reportResolved(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
-        //System.out.println(hashCode()+" REPORT RESOLVED 2 "+disqualified);
         int qualifiedIndex = disqualified.nextClearBit(0);
-        //System.out.println("qualifiedIndex "+qualifiedIndex);
         if(candidateMessages != null && candidateMessages[qualifiedIndex] != null) candidateMessages[qualifiedIndex].report(restrictToFileName, locator, errorDispatcher, prefix);
     }
     
@@ -606,7 +590,8 @@ public class AbstractMessageHandler  implements MessageReporter{
         }
         message = message.trim();
         if(!message.equals("")){
-            errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
+            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, publicId, systemId, lineNumber, columnNumber));
         }
     }
     
@@ -814,16 +799,25 @@ public class AbstractMessageHandler  implements MessageReporter{
 							+"\n"+prefix+"The document structure starting with <"+illegalQName[i] +"> at "+getLocation(restrictToFileName, illegalStartSystemId[i])+":"+illegalStartLineNumber[i]+":"+illegalStartColumnNumber[i]+" does not match schema definition <"+illegalContext[i].getQName()+"> at "+illegalContext[i].getLocation(restrictToFileName)+".";
 			}			
 		}
-		// {12}
-		if(ambiguousElementQNameEE != null){
-			for(int i = 0; i <= ambiguousElementIndexEE; i++){
-				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Element <"+ambiguousElementQNameEE[i] + "> at "+getLocation(restrictToFileName, ambiguousElementSystemIdEE[i])+":"+ambiguousElementLineNumberEE[i]+":"+ambiguousElementColumnNumberEE[i]
-						+" cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: ";
-				for(int j = 0; j < ambiguousElementDefinitionEE[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousElementDefinitionEE[i][j].getQName()+"> at "+ambiguousElementDefinitionEE[i][j].getLocation(restrictToFileName);
+		// {12 A}
+		if(unresolvedAmbiguousElementQNameEE != null){
+			for(int i = 0; i <= unresolvedAmbiguousElementIndexEE; i++){
+				message += "\n"+prefix+"Unresolved content."
+						+"\n"+prefix+"Element <"+unresolvedAmbiguousElementQNameEE[i] + "> at "+getLocation(restrictToFileName, unresolvedAmbiguousElementSystemIdEE[i])+":"+unresolvedAmbiguousElementLineNumberEE[i]+":"+unresolvedAmbiguousElementColumnNumberEE[i]
+						+", ambiguous after content validation, cannot be resolved by in context validation either, all candidates resulted in errors. Possible definitions: ";
+				for(int j = 0; j < unresolvedAmbiguousElementDefinitionEE[i].length; j++){
+					message += "\n"+prefix+"<"+unresolvedAmbiguousElementDefinitionEE[i][j].getQName()+"> at "+unresolvedAmbiguousElementDefinitionEE[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
+			}
+		}
+		// {12 U}
+		if(unresolvedUnresolvedElementQNameEE != null){
+			for(int i = 0; i <= unresolvedUnresolvedElementIndexEE; i++){
+				message += "\n"+prefix+"Unresolved content."
+						+"\n"+prefix+"Element <"+unresolvedUnresolvedElementQNameEE[i] + "> at "+getLocation(restrictToFileName, unresolvedUnresolvedElementSystemIdEE[i])+":"+unresolvedUnresolvedElementLineNumberEE[i]+":"+unresolvedUnresolvedElementColumnNumberEE[i]
+						+", unresolved by content validation, cannot be resolved by in context validation either, all candidates resulted in errors.";
+				
 			}
 		}
 		// {13}
@@ -1095,18 +1089,27 @@ public class AbstractMessageHandler  implements MessageReporter{
     
     String getValidationWarningMessage(String prefix, boolean restrictToFileName){
 		String message = "";
-		// {w1}
-		if(ambiguousElementQNameWW != null){
-			for(int i = 0; i <= ambiguousElementIndexWW; i++){
+		// {w1 U}
+		if(ambiguousUnresolvedElementQNameWW != null){
+			for(int i = 0; i <= ambiguousUnresolvedElementIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Element <"+ambiguousElementQNameWW[i] + "> at "+getLocation(restrictToFileName, ambiguousElementSystemIdWW[i])+":"+ambiguousElementLineNumberWW[i]+":"+ambiguousElementColumnNumberWW[i]
-						+" cannot be resolved by in context validation, possible definitions: ";
-				for(int j = 0; j < ambiguousElementDefinitionWW[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousElementDefinitionWW[i][j].getQName()+"> at "+ambiguousElementDefinitionWW[i][j].getLocation(restrictToFileName);
-				}
-				message += ".";
+						+"\n"+prefix+"Element <"+ambiguousUnresolvedElementQNameWW[i] + "> at "+getLocation(restrictToFileName, ambiguousUnresolvedElementSystemIdWW[i])+":"+ambiguousUnresolvedElementLineNumberWW[i]+":"+ambiguousUnresolvedElementColumnNumberWW[i]
+						+", unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.";				
 			}
 		}
+		// {w1 A}
+		if(ambiguousAmbiguousElementQNameWW != null){
+			for(int i = 0; i <= ambiguousAmbiguousElementIndexWW; i++){
+				message += "\n"+prefix+"Ambiguous content."
+						+"\n"+prefix+"Element <"+ambiguousAmbiguousElementQNameWW[i] + "> at "+getLocation(restrictToFileName, ambiguousAmbiguousElementSystemIdWW[i])+":"+ambiguousAmbiguousElementLineNumberWW[i]+":"+ambiguousAmbiguousElementColumnNumberWW[i]
+						+", ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:";
+				for(int j = 0; j < ambiguousAmbiguousElementDefinitionWW[i].length; j++){
+					message += "\n"+prefix+"<"+ambiguousAmbiguousElementDefinitionWW[i][j].getQName()+"> at "+ambiguousAmbiguousElementDefinitionWW[i][j].getLocation(restrictToFileName);
+				}
+				message += ".";				
+			}
+		}
+		
 		// {w2}
 		if(ambiguousAttributeQNameWW != null){
 			for(int i = 0; i <= ambiguousAttributeIndexWW; i++){

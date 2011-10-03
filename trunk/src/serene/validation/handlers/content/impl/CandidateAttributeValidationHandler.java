@@ -19,6 +19,8 @@ package serene.validation.handlers.content.impl;
 import java.util.Arrays;
 import java.util.List;
 
+import org.xml.sax.SAXException;
+
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.CharsActiveType;
 import serene.validation.schema.active.components.APattern;
@@ -42,6 +44,8 @@ import serene.validation.handlers.error.ContextErrorHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ContextErrorHandler;
 import serene.validation.handlers.error.CandidatesConflictErrorHandler;
+import serene.validation.handlers.error.ConflictMessageReporter;
+
 
 import serene.validation.handlers.content.CharactersEventHandler;
 import serene.validation.handlers.content.util.ValidationItemLocator;
@@ -87,7 +91,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
         return parent;
     }
     
-	void validateValue(String value){
+	void validateValue(String value) throws SAXException{
 		if(!attribute.allowsChars()){
 			unexpectedAttributeValue(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), attribute);
 			return;
@@ -158,8 +162,12 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 		contextErrorHandler.illegalContent(context, startQName, startSystemId, startLineNumber, startColumnNumber);
 	}
     
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		contextErrorHandler.ambiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		contextErrorHandler.unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
+	
+	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		contextErrorHandler.unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber,  possibleDefinitions);
 	}
 
 	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
@@ -170,8 +178,12 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 		contextErrorHandler.ambiguousCharsContentError(systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		contextErrorHandler.ambiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		contextErrorHandler.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
+	
+	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		contextErrorHandler.ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 
 	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
@@ -245,6 +257,10 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
     
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 		contextErrorHandler.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
+	}
+
+    public void internalConflict(ConflictMessageReporter conflictMessageReporter){	 
+		throw new IllegalStateException();
 	}	
 	//--------------------------------------------------------------------------
 

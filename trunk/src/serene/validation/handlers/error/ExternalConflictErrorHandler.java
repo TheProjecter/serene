@@ -127,7 +127,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
             messageHandler.unknownAttribute(-1, qName, systemId, lineNumber, columnNumber);
         }
 	}	
-	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){	    
         if(isCandidate){
             int functionalEquivalenceCode = qName.hashCode()+definition.hashCode();
             messageHandler.unexpectedAttribute(functionalEquivalenceCode, qName, definition, systemId, lineNumber, columnNumber);
@@ -225,16 +225,29 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
         if(isCandidate){
             int functionalEquivalenceCode = qName.hashCode();
             for(int i = 0; i < possibleDefinitions.length; i++){
                 functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
             }
-            messageHandler.ambiguousElementContentError(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
-            candidatesConflictErrorHandler.ambiguousElementContentError(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedAmbiguousElementContentError(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            candidatesConflictErrorHandler.unresolvedAmbiguousElementContentError(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousElementContentError(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedAmbiguousElementContentError(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+        }
+	}
+	
+	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+        if(isCandidate){
+            int functionalEquivalenceCode = qName.hashCode();
+            for(int i = 0; i < possibleDefinitions.length; i++){
+                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+            }
+            messageHandler.unresolvedUnresolvedElementContentError(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            candidatesConflictErrorHandler.unresolvedUnresolvedElementContentError(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+        }else{
+            messageHandler.unresolvedUnresolvedElementContentError(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	
@@ -265,15 +278,27 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	}
 	
 	
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
         if(isCandidate){
             int functionalEquivalenceCode = qName.hashCode();
             for(int i = 0; i < possibleDefinitions.length; i++){
                 functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
             }
-            candidatesConflictErrorHandler.ambiguousElementContentWarning(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            candidatesConflictErrorHandler.ambiguousUnresolvedElementContentWarning(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousElementContentWarning(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.ambiguousUnresolvedElementContentWarning(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+        }
+	}
+	
+	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+        if(isCandidate){
+            int functionalEquivalenceCode = qName.hashCode();
+            for(int i = 0; i < possibleDefinitions.length; i++){
+                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+            }
+            candidatesConflictErrorHandler.ambiguousAmbiguousElementContentWarning(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+        }else{
+            messageHandler.ambiguousAmbiguousElementContentWarning(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	
@@ -506,7 +531,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
             messageHandler.missingCompositorContent(-1, context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
         }
 	}
-    public  void conflict(MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){
+    public  void conflict(int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){
         if(isCandidate){
             int functionalEquivalenceCode = disqualified.hashCode();                                        
             if(commonMessages != null) functionalEquivalenceCode += commonMessages.hashCode();
@@ -515,15 +540,19 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
                     if(candidateMessages[i] != null)functionalEquivalenceCode += candidateMessages[i].hashCode();
                 }
             }
-            messageHandler.conflict(functionalEquivalenceCode, commonMessages, candidatesCount, disqualified, candidateMessages);
-            candidatesConflictErrorHandler.conflict(candidateIndex, functionalEquivalenceCode, commonMessages, candidatesCount, disqualified, candidateMessages);
+            messageHandler.conflict(functionalEquivalenceCode, conflictResolutionId, commonMessages, candidatesCount, disqualified, candidateMessages);
+            candidatesConflictErrorHandler.conflict(candidateIndex, functionalEquivalenceCode, conflictResolutionId, commonMessages, candidatesCount, disqualified, candidateMessages);
         }else{
-            messageHandler.conflict(-1, commonMessages, candidatesCount, disqualified, candidateMessages);
+            messageHandler.conflict(-1, conflictResolutionId, commonMessages, candidatesCount, disqualified, candidateMessages);
         }
     }
     
+    public void internalConflict(ConflictMessageReporter conflictMessageReporter){
+	    candidatesConflictErrorHandler.delayMessageReporter(conflictMessageReporter, candidateIndex);
+    }
+    
 	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
-					throws SAXException{				
+					throws SAXException{
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, definition, locator, messageHandler, candidateIndex);
 	}
 	
@@ -532,7 +561,21 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, locator, messageHandler, candidateIndex);
 	}
 	
+	public void record(int contextType, String qName, boolean restrictToFileName, Locator locator){
+	    messageHandler.setContextQName(qName);
+        messageHandler.setContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
+        messageHandler.setContextType(contextType);
+        messageHandler.setRestrictToFileName(restrictToFileName);
+	}
+		
 	
+    public int getConflictResolutionId(){
+        return messageHandler.getConflictResolutionId();
+    }	
+        
+    public ConflictMessageReporter getConflictMessageReporter(){
+        return messageHandler.getConflictMessageReporter(errorDispatcher);
+    } 
 	
 	public String toString(){
 		//return "ExternalConflictErrorHandler "+hashCode()+" candidate "+candidateIndex+" in conflict "+conflictHandler.toString();
