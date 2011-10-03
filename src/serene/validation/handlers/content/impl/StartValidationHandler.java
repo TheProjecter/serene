@@ -17,6 +17,7 @@ limitations under the License.
 package serene.validation.handlers.content.impl;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.xml.sax.Locator;
@@ -40,8 +41,6 @@ class StartValidationHandler extends ElementValidationHandler{
 			stackHandler = null;
 		}
 		resetContextErrorHandlerManager();
-		//internalConflicts = null; 
-		if(contextConflictPool != null)contextConflictPool.clear();
 		element.releaseDefinition();
 		pool.recycle(this);
 	}
@@ -76,9 +75,7 @@ class StartValidationHandler extends ElementValidationHandler{
 			return next;
 		}else{
             hasComplexContent = true;
-			if(contextConflictPool == null)	contextConflictPool = new ContextConflictPool();			
-			ContextConflictDescriptor ccd = contextConflictPool.getContextConflictDescriptor(elementMatches);
-			ElementConcurrentHandler next = pool.getElementConcurrentHandler(ccd.getDefinitions(), this);				
+			ElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList<AElement>(elementMatches), this);				
 			return next;
 		}		
 	}
