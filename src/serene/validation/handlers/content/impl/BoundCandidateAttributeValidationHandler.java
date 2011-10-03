@@ -25,7 +25,8 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.handlers.content.BoundAttributeHandler;
 
 import serene.validation.handlers.error.ContextErrorHandler;
-import serene.validation.handlers.error.CandidatesConflictErrorHandler;
+
+import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.bind.AttributeBinder;
 import serene.bind.BindingModel;
@@ -43,8 +44,8 @@ class BoundCandidateAttributeValidationHandler extends CandidateAttributeValidat
 		super(debugWriter);		
 	}
 	
-	void init(AAttribute attribute, ElementValidationHandler parent, CandidatesConflictErrorHandler candidatesConflictErrorHandler, int candidateIndex, BindingModel bindingModel, Queue queue, int entry){
-		super.init(attribute, parent, candidatesConflictErrorHandler, candidateIndex);
+	void init(AAttribute attribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex, BindingModel bindingModel, Queue queue, int entry){
+		super.init(attribute, parent, conflictHandler, candidateIndex);
 		this.bindingModel = bindingModel;
 		this.queue = queue;
 		this.entry = entry;

@@ -631,7 +631,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		AttributeConflictResolver resolver = conflictHandlerPool.getAttributeConflictResolver();
+		AttributeConflictResolver resolver = conflictHandlerPool.getUnresolvedAttributeConflictResolver();
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
@@ -714,7 +714,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundAttributeConflictResolver(validationItemLocator.getNamespaceURI(),
+		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundUnresolvedAttributeConflictResolver(validationItemLocator.getNamespaceURI(),
                                                                                  validationItemLocator.getLocalName(),
                                                                                  validationItemLocator.getQName(),
                                                                                  value, 
@@ -803,7 +803,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		AttributeConflictResolver resolver = conflictHandlerPool.getAttributeConflictResolver();
+		AttributeConflictResolver resolver = conflictHandlerPool.getAmbiguousAttributeConflictResolver();
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
@@ -886,7 +886,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundAttributeConflictResolver(validationItemLocator.getNamespaceURI(),
+		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundAmbiguousAttributeConflictResolver(validationItemLocator.getNamespaceURI(),
                                                                                  validationItemLocator.getLocalName(),
                                                                                  validationItemLocator.getQName(),
                                                                                  value, 

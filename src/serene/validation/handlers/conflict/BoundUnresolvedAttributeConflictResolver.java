@@ -31,7 +31,6 @@ import serene.validation.schema.active.components.CharsActiveTypeItem;
 
 import serene.validation.handlers.content.util.ValidationItemLocator;
 import serene.validation.handlers.error.ErrorCatcher;
-import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.bind.Queue;
 import serene.bind.AttributeBinder;
@@ -39,45 +38,37 @@ import serene.bind.AttributeBinder;
 import sereneWrite.MessageWriter;
 
 
-public abstract class BoundElementConflictResolver extends ElementConflictResolver{
+public class BoundUnresolvedAttributeConflictResolver extends BoundAttributeConflictResolver{
 	Queue targetQueue;
 	int targetEntry;	
 	
-	Map<AElement, Queue> candidateQueues;
+	Map<AAttribute, AttributeBinder> attributeBinders;
 	
-	public BoundElementConflictResolver(MessageWriter debugWriter){
+	String namespaceURI;
+    String localName;
+    String value;
+    
+	public BoundUnresolvedAttributeConflictResolver(MessageWriter debugWriter){
 		super(debugWriter);
 	}
 	
-	void init(ConflictMessageReporter conflictMessageReporter,
-	        Queue targetQueue,
-			int targetEntry,
-			Map<AElement, Queue> candidateQueues){		
-		super.init(conflictMessageReporter);
-		this.targetQueue = targetQueue;
-		this.targetEntry = targetEntry;
-		this.candidateQueues = candidateQueues;
+	public void recycle(){
+	    reset();
+	    pool.recycle(this);
 	}
 	
-	
-	void reset(){
-	    super.reset();
-		targetQueue = null;
-		targetEntry = -1;
-		candidateDefinitions.clear();
-		candidateQueues = null;
-	}
-	
-		
-    /*public void resolve(ErrorCatcher errorCatcher){
+    public void resolve(ErrorCatcher errorCatcher){
         if(qualified.cardinality() == 0){				
-            AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
-            errorCatcher.ambiguousElementContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
-            targetQueue.closeReservation(targetEntry);				
+            AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
+            errorCatcher.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
         }else if(qualified.cardinality() == 1){
-            int qual = qualified.nextSetBit(0);				
-            Queue qq = candidateQueues.get(candidateDefinitions.get(qual));
-            targetQueue.closeReservation(targetEntry, qq);				
+            int qual = qualified.nextSetBit(0);
+            AAttribute attribute = candidateDefinitions.get(qual);
+            int definitionIndex = attribute.getDefinitionIndex();
+            AttributeBinder binder = attributeBinders.get(attribute);
+            if(binder != null){
+                binder.bindAttribute(targetQueue, targetEntry, definitionIndex, namespaceURI, localName, qName, Datatype.ID_TYPE_NULL, value);
+            }
         }else{		
             int j = 0;
             for(int i = 0; i < candidateDefinitions.size(); i++){			
@@ -86,13 +77,12 @@ public abstract class BoundElementConflictResolver extends ElementConflictResolv
                     i--;
                 }
             }
-            AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
-            errorCatcher.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
-            targetQueue.closeReservation(targetEntry);
-        }			
-    }*/
-    
+            AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
+            errorCatcher.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+        }
+    }
+	
 	public String toString(){
-		return "BoundElementConflictResolver ";
+		return "BoundUnresolvedAttributeConflictResolver ";
 	}
 }

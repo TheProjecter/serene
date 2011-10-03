@@ -453,9 +453,9 @@ class ElementValidationHandler extends ValidatingEEH
 		contextErrorHandler[contextErrorHandlerIndex].unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 
-	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousAttributeContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 
 	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){

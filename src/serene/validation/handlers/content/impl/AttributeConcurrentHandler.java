@@ -38,8 +38,7 @@ class AttributeConcurrentHandler extends ValidatingAEH{
     
 	List<AAttribute> candidateDefinitions;
 	List<CandidateAttributeValidationHandler> candidates;
-	ExternalConflictHandler localCandidatesConflictHandler;
-    CandidatesConflictErrorHandler localCandidatesConflictErrorHandler; 
+	ExternalConflictHandler localCandidatesConflictHandler;     
 	ValidatorErrorHandlerPool errorHandlerPool;
 	
 	AttributeConcurrentHandler(MessageWriter debugWriter){
@@ -71,7 +70,7 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 			// At the end of attribute handling only the number of qualified 
 			// candidates left is assesed and the appropriate addAttribute() 
 			// is called.
-			CandidateAttributeValidationHandler candidate = pool.getCandidateAttributeValidationHandler(candidateDefinitions.get(i), parent, localCandidatesConflictErrorHandler, i);
+			CandidateAttributeValidationHandler candidate = pool.getCandidateAttributeValidationHandler(candidateDefinitions.get(i), parent, localCandidatesConflictHandler, i);
 			candidates.add(candidate);
 		}		
 	}
@@ -93,13 +92,15 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 			// Shift all with errors, hope the parent context disqualifies all but 1
 			// Why shift, they all have errors already??? 
 			// Maybe the parent actually expects one of them and not shifting 
-			// results in a fake error.			
+			// results in a fake error.	
+			boolean oldIsCandidate = parent.isCandidate();
+			parent.unresolvedAttributeContentError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]));
+			parent.setCandidate(oldIsCandidate);
 			parent.addAttribute(candidateDefinitions);
 		}else if(qualifiedCount == 1){			
 			AAttribute qAttribute = candidateDefinitions.get(localCandidatesConflictHandler.getNextQualified(0));
 			parent.addAttribute(qAttribute);
 		}else if(qualifiedCount > 1){
-			// TODO Maybe a warning
 			// Shift all without errors, hope the parent conflict disqualifies all but one
 			parent.addAttribute(candidateDefinitions, localCandidatesConflictHandler);
 		}

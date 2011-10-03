@@ -36,23 +36,35 @@ import sereneWrite.MessageWriter;
 * counts the qualified candidates and when asked to resolve() theconflict if the
 * number is greater than 1, it reports ambiguous content.   
 */
-public abstract class AttributeConflictResolver extends InternalConflictResolver{
-	List<AAttribute> candidateDefinitions;
-	public AttributeConflictResolver(MessageWriter debugWriter){				
+public class AmbiguousAttributeConflictResolver extends AttributeConflictResolver{
+	
+	public AmbiguousAttributeConflictResolver(MessageWriter debugWriter){				
 		super(debugWriter);
-		candidateDefinitions = new ArrayList<AAttribute>();
-	}	
+	}
+	
+	public void recycle(){
+		reset();
+		pool.recycle(this);
+	}
 		
-    void reset(){
-        super.reset();
-        candidateDefinitions.clear();
+    public void resolve(ErrorCatcher errorCatcher){			
+        if(qualified.cardinality()== 0){
+            AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
+            errorCatcher.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+        }else if(qualified.cardinality() > 1){
+            int j = 0;
+            for(int i = 0; i < candidateDefinitions.size(); i++){			
+                if(!qualified.get(j++)){
+                    candidateDefinitions.remove(i);
+                    i--;
+                }
+            }
+            AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
+            errorCatcher.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+        }
     }
     
-    public void addCandidate(AAttribute candidate){
-        candidateDefinitions.add(candidate);
-    }
-        
     public String toString(){
-        return "AttributeConflictResolver candidates "+candidateDefinitions+" qualified "+qualified;
+        return "AmbiguousAttributeConflictResolver candidates "+candidateDefinitions+" qualified "+qualified;
     }
 }

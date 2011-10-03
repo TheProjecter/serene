@@ -110,7 +110,7 @@ interface CandidatesConflictErrorCatcher extends ErrorType{
 									int columnNumber, 
 									AElement[] possibleDefinitions);
     
-	void ambiguousAttributeContentError(int candidateIndex, int functionalEquivalenceCode, 
+	void unresolvedAttributeContentError(int candidateIndex, int functionalEquivalenceCode, 
                                     String qName, 
 									String systemId, 
 									int lineNumber, 

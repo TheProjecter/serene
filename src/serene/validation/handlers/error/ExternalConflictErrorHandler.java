@@ -251,16 +251,16 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
         if(isCandidate){
             int functionalEquivalenceCode = qName.hashCode();
             for(int i = 0; i < possibleDefinitions.length; i++){
                 functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
             }
-            messageHandler.ambiguousAttributeContentError(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
-            candidatesConflictErrorHandler.ambiguousAttributeContentError(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedAttributeContentError(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            candidatesConflictErrorHandler.unresolvedAttributeContentError(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousAttributeContentError(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedAttributeContentError(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	

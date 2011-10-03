@@ -972,16 +972,16 @@ public class ValidatorEventHandlerPool implements Reusable{
 	}
     
     
-    public CandidateAttributeValidationHandler getCandidateAttributeValidationHandler(AAttribute candidateAttribute, ElementValidationHandler parent, CandidatesConflictErrorHandler candidatesConflictErrorHandler, int candidateIndex){		
+    public CandidateAttributeValidationHandler getCandidateAttributeValidationHandler(AAttribute candidateAttribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex){		
 		if(candidateAttributeVHFree == 0){
 			CandidateAttributeValidationHandler avh = new CandidateAttributeValidationHandler(debugWriter);
 			avh.init(this, validationItemLocator, matchHandler);
-			avh.init(candidateAttribute,  parent, candidatesConflictErrorHandler, candidateIndex);
+			avh.init(candidateAttribute,  parent, conflictHandler, candidateIndex);
 			return avh;			
 		}
 		else{						
 			CandidateAttributeValidationHandler avh = candidateAttributeVH[--candidateAttributeVHFree];
-			avh.init(candidateAttribute, parent, candidatesConflictErrorHandler, candidateIndex);
+			avh.init(candidateAttribute, parent, conflictHandler, candidateIndex);
 			return avh;
 		}		
 	}
@@ -1303,16 +1303,16 @@ public class ValidatorEventHandlerPool implements Reusable{
 		boundAttributeVH[boundAttributeVHFree++] = eh; 
 	}
     
-    public BoundCandidateAttributeValidationHandler getCandidateAttributeValidationHandler(AAttribute boundCandidateAttribute, ElementValidationHandler parent, CandidatesConflictErrorHandler candidatesConflictErrorHandler, int candidateIndex, BindingModel bindingModel, Queue queue, int entry){		
+    public BoundCandidateAttributeValidationHandler getCandidateAttributeValidationHandler(AAttribute boundCandidateAttribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex, BindingModel bindingModel, Queue queue, int entry){		
 		if(boundCandidateAttributeVHFree == 0){
 			BoundCandidateAttributeValidationHandler bavh = new BoundCandidateAttributeValidationHandler(debugWriter);
 			bavh.init(this, validationItemLocator, matchHandler);
-			bavh.init(boundCandidateAttribute,  parent, candidatesConflictErrorHandler, candidateIndex, bindingModel, queue, entry);
+			bavh.init(boundCandidateAttribute,  parent, conflictHandler, candidateIndex, bindingModel, queue, entry);
 			return bavh;			
 		}
 		else{						
 			BoundCandidateAttributeValidationHandler bavh = boundCandidateAttributeVH[--boundCandidateAttributeVHFree];
-			bavh.init(boundCandidateAttribute, parent, candidatesConflictErrorHandler, candidateIndex, bindingModel, queue, entry);
+			bavh.init(boundCandidateAttribute, parent, conflictHandler, candidateIndex, bindingModel, queue, entry);
 			return bavh;
 		}		
 	}

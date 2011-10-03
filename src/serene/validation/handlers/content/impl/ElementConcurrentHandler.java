@@ -167,11 +167,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
 	
 	void validateInContext(){				
 	    int conflictResolutionIndex = contextErrorHandler[contextErrorHandlerIndex] == null ? getConflictResolutionId() : contextErrorHandler[contextErrorHandlerIndex].getConflictResolutionId();
-	    // TODO !!! PROBLEM
-	    // If the resolved count is greater then 1 and there have been no common 
-	    // errors the conflict resolution state is AMBIGUOUS, but the 
-	    // conflictResolutionIndex delivered by the expression above is RESOLVED.
-	    
+	    	    
 		if(conflictResolutionIndex == MessageReporter.UNRESOLVED){						
 			// Shift all with errors, hope the parent context disqualifies all but 1
 			// Why shift, they all have errors already??? 
@@ -182,7 +178,6 @@ class ElementConcurrentHandler extends CandidatesEEH{
 			AElement qElement = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
 			parent.addChildElement(qElement);
 		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
-			// TODO Maybe a warning
 			// Shift all without errors, hope the parent conflict disqualifies all but one
 			ConflictMessageReporter cmr = null;
 			if(contextErrorHandler[contextErrorHandlerIndex] != null) cmr = contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();			

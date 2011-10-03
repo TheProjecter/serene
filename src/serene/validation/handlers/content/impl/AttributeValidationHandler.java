@@ -224,12 +224,13 @@ class AttributeValidationHandler extends AttributeDefinitionHandler implements E
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 
-	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
-        ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
+	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+        /*ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousAttributeContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
-        contextErrorHandler.setCandidate(oldIsCandidate);
+		contextErrorHandler.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+        contextErrorHandler.setCandidate(oldIsCandidate);*/
+        throw new IllegalStateException();
 	}
 
 	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
