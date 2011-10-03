@@ -50,12 +50,7 @@ public class ErrorHandlerPool{
 	int startErrorHPoolSize;
 	int startErrorHFree;
 	StartErrorHandler[] startErrorH;
-	
-	int attributeConflictErrorHAverageUse;
-	int attributeConflictErrorHPoolSize;
-	int attributeConflictErrorHFree;
-	AttributeConflictErrorHandler[] attributeConflictErrorH;
-	
+		
 	final int UNUSED = 0;
 	
 	MessageWriter debugWriter;
@@ -92,11 +87,6 @@ public class ErrorHandlerPool{
 		startErrorHPoolSize = 10;
 		startErrorHFree = 0;
 		startErrorH = new StartErrorHandler[startErrorHPoolSize];
-		
-		attributeConflictErrorHAverageUse = UNUSED;
-		attributeConflictErrorHPoolSize = 10;
-		attributeConflictErrorHFree = 0;
-		attributeConflictErrorH = new AttributeConflictErrorHandler[attributeConflictErrorHPoolSize];
 	}
 	
 	public static ErrorHandlerPool getInstance(MessageWriter debugWriter){
@@ -134,8 +124,7 @@ public class ErrorHandlerPool{
 						ExternalConflictErrorHandler[] conflictErrorH,
 						CommonErrorHandler[] commonErrorH,
 						DefaultErrorHandler[] defaultErrorH,
-						StartErrorHandler[] startErrorH,
-						AttributeConflictErrorHandler[] attributeConflictErrorH){
+						StartErrorHandler[] startErrorH){
 		int validationErrorHFillCount;	
 		if(validationErrorH == null || validationErrorH.length < validationErrorHAverageUse)
 			validationErrorH = new ValidationErrorHandler[validationErrorHAverageUse];
@@ -203,18 +192,6 @@ public class ErrorHandlerPool{
 		System.arraycopy(this.startErrorH, startErrorHFree, 
 							startErrorH, 0, startErrorHFillCount);
 		
-		int attributeConflictErrorHFillCount;	
-		if(attributeConflictErrorH == null || attributeConflictErrorH.length < attributeConflictErrorHAverageUse)
-			attributeConflictErrorH = new AttributeConflictErrorHandler[attributeConflictErrorHAverageUse];
-		if(attributeConflictErrorHFree > attributeConflictErrorHAverageUse){
-			attributeConflictErrorHFillCount = attributeConflictErrorHAverageUse;
-			attributeConflictErrorHFree = attributeConflictErrorHFree - attributeConflictErrorHAverageUse;
-		}else{
-			attributeConflictErrorHFillCount = attributeConflictErrorHFree;
-			attributeConflictErrorHFree = 0;
-		}
-		System.arraycopy(this.attributeConflictErrorH, attributeConflictErrorHFree, 
-							attributeConflictErrorH, 0, attributeConflictErrorHFillCount);
 		
 		pool.setHandlers(validationErrorHFillCount,
 						validationErrorH,
@@ -225,9 +202,7 @@ public class ErrorHandlerPool{
 						defaultErrorHFillCount,
 						defaultErrorH,
 						startErrorHFillCount,
-						startErrorH,
-						attributeConflictErrorHFillCount,
-						attributeConflictErrorH);
+						startErrorH);
 	}
 		
 	synchronized void recycle(int validationErrorHAverageUse,
@@ -239,9 +214,7 @@ public class ErrorHandlerPool{
 							int defaultErrorHAverageUse,
 							DefaultErrorHandler[] defaultErrorH,
 							int startErrorHAverageUse,
-							StartErrorHandler[] startErrorH,
-							int attributeConflictErrorHAverageUse,
-							AttributeConflictErrorHandler[] attributeConflictErrorH){
+							StartErrorHandler[] startErrorH){
 		if(validationErrorHFree + validationErrorHAverageUse >= validationErrorHPoolSize){			 
 			validationErrorHPoolSize+= validationErrorHAverageUse;
 			ValidationErrorHandler[] increased = new ValidationErrorHandler[validationErrorHPoolSize];
@@ -301,18 +274,6 @@ public class ErrorHandlerPool{
 		startErrorHFree += startErrorHAverageUse;
 		if(this.startErrorHAverageUse != 0)this.startErrorHAverageUse = (this.startErrorHAverageUse + startErrorHAverageUse)/2;
 		else this.startErrorHAverageUse = startErrorHAverageUse;
-		// System.out.println("startErrorH "+this.startErrorHAverageUse);
-		
-		if(attributeConflictErrorHFree + attributeConflictErrorHAverageUse >= attributeConflictErrorHPoolSize){			 
-			attributeConflictErrorHPoolSize+= attributeConflictErrorHAverageUse;
-			AttributeConflictErrorHandler[] increased = new AttributeConflictErrorHandler[attributeConflictErrorHPoolSize];
-			System.arraycopy(this.attributeConflictErrorH, 0, increased, 0, attributeConflictErrorHFree);
-			this.attributeConflictErrorH = increased;
-		}
-		System.arraycopy(attributeConflictErrorH, 0, this.attributeConflictErrorH, attributeConflictErrorHFree, attributeConflictErrorHAverageUse);
-		attributeConflictErrorHFree += attributeConflictErrorHAverageUse;
-		if(this.attributeConflictErrorHAverageUse != 0)this.attributeConflictErrorHAverageUse = (this.attributeConflictErrorHAverageUse + attributeConflictErrorHAverageUse)/2;
-		else this.attributeConflictErrorHAverageUse = attributeConflictErrorHAverageUse;
-		// System.out.println("attributeConflictErrorH "+this.attributeConflictErrorHAverageUse);
+		// System.out.println("startErrorH "+this.startErrorHAverageUse);		
 	}
 } 
