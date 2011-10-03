@@ -30,7 +30,9 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 
 import serene.validation.handlers.content.util.ValidationItemLocator;
+
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.bind.Queue;
 import serene.bind.AttributeBinder;
@@ -39,16 +41,8 @@ import sereneWrite.MessageWriter;
 
 
 public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConflictResolver{
-	Queue targetQueue;
-	int targetEntry;	
-	
-	Map<AAttribute, AttributeBinder> attributeBinders;
-	
-	String namespaceURI;
-    String localName;
-    String value;
-    
-	public BoundAmbiguousAttributeConflictResolver(MessageWriter debugWriter){
+    BitSet disqualified;
+    public BoundAmbiguousAttributeConflictResolver(MessageWriter debugWriter){
 		super(debugWriter);
 	}
 	
@@ -57,28 +51,62 @@ public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConfl
 	    pool.recycle(this);
 	}
 	
+	void init(BitSet disqualified,
+	        TemporaryMessageStorage[] temporaryMessageStorage,
+	        String namespaceURI, 
+            String localName,
+            String qName,
+            String value, 
+			Queue queue, 
+			int entry, 
+			Map<AAttribute, AttributeBinder> attributeBinders){		
+		super.init(temporaryMessageStorage,
+		            namespaceURI, 
+                    localName,
+                    qName,
+                    value, 
+                    queue, 
+                    entry, 
+                    attributeBinders);			
+		this.disqualified = disqualified;		
+	}
+		
     public void resolve(ErrorCatcher errorCatcher){
         if(qualified.cardinality() == 0){				
             AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
             errorCatcher.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
         }else if(qualified.cardinality() == 1){
             int qual = qualified.nextSetBit(0);
+            
+            if(temporaryMessageStorage != null && temporaryMessageStorage[qual] != null)temporaryMessageStorage[qual].transferMessages(errorCatcher);
+            
             AAttribute attribute = candidateDefinitions.get(qual);
             int definitionIndex = attribute.getDefinitionIndex();
             AttributeBinder binder = attributeBinders.get(attribute);
             if(binder != null){
                 binder.bindAttribute(targetQueue, targetEntry, definitionIndex, namespaceURI, localName, qName, Datatype.ID_TYPE_NULL, value);
             }
-        }else{		
-            int j = 0;
-            for(int i = 0; i < candidateDefinitions.size(); i++){			
-                if(!qualified.get(j++)){
-                    candidateDefinitions.remove(i);
-                    i--;
-                }
+        }else{
+            for(int i = 0; i < disqualified.length(); i++){
+                if(disqualified.get(i) && qualified.get(i))qualified.clear(i);
             }
-            AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
-            errorCatcher.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            
+            if(qualified.cardinality()== 0){
+                AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
+                errorCatcher.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            }else if(qualified.cardinality() > 1){
+                int j = 0;
+                for(int i = 0; i < candidateDefinitions.size(); i++){			
+                    if(!qualified.get(j++)){
+                        candidateDefinitions.remove(i);
+                        i--;
+                    }
+                }   
+                AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
+                errorCatcher.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            }else{
+                if(temporaryMessageStorage != null && temporaryMessageStorage[qualified.nextSetBit(0)] != null)temporaryMessageStorage[qualified.nextSetBit(0)].transferMessages(errorCatcher);        
+            }
         }
     }
 	

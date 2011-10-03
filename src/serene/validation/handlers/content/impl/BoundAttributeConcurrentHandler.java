@@ -95,19 +95,13 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 	void validateInContext(){
 		int candidatesCount = candidates.size();		
 		int qualifiedCount = candidatesCount - localCandidatesConflictHandler.getDisqualifiedCount();		
-		if(qualifiedCount == 0){						
-			// Shift all with errors, hope the parent context disqualifies all but 1
-			// Why shift, they all have errors already??? 
-			// Maybe the parent actually expects one of them and not shifting 
-			// results in a fake error.			
-			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitions, value, queue, entry, mapCandidateToBinder());
+		if(qualifiedCount == 0){		
+			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitions, temporaryMessageStorage, value, queue, entry, mapCandidateToBinder());
 		}else if(qualifiedCount == 1){			
 			AAttribute qAttribute = candidateDefinitions.get(localCandidatesConflictHandler.getNextQualified(0));
 			parent.addAttribute(qAttribute);
-		}else if(qualifiedCount > 1){
-			// TODO Maybe a warning
-			// Shift all without errors, hope the parent conflict disqualifies all but one			
-			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitions, localCandidatesConflictHandler, value, queue, entry, mapCandidateToBinder());
+		}else if(qualifiedCount > 1){			
+			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitions, localCandidatesConflictHandler.getDisqualified(), temporaryMessageStorage, value, queue, entry, mapCandidateToBinder());
 		}
 	}	
 	

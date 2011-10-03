@@ -26,7 +26,8 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
-import serene.validation.handlers.error.CandidatesConflictErrorHandler;
+//import serene.validation.handlers.error.CandidatesConflictErrorHandler;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
@@ -40,6 +41,7 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 	List<CandidateAttributeValidationHandler> candidates;
 	ExternalConflictHandler localCandidatesConflictHandler;     
 	ValidatorErrorHandlerPool errorHandlerPool;
+	TemporaryMessageStorage[] temporaryMessageStorage;
 	
 	AttributeConcurrentHandler(MessageWriter debugWriter){
 		super(debugWriter);
@@ -53,6 +55,7 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 		}
 		localCandidatesConflictHandler.reset();
 		candidates.clear();
+		temporaryMessageStorage = null;
 		pool.recycle(this);
 	}
 		
@@ -64,13 +67,15 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 	void init(List<AAttribute> candidateDefinitions, ElementValidationHandler parent){
 		this.parent = parent;
 		this.candidateDefinitions = candidateDefinitions; 
+		localCandidatesConflictHandler.init(candidateDefinitions.size());
+		temporaryMessageStorage = new TemporaryMessageStorage[candidateDefinitions.size()];
 		for(int i = 0; i < candidateDefinitions.size(); i++){						
 			// To each candidate set a ConflictErrorHandler that knows the ExternalConflictHandler
 			// and the candidate index. Errors will not be handled and reported.
 			// At the end of attribute handling only the number of qualified 
 			// candidates left is assesed and the appropriate addAttribute() 
 			// is called.
-			CandidateAttributeValidationHandler candidate = pool.getCandidateAttributeValidationHandler(candidateDefinitions.get(i), parent, localCandidatesConflictHandler, i);
+			CandidateAttributeValidationHandler candidate = pool.getCandidateAttributeValidationHandler(candidateDefinitions.get(i), parent, localCandidatesConflictHandler, i, temporaryMessageStorage);
 			candidates.add(candidate);
 		}		
 	}
@@ -88,21 +93,13 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 	void validateInContext(){
 		int candidatesCount = candidates.size();		
 		int qualifiedCount = candidatesCount - localCandidatesConflictHandler.getDisqualifiedCount();		
-		if(qualifiedCount == 0){						
-			// Shift all with errors, hope the parent context disqualifies all but 1
-			// Why shift, they all have errors already??? 
-			// Maybe the parent actually expects one of them and not shifting 
-			// results in a fake error.	
-			boolean oldIsCandidate = parent.isCandidate();
-			parent.unresolvedAttributeContentError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]));
-			parent.setCandidate(oldIsCandidate);
-			parent.addAttribute(candidateDefinitions);
-		}else if(qualifiedCount == 1){			
+		if(qualifiedCount == 0){		
+			parent.addAttribute(candidateDefinitions, temporaryMessageStorage);
+		}else if(qualifiedCount == 1){
 			AAttribute qAttribute = candidateDefinitions.get(localCandidatesConflictHandler.getNextQualified(0));
 			parent.addAttribute(qAttribute);
 		}else if(qualifiedCount > 1){
-			// Shift all without errors, hope the parent conflict disqualifies all but one
-			parent.addAttribute(candidateDefinitions, localCandidatesConflictHandler);
+			parent.addAttribute(candidateDefinitions, localCandidatesConflictHandler.getDisqualified(), temporaryMessageStorage);
 		}
 	}
 

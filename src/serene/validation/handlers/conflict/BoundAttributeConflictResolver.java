@@ -30,7 +30,9 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 
 import serene.validation.handlers.content.util.ValidationItemLocator;
+
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.bind.Queue;
 import serene.bind.AttributeBinder;
@@ -52,14 +54,15 @@ public abstract class BoundAttributeConflictResolver extends AttributeConflictRe
 		super(debugWriter);
 	}
 	
-	void init(String namespaceURI, 
+	void init(TemporaryMessageStorage[] temporaryMessageStorage,
+	        String namespaceURI, 
             String localName,
             String qName,
             String value, 
 			Queue queue, 
 			int entry, 
 			Map<AAttribute, AttributeBinder> attributeBinders){		
-		super.init();			
+		super.init(temporaryMessageStorage);			
 		this.targetQueue = queue;
 		this.targetEntry = entry;
 		this.attributeBinders = attributeBinders;

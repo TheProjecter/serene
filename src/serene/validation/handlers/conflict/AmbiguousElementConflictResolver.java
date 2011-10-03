@@ -60,14 +60,13 @@ public class AmbiguousElementConflictResolver extends ElementConflictResolver{
                 conflictMessageReporter.setConflictInternalResolution(MessageReporter.AMBIGUOUS, qualified);
                 errorCatcher.internalConflict(conflictMessageReporter);
             }
-            
             int j = 0;
             for(int i = 0; i < candidateDefinitions.size(); i++){			
                 if(!qualified.get(j++)){
                     candidateDefinitions.remove(i);
                     i--;
                 }
-            }            
+            }             
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
             errorCatcher.ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
         }else if(qualified.cardinality() == 1){

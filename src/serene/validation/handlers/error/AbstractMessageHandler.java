@@ -399,10 +399,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	public AbstractMessageHandler(MessageWriter debugWriter){
 		super(debugWriter);
 			
-        errorTotalCount = 0;   
-        
-        
-        
+        errorTotalCount = 0;  
         
         // {2}
         unknownElementIndex = -1;
@@ -1232,7 +1229,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			for(int i = 0; i <= ambiguousAttributeIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous content."
 						+"\n"+prefix+"Attribute \""+ambiguousAttributeQNameWW[i] + "\" at "+getLocation(restrictToFileName, ambiguousAttributeSystemIdWW[i])+":"+ambiguousAttributeLineNumberWW[i]+":"+ambiguousAttributeColumnNumberWW[i]
-						+" cannot be resolved by in context validation, possible definitions: ";
+						+" cannot be resolved to a single definition, all candidates could be correct. Possible definitions: ";
 				for(int j = 0; j < ambiguousAttributeDefinitionWW[i].length; j++){
 					message += "\n"+prefix+"<"+ambiguousAttributeDefinitionWW[i][j].getQName()+"> at "+ambiguousAttributeDefinitionWW[i][j].getLocation(restrictToFileName);
 				}

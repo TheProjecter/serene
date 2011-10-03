@@ -39,15 +39,7 @@ import sereneWrite.MessageWriter;
 
 
 public class BoundUnresolvedAttributeConflictResolver extends BoundAttributeConflictResolver{
-	Queue targetQueue;
-	int targetEntry;	
-	
-	Map<AAttribute, AttributeBinder> attributeBinders;
-	
-	String namespaceURI;
-    String localName;
-    String value;
-    
+	    
 	public BoundUnresolvedAttributeConflictResolver(MessageWriter debugWriter){
 		super(debugWriter);
 	}
@@ -60,9 +52,12 @@ public class BoundUnresolvedAttributeConflictResolver extends BoundAttributeConf
     public void resolve(ErrorCatcher errorCatcher){
         if(qualified.cardinality() == 0){				
             AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
-            errorCatcher.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
         }else if(qualified.cardinality() == 1){
             int qual = qualified.nextSetBit(0);
+            
+            temporaryMessageStorage[qual].transferMessages(errorCatcher);
+            
             AAttribute attribute = candidateDefinitions.get(qual);
             int definitionIndex = attribute.getDefinitionIndex();
             AttributeBinder binder = attributeBinders.get(attribute);
@@ -76,9 +71,9 @@ public class BoundUnresolvedAttributeConflictResolver extends BoundAttributeConf
                     candidateDefinitions.remove(i);
                     i--;
                 }
-            }
+            }   
             AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
-            errorCatcher.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
         }
     }
 	

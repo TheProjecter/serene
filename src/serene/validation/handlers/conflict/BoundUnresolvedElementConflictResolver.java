@@ -70,7 +70,7 @@ public class BoundUnresolvedElementConflictResolver extends BoundElementConflict
             Queue qq = candidateQueues.get(candidateDefinitions.get(qual));
             targetQueue.closeReservation(targetEntry, qq);	
             
-            conflictMessageReporter.setConflictInternalResolution(MessageReporter.RESOLVED, qualified.nextSetBit(0), candidateDefinitions.get(qualified.nextSetBit(0)));
+            conflictMessageReporter.setConflictInternalResolution(MessageReporter.RESOLVED, qual, candidateDefinitions.get(qual));
             errorCatcher.internalConflict(conflictMessageReporter);			
         }else{
             // report the external conflict errors of the winners ?+ ambiguity warning?
@@ -83,7 +83,7 @@ public class BoundUnresolvedElementConflictResolver extends BoundElementConflict
                     candidateDefinitions.remove(i);
                     i--;
                 }
-            }
+            }   
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
             errorCatcher.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
             

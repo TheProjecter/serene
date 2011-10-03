@@ -1,0 +1,21 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\attributeConflictIntegration\coOccurrence\resolved\elementId\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/resolved/elementId/document2.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:4:66 contains errors: 
+Excessive content.
+In the document structure starting at document2.xml:19:16, corresponding to definition <element> at schema.rng:4:66,  expected 1 occurrence corresponding to definition <choice> at schema.rng:5:11, found 2: 
+<baz> at document2.xml:19:16
+<bar2> at document2.xml:20:11.
+Missing content.
+In the document structure starting at document2.xml:19:16, corresponding to definition <group> at schema.rng:6:12, expected 1 occurrence corresponding to definition <element> at schema.rng:7:30, found 0.
+Missing content.
+In the document structure starting at document2.xml:20:11, corresponding to definition <group> at schema.rng:10:12, expected 1 occurrence corresponding to definition <attribute> at schema.rng:12:31, found 0.

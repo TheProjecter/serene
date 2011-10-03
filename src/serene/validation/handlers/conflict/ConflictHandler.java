@@ -26,15 +26,17 @@ import sereneWrite.MessageWriter;
 public abstract class ConflictHandler{
 	MessageWriter debugWriter;
     
-	int candidatesCount;
+	int candidatesCount;	
 	BitSet disqualified;	
 	
 	public ConflictHandler(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
-		disqualified = new BitSet();		
+		disqualified = new BitSet();
+        candidatesCount = -1;		
 	}
 		
     public void init(int candidatesCount){
+        if(candidatesCount < 0)throw new IllegalArgumentException();
         this.candidatesCount = candidatesCount;
     }
 	public void clearDisqualified(int candidateIndex){
@@ -65,7 +67,11 @@ public abstract class ConflictHandler{
 	public int getDisqualifiedCount(){
 		return disqualified.cardinality();
 	}
+	public int getLength(){
+	    return disqualified.length();
+	}
 	public int getNextQualified(int fromIndex){
+	    if(candidatesCount < 0)throw new IllegalStateException();
 		int nextQ = disqualified.nextClearBit(fromIndex);
         if(nextQ >= candidatesCount) return -1;
         return nextQ;
@@ -75,11 +81,10 @@ public abstract class ConflictHandler{
 		for(int i = fromIndex-1; i >=0; i--){
 			if(!disqualified.get(i))return i;
 		}
-		return -1;
+		return -1;		
 	}
     
 	public String toString(){
-		//return "ConflictHandler "+hashCode()+" "+disqualified.toString();
 		return "ConflictHandler "+disqualified.toString();
 	}
 }

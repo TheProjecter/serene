@@ -26,7 +26,9 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 
 import serene.validation.handlers.content.util.ValidationItemLocator;
+
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import sereneWrite.MessageWriter;
 
@@ -38,11 +40,17 @@ import sereneWrite.MessageWriter;
 */
 public abstract class AttributeConflictResolver extends InternalConflictResolver{
 	List<AAttribute> candidateDefinitions;
+	TemporaryMessageStorage[] temporaryMessageStorage;
 	public AttributeConflictResolver(MessageWriter debugWriter){				
 		super(debugWriter);
 		candidateDefinitions = new ArrayList<AAttribute>();
 	}	
-		
+	
+	void init(TemporaryMessageStorage[] temporaryMessageStorage){
+	    super.init();
+	    this.temporaryMessageStorage = temporaryMessageStorage;
+	}	
+	
     void reset(){
         super.reset();
         candidateDefinitions.clear();

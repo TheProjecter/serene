@@ -19,12 +19,14 @@ package serene.validation.handlers.conflict;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.Map;
+import java.util.BitSet;
 
 import org.xml.sax.Locator;
 
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import serene.validation.handlers.error.ConflictMessageReporter;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.ActiveTypeItem;
@@ -304,16 +306,16 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		unresolvedElementConflictResolver[unresolvedElementConflictResolverFree++] = icr;
 	}
 	
-	public AmbiguousAttributeConflictResolver getAmbiguousAttributeConflictResolver(){				
+	public AmbiguousAttributeConflictResolver getAmbiguousAttributeConflictResolver(BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){				
 		if(ambiguousAttributeConflictResolverFree == 0){
 			// ambiguousAttributeConflictResolverCreated++;
 			AmbiguousAttributeConflictResolver icr = new AmbiguousAttributeConflictResolver(debugWriter);
 			icr.init(this, validationItemLocator);
-			icr.init();			
+			icr.init(disqualified, temporaryMessageStorage);			
 			return icr;			
 		}else{
 			AmbiguousAttributeConflictResolver icr = ambiguousAttributeConflictResolver[--ambiguousAttributeConflictResolverFree];
-			icr.init();
+			icr.init(disqualified, temporaryMessageStorage);
 			return icr;
 		}		
 	}
@@ -328,16 +330,16 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	}
 	
 	
-	public UnresolvedAttributeConflictResolver getUnresolvedAttributeConflictResolver(){				
+	public UnresolvedAttributeConflictResolver getUnresolvedAttributeConflictResolver(TemporaryMessageStorage[] temporaryMessageStorage){				
 		if(unresolvedAttributeConflictResolverFree == 0){
 			// unresolvedAttributeConflictResolverCreated++;
 			UnresolvedAttributeConflictResolver icr = new UnresolvedAttributeConflictResolver(debugWriter);
 			icr.init(this, validationItemLocator);
-			icr.init();			
+			icr.init(temporaryMessageStorage);			
 			return icr;			
 		}else{
 			UnresolvedAttributeConflictResolver icr = unresolvedAttributeConflictResolver[--unresolvedAttributeConflictResolverFree];
-			icr.init();
+			icr.init(temporaryMessageStorage);
 			return icr;
 		}		
 	}
@@ -461,18 +463,22 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		boundUnresolvedElementConflictResolver[boundUnresolvedElementConflictResolverFree++] = icr;
 	}
 	
-	public BoundAmbiguousAttributeConflictResolver getBoundAmbiguousAttributeConflictResolver(String namespaceURI,
-                                                                    String localName,
-                                                                    String qName,
-                                                                    String value, 
-																	Queue queue, 
-																	int entry, 
-																	Map<AAttribute, AttributeBinder> attributeBinders){				
+	public BoundAmbiguousAttributeConflictResolver getBoundAmbiguousAttributeConflictResolver(BitSet disqualified,
+	                                                                                        TemporaryMessageStorage[] temporaryMessageStorage,
+                                                                                            String namespaceURI,
+                                                                                            String localName,
+                                                                                            String qName,
+                                                                                            String value, 
+                                                                                            Queue queue, 
+                                                                                            int entry, 
+                                                                                            Map<AAttribute, AttributeBinder> attributeBinders){				
 		if(boundAmbiguousAttributeConflictResolverFree == 0){
 			// boundAmbiguousAttributeConflictResolverCreated++;
 			BoundAmbiguousAttributeConflictResolver icr = new BoundAmbiguousAttributeConflictResolver(debugWriter);
 			icr.init(this, validationItemLocator);
-			icr.init(namespaceURI,
+			icr.init(disqualified,
+			        temporaryMessageStorage,
+			        namespaceURI,
                     localName,
                     qName,
                     value, 
@@ -482,7 +488,9 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			return icr;			
 		}else{
 			BoundAmbiguousAttributeConflictResolver icr = boundAmbiguousAttributeConflictResolver[--boundAmbiguousAttributeConflictResolverFree];
-			icr.init(namespaceURI,
+			icr.init(disqualified,
+			        temporaryMessageStorage,
+			        namespaceURI,
                     localName,
                     qName,
                     value, 
@@ -502,18 +510,20 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		boundAmbiguousAttributeConflictResolver[boundAmbiguousAttributeConflictResolverFree++] = icr;
 	}
 	
-	public BoundUnresolvedAttributeConflictResolver getBoundUnresolvedAttributeConflictResolver(String namespaceURI,
-                                                                    String localName,
-                                                                    String qName,
-                                                                    String value, 
-																	Queue queue, 
-																	int entry, 
-																	Map<AAttribute, AttributeBinder> attributeBinders){				
+	public BoundUnresolvedAttributeConflictResolver getBoundUnresolvedAttributeConflictResolver(TemporaryMessageStorage[] temporaryMessageStorage,
+                                                                                            String namespaceURI,
+                                                                                            String localName,
+                                                                                            String qName,
+                                                                                            String value, 
+                                                                                            Queue queue, 
+                                                                                            int entry, 
+                                                                                            Map<AAttribute, AttributeBinder> attributeBinders){				
 		if(boundUnresolvedAttributeConflictResolverFree == 0){
 			// boundUnresolvedAttributeConflictResolverCreated++;
 			BoundUnresolvedAttributeConflictResolver icr = new BoundUnresolvedAttributeConflictResolver(debugWriter);
 			icr.init(this, validationItemLocator);
-			icr.init(namespaceURI,
+			icr.init(temporaryMessageStorage,
+			        namespaceURI,
                     localName,
                     qName,
                     value, 
@@ -523,7 +533,8 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			return icr;			
 		}else{
 			BoundUnresolvedAttributeConflictResolver icr = boundUnresolvedAttributeConflictResolver[--boundUnresolvedAttributeConflictResolverFree];
-			icr.init(namespaceURI,
+			icr.init(temporaryMessageStorage,
+			        namespaceURI,
                     localName,
                     qName,
                     value, 

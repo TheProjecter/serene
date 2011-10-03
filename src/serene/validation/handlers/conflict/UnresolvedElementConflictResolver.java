@@ -63,7 +63,7 @@ public class UnresolvedElementConflictResolver extends ElementConflictResolver{
                     candidateDefinitions.remove(i);
                     i--;
                 }
-            }
+            }   
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
             errorCatcher.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));            
         }else if(qualified.cardinality() == 1){            

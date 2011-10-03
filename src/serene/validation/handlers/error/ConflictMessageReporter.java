@@ -190,7 +190,7 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     private void reportUnresolved(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         String message = ""; 
         for(int i = 0; i < candidatesCount; i++){
-            message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
+            if(candidateMessages[i] != null)message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
         }
         if(!message.equals("")){
             //System.out.println(hashCode()+" 3 "+message);

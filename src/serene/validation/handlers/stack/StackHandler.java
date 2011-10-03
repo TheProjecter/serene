@@ -18,6 +18,7 @@ package serene.validation.handlers.stack;
 
 import java.util.List;
 import java.util.Map;
+import java.util.BitSet;
 
 import org.xml.sax.SAXException;
 
@@ -35,6 +36,7 @@ import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.structure.StructureHandler;
 
@@ -51,10 +53,10 @@ public interface StackHandler extends FunctionallyEquivalable{
 	void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues);
 	
 	void shift(AAttribute attribute);	
-	void shiftAllAttributes(List<AAttribute> attributeDefinitions);
-	void shiftAllAttributes(List<AAttribute> attributeDefinitions, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders);
-	void shiftAllAttributes(List<AAttribute> attributeDefinitions, ExternalConflictHandler conflictHandler);
-	void shiftAllAttributes(List<AAttribute> attributeDefinitions, ExternalConflictHandler conflictHandler, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders);
+	void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
+	void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders);
+	void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
+	void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders);
 	
 	void shift(CharsActiveTypeItem chars);	
 	void shiftAllCharsDefinitions(List<CharsActiveTypeItem> charsDefinitions);
