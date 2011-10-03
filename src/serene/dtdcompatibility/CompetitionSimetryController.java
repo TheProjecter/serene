@@ -100,7 +100,7 @@ class CompetitionSimetryController{
                             }
                         }
                     }
-                    if(!foundCorrespondent){
+                    if(!foundCorrespondent  && defaultValue != null){
                         String message = "DTD compatibility error. Competing element definitions without corresponding attribute definitions with default values:"
                                 +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)
                                 +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" without corresponding attribute definition.";
@@ -118,7 +118,7 @@ class CompetitionSimetryController{
                                 foundCorrespondent = true;// already handled previously
                             }
                         }
-                        if(!foundCorrespondent){
+                        if(!foundCorrespondent && defaultValue != null){
                             String message = "DTD compatibility error. Competing element definitions without corresponding attribute definitions with default values:"
                                     +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" without corresponding attribute definition."
                                     +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName);
@@ -194,7 +194,7 @@ class CompetitionSimetryController{
                             }
                         }
                     }
-                    if(!foundCorrespondent){
+                    if(!foundCorrespondent && defaultValue != null){
                         String message = "DTD compatibility error. Competing element definitions without corresponding attribute definitions with default values:"
                                 +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" with attribute definition <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)
                                 +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" without corresponding attribute definition.";
@@ -212,7 +212,7 @@ class CompetitionSimetryController{
                                 foundCorrespondent = true;// already handled previously
                             }
                         }
-                        if(!foundCorrespondent){
+                        if(!foundCorrespondent  && defaultValue != null){
                             String message = "DTD compatibility error. Competing element definitions without corresponding attribute definitions with default values:"
                                     +"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+" without corresponding attribute definition."
                                     +"\n<"+record.element.getQName()+"> at "+record.element.getLocation(restrictToFileName)+" with attribute definition <"+recordAttribute.getQName()+"> at "+recordAttribute.getLocation(restrictToFileName);
