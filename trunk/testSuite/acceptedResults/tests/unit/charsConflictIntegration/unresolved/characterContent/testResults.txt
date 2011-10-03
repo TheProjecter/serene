@@ -1,0 +1,13 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\charsConflictIntegration\unresolved\characterContent\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/unresolved/characterContent/document1.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Unresolved character content.
+Character content at document1.xml:20:4 cannot be resolved to one schema definition, all candidates resulted in errors. Available definitions:
+<data> at schema.rng:23:27
+<data> at schema.rng:24:27.

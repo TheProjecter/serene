@@ -23,8 +23,6 @@ import java.util.ArrayList;
 
 import serene.validation.schema.active.components.AElement;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
-
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
 

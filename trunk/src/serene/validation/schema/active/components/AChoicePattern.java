@@ -53,7 +53,7 @@ public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerP
 		return true;
 	}
 	
-    boolean requiresBranch(){
+    boolean isChildBranchRequired(){
         return false;
     }
     

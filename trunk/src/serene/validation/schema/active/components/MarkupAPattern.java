@@ -268,7 +268,7 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 	}
 	//--------------------------------------------------------------------------
     
-    boolean requiresBranch(){
+    boolean isChildBranchRequired(){
         return true;
     } 
 }

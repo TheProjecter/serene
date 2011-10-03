@@ -51,16 +51,14 @@ class BoundCandidateAttributeValidationHandler extends CandidateAttributeValidat
 		this.entry = entry;
 	}
 	
-	public void recycle(){
-		bindingModel = null;
+	void reset(){
+	    super.reset();
+	    bindingModel = null;
 		queue = null;
 		entry = -1;
-        
-		if(stackHandler != null){
-			stackHandler.recycle();
-			stackHandler = null;
-		}
-        attribute.releaseDefinition();
+	}
+	
+	public void recycle(){
 		pool.recycle(this);
 	}
 	

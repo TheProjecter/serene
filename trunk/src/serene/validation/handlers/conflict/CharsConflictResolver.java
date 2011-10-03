@@ -21,29 +21,25 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import sereneWrite.MessageWriter;
 
-public class CharsConflictResolver extends InternalConflictResolver{
-	
+public abstract class CharsConflictResolver extends InternalConflictResolver{	
     List<CharsActiveTypeItem> candidateDefinitions;
-    
+    TemporaryMessageStorage[] temporaryMessageStorage;    
 	public CharsConflictResolver(MessageWriter debugWriter){				
 		super(debugWriter);
 		candidateDefinitions = new ArrayList<CharsActiveTypeItem>();
 	}
 	
-	public void recycle(){
-		reset();
-		pool.recycle(this);
-	}
-    
+	void init(TemporaryMessageStorage[] temporaryMessageStorage){
+	    super.init();
+	    this.temporaryMessageStorage = temporaryMessageStorage;
+	}	
     void reset(){
         super.reset();
         candidateDefinitions.clear();
@@ -51,22 +47,31 @@ public class CharsConflictResolver extends InternalConflictResolver{
     public void addCandidate(CharsActiveTypeItem candidate){
         candidateDefinitions.add(candidate);
     }
-    public void resolve(ErrorCatcher errorCatcher){
-        if(qualified.cardinality() == 0){
-            CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
-            errorCatcher.ambiguousCharsContentError(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
-        }else if(qualified.cardinality() > 1){ 
-            int j = 0;
-            for(int i = 0; i < candidateDefinitions.size(); i++){			
-                if(!qualified.get(j++)){
-                    candidateDefinitions.remove(i);
-                    i--;
-                }
-            }
-            CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
-            errorCatcher.ambiguousCharsContentWarning(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
-        }
-    }	
+    
+    void reportUnresolvedError(ErrorCatcher errorCatcher){
+        // TODO differentiate attribute value and element content
+        CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
+        //errorCatcher.ambiguousCharsContentErrorsystemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+        if(validationItemLocator.isElementContext()){			
+			errorCatcher.unresolvedCharacterContent(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
+		}else if(validationItemLocator.isAttributeContext()){
+			errorCatcher.unresolvedAttributeValue(validationItemLocator.getQName(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+		}else{
+			throw new IllegalStateException();
+		}	
+    }
+    
+    void reportAmbiguousWarning(ErrorCatcher errorCatcher){
+        // TODO differentiate attribute value and element content
+        CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);        
+        if(validationItemLocator.isElementContext()){			
+			errorCatcher.ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
+		}else if(validationItemLocator.isAttributeContext()){
+		    errorCatcher.ambiguousAttributeValueWarning(validationItemLocator.getQName(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+		}else{
+			throw new IllegalStateException();
+		}	
+    }
     
     public String toString(){
         return "CharsConflictResolver candidates "+candidateDefinitions+" qualified "+qualified;

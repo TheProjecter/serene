@@ -129,8 +129,10 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
                 commonMessages.report(restrictToFileName, null, errorDispatcher, "");                
             }
         }else if(conflictInternalResolutionId == AMBIGUOUS){
-            for(int i = 0; i < candidateMessages.length; i++){
-                if(!qualified.get(i))candidateMessages[i] = null;
+            if(candidateMessages != null){
+                for(int i = 0; i < candidateMessages.length; i++){
+                    if(!qualified.get(i))candidateMessages[i] = null;
+                }
             }
             
             if(parent != null){
@@ -215,8 +217,8 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
         }
         if(!message.equals("")){         
             //System.out.println(hashCode()+" 4 "+message);
-            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
-            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, publicId, systemId, lineNumber, columnNumber));
+            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, publicId, systemId, lineNumber, columnNumber));
         }        
     }
     

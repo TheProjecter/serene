@@ -28,7 +28,8 @@ import serene.validation.handlers.stack.StackHandler;
 
 import sereneWrite.MessageWriter;
 
-abstract class AttributeDefinitionHandler extends ValidatingAEH{
+abstract class AttributeDefinitionHandler extends ValidatingAEH 
+                                            implements CharsContentTypeHandler{
     AAttribute attribute;
     
     MatchHandler matchHandler;
@@ -38,11 +39,11 @@ abstract class AttributeDefinitionHandler extends ValidatingAEH{
     AttributeDefinitionHandler(MessageWriter debugWriter){
         super(debugWriter);
     }
-
-    abstract void addChars(CharsActiveTypeItem charsDefinition);	
-	abstract void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions);
-    
-    
+  
+    void reset(){       
+		attribute.releaseDefinition();
+		attribute = null;
+    }
     boolean functionalEquivalent(ComparableAEH other){
         return other.functionalEquivalent(this);
     }

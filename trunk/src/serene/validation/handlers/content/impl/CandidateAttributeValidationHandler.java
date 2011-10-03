@@ -18,6 +18,7 @@ package serene.validation.handlers.content.impl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.BitSet;
 
 import org.xml.sax.SAXException;
 
@@ -53,7 +54,8 @@ import serene.Reusable;
 
 import sereneWrite.MessageWriter;
 
-class CandidateAttributeValidationHandler extends AttributeDefinitionHandler implements ErrorCatcher{
+class CandidateAttributeValidationHandler extends AttributeDefinitionHandler 
+                                            implements ErrorCatcher{
 	
     ElementValidationHandler parent;    
 	
@@ -63,15 +65,19 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 	
 	CandidateAttributeValidationHandler(MessageWriter debugWriter){
 		super(debugWriter);
+		candidateIndex = -1;
 	}
 		
-	public void recycle(){
-		if(stackHandler != null){
-			stackHandler.recycle();
-			stackHandler = null;
-		}        
-        attribute.releaseDefinition();
-        temporaryMessageStorage = null;
+	void reset(){
+	    super.reset();
+	    temporaryMessageStorage = null;
+	    candidateIndex = -1;
+	    conflictHandler = null;
+	    parent = null;
+	}
+	
+	public void recycle(){		
+        reset();
 		pool.recycle(this);
 	}
 	
@@ -88,7 +94,6 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
         this.candidateIndex = candidateIndex;
         this.temporaryMessageStorage = temporaryMessageStorage;		
 		attribute.assembleDefinition();
-		stackHandler = attribute.getStackHandler(this);
 	}
 	
     public ElementValidationHandler getParentHandler(){
@@ -96,27 +101,41 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
     }
     
 	void validateValue(String value) throws SAXException{
+	    stackHandler = attribute.getStackHandler(this);
 		if(!attribute.allowsChars()){
 			unexpectedAttributeValue(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), attribute);
 			return;
 		}				
-		CharactersEventHandler ceh = pool.getAttributeValueValidationHandler(this, this);
-		ceh.handleString(value, (CharsActiveType)attribute, false);		
-        ceh.recycle();
+		CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+		cvh.handleString(value, (CharsActiveType)attribute, false);	
+        cvh.recycle();
+        stackHandler.endValidation();
+		stackHandler.recycle();
+		stackHandler = null;
 	}
 
 	void validateInContext(){
 		parent.addAttribute(attribute);
 	}
 
-	void addChars(CharsActiveTypeItem charsDefinition){
+	
+	// CharsContentTypeHandler
+	//==========================================================================
+	public void addChars(CharsActiveTypeItem charsDefinition){	
 		stackHandler.shift(charsDefinition);
 	}
 	
-	void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions){
+	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()) stackHandler = attribute.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions);
+		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, temporaryMessageStorage);
 	}
+	
+	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+		if(!stackHandler.handlesConflict()) stackHandler = attribute.getStackHandler(stackHandler, this);
+		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, disqualified, temporaryMessageStorage);
+	}
+	//==========================================================================
+	
 	
 	//errorCatcher
 	//--------------------------------------------------------------------------
@@ -178,12 +197,6 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 		throw new IllegalStateException();
 	}
 
-	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		conflictHandler.disqualify(candidateIndex);
-		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
-		temporaryMessageStorage[candidateIndex].ambiguousCharsContentError(systemId, lineNumber, columnNumber, possibleDefinitions);
-	}
-
 	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
@@ -196,10 +209,16 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 		throw new IllegalStateException();
 	}
 
-	public void ambiguousCharsContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
-		temporaryMessageStorage[candidateIndex].ambiguousCharsContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
+		temporaryMessageStorage[candidateIndex].ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
+	
+	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].ambiguousAttributeValueWarning(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void undeterminedByContent(String qName, String candidateMessages){
@@ -265,21 +284,17 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
 		temporaryMessageStorage[candidateIndex].listTokenExceptedError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
-	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		conflictHandler.disqualify(candidateIndex);
-		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
-		temporaryMessageStorage[candidateIndex].ambiguousListToken(token, systemId, lineNumber, columnNumber, possibleDefinitions);
-	}
+	
     
-    public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
-		temporaryMessageStorage[candidateIndex].ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		temporaryMessageStorage[candidateIndex].unresolvedListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
     }    
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
-		temporaryMessageStorage[candidateIndex].ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		temporaryMessageStorage[candidateIndex].ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, possibleDefinitions);
     }
     
     

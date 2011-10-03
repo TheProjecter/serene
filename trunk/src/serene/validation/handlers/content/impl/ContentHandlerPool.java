@@ -121,30 +121,35 @@ public class ContentHandlerPool{
 	int attributeDefaultHFree;
 	AttributeDefaultHandler[] attributeDefaultH;
 	
-	int characterContentHAverageUse;
-	int characterContentHPoolSize;
-	int characterContentHFree;
-	CharacterContentValidationHandler[] characterContentH;
+	int charactersValidationHAverageUse;
+	int charactersValidationHPoolSize;
+	int charactersValidationHFree;
+	CharactersValidationHandler[] charactersValidationH;
 	
-	int attributeValueHAverageUse;
-	int attributeValueHPoolSize;
-	int attributeValueHFree;
-	AttributeValueValidationHandler[] attributeValueH;
+	int structuredDataValidationHAverageUse;
+	int structuredDataValidationHPoolSize;
+	int structuredDataValidationHFree;
+	StructuredDataValidationHandler[] structuredDataValidationH;
     
+	int dataValidationHAverageUse;
+	int dataValidationHPoolSize;
+	int dataValidationHFree;
+	DataValidationHandler[] dataValidationH;
+	
     int defaultVAttributeHAverageUse;
 	int defaultVAttributeHPoolSize;
 	int defaultVAttributeHFree;
 	DefaultValueAttributeValidationHandler[] defaultVAttributeH;
 		
-	int listPatternTAverageUse;
-	int listPatternTPoolSize;
-	int listPatternTFree;
-	ListPatternTester[] listPatternT;
+	int listPatternVHAverageUse;
+	int listPatternVHPoolSize;
+	int listPatternVHFree;
+	ListPatternValidationHandler[] listPatternVH;
 	
-	int exceptPatternTAverageUse;
-	int exceptPatternTPoolSize;
-	int exceptPatternTFree;
-	ExceptPatternTester[] exceptPatternT;
+	int exceptPatternVHAverageUse;
+	int exceptPatternVHPoolSize;
+	int exceptPatternVHFree;
+	ExceptPatternValidationHandler[] exceptPatternVH;
 	
 	
 	
@@ -287,30 +292,36 @@ public class ContentHandlerPool{
 		attributeDefaultH = new AttributeDefaultHandler[attributeDefaultHPoolSize];
         
         
-		characterContentHAverageUse = UNUSED;
-		characterContentHPoolSize = 1;
-		characterContentHFree = 0;
-		characterContentH = new CharacterContentValidationHandler[characterContentHPoolSize];
+		charactersValidationHAverageUse = UNUSED;
+		charactersValidationHPoolSize = 1;
+		charactersValidationHFree = 0;
+		charactersValidationH = new CharactersValidationHandler[charactersValidationHPoolSize];
 		
-		attributeValueHAverageUse = UNUSED;
-		attributeValueHPoolSize = 1;
-		attributeValueHFree = 0;
-		attributeValueH = new AttributeValueValidationHandler[attributeValueHPoolSize];
+		structuredDataValidationHAverageUse = UNUSED;
+		structuredDataValidationHPoolSize = 1;
+		structuredDataValidationHFree = 0;
+		structuredDataValidationH = new StructuredDataValidationHandler[structuredDataValidationHPoolSize];
         
+		dataValidationHAverageUse = UNUSED;
+		dataValidationHPoolSize = 1;
+		dataValidationHFree = 0;
+		dataValidationH = new DataValidationHandler[dataValidationHPoolSize];
+        
+		
         defaultVAttributeHAverageUse = UNUSED;
 		defaultVAttributeHPoolSize = 1;
 		defaultVAttributeHFree = 0;
 		defaultVAttributeH = new DefaultValueAttributeValidationHandler[defaultVAttributeHPoolSize];
 		
-		listPatternTAverageUse = UNUSED;
-		listPatternTPoolSize = 1;
-		listPatternTFree = 0;
-		listPatternT = new ListPatternTester[listPatternTPoolSize];
+		listPatternVHAverageUse = UNUSED;
+		listPatternVHPoolSize = 1;
+		listPatternVHFree = 0;
+		listPatternVH = new ListPatternValidationHandler[listPatternVHPoolSize];
 		
-		exceptPatternTAverageUse = UNUSED;
-		exceptPatternTPoolSize = 1;
-		exceptPatternTFree = 0;
-		exceptPatternT = new ExceptPatternTester[exceptPatternTPoolSize];
+		exceptPatternVHAverageUse = UNUSED;
+		exceptPatternVHPoolSize = 1;
+		exceptPatternVHFree = 0;
+		exceptPatternVH = new ExceptPatternValidationHandler[exceptPatternVHPoolSize];
 		
 		
 		
@@ -404,11 +415,12 @@ public class ContentHandlerPool{
 					AttributeConcurrentHandler[] attributeConcurrentH,
                     AttributeParallelHandler[] attributeParallelH,
                     AttributeDefaultHandler[] attributeDefaultH,
-					CharacterContentValidationHandler[] characterContentH,					
-					AttributeValueValidationHandler[] attributeValueH,
+					CharactersValidationHandler[] charactersValidationH,					
+					StructuredDataValidationHandler[] structuredDataValidationH,
+					DataValidationHandler[] dataValidationH,
                     DefaultValueAttributeValidationHandler[] defaultVAttributeH,
-					ListPatternTester[] listPatternT,
-					ExceptPatternTester[] exceptPatternT,
+					ListPatternValidationHandler[] listPatternVH,
+					ExceptPatternValidationHandler[] exceptPatternVH,
 					BoundElementValidationHandler[] boundElementVH,
 					BoundStartValidationHandler[] boundStartVH,
 					BoundElementConcurrentHandler[] boundElementConcurrentH,
@@ -643,32 +655,46 @@ public class ContentHandlerPool{
 		System.arraycopy(this.attributeDefaultH, attributeDefaultHFree, 
 							attributeDefaultH, 0, attributeDefaultHFillCount);
 		
-		int characterContentHFillCount;
-		if(characterContentH == null || characterContentH.length < characterContentHAverageUse)
-			characterContentH = new CharacterContentValidationHandler[characterContentHAverageUse];		
-		if(characterContentHFree > characterContentHAverageUse){
-			characterContentHFillCount = characterContentHAverageUse;
-			characterContentHFree = characterContentHFree - characterContentHAverageUse;
+		int charactersValidationHFillCount;
+		if(charactersValidationH == null || charactersValidationH.length < charactersValidationHAverageUse)
+			charactersValidationH = new CharactersValidationHandler[charactersValidationHAverageUse];		
+		if(charactersValidationHFree > charactersValidationHAverageUse){
+			charactersValidationHFillCount = charactersValidationHAverageUse;
+			charactersValidationHFree = charactersValidationHFree - charactersValidationHAverageUse;
 		}else{
-			characterContentHFillCount = characterContentHFree;
-			characterContentHFree = 0;
+			charactersValidationHFillCount = charactersValidationHFree;
+			charactersValidationHFree = 0;
 		}		
-		System.arraycopy(this.characterContentH, characterContentHFree, 
-							characterContentH, 0, characterContentHFillCount);
+		System.arraycopy(this.charactersValidationH, charactersValidationHFree, 
+							charactersValidationH, 0, charactersValidationHFillCount);
 		
-		int attributeValueHFillCount;
-		if(attributeValueH == null || attributeValueH.length < attributeValueHAverageUse)
-			attributeValueH = new AttributeValueValidationHandler[attributeValueHAverageUse];		
-		if(attributeValueHFree > attributeValueHAverageUse){
-			attributeValueHFillCount = attributeValueHAverageUse;
-			attributeValueHFree = attributeValueHFree - attributeValueHAverageUse;
+		int structuredDataValidationHFillCount;
+		if(structuredDataValidationH == null || structuredDataValidationH.length < structuredDataValidationHAverageUse)
+			structuredDataValidationH = new StructuredDataValidationHandler[structuredDataValidationHAverageUse];		
+		if(structuredDataValidationHFree > structuredDataValidationHAverageUse){
+			structuredDataValidationHFillCount = structuredDataValidationHAverageUse;
+			structuredDataValidationHFree = structuredDataValidationHFree - structuredDataValidationHAverageUse;
 		}else{
-			attributeValueHFillCount = attributeValueHFree;
-			attributeValueHFree = 0;
+			structuredDataValidationHFillCount = structuredDataValidationHFree;
+			structuredDataValidationHFree = 0;
 		}		
-		System.arraycopy(this.attributeValueH, attributeValueHFree, 
-							attributeValueH, 0, attributeValueHFillCount);
+		System.arraycopy(this.structuredDataValidationH, structuredDataValidationHFree, 
+							structuredDataValidationH, 0, structuredDataValidationHFillCount);
         
+		int dataValidationHFillCount;
+		if(dataValidationH == null || dataValidationH.length < dataValidationHAverageUse)
+			dataValidationH = new DataValidationHandler[dataValidationHAverageUse];		
+		if(dataValidationHFree > dataValidationHAverageUse){
+			dataValidationHFillCount = dataValidationHAverageUse;
+			dataValidationHFree = dataValidationHFree - dataValidationHAverageUse;
+		}else{
+			dataValidationHFillCount = dataValidationHFree;
+			dataValidationHFree = 0;
+		}		
+		System.arraycopy(this.dataValidationH, dataValidationHFree, 
+							dataValidationH, 0, dataValidationHFillCount);
+        
+		
         int defaultVAttributeHFillCount;
 		if(defaultVAttributeH == null || defaultVAttributeH.length < defaultVAttributeHAverageUse)
 			defaultVAttributeH = new DefaultValueAttributeValidationHandler[defaultVAttributeHAverageUse];		
@@ -682,31 +708,31 @@ public class ContentHandlerPool{
 		System.arraycopy(this.defaultVAttributeH, defaultVAttributeHFree, 
 							defaultVAttributeH, 0, defaultVAttributeHFillCount);
 		
-		int listPatternTFillCount;
-		if(listPatternT == null || listPatternT.length < listPatternTAverageUse)
-			listPatternT = new ListPatternTester[listPatternTAverageUse];		
-		if(listPatternTFree > listPatternTAverageUse){
-			listPatternTFillCount = listPatternTAverageUse;
-			listPatternTFree = listPatternTFree - listPatternTAverageUse;
+		int listPatternVHFillCount;
+		if(listPatternVH == null || listPatternVH.length < listPatternVHAverageUse)
+			listPatternVH = new ListPatternValidationHandler[listPatternVHAverageUse];		
+		if(listPatternVHFree > listPatternVHAverageUse){
+			listPatternVHFillCount = listPatternVHAverageUse;
+			listPatternVHFree = listPatternVHFree - listPatternVHAverageUse;
 		}else{
-			listPatternTFillCount = listPatternTFree;
-			listPatternTFree = 0;
+			listPatternVHFillCount = listPatternVHFree;
+			listPatternVHFree = 0;
 		}		
-		System.arraycopy(this.listPatternT, listPatternTFree, 
-							listPatternT, 0, listPatternTFillCount);
+		System.arraycopy(this.listPatternVH, listPatternVHFree, 
+							listPatternVH, 0, listPatternVHFillCount);
 		
-		int exceptPatternTFillCount;
-		if(exceptPatternT == null || exceptPatternT.length < exceptPatternTAverageUse)
-			exceptPatternT = new ExceptPatternTester[exceptPatternTAverageUse];		
-		if(exceptPatternTFree > exceptPatternTAverageUse){
-			exceptPatternTFillCount = exceptPatternTAverageUse;
-			exceptPatternTFree = exceptPatternTFree - exceptPatternTAverageUse;
+		int exceptPatternVHFillCount;
+		if(exceptPatternVH == null || exceptPatternVH.length < exceptPatternVHAverageUse)
+			exceptPatternVH = new ExceptPatternValidationHandler[exceptPatternVHAverageUse];		
+		if(exceptPatternVHFree > exceptPatternVHAverageUse){
+			exceptPatternVHFillCount = exceptPatternVHAverageUse;
+			exceptPatternVHFree = exceptPatternVHFree - exceptPatternVHAverageUse;
 		}else{
-			exceptPatternTFillCount = exceptPatternTFree;
-			exceptPatternTFree = 0;
+			exceptPatternVHFillCount = exceptPatternVHFree;
+			exceptPatternVHFree = 0;
 		}		
-		System.arraycopy(this.exceptPatternT, exceptPatternTFree, 
-							exceptPatternT, 0, exceptPatternTFillCount);
+		System.arraycopy(this.exceptPatternVH, exceptPatternVHFree, 
+							exceptPatternVH, 0, exceptPatternVHFillCount);
 		
 		
 		
@@ -851,16 +877,18 @@ public class ContentHandlerPool{
 										attributeParallelH,
                                         attributeDefaultHFillCount,
 										attributeDefaultH,
-										characterContentHFillCount,
-										characterContentH,
-										attributeValueHFillCount,
-										attributeValueH,
+										charactersValidationHFillCount,
+										charactersValidationH,
+										structuredDataValidationHFillCount,
+										structuredDataValidationH,
+										dataValidationHFillCount,
+										dataValidationH,
                                         defaultVAttributeHFillCount,
 										defaultVAttributeH,
-										listPatternTFillCount,
-										listPatternT,
-										exceptPatternTFillCount,
-										exceptPatternT,
+										listPatternVHFillCount,
+										listPatternVH,
+										exceptPatternVHFillCount,
+										exceptPatternVH,
 										boundElementVHFillCount,	
 										boundElementVH,
 										boundStartVHFillCount,	
@@ -913,16 +941,18 @@ public class ContentHandlerPool{
 							AttributeParallelHandler[] attributeParallelH,
                             int attributeDefaultHAverageUse,
 							AttributeDefaultHandler[] attributeDefaultH,
-							int characterContentHAverageUse,
-							CharacterContentValidationHandler[] characterContentH,
-							int attributeValueHAverageUse,
-							AttributeValueValidationHandler[] attributeValueH,
+							int charactersValidationHAverageUse,
+							CharactersValidationHandler[] charactersValidationH,
+							int structuredDataValidationHAverageUse,
+							StructuredDataValidationHandler[] structuredDataValidationH,
+							int dataValidationHAverageUse,
+							DataValidationHandler[] dataValidationH,
                             int defaultVAttributeHAverageUse,
 							DefaultValueAttributeValidationHandler[] defaultVAttributeH,
-							int listPatternTAverageUse,
-							ListPatternTester[] listPatternT,
-							int exceptPatternTAverageUse,
-							ExceptPatternTester[] exceptPatternT,
+							int listPatternVHAverageUse,
+							ListPatternValidationHandler[] listPatternVH,
+							int exceptPatternVHAverageUse,
+							ExceptPatternValidationHandler[] exceptPatternVH,
 							int boundElementVHAverageUse,	
 							BoundElementValidationHandler[] boundElementVH,
 							int boundStartVHAverageUse,	
@@ -1146,29 +1176,41 @@ public class ContentHandlerPool{
 		else this.attributeDefaultHAverageUse = attributeDefaultHAverageUse;
 		// System.out.println("vh "+this.attributeDefaultHAverageUse);
 		
-		if(characterContentHFree + characterContentHAverageUse >= characterContentHPoolSize){			 
-			characterContentHPoolSize+= characterContentHAverageUse;
-			CharacterContentValidationHandler[] increased = new CharacterContentValidationHandler[characterContentHPoolSize];
-			System.arraycopy(this.characterContentH, 0, increased, 0, characterContentHFree);
-			this.characterContentH = increased;
+		if(charactersValidationHFree + charactersValidationHAverageUse >= charactersValidationHPoolSize){			 
+			charactersValidationHPoolSize+= charactersValidationHAverageUse;
+			CharactersValidationHandler[] increased = new CharactersValidationHandler[charactersValidationHPoolSize];
+			System.arraycopy(this.charactersValidationH, 0, increased, 0, charactersValidationHFree);
+			this.charactersValidationH = increased;
 		}
-		System.arraycopy(characterContentH, 0, this.characterContentH, characterContentHFree, characterContentHAverageUse);
-		characterContentHFree += characterContentHAverageUse;
-		if(this.characterContentHAverageUse != 0)this.characterContentHAverageUse = (this.characterContentHAverageUse + characterContentHAverageUse)/2;
-		else this.characterContentHAverageUse = characterContentHAverageUse;
-		// System.out.println("vh "+this.characterContentHAverageUse);
+		System.arraycopy(charactersValidationH, 0, this.charactersValidationH, charactersValidationHFree, charactersValidationHAverageUse);
+		charactersValidationHFree += charactersValidationHAverageUse;
+		if(this.charactersValidationHAverageUse != 0)this.charactersValidationHAverageUse = (this.charactersValidationHAverageUse + charactersValidationHAverageUse)/2;
+		else this.charactersValidationHAverageUse = charactersValidationHAverageUse;
+		// System.out.println("vh "+this.charactersValidationHAverageUse);
 		
-		if(attributeValueHFree + attributeValueHAverageUse >= attributeValueHPoolSize){			 
-			attributeValueHPoolSize+= attributeValueHAverageUse;
-			AttributeValueValidationHandler[] increased = new AttributeValueValidationHandler[attributeValueHPoolSize];
-			System.arraycopy(this.attributeValueH, 0, increased, 0, attributeValueHFree);
-			this.attributeValueH = increased;
+		if(structuredDataValidationHFree + structuredDataValidationHAverageUse >= structuredDataValidationHPoolSize){			 
+			structuredDataValidationHPoolSize+= structuredDataValidationHAverageUse;
+			StructuredDataValidationHandler[] increased = new StructuredDataValidationHandler[structuredDataValidationHPoolSize];
+			System.arraycopy(this.structuredDataValidationH, 0, increased, 0, structuredDataValidationHFree);
+			this.structuredDataValidationH = increased;
 		}
-		System.arraycopy(attributeValueH, 0, this.attributeValueH, attributeValueHFree, attributeValueHAverageUse);
-		attributeValueHFree += attributeValueHAverageUse;
-		if(this.attributeValueHAverageUse != 0)this.attributeValueHAverageUse = (this.attributeValueHAverageUse + attributeValueHAverageUse)/2;
-		else this.attributeValueHAverageUse = attributeValueHAverageUse;
-		// System.out.println("vh "+this.attributeValueHAverageUse);
+		System.arraycopy(structuredDataValidationH, 0, this.structuredDataValidationH, structuredDataValidationHFree, structuredDataValidationHAverageUse);
+		structuredDataValidationHFree += structuredDataValidationHAverageUse;
+		if(this.structuredDataValidationHAverageUse != 0)this.structuredDataValidationHAverageUse = (this.structuredDataValidationHAverageUse + structuredDataValidationHAverageUse)/2;
+		else this.structuredDataValidationHAverageUse = structuredDataValidationHAverageUse;
+		// System.out.println("vh "+this.structuredDataValidationHAverageUse);
+        
+		if(dataValidationHFree + dataValidationHAverageUse >= dataValidationHPoolSize){			 
+			dataValidationHPoolSize+= dataValidationHAverageUse;
+			DataValidationHandler[] increased = new DataValidationHandler[dataValidationHPoolSize];
+			System.arraycopy(this.dataValidationH, 0, increased, 0, dataValidationHFree);
+			this.dataValidationH = increased;
+		}
+		System.arraycopy(dataValidationH, 0, this.dataValidationH, dataValidationHFree, dataValidationHAverageUse);
+		dataValidationHFree += dataValidationHAverageUse;
+		if(this.dataValidationHAverageUse != 0)this.dataValidationHAverageUse = (this.dataValidationHAverageUse + dataValidationHAverageUse)/2;
+		else this.dataValidationHAverageUse = dataValidationHAverageUse;
+		// System.out.println("vh "+this.dataValidationHAverageUse);
         
         
         if(defaultVAttributeHFree + defaultVAttributeHAverageUse >= defaultVAttributeHPoolSize){			 
@@ -1184,29 +1226,29 @@ public class ContentHandlerPool{
 		// System.out.println("vh "+this.defaultVAttributeHAverageUse);
 		
 		
-		if(listPatternTFree + listPatternTAverageUse >= listPatternTPoolSize){			 
-			listPatternTPoolSize+= listPatternTAverageUse;
-			ListPatternTester[] increased = new ListPatternTester[listPatternTPoolSize];
-			System.arraycopy(this.listPatternT, 0, increased, 0, listPatternTFree);
-			this.listPatternT = increased;
+		if(listPatternVHFree + listPatternVHAverageUse >= listPatternVHPoolSize){			 
+			listPatternVHPoolSize+= listPatternVHAverageUse;
+			ListPatternValidationHandler[] increased = new ListPatternValidationHandler[listPatternVHPoolSize];
+			System.arraycopy(this.listPatternVH, 0, increased, 0, listPatternVHFree);
+			this.listPatternVH = increased;
 		}
-		System.arraycopy(listPatternT, 0, this.listPatternT, listPatternTFree, listPatternTAverageUse);
-		listPatternTFree += listPatternTAverageUse;
-		if(this.listPatternTAverageUse != 0)this.listPatternTAverageUse = (this.listPatternTAverageUse + listPatternTAverageUse)/2;
-		else this.listPatternTAverageUse = listPatternTAverageUse;
-		// System.out.println("vh "+this.listPatternTAverageUse);
+		System.arraycopy(listPatternVH, 0, this.listPatternVH, listPatternVHFree, listPatternVHAverageUse);
+		listPatternVHFree += listPatternVHAverageUse;
+		if(this.listPatternVHAverageUse != 0)this.listPatternVHAverageUse = (this.listPatternVHAverageUse + listPatternVHAverageUse)/2;
+		else this.listPatternVHAverageUse = listPatternVHAverageUse;
+		// System.out.println("vh "+this.listPatternVHAverageUse);
 		
-		if(exceptPatternTFree + exceptPatternTAverageUse >= exceptPatternTPoolSize){			 
-			exceptPatternTPoolSize+= exceptPatternTAverageUse;
-			ExceptPatternTester[] increased = new ExceptPatternTester[exceptPatternTPoolSize];
-			System.arraycopy(this.exceptPatternT, 0, increased, 0, exceptPatternTFree);
-			this.exceptPatternT = increased;
+		if(exceptPatternVHFree + exceptPatternVHAverageUse >= exceptPatternVHPoolSize){			 
+			exceptPatternVHPoolSize+= exceptPatternVHAverageUse;
+			ExceptPatternValidationHandler[] increased = new ExceptPatternValidationHandler[exceptPatternVHPoolSize];
+			System.arraycopy(this.exceptPatternVH, 0, increased, 0, exceptPatternVHFree);
+			this.exceptPatternVH = increased;
 		}
-		System.arraycopy(exceptPatternT, 0, this.exceptPatternT, exceptPatternTFree, exceptPatternTAverageUse);
-		exceptPatternTFree += exceptPatternTAverageUse;
-		if(this.exceptPatternTAverageUse != 0)this.exceptPatternTAverageUse = (this.exceptPatternTAverageUse + exceptPatternTAverageUse)/2;
-		else this.exceptPatternTAverageUse = exceptPatternTAverageUse;
-		// System.out.println("vh "+this.exceptPatternTAverageUse);
+		System.arraycopy(exceptPatternVH, 0, this.exceptPatternVH, exceptPatternVHFree, exceptPatternVHAverageUse);
+		exceptPatternVHFree += exceptPatternVHAverageUse;
+		if(this.exceptPatternVHAverageUse != 0)this.exceptPatternVHAverageUse = (this.exceptPatternVHAverageUse + exceptPatternVHAverageUse)/2;
+		else this.exceptPatternVHAverageUse = exceptPatternVHAverageUse;
+		// System.out.println("vh "+this.exceptPatternVHAverageUse);
 		
 		
 		

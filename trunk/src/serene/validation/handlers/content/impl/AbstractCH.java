@@ -1,0 +1,58 @@
+/*
+Copyright 2011 Radu Cernuta 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package serene.validation.handlers.content.impl;
+
+import serene.validation.handlers.content.EventHandler;
+import serene.validation.handlers.content.util.ValidationItemLocator;
+
+import serene.validation.handlers.conflict.ExternalConflictHandler;
+
+import serene.validation.handlers.error.TemporaryMessageStorage;
+
+import serene.validation.handlers.match.MatchHandler;
+
+import sereneWrite.MessageWriter;
+
+
+abstract class AbstractCH implements EventHandler{    
+    MatchHandler matchHandler;
+           
+    TemporaryMessageStorage[] temporaryMessageStorage;    
+    ExternalConflictHandler externalConflictHandler;
+    
+    ValidatorEventHandlerPool pool;	    
+    ValidationItemLocator validationItemLocator;
+    
+    MessageWriter debugWriter;
+	
+	AbstractCH(MessageWriter debugWriter){
+		this.debugWriter = debugWriter;
+		
+		externalConflictHandler = new ExternalConflictHandler(debugWriter);
+	}
+	
+	void init(MatchHandler matchHandler, ValidationItemLocator validationItemLocator, ValidatorEventHandlerPool pool){
+	    this.matchHandler = matchHandler;		
+		this.validationItemLocator = validationItemLocator;		
+		this.pool = pool;		
+	}
+	
+	void reset(){
+	    externalConflictHandler.clear();	    
+	    temporaryMessageStorage = null;
+	}	
+}

@@ -141,7 +141,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	// actually pattern is always a compositor, more precisely group or interleave
 	// LATER really???	
 	
-	void setStart(){		
+	void setStart(){	
 		starttSystemId = validationItemLocator.getSystemId();		
 		starttLineNumber = validationItemLocator.getLineNumber();
 		starttColumnNumber = validationItemLocator.getColumnNumber();
