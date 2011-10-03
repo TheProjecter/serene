@@ -81,8 +81,6 @@ class ElementValidationHandler extends ValidatingEEH
 	
 	AElement element;
 
-	ContextConflictPool contextConflictPool;
-			
 	StackHandler stackHandler;
 		
 	ElementValidationHandler parent;
@@ -108,8 +106,6 @@ class ElementValidationHandler extends ValidatingEEH
 			stackHandler = null;
 		}
 		resetContextErrorHandlerManager();
-		//internalConflicts = null; 
-		if(contextConflictPool != null)contextConflictPool.clear();
 		element.releaseDefinition();
 		pool.recycle(this);
 	}
@@ -153,10 +149,8 @@ class ElementValidationHandler extends ValidatingEEH
 			ElementValidationHandler next = pool.getElementValidationHandler(elementMatches.get(0), this);				
 			return next;
 		}else{
-            hasComplexContent = true;
-			if(contextConflictPool == null)	contextConflictPool = new ContextConflictPool();			
-			ContextConflictDescriptor ccd = contextConflictPool.getContextConflictDescriptor(elementMatches);
-			ElementConcurrentHandler next = pool.getElementConcurrentHandler(ccd.getDefinitions(), this);				
+            hasComplexContent = true;			
+			ElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList(elementMatches), this);				
 			return next;
 		}		
 	}	
@@ -200,11 +194,8 @@ class ElementValidationHandler extends ValidatingEEH
 		}else if(matchCount == 1){			
 			AttributeValidationHandler next = pool.getAttributeValidationHandler(attributeMatches.get(0), this, this);				
 			return next;
-		}else{	
-			// TODO
-			// if(contextConflictPool == null)	contextConflictPool = new ContextConflictPool();			
-			// ContextConflictDescriptor ccd = contextConflictPool.getContextConflictDescriptor(attributeMatches);
-			AttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(attributeMatches, this);				
+		}else{
+			AttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(new ArrayList<AAttribute>(attributeMatches), this);				
 			return next;
 		}		
 	}	
@@ -572,64 +563,6 @@ class ElementValidationHandler extends ValidatingEEH
 		if(stackHandler == null)s= " null";
 		else s = stackHandler.toString();
 		return "ElementValidationHandler "+element.toString()+" "+s;
-	}
-	
-	protected class ContextConflictPool{
-		ContextConflictDescriptor[] conflicts;
-		int size;	
-		int maxSize;
-		ContextConflictPool(){
-			maxSize = 1;
-			size = 0;
-			conflicts = new ContextConflictDescriptor[maxSize];
-		}
-		
-		void clear(){
-			Arrays.fill(conflicts, null);
-			size = 0;
-		}
-		
-		ContextConflictDescriptor getContextConflictDescriptor(List<AElement> elementMatches){			
-			for(int i = 0; i < size; i++){
-				if(conflicts[i].equals(elementMatches))return conflicts[i];
-			}
-						
-			ContextConflictDescriptor[] increased = new ContextConflictDescriptor[++maxSize];
-			System.arraycopy(conflicts, 0, increased, 0, size);	
-			conflicts = increased;
-			ContextConflictDescriptor descriptor = new ContextConflictDescriptor(elementMatches); 
-			conflicts[size++] = descriptor;
-			return descriptor;
-		}		
-	}
-	
-	protected class ContextConflictDescriptor{
-		private List<AElement> definitions;
-				
-		ContextConflictDescriptor(List<AElement> definitions){
-			this.definitions = new ArrayList<AElement>(definitions);
-		}
-		
-				
-		boolean equalsCandidates(List<AElement> otherConflictElements){
-			return definitions.equals(otherConflictElements);
-		}
-		
-		boolean equals(ContextConflictDescriptor other){
-			return definitions.equals(other.getDefinitions());
-		}
-	
-		List<AElement> getDefinitions(){
-			return definitions;
-		}
-		
-		int getDefinitionsCount(){
-			return definitions.size();
-		}
-		
-		AElement getDefinition(int index){
-			return definitions.get(index);
-		}
-	}
+	}	
 }
 

@@ -17,6 +17,7 @@ limitations under the License.
 package serene.validation.handlers.content.impl;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Arrays;
 
@@ -76,8 +77,6 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 			stackHandler = null;
 		}
 		resetContextErrorHandlerManager();
-		//internalConflicts = null; 
-		if(contextConflictPool != null)contextConflictPool.clear();
 		element.releaseDefinition();
 				
 		bindingModel = null;
@@ -133,10 +132,8 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		}else if(matchCount == 1){			
 			BoundElementValidationHandler next = pool.getElementValidationHandler(elementMatches.get(0), this, bindingModel, queue, queuePool);				
 			return next;
-		}else{	
-			if(contextConflictPool == null)	contextConflictPool = new ContextConflictPool();			
-			ContextConflictDescriptor ccd = contextConflictPool.getContextConflictDescriptor(elementMatches);
-			BoundElementConcurrentHandler next = pool.getElementConcurrentHandler(ccd.getDefinitions(), this, bindingModel, queue, queuePool);				
+		}else{
+			BoundElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList<AElement>(elementMatches), this, bindingModel, queue, queuePool);
 			return next;
 		}		
 	}
@@ -152,11 +149,8 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		}else if(matchCount == 1){			
 			BoundAttributeValidationHandler next = pool.getAttributeValidationHandler(attributeMatches.get(0), this, this, bindingModel, queue, queueStartEntry);
 			return next;
-		}else{	
-			// TODO
-			// if(contextConflictPool == null)	contextConflictPool = new ContextConflictPool();			
-			// ContextConflictDescriptor ccd = contextConflictPool.getContextConflictDescriptor(attributeMatches);
-			BoundAttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(attributeMatches, this, bindingModel, queue, queueStartEntry);
+		}else{
+			BoundAttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(new ArrayList<AAttribute>(attributeMatches), this, bindingModel, queue, queueStartEntry);
 			return next;
 		}		
 	}	
