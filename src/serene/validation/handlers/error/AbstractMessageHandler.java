@@ -387,6 +387,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	int missingCompositorContentSize;
     
     // {30}
+    
     MessageReporter commonMessages; // It can be only one because it is about this context.
     int candidatesCount;
     BitSet disqualified;
@@ -397,48 +398,164 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		
 	public AbstractMessageHandler(MessageWriter debugWriter){
 		super(debugWriter);
-				
-		unknownElementSize = 0;
-		unexpectedElementSize = 0;
-		unexpectedAmbiguousElementSize = 0;
-		misplacedSize = 0;
-		excessiveSize = 0;		
-		missingSize = 0;	
-		illegalSize = 0;
-		unknownAttributeSize = 0;		
-		unexpectedAttributeSize = 0;
-		unexpectedAmbiguousAttributeSize = 0;
-		unresolvedAmbiguousElementSizeEE = 0;		
-		unresolvedUnresolvedElementSizeEE = 0;
-		unresolvedAttributeSizeEE = 0;
-		ambiguousCharsSizeEE = 0;
-		
-		ambiguousUnresolvedElementSizeWW = 0;
-		ambiguousAmbiguousElementSizeWW = 0;
-		ambiguousAttributeSizeWW = 0;
-		ambiguousCharsSizeWW = 0;
-		
-		
-		datatypeSizeCC = 0;
-		datatypeSizeAV = 0;
-		valueSizeCC = 0;
-		valueSizeAV = 0;
-		exceptSizeCC = 0;
-		exceptSizeAV = 0;
-		unexpectedSizeCC = 0;
-		unexpectedSizeAV = 0;
-		ambiguousSizeCC = 0;
-		ambiguousSizeAV = 0;
-		datatypeSizeLP = 0;
-		valueSizeLP = 0;
-		exceptSizeLP = 0;
-		ambiguousSizeLP = 0;
-        ambiguousSizeLPICE = 0;
-        ambiguousSizeLPICW = 0;
-		
-		missingCompositorContentSize = 0;
-        
+			
         errorTotalCount = 0;   
+        
+        
+        
+        
+        // {2}
+        unknownElementIndex = -1;
+        unknownElementSize = 0;	
+        
+        // {3}
+        unexpectedElementIndex = -1;
+        unexpectedElementSize = 0;
+        
+        // {4}
+        unexpectedAmbiguousElementIndex = -1;
+        unexpectedAmbiguousElementSize = 0;
+        
+        // {5}
+        unknownAttributeIndex = -1;
+        unknownAttributeSize = 0;	
+        
+        // {6}
+        unexpectedAttributeIndex = -1;
+        unexpectedAttributeSize = 0;
+        
+        // {7}
+        unexpectedAmbiguousAttributeIndex = -1;
+        unexpectedAmbiguousAttributeSize = 0;
+        
+        
+        // {8}
+        misplacedIndex = -1;
+        misplacedSize = 0;
+    
+        // {9}
+        excessiveIndex = -1;
+        excessiveSize = 0;
+        
+        // {10}
+        missingIndex = -1;
+        missingSize = 0;
+        
+        
+        // {11}	
+        illegalIndex = -1;
+        illegalSize = 0;
+        
+        // {12 A}
+        unresolvedAmbiguousElementIndexEE = -1;
+        unresolvedAmbiguousElementSizeEE = 0;
+        
+        // {12 U}
+        unresolvedUnresolvedElementIndexEE = -1;
+        unresolvedUnresolvedElementSizeEE = 0;
+    
+        // {13}
+        unresolvedAttributeIndexEE = -1;
+        unresolvedAttributeSizeEE = 0;
+    
+        // {14}
+        ambiguousCharsIndexEE = -1;
+        ambiguousCharsSizeEE = 0;
+        
+        
+        // {w1 U}
+        ambiguousUnresolvedElementIndexWW = -1;
+        ambiguousUnresolvedElementSizeWW = 0;
+        
+        // {w1 A}
+        ambiguousAmbiguousElementIndexWW = -1;
+        ambiguousAmbiguousElementSizeWW = 0;
+        
+        
+        
+        // {w2}
+        ambiguousAttributeIndexWW = -1;
+        ambiguousAttributeSizeWW = 0;
+    
+        // {w3}
+        ambiguousCharsIndexWW = -1;
+        ambiguousCharsSizeWW = 0;
+        
+        
+        // {15}
+        datatypeIndexCC = -1;
+        datatypeSizeCC = 0;
+        
+        // {16}
+        datatypeIndexAV = -1;
+        datatypeSizeAV = 0;
+       
+        
+        // {17}
+        valueIndexCC = -1;
+        valueSizeCC = 0;
+        
+        // {18}
+        valueIndexAV = -1;
+        valueSizeAV = 0;
+        
+        // {19}
+        exceptIndexCC = -1;
+        exceptSizeCC = 0;
+        
+        // {20}
+        exceptIndexAV = -1;
+        exceptSizeAV = 0;
+        
+        // {21}
+        unexpectedIndexCC = -1;
+        unexpectedSizeCC = 0;
+        
+        // {22}
+        unexpectedIndexAV = -1;
+        unexpectedSizeAV = 0;
+        
+        
+        // {23}
+        ambiguousIndexCC = -1;
+        ambiguousSizeCC = 0;
+        
+        // {24}
+        ambiguousIndexAV = -1;
+        ambiguousSizeAV = 0;
+        
+        
+        // {25}
+        datatypeIndexLP = -1;
+        datatypeSizeLP = 0;
+            
+        // {26}
+        valueIndexLP = -1;
+        valueSizeLP = 0;
+        
+        // {27}
+        exceptIndexLP = -1;
+        exceptSizeLP = 0;
+        
+        // {28}
+        ambiguousIndexLP = -1;
+        ambiguousSizeLP = 0;
+        
+        // {28_1}
+        ambiguousIndexLPICE = -1;
+        ambiguousSizeLPICE = 0;
+        
+        
+        // {28_2}
+        ambiguousIndexLPICW = -1;
+        ambiguousSizeLPICW = 0;
+        
+        
+        // {29}
+        missingCompositorContentIndex = -1;
+        missingCompositorContentSize = 0;
+        
+        // {30}
 	}  
     
     public void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
@@ -688,7 +805,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     String getValidationErrorMessage(String prefix, boolean restrictToFileName){
 		// {2}
         String message = "";
-		if(unknownElementQName != null){
+		if(unknownElementIndex >= 0){
 			for(int i = 0; i <= unknownElementIndex; i++){
 				message += "\n"+prefix+"Unknown element."
 				+"\n"+prefix+"Element <"+unknownElementQName[i]+"> at "+getLocation(restrictToFileName, unknownElementSystemId[i])+":"+unknownElementLineNumber[i]+":"+unknownElementColumnNumber[i]
@@ -696,14 +813,14 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}	
 		// {3}
-		if(unexpectedElementQName != null){
+		if(unexpectedElementIndex >= 0){
 			for(int i = 0; i <= unexpectedElementIndex; i++){
 				message += "\n"+prefix+"Unexpected element."
                 +"\n"+prefix+"Element <"+unexpectedElementQName[i]+"> at "+getLocation(restrictToFileName, unexpectedElementSystemId[i])+":"+unexpectedElementLineNumber[i]+":"+unexpectedElementColumnNumber[i]+" corresponding to definition: <"+unexpectedElementDefinition[i].getQName()+"> at "+unexpectedElementDefinition[i].getLocation(restrictToFileName)+" is not part of the parent's content model." ;
 			}
 		}
 		// {4}
-		if(unexpectedAmbiguousElementQName != null){
+		if(unexpectedAmbiguousElementIndex  >= 0){
 			for(int i = 0; i <= unexpectedAmbiguousElementIndex; i++){
 				String definitions = "";
 				for(int j = 0; j < unexpectedAmbiguousElementDefinition[i].length; j++ ){
@@ -717,7 +834,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {5}
-		if(unknownAttributeQName != null){
+		if(unknownAttributeIndex  >= 0){
 			for(int i = 0; i <= unknownAttributeIndex; i++){
 				message += "\n"+prefix+"Unknown attribute."
 				+"\n"+prefix+"Attribute \""+unknownAttributeQName[i]+"\" at "+getLocation(restrictToFileName, unknownAttributeSystemId[i])+":"+unknownAttributeLineNumber[i]+":"+unknownAttributeColumnNumber[i]
@@ -725,14 +842,14 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}	
 		// {6}
-		if(unexpectedAttributeQName != null){
+		if(unexpectedAttributeIndex  >= 0){
 			for(int i = 0; i <= unexpectedAttributeIndex; i++){
 				message += "\n"+prefix+"Unexpected attribute."
 						+"\n"+prefix+"Attribute \""+unexpectedAttributeQName[i]+"\" at "+getLocation(restrictToFileName, unexpectedAttributeSystemId[i])+":"+unexpectedAttributeLineNumber[i]+":"+unexpectedAttributeColumnNumber[i]+" corresponding to definition <"+unexpectedAttributeDefinition[i].getQName()+"> at "+unexpectedAttributeDefinition[i].getLocation(restrictToFileName)+" is not part of the parent's content model." ;
 			}
 		}
 		// {7}
-		if(unexpectedAmbiguousAttributeQName != null){
+		if(unexpectedAmbiguousAttributeIndex >= 0){
 			for(int i = 0; i <= unexpectedAmbiguousAttributeIndex; i++){
 				String definitions = "";
 				for(int j = 0; j < unexpectedAmbiguousAttributeDefinition[i].length; j++ ){
@@ -748,7 +865,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 
 		
 		// {8}
-		if(misplacedContext != null){
+		if(misplacedIndex  >= 0){
 			for(int i = 0; i <= misplacedIndex; i++){
 				message += "\n"+prefix+"Order error."
 				+"\n"+prefix+"Misplaced content in the document structure starting at "+getLocation(restrictToFileName, misplacedStartSystemId[i])+":"+misplacedStartLineNumber[i]+":"+misplacedStartColumnNumber[i]+", corresponding to definition <"+misplacedContext[i].getQName()+"> at "+misplacedContext[i].getLocation(restrictToFileName)+ ":";
@@ -762,7 +879,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {9}
-		if(excessiveContext != null){
+		if(excessiveIndex  >= 0){
 			for(int i = 0; i <= excessiveIndex; i++){
 				message += "\n"+prefix+"Excessive content."
 						+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, excessiveStartSystemId[i])+":"+excessiveStartLineNumber[i]+":"+excessiveStartColumnNumber[i]+", corresponding to definition <"+excessiveContext[i].getQName()+"> at "+excessiveContext[i].getLocation(restrictToFileName)+", "
@@ -774,7 +891,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {10}
-		if(missingContext != null){
+		if(missingIndex >= 0){
 			for(int i = 0; i <= missingIndex; i++){
 				int found = missingFound[i];				
 				if(found > 0){
@@ -793,14 +910,14 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}			
 		}		
 		// {11}
-		if(illegalContext != null){
+		if(illegalIndex >= 0){
 			for(int i = 0; i <= illegalIndex; i++){
 				message += "\n"+prefix+"Illegal content."
 							+"\n"+prefix+"The document structure starting with <"+illegalQName[i] +"> at "+getLocation(restrictToFileName, illegalStartSystemId[i])+":"+illegalStartLineNumber[i]+":"+illegalStartColumnNumber[i]+" does not match schema definition <"+illegalContext[i].getQName()+"> at "+illegalContext[i].getLocation(restrictToFileName)+".";
 			}			
 		}
 		// {12 A}
-		if(unresolvedAmbiguousElementQNameEE != null){
+		if(unresolvedAmbiguousElementIndexEE >= 0){
 			for(int i = 0; i <= unresolvedAmbiguousElementIndexEE; i++){
 				message += "\n"+prefix+"Unresolved content."
 						+"\n"+prefix+"Element <"+unresolvedAmbiguousElementQNameEE[i] + "> at "+getLocation(restrictToFileName, unresolvedAmbiguousElementSystemIdEE[i])+":"+unresolvedAmbiguousElementLineNumberEE[i]+":"+unresolvedAmbiguousElementColumnNumberEE[i]
@@ -812,7 +929,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {12 U}
-		if(unresolvedUnresolvedElementQNameEE != null){
+		if(unresolvedUnresolvedElementIndexEE >= 0){
 			for(int i = 0; i <= unresolvedUnresolvedElementIndexEE; i++){
 				message += "\n"+prefix+"Unresolved content."
 						+"\n"+prefix+"Element <"+unresolvedUnresolvedElementQNameEE[i] + "> at "+getLocation(restrictToFileName, unresolvedUnresolvedElementSystemIdEE[i])+":"+unresolvedUnresolvedElementLineNumberEE[i]+":"+unresolvedUnresolvedElementColumnNumberEE[i]
@@ -821,7 +938,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {13}
-		if(unresolvedAttributeQNameEE != null){
+		if(unresolvedAttributeIndexEE >= 0){
 			for(int i = 0; i <= unresolvedAttributeIndexEE; i++){
 				message += "\n"+prefix+"Unresolved content."
 						+"\n"+prefix+"Attribute \""+unresolvedAttributeQNameEE[i] + "\" at "+getLocation(restrictToFileName, unresolvedAttributeSystemIdEE[i])+":"+unresolvedAttributeLineNumberEE[i]+":"+unresolvedAttributeColumnNumberEE[i]
@@ -833,7 +950,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {14}
-		if(ambiguousCharsDefinitionEE != null){
+		if(ambiguousCharsIndexEE >= 0){
 			for(int i = 0; i <= ambiguousCharsIndexEE; i++){
 				message += "\n"+prefix+"Ambiguous content."
 						+"\n"+prefix+"Chars at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEE[i])+":"+ambiguousCharsLineNumberEE[i]+":"+ambiguousCharsColumnNumberEE[i]
@@ -845,7 +962,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {15}
-		if(datatypeCharsSystemIdCC != null){
+		if(datatypeIndexCC >= 0){
 			for(int i = 0; i <= datatypeIndexCC; i++){
 				message += "\n"+prefix+"Illegal datatype."
 				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, datatypeCharsSystemIdCC[i])+":"+datatypeCharsLineNumberCC[i]+":"+datatypeCharsColumnNumberCC[i]
@@ -854,7 +971,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {16}
-		if(datatypeCharsSystemIdAV != null){
+		if(datatypeIndexAV >= 0){
 			for(int i = 0; i <= datatypeIndexAV; i++){
 				message += "\n"+prefix+"Illegal datatype."
 				+"\n"+prefix+ "Value of attribute \""+datatypeAttributeQNameAV[i]+"\" at "+getLocation(restrictToFileName, datatypeCharsSystemIdAV[i])+":"+datatypeCharsLineNumberAV[i]+":"+datatypeCharsColumnNumberAV[i]
@@ -863,7 +980,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {17}
-		if(valueCharsSystemIdCC != null){
+		if(valueIndexCC >= 0){
 			for(int i = 0; i <= valueIndexCC; i++){
 				message += "\n"+prefix+"Illegal value."
 				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, valueCharsSystemIdCC[i])+":"+valueCharsLineNumberCC[i]+":"+valueCharsColumnNumberCC[i]
@@ -871,7 +988,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {18}
-		if(valueCharsSystemIdAV != null){
+		if(valueIndexAV >= 0){
 			for(int i = 0; i <= valueIndexAV; i++){
 				message += "\n"+prefix+"Illegal value."
 				+"\n"+prefix+ "Value of attribute \""+valueAttributeQNameAV[i]+"\" at "+getLocation(restrictToFileName, valueCharsSystemIdAV[i])+":"+valueCharsLineNumberAV[i]+":"+valueCharsColumnNumberAV[i]
@@ -879,7 +996,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {19}
-		if(exceptCharsSystemIdCC != null){
+		if(exceptIndexCC >= 0){
 			for(int i = 0; i <= exceptIndexCC; i++){
 				message += "\n"+prefix+"Excepted character content."
 				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, exceptCharsSystemIdCC[i])+":"+exceptCharsLineNumberCC[i]+":"+exceptCharsColumnNumberCC[i]
@@ -887,7 +1004,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {20}
-		if(exceptCharsSystemIdAV != null){
+		if(exceptIndexAV >= 0){
 			for(int i = 0; i <= exceptIndexAV; i++){
 				message += "\n"+prefix+"Excepted attribute value"
 				+"\n"+prefix+ "Value of attribute \""+exceptAttributeQNameAV[i]+"\" at "+getLocation(restrictToFileName, exceptCharsSystemIdAV[i])+":"+exceptCharsLineNumberAV[i]+":"+exceptCharsColumnNumberAV[i]
@@ -895,7 +1012,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {21}
-		if(unexpectedCharsSystemIdCC != null){
+		if(unexpectedIndexCC >= 0){
 			for(int i = 0; i <= unexpectedIndexCC; i++){
 				message += "\n"+prefix+"Unexpected character content."
 				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, unexpectedCharsSystemIdCC[i])+":"+unexpectedCharsLineNumberCC[i]+":"+unexpectedCharsColumnNumberCC[i]
@@ -903,7 +1020,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {22}
-		if(unexpectedCharsSystemIdAV != null){
+		if(unexpectedIndexAV >= 0){
 			for(int i = 0; i <= unexpectedIndexAV; i++){
 				message += "\n"+prefix+"Unexpected attribute unexpected."
 				+"\n"+prefix+ "Value of attribute \""+unexpectedAttributeQName[i]+"\" at "+getLocation(restrictToFileName, unexpectedCharsSystemIdAV[i])+":"+unexpectedCharsLineNumberAV[i]+":"+unexpectedCharsColumnNumberAV[i]
@@ -911,7 +1028,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {23}
-		if(ambiguousCharsSystemIdEECC != null){
+		if(ambiguousIndexCC >= 0){
 			for(int i = 0; i <= ambiguousIndexCC; i++){
 				message += "\n"+prefix+"Unresolved character content."
 				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEECC[i])+":"+ambiguousCharsLineNumberEECC[i]+":"+ambiguousCharsColumnNumberEECC[i]
@@ -924,7 +1041,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {24}
-		if(ambiguousCharsSystemIdEEAV != null){			
+		if(ambiguousIndexAV >= 0){			
 			for(int i = 0; i <= ambiguousIndexAV; i++){				
 				message += "\n"+prefix+"Unresolved attribute value."
 				+"\n"+prefix+ "Value of attribute \""+ambiguousAttributeQNameEEAV[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEEAV[i])+":"+ambiguousCharsLineNumberEEAV[i]+":"+ambiguousCharsColumnNumberEEAV[i]
@@ -937,7 +1054,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {25}
-		if(datatypeCharsSystemIdLP != null){
+		if(datatypeIndexLP >= 0){
 			for(int i = 0; i <= datatypeIndexLP; i++){
 				message += "\n"+prefix+"Illegal datatype."
 				+"\n"+prefix+ "List token \""+datatypeTokenLP[i]+"\" at "+getLocation(restrictToFileName, datatypeCharsSystemIdLP[i])+":"+datatypeCharsLineNumberLP[i]+":"+datatypeCharsColumnNumberLP[i]
@@ -946,7 +1063,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {26}
-		if(valueCharsSystemIdLP != null){
+		if(valueIndexLP >= 0){
 			for(int i = 0; i <= valueIndexLP; i++){
 				message += "\n"+prefix+"Illegal value."
 				+"\n"+prefix+ "List token \""+valueTokenLP[i]+"\" at "+getLocation(restrictToFileName, valueCharsSystemIdLP[i])+":"+valueCharsLineNumberLP[i]+":"+valueCharsColumnNumberLP[i]
@@ -954,7 +1071,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {27}
-		if(exceptCharsSystemIdLP != null){
+		if(exceptIndexLP >= 0){
 			for(int i = 0; i <= exceptIndexLP; i++){
 				message += "\n"+prefix+"Excepted token."
 				+"\n"+prefix+ "List token \""+exceptTokenLP[i]+"\" at "+getLocation(restrictToFileName, exceptCharsSystemIdLP[i])+":"+exceptCharsLineNumberLP[i]+":"+exceptCharsColumnNumberLP[i]
@@ -962,7 +1079,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {28}
-		if(ambiguousCharsSystemIdEELP != null){
+		if(ambiguousIndexLP >= 0){
 			for(int i = 0; i <= ambiguousIndexLP; i++){
 				message += "\n"+prefix+"Illegal ambiguous."
 				+"\n"+prefix+ "List token \""+ambiguousTokenLP[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEELP[i])+":"+ambiguousCharsLineNumberEELP[i]+":"+ambiguousCharsColumnNumberEELP[i]
@@ -976,7 +1093,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		}
         
         // {28_1}
-        if(ambiguousCharsSystemIdEELPICE != null){
+        if(ambiguousIndexLPICE >= 0){
 			for(int i = 0; i <= ambiguousIndexLPICE; i++){
 				message += "\n"+prefix+"Ambiguous list token."
 				+"\n"+prefix+ "List token \""+ambiguousTokenLPICE[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEELPICE[i])+":"+ambiguousCharsLineNumberEELPICE[i]+":"+ambiguousCharsColumnNumberEELPICE[i]
@@ -990,7 +1107,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		}
 		
 		// {29}
-		if(missingCompositorContentContext != null){
+		if(missingCompositorContentIndex >= 0){
 			for(int i = 0; i <= missingCompositorContentIndex; i++){
 				message += "\n"+prefix+"Missing compositor content."
 						+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, missingCompositorContentStartSystemId[i])+":"+missingCompositorContentStartLineNumber[i]+":"+missingCompositorContentStartColumnNumber[i]+", corresponding to definition <"+missingCompositorContentContext[i].getQName()+"> at "+missingCompositorContentContext[i].getLocation(restrictToFileName)+", "
@@ -1090,7 +1207,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     String getValidationWarningMessage(String prefix, boolean restrictToFileName){
 		String message = "";
 		// {w1 U}
-		if(ambiguousUnresolvedElementQNameWW != null){
+		if(ambiguousUnresolvedElementIndexWW >= 0){
 			for(int i = 0; i <= ambiguousUnresolvedElementIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous content."
 						+"\n"+prefix+"Element <"+ambiguousUnresolvedElementQNameWW[i] + "> at "+getLocation(restrictToFileName, ambiguousUnresolvedElementSystemIdWW[i])+":"+ambiguousUnresolvedElementLineNumberWW[i]+":"+ambiguousUnresolvedElementColumnNumberWW[i]
@@ -1098,7 +1215,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {w1 A}
-		if(ambiguousAmbiguousElementQNameWW != null){
+		if(ambiguousAmbiguousElementIndexWW >= 0){
 			for(int i = 0; i <= ambiguousAmbiguousElementIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous content."
 						+"\n"+prefix+"Element <"+ambiguousAmbiguousElementQNameWW[i] + "> at "+getLocation(restrictToFileName, ambiguousAmbiguousElementSystemIdWW[i])+":"+ambiguousAmbiguousElementLineNumberWW[i]+":"+ambiguousAmbiguousElementColumnNumberWW[i]
@@ -1111,7 +1228,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		}
 		
 		// {w2}
-		if(ambiguousAttributeQNameWW != null){
+		if(ambiguousAttributeIndexWW >= 0){
 			for(int i = 0; i <= ambiguousAttributeIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous content."
 						+"\n"+prefix+"Attribute \""+ambiguousAttributeQNameWW[i] + "\" at "+getLocation(restrictToFileName, ambiguousAttributeSystemIdWW[i])+":"+ambiguousAttributeLineNumberWW[i]+":"+ambiguousAttributeColumnNumberWW[i]
@@ -1123,7 +1240,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {w3}
-		if(ambiguousCharsDefinitionWW != null){
+		if(ambiguousCharsIndexWW >= 0){
 			for(int i = 0; i <= ambiguousCharsIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous content."
 						+"\n"+prefix+"Chars at "+getLocation(restrictToFileName, ambiguousCharsSystemIdWW[i])+":"+ambiguousCharsLineNumberWW[i]+":"+ambiguousCharsColumnNumberWW[i]
@@ -1136,7 +1253,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		}
         
         // {28_2}
-        if(ambiguousCharsSystemIdEELPICW != null){
+        if(ambiguousIndexLPICW >= 0){
 			for(int i = 0; i <= ambiguousIndexLPICW; i++){
 				message += "\n"+prefix+"Ambiguous list token."
 				+"\n"+prefix+ "List token \""+ambiguousTokenLPICW[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEELPICW[i])+":"+ambiguousCharsLineNumberEELPICW[i]+":"+ambiguousCharsColumnNumberEELPICW[i]
