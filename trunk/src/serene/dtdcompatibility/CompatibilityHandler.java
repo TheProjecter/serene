@@ -208,7 +208,6 @@ public class CompatibilityHandler implements RestrictingVisitor{
         idAttributeListsStack = new Stack<ArrayList<SAttribute>>();
         currentIdAttributesList = new ArrayList<SAttribute>();
         
-        currentAttributeIdTypesList = new IntList();
         attributeIdTypeListsStack = new Stack<IntList>();
         
         idAttributes = new HashMap<String, SAttribute>();
@@ -418,7 +417,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             
         child.accept(this);
         //see about this: only necessary when compatibility
-        
+                
         if(level1AttributeDefaultValue){
             if(defaultedAttributeContent){                
                 hasName = false;
@@ -512,6 +511,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 
             idTypeAttributeContent = idTypeAttributeContentMemo;            
             currentIdAttributesList = idAttributeListsStack.pop();
+            currentAttributeIdTypesList = attributeIdTypeListsStack.pop();
         }       
 	}	
 	public void visit(SAttribute attribute)throws SAXException{
