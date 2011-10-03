@@ -131,7 +131,7 @@ public class AttributeConflictErrorHandler implements Reusable, ErrorCatcher{
 		conflictHandler.disqualify(candidateIndex);
 	}
 	
-	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 	}
 	

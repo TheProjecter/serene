@@ -40,12 +40,10 @@ import serene.validation.handlers.match.MatchHandler;
 
 import serene.validation.handlers.stack.StackHandler;
 
-import serene.validation.handlers.error.ContextErrorHandler;
 import serene.validation.handlers.error.ErrorCatcher;
-import serene.validation.handlers.error.ContextErrorHandler;
-import serene.validation.handlers.error.CandidatesConflictErrorHandler;
 import serene.validation.handlers.error.ConflictMessageReporter;
 
+import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.content.CharactersEventHandler;
 import serene.validation.handlers.content.util.ValidationItemLocator;
@@ -58,7 +56,8 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 	
     ElementValidationHandler parent;    
 	
-	ContextErrorHandler contextErrorHandler;
+	ExternalConflictHandler conflictHandler;
+	int candidateIndex;
 	
 	CandidateAttributeValidationHandler(MessageWriter debugWriter){
 		super(debugWriter);
@@ -79,10 +78,11 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 	}
 	
 		
-	void init(AAttribute attribute, ElementValidationHandler parent, CandidatesConflictErrorHandler candidatesConflictErrorHandler, int candidateIndex){
+	void init(AAttribute attribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex){
 		this.parent = parent;
-		this.contextErrorHandler = contextErrorHandler;
 		this.attribute = attribute;
+        this.conflictHandler = conflictHandler;
+        this.candidateIndex = candidateIndex;		
 		attribute.assembleDefinition();
 		stackHandler = attribute.getStackHandler(this);
 	}
@@ -117,146 +117,146 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 	//errorCatcher
 	//--------------------------------------------------------------------------
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){        
-		contextErrorHandler.unknownElement( qName, systemId, lineNumber, columnNumber);
+		throw new IllegalStateException();
 	}	
 	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){        
-		contextErrorHandler.unexpectedElement( qName, definition, systemId, lineNumber, columnNumber);
+		throw new IllegalStateException();
 	}	
 	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
-		contextErrorHandler.unexpectedAmbiguousElement( qName, definition, systemId, lineNumber, columnNumber);
+		throw new IllegalStateException();
 	}
 	
 	
 	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
-		contextErrorHandler.unknownAttribute( qName, systemId, lineNumber, columnNumber);
+		throw new IllegalStateException();
 	}	
 	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
-		contextErrorHandler.unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);
+		throw new IllegalStateException();
 	}	
 	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
-		contextErrorHandler.unexpectedAmbiguousAttribute( qName, definition, systemId, lineNumber, columnNumber);
+		throw new IllegalStateException();
 	}
 	
 		
 	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String qName, String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
-		contextErrorHandler.misplacedElement(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+		throw new IllegalStateException();
 	}
 	
     public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
-		contextErrorHandler.misplacedElement(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+		throw new IllegalStateException();
 	}
     
 	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
-		contextErrorHandler.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+		throw new IllegalStateException();
 	}
 	
 	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
-		contextErrorHandler.excessiveContent(context, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+		throw new IllegalStateException();
 	}
 	
 	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
-		contextErrorHandler.missingContent(context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
+		throw new IllegalStateException();
 	}
     
     public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
-		contextErrorHandler.illegalContent(context, startQName, startSystemId, startLineNumber, startColumnNumber);
+		throw new IllegalStateException();
 	}
     
 	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		contextErrorHandler.unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		throw new IllegalStateException();
 	}
 	
 	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		contextErrorHandler.unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber,  possibleDefinitions);
+		throw new IllegalStateException();
 	}
 
-	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
-		contextErrorHandler.ambiguousAttributeContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+		throw new IllegalStateException();
 	}
 
 	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		contextErrorHandler.ambiguousCharsContentError(systemId, lineNumber, columnNumber, possibleDefinitions);
+		conflictHandler.disqualify(candidateIndex);
 	}
 
 	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		contextErrorHandler.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		throw new IllegalStateException();
 	}
 	
 	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		contextErrorHandler.ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		throw new IllegalStateException();
 	}
 
 	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
-		contextErrorHandler.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		throw new IllegalStateException();
 	}
 
 	public void ambiguousCharsContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		contextErrorHandler.ambiguousCharsContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
+		conflictHandler.disqualify(candidateIndex);
 	}
 	
 	public void undeterminedByContent(String qName, String candidateMessages){
-		contextErrorHandler.undeterminedByContent(qName, candidateMessages);
+		throw new IllegalStateException();
 	}
 
 
     public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		contextErrorHandler.characterContentDatatypeError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		throw new IllegalStateException();
 	}
 	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		contextErrorHandler.attributeValueDatatypeError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		conflictHandler.disqualify(candidateIndex);
 	}
 	
 	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-		contextErrorHandler.characterContentValueError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		throw new IllegalStateException();
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-		contextErrorHandler.attributeValueValueError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		conflictHandler.disqualify(candidateIndex);
 	}
 	
 	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-		contextErrorHandler.characterContentExceptedError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		throw new IllegalStateException();
 	}	
 	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-		contextErrorHandler.attributeValueExceptedError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		conflictHandler.disqualify(candidateIndex);
 	}
 	
 	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
-		contextErrorHandler.unexpectedCharacterContent(charsSystemId, charsLineNumber, columnNumber, elementDefinition);
+		throw new IllegalStateException();
 	}	
 	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
-		contextErrorHandler.unexpectedAttributeValue(charsSystemId, charsLineNumber, columnNumber, attributeDefinition);
+		throw new IllegalStateException();
 	}
 	
 	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		contextErrorHandler.unresolvedCharacterContent(systemId, lineNumber, columnNumber, possibleDefinitions);
+		throw new IllegalStateException();
 	}
 	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		contextErrorHandler.unresolvedAttributeValue(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		conflictHandler.disqualify(candidateIndex);
 	}
 	
 	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		contextErrorHandler.listTokenDatatypeError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		conflictHandler.disqualify(candidateIndex);
 	}
 	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-		contextErrorHandler.listTokenValueError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		conflictHandler.disqualify(candidateIndex);
 	}
 	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-		contextErrorHandler.listTokenExceptedError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		conflictHandler.disqualify(candidateIndex);
 	}
 	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		contextErrorHandler.ambiguousListToken(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		conflictHandler.disqualify(candidateIndex);
 	}
     
     public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		contextErrorHandler.ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		conflictHandler.disqualify(candidateIndex);
     }    
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		contextErrorHandler.ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		conflictHandler.disqualify(candidateIndex);
     }
     
     
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
-		contextErrorHandler.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
+		throw new IllegalStateException();
 	}
 
     public void internalConflict(ConflictMessageReporter conflictMessageReporter){	 

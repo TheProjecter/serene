@@ -712,9 +712,9 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		errorCatcher.unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
-	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
 		// TODO are you sure it is possible?
-		errorCatcher.ambiguousAttributeContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		errorCatcher.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){

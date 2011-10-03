@@ -53,6 +53,7 @@ public abstract class ElementConflictResolver extends InternalConflictResolver{
     public void addCandidate(AElement candidate){
         candidateDefinitions.add(candidate);
     }
+      
     public String toString(){
         return "ElementConflictResolver candidates "+candidateDefinitions+" qualified "+qualified;
     }		

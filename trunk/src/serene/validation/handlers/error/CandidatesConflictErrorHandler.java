@@ -693,21 +693,21 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 	}
     
     
-	public void ambiguousAttributeContentError(int candidateIndex, int functionalEquivalenceCode, 
+	public void unresolvedAttributeContentError(int candidateIndex, int functionalEquivalenceCode, 
                                     String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AAttribute[] possibleDefinitions){
-        recordError(AMBIGUOUS_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);
-        if(mustRecordErrorMessage(AMBIGUOUS_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex)){
-            localMessageHandler.ambiguousAttributeContentError(functionalEquivalenceCode,
+        recordError(UNRESOLVED_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);
+        if(mustRecordErrorMessage(UNRESOLVED_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex)){
+            localMessageHandler.unresolvedAttributeContentError(functionalEquivalenceCode,
                                                                             qName, 
                                                                             systemId, 
                                                                             lineNumber, 
                                                                             columnNumber, 
                                                                             possibleDefinitions);
-            setErrorMessageRecorded(AMBIGUOUS_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode);
+            setErrorMessageRecorded(UNRESOLVED_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode);
         }
 	}
 	

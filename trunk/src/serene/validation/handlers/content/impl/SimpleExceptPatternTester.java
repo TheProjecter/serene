@@ -224,7 +224,7 @@ class SimpleExceptPatternTester extends ExceptPatternTesterState implements Erro
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	

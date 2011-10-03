@@ -51,7 +51,7 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 			// At the end of attribute handling only the number of qualified 
 			// candidates left is assesed and the appropriate addAttribute() 
 			// is called.
-			BoundCandidateAttributeValidationHandler candidate = pool.getCandidateAttributeValidationHandler(candidateDefinitions.get(i), parent, localCandidatesConflictErrorHandler, i, bindingModel, queue, entry);
+			BoundCandidateAttributeValidationHandler candidate = pool.getCandidateAttributeValidationHandler(candidateDefinitions.get(i), parent, localCandidatesConflictHandler, i, bindingModel, queue, entry);
 			candidates.add(candidate);
 		}		
 		this.bindingModel = bindingModel;

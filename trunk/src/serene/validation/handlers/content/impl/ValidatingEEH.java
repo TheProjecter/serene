@@ -39,11 +39,6 @@ abstract class ValidatingEEH extends ComparableEEH implements ContextErrorHandle
 	
 	ContextErrorHandler[] contextErrorHandler;
 	
-	/*ValidationErrorHandler validationErrorHandler;
-	ExternalConflictErrorHandler externalConflictErrorHandler;
-	CommonErrorHandler commonErrorHandler;
-	DefaultErrorHandler defaultErrorHandler;*/
-	    
 	int contextErrorHandlerIndex;	
 
     boolean isCandidate; //true when this is a direct candidate, false when it is a descendant of one, or simply not involved in a conflict
@@ -117,88 +112,18 @@ abstract class ValidatingEEH extends ComparableEEH implements ContextErrorHandle
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		return contextErrorHandler[contextErrorHandlerIndex];
 	}
-    
-	/*public void setNone(){
-		contextErrorHandlerIndex = NONE;		
-		storeState();
-		contextErrorHandler = null;		
-	}	
-	public void setValidation(){
-        //System.out.println(" SET VALIDATION ");
-		contextErrorHandlerIndex = VALIDATION;		
-		storeState();
-		contextErrorHandler = validationErrorHandler;
-	}
-	public void setConflict(){
-        //System.out.println(" SET CONFLICT ");        
-		contextErrorHandlerIndex = CONFLICT;
-		storeState();
-        //if(externalConflictErrorHandler != null) externalConflictErrorHandler.init(candidatesConflictErrorHandler, candidateIndex, isCandidate);
-        // Not necessary because the all contextErrorHandlers are nulled when recycling
-        // so they are only used for one occurrence handling and should not be reinitialized. 
-		contextErrorHandler = externalConflictErrorHandler;
-	}
-	public void setCommon(){
-        //System.out.println(" SET COMMON ");
-		contextErrorHandlerIndex = COMMON;		
-		storeState();
-        //if(commonErrorHandler != null) commonErrorHandler.init(candidatesConflictErrorHandler);
-        // Not necessary because the all contextErrorHandlers are nulled when recycling
-        // so they are only used for one occurrence handling and should not be reinitialized.
-		contextErrorHandler = commonErrorHandler;
-	}
-	public void setDefault(){		
-        //System.out.println(" SET DEFAULT ");
-		contextErrorHandlerIndex = DEFAULT;
-		storeState();
-		contextErrorHandler = defaultErrorHandler;
-	} 
-	public ContextErrorHandler getContextErrorHandler(){
-		if(contextErrorHandler == null)setContextErrorHandler();
-		return contextErrorHandler;
-	}*/
-	
-	
+   	
 	public void restorePreviousHandler(){
         if(--stateHistoryIndex < 0)throw new IllegalStateException();        
 		contextErrorHandlerIndex = stateHistory[stateHistoryIndex];
-		/*if(contextErrorHandlerIndex == NONE){
-			contextErrorHandler = null;		
-		}else if(contextErrorHandlerIndex == VALIDATION){            
-			contextErrorHandler = validationErrorHandler;
-		}else if(contextErrorHandlerIndex == CONFLICT){
-			contextErrorHandler = externalConflictErrorHandler;
-		}else if(contextErrorHandlerIndex == COMMON){
-			contextErrorHandler = commonErrorHandler;
-		}else if(contextErrorHandlerIndex == DEFAULT){
-			contextErrorHandler = defaultErrorHandler;
-		}else{
-			throw new IllegalStateException();
-		}*/	
 	}
 				
 	//--------------------------------------------------------------------------
 	
 	protected void resetContextErrorHandlerManager(){		
 		stateHistoryIndex = 0;
-		contextErrorHandlerIndex = VALIDATION;
-		
-		/*if(validationErrorHandler != null){
-			validationErrorHandler.recycle();
-			validationErrorHandler = null;
-		}
-		if(externalConflictErrorHandler != null){
-			externalConflictErrorHandler.recycle();
-			externalConflictErrorHandler = null;
-		}
-		if(commonErrorHandler != null){
-			commonErrorHandler.recycle();
-			commonErrorHandler = null;
-		}
-		if(defaultErrorHandler != null){
-			defaultErrorHandler.recycle();
-			defaultErrorHandler = null;
-		}*/
+		contextErrorHandlerIndex = VALIDATION;		
+	
         for(int i = 0; i < HANDLER_COUNT; i++){
             if(contextErrorHandler[i] != null){
                 contextErrorHandler[i].recycle();

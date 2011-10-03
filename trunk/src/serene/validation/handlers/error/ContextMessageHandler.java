@@ -774,56 +774,56 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
     
-	public void ambiguousAttributeContentError(String qName, 
+	public void unresolvedAttributeContentError(String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AAttribute[] possibleDefinitions){
         errorTotalCount++;
-		if(ambiguousAttributeSizeEE == 0){
-			ambiguousAttributeSizeEE = 1;
-			ambiguousAttributeIndexEE = 0;	
-			ambiguousAttributeQNameEE = new String[ambiguousAttributeSizeEE];			
-			ambiguousAttributeSystemIdEE = new String[ambiguousAttributeSizeEE];			
-			ambiguousAttributeLineNumberEE = new int[ambiguousAttributeSizeEE];
-			ambiguousAttributeColumnNumberEE = new int[ambiguousAttributeSizeEE];
-			ambiguousAttributeDefinitionEE = new AAttribute[ambiguousAttributeSizeEE][];
-		}else if(++ambiguousAttributeIndexEE == ambiguousAttributeSizeEE){			
-			String[] increasedQN = new String[++ambiguousAttributeSizeEE];
-			System.arraycopy(ambiguousAttributeQNameEE, 0, increasedQN, 0, ambiguousAttributeIndexEE);
-			ambiguousAttributeQNameEE = increasedQN;
+		if(unresolvedAttributeSizeEE == 0){
+			unresolvedAttributeSizeEE = 1;
+			unresolvedAttributeIndexEE = 0;	
+			unresolvedAttributeQNameEE = new String[unresolvedAttributeSizeEE];			
+			unresolvedAttributeSystemIdEE = new String[unresolvedAttributeSizeEE];			
+			unresolvedAttributeLineNumberEE = new int[unresolvedAttributeSizeEE];
+			unresolvedAttributeColumnNumberEE = new int[unresolvedAttributeSizeEE];
+			unresolvedAttributeDefinitionEE = new AAttribute[unresolvedAttributeSizeEE][];
+		}else if(++unresolvedAttributeIndexEE == unresolvedAttributeSizeEE){			
+			String[] increasedQN = new String[++unresolvedAttributeSizeEE];
+			System.arraycopy(unresolvedAttributeQNameEE, 0, increasedQN, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeQNameEE = increasedQN;
 			
-			AAttribute[][] increasedDef = new AAttribute[ambiguousAttributeSizeEE][];
-			System.arraycopy(ambiguousAttributeDefinitionEE, 0, increasedDef, 0, ambiguousAttributeIndexEE);
-			ambiguousAttributeDefinitionEE = increasedDef;
+			AAttribute[][] increasedDef = new AAttribute[unresolvedAttributeSizeEE][];
+			System.arraycopy(unresolvedAttributeDefinitionEE, 0, increasedDef, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeDefinitionEE = increasedDef;
 			
-			String[] increasedSI = new String[ambiguousAttributeSizeEE];
-			System.arraycopy(ambiguousAttributeSystemIdEE, 0, increasedSI, 0, ambiguousAttributeIndexEE);
-			ambiguousAttributeSystemIdEE = increasedSI;
+			String[] increasedSI = new String[unresolvedAttributeSizeEE];
+			System.arraycopy(unresolvedAttributeSystemIdEE, 0, increasedSI, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeSystemIdEE = increasedSI;
 						
-			int[] increasedLN = new int[ambiguousAttributeSizeEE];
-			System.arraycopy(ambiguousAttributeLineNumberEE, 0, increasedLN, 0, ambiguousAttributeIndexEE);
-			ambiguousAttributeLineNumberEE = increasedLN;
+			int[] increasedLN = new int[unresolvedAttributeSizeEE];
+			System.arraycopy(unresolvedAttributeLineNumberEE, 0, increasedLN, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeLineNumberEE = increasedLN;
 			
-			int[] increasedCN = new int[ambiguousAttributeSizeEE];
-			System.arraycopy(ambiguousAttributeColumnNumberEE, 0, increasedCN, 0, ambiguousAttributeIndexEE);
-			ambiguousAttributeColumnNumberEE = increasedCN;
+			int[] increasedCN = new int[unresolvedAttributeSizeEE];
+			System.arraycopy(unresolvedAttributeColumnNumberEE, 0, increasedCN, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeColumnNumberEE = increasedCN;
 		}
-		ambiguousAttributeQNameEE[ambiguousAttributeIndexEE] = qName;		
-		ambiguousAttributeSystemIdEE[ambiguousAttributeIndexEE] = systemId;
-		ambiguousAttributeLineNumberEE[ambiguousAttributeIndexEE] = lineNumber;
-		ambiguousAttributeColumnNumberEE[ambiguousAttributeIndexEE] = columnNumber;
-		ambiguousAttributeDefinitionEE[ambiguousAttributeIndexEE] = possibleDefinitions;
+		unresolvedAttributeQNameEE[unresolvedAttributeIndexEE] = qName;		
+		unresolvedAttributeSystemIdEE[unresolvedAttributeIndexEE] = systemId;
+		unresolvedAttributeLineNumberEE[unresolvedAttributeIndexEE] = lineNumber;
+		unresolvedAttributeColumnNumberEE[unresolvedAttributeIndexEE] = columnNumber;
+		unresolvedAttributeDefinitionEE[unresolvedAttributeIndexEE] = possibleDefinitions;
 	}
-	public void clearAmbiguousAttributeContentError(){
-        errorTotalCount -= ambiguousAttributeSizeEE;
-        ambiguousAttributeSizeEE = 0;
-        ambiguousAttributeIndexEE = -1;	
-        ambiguousAttributeQNameEE = null;			
-        ambiguousAttributeSystemIdEE = null;			
-        ambiguousAttributeLineNumberEE = null;
-        ambiguousAttributeColumnNumberEE = null;
-        ambiguousAttributeDefinitionEE = null;
+	public void clearUnresolvedAttributeContentError(){
+        errorTotalCount -= unresolvedAttributeSizeEE;
+        unresolvedAttributeSizeEE = 0;
+        unresolvedAttributeIndexEE = -1;	
+        unresolvedAttributeQNameEE = null;			
+        unresolvedAttributeSystemIdEE = null;			
+        unresolvedAttributeLineNumberEE = null;
+        unresolvedAttributeColumnNumberEE = null;
+        unresolvedAttributeDefinitionEE = null;
     }
 	
 	public void ambiguousCharsContentError(String systemId, 
@@ -2156,9 +2156,9 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
             if(unresolvedUnresolvedElementIndexEE < 0) throw new IllegalArgumentException();
             unresolvedUnresolvedElementIndexEE--;
             errorTotalCount--;
-        }else if(errorId == AMBIGUOUS_ATTRIBUTE_CONTENT_ERROR){
-            if(ambiguousAttributeIndexEE < 0) throw new IllegalArgumentException();
-            ambiguousAttributeIndexEE--;
+        }else if(errorId == UNRESOLVED_ATTRIBUTE_CONTENT_ERROR){
+            if(unresolvedAttributeIndexEE < 0) throw new IllegalArgumentException();
+            unresolvedAttributeIndexEE--;
             errorTotalCount--;
         }else if(errorId == AMBIGUOUS_CHARS_CONTENT_ERROR){
             if(ambiguousCharsIndexEE < 0) throw new IllegalArgumentException();
@@ -2263,7 +2263,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         clearExcessiveContent();
         clearUnresolvedAmbiguousElementContentError();
         clearUnresolvedUnresolvedElementContentError();
-        clearAmbiguousAttributeContentError();
+        clearUnresolvedAttributeContentError();
         clearAmbiguousCharsContentError();
         clearAmbiguousUnresolvedElementContentWarning();
         clearAmbiguousAmbiguousElementContentWarning();

@@ -171,13 +171,13 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	int unresolvedUnresolvedElementSizeEE;
 
 	// {13}
-	String[] ambiguousAttributeQNameEE;
-	String[] ambiguousAttributeSystemIdEE;
-	int[] ambiguousAttributeLineNumberEE;
-	int[] ambiguousAttributeColumnNumberEE;
-	AAttribute[][] ambiguousAttributeDefinitionEE;
-	int ambiguousAttributeIndexEE;
-	int ambiguousAttributeSizeEE;
+	String[] unresolvedAttributeQNameEE;
+	String[] unresolvedAttributeSystemIdEE;
+	int[] unresolvedAttributeLineNumberEE;
+	int[] unresolvedAttributeColumnNumberEE;
+	AAttribute[][] unresolvedAttributeDefinitionEE;
+	int unresolvedAttributeIndexEE;
+	int unresolvedAttributeSizeEE;
 
 	// {14}
 	String[] ambiguousCharsSystemIdEE;
@@ -410,7 +410,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		unexpectedAmbiguousAttributeSize = 0;
 		unresolvedAmbiguousElementSizeEE = 0;		
 		unresolvedUnresolvedElementSizeEE = 0;
-		ambiguousAttributeSizeEE = 0;
+		unresolvedAttributeSizeEE = 0;
 		ambiguousCharsSizeEE = 0;
 		
 		ambiguousUnresolvedElementSizeWW = 0;
@@ -821,13 +821,13 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {13}
-		if(ambiguousAttributeQNameEE != null){
-			for(int i = 0; i <= ambiguousAttributeIndexEE; i++){
-				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Attribute \""+ambiguousAttributeQNameEE[i] + "\" at "+getLocation(restrictToFileName, ambiguousAttributeSystemIdEE[i])+":"+ambiguousAttributeLineNumberEE[i]+":"+ambiguousAttributeColumnNumberEE[i]
-						+" cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: ";
-				for(int j = 0; j < ambiguousAttributeDefinitionEE[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousAttributeDefinitionEE[i][j].getQName()+"> at "+ambiguousAttributeDefinitionEE[i][j].getLocation(restrictToFileName);
+		if(unresolvedAttributeQNameEE != null){
+			for(int i = 0; i <= unresolvedAttributeIndexEE; i++){
+				message += "\n"+prefix+"Unresolved content."
+						+"\n"+prefix+"Attribute \""+unresolvedAttributeQNameEE[i] + "\" at "+getLocation(restrictToFileName, unresolvedAttributeSystemIdEE[i])+":"+unresolvedAttributeLineNumberEE[i]+":"+unresolvedAttributeColumnNumberEE[i]
+						+" cannot be resolved, all candidates resulted in errors. Possible definitions: ";
+				for(int j = 0; j < unresolvedAttributeDefinitionEE[i].length; j++){
+					message += "\n"+prefix+"<"+unresolvedAttributeDefinitionEE[i][j].getQName()+"> at "+unresolvedAttributeDefinitionEE[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
