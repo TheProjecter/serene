@@ -19,6 +19,7 @@ package serene.validation.handlers.stack.impl;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.BitSet;
 
 import org.xml.sax.SAXException;
 
@@ -54,6 +55,7 @@ import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.structure.StructureHandler;
 
@@ -619,7 +621,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		}
 	}
 			
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions){
+	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		
 		reportExcessive = true;
 		reportMissing = true;
@@ -631,7 +633,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		AttributeConflictResolver resolver = conflictHandlerPool.getUnresolvedAttributeConflictResolver();
+		AttributeConflictResolver resolver = conflictHandlerPool.getUnresolvedAttributeConflictResolver(temporaryMessageStorage);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
@@ -702,7 +704,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders){
+	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders){
 		
 		reportExcessive = true;
 		reportMissing = true;
@@ -714,13 +716,14 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundUnresolvedAttributeConflictResolver(validationItemLocator.getNamespaceURI(),
-                                                                                 validationItemLocator.getLocalName(),
-                                                                                 validationItemLocator.getQName(),
-                                                                                 value, 
-                                                                                 targetQueue, 
-                                                                                 targetEntry, 
-                                                                                 attributeBinders);
+		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundUnresolvedAttributeConflictResolver(temporaryMessageStorage,
+		                                                                             validationItemLocator.getNamespaceURI(),
+                                                                                     validationItemLocator.getLocalName(),
+                                                                                     validationItemLocator.getQName(),
+                                                                                     value, 
+                                                                                     targetQueue, 
+                                                                                     targetEntry, 
+                                                                                     attributeBinders);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
@@ -791,7 +794,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, ExternalConflictHandler conflictHandler){
+	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 		
 		reportExcessive = true;
 		reportMissing = true;
@@ -803,15 +806,22 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		AttributeConflictResolver resolver = conflictHandlerPool.getAmbiguousAttributeConflictResolver();
+		AttributeConflictResolver resolver = conflictHandlerPool.getAmbiguousAttributeConflictResolver(disqualified, temporaryMessageStorage);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
 		recordInConflictDescriptor(attributeDefinitions, innerPathes);
-		int lastQualifiedIndex = conflictHandler.getPreviousQualified(attributeDefinitions.size());
+		int lastQualifiedIndex = attributeDefinitions.size()-1;
+		determineIndex:{
+            for(; lastQualifiedIndex >=0; lastQualifiedIndex--){
+                if(!disqualified.get(lastQualifiedIndex))break determineIndex;
+            }
+            lastQualifiedIndex = -1;
+        }
+		
 		
 		for(int i = 0; i < lastQualifiedIndex; i++){
-			if(!conflictHandler.isDisqualified(i)){
+			if(!disqualified.get(i)){
 				AAttribute attribute = attributeDefinitions.get(i);
 				
 				resolver.addCandidate(attribute);
@@ -842,11 +852,13 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 						}
 					}
 				}
+			}else{
+			    AAttribute attribute = attributeDefinitions.get(i);				
+				resolver.addCandidate(attribute);
 			}
 		}
 		
-		AAttribute attribute = attributeDefinitions.get(lastQualifiedIndex);
-		
+		AAttribute attribute = attributeDefinitions.get(lastQualifiedIndex);		
 		resolver.addCandidate(attribute);
 		
 		for(int j = 0; j < temporary.size(); j++){
@@ -874,8 +886,14 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}
 		temporary.clear();
+		
+		for(int i = lastQualifiedIndex+1; i < attributeDefinitions.size(); i++){
+		    attribute = attributeDefinitions.get(i);				
+			resolver.addCandidate(attribute);
+		}
 	}
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, ExternalConflictHandler conflictHandler, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders){
+	
+	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders){		
 		reportExcessive = true;
 		reportMissing = true;
 		reportIllegal = true;
@@ -886,21 +904,29 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 		
-		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundAmbiguousAttributeConflictResolver(validationItemLocator.getNamespaceURI(),
-                                                                                 validationItemLocator.getLocalName(),
-                                                                                 validationItemLocator.getQName(),
-                                                                                 value, 
-                                                                                 targetQueue, 
-                                                                                 targetEntry, 
-                                                                                 attributeBinders);
+		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundAmbiguousAttributeConflictResolver(disqualified,
+		                                                                                    temporaryMessageStorage,
+		                                                                                    validationItemLocator.getNamespaceURI(),
+                                                                                            validationItemLocator.getLocalName(),
+                                                                                            validationItemLocator.getQName(),
+                                                                                            value, 
+                                                                                            targetQueue, 
+                                                                                            targetEntry, 
+                                                                                            attributeBinders);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
 		recordInConflictDescriptor(attributeDefinitions, innerPathes);
-		int lastQualifiedIndex = conflictHandler.getPreviousQualified(attributeDefinitions.size());
+		int lastQualifiedIndex = attributeDefinitions.size()-1;
+		determineIndex:{
+            for(; lastQualifiedIndex >=0; lastQualifiedIndex--){
+                if(!disqualified.get(lastQualifiedIndex))break determineIndex;
+            }
+            lastQualifiedIndex = -1;
+        }
 		
 		for(int i = 0; i < lastQualifiedIndex; i++){
-			if(!conflictHandler.isDisqualified(i)){
+			if(!disqualified.get(i)){
 				AAttribute attribute = attributeDefinitions.get(i);
 				
 				resolver.addCandidate(attribute);
@@ -931,6 +957,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 						}
 					}
 				}
+			}else{
+			    AAttribute attribute = attributeDefinitions.get(i);				
+			    resolver.addCandidate(attribute);
 			}
 		}
 		
@@ -963,6 +992,11 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}
 		temporary.clear();
+		
+		for(int i = lastQualifiedIndex+1; i < attributeDefinitions.size(); i++){
+		    attribute = attributeDefinitions.get(i);				
+			resolver.addCandidate(attribute);
+		}
 	} 	
 		 	
 	public void shift(CharsActiveTypeItem chars){

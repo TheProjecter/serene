@@ -18,6 +18,7 @@ package serene.validation.handlers.stack.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.BitSet;
 
 import serene.bind.Queue;
 import serene.bind.AttributeBinder;
@@ -39,6 +40,7 @@ import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.structure.StructureHandler;
 
@@ -111,7 +113,7 @@ public class ContextStackHandler  implements  StackHandler{
 	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter){
 		throw new IllegalStateException();
 	}	
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions){
+	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		throw new IllegalStateException();
 	}	
 	public void shiftAllCharsDefinitions(List<CharsActiveTypeItem> charsDefinitions){
@@ -124,7 +126,7 @@ public class ContextStackHandler  implements  StackHandler{
 	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
 		throw new IllegalStateException();
 	}	
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, ExternalConflictHandler conflictHandler){
+	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 		throw new IllegalStateException();
 	}
 	
@@ -132,14 +134,14 @@ public class ContextStackHandler  implements  StackHandler{
 		throw new IllegalStateException();
 	}
 	
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders){
+	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders){
 		throw new IllegalStateException();
 	}
 	
 	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
 		throw new IllegalStateException();
 	}
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, ExternalConflictHandler conflictHandler, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders){
+	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders){
 		throw new IllegalStateException();
 	}
 	

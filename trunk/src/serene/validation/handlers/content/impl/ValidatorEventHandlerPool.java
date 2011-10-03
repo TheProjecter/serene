@@ -40,6 +40,7 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.CandidatesConflictErrorHandler;
 import serene.validation.handlers.error.ContextErrorHandlerManager;
 import serene.validation.handlers.error.ContextErrorHandler;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.bind.BindingModel;
 import serene.bind.ValidatorQueuePool;
@@ -972,16 +973,16 @@ public class ValidatorEventHandlerPool implements Reusable{
 	}
     
     
-    public CandidateAttributeValidationHandler getCandidateAttributeValidationHandler(AAttribute candidateAttribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex){		
+    public CandidateAttributeValidationHandler getCandidateAttributeValidationHandler(AAttribute candidateAttribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex, TemporaryMessageStorage[] temporaryMessageStorage){		
 		if(candidateAttributeVHFree == 0){
 			CandidateAttributeValidationHandler avh = new CandidateAttributeValidationHandler(debugWriter);
 			avh.init(this, validationItemLocator, matchHandler);
-			avh.init(candidateAttribute,  parent, conflictHandler, candidateIndex);
+			avh.init(candidateAttribute,  parent, conflictHandler, candidateIndex, temporaryMessageStorage);
 			return avh;			
 		}
 		else{						
 			CandidateAttributeValidationHandler avh = candidateAttributeVH[--candidateAttributeVHFree];
-			avh.init(candidateAttribute, parent, conflictHandler, candidateIndex);
+			avh.init(candidateAttribute, parent, conflictHandler, candidateIndex, temporaryMessageStorage);
 			return avh;
 		}		
 	}

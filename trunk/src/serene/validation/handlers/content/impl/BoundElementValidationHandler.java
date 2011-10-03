@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.BitSet;
+
 
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -35,6 +37,7 @@ import serene.validation.handlers.content.AttributeEventHandler;
 import serene.validation.handlers.content.CharactersEventHandler;
 import serene.validation.handlers.content.BoundElementHandler;
 
+import serene.validation.handlers.error.TemporaryMessageStorage;
 import serene.validation.handlers.error.ConflictMessageReporter; 
 
 import serene.bind.BindingModel;
@@ -253,17 +256,17 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
 		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter, targetQueue, targetEntry, candidateQueues);
 	}
-	void addAttribute(List<AAttribute> candidateDefinitions, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
+	void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllAttributes(candidateDefinitions, value, queue, entry, attributeBinders);
+		stackHandler.shiftAllAttributes(candidateDefinitions, temporaryMessageStorage, value, queue, entry, attributeBinders);
 	}
 	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
 		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter, targetQueue, targetEntry, candidateQueues);
 	}
-	void addAttribute(List<AAttribute> candidateDefinitions, ExternalConflictHandler conflictHandler, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
+	void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllAttributes(candidateDefinitions, conflictHandler, value, queue, entry, attributeBinders);
+		stackHandler.shiftAllAttributes(candidateDefinitions, disqualified, temporaryMessageStorage, value, queue, entry, attributeBinders);
 	}
 	
 	public String toString(){

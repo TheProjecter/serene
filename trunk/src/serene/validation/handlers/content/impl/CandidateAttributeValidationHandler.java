@@ -42,6 +42,7 @@ import serene.validation.handlers.stack.StackHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
@@ -58,6 +59,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 	
 	ExternalConflictHandler conflictHandler;
 	int candidateIndex;
+	TemporaryMessageStorage[] temporaryMessageStorage;
 	
 	CandidateAttributeValidationHandler(MessageWriter debugWriter){
 		super(debugWriter);
@@ -69,6 +71,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 			stackHandler = null;
 		}        
         attribute.releaseDefinition();
+        temporaryMessageStorage = null;
 		pool.recycle(this);
 	}
 	
@@ -78,11 +81,12 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 	}
 	
 		
-	void init(AAttribute attribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex){
+	void init(AAttribute attribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex, TemporaryMessageStorage[] temporaryMessageStorage){
 		this.parent = parent;
 		this.attribute = attribute;
         this.conflictHandler = conflictHandler;
-        this.candidateIndex = candidateIndex;		
+        this.candidateIndex = candidateIndex;
+        this.temporaryMessageStorage = temporaryMessageStorage;		
 		attribute.assembleDefinition();
 		stackHandler = attribute.getStackHandler(this);
 	}
@@ -176,6 +180,8 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 
 	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].ambiguousCharsContentError(systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 
 	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
@@ -192,6 +198,8 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 
 	public void ambiguousCharsContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].ambiguousCharsContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void undeterminedByContent(String qName, String candidateMessages){
@@ -204,6 +212,8 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 	}
 	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].attributeValueDatatypeError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
 	}
 	
 	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
@@ -211,6 +221,8 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].attributeValueValueError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
 	
 	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
@@ -218,6 +230,8 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 	}	
 	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
 		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].attributeValueExceptedError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
 	
 	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
@@ -232,26 +246,40 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler imp
 	}
 	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].unresolvedAttributeValue(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].listTokenDatatypeError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
 	}
 	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].listTokenValueError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
 	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
 		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].listTokenExceptedError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
 	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].ambiguousListToken(token, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
     
     public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
     }    
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
+		if(temporaryMessageStorage[candidateIndex] == null) temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		temporaryMessageStorage[candidateIndex].ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
     }
     
     

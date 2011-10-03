@@ -45,7 +45,7 @@ class BoundCandidateAttributeValidationHandler extends CandidateAttributeValidat
 	}
 	
 	void init(AAttribute attribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex, BindingModel bindingModel, Queue queue, int entry){
-		super.init(attribute, parent, conflictHandler, candidateIndex);
+		super.init(attribute, parent, conflictHandler, candidateIndex, temporaryMessageStorage);
 		this.bindingModel = bindingModel;
 		this.queue = queue;
 		this.entry = entry;

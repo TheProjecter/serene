@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<element name="foo"
+    xmlns="http://relaxng.org/ns/structure/1.0" 
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <choice>
+    <group>
+        <element name="bar1"><text/></element>
+        <attribute name="baz"/>        
+    </group>   
+    <group>
+        <element name="bar2"><text/></element>
+        <attribute name="baz">
+            <data type="boolean"/>
+        </attribute>          
+    </group>  
+    <group>
+        <element name="bar3"><text/></element>
+        <attribute name="baz">
+            <data type="integer"/>
+        </attribute>          
+    </group>  
+  </choice>
+</element>

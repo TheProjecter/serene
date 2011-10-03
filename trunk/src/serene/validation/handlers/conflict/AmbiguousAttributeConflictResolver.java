@@ -26,7 +26,9 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 
 import serene.validation.handlers.content.util.ValidationItemLocator;
+
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import sereneWrite.MessageWriter;
 
@@ -37,7 +39,7 @@ import sereneWrite.MessageWriter;
 * number is greater than 1, it reports ambiguous content.   
 */
 public class AmbiguousAttributeConflictResolver extends AttributeConflictResolver{
-	
+	BitSet disqualified;	
 	public AmbiguousAttributeConflictResolver(MessageWriter debugWriter){				
 		super(debugWriter);
 	}
@@ -46,7 +48,13 @@ public class AmbiguousAttributeConflictResolver extends AttributeConflictResolve
 		reset();
 		pool.recycle(this);
 	}
-		
+	
+	void init(BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+	    super.init(temporaryMessageStorage);
+	    this.disqualified = disqualified;
+	}	
+
+	
     public void resolve(ErrorCatcher errorCatcher){			
         if(qualified.cardinality()== 0){
             AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
@@ -58,9 +66,11 @@ public class AmbiguousAttributeConflictResolver extends AttributeConflictResolve
                     candidateDefinitions.remove(i);
                     i--;
                 }
-            }
+            }   
             AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
             errorCatcher.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+        }else{
+            if(temporaryMessageStorage != null && temporaryMessageStorage[qualified.nextSetBit(0)] != null)temporaryMessageStorage[qualified.nextSetBit(0)].transferMessages(errorCatcher);        
         }
     }
     

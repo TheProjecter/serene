@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.BitSet;
 
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -54,6 +55,7 @@ import serene.validation.handlers.error.ContextErrorHandlerManager;
 import serene.validation.handlers.error.ContextErrorHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
@@ -217,7 +219,7 @@ class ElementValidationHandler extends ValidatingEEH
 	}	
 
 	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{		
-		validateContext();
+		validateContext();		
 		reportContextErrors(restrictToFileName, locator);
 		validateInContext();
 	}
@@ -322,14 +324,14 @@ class ElementValidationHandler extends ValidatingEEH
 		stackHandler.shift(attribute);
 	}
 	
-	void addAttribute(List<AAttribute> candidateDefinitions){
+	void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllAttributes(candidateDefinitions);
+		stackHandler.shiftAllAttributes(candidateDefinitions, temporaryMessageStorage);
 	}
 	
-	void addAttribute(List<AAttribute> candidateDefinitions, ExternalConflictHandler conflictHandler){		
+	void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllAttributes(candidateDefinitions, conflictHandler);
+		stackHandler.shiftAllAttributes(candidateDefinitions, disqualified, temporaryMessageStorage);
 	}
 	
 	void addChars(CharsActiveTypeItem charsDefinition){		

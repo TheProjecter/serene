@@ -50,7 +50,7 @@ public class UnresolvedAttributeConflictResolver extends AttributeConflictResolv
     public void resolve(ErrorCatcher errorCatcher){			
         if(qualified.cardinality()== 0){
             AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
-            errorCatcher.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
         }else if(qualified.cardinality() > 1){
             int j = 0;
             for(int i = 0; i < candidateDefinitions.size(); i++){			
@@ -58,9 +58,11 @@ public class UnresolvedAttributeConflictResolver extends AttributeConflictResolv
                     candidateDefinitions.remove(i);
                     i--;
                 }
-            }
+            }   
             AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
-            errorCatcher.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+        }else{
+            temporaryMessageStorage[qualified.nextSetBit(0)].transferMessages(errorCatcher);
         }
     }
     

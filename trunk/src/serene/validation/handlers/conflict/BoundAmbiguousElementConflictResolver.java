@@ -73,7 +73,7 @@ public class BoundAmbiguousElementConflictResolver extends BoundElementConflictR
             targetQueue.closeReservation(targetEntry, qq);	
             
             if(conflictMessageReporter != null){
-                conflictMessageReporter.setConflictInternalResolution(MessageReporter.RESOLVED, qualified.nextSetBit(0), candidateDefinitions.get(qualified.nextSetBit(0)));
+                conflictMessageReporter.setConflictInternalResolution(MessageReporter.RESOLVED, qual, candidateDefinitions.get(qual));
                 errorCatcher.internalConflict(conflictMessageReporter);
             }			
         }else{
@@ -82,14 +82,13 @@ public class BoundAmbiguousElementConflictResolver extends BoundElementConflictR
                 conflictMessageReporter.setConflictInternalResolution(MessageReporter.AMBIGUOUS, qualified);
                 errorCatcher.internalConflict(conflictMessageReporter);
             }
-            
             int j = 0;
             for(int i = 0; i < candidateDefinitions.size(); i++){			
                 if(!qualified.get(j++)){
                     candidateDefinitions.remove(i);
                     i--;
                 }
-            }
+            }   
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
             errorCatcher.ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
             
