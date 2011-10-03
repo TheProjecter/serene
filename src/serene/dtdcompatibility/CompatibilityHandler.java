@@ -532,10 +532,12 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 needsOptionalChoice.add(true);
                 
                 ccAttribute.init(grammarModel.getIndex(attribute), attribute);
+                validationItemLocator.newAttribute(null, null, -1, -1, null, null, attribute.getQName());                
                 defaultValueErrorHandler.setAttribute(attribute.getQName(), attribute.getLocation(restrictToFileName));                
                 defaultValueHandler.init(ccAttribute, defaultValueErrorHandler);
                 defaultValueHandler.handleAttribute(defaultValue);
                 defaultValueHandler.reset();
+                validationItemLocator.closeAttribute();
                                 
                 defaultedAttributeContext = true;    
                 controlAlternative = false; 

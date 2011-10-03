@@ -117,17 +117,13 @@ interface ConflictErrorCatcher extends ErrorType{
 									int columnNumber, 
 									AAttribute[] possibleDefinitions);
 	
-	void ambiguousCharsContentError(int functionalEquivalenceCode, 
-                                    String systemId, 
-									int lineNumber, 
-									int columnNumber, 
-									CharsActiveTypeItem[] possibleDefinitions);
-	
+
 
     void ambiguousUnresolvedElementContentWarning(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
     void ambiguousAmbiguousElementContentWarning(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
 	void ambiguousAttributeContentWarning(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions);
-	void ambiguousCharsContentWarning(int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
+	void ambiguousCharacterContentWarning(int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
+	void ambiguousAttributeValueWarning(int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
 
 	
 	void missingContent(int functionalEquivalenceCode, 
@@ -179,9 +175,7 @@ interface ConflictErrorCatcher extends ErrorType{
     
 	void listTokenExceptedError(int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition);
         
-	void ambiguousListToken(int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
-        
-    void ambiguousListTokenInContextError(int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
+    void unresolvedListTokenInContextError(int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
     void ambiguousListTokenInContextWarning(int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);    
     
 	void missingCompositorContent(int functionalEquivalenceCode, 

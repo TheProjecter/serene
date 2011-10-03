@@ -18,6 +18,7 @@ limitations under the License.
 package serene.validation.handlers.content.impl;
 
 import java.util.List;
+import java.util.BitSet;
 
 import org.xml.sax.SAXException;
 
@@ -35,11 +36,13 @@ import serene.validation.handlers.match.MatchHandler;
 import serene.validation.handlers.stack.StackHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
+import serene.validation.handlers.error.TemporaryMessageStorage;
 
 
 import sereneWrite.MessageWriter;
 
-class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler implements DefaultValueAttributeHandler{
+class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler 
+                                            implements DefaultValueAttributeHandler{
 		
 	ErrorCatcher errorCatcher;
     
@@ -61,16 +64,11 @@ class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler 
 		this.errorCatcher = errorCatcher;
 		this.attribute = attribute;
 		attribute.assembleDefinition();
-		stackHandler = attribute.getStackHandler(errorCatcher);
 	}
     
     public void reset(){
-        errorCatcher = null;
-		if(stackHandler != null){
-			stackHandler.recycle();
-			stackHandler = null;
-		}
-        attribute.releaseDefinition();
+        super.reset();
+        errorCatcher = null;		
 	}
     
     public ValidatingEEH getParentHandler(){
@@ -82,27 +80,39 @@ class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler 
 	}	
     
     void validateValue(String value) throws SAXException{
+        stackHandler = attribute.getStackHandler(errorCatcher);
 		if(!attribute.allowsChars()){
 			errorCatcher.unexpectedAttributeValue(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), attribute);
 			return;
-		}				
-		CharactersEventHandler ceh = pool.getAttributeValueValidationHandler(this, errorCatcher);
-		ceh.handleString(value, (CharsActiveType)attribute, false);		
-        ceh.recycle();
+		}
+		CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, errorCatcher);
+		cvh.handleString(value, (CharsActiveType)attribute, false);	
+        cvh.recycle();
+        stackHandler.endValidation();
+		stackHandler.recycle();
+		stackHandler = null;
 	}
 
     void validateInContext(){
 		throw new IllegalStateException();
 	}
     
-    void addChars(CharsActiveTypeItem charsDefinition){
+	// CharactersValidationHandler
+	//==========================================================================
+    public void addChars(CharsActiveTypeItem charsDefinition){
 		stackHandler.shift(charsDefinition);
 	}
 	
-	void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions){
+	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()) stackHandler = attribute.getStackHandler(stackHandler, errorCatcher);
-		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions);
+		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, temporaryMessageStorage);
 	}
+	
+	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+		if(!stackHandler.handlesConflict()) stackHandler = attribute.getStackHandler(stackHandler, errorCatcher);
+		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, disqualified, temporaryMessageStorage);
+	}
+	//==========================================================================
  
     
     boolean functionalEquivalent(ComparableAEH other){

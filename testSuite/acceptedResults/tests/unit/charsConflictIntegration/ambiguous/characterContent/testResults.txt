@@ -1,0 +1,13 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\charsConflictIntegration\ambiguous\characterContent\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/ambiguous/characterContent/document1.xml:21:7 Syntax warning. Element <foo> corresponding to definition <element> at schema.rng:21:66 generates warning: 
+Ambiguous character content.
+Character content at document1.xml:20:2 cannot be resolved to a single definition, several candidates could be correct. Possible definitions: 
+<data> at schema.rng:23:27
+<data> at schema.rng:24:27.

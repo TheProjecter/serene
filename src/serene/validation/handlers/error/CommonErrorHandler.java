@@ -135,10 +135,6 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
-	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		messageHandler.ambiguousCharsContentError(systemId, lineNumber, columnNumber, possibleDefinitions);
-	}
-	
 	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		messageHandler.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
@@ -151,8 +147,12 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
-	public void ambiguousCharsContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		messageHandler.ambiguousCharsContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
+	public void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+		messageHandler.ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
+	
+	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+		messageHandler.ambiguousAttributeValueWarning(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 
 	public void undeterminedByContent(String qName, String candidateMessages){
@@ -203,12 +203,9 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
 		messageHandler.listTokenExceptedError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
-	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		messageHandler.ambiguousListToken(token, systemId, lineNumber, columnNumber, possibleDefinitions);
-	}
-    
-    public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		messageHandler.ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+	
+    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+		messageHandler.unresolvedListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
     }    
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		messageHandler.ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, possibleDefinitions);

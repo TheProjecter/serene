@@ -26,6 +26,8 @@ import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.schema.active.components.AData;
+import serene.validation.schema.active.components.AExceptPattern;
+import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.handlers.match.MatchHandler;
 
@@ -132,25 +134,29 @@ public class ValidatorEventHandlerPool implements Reusable{
 	int attributeDefaultHFree = 0;
 	AttributeDefaultHandler[] attributeDefaultH;
 	
-	int characterContentHPoolSize;
-	int characterContentHFree = 0;
-	CharacterContentValidationHandler[] characterContentH;
+	int charactersValidationHPoolSize;
+	int charactersValidationHFree = 0;
+	CharactersValidationHandler[] charactersValidationH;
 	
-	int attributeValueHPoolSize;
-	int attributeValueHFree = 0;
-	AttributeValueValidationHandler[] attributeValueH;
+	int structuredDataValidationHPoolSize;
+	int structuredDataValidationHFree = 0;
+	StructuredDataValidationHandler[] structuredDataValidationH;
+	
+	int dataValidationHPoolSize;
+	int dataValidationHFree = 0;
+	DataValidationHandler[] dataValidationH;
     
     int defaultVAttributeHPoolSize;
 	int defaultVAttributeHFree = 0;
 	DefaultValueAttributeValidationHandler[] defaultVAttributeH;
 	
-	int listPatternTPoolSize;
-	int listPatternTFree = 0;
-	ListPatternTester[] listPatternT;
+	int listPatternVHPoolSize;
+	int listPatternVHFree = 0;
+	ListPatternValidationHandler[] listPatternVH;
 	
-	int exceptPatternTPoolSize;
-	int exceptPatternTFree = 0;
-	ExceptPatternTester[] exceptPatternT;
+	int exceptPatternVHPoolSize;
+	int exceptPatternVHFree = 0;
+	ExceptPatternValidationHandler[] exceptPatternVH;
 	
 	
 	
@@ -212,11 +218,12 @@ public class ValidatorEventHandlerPool implements Reusable{
 			attributeConcurrentHFree != 0 ||
             attributeParallelHFree != 0 ||
             attributeDefaultHFree != 0 ||
-			characterContentHFree != 0 ||
-			attributeValueHFree != 0 ||
+			charactersValidationHFree != 0 ||
+			structuredDataValidationHFree != 0 ||
+			dataValidationHFree != 0 ||
             defaultVAttributeHFree != 0 ||
-			listPatternTFree != 0 ||
-			exceptPatternTFree != 0 ||
+			listPatternVHFree != 0 ||
+			exceptPatternVHFree != 0 ||
 			boundElementVHFree != 0 ||
 			boundStartVHFree != 0 ||
 			boundElementConcurrentHFree != 0 ||
@@ -252,11 +259,12 @@ public class ValidatorEventHandlerPool implements Reusable{
 						attributeConcurrentH,
                         attributeParallelH,
                         attributeDefaultH,
-						characterContentH,
-						attributeValueH,
+						charactersValidationH,
+						structuredDataValidationH,
+						dataValidationH,
                         defaultVAttributeH,
-						listPatternT,
-						exceptPatternT,
+						listPatternVH,
+						exceptPatternVH,
 						boundElementVH,
 						boundStartVH,						
 						boundElementConcurrentH,
@@ -301,16 +309,18 @@ public class ValidatorEventHandlerPool implements Reusable{
 					AttributeParallelHandler[] attributeParallelH,
                     int attributeDefaultHFree,
 					AttributeDefaultHandler[] attributeDefaultH,
-					int characterContentHFree,
-					CharacterContentValidationHandler[] characterContentH,					
-					int attributeValueHFree,
-					AttributeValueValidationHandler[] attributeValueH,
+					int charactersValidationHFree,
+					CharactersValidationHandler[] charactersValidationH,					
+					int structuredDataValidationHFree,
+					StructuredDataValidationHandler[] structuredDataValidationH,
+					int dataValidationHFree,
+					DataValidationHandler[] dataValidationH,
                     int defaultVAttributeHFree,
 					DefaultValueAttributeValidationHandler[] defaultVAttributeH,
-					int listPatternTFree,
-					ListPatternTester[] listPatternT,
-					int exceptPatternTFree,
-					ExceptPatternTester[] exceptPatternT,
+					int listPatternVHFree,
+					ListPatternValidationHandler[] listPatternVH,
+					int exceptPatternVHFree,
+					ExceptPatternValidationHandler[] exceptPatternVH,
 					int boundElementVHFree,	
 					BoundElementValidationHandler[] boundElementVH,
 					int boundStartVHFree,	
@@ -459,18 +469,25 @@ public class ValidatorEventHandlerPool implements Reusable{
 			attributeDefaultH[i].init(this, validationItemLocator);
 		}
 			
-		characterContentHPoolSize = characterContentH.length;
-		this.characterContentHFree = characterContentHFree;
-		this.characterContentH = characterContentH;
-		for(int i = 0; i < characterContentHFree; i++){	
-			characterContentH[i].init(this, validationItemLocator, matchHandler, spaceHandler);
+		charactersValidationHPoolSize = charactersValidationH.length;
+		this.charactersValidationHFree = charactersValidationHFree;
+		this.charactersValidationH = charactersValidationH;
+		for(int i = 0; i < charactersValidationHFree; i++){	
+			charactersValidationH[i].init(matchHandler, validationContext, spaceHandler, validationItemLocator, this);
 		}
 		
-		attributeValueHPoolSize = attributeValueH.length;
-		this.attributeValueHFree = attributeValueHFree;
-		this.attributeValueH = attributeValueH;
-		for(int i = 0; i < attributeValueHFree; i++){	
-			attributeValueH[i].init(this, validationItemLocator, matchHandler, spaceHandler);
+		structuredDataValidationHPoolSize = structuredDataValidationH.length;
+		this.structuredDataValidationHFree = structuredDataValidationHFree;
+		this.structuredDataValidationH = structuredDataValidationH;
+		for(int i = 0; i < structuredDataValidationHFree; i++){	
+			structuredDataValidationH[i].init(matchHandler, validationContext, spaceHandler, validationItemLocator, this);
+		}
+		
+		dataValidationHPoolSize = dataValidationH.length;
+		this.dataValidationHFree = dataValidationHFree;
+		this.dataValidationH = dataValidationH;
+		for(int i = 0; i < dataValidationHFree; i++){	
+			dataValidationH[i].init(matchHandler, validationContext, spaceHandler, validationItemLocator, this);
 		}
         
         defaultVAttributeHPoolSize = defaultVAttributeH.length;
@@ -480,18 +497,18 @@ public class ValidatorEventHandlerPool implements Reusable{
 			defaultVAttributeH[i].init(this, validationItemLocator, matchHandler);
 		}
 		
-		listPatternTPoolSize = listPatternT.length;
-		this.listPatternTFree = listPatternTFree;
-		this.listPatternT = listPatternT;
-		for(int i = 0; i < listPatternTFree; i++){	
-			listPatternT[i].init(this, validationItemLocator, spaceHandler, matchHandler);
+		listPatternVHPoolSize = listPatternVH.length;
+		this.listPatternVHFree = listPatternVHFree;
+		this.listPatternVH = listPatternVH;
+		for(int i = 0; i < listPatternVHFree; i++){	
+			listPatternVH[i].init(this, validationItemLocator, spaceHandler);
 		}
 		
-		exceptPatternTPoolSize = exceptPatternT.length;
-		this.exceptPatternTFree = exceptPatternTFree;
-		this.exceptPatternT = exceptPatternT;
-		for(int i = 0; i < exceptPatternTFree; i++){	
-			exceptPatternT[i].init(this, validationItemLocator, matchHandler, spaceHandler);
+		exceptPatternVHPoolSize = exceptPatternVH.length;
+		this.exceptPatternVHFree = exceptPatternVHFree;
+		this.exceptPatternVH = exceptPatternVH;
+		for(int i = 0; i < exceptPatternVHFree; i++){	
+			exceptPatternVH[i].init(this, validationItemLocator);
 		}
 		
 		
@@ -592,16 +609,18 @@ public class ValidatorEventHandlerPool implements Reusable{
 									attributeParallelH,
                                     attributeDefaultHFree,
 									attributeDefaultH,                                    
-									characterContentHFree,
-									characterContentH,
-									attributeValueHFree,
-									attributeValueH,
+									charactersValidationHFree,
+									charactersValidationH,
+									structuredDataValidationHFree,
+									structuredDataValidationH,
+									dataValidationHFree,
+									dataValidationH,
                                     defaultVAttributeHFree,
 									defaultVAttributeH,
-									listPatternTFree,
-									listPatternT,
-									exceptPatternTFree,
-									exceptPatternT,
+									listPatternVHFree,
+									listPatternVH,
+									exceptPatternVHFree,
+									exceptPatternVH,
 									boundElementVHFree,
 									boundElementVH,
 									boundStartVHFree,
@@ -636,9 +655,11 @@ public class ValidatorEventHandlerPool implements Reusable{
 		attributeConcurrentHFree = 0;
 		attributeParallelHFree = 0;
         attributeDefaultHFree = 0;        
-		characterContentHFree = 0;
-		listPatternTFree = 0;
-		exceptPatternTFree = 0;
+		charactersValidationHFree = 0;
+		structuredDataValidationHFree = 0;		
+		dataValidationHFree = 0;
+		listPatternVHFree = 0;
+		exceptPatternVHFree = 0;
 		boundElementVHFree = 0;
 		boundStartVHFree = 0;
 		boundElementConcurrentHFree = 0;
@@ -1066,52 +1087,75 @@ public class ValidatorEventHandlerPool implements Reusable{
 		attributeDefaultH[attributeDefaultHFree++] = ach;
 	}
 
-	CharacterContentValidationHandler getCharacterContentValidationHandler(ElementValidationHandler parent, ErrorCatcher errorCatcher){		
-		if(characterContentHFree == 0){
-			CharacterContentValidationHandler ach = new CharacterContentValidationHandler(debugWriter);
-			ach.init(this, validationItemLocator, matchHandler, spaceHandler);
-			ach.init(parent, validationContext, errorCatcher);
+	CharactersValidationHandler getCharactersValidationHandler(MarkupEventHandler parent, CharsContentTypeHandler charsContentTypeHandler, ErrorCatcher contextErrorCatcher){		
+		if(charactersValidationHFree == 0){
+			CharactersValidationHandler ach = new CharactersValidationHandler(debugWriter);
+			ach.init(matchHandler, validationContext, spaceHandler, validationItemLocator, this);
+			ach.init(parent, charsContentTypeHandler, contextErrorCatcher);
 			return ach;
-		}
-		else{
-			CharacterContentValidationHandler ach = characterContentH[--characterContentHFree];
-			ach.init(parent, validationContext, errorCatcher);
+		}else{
+			CharactersValidationHandler ach = charactersValidationH[--charactersValidationHFree];
+			ach.init(parent, charsContentTypeHandler, contextErrorCatcher);
 			return ach; 
 		}		
 	}
 		
-	void recycle(CharacterContentValidationHandler ach){
-		if(characterContentHFree == characterContentHPoolSize){			
-			CharacterContentValidationHandler[] increased = new CharacterContentValidationHandler[++characterContentHPoolSize];
-			System.arraycopy(characterContentH, 0, increased, 0, characterContentHFree);
-			characterContentH = increased;
+	void recycle(CharactersValidationHandler ach){
+		if(charactersValidationHFree == charactersValidationHPoolSize){			
+			CharactersValidationHandler[] increased = new CharactersValidationHandler[++charactersValidationHPoolSize];
+			System.arraycopy(charactersValidationH, 0, increased, 0, charactersValidationHFree);
+			charactersValidationH = increased;
 		}
-		characterContentH[characterContentHFree++] = ach;
+		charactersValidationH[charactersValidationHFree++] = ach;
 	}
 	
 	
-	AttributeValueValidationHandler getAttributeValueValidationHandler(AttributeDefinitionHandler parent, ErrorCatcher errorCatcher){		
-		if(attributeValueHFree == 0){
-			AttributeValueValidationHandler ach = new AttributeValueValidationHandler(debugWriter);
-			ach.init(this, validationItemLocator, matchHandler, spaceHandler);
-			ach.init(parent, validationContext, errorCatcher);
+	StructuredDataValidationHandler getStructuredDataValidationHandler(ExceptPatternValidationHandler parent, StructuredDataContentTypeHandler structuredDataContentTypeHandler, ErrorCatcher contextErrorCatcher){		
+		if(structuredDataValidationHFree == 0){
+			StructuredDataValidationHandler ach = new StructuredDataValidationHandler(debugWriter);
+			ach.init(matchHandler, validationContext, spaceHandler, validationItemLocator, this);
+			ach.init(parent, structuredDataContentTypeHandler, contextErrorCatcher);
 			return ach;
 		}
 		else{
-			AttributeValueValidationHandler ach = attributeValueH[--attributeValueHFree];
-			ach.init(parent, validationContext, errorCatcher);
+			StructuredDataValidationHandler ach = structuredDataValidationH[--structuredDataValidationHFree];
+			ach.init(parent, structuredDataContentTypeHandler, contextErrorCatcher);
 			return ach; 
 		}		
 	}
 		
-	void recycle(AttributeValueValidationHandler ach){		
-		if(attributeValueHFree == attributeValueHPoolSize){			
-			AttributeValueValidationHandler[] increased = new AttributeValueValidationHandler[++attributeValueHPoolSize];
-			System.arraycopy(attributeValueH, 0, increased, 0, attributeValueHFree);
-			attributeValueH = increased;
+	void recycle(StructuredDataValidationHandler ach){		
+		if(structuredDataValidationHFree == structuredDataValidationHPoolSize){			
+			StructuredDataValidationHandler[] increased = new StructuredDataValidationHandler[++structuredDataValidationHPoolSize];
+			System.arraycopy(structuredDataValidationH, 0, increased, 0, structuredDataValidationHFree);
+			structuredDataValidationH = increased;
 		}
-		attributeValueH[attributeValueHFree++] = ach;
+		structuredDataValidationH[structuredDataValidationHFree++] = ach;
 	}
+	
+	DataValidationHandler getDataValidationHandler(ListPatternValidationHandler parent, DataContentTypeHandler dataContentTypeHandler, ErrorCatcher contextErrorCatcher){		
+		if(dataValidationHFree == 0){
+			DataValidationHandler ach = new DataValidationHandler(debugWriter);
+			ach.init(matchHandler, validationContext, spaceHandler, validationItemLocator, this);
+			ach.init(parent, dataContentTypeHandler, contextErrorCatcher);
+			return ach;
+		}
+		else{
+			DataValidationHandler ach = dataValidationH[--dataValidationHFree];
+			ach.init(parent, dataContentTypeHandler, contextErrorCatcher);
+			return ach; 
+		}		
+	}
+		
+	void recycle(DataValidationHandler ach){		
+		if(dataValidationHFree == dataValidationHPoolSize){			
+			DataValidationHandler[] increased = new DataValidationHandler[++dataValidationHPoolSize];
+			System.arraycopy(dataValidationH, 0, increased, 0, dataValidationHFree);
+			dataValidationH = increased;
+		}
+		dataValidationH[dataValidationHFree++] = ach;
+	}
+	
 
     public DefaultValueAttributeValidationHandler getDefaultValueAttributeValidationHandler(){		
 		if(defaultVAttributeHFree == 0){
@@ -1135,50 +1179,50 @@ public class ValidatorEventHandlerPool implements Reusable{
 		defaultVAttributeH[defaultVAttributeHFree++] = ach;
 	}
 	
-	ListPatternTester getListPatternTester(List<CharsActiveTypeItem> totalCharsItemMatches, int totalCount, ErrorCatcher errorCatcher){		
-		if(listPatternTFree == 0){
-			ListPatternTester ach = new ListPatternTester(debugWriter);
-			ach.init(this, validationItemLocator, spaceHandler, matchHandler);
-			ach.init(totalCharsItemMatches, totalCount, validationContext, errorCatcher);
+	ListPatternValidationHandler getListPatternValidationHandler(AListPattern listPattern, AbstractSDVH parent, ErrorCatcher errorCatcher){		
+		if(listPatternVHFree == 0){
+			ListPatternValidationHandler lpvh = new ListPatternValidationHandler(debugWriter);
+			lpvh.init(this, validationItemLocator, spaceHandler);
+			lpvh.init(listPattern, parent, errorCatcher);
+			return lpvh;
+		}
+		else{
+			ListPatternValidationHandler lpvh = listPatternVH[--listPatternVHFree];
+			lpvh.init(listPattern, parent, errorCatcher);
+			return lpvh; 
+		}		
+	}
+	
+	void recycle(ListPatternValidationHandler lpvh){		
+		if(listPatternVHFree == listPatternVHPoolSize){			
+			ListPatternValidationHandler[] increased = new ListPatternValidationHandler[++listPatternVHPoolSize];
+			System.arraycopy(listPatternVH, 0, increased, 0, listPatternVHFree);
+			listPatternVH = increased;
+		}
+		listPatternVH[listPatternVHFree++] = lpvh;
+	}
+	
+	ExceptPatternValidationHandler getExceptPatternValidationHandler(AData data, AExceptPattern exceptPattern, AbstractDVH parent, ErrorCatcher errorCatcher){		
+		if(exceptPatternVHFree == 0){
+			ExceptPatternValidationHandler ach = new ExceptPatternValidationHandler(debugWriter);
+			ach.init(this, validationItemLocator);
+			ach.init(data, exceptPattern, parent, errorCatcher);
 			return ach;
 		}
 		else{
-			ListPatternTester ach = listPatternT[--listPatternTFree];
-			ach.init(totalCharsItemMatches, totalCount, validationContext, errorCatcher);
+			ExceptPatternValidationHandler ach = exceptPatternVH[--exceptPatternVHFree];
+			ach.init(data, exceptPattern, parent, errorCatcher);
 			return ach; 
 		}		
 	}
 	
-	void recycle(ListPatternTester ach){		
-		if(listPatternTFree == listPatternTPoolSize){			
-			ListPatternTester[] increased = new ListPatternTester[++listPatternTPoolSize];
-			System.arraycopy(listPatternT, 0, increased, 0, listPatternTFree);
-			listPatternT = increased;
+	void recycle(ExceptPatternValidationHandler ach){		
+		if(exceptPatternVHFree == exceptPatternVHPoolSize){			
+			ExceptPatternValidationHandler[] increased = new ExceptPatternValidationHandler[++exceptPatternVHPoolSize];
+			System.arraycopy(exceptPatternVH, 0, increased, 0, exceptPatternVHFree);
+			exceptPatternVH = increased;
 		}
-		listPatternT[listPatternTFree++] = ach;
-	}
-	
-	ExceptPatternTester getExceptPatternTester(AData data, List<CharsActiveTypeItem> totalCharsItemMatches, int totalCount, ErrorCatcher errorCatcher){		
-		if(exceptPatternTFree == 0){
-			ExceptPatternTester ach = new ExceptPatternTester(debugWriter);
-			ach.init(this, validationItemLocator, matchHandler, spaceHandler);
-			ach.init(data, totalCharsItemMatches, totalCount, validationContext, errorCatcher);
-			return ach;
-		}
-		else{
-			ExceptPatternTester ach = exceptPatternT[--exceptPatternTFree];
-			ach.init(data, totalCharsItemMatches, totalCount, validationContext, errorCatcher);
-			return ach; 
-		}		
-	}
-	
-	void recycle(ExceptPatternTester ach){		
-		if(exceptPatternTFree == exceptPatternTPoolSize){			
-			ExceptPatternTester[] increased = new ExceptPatternTester[++exceptPatternTPoolSize];
-			System.arraycopy(exceptPatternT, 0, increased, 0, exceptPatternTFree);
-			exceptPatternT = increased;
-		}
-		exceptPatternT[exceptPatternTFree++] = ach;
+		exceptPatternVH[exceptPatternVHFree++] = ach;
 	}
 	
 	

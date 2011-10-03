@@ -61,6 +61,7 @@ public class ListPatternHandler extends StructureValidationHandler{
 		this.rule = attribute;
 		this.stackHandler = stackHandler;
 		this.errorCatcher = errorCatcher;
+		setStart();
 	}
 		
 	public void recycle(){

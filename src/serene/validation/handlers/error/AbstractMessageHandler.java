@@ -180,12 +180,6 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	int unresolvedAttributeSizeEE;
 
 	// {14}
-	String[] ambiguousCharsSystemIdEE;
-	int[] ambiguousCharsLineNumberEE;
-	int[] ambiguousCharsColumnNumberEE;
-	CharsActiveTypeItem[][] ambiguousCharsDefinitionEE;
-	int ambiguousCharsIndexEE;
-	int ambiguousCharsSizeEE;
 	
 	
 	// {w1 U}
@@ -224,6 +218,15 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	CharsActiveTypeItem[][] ambiguousCharsDefinitionWW;
 	int ambiguousCharsIndexWW;
 	int ambiguousCharsSizeWW;
+	
+	// {w4}
+	String[] ambiguousAVAttributeQNameWW;
+	String[] ambiguousAVSystemIdWW;
+	int[] ambiguousAVLineNumberWW;
+	int[] ambiguousAVColumnNumberWW;
+	CharsActiveTypeItem[][] ambiguousAVDefinitionWW;
+	int ambiguousAVIndexWW;
+	int ambiguousAVSizeWW;
 	
 	
 	// {15}
@@ -301,21 +304,21 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	
 	
 	// {23}
-	String ambiguousCharsSystemIdEECC[];//CC character content
-	int ambiguousCharsLineNumberEECC[];
-	int ambiguousCharsColumnNumberEECC[];
-	CharsActiveTypeItem ambiguousPossibleDefinitionsCC[][];
-	int ambiguousIndexCC;
-	int ambiguousSizeCC;
+	String unresolvedCharsSystemIdEECC[];//CC character content
+	int unresolvedCharsLineNumberEECC[];
+	int unresolvedCharsColumnNumberEECC[];
+	CharsActiveTypeItem unresolvedPossibleDefinitionsCC[][];
+	int unresolvedIndexCC;
+	int unresolvedSizeCC;
 	
 	// {24}
-	String ambiguousAttributeQNameEEAV[];
-	String ambiguousCharsSystemIdEEAV[];//AV attribute ambiguous
-	int ambiguousCharsLineNumberEEAV[];
-	int ambiguousCharsColumnNumberEEAV[];
-	CharsActiveTypeItem ambiguousPossibleDefinitionsAV[][];
-	int ambiguousIndexAV;
-	int ambiguousSizeAV;
+	String unresolvedAttributeQNameEEAV[];
+	String unresolvedCharsSystemIdEEAV[];//AV attribute unresolved
+	int unresolvedCharsLineNumberEEAV[];
+	int unresolvedCharsColumnNumberEEAV[];
+	CharsActiveTypeItem unresolvedPossibleDefinitionsAV[][];
+	int unresolvedIndexAV;
+	int unresolvedSizeAV;
 	
 	
 	// {25}
@@ -347,22 +350,15 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	int exceptSizeLP;
 	
 	// {28}
-	String ambiguousTokenLP[];//LP list pattern
-	String ambiguousCharsSystemIdEELP[];
-	int ambiguousCharsLineNumberEELP[];
-	int ambiguousCharsColumnNumberEELP[];
-	CharsActiveTypeItem ambiguousPossibleDefinitionsLP[][];
-	int ambiguousIndexLP;
-	int ambiguousSizeLP;
-    
+	    
     // {28_1}
-	String ambiguousTokenLPICE[];//LPICE list pattern in context validation error
-	String ambiguousCharsSystemIdEELPICE[];
-	int ambiguousCharsLineNumberEELPICE[];
-	int ambiguousCharsColumnNumberEELPICE[];
-	CharsActiveTypeItem ambiguousPossibleDefinitionsLPICE[][];
-	int ambiguousIndexLPICE;
-	int ambiguousSizeLPICE;
+	String unresolvedTokenLPICE[];//LPICE list pattern in context validation error
+	String unresolvedCharsSystemIdEELPICE[];
+	int unresolvedCharsLineNumberEELPICE[];
+	int unresolvedCharsColumnNumberEELPICE[];
+	CharsActiveTypeItem unresolvedPossibleDefinitionsLPICE[][];
+	int unresolvedIndexLPICE;
+	int unresolvedSizeLPICE;
     
     
     // {28_2}
@@ -456,9 +452,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         unresolvedAttributeSizeEE = 0;
     
         // {14}
-        ambiguousCharsIndexEE = -1;
-        ambiguousCharsSizeEE = 0;
-        
+
         
         // {w1 U}
         ambiguousUnresolvedElementIndexWW = -1;
@@ -477,6 +471,10 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         // {w3}
         ambiguousCharsIndexWW = -1;
         ambiguousCharsSizeWW = 0;
+        
+        // {w4}
+        ambiguousAVIndexWW = -1;
+        ambiguousAVSizeWW = 0;
         
         
         // {15}
@@ -514,12 +512,12 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         
         
         // {23}
-        ambiguousIndexCC = -1;
-        ambiguousSizeCC = 0;
+        unresolvedIndexCC = -1;
+        unresolvedSizeCC = 0;
         
         // {24}
-        ambiguousIndexAV = -1;
-        ambiguousSizeAV = 0;
+        unresolvedIndexAV = -1;
+        unresolvedSizeAV = 0;
         
         
         // {25}
@@ -535,12 +533,10 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         exceptSizeLP = 0;
         
         // {28}
-        ambiguousIndexLP = -1;
-        ambiguousSizeLP = 0;
-        
+
         // {28_1}
-        ambiguousIndexLPICE = -1;
-        ambiguousSizeLPICE = 0;
+        unresolvedIndexLPICE = -1;
+        unresolvedSizeLPICE = 0;
         
         
         // {28_2}
@@ -629,8 +625,8 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
             }
         }
         if(!message.equals("")){            
-            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
-            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, publicId, systemId, lineNumber, columnNumber));
+            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, publicId, systemId, lineNumber, columnNumber));
         }        
     }
         
@@ -704,8 +700,8 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         }
         message = message.trim();
         if(!message.equals("")){
-            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
-            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, publicId, systemId, lineNumber, columnNumber));
+            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, publicId, systemId, lineNumber, columnNumber));
         }
     }
     
@@ -793,7 +789,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         }
         message = message.trim();
         if(!message.equals("")){
-            return "\n"+prefix+"Syntax error. Possible definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message;
+            return "\n"+prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message;
         }
         return message;
     }
@@ -947,17 +943,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {14}
-		if(ambiguousCharsIndexEE >= 0){
-			for(int i = 0; i <= ambiguousCharsIndexEE; i++){
-				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Chars at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEE[i])+":"+ambiguousCharsLineNumberEE[i]+":"+ambiguousCharsColumnNumberEE[i]
-						+" cannot be resolved by in context validation, all candidates resulted in errors. Possible definitions: ";
-				for(int j = 0; j < ambiguousCharsDefinitionEE[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousCharsDefinitionEE[i][j].getQName()+"> at "+ambiguousCharsDefinitionEE[i][j].getLocation(restrictToFileName);
-				}
-				message += ".";
-			}
-		}
+
 		// {15}
 		if(datatypeIndexCC >= 0){
 			for(int i = 0; i <= datatypeIndexCC; i++){
@@ -1019,33 +1005,33 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		// {22}
 		if(unexpectedIndexAV >= 0){
 			for(int i = 0; i <= unexpectedIndexAV; i++){
-				message += "\n"+prefix+"Unexpected attribute unexpected."
+				message += "\n"+prefix+"Unexpected attribute value."
 				+"\n"+prefix+ "Value of attribute \""+unexpectedAttributeQName[i]+"\" at "+getLocation(restrictToFileName, unexpectedCharsSystemIdAV[i])+":"+unexpectedCharsLineNumberAV[i]+":"+unexpectedCharsColumnNumberAV[i]
 				+ " is not allowed by the attributes's schema definition <" +unexpectedContextDefinitionAV[i].getQName()+"> at "+unexpectedContextDefinitionAV[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {23}
-		if(ambiguousIndexCC >= 0){
-			for(int i = 0; i <= ambiguousIndexCC; i++){
+		if(unresolvedIndexCC >= 0){
+			for(int i = 0; i <= unresolvedIndexCC; i++){
 				message += "\n"+prefix+"Unresolved character content."
-				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEECC[i])+":"+ambiguousCharsLineNumberEECC[i]+":"+ambiguousCharsColumnNumberEECC[i]
-				+ " cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors."
-				+" Possible definitions:";
-				for(int j = 0; j < ambiguousPossibleDefinitionsCC[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsCC[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsCC[i][j].getLocation(restrictToFileName);
+				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, unresolvedCharsSystemIdEECC[i])+":"+unresolvedCharsLineNumberEECC[i]+":"+unresolvedCharsColumnNumberEECC[i]
+				+ " cannot be resolved to one schema definition, all candidates resulted in errors."
+				+" Available definitions:";
+				for(int j = 0; j < unresolvedPossibleDefinitionsCC[i].length; j++){
+					message += "\n"+prefix+"<"+unresolvedPossibleDefinitionsCC[i][j].getQName()+"> at "+unresolvedPossibleDefinitionsCC[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
 		}
 		// {24}
-		if(ambiguousIndexAV >= 0){			
-			for(int i = 0; i <= ambiguousIndexAV; i++){				
+		if(unresolvedIndexAV >= 0){			
+			for(int i = 0; i <= unresolvedIndexAV; i++){				
 				message += "\n"+prefix+"Unresolved attribute value."
-				+"\n"+prefix+ "Value of attribute \""+ambiguousAttributeQNameEEAV[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEEAV[i])+":"+ambiguousCharsLineNumberEEAV[i]+":"+ambiguousCharsColumnNumberEEAV[i]
-				+ " cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors."
-				+" Possible definitions:";
-				for(int j = 0; j < ambiguousPossibleDefinitionsAV[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsAV[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsAV[i][j].getLocation(restrictToFileName);
+				+"\n"+prefix+ "Value of attribute \""+unresolvedAttributeQNameEEAV[i]+"\" at "+getLocation(restrictToFileName, unresolvedCharsSystemIdEEAV[i])+":"+unresolvedCharsLineNumberEEAV[i]+":"+unresolvedCharsColumnNumberEEAV[i]
+				+ " cannot be resolved to one schema definition, all candidates resulted in errors."
+				+" Available definitions:";
+				for(int j = 0; j < unresolvedPossibleDefinitionsAV[i].length; j++){
+					message += "\n"+prefix+"<"+unresolvedPossibleDefinitionsAV[i][j].getQName()+"> at "+unresolvedPossibleDefinitionsAV[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -1076,28 +1062,16 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			}
 		}
 		// {28}
-		if(ambiguousIndexLP >= 0){
-			for(int i = 0; i <= ambiguousIndexLP; i++){
-				message += "\n"+prefix+"Illegal ambiguous."
-				+"\n"+prefix+ "List token \""+ambiguousTokenLP[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEELP[i])+":"+ambiguousCharsLineNumberEELP[i]+":"+ambiguousCharsColumnNumberEELP[i]
-				+ " cannot be resolved by datatype and structure validation to one schema definition, all candidates resulted in errors."
-				+ " Possible definitions: ";
-				for(int j = 0; j < ambiguousPossibleDefinitionsLP[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLP[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLP[i][j].getLocation(restrictToFileName);
-				}
-				message += ".";
-			}
-		}
         
         // {28_1}
-        if(ambiguousIndexLPICE >= 0){
-			for(int i = 0; i <= ambiguousIndexLPICE; i++){
-				message += "\n"+prefix+"Ambiguous list token."
-				+"\n"+prefix+ "List token \""+ambiguousTokenLPICE[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEELPICE[i])+":"+ambiguousCharsLineNumberEELPICE[i]+":"+ambiguousCharsColumnNumberEELPICE[i]
-				+ " cannot be resolved by in context validation to one schema definition, all candidates resulted in errors."
-				+ " Possible definitions: ";
-				for(int j = 0; j < ambiguousPossibleDefinitionsLPICE[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLPICE[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLPICE[i][j].getLocation(restrictToFileName);
+        if(unresolvedIndexLPICE >= 0){
+			for(int i = 0; i <= unresolvedIndexLPICE; i++){
+				message += "\n"+prefix+"Unresolved list token."
+				+"\n"+prefix+ "List token \""+unresolvedTokenLPICE[i]+"\" at "+getLocation(restrictToFileName, unresolvedCharsSystemIdEELPICE[i])+":"+unresolvedCharsLineNumberEELPICE[i]+":"+unresolvedCharsColumnNumberEELPICE[i]
+				+ " cannot be resolved to a single schema definition, all candidates resulted in errors."
+				+ " Available definitions: ";
+				for(int j = 0; j < unresolvedPossibleDefinitionsLPICE[i].length; j++){
+					message += "\n"+prefix+"<"+unresolvedPossibleDefinitionsLPICE[i][j].getQName()+"> at "+unresolvedPossibleDefinitionsLPICE[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -1239,11 +1213,24 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		// {w3}
 		if(ambiguousCharsIndexWW >= 0){
 			for(int i = 0; i <= ambiguousCharsIndexWW; i++){
-				message += "\n"+prefix+"Ambiguous content."
-						+"\n"+prefix+"Chars at "+getLocation(restrictToFileName, ambiguousCharsSystemIdWW[i])+":"+ambiguousCharsLineNumberWW[i]+":"+ambiguousCharsColumnNumberWW[i]
-						+" cannot be resolved by in context validation, possible definitions: ";
+				message += "\n"+prefix+"Ambiguous character content."
+						+"\n"+prefix+"Character content at "+getLocation(restrictToFileName, ambiguousCharsSystemIdWW[i])+":"+ambiguousCharsLineNumberWW[i]+":"+ambiguousCharsColumnNumberWW[i]
+						+" cannot be resolved to a single definition, several candidates could be correct. Possible definitions: ";
 				for(int j = 0; j < ambiguousCharsDefinitionWW[i].length; j++){
 					message += "\n"+prefix+"<"+ambiguousCharsDefinitionWW[i][j].getQName()+"> at "+ambiguousCharsDefinitionWW[i][j].getLocation(restrictToFileName);
+				}
+				message += ".";
+			}
+		}
+		
+		// {w4}
+		if(ambiguousAVIndexWW >= 0){
+			for(int i = 0; i <= ambiguousAVIndexWW; i++){
+				message += "\n"+prefix+"Ambiguous attribute value."
+						+"\n"+prefix+"Value of attribute \""+ambiguousAVAttributeQNameWW[i]+"\" at "+getLocation(restrictToFileName, ambiguousAVSystemIdWW[i])+":"+ambiguousAVLineNumberWW[i]+":"+ambiguousAVColumnNumberWW[i]
+						+" cannot be resolved to a single definition, several candidates could be correct. Possible definitions: ";
+				for(int j = 0; j < ambiguousAVDefinitionWW[i].length; j++){
+					message += "\n"+prefix+"<"+ambiguousAVDefinitionWW[i][j].getQName()+"> at "+ambiguousAVDefinitionWW[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -1254,7 +1241,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			for(int i = 0; i <= ambiguousIndexLPICW; i++){
 				message += "\n"+prefix+"Ambiguous list token."
 				+"\n"+prefix+ "List token \""+ambiguousTokenLPICW[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEELPICW[i])+":"+ambiguousCharsLineNumberEELPICW[i]+":"+ambiguousCharsColumnNumberEELPICW[i]
-				+ " cannot be resolved by in context validation to one schema definition."
+				+ " cannot be resolved to a single schema definition, several candidates could be correct."
 				+ " Possible definitions: ";
 				for(int j = 0; j < ambiguousPossibleDefinitionsLPICW[i].length; j++){
 					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLPICW[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLPICW[i][j].getLocation(restrictToFileName);

@@ -1,0 +1,21 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\charsConflictIntegration\list\ambiguous\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/list/ambiguous/document1.xml:21:7 Syntax warning. Element <foo> corresponding to definition <element> at schema.rng:21:66 generates warning: 
+Ambiguous list token.
+List token "0" at document1.xml:20:8 cannot be resolved to a single schema definition, several candidates could be correct. Possible definitions: 
+<data> at schema.rng:25:35
+<data> at schema.rng:26:35.
+Ambiguous list token.
+List token "1" at document1.xml:20:8 cannot be resolved to a single schema definition, several candidates could be correct. Possible definitions: 
+<data> at schema.rng:25:35
+<data> at schema.rng:26:35.
+Ambiguous list token.
+List token "0" at document1.xml:20:8 cannot be resolved to a single schema definition, several candidates could be correct. Possible definitions: 
+<data> at schema.rng:25:35
+<data> at schema.rng:26:35.

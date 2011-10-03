@@ -826,53 +826,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         unresolvedAttributeDefinitionEE = null;
     }
 	
-	public void ambiguousCharsContentError(String systemId, 
-									int lineNumber, 
-									int columnNumber, 
-									CharsActiveTypeItem[] possibleDefinitions){
-        errorTotalCount++;
-		if(ambiguousCharsSizeEE == 0){
-			ambiguousCharsSizeEE = 1;
-			ambiguousCharsIndexEE = 0;
-			ambiguousCharsSystemIdEE = new String[ambiguousCharsSizeEE];			
-			ambiguousCharsLineNumberEE = new int[ambiguousCharsSizeEE];
-			ambiguousCharsColumnNumberEE = new int[ambiguousCharsSizeEE];
-			ambiguousCharsDefinitionEE = new CharsActiveTypeItem[ambiguousCharsSizeEE][];
-		}else if(++ambiguousCharsIndexEE == ambiguousCharsSizeEE){	
-                                                                        // ISSUE 283 
-			CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[++ambiguousCharsSizeEE][];
-			System.arraycopy(ambiguousCharsDefinitionEE, 0, increasedDef, 0, ambiguousCharsIndexEE);
-			ambiguousCharsDefinitionEE = increasedDef;
-			
-			String[] increasedSI = new String[ambiguousCharsSizeEE];
-			System.arraycopy(ambiguousCharsSystemIdEE, 0, increasedSI, 0, ambiguousCharsIndexEE);
-			ambiguousCharsSystemIdEE = increasedSI;
-						
-			int[] increasedLN = new int[ambiguousCharsSizeEE];
-			System.arraycopy(ambiguousCharsLineNumberEE, 0, increasedLN, 0, ambiguousCharsIndexEE);
-			ambiguousCharsLineNumberEE = increasedLN;
-			
-			int[] increasedCN = new int[ambiguousCharsSizeEE];
-			System.arraycopy(ambiguousCharsColumnNumberEE, 0, increasedCN, 0, ambiguousCharsIndexEE);
-			ambiguousCharsColumnNumberEE = increasedCN;
-		}		
-        // ISSUE 283        
-        ambiguousCharsDefinitionEE[ambiguousCharsIndexEE] = possibleDefinitions;
-		ambiguousCharsSystemIdEE[ambiguousCharsIndexEE] = systemId;
-		ambiguousCharsLineNumberEE[ambiguousCharsIndexEE] = lineNumber;
-		ambiguousCharsColumnNumberEE[ambiguousCharsIndexEE] = columnNumber;
-		ambiguousCharsDefinitionEE[ambiguousCharsIndexEE] = possibleDefinitions;
-	}
-    public void clearAmbiguousCharsContentError(){
-        errorTotalCount -= ambiguousCharsSizeEE;
-        ambiguousCharsSizeEE = 0;
-        ambiguousCharsIndexEE = -1;
-        ambiguousCharsSystemIdEE = null;			
-        ambiguousCharsLineNumberEE = null;
-        ambiguousCharsColumnNumberEE = null;
-        ambiguousCharsDefinitionEE = null;
-    }	
-	
 	
 	public void ambiguousUnresolvedElementContentWarning(String qName, 
 									String systemId, 
@@ -1031,7 +984,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         ambiguousAttributeDefinitionWW = null;
     }
 	
-	public void ambiguousCharsContentWarning(String systemId, 
+	public void ambiguousCharacterContentWarning(String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									CharsActiveTypeItem[] possibleDefinitions){
@@ -1065,7 +1018,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		ambiguousCharsColumnNumberWW[ambiguousCharsIndexWW] = columnNumber;
 		ambiguousCharsDefinitionWW[ambiguousCharsIndexWW] = possibleDefinitions;
 	}
-	public void clearAmbiguousCharsContentWarning(){
+	public void clearAmbiguousCharacterContentWarning(){
         errorTotalCount -= ambiguousCharsSizeWW;
         ambiguousCharsSizeWW = 0;
         ambiguousCharsIndexWW = -1;
@@ -1073,6 +1026,58 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         ambiguousCharsLineNumberWW = null;
         ambiguousCharsColumnNumberWW = null;
         ambiguousCharsDefinitionWW = null;
+    }
+	
+	public void ambiguousAttributeValueWarning(String attributeQName, 
+	                                String systemId, 
+									int lineNumber, 
+									int columnNumber, 
+									CharsActiveTypeItem[] possibleDefinitions){
+        errorTotalCount++;
+		if(ambiguousAVSizeWW == 0){
+			ambiguousAVSizeWW = 1;
+			ambiguousAVIndexWW = 0;
+			ambiguousAVAttributeQNameWW = new String[ambiguousAVSizeWW];
+			ambiguousAVSystemIdWW = new String[ambiguousAVSizeWW];			
+			ambiguousAVLineNumberWW = new int[ambiguousAVSizeWW];
+			ambiguousAVColumnNumberWW = new int[ambiguousAVSizeWW];
+			ambiguousAVDefinitionWW = new CharsActiveTypeItem[ambiguousAVSizeWW][];
+		}else if(++ambiguousAVIndexWW == ambiguousAVSizeWW){			
+			CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[++ambiguousAVSizeWW][];
+			System.arraycopy(ambiguousAVDefinitionWW, 0, increasedDef, 0, ambiguousAVIndexWW);
+			ambiguousAVDefinitionWW = increasedDef;
+			
+			String[] increasedAQ = new String[ambiguousAVSizeWW];
+			System.arraycopy(ambiguousAVSystemIdWW, 0, increasedAQ, 0, ambiguousAVIndexWW);
+			ambiguousAVAttributeQNameWW = increasedAQ;
+			
+			String[] increasedSI = new String[ambiguousAVSizeWW];
+			System.arraycopy(ambiguousAVAttributeQNameWW, 0, increasedSI, 0, ambiguousAVIndexWW);
+			ambiguousAVSystemIdWW = increasedSI;
+						
+			int[] increasedLN = new int[ambiguousAVSizeWW];
+			System.arraycopy(ambiguousAVLineNumberWW, 0, increasedLN, 0, ambiguousAVIndexWW);
+			ambiguousAVLineNumberWW = increasedLN;
+			
+			int[] increasedCN = new int[ambiguousAVSizeWW];
+			System.arraycopy(ambiguousAVColumnNumberWW, 0, increasedCN, 0, ambiguousAVIndexWW);
+			ambiguousAVColumnNumberWW = increasedCN;
+		}		
+		ambiguousAVAttributeQNameWW[ambiguousAVIndexWW] = attributeQName;;
+		ambiguousAVSystemIdWW[ambiguousAVIndexWW] = systemId;
+		ambiguousAVLineNumberWW[ambiguousAVIndexWW] = lineNumber;
+		ambiguousAVColumnNumberWW[ambiguousAVIndexWW] = columnNumber;
+		ambiguousAVDefinitionWW[ambiguousAVIndexWW] = possibleDefinitions;
+	}
+	public void clearAmbiguousAttributeValueWarning(){
+        errorTotalCount -= ambiguousAVSizeWW;
+        ambiguousAVSizeWW = 0;
+        ambiguousAVIndexWW = -1;
+        ambiguousAVAttributeQNameWW = null;
+        ambiguousAVSystemIdWW = null;			
+        ambiguousAVLineNumberWW = null;
+        ambiguousAVColumnNumberWW = null;
+        ambiguousAVDefinitionWW = null;
     }
 	
 	
@@ -1633,92 +1638,92 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
 	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         errorTotalCount++;
-		if(ambiguousSizeCC == 0){
-			ambiguousSizeCC = 1;
-			ambiguousIndexCC = 0;		
-			ambiguousCharsSystemIdEECC = new String[ambiguousSizeCC];
-			ambiguousCharsLineNumberEECC = new int[ambiguousSizeCC];
-			ambiguousCharsColumnNumberEECC = new int[ambiguousSizeCC];
-			ambiguousPossibleDefinitionsCC = new CharsActiveTypeItem[ambiguousSizeCC][];
-		}else if(++ambiguousIndexCC == ambiguousSizeCC){
-			String[] increasedCSI = new String[++ambiguousSizeCC];
-			System.arraycopy(ambiguousCharsSystemIdEECC, 0, increasedCSI, 0, ambiguousIndexCC);
-			ambiguousCharsSystemIdEECC = increasedCSI;
+		if(unresolvedSizeCC == 0){
+			unresolvedSizeCC = 1;
+			unresolvedIndexCC = 0;		
+			unresolvedCharsSystemIdEECC = new String[unresolvedSizeCC];
+			unresolvedCharsLineNumberEECC = new int[unresolvedSizeCC];
+			unresolvedCharsColumnNumberEECC = new int[unresolvedSizeCC];
+			unresolvedPossibleDefinitionsCC = new CharsActiveTypeItem[unresolvedSizeCC][];
+		}else if(++unresolvedIndexCC == unresolvedSizeCC){
+			String[] increasedCSI = new String[++unresolvedSizeCC];
+			System.arraycopy(unresolvedCharsSystemIdEECC, 0, increasedCSI, 0, unresolvedIndexCC);
+			unresolvedCharsSystemIdEECC = increasedCSI;
 			
-			int[] increasedCLN = new int[ambiguousSizeCC];
-			System.arraycopy(ambiguousCharsLineNumberEECC, 0, increasedCLN, 0, ambiguousIndexCC);
-			ambiguousCharsLineNumberEECC = increasedCLN;
+			int[] increasedCLN = new int[unresolvedSizeCC];
+			System.arraycopy(unresolvedCharsLineNumberEECC, 0, increasedCLN, 0, unresolvedIndexCC);
+			unresolvedCharsLineNumberEECC = increasedCLN;
 			
-			int[] increasedCCN = new int[ambiguousSizeCC];
-			System.arraycopy(ambiguousCharsColumnNumberEECC, 0, increasedCCN, 0, ambiguousIndexCC);
-			ambiguousCharsColumnNumberEECC = increasedCCN;
+			int[] increasedCCN = new int[unresolvedSizeCC];
+			System.arraycopy(unresolvedCharsColumnNumberEECC, 0, increasedCCN, 0, unresolvedIndexCC);
+			unresolvedCharsColumnNumberEECC = increasedCCN;
 			
-			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[ambiguousSizeCC][];
-			System.arraycopy(ambiguousPossibleDefinitionsCC, 0, increasedPD, 0, ambiguousIndexCC);
-			ambiguousPossibleDefinitionsCC = increasedPD;			
+			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[unresolvedSizeCC][];
+			System.arraycopy(unresolvedPossibleDefinitionsCC, 0, increasedPD, 0, unresolvedIndexCC);
+			unresolvedPossibleDefinitionsCC = increasedPD;			
 		}
-		ambiguousCharsSystemIdEECC[ambiguousIndexCC] = systemId;
-		ambiguousCharsLineNumberEECC[ambiguousIndexCC] = lineNumber;
-		ambiguousCharsColumnNumberEECC[ambiguousIndexCC] = columnNumber;
-		ambiguousPossibleDefinitionsCC[ambiguousIndexCC] = possibleDefinitions;
+		unresolvedCharsSystemIdEECC[unresolvedIndexCC] = systemId;
+		unresolvedCharsLineNumberEECC[unresolvedIndexCC] = lineNumber;
+		unresolvedCharsColumnNumberEECC[unresolvedIndexCC] = columnNumber;
+		unresolvedPossibleDefinitionsCC[unresolvedIndexCC] = possibleDefinitions;
 	}
-    public void clearAmbiguousCharacterContent(){
-        errorTotalCount -= ambiguousSizeCC;
-        ambiguousSizeCC = 0;
-        ambiguousIndexCC = -1;		
-        ambiguousCharsSystemIdEECC = null;
-        ambiguousCharsLineNumberEECC = null;
-        ambiguousCharsColumnNumberEECC = null;
-        ambiguousPossibleDefinitionsCC = null;
+    public void clearUnresolvedCharacterContent(){
+        errorTotalCount -= unresolvedSizeCC;
+        unresolvedSizeCC = 0;
+        unresolvedIndexCC = -1;		
+        unresolvedCharsSystemIdEECC = null;
+        unresolvedCharsLineNumberEECC = null;
+        unresolvedCharsColumnNumberEECC = null;
+        unresolvedPossibleDefinitionsCC = null;
     }
     
 	// {24}
 	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         errorTotalCount++;
-		if(ambiguousSizeAV == 0){
-			ambiguousSizeAV = 1;
-			ambiguousIndexAV = 0;
-			ambiguousAttributeQNameEEAV = new String[ambiguousSizeAV];
-			ambiguousCharsSystemIdEEAV = new String[ambiguousSizeAV];
-			ambiguousCharsLineNumberEEAV = new int[ambiguousSizeAV];
-			ambiguousCharsColumnNumberEEAV = new int[ambiguousSizeAV];
-			ambiguousPossibleDefinitionsAV = new CharsActiveTypeItem[ambiguousSizeAV][];
-		}else if(++ambiguousIndexAV == ambiguousSizeAV){
-			String[] increasedAQ = new String[++ambiguousSizeAV];
-			System.arraycopy(ambiguousAttributeQNameEEAV, 0, increasedAQ, 0, ambiguousIndexAV);
-			ambiguousAttributeQNameEEAV = increasedAQ;
+		if(unresolvedSizeAV == 0){
+			unresolvedSizeAV = 1;
+			unresolvedIndexAV = 0;
+			unresolvedAttributeQNameEEAV = new String[unresolvedSizeAV];
+			unresolvedCharsSystemIdEEAV = new String[unresolvedSizeAV];
+			unresolvedCharsLineNumberEEAV = new int[unresolvedSizeAV];
+			unresolvedCharsColumnNumberEEAV = new int[unresolvedSizeAV];
+			unresolvedPossibleDefinitionsAV = new CharsActiveTypeItem[unresolvedSizeAV][];
+		}else if(++unresolvedIndexAV == unresolvedSizeAV){
+			String[] increasedAQ = new String[++unresolvedSizeAV];
+			System.arraycopy(unresolvedAttributeQNameEEAV, 0, increasedAQ, 0, unresolvedIndexAV);
+			unresolvedAttributeQNameEEAV = increasedAQ;
 			
-			String[] increasedCSI = new String[++ambiguousSizeAV];
-			System.arraycopy(ambiguousCharsSystemIdEEAV, 0, increasedCSI, 0, ambiguousIndexAV);
-			ambiguousCharsSystemIdEEAV = increasedCSI;
+			String[] increasedCSI = new String[++unresolvedSizeAV];
+			System.arraycopy(unresolvedCharsSystemIdEEAV, 0, increasedCSI, 0, unresolvedIndexAV);
+			unresolvedCharsSystemIdEEAV = increasedCSI;
 			
-			int[] increasedCLN = new int[ambiguousSizeAV];
-			System.arraycopy(ambiguousCharsLineNumberEEAV, 0, increasedCLN, 0, ambiguousIndexAV);
-			ambiguousCharsLineNumberEEAV = increasedCLN;
+			int[] increasedCLN = new int[unresolvedSizeAV];
+			System.arraycopy(unresolvedCharsLineNumberEEAV, 0, increasedCLN, 0, unresolvedIndexAV);
+			unresolvedCharsLineNumberEEAV = increasedCLN;
 			
-			int[] increasedAVN = new int[ambiguousSizeAV];
-			System.arraycopy(ambiguousCharsColumnNumberEEAV, 0, increasedAVN, 0, ambiguousIndexAV);
-			ambiguousCharsColumnNumberEEAV = increasedAVN;
+			int[] increasedAVN = new int[unresolvedSizeAV];
+			System.arraycopy(unresolvedCharsColumnNumberEEAV, 0, increasedAVN, 0, unresolvedIndexAV);
+			unresolvedCharsColumnNumberEEAV = increasedAVN;
 			
-			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[ambiguousSizeAV][];
-			System.arraycopy(ambiguousPossibleDefinitionsAV, 0, increasedPD, 0, ambiguousIndexAV);
-			ambiguousPossibleDefinitionsAV = increasedPD;			
+			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[unresolvedSizeAV][];
+			System.arraycopy(unresolvedPossibleDefinitionsAV, 0, increasedPD, 0, unresolvedIndexAV);
+			unresolvedPossibleDefinitionsAV = increasedPD;			
 		}
-		ambiguousAttributeQNameEEAV[ambiguousIndexAV] = attributeQName;
-		ambiguousCharsSystemIdEEAV[ambiguousIndexAV] = systemId;
-		ambiguousCharsLineNumberEEAV[ambiguousIndexAV] = lineNumber;
-		ambiguousCharsColumnNumberEEAV[ambiguousIndexAV] = columnNumber;
-		ambiguousPossibleDefinitionsAV[ambiguousIndexAV] = possibleDefinitions;
+		unresolvedAttributeQNameEEAV[unresolvedIndexAV] = attributeQName;
+		unresolvedCharsSystemIdEEAV[unresolvedIndexAV] = systemId;
+		unresolvedCharsLineNumberEEAV[unresolvedIndexAV] = lineNumber;
+		unresolvedCharsColumnNumberEEAV[unresolvedIndexAV] = columnNumber;
+		unresolvedPossibleDefinitionsAV[unresolvedIndexAV] = possibleDefinitions;
 	}
-	public void clearAmbiguousAttributeValue(){
-        errorTotalCount -= ambiguousSizeAV;
-        ambiguousSizeAV = 0;
-        ambiguousIndexAV = -1;
-        ambiguousAttributeQNameEEAV = null;
-        ambiguousCharsSystemIdEEAV = null;
-        ambiguousCharsLineNumberEEAV = null;
-        ambiguousCharsColumnNumberEEAV = null;
-        ambiguousPossibleDefinitionsAV = null;
+	public void clearUnresolvedAttributeValue(){
+        errorTotalCount -= unresolvedSizeAV;
+        unresolvedSizeAV = 0;
+        unresolvedIndexAV = -1;
+        unresolvedAttributeQNameEEAV = null;
+        unresolvedCharsSystemIdEEAV = null;
+        unresolvedCharsLineNumberEEAV = null;
+        unresolvedCharsColumnNumberEEAV = null;
+        unresolvedPossibleDefinitionsAV = null;
     }
     
     
@@ -1874,102 +1879,53 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         exceptCharsColumnNumberLP = null;
         exceptCharsDefinitionLP = null;
     }
-    
-    
-	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+    	    
+    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         errorTotalCount++;
-		if(ambiguousSizeLP == 0){
-			ambiguousSizeLP = 1;
-			ambiguousIndexLP = 0;
-			ambiguousTokenLP = new String[ambiguousSizeLP];
-			ambiguousCharsSystemIdEELP = new String[ambiguousSizeLP];
-			ambiguousCharsLineNumberEELP = new int[ambiguousSizeLP];
-			ambiguousCharsColumnNumberEELP = new int[ambiguousSizeLP];
-			ambiguousPossibleDefinitionsLP = new CharsActiveTypeItem[ambiguousSizeLP][];
-		}else if(++ambiguousIndexLP == ambiguousSizeLP){
-			String[] increasedT = new String[++ambiguousSizeLP];
-			System.arraycopy(ambiguousTokenLP, 0, increasedT, 0, ambiguousIndexLP);
-			ambiguousTokenLP = increasedT;
+        if(unresolvedSizeLPICE == 0){
+			unresolvedSizeLPICE = 1;
+			unresolvedIndexLPICE = 0;
+			unresolvedTokenLPICE = new String[unresolvedSizeLPICE];
+			unresolvedCharsSystemIdEELPICE = new String[unresolvedSizeLPICE];
+			unresolvedCharsLineNumberEELPICE = new int[unresolvedSizeLPICE];
+			unresolvedCharsColumnNumberEELPICE = new int[unresolvedSizeLPICE];
+			unresolvedPossibleDefinitionsLPICE = new CharsActiveTypeItem[unresolvedSizeLPICE][];
+		}else if(++unresolvedIndexLPICE == unresolvedSizeLPICE){
+			String[] increasedT = new String[++unresolvedSizeLPICE];
+			System.arraycopy(unresolvedTokenLPICE, 0, increasedT, 0, unresolvedIndexLPICE);
+			unresolvedTokenLPICE = increasedT;
 						
-			String[] increasedCSI = new String[ambiguousSizeLP];
-			System.arraycopy(ambiguousCharsSystemIdEELP, 0, increasedCSI, 0, ambiguousIndexLP);
-			ambiguousCharsSystemIdEELP = increasedCSI;
+			String[] increasedCSI = new String[unresolvedSizeLPICE];
+			System.arraycopy(unresolvedCharsSystemIdEELPICE, 0, increasedCSI, 0, unresolvedIndexLPICE);
+			unresolvedCharsSystemIdEELPICE = increasedCSI;
 			
-			int[] increasedCLN = new int[ambiguousSizeLP];
-			System.arraycopy(ambiguousCharsLineNumberEELP, 0, increasedCLN, 0, ambiguousIndexLP);
-			ambiguousCharsLineNumberEELP = increasedCLN;
+			int[] increasedCLN = new int[unresolvedSizeLPICE];
+			System.arraycopy(unresolvedCharsLineNumberEELPICE, 0, increasedCLN, 0, unresolvedIndexLPICE);
+			unresolvedCharsLineNumberEELPICE = increasedCLN;
 			
-			int[] increasedLPN = new int[ambiguousSizeLP];
-			System.arraycopy(ambiguousCharsColumnNumberEELP, 0, increasedLPN, 0, ambiguousIndexLP);
-			ambiguousCharsColumnNumberEELP = increasedLPN;
+			int[] increasedLPICEN = new int[unresolvedSizeLPICE];
+			System.arraycopy(unresolvedCharsColumnNumberEELPICE, 0, increasedLPICEN, 0, unresolvedIndexLPICE);
+			unresolvedCharsColumnNumberEELPICE = increasedLPICEN;
 			
-			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[ambiguousSizeLP][];
-			System.arraycopy(ambiguousPossibleDefinitionsLP, 0, increasedPD, 0, ambiguousIndexLP);
-			ambiguousPossibleDefinitionsLP = increasedPD;			
+			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[unresolvedSizeLPICE][];
+			System.arraycopy(unresolvedPossibleDefinitionsLPICE, 0, increasedPD, 0, unresolvedIndexLPICE);
+			unresolvedPossibleDefinitionsLPICE = increasedPD;			
 		}
-		ambiguousTokenLP[ambiguousIndexLP] = token;
-		ambiguousCharsSystemIdEELP[ambiguousIndexLP] = systemId;
-		ambiguousCharsLineNumberEELP[ambiguousIndexLP] = lineNumber;
-		ambiguousCharsColumnNumberEELP[ambiguousIndexLP] = columnNumber;
-		ambiguousPossibleDefinitionsLP[ambiguousIndexLP] = possibleDefinitions;
-	}
-    public void clearAmbiguousListToken(){
-        errorTotalCount -= ambiguousSizeLP;
-        ambiguousSizeLP = 0;
-        ambiguousIndexLP = -1;
-        ambiguousTokenLP = null;
-        ambiguousCharsSystemIdEELP = null;
-        ambiguousCharsLineNumberEELP = null;
-        ambiguousCharsColumnNumberEELP = null;
-        ambiguousPossibleDefinitionsLP = null;
+		unresolvedTokenLPICE[unresolvedIndexLPICE] = token;
+		unresolvedCharsSystemIdEELPICE[unresolvedIndexLPICE] = systemId;
+		unresolvedCharsLineNumberEELPICE[unresolvedIndexLPICE] = lineNumber;
+		unresolvedCharsColumnNumberEELPICE[unresolvedIndexLPICE] = columnNumber;
+		unresolvedPossibleDefinitionsLPICE[unresolvedIndexLPICE] = possibleDefinitions;
     }
-        
-    public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        errorTotalCount++;
-        if(ambiguousSizeLPICE == 0){
-			ambiguousSizeLPICE = 1;
-			ambiguousIndexLPICE = 0;
-			ambiguousTokenLPICE = new String[ambiguousSizeLPICE];
-			ambiguousCharsSystemIdEELPICE = new String[ambiguousSizeLPICE];
-			ambiguousCharsLineNumberEELPICE = new int[ambiguousSizeLPICE];
-			ambiguousCharsColumnNumberEELPICE = new int[ambiguousSizeLPICE];
-			ambiguousPossibleDefinitionsLPICE = new CharsActiveTypeItem[ambiguousSizeLPICE][];
-		}else if(++ambiguousIndexLPICE == ambiguousSizeLPICE){
-			String[] increasedT = new String[++ambiguousSizeLPICE];
-			System.arraycopy(ambiguousTokenLPICE, 0, increasedT, 0, ambiguousIndexLPICE);
-			ambiguousTokenLPICE = increasedT;
-						
-			String[] increasedCSI = new String[ambiguousSizeLPICE];
-			System.arraycopy(ambiguousCharsSystemIdEELPICE, 0, increasedCSI, 0, ambiguousIndexLPICE);
-			ambiguousCharsSystemIdEELPICE = increasedCSI;
-			
-			int[] increasedCLN = new int[ambiguousSizeLPICE];
-			System.arraycopy(ambiguousCharsLineNumberEELPICE, 0, increasedCLN, 0, ambiguousIndexLPICE);
-			ambiguousCharsLineNumberEELPICE = increasedCLN;
-			
-			int[] increasedLPICEN = new int[ambiguousSizeLPICE];
-			System.arraycopy(ambiguousCharsColumnNumberEELPICE, 0, increasedLPICEN, 0, ambiguousIndexLPICE);
-			ambiguousCharsColumnNumberEELPICE = increasedLPICEN;
-			
-			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[ambiguousSizeLPICE][];
-			System.arraycopy(ambiguousPossibleDefinitionsLPICE, 0, increasedPD, 0, ambiguousIndexLPICE);
-			ambiguousPossibleDefinitionsLPICE = increasedPD;			
-		}
-		ambiguousTokenLPICE[ambiguousIndexLPICE] = token;
-		ambiguousCharsSystemIdEELPICE[ambiguousIndexLPICE] = systemId;
-		ambiguousCharsLineNumberEELPICE[ambiguousIndexLPICE] = lineNumber;
-		ambiguousCharsColumnNumberEELPICE[ambiguousIndexLPICE] = columnNumber;
-		ambiguousPossibleDefinitionsLPICE[ambiguousIndexLPICE] = possibleDefinitions;
-    }
-    public void clearAmbiguousListTokenInContextError(){
-        errorTotalCount -= ambiguousSizeLPICE;
-        ambiguousSizeLPICE = 0;
-        ambiguousIndexLPICE = -1;
-        ambiguousTokenLPICE = null;
-        ambiguousCharsSystemIdEELPICE = null;
-        ambiguousCharsLineNumberEELPICE = null;
-        ambiguousCharsColumnNumberEELPICE = null;
-        ambiguousPossibleDefinitionsLPICE = null;
+    public void clearUnresolvedListTokenInContextError(){
+        errorTotalCount -= unresolvedSizeLPICE;
+        unresolvedSizeLPICE = 0;
+        unresolvedIndexLPICE = -1;
+        unresolvedTokenLPICE = null;
+        unresolvedCharsSystemIdEELPICE = null;
+        unresolvedCharsLineNumberEELPICE = null;
+        unresolvedCharsColumnNumberEELPICE = null;
+        unresolvedPossibleDefinitionsLPICE = null;
     }
     
     public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
@@ -2160,10 +2116,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
             if(unresolvedAttributeIndexEE < 0) throw new IllegalArgumentException();
             unresolvedAttributeIndexEE--;
             errorTotalCount--;
-        }else if(errorId == AMBIGUOUS_CHARS_CONTENT_ERROR){
-            if(ambiguousCharsIndexEE < 0) throw new IllegalArgumentException();
-            ambiguousCharsIndexEE--;
-            errorTotalCount--;
         }else if(errorId == MISSING_CONTENT){
             if(missingIndex < 0) throw new IllegalArgumentException();
             missingIndex--;	  
@@ -2209,13 +2161,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
             if(unexpectedIndexAV < 0) throw new IllegalArgumentException();
             unexpectedIndexAV--;
             errorTotalCount--;
-        }else if(errorId == AMBIGUOUS_CHARACTER_CONTENT){
-            if(ambiguousIndexCC < 0) throw new IllegalArgumentException();
-            ambiguousIndexCC--;
+        }else if(errorId == UNRESOLVED_CHARACTER_CONTENT){
+            if(unresolvedIndexCC < 0) throw new IllegalArgumentException();
+            unresolvedIndexCC--;
             errorTotalCount--;
-        }else if(errorId == AMBIGUOUS_ATTRIBUTE_VALUE){
-            if(ambiguousIndexAV < 0) throw new IllegalArgumentException();
-            ambiguousIndexAV--;
+        }else if(errorId == UNRESOLVED_ATTRIBUTE_VALUE){
+            if(unresolvedIndexAV < 0) throw new IllegalArgumentException();
+            unresolvedIndexAV--;
             errorTotalCount--;
         }else if(errorId == LIST_TOKEN_DATATYPE_ERROR){
             if(datatypeIndexLP < 0) throw new IllegalArgumentException();
@@ -2229,13 +2181,9 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
             if(exceptIndexLP < 0) throw new IllegalArgumentException();
             exceptIndexLP--;
             errorTotalCount--;
-        }else if(errorId == AMBIGUOUS_LIST_TOKEN){
-            if(ambiguousIndexLP < 0) throw new IllegalArgumentException();
-            ambiguousIndexLP--;
-            errorTotalCount--;
-        }else if(errorId == AMBIGUOUS_LIST_TOKEN_IN_CONTEXT_ERROR){
-            if(ambiguousIndexLPICE < 0) throw new IllegalArgumentException();
-            ambiguousIndexLPICE--;
+        }else if(errorId == UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR){
+            if(unresolvedIndexLPICE < 0) throw new IllegalArgumentException();
+            unresolvedIndexLPICE--;
             errorTotalCount--;
         }else if(errorId == MISSING_COMPOSITOR_CONTENT){
             if(missingCompositorContentIndex < 0) throw new IllegalArgumentException();
@@ -2264,11 +2212,11 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         clearUnresolvedAmbiguousElementContentError();
         clearUnresolvedUnresolvedElementContentError();
         clearUnresolvedAttributeContentError();
-        clearAmbiguousCharsContentError();
         clearAmbiguousUnresolvedElementContentWarning();
         clearAmbiguousAmbiguousElementContentWarning();
         clearAmbiguousAttributeContentWarning();
-        clearAmbiguousCharsContentWarning();
+        clearAmbiguousCharacterContentWarning();
+        clearAmbiguousAttributeValueWarning();
         clearMissingContent();
         clearIllegalContent();
         clearUndeterminedByContent();
@@ -2280,13 +2228,12 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         clearAttributeValueExceptedError();
         clearUnexpectedCharacterContent();
         clearUnexpectedAttributeValue();
-        clearAmbiguousCharacterContent();
-        clearAmbiguousAttributeValue();
+        clearUnresolvedCharacterContent();
+        clearUnresolvedAttributeValue();
         clearListTokenDatatypeError();
         clearListTokenValueError();
         clearListTokenExceptedError();
-        clearAmbiguousListToken();
-        clearAmbiguousListTokenInContextError();
+        clearUnresolvedListTokenInContextError();
         clearAmbiguousListTokenInContextWarning();
         clearMissingCompositorContent();
         clearConflict();

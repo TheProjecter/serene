@@ -31,6 +31,7 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
+import serene.validation.schema.active.components.DatatypedActiveTypeItem;
 import serene.validation.schema.active.components.ActiveTypeItem;
 
 import serene.validation.handlers.stack.CandidateStackHandler;
@@ -46,8 +47,10 @@ import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.ElementConflictResolver;
 import serene.validation.handlers.conflict.AttributeConflictResolver;
-import serene.validation.handlers.conflict.CharsConflictResolver;
-import serene.validation.handlers.conflict.ListTokenConflictResolver;
+import serene.validation.handlers.conflict.AmbiguousCharsConflictResolver;
+import serene.validation.handlers.conflict.UnresolvedCharsConflictResolver;
+import serene.validation.handlers.conflict.AmbiguousListTokenConflictResolver;
+import serene.validation.handlers.conflict.UnresolvedListTokenConflictResolver;
 import serene.validation.handlers.conflict.BoundElementConflictResolver;
 import serene.validation.handlers.conflict.BoundAttributeConflictResolver;
 import serene.validation.handlers.conflict.ContextConflictsDescriptor;
@@ -1033,10 +1036,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}
 	}
-	
-	
-	public void shiftAllCharsDefinitions(List<CharsActiveTypeItem> charsDefinitions){				
-		reportExcessive = true;
+		
+	public void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
+	    reportExcessive = true;
 		reportPreviousMisplaced = true;
 		reportCurrentMisplaced = true;
 		reportMissing = true;
@@ -1048,7 +1050,184 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 				
-		CharsConflictResolver resolver = conflictHandlerPool.getCharsConflictResolver();
+		UnresolvedCharsConflictResolver resolver = conflictHandlerPool.getUnresolvedCharsConflictResolver(temporaryMessageStorage);
+		resolvers.add(resolver);
+		
+		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
+		recordInConflictDescriptor(charsDefinitions, innerPathes);
+		int lastQualifiedIndex = charsDefinitions.size()-1;
+		
+		for(int i = 0; i < lastQualifiedIndex; i++){				
+			CharsActiveTypeItem chars = charsDefinitions.get(i);
+		
+			resolver.addCandidate(chars);
+			
+			for(int j = 0; j < temporary.size(); j++){
+				CandidateStackHandler temp = temporary.get(j);
+				if(temp != null){
+					CandidateStackHandler candidate = temp.getCopy();
+					candidate.shift(chars, 
+									innerPathes[i],
+									resolver,
+									i,
+									reportExcessive,  
+									reportPreviousMisplaced, 
+									reportCurrentMisplaced, 
+									reportMissing, 
+									reportIllegal, 
+									reportCompositorContentMissing);
+					if(!candidate.hasActiveConflicts()){
+						/*if(candidates.size() > 0){
+							candidate.recycle();
+						}else{
+							candidates.add(candidate);	
+						}*/
+						candidate.recycle();
+					}else if(stackRedundanceHandler.isRedundant(candidate)){
+						candidate.recycle();
+					}else{
+						candidates.add(candidate);
+					}
+				}
+			}			
+		}
+		
+		CharsActiveTypeItem chars = charsDefinitions.get(lastQualifiedIndex);
+		
+		resolver.addCandidate(chars);
+		
+		for(int j = 0; j < temporary.size(); j++){
+			CandidateStackHandler temp = temporary.get(j);
+			if(temp != null){
+				temp.shift(chars,
+								innerPathes[lastQualifiedIndex],
+								resolver,
+								lastQualifiedIndex,
+								reportExcessive,  
+								reportPreviousMisplaced, 
+								reportCurrentMisplaced, 
+								reportMissing, 
+								reportIllegal, 
+								reportCompositorContentMissing);
+				if(!temp.hasActiveConflicts()){
+					if(candidates.size() > 0){
+						temp.recycle();
+					}else{
+						candidates.add(temp);	
+					}
+				}else if(stackRedundanceHandler.isRedundant(temp)){
+					temp.recycle();
+				}else{
+					candidates.add(temp);
+				}
+			}
+		}			
+		temporary.clear();
+	}
+	public void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+	    reportExcessive = true;
+		reportPreviousMisplaced = true;
+		reportCurrentMisplaced = true;
+		reportMissing = true;
+		reportIllegal = true;
+		reportCompositorContentMissing = true;
+		
+		stackRedundanceHandler.clear();
+		
+		temporary.addAll(candidates);
+		candidates.clear();
+				
+		AmbiguousCharsConflictResolver resolver = conflictHandlerPool.getAmbiguousCharsConflictResolver(disqualified, temporaryMessageStorage);
+		resolvers.add(resolver);
+		
+		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
+		recordInConflictDescriptor(charsDefinitions, innerPathes);
+		int lastQualifiedIndex = charsDefinitions.size()-1;
+		
+		for(int i = 0; i < lastQualifiedIndex; i++){				
+			CharsActiveTypeItem chars = charsDefinitions.get(i);
+		
+			resolver.addCandidate(chars);
+			
+			for(int j = 0; j < temporary.size(); j++){
+				CandidateStackHandler temp = temporary.get(j);
+				if(temp != null){
+					CandidateStackHandler candidate = temp.getCopy();
+					candidate.shift(chars, 
+									innerPathes[i],
+									resolver,
+									i,
+									reportExcessive,  
+									reportPreviousMisplaced, 
+									reportCurrentMisplaced, 
+									reportMissing, 
+									reportIllegal, 
+									reportCompositorContentMissing);
+					if(!candidate.hasActiveConflicts()){
+						/*if(candidates.size() > 0){
+							candidate.recycle();
+						}else{
+							candidates.add(candidate);	
+						}*/
+						candidate.recycle();
+					}else if(stackRedundanceHandler.isRedundant(candidate)){
+						candidate.recycle();
+					}else{
+						candidates.add(candidate);
+					}
+				}
+			}			
+		}
+		
+		CharsActiveTypeItem chars = charsDefinitions.get(lastQualifiedIndex);
+		
+		resolver.addCandidate(chars);
+		
+		for(int j = 0; j < temporary.size(); j++){
+			CandidateStackHandler temp = temporary.get(j);
+			if(temp != null){
+				temp.shift(chars,
+								innerPathes[lastQualifiedIndex],
+								resolver,
+								lastQualifiedIndex,
+								reportExcessive,  
+								reportPreviousMisplaced, 
+								reportCurrentMisplaced, 
+								reportMissing, 
+								reportIllegal, 
+								reportCompositorContentMissing);
+				if(!temp.hasActiveConflicts()){
+					if(candidates.size() > 0){
+						temp.recycle();
+					}else{
+						candidates.add(temp);	
+					}
+				}else if(stackRedundanceHandler.isRedundant(temp)){
+					temp.recycle();
+				}else{
+					candidates.add(temp);
+				}
+			}
+		}			
+		temporary.clear();
+	}
+    
+	
+	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, char[] token, TemporaryMessageStorage[] temporaryMessageStorage){		
+				
+		reportExcessive = true;
+		reportPreviousMisplaced = true;
+		reportCurrentMisplaced = true;
+		reportMissing = true;
+		reportIllegal = true;
+		reportCompositorContentMissing = true;
+		
+		stackRedundanceHandler.clear();
+		
+		temporary.addAll(candidates);
+		candidates.clear();
+			
+		UnresolvedListTokenConflictResolver resolver = conflictHandlerPool.getUnresolvedListTokenConflictResolver(token, temporaryMessageStorage);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
@@ -1123,7 +1302,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllTokenDefinitions(List<CharsActiveTypeItem> charsDefinitions, char[] token){		
+	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, char[] token, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
 				
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -1137,50 +1316,60 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 			
-		ListTokenConflictResolver resolver = conflictHandlerPool.getListTokenConflictResolver(token);
+		AmbiguousListTokenConflictResolver resolver = conflictHandlerPool.getAmbiguousListTokenConflictResolver(token, disqualified, temporaryMessageStorage);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
 		recordInConflictDescriptor(charsDefinitions, innerPathes);
 		int lastQualifiedIndex = charsDefinitions.size()-1;
+		determineIndex:{
+            for(; lastQualifiedIndex >=0; lastQualifiedIndex--){
+                if(!disqualified.get(lastQualifiedIndex))break determineIndex;
+            }
+            lastQualifiedIndex = -1;
+        }
 		
-		for(int i = 0; i < lastQualifiedIndex; i++){				
-			CharsActiveTypeItem chars = charsDefinitions.get(i);
-		
-			resolver.addCandidate(chars);
-			
-			for(int j = 0; j < temporary.size(); j++){
-				CandidateStackHandler temp = temporary.get(j);
-				if(temp != null){
-					CandidateStackHandler candidate = temp.getCopy();
-					candidate.shift(chars, 
-									innerPathes[i],
-									resolver,
-									i,
-									reportExcessive,  
-									reportPreviousMisplaced, 
-									reportCurrentMisplaced, 
-									reportMissing, 
-									reportIllegal, 
-									reportCompositorContentMissing);
-					if(!candidate.hasActiveConflicts()){
-						/*if(candidates.size() > 0){
-							candidate.recycle();
-						}else{
-							candidates.add(candidate);	
-						}*/
-						candidate.recycle();
-					}else if(stackRedundanceHandler.isRedundant(candidate)){
-						candidate.recycle();
-					}else{
-						candidates.add(candidate);
-					}
-				}
-			}			
+		for(int i = 0; i < lastQualifiedIndex; i++){	
+		    if(!disqualified.get(i)){			
+                CharsActiveTypeItem chars = charsDefinitions.get(i);
+            
+                resolver.addCandidate(chars);
+                
+                for(int j = 0; j < temporary.size(); j++){
+                    CandidateStackHandler temp = temporary.get(j);
+                    if(temp != null){
+                        CandidateStackHandler candidate = temp.getCopy();
+                        candidate.shift(chars, 
+                                        innerPathes[i],
+                                        resolver,
+                                        i,
+                                        reportExcessive,  
+                                        reportPreviousMisplaced, 
+                                        reportCurrentMisplaced, 
+                                        reportMissing, 
+                                        reportIllegal, 
+                                        reportCompositorContentMissing);
+                        if(!candidate.hasActiveConflicts()){
+                            /*if(candidates.size() > 0){
+                                candidate.recycle();
+                            }else{
+                                candidates.add(candidate);	
+                            }*/
+                            candidate.recycle();
+                        }else if(stackRedundanceHandler.isRedundant(candidate)){
+                            candidate.recycle();
+                        }else{
+                            candidates.add(candidate);
+                        }
+                    }
+                }
+            }else{
+                CharsActiveTypeItem chars = charsDefinitions.get(i);		
+                resolver.addCandidate(chars);
+            }
 		}
-		
-		CharsActiveTypeItem chars = charsDefinitions.get(lastQualifiedIndex);
-		
+				
+		CharsActiveTypeItem chars = charsDefinitions.get(lastQualifiedIndex);		
 		resolver.addCandidate(chars);
 		
 		for(int j = 0; j < temporary.size(); j++){
@@ -1210,6 +1399,11 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}			
 		temporary.clear();
+		
+		
+		for(++lastQualifiedIndex; lastQualifiedIndex < charsDefinitions.size(); lastQualifiedIndex++){
+		    resolver.addCandidate(charsDefinitions.get(lastQualifiedIndex));
+		}
 	}
 	
 	public void reduce(StructureHandler handler){

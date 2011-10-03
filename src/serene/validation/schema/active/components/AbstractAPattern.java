@@ -64,12 +64,17 @@ public abstract class AbstractAPattern extends AbstractRule implements APattern{
 	}
 	   
     public boolean isRequiredBranch(){
-        if(parent == null) return minOccurs > 0;
-        return minOccurs > 0 && ((AbstractAPattern)parent).requiresBranch();
+        if( minOccurs == 0) return false;
+        if(parent == null) return true;
+        if(!(parent instanceof AbstractAPattern)) return true;
+        return ((AbstractAPattern)parent).isChildBranchRequired();
     }
     
-    boolean requiresBranch(){
-        return minOccurs > 0;
+    boolean isChildBranchRequired(){
+        if( minOccurs == 0) return false;
+        if(parent == null) return true;
+        if(!(parent instanceof AbstractAPattern)) return true;
+        return ((AbstractAPattern)parent).isChildBranchRequired();
     }
     
 	boolean transmitsMultipleCardinality(){

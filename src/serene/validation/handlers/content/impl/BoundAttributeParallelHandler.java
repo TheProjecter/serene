@@ -150,6 +150,7 @@ class BoundAttributeParallelHandler extends AttributeParallelHandler{
                     }
                 }			
             }
+            reset();
         }
     }
     int getHashCode(){return hashCode();}

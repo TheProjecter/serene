@@ -32,6 +32,7 @@ import serene.validation.schema.active.ActiveType;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ActiveTypeItem;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
+import serene.validation.schema.active.components.DatatypedActiveTypeItem;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 
@@ -116,10 +117,15 @@ public class ContextStackHandler  implements  StackHandler{
 	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		throw new IllegalStateException();
 	}	
-	public void shiftAllCharsDefinitions(List<CharsActiveTypeItem> charsDefinitions){
+	public void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		throw new IllegalStateException();
 	}
-	public void shiftAllTokenDefinitions(List<CharsActiveTypeItem> charsDefinitions, char[] token){
+	
+	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, char[] token, TemporaryMessageStorage[] temporaryMessageStorage){
+		throw new IllegalStateException();
+	}
+	
+	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, char[] token, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 		throw new IllegalStateException();
 	}
 	
@@ -129,7 +135,9 @@ public class ContextStackHandler  implements  StackHandler{
 	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 		throw new IllegalStateException();
 	}
-	
+	public void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+	    throw new IllegalStateException();
+	}
 	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
 		throw new IllegalStateException();
 	}

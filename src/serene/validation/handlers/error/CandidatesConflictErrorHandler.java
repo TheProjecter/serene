@@ -710,23 +710,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             setErrorMessageRecorded(UNRESOLVED_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode);
         }
 	}
-	
-	public void ambiguousCharsContentError(int candidateIndex, int functionalEquivalenceCode, 
-                                    String systemId, 
-									int lineNumber, 
-									int columnNumber, 
-									CharsActiveTypeItem[] possibleDefinitions){
-        recordError(AMBIGUOUS_CHARS_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);
-        if(mustRecordErrorMessage(AMBIGUOUS_CHARS_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex)){
-            localMessageHandler.ambiguousCharsContentError(functionalEquivalenceCode,
-                                                                        systemId, 
-                                                                        lineNumber, 
-                                                                        columnNumber, 
-                                                                        possibleDefinitions);
-            setErrorMessageRecorded(AMBIGUOUS_CHARS_CONTENT_ERROR, functionalEquivalenceCode);
-        }
-	}
-	
 
     public void ambiguousUnresolvedElementContentWarning(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
         recordWarning(AMBIGUOUS_UNRESOLVED_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);
@@ -752,11 +735,19 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         }
     }
     
-	public void ambiguousCharsContentWarning(int candidateIndex, int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        recordWarning(AMBIGUOUS_CHARS_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);
-        if(mustRecordWarningMessage(AMBIGUOUS_CHARS_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex)){
-            localMessageHandler.ambiguousCharsContentWarning(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
-            setWarningMessageRecorded(AMBIGUOUS_CHARS_CONTENT_WARNING, functionalEquivalenceCode);
+	public void ambiguousCharacterContentWarning(int candidateIndex, int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        recordWarning(AMBIGUOUS_CHARACTER_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);
+        if(mustRecordWarningMessage(AMBIGUOUS_CHARACTER_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex)){
+            localMessageHandler.ambiguousCharacterContentWarning(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
+            setWarningMessageRecorded(AMBIGUOUS_CHARACTER_CONTENT_WARNING, functionalEquivalenceCode);
+        }
+    }
+
+    public void ambiguousAttributeValueWarning(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        recordWarning(AMBIGUOUS_ATTRIBUTE_VALUE_WARNING, functionalEquivalenceCode, candidateIndex);
+        if(mustRecordWarningMessage(AMBIGUOUS_ATTRIBUTE_VALUE_WARNING, functionalEquivalenceCode, candidateIndex)){
+            localMessageHandler.ambiguousAttributeValueWarning(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            setWarningMessageRecorded(AMBIGUOUS_ATTRIBUTE_VALUE_WARNING, functionalEquivalenceCode);
         }
     }    
 	
@@ -886,19 +877,19 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 	}
     
 	public void unresolvedCharacterContent(int candidateIndex, int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        recordError(AMBIGUOUS_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex);
-	    if(mustRecordErrorMessage(AMBIGUOUS_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex)){
+        recordError(UNRESOLVED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex);
+	    if(mustRecordErrorMessage(UNRESOLVED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex)){
             localMessageHandler.unresolvedCharacterContent(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
-            setErrorMessageRecorded(AMBIGUOUS_CHARACTER_CONTENT, functionalEquivalenceCode);
+            setErrorMessageRecorded(UNRESOLVED_CHARACTER_CONTENT, functionalEquivalenceCode);
         }
 	}
     
 	// {24}
 	public void unresolvedAttributeValue(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        recordError(AMBIGUOUS_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex);
-	    if(mustRecordErrorMessage(AMBIGUOUS_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex)){
+        recordError(UNRESOLVED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex);
+	    if(mustRecordErrorMessage(UNRESOLVED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex)){
             localMessageHandler.unresolvedAttributeValue(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
-            setErrorMessageRecorded(AMBIGUOUS_ATTRIBUTE_VALUE, functionalEquivalenceCode);
+            setErrorMessageRecorded(UNRESOLVED_ATTRIBUTE_VALUE, functionalEquivalenceCode);
         }
 	}        
     
@@ -929,20 +920,12 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         }
 	}
     
-    
-	public void ambiguousListToken(int candidateIndex, int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        recordError(AMBIGUOUS_LIST_TOKEN, functionalEquivalenceCode, candidateIndex);
-	    if(mustRecordErrorMessage(AMBIGUOUS_LIST_TOKEN, functionalEquivalenceCode, candidateIndex)){
-            localMessageHandler.ambiguousListToken(functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
-            setErrorMessageRecorded(AMBIGUOUS_LIST_TOKEN, functionalEquivalenceCode);
-        }
-	}
-        
-    public void ambiguousListTokenInContextError(int candidateIndex, int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        recordError(AMBIGUOUS_LIST_TOKEN_IN_CONTEXT_ERROR, functionalEquivalenceCode, candidateIndex);
-        if(mustRecordErrorMessage(AMBIGUOUS_LIST_TOKEN_IN_CONTEXT_ERROR, functionalEquivalenceCode, candidateIndex)){
-            localMessageHandler.ambiguousListTokenInContextError(functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
-            setErrorMessageRecorded(AMBIGUOUS_LIST_TOKEN_IN_CONTEXT_ERROR, functionalEquivalenceCode);
+    	    
+    public void unresolvedListTokenInContextError(int candidateIndex, int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        recordError(UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR, functionalEquivalenceCode, candidateIndex);
+        if(mustRecordErrorMessage(UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR, functionalEquivalenceCode, candidateIndex)){
+            localMessageHandler.unresolvedListTokenInContextError(functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
+            setErrorMessageRecorded(UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR, functionalEquivalenceCode);
         }
     }
     public void ambiguousListTokenInContextWarning(int candidateIndex, int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){

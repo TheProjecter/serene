@@ -164,7 +164,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
         if(!isIgnorable && element.allowsTextContent()){
             hasComplexContent = true;
-            CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
+            CharactersValidationHandler ceh = pool.getCharactersValidationHandler(this, this, this);
             ceh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
             ceh.recycle();
         }else if(!isIgnorable && ! element.allowsChars()){
@@ -201,9 +201,9 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
         boolean isBufferIgnorable = bufferedContent.length == 0 || spaceHandler.isSpace(bufferedContent);
 		if(hasComplexContent){
             if(!isIgnorable && element.allowsTextContent()){
-                CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
-                ceh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
-                ceh.recycle();
+                CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                cvh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
+                cvh.recycle();
             }else if(!isIgnorable || !isBufferIgnorable){
                 unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
             }
@@ -224,9 +224,9 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
                 validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
             }
             
-            CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
-            ceh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
-            ceh.recycle();
+            CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+            cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
+            cvh.recycle();
             
             if(chars.length == 0)validationItemLocator.closeCharsContent();
         }

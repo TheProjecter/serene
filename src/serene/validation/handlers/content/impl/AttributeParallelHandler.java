@@ -176,10 +176,10 @@ class AttributeParallelHandler extends ValidatingAEH{
         }
         
         void handleAttribute(String value) throws SAXException{
-            uniqueSample.handleAttribute(value);            
+            uniqueSample.handleAttribute(value);  
+            reset();
         }
     }
-    int getHashCode(){return hashCode();}
     class Conflict extends State{
         void add(ComparableAEH individualHandler){
             individualHandlers.add(individualHandler);

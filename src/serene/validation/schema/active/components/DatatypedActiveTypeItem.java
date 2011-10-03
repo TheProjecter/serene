@@ -19,7 +19,7 @@ package serene.validation.schema.active.components;
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 
-public interface DatatypedActiveTypeItem extends ActiveTypeItem{
+public interface DatatypedActiveTypeItem extends StructuredDataActiveTypeItem{
 	void datatypeMatches(String value, ValidationContext validationContext) throws DatatypeException;
 	void datatypeMatches(char[] chars, ValidationContext validationContext) throws DatatypeException;
 }	

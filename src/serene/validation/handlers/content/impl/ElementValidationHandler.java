@@ -67,7 +67,10 @@ import serene.validation.handlers.content.util.ValidationItemLocator;
 import sereneWrite.MessageWriter;
 
 class ElementValidationHandler extends ValidatingEEH
-							implements ErrorCatcher{
+							implements ErrorCatcher, 
+							ElementContentTypeHandler,
+							AttributeContentTypeHandler,
+							CharsContentTypeHandler{
 								
 	CharsBuffer charContentBuffer;
     String charContentSystemId;
@@ -245,9 +248,9 @@ class ElementValidationHandler extends ValidatingEEH
         boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
         if(!isIgnorable && element.allowsTextContent()){
             hasComplexContent = true;
-            CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
-            ceh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
-            ceh.recycle();
+            CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+            cvh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
+            cvh.recycle();
         }else if(!isIgnorable && !element.allowsChars()){
             unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
         }else{
@@ -273,11 +276,27 @@ class ElementValidationHandler extends ValidatingEEH
         boolean isBufferIgnorable = bufferedContent.length == 0 || spaceHandler.isSpace(bufferedContent);
 		if(hasComplexContent){            
             if(!isIgnorable && element.allowsTextContent()){
-                CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
-                ceh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
-                ceh.recycle();
+                CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                cvh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
+                cvh.recycle();
             }else if(!isIgnorable || !isBufferIgnorable){
-                unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+                //unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+                // append the content, it could be that the element following is an error            
+                if(chars.length > 0){
+                    charContentBuffer.append(chars, 0, chars.length);
+                }
+                
+                // see that the right location is used in the messages
+                if(charContentLineNumber != -1){
+                    if(chars.length > 0)validationItemLocator.closeCharsContent();
+                    validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
+                }
+                
+                CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
+                cvh.recycle();
+                
+                if(chars.length == 0)validationItemLocator.closeCharsContent();
             }
         }else{
             if(!element.allowsChars()){
@@ -298,50 +317,66 @@ class ElementValidationHandler extends ValidatingEEH
                 validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
             }
             
-            CharacterContentValidationHandler ceh = pool.getCharacterContentValidationHandler(this, this);
-            ceh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
-            ceh.recycle();
+            CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+            cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
+            cvh.recycle();
             
             if(chars.length == 0)validationItemLocator.closeCharsContent();
         }				
 	}
 	
-	void addChildElement(AElement element){
+//ElementContentTypeHandler
+//==============================================================================
+	public void addChildElement(AElement element){
 		stackHandler.shift(element);
 	}
 	
-	void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter){
+	public void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
 		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter);
 	}
 	
-	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
+	public void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
 		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter);
 	}	
-	
-	void addAttribute(AAttribute attribute){
+//==============================================================================
+
+
+//AttributeContentTypeHandler
+//==============================================================================
+	public void addAttribute(AAttribute attribute){
 		stackHandler.shift(attribute);
 	}
 	
-	void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
 		stackHandler.shiftAllAttributes(candidateDefinitions, temporaryMessageStorage);
 	}
 	
-	void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
+	public void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
 		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
 		stackHandler.shiftAllAttributes(candidateDefinitions, disqualified, temporaryMessageStorage);
 	}
+//==============================================================================
+
 	
-	void addChars(CharsActiveTypeItem charsDefinition){		
+//CharsContentTypeHandler
+//==============================================================================
+	public void addChars(CharsActiveTypeItem charsDefinition){		
 		stackHandler.shift(charsDefinition);
 	}
 	
-	void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions){		
-		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions);
+	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
+		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);		
+		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, temporaryMessageStorage);
 	}
+	
+	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);		
+		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, disqualified, temporaryMessageStorage);
+	}
+//==============================================================================	
 	
 	private StackHandler getStackHandler(){
 		return stackHandler;
@@ -404,12 +439,12 @@ class ElementValidationHandler extends ValidatingEEH
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].unknownAttribute( qName, systemId, lineNumber, columnNumber);
 	}	
-	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){	    
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);
 	}	
 	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
-		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
+	    if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].unexpectedAmbiguousAttribute( qName, definition, systemId, lineNumber, columnNumber);
 	}
 	
@@ -460,11 +495,6 @@ class ElementValidationHandler extends ValidatingEEH
 		contextErrorHandler[contextErrorHandlerIndex].unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 
-	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousCharsContentError(systemId, lineNumber, columnNumber, possibleDefinitions);
-	}
-
 	
 	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
@@ -481,11 +511,15 @@ class ElementValidationHandler extends ValidatingEEH
 		contextErrorHandler[contextErrorHandlerIndex].ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 
-	public void ambiguousCharsContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousCharsContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 
+	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
+		contextErrorHandler[contextErrorHandlerIndex].ambiguousAttributeValueWarning(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
 	
 	
 	
@@ -523,7 +557,7 @@ class ElementValidationHandler extends ValidatingEEH
 	
 	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unexpectedCharacterContent(charsSystemId, charsLineNumber, columnNumber, elementDefinition);
+		contextErrorHandler[contextErrorHandlerIndex].unexpectedCharacterContent(charsSystemId, charsLineNumber, columnNumber, elementDefinition);		
 	}	
 	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
@@ -551,14 +585,10 @@ class ElementValidationHandler extends ValidatingEEH
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].listTokenExceptedError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
-	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	    
+    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousListToken(token, systemId, lineNumber, columnNumber, possibleDefinitions);
-	}
-    
-    public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].unresolvedListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
     }
     
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){

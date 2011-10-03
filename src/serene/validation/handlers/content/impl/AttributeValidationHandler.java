@@ -18,6 +18,7 @@ package serene.validation.handlers.content.impl;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.BitSet;
 
 import org.xml.sax.SAXException;
 
@@ -44,6 +45,7 @@ import serene.validation.handlers.error.ContextErrorHandlerManager;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ContextErrorHandler;
 import serene.validation.handlers.error.ConflictMessageReporter;
+import serene.validation.handlers.error.TemporaryMessageStorage;
    
 	
 import serene.validation.handlers.content.CharactersEventHandler;
@@ -53,7 +55,8 @@ import serene.Reusable;
 
 import sereneWrite.MessageWriter;
 
-class AttributeValidationHandler extends AttributeDefinitionHandler implements ErrorCatcher{
+class AttributeValidationHandler extends AttributeDefinitionHandler 
+                                  implements ErrorCatcher{
 		
     ElementValidationHandler parent;    
 	
@@ -63,12 +66,14 @@ class AttributeValidationHandler extends AttributeDefinitionHandler implements E
 		super(debugWriter);
 	}
 		
+	void reset(){
+	    super.reset();
+		parent = null;
+		contextErrorHandlerManager = null;
+	}
+	
 	public void recycle(){
-		if(stackHandler != null){
-			stackHandler.recycle();
-			stackHandler = null;
-		}
-        attribute.releaseDefinition();
+		reset();
 		pool.recycle(this);
 	}
 	
@@ -83,7 +88,7 @@ class AttributeValidationHandler extends AttributeDefinitionHandler implements E
 		this.contextErrorHandlerManager = contextErrorHandlerManager;
 		this.attribute = attribute;
 		attribute.assembleDefinition();
-		stackHandler = attribute.getStackHandler(this);
+		
 	}
 	
     public ElementValidationHandler getParentHandler(){
@@ -91,28 +96,41 @@ class AttributeValidationHandler extends AttributeDefinitionHandler implements E
     }
     
 	void validateValue(String value) throws SAXException{
+	    stackHandler = attribute.getStackHandler(this);
 		if(!attribute.allowsChars()){
 			unexpectedAttributeValue(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), attribute);
 			return;
 		}				
-		CharactersEventHandler ceh = pool.getAttributeValueValidationHandler(this, this);
-		ceh.handleString(value, (CharsActiveType)attribute, false);		
-        ceh.recycle();
+		CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+		cvh.handleString(value, (CharsActiveType)attribute, false);
+		cvh.recycle();
+		stackHandler.endValidation();
+		stackHandler.recycle();
+		stackHandler = null;
+                
 	}
 
 	void validateInContext(){
 		parent.addAttribute(attribute);
 	}
 
-	void addChars(CharsActiveTypeItem charsDefinition){
+//CharsContentTypeHandler
+//==============================================================================
+	public void addChars(CharsActiveTypeItem charsDefinition){	    
 		stackHandler.shift(charsDefinition);
 	}
 	
-	void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions){
+	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()) stackHandler = attribute.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions);
+		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, temporaryMessageStorage);
 	}
 	
+	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+		if(!stackHandler.handlesConflict()) stackHandler = attribute.getStackHandler(stackHandler, this);
+		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, disqualified, temporaryMessageStorage);
+	}
+//==============================================================================
+
 	//errorCatcher
 	//--------------------------------------------------------------------------
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
@@ -232,15 +250,7 @@ class AttributeValidationHandler extends AttributeDefinitionHandler implements E
         contextErrorHandler.setCandidate(oldIsCandidate);*/
         throw new IllegalStateException();
 	}
-
-	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
-        boolean oldIsCandidate = contextErrorHandler.isCandidate();
-        contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousCharsContentError(systemId, lineNumber, columnNumber, possibleDefinitions);
-        contextErrorHandler.setCandidate(oldIsCandidate);
-	}
-
+	
 	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
@@ -265,11 +275,19 @@ class AttributeValidationHandler extends AttributeDefinitionHandler implements E
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 
-	public void ambiguousCharsContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousCharsContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
+        contextErrorHandler.setCandidate(oldIsCandidate);
+	}
+	
+	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
+        boolean oldIsCandidate = contextErrorHandler.isCandidate();
+        contextErrorHandler.setCandidate(false);
+		contextErrorHandler.ambiguousAttributeValueWarning(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
@@ -378,19 +396,13 @@ class AttributeValidationHandler extends AttributeDefinitionHandler implements E
 		contextErrorHandler.listTokenExceptedError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
-	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
-        boolean oldIsCandidate = contextErrorHandler.isCandidate();
-        contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousListToken(token, systemId, lineNumber, columnNumber, possibleDefinitions);
-        contextErrorHandler.setCandidate(oldIsCandidate);
-	}
+
     
-    public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.unresolvedListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
     }    
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){

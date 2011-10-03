@@ -66,15 +66,28 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	UnresolvedAttributeConflictResolver[] unresolvedAttributeConflictResolver;
 	
 	
-	int charsConflictResolverCreated = 0;
-	int charsConflictResolverPoolSize;
-	int charsConflictResolverFree = 0;
-	CharsConflictResolver[] charsConflictResolver;
+	int ambiguousCharsConflictResolverCreated = 0;
+	int ambiguousCharsConflictResolverPoolSize;
+	int ambiguousCharsConflictResolverFree = 0;
+	AmbiguousCharsConflictResolver[] ambiguousCharsConflictResolver;
+	
+	int unresolvedCharsConflictResolverCreated = 0;
+	int unresolvedCharsConflictResolverPoolSize;
+	int unresolvedCharsConflictResolverFree = 0;
+	UnresolvedCharsConflictResolver[] unresolvedCharsConflictResolver;
     
-    int listTokenConflictResolverCreated = 0;
-	int listTokenConflictResolverPoolSize;
-	int listTokenConflictResolverFree = 0;
-	ListTokenConflictResolver[] listTokenConflictResolver;
+	
+    int ambiguousListTokenConflictResolverCreated = 0;
+	int ambiguousListTokenConflictResolverPoolSize;
+	int ambiguousListTokenConflictResolverFree = 0;
+	AmbiguousListTokenConflictResolver[] ambiguousListTokenConflictResolver;
+	
+	int unresolvedListTokenConflictResolverCreated = 0;
+	int unresolvedListTokenConflictResolverPoolSize;
+	int unresolvedListTokenConflictResolverFree = 0;
+	UnresolvedListTokenConflictResolver[] unresolvedListTokenConflictResolver;
+	
+	
 	
 	int boundAmbiguousElementConflictResolverCreated = 0;
 	int boundAmbiguousElementConflictResolverPoolSize;
@@ -112,8 +125,10 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		       || unresolvedElementConflictResolverFree != 0
                || ambiguousAttributeConflictResolverFree != 0
                || unresolvedAttributeConflictResolverFree != 0
-               || charsConflictResolverFree != 0
-               || listTokenConflictResolverFree != 0
+               || ambiguousCharsConflictResolverFree != 0
+               || unresolvedCharsConflictResolverFree != 0
+               || ambiguousListTokenConflictResolverFree != 0
+               || unresolvedListTokenConflictResolverFree != 0
                || boundAmbiguousElementConflictResolverFree != 0
                || boundUnresolvedElementConflictResolverFree != 0
                || boundAmbiguousAttributeConflictResolverFree != 0
@@ -127,8 +142,10 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 				unresolvedElementConflictResolver,
 				ambiguousAttributeConflictResolver,
 				unresolvedAttributeConflictResolver,
-				charsConflictResolver,
-				listTokenConflictResolver,
+				ambiguousCharsConflictResolver,
+				unresolvedCharsConflictResolver,
+				ambiguousListTokenConflictResolver,
+				unresolvedListTokenConflictResolver,
 				boundAmbiguousElementConflictResolver,
 				boundUnresolvedElementConflictResolver,
 				boundAmbiguousAttributeConflictResolver,
@@ -143,10 +160,14 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 				AmbiguousAttributeConflictResolver[] ambiguousAttributeConflictResolver,
 				int unresolvedAttributeConflictResolverFree,
 				UnresolvedAttributeConflictResolver[] unresolvedAttributeConflictResolver,
-				int charsConflictResolverFree,
-				CharsConflictResolver[] charsConflictResolver,
-                int listTokenConflictResolverFree,
-				ListTokenConflictResolver[] listTokenConflictResolver,
+				int ambiguousCharsConflictResolverFree,
+				AmbiguousCharsConflictResolver[] ambiguousCharsConflictResolver,
+				int unresolvedCharsConflictResolverFree,
+				UnresolvedCharsConflictResolver[] unresolvedCharsConflictResolver,
+                int ambiguousListTokenConflictResolverFree,
+				AmbiguousListTokenConflictResolver[] ambiguousListTokenConflictResolver,
+				int unresolvedListTokenConflictResolverFree,
+				UnresolvedListTokenConflictResolver[] unresolvedListTokenConflictResolver,
 				int boundAmbiguousElementConflictResolverFree,
 				BoundAmbiguousElementConflictResolver[] boundAmbiguousElementConflictResolver,
 				int boundUnresolvedElementConflictResolverFree,
@@ -183,19 +204,34 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			unresolvedAttributeConflictResolver[i].init(this, validationItemLocator);
 		}
 		
-		charsConflictResolverPoolSize = charsConflictResolver.length;
-		this.charsConflictResolverFree = charsConflictResolverFree;
-		this.charsConflictResolver = charsConflictResolver;
-		for(int i = 0; i < charsConflictResolverFree; i++){	
-			charsConflictResolver[i].init(this, validationItemLocator);
+		ambiguousCharsConflictResolverPoolSize = ambiguousCharsConflictResolver.length;
+		this.ambiguousCharsConflictResolverFree = ambiguousCharsConflictResolverFree;
+		this.ambiguousCharsConflictResolver = ambiguousCharsConflictResolver;
+		for(int i = 0; i < ambiguousCharsConflictResolverFree; i++){	
+			ambiguousCharsConflictResolver[i].init(this, validationItemLocator);
+		}
+		
+		unresolvedCharsConflictResolverPoolSize = unresolvedCharsConflictResolver.length;
+		this.unresolvedCharsConflictResolverFree = unresolvedCharsConflictResolverFree;
+		this.unresolvedCharsConflictResolver = unresolvedCharsConflictResolver;
+		for(int i = 0; i < unresolvedCharsConflictResolverFree; i++){	
+			unresolvedCharsConflictResolver[i].init(this, validationItemLocator);
 		}
         
-        listTokenConflictResolverPoolSize = listTokenConflictResolver.length;
-		this.listTokenConflictResolverFree = listTokenConflictResolverFree;
-		this.listTokenConflictResolver = listTokenConflictResolver;
-		for(int i = 0; i < listTokenConflictResolverFree; i++){	
-			listTokenConflictResolver[i].init(this, validationItemLocator);
+        ambiguousListTokenConflictResolverPoolSize = ambiguousListTokenConflictResolver.length;
+		this.ambiguousListTokenConflictResolverFree = ambiguousListTokenConflictResolverFree;
+		this.ambiguousListTokenConflictResolver = ambiguousListTokenConflictResolver;
+		for(int i = 0; i < ambiguousListTokenConflictResolverFree; i++){	
+			ambiguousListTokenConflictResolver[i].init(this, validationItemLocator);
 		}
+		
+		unresolvedListTokenConflictResolverPoolSize = unresolvedListTokenConflictResolver.length;
+		this.unresolvedListTokenConflictResolverFree = unresolvedListTokenConflictResolverFree;
+		this.unresolvedListTokenConflictResolver = unresolvedListTokenConflictResolver;
+		for(int i = 0; i < unresolvedListTokenConflictResolverFree; i++){	
+			unresolvedListTokenConflictResolver[i].init(this, validationItemLocator);
+		}
+		
 				
 		boundAmbiguousElementConflictResolverPoolSize = boundAmbiguousElementConflictResolver.length;
 		this.boundAmbiguousElementConflictResolverFree = boundAmbiguousElementConflictResolverFree;
@@ -235,10 +271,14 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 				ambiguousAttributeConflictResolver,
 				unresolvedAttributeConflictResolverFree,
 				unresolvedAttributeConflictResolver,
-				charsConflictResolverFree,
-				charsConflictResolver,
-                listTokenConflictResolverFree,
-				listTokenConflictResolver,
+				ambiguousCharsConflictResolverFree,
+				ambiguousCharsConflictResolver,
+				unresolvedCharsConflictResolverFree,
+				unresolvedCharsConflictResolver,
+                ambiguousListTokenConflictResolverFree,
+				ambiguousListTokenConflictResolver,
+				unresolvedListTokenConflictResolverFree,
+				unresolvedListTokenConflictResolver,
 				boundAmbiguousElementConflictResolverFree,
 				boundAmbiguousElementConflictResolver,
 				boundUnresolvedElementConflictResolverFree,
@@ -252,8 +292,10 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		unresolvedElementConflictResolverFree = 0;
 		ambiguousAttributeConflictResolverFree = 0;
 		unresolvedAttributeConflictResolverFree = 0;
-		charsConflictResolverFree = 0;
-        listTokenConflictResolverFree = 0;
+		ambiguousCharsConflictResolverFree = 0;
+		unresolvedCharsConflictResolverFree = 0;
+        ambiguousListTokenConflictResolverFree = 0;
+        unresolvedListTokenConflictResolverFree = 0;
 		boundAmbiguousElementConflictResolverFree = 0;
 		boundUnresolvedElementConflictResolverFree = 0;
 		boundAmbiguousAttributeConflictResolverFree = 0;
@@ -353,51 +395,99 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		unresolvedAttributeConflictResolver[unresolvedAttributeConflictResolverFree++] = icr;
 	}
 	
-	public CharsConflictResolver getCharsConflictResolver(){				
-		if(charsConflictResolverFree == 0){
-			// charsConflictResolverCreated++;
-			CharsConflictResolver icr = new CharsConflictResolver(debugWriter);
+	public AmbiguousCharsConflictResolver getAmbiguousCharsConflictResolver(BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){				
+		if(ambiguousCharsConflictResolverFree == 0){
+			// ambiguousCharsConflictResolverCreated++;
+			AmbiguousCharsConflictResolver icr = new AmbiguousCharsConflictResolver(debugWriter);
 			icr.init(this, validationItemLocator);
-			icr.init();			
+			icr.init(disqualified, temporaryMessageStorage);			
 			return icr;			
 		}else{
-			CharsConflictResolver icr = charsConflictResolver[--charsConflictResolverFree];
-			icr.init();
+			AmbiguousCharsConflictResolver icr = ambiguousCharsConflictResolver[--ambiguousCharsConflictResolverFree];
+			icr.init(disqualified, temporaryMessageStorage);
 			return icr;
 		}		
 	}
 		
-	public void recycle(CharsConflictResolver icr){	
-		if(charsConflictResolverFree == charsConflictResolverPoolSize){
-			CharsConflictResolver[] increased = new CharsConflictResolver[++charsConflictResolverPoolSize];
-			System.arraycopy(charsConflictResolver, 0, increased, 0, charsConflictResolverFree);
-			charsConflictResolver = increased;
+	public void recycle(AmbiguousCharsConflictResolver icr){	
+		if(ambiguousCharsConflictResolverFree == ambiguousCharsConflictResolverPoolSize){
+			AmbiguousCharsConflictResolver[] increased = new AmbiguousCharsConflictResolver[++ambiguousCharsConflictResolverPoolSize];
+			System.arraycopy(ambiguousCharsConflictResolver, 0, increased, 0, ambiguousCharsConflictResolverFree);
+			ambiguousCharsConflictResolver = increased;
 		}
-		charsConflictResolver[charsConflictResolverFree++] = icr;
+		ambiguousCharsConflictResolver[ambiguousCharsConflictResolverFree++] = icr;
+	}
+	
+	public UnresolvedCharsConflictResolver getUnresolvedCharsConflictResolver(TemporaryMessageStorage[] temporaryMessageStorage){				
+		if(unresolvedCharsConflictResolverFree == 0){
+			// unresolvedCharsConflictResolverCreated++;
+			UnresolvedCharsConflictResolver icr = new UnresolvedCharsConflictResolver(debugWriter);
+			icr.init(this, validationItemLocator);
+			icr.init(temporaryMessageStorage);			
+			return icr;			
+		}else{
+			UnresolvedCharsConflictResolver icr = unresolvedCharsConflictResolver[--unresolvedCharsConflictResolverFree];
+			icr.init(temporaryMessageStorage);
+			return icr;
+		}		
+	}
+		
+	public void recycle(UnresolvedCharsConflictResolver icr){	
+		if(unresolvedCharsConflictResolverFree == unresolvedCharsConflictResolverPoolSize){
+			UnresolvedCharsConflictResolver[] increased = new UnresolvedCharsConflictResolver[++unresolvedCharsConflictResolverPoolSize];
+			System.arraycopy(unresolvedCharsConflictResolver, 0, increased, 0, unresolvedCharsConflictResolverFree);
+			unresolvedCharsConflictResolver = increased;
+		}
+		unresolvedCharsConflictResolver[unresolvedCharsConflictResolverFree++] = icr;
 	}
         
-    public ListTokenConflictResolver getListTokenConflictResolver(char[] token){				
-		if(listTokenConflictResolverFree == 0){
-			// listTokenConflictResolverCreated++;
-			ListTokenConflictResolver icr = new ListTokenConflictResolver(debugWriter);
+    public AmbiguousListTokenConflictResolver getAmbiguousListTokenConflictResolver(char[] token, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){				
+		if(ambiguousListTokenConflictResolverFree == 0){
+			// ambiguousListTokenConflictResolverCreated++;
+			AmbiguousListTokenConflictResolver icr = new AmbiguousListTokenConflictResolver(debugWriter);
 			icr.init(this, validationItemLocator);
-			icr.init(token);			
+			icr.init(token, disqualified, temporaryMessageStorage);			
 			return icr;			
 		}else{
-			ListTokenConflictResolver icr = listTokenConflictResolver[--listTokenConflictResolverFree];
-			icr.init(token);
+			AmbiguousListTokenConflictResolver icr = ambiguousListTokenConflictResolver[--ambiguousListTokenConflictResolverFree];
+			icr.init(token, disqualified, temporaryMessageStorage);
 			return icr;
 		}		
 	}
 		
-	public void recycle(ListTokenConflictResolver icr){	
-		if(listTokenConflictResolverFree == listTokenConflictResolverPoolSize){
-			ListTokenConflictResolver[] increased = new ListTokenConflictResolver[++listTokenConflictResolverPoolSize];
-			System.arraycopy(listTokenConflictResolver, 0, increased, 0, listTokenConflictResolverFree);
-			listTokenConflictResolver = increased;
+	public void recycle(AmbiguousListTokenConflictResolver icr){	
+		if(ambiguousListTokenConflictResolverFree == ambiguousListTokenConflictResolverPoolSize){
+			AmbiguousListTokenConflictResolver[] increased = new AmbiguousListTokenConflictResolver[++ambiguousListTokenConflictResolverPoolSize];
+			System.arraycopy(ambiguousListTokenConflictResolver, 0, increased, 0, ambiguousListTokenConflictResolverFree);
+			ambiguousListTokenConflictResolver = increased;
 		}
-		listTokenConflictResolver[listTokenConflictResolverFree++] = icr;
+		ambiguousListTokenConflictResolver[ambiguousListTokenConflictResolverFree++] = icr;
 	}
+	
+	public UnresolvedListTokenConflictResolver getUnresolvedListTokenConflictResolver(char[] token, TemporaryMessageStorage[] temporaryMessageStorage){				
+		if(unresolvedListTokenConflictResolverFree == 0){
+			// unresolvedListTokenConflictResolverCreated++;
+			UnresolvedListTokenConflictResolver icr = new UnresolvedListTokenConflictResolver(debugWriter);
+			icr.init(this, validationItemLocator);
+			icr.init(token, temporaryMessageStorage);			
+			return icr;			
+		}else{
+			UnresolvedListTokenConflictResolver icr = unresolvedListTokenConflictResolver[--unresolvedListTokenConflictResolverFree];
+			icr.init(token, temporaryMessageStorage);
+			return icr;
+		}		
+	}
+		
+	public void recycle(UnresolvedListTokenConflictResolver icr){	
+		if(unresolvedListTokenConflictResolverFree == unresolvedListTokenConflictResolverPoolSize){
+			UnresolvedListTokenConflictResolver[] increased = new UnresolvedListTokenConflictResolver[++unresolvedListTokenConflictResolverPoolSize];
+			System.arraycopy(unresolvedListTokenConflictResolver, 0, increased, 0, unresolvedListTokenConflictResolverFree);
+			unresolvedListTokenConflictResolver = increased;
+		}
+		unresolvedListTokenConflictResolver[unresolvedListTokenConflictResolverFree++] = icr;
+	}
+	
+	
 	
 	public BoundAmbiguousElementConflictResolver getBoundAmbiguousElementConflictResolver(ConflictMessageReporter conflictMessageReporter,
 	                                                                    Queue targetQueue,

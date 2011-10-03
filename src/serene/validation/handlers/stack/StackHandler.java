@@ -29,6 +29,7 @@ import serene.validation.handlers.FunctionallyEquivalable;
 
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
+import serene.validation.schema.active.components.DatatypedActiveTypeItem;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 
@@ -59,8 +60,11 @@ public interface StackHandler extends FunctionallyEquivalable{
 	void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders);
 	
 	void shift(CharsActiveTypeItem chars);	
-	void shiftAllCharsDefinitions(List<CharsActiveTypeItem> charsDefinitions);
-    void shiftAllTokenDefinitions(List<CharsActiveTypeItem> charsDefinitions, char[] token);
+	void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
+	void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
+    
+	void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, char[] token, TemporaryMessageStorage[] temporaryMessageStorage);
+	void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, char[] token, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
 	
 	void reduce(StructureHandler handler);
 	

@@ -53,7 +53,9 @@ import serene.bind.AttributeBinder;
 
 import sereneWrite.MessageWriter;
 
-public class AListPattern extends UniqueChildAPattern implements DataActiveType, CharsActiveTypeItem{
+public class AListPattern extends UniqueChildAPattern 
+                                        implements DataActiveType, 
+                                        StructuredDataActiveTypeItem{
 	ActiveModelStackHandlerPool stackHandlerPool;
 		
 	boolean allowsDataContent;

@@ -264,19 +264,6 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = 0;
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
-            messageHandler.ambiguousCharsContentError(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
-            candidatesConflictErrorHandler.ambiguousCharsContentError(candidateIndex, functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
-        }else{
-            messageHandler.ambiguousCharsContentError(-1, systemId, lineNumber, columnNumber, possibleDefinitions);
-        }
-	}
-	
 	
 	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
         if(isCandidate){
@@ -314,15 +301,27 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void ambiguousCharsContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         if(isCandidate){
             int functionalEquivalenceCode = 0;
             for(int i = 0; i < possibleDefinitions.length; i++){
                 functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
             }
-            candidatesConflictErrorHandler.ambiguousCharsContentWarning(candidateIndex, functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
+            candidatesConflictErrorHandler.ambiguousCharacterContentWarning(candidateIndex, functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousCharsContentWarning(-1, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.ambiguousCharacterContentWarning(-1, systemId, lineNumber, columnNumber, possibleDefinitions);
+        }
+	}
+	
+	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        if(isCandidate){
+            int functionalEquivalenceCode = 0;
+            for(int i = 0; i < possibleDefinitions.length; i++){
+                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+            }
+            candidatesConflictErrorHandler.ambiguousAttributeValueWarning(candidateIndex, functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+        }else{
+            messageHandler.ambiguousAttributeValueWarning(-1, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	
@@ -483,28 +482,17 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
             messageHandler.listTokenExceptedError(-1, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }
 	}
-	public void ambiguousListToken(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+
+    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
         if(isCandidate){
             int functionalEquivalenceCode = token.hashCode();
             for(int i = 0; i < possibleDefinitions.length; i++){
                 functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
             }
-            messageHandler.ambiguousListToken(functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
-            candidatesConflictErrorHandler.ambiguousListToken(candidateIndex, functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedListTokenInContextError(functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
+            candidatesConflictErrorHandler.unresolvedListTokenInContextError(candidateIndex, functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousListToken(-1, token, systemId, lineNumber, columnNumber, possibleDefinitions);
-        }
-	}
-    public void ambiguousListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = token.hashCode();
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
-            messageHandler.ambiguousListTokenInContextError(functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
-            candidatesConflictErrorHandler.ambiguousListTokenInContextError(candidateIndex, functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
-        }else{
-            messageHandler.ambiguousListTokenInContextError(-1, token, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedListTokenInContextError(-1, token, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
     }    
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
