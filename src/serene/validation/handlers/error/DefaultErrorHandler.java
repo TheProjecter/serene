@@ -89,7 +89,10 @@ public class DefaultErrorHandler extends AbstractContextErrorHandler{
 	public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
 	}
 	
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	}
+	
+	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 	}
 	
 	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
@@ -99,7 +102,10 @@ public class DefaultErrorHandler extends AbstractContextErrorHandler{
 	}
 	
 	
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	}
+	
+	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
 	}
 	
 	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
@@ -153,8 +159,11 @@ public class DefaultErrorHandler extends AbstractContextErrorHandler{
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
 	}
     
-    public  void conflict(MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){
+    public  void conflict(int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){
     }
+	
+    public void internalConflict(ConflictMessageReporter conflictMessageReporter){}
+	
 	
 	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 				throws SAXException{
@@ -164,6 +173,19 @@ public class DefaultErrorHandler extends AbstractContextErrorHandler{
 				throws SAXException{
 	}
 	
+    public void record(int contextType, String qName, boolean restrictToFileName, Locator locator){
+	    throw new IllegalStateException();
+	}
+    
+	    
+	public int getConflictResolutionId(){
+        throw new IllegalStateException();
+    }
+	
+    public ConflictMessageReporter getConflictMessageReporter(){
+        throw new IllegalStateException();
+    } 
+    
 	public String toString(){
 		return "ValidationErrorHandler ";
 	}

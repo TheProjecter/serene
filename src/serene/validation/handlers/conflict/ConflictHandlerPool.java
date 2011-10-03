@@ -25,10 +25,25 @@ public class ConflictHandlerPool{
 	int vchPoolPoolSize;
 	ActiveModelConflictHandlerPool[] vchPools;
 	
-	int internalConflictResolverAverageUse;
-	int internalConflictResolverPoolSize;
-	int internalConflictResolverFree;
-	InternalConflictResolver[] internalConflictResolver;
+	int ambiguousElementConflictResolverAverageUse;
+	int ambiguousElementConflictResolverPoolSize;
+	int ambiguousElementConflictResolverFree;
+	AmbiguousElementConflictResolver[] ambiguousElementConflictResolver;
+	
+	int unresolvedElementConflictResolverAverageUse;
+	int unresolvedElementConflictResolverPoolSize;
+	int unresolvedElementConflictResolverFree;
+	UnresolvedElementConflictResolver[] unresolvedElementConflictResolver;
+    
+	int attributeConflictResolverAverageUse;
+	int attributeConflictResolverPoolSize;
+	int attributeConflictResolverFree;
+	AttributeConflictResolver[] attributeConflictResolver;
+	
+	int charsConflictResolverAverageUse;
+	int charsConflictResolverPoolSize;
+	int charsConflictResolverFree;
+	CharsConflictResolver[] charsConflictResolver;
     
     
     int listTokenConflictResolverAverageUse;
@@ -36,15 +51,21 @@ public class ConflictHandlerPool{
 	int listTokenConflictResolverFree;
 	ListTokenConflictResolver[] listTokenConflictResolver;
 	
-	int boundInternalConflictResolverAverageUse;
-	int boundInternalConflictResolverPoolSize;
-	int boundInternalConflictResolverFree;
-	BoundInternalConflictResolver[] boundInternalConflictResolver;
+	int boundAmbiguousElementConflictResolverAverageUse;
+	int boundAmbiguousElementConflictResolverPoolSize;
+	int boundAmbiguousElementConflictResolverFree;
+	BoundAmbiguousElementConflictResolver[] boundAmbiguousElementConflictResolver;
 	
-	int contextConflictResolverAverageUse;
-	int contextConflictResolverPoolSize;
-	int contextConflictResolverFree;
-	ContextConflictResolver[] contextConflictResolver;
+	int boundUnresolvedElementConflictResolverAverageUse;
+	int boundUnresolvedElementConflictResolverPoolSize;
+	int boundUnresolvedElementConflictResolverFree;
+	BoundUnresolvedElementConflictResolver[] boundUnresolvedElementConflictResolver;
+	
+	
+	int boundAttributeConflictResolverAverageUse;
+	int boundAttributeConflictResolverPoolSize;
+	int boundAttributeConflictResolverFree;
+	BoundAttributeConflictResolver[] boundAttributeConflictResolver;
 		
 	final int UNUSED = 0;
 	
@@ -57,25 +78,46 @@ public class ConflictHandlerPool{
 		vchPoolPoolSize = 10;
 		vchPools = new ActiveModelConflictHandlerPool[vchPoolPoolSize];
 		
-		internalConflictResolverAverageUse = UNUSED;
-		internalConflictResolverPoolSize = 10;
-		internalConflictResolverFree = 0;
-		internalConflictResolver = new InternalConflictResolver[internalConflictResolverPoolSize];
+		ambiguousElementConflictResolverAverageUse = UNUSED;
+		ambiguousElementConflictResolverPoolSize = 10;
+		ambiguousElementConflictResolverFree = 0;
+		ambiguousElementConflictResolver = new AmbiguousElementConflictResolver[ambiguousElementConflictResolverPoolSize];
+		
+		unresolvedElementConflictResolverAverageUse = UNUSED;
+		unresolvedElementConflictResolverPoolSize = 10;
+		unresolvedElementConflictResolverFree = 0;
+		unresolvedElementConflictResolver = new UnresolvedElementConflictResolver[unresolvedElementConflictResolverPoolSize];
+		
+		attributeConflictResolverAverageUse = UNUSED;
+		attributeConflictResolverPoolSize = 10;
+		attributeConflictResolverFree = 0;
+		attributeConflictResolver = new AttributeConflictResolver[attributeConflictResolverPoolSize];
         
+		charsConflictResolverAverageUse = UNUSED;
+		charsConflictResolverPoolSize = 10;
+		charsConflictResolverFree = 0;
+		charsConflictResolver = new CharsConflictResolver[charsConflictResolverPoolSize];
+        		
+		
         listTokenConflictResolverAverageUse = UNUSED;
 		listTokenConflictResolverPoolSize = 10;
 		listTokenConflictResolverFree = 0;
 		listTokenConflictResolver = new ListTokenConflictResolver[listTokenConflictResolverPoolSize];
 		
-		boundInternalConflictResolverAverageUse = UNUSED;
-		boundInternalConflictResolverPoolSize = 10;
-		boundInternalConflictResolverFree = 0;
-		boundInternalConflictResolver = new BoundInternalConflictResolver[boundInternalConflictResolverPoolSize];
+		boundAmbiguousElementConflictResolverAverageUse = UNUSED;
+		boundAmbiguousElementConflictResolverPoolSize = 10;
+		boundAmbiguousElementConflictResolverFree = 0;
+		boundAmbiguousElementConflictResolver = new BoundAmbiguousElementConflictResolver[boundAmbiguousElementConflictResolverPoolSize];
 		
-		contextConflictResolverAverageUse = UNUSED;
-		contextConflictResolverPoolSize = 10;
-		contextConflictResolverFree = 0;
-		contextConflictResolver = new ContextConflictResolver[contextConflictResolverPoolSize];
+		boundUnresolvedElementConflictResolverAverageUse = UNUSED;
+		boundUnresolvedElementConflictResolverPoolSize = 10;
+		boundUnresolvedElementConflictResolverFree = 0;
+		boundUnresolvedElementConflictResolver = new BoundUnresolvedElementConflictResolver[boundUnresolvedElementConflictResolverPoolSize];
+		
+		boundAttributeConflictResolverAverageUse = UNUSED;
+		boundAttributeConflictResolverPoolSize = 10;
+		boundAttributeConflictResolverFree = 0;
+		boundAttributeConflictResolver = new BoundAttributeConflictResolver[boundAttributeConflictResolverPoolSize];
 		
 	}
 	
@@ -91,24 +133,69 @@ public class ConflictHandlerPool{
 	}
 	
 	synchronized void fill(ActiveModelConflictHandlerPool pool,
-					InternalConflictResolver[] internalConflictResolver,
+					AmbiguousElementConflictResolver[] ambiguousElementConflictResolver,
+					UnresolvedElementConflictResolver[] unresolvedElementConflictResolver,
+					AttributeConflictResolver[] attributeConflictResolver,
+					CharsConflictResolver[] charsConflictResolver,
                     ListTokenConflictResolver[] listTokenConflictResolver,
-					BoundInternalConflictResolver[] boundInternalConflictResolver,
-					ContextConflictResolver[] contextConflictResolver){
-		int internalConflictResolverFillCount;
-		if(internalConflictResolver == null || internalConflictResolver.length < internalConflictResolverAverageUse)
-			internalConflictResolver = new InternalConflictResolver[internalConflictResolverAverageUse];
-		if(internalConflictResolverFree > internalConflictResolverAverageUse){
-			internalConflictResolverFillCount = internalConflictResolverAverageUse;
-			internalConflictResolverFree = internalConflictResolverFree - internalConflictResolverAverageUse;
+					BoundAmbiguousElementConflictResolver[] boundAmbiguousElementConflictResolver,
+					BoundUnresolvedElementConflictResolver[] boundUnresolvedElementConflictResolver,
+					BoundAttributeConflictResolver[] boundAttributeConflictResolver){
+		int ambiguousElementConflictResolverFillCount;
+		if(ambiguousElementConflictResolver == null || ambiguousElementConflictResolver.length < ambiguousElementConflictResolverAverageUse)
+			ambiguousElementConflictResolver = new AmbiguousElementConflictResolver[ambiguousElementConflictResolverAverageUse];
+		if(ambiguousElementConflictResolverFree > ambiguousElementConflictResolverAverageUse){
+			ambiguousElementConflictResolverFillCount = ambiguousElementConflictResolverAverageUse;
+			ambiguousElementConflictResolverFree = ambiguousElementConflictResolverFree - ambiguousElementConflictResolverAverageUse;
 		}else{
-			internalConflictResolverFillCount = internalConflictResolverFree;
-			internalConflictResolverFree = 0;
+			ambiguousElementConflictResolverFillCount = ambiguousElementConflictResolverFree;
+			ambiguousElementConflictResolverFree = 0;
 		}		
-		System.arraycopy(this.internalConflictResolver, internalConflictResolverFree, 
-							internalConflictResolver, 0, internalConflictResolverFillCount);
+		System.arraycopy(this.ambiguousElementConflictResolver, ambiguousElementConflictResolverFree, 
+							ambiguousElementConflictResolver, 0, ambiguousElementConflictResolverFillCount);
         
         
+		int unresolvedElementConflictResolverFillCount;
+		if(unresolvedElementConflictResolver == null || unresolvedElementConflictResolver.length < unresolvedElementConflictResolverAverageUse)
+			unresolvedElementConflictResolver = new UnresolvedElementConflictResolver[unresolvedElementConflictResolverAverageUse];
+		if(unresolvedElementConflictResolverFree > unresolvedElementConflictResolverAverageUse){
+			unresolvedElementConflictResolverFillCount = unresolvedElementConflictResolverAverageUse;
+			unresolvedElementConflictResolverFree = unresolvedElementConflictResolverFree - unresolvedElementConflictResolverAverageUse;
+		}else{
+			unresolvedElementConflictResolverFillCount = unresolvedElementConflictResolverFree;
+			unresolvedElementConflictResolverFree = 0;
+		}		
+		System.arraycopy(this.unresolvedElementConflictResolver, unresolvedElementConflictResolverFree, 
+							unresolvedElementConflictResolver, 0, unresolvedElementConflictResolverFillCount);
+        
+		
+		int attributeConflictResolverFillCount;
+		if(attributeConflictResolver == null || attributeConflictResolver.length < attributeConflictResolverAverageUse)
+			attributeConflictResolver = new AttributeConflictResolver[attributeConflictResolverAverageUse];
+		if(attributeConflictResolverFree > attributeConflictResolverAverageUse){
+			attributeConflictResolverFillCount = attributeConflictResolverAverageUse;
+			attributeConflictResolverFree = attributeConflictResolverFree - attributeConflictResolverAverageUse;
+		}else{
+			attributeConflictResolverFillCount = attributeConflictResolverFree;
+			attributeConflictResolverFree = 0;
+		}		
+		System.arraycopy(this.attributeConflictResolver, attributeConflictResolverFree, 
+							attributeConflictResolver, 0, attributeConflictResolverFillCount);
+        
+		int charsConflictResolverFillCount;
+		if(charsConflictResolver == null || charsConflictResolver.length < charsConflictResolverAverageUse)
+			charsConflictResolver = new CharsConflictResolver[charsConflictResolverAverageUse];
+		if(charsConflictResolverFree > charsConflictResolverAverageUse){
+			charsConflictResolverFillCount = charsConflictResolverAverageUse;
+			charsConflictResolverFree = charsConflictResolverFree - charsConflictResolverAverageUse;
+		}else{
+			charsConflictResolverFillCount = charsConflictResolverFree;
+			charsConflictResolverFree = 0;
+		}		
+		System.arraycopy(this.charsConflictResolver, charsConflictResolverFree, 
+							charsConflictResolver, 0, charsConflictResolverFillCount);
+        
+		
         int listTokenConflictResolverFillCount;
 		if(listTokenConflictResolver == null || listTokenConflictResolver.length < listTokenConflictResolverAverageUse)
 			listTokenConflictResolver = new ListTokenConflictResolver[listTokenConflictResolverAverageUse];
@@ -122,63 +209,128 @@ public class ConflictHandlerPool{
 		System.arraycopy(this.listTokenConflictResolver, listTokenConflictResolverFree, 
 							listTokenConflictResolver, 0, listTokenConflictResolverFillCount);
 		
-		int boundInternalConflictResolverFillCount;
-		if(boundInternalConflictResolver == null || boundInternalConflictResolver.length < boundInternalConflictResolverAverageUse)
-			boundInternalConflictResolver = new BoundInternalConflictResolver[boundInternalConflictResolverAverageUse];
-		if(boundInternalConflictResolverFree > boundInternalConflictResolverAverageUse){
-			boundInternalConflictResolverFillCount = boundInternalConflictResolverAverageUse;
-			boundInternalConflictResolverFree = boundInternalConflictResolverFree - boundInternalConflictResolverAverageUse;
+		int boundAmbiguousElementConflictResolverFillCount;
+		if(boundAmbiguousElementConflictResolver == null || boundAmbiguousElementConflictResolver.length < boundAmbiguousElementConflictResolverAverageUse)
+			boundAmbiguousElementConflictResolver = new BoundAmbiguousElementConflictResolver[boundAmbiguousElementConflictResolverAverageUse];
+		if(boundAmbiguousElementConflictResolverFree > boundAmbiguousElementConflictResolverAverageUse){
+			boundAmbiguousElementConflictResolverFillCount = boundAmbiguousElementConflictResolverAverageUse;
+			boundAmbiguousElementConflictResolverFree = boundAmbiguousElementConflictResolverFree - boundAmbiguousElementConflictResolverAverageUse;
 		}else{
-			boundInternalConflictResolverFillCount = boundInternalConflictResolverFree;
-			boundInternalConflictResolverFree = 0;
+			boundAmbiguousElementConflictResolverFillCount = boundAmbiguousElementConflictResolverFree;
+			boundAmbiguousElementConflictResolverFree = 0;
 		}		
-		System.arraycopy(this.boundInternalConflictResolver, boundInternalConflictResolverFree, 
-							boundInternalConflictResolver, 0, boundInternalConflictResolverFillCount);
+		System.arraycopy(this.boundAmbiguousElementConflictResolver, boundAmbiguousElementConflictResolverFree, 
+							boundAmbiguousElementConflictResolver, 0, boundAmbiguousElementConflictResolverFillCount);
 		
-		int contextConflictResolverFillCount;
-		if(contextConflictResolver == null || contextConflictResolver.length < contextConflictResolverAverageUse)
-			contextConflictResolver = new ContextConflictResolver[contextConflictResolverAverageUse];
-		if(contextConflictResolverFree > contextConflictResolverAverageUse){
-			contextConflictResolverFillCount = contextConflictResolverAverageUse;
-			contextConflictResolverFree = contextConflictResolverFree - contextConflictResolverAverageUse;
+		int boundUnresolvedElementConflictResolverFillCount;
+		if(boundUnresolvedElementConflictResolver == null || boundUnresolvedElementConflictResolver.length < boundUnresolvedElementConflictResolverAverageUse)
+			boundUnresolvedElementConflictResolver = new BoundUnresolvedElementConflictResolver[boundUnresolvedElementConflictResolverAverageUse];
+		if(boundUnresolvedElementConflictResolverFree > boundUnresolvedElementConflictResolverAverageUse){
+			boundUnresolvedElementConflictResolverFillCount = boundUnresolvedElementConflictResolverAverageUse;
+			boundUnresolvedElementConflictResolverFree = boundUnresolvedElementConflictResolverFree - boundUnresolvedElementConflictResolverAverageUse;
 		}else{
-			contextConflictResolverFillCount = contextConflictResolverFree;
-			contextConflictResolverFree = 0;
+			boundUnresolvedElementConflictResolverFillCount = boundUnresolvedElementConflictResolverFree;
+			boundUnresolvedElementConflictResolverFree = 0;
 		}		
-		System.arraycopy(this.contextConflictResolver, contextConflictResolverFree, 
-							contextConflictResolver, 0, contextConflictResolverFillCount);
+		System.arraycopy(this.boundUnresolvedElementConflictResolver, boundUnresolvedElementConflictResolverFree, 
+							boundUnresolvedElementConflictResolver, 0, boundUnresolvedElementConflictResolverFillCount);
+		
+		
+		int boundAttributeConflictResolverFillCount;
+		if(boundAttributeConflictResolver == null || boundAttributeConflictResolver.length < boundAttributeConflictResolverAverageUse)
+			boundAttributeConflictResolver = new BoundAttributeConflictResolver[boundAttributeConflictResolverAverageUse];
+		if(boundAttributeConflictResolverFree > boundAttributeConflictResolverAverageUse){
+			boundAttributeConflictResolverFillCount = boundAttributeConflictResolverAverageUse;
+			boundAttributeConflictResolverFree = boundAttributeConflictResolverFree - boundAttributeConflictResolverAverageUse;
+		}else{
+			boundAttributeConflictResolverFillCount = boundAttributeConflictResolverFree;
+			boundAttributeConflictResolverFree = 0;
+		}		
+		System.arraycopy(this.boundAttributeConflictResolver, boundAttributeConflictResolverFree, 
+							boundAttributeConflictResolver, 0, boundAttributeConflictResolverFillCount);
 		
 				
-		pool.setHandlers(internalConflictResolverFillCount,
-							internalConflictResolver,
+		pool.setHandlers(ambiguousElementConflictResolverFillCount,
+							ambiguousElementConflictResolver,
+							unresolvedElementConflictResolverFillCount,
+							unresolvedElementConflictResolver,
+							attributeConflictResolverFillCount,
+							attributeConflictResolver,
+							charsConflictResolverFillCount,
+							charsConflictResolver,
                             listTokenConflictResolverFillCount,
 							listTokenConflictResolver,
-							boundInternalConflictResolverFillCount,
-							boundInternalConflictResolver,
-							contextConflictResolverFillCount,
-							contextConflictResolver);
+							boundAmbiguousElementConflictResolverFillCount,
+							boundAmbiguousElementConflictResolver,
+							boundUnresolvedElementConflictResolverFillCount,
+							boundUnresolvedElementConflictResolver,
+							boundAttributeConflictResolverFillCount,
+							boundAttributeConflictResolver);
 	}
 	
-	synchronized void recycle(int internalConflictResolverAverageUse,
-						InternalConflictResolver[] internalConflictResolver,
+	synchronized void recycle(int ambiguousElementConflictResolverAverageUse,
+						AmbiguousElementConflictResolver[] ambiguousElementConflictResolver,
+						int unresolvedElementConflictResolverAverageUse,
+						UnresolvedElementConflictResolver[] unresolvedElementConflictResolver,
+						int attributeConflictResolverAverageUse,
+						AttributeConflictResolver[] attributeConflictResolver,
+						int charsConflictResolverAverageUse,
+						CharsConflictResolver[] charsConflictResolver,
                         int listTokenConflictResolverAverageUse,
 						ListTokenConflictResolver[] listTokenConflictResolver,
-						int boundInternalConflictResolverAverageUse,
-						BoundInternalConflictResolver[] boundInternalConflictResolver,
-						int contextConflictResolverAverageUse,
-						ContextConflictResolver[] contextConflictResolver){
-		if(internalConflictResolverFree + internalConflictResolverAverageUse >= internalConflictResolverPoolSize){			 
-			internalConflictResolverPoolSize+= internalConflictResolverAverageUse;
-			InternalConflictResolver[] increased = new InternalConflictResolver[internalConflictResolverPoolSize];
-			System.arraycopy(this.internalConflictResolver, 0, increased, 0, internalConflictResolverFree);
-			this.internalConflictResolver = increased;
+						int boundAmbiguousElementConflictResolverAverageUse,
+						BoundAmbiguousElementConflictResolver[] boundAmbiguousElementConflictResolver,
+						int boundUnresolvedElementConflictResolverAverageUse,
+						BoundUnresolvedElementConflictResolver[] boundUnresolvedElementConflictResolver,
+						int boundAttributeConflictResolverAverageUse,
+						BoundAttributeConflictResolver[] boundAttributeConflictResolver){
+		if(ambiguousElementConflictResolverFree + ambiguousElementConflictResolverAverageUse >= ambiguousElementConflictResolverPoolSize){			 
+			ambiguousElementConflictResolverPoolSize+= ambiguousElementConflictResolverAverageUse;
+			AmbiguousElementConflictResolver[] increased = new AmbiguousElementConflictResolver[ambiguousElementConflictResolverPoolSize];
+			System.arraycopy(this.ambiguousElementConflictResolver, 0, increased, 0, ambiguousElementConflictResolverFree);
+			this.ambiguousElementConflictResolver = increased;
 		}
-		System.arraycopy(internalConflictResolver, 0, this.internalConflictResolver, internalConflictResolverFree, internalConflictResolverAverageUse);
-		internalConflictResolverFree += internalConflictResolverAverageUse;
-		if(this.internalConflictResolverAverageUse != 0) this.internalConflictResolverAverageUse = (this.internalConflictResolverAverageUse + internalConflictResolverAverageUse)/2;
-		else this.internalConflictResolverAverageUse = internalConflictResolverAverageUse;
-		//System.out.println("internalConflictResolver "+this.internalConflictResolverAverageUse);
+		System.arraycopy(ambiguousElementConflictResolver, 0, this.ambiguousElementConflictResolver, ambiguousElementConflictResolverFree, ambiguousElementConflictResolverAverageUse);
+		ambiguousElementConflictResolverFree += ambiguousElementConflictResolverAverageUse;
+		if(this.ambiguousElementConflictResolverAverageUse != 0) this.ambiguousElementConflictResolverAverageUse = (this.ambiguousElementConflictResolverAverageUse + ambiguousElementConflictResolverAverageUse)/2;
+		else this.ambiguousElementConflictResolverAverageUse = ambiguousElementConflictResolverAverageUse;
+		//System.out.println("ambiguousElementConflictResolver "+this.ambiguousElementConflictResolverAverageUse);
+		
+		if(unresolvedElementConflictResolverFree + unresolvedElementConflictResolverAverageUse >= unresolvedElementConflictResolverPoolSize){			 
+			unresolvedElementConflictResolverPoolSize+= unresolvedElementConflictResolverAverageUse;
+			UnresolvedElementConflictResolver[] increased = new UnresolvedElementConflictResolver[unresolvedElementConflictResolverPoolSize];
+			System.arraycopy(this.unresolvedElementConflictResolver, 0, increased, 0, unresolvedElementConflictResolverFree);
+			this.unresolvedElementConflictResolver = increased;
+		}
+		System.arraycopy(unresolvedElementConflictResolver, 0, this.unresolvedElementConflictResolver, unresolvedElementConflictResolverFree, unresolvedElementConflictResolverAverageUse);
+		unresolvedElementConflictResolverFree += unresolvedElementConflictResolverAverageUse;
+		if(this.unresolvedElementConflictResolverAverageUse != 0) this.unresolvedElementConflictResolverAverageUse = (this.unresolvedElementConflictResolverAverageUse + unresolvedElementConflictResolverAverageUse)/2;
+		else this.unresolvedElementConflictResolverAverageUse = unresolvedElementConflictResolverAverageUse;
+		//System.out.println("unresolvedElementConflictResolver "+this.unresolvedElementConflictResolverAverageUse);
         
+		if(attributeConflictResolverFree + attributeConflictResolverAverageUse >= attributeConflictResolverPoolSize){			 
+			attributeConflictResolverPoolSize+= attributeConflictResolverAverageUse;
+			AttributeConflictResolver[] increased = new AttributeConflictResolver[attributeConflictResolverPoolSize];
+			System.arraycopy(this.attributeConflictResolver, 0, increased, 0, attributeConflictResolverFree);
+			this.attributeConflictResolver = increased;
+		}
+		System.arraycopy(attributeConflictResolver, 0, this.attributeConflictResolver, attributeConflictResolverFree, attributeConflictResolverAverageUse);
+		attributeConflictResolverFree += attributeConflictResolverAverageUse;
+		if(this.attributeConflictResolverAverageUse != 0) this.attributeConflictResolverAverageUse = (this.attributeConflictResolverAverageUse + attributeConflictResolverAverageUse)/2;
+		else this.attributeConflictResolverAverageUse = attributeConflictResolverAverageUse;
+		//System.out.println("attributeConflictResolver "+this.attributeConflictResolverAverageUse);
+        
+		if(charsConflictResolverFree + charsConflictResolverAverageUse >= charsConflictResolverPoolSize){			 
+			charsConflictResolverPoolSize+= charsConflictResolverAverageUse;
+			CharsConflictResolver[] increased = new CharsConflictResolver[charsConflictResolverPoolSize];
+			System.arraycopy(this.charsConflictResolver, 0, increased, 0, charsConflictResolverFree);
+			this.charsConflictResolver = increased;
+		}
+		System.arraycopy(charsConflictResolver, 0, this.charsConflictResolver, charsConflictResolverFree, charsConflictResolverAverageUse);
+		charsConflictResolverFree += charsConflictResolverAverageUse;
+		if(this.charsConflictResolverAverageUse != 0) this.charsConflictResolverAverageUse = (this.charsConflictResolverAverageUse + charsConflictResolverAverageUse)/2;
+		else this.charsConflictResolverAverageUse = charsConflictResolverAverageUse;
+		//System.out.println("charsConflictResolver "+this.charsConflictResolverAverageUse);
         
         if(listTokenConflictResolverFree + listTokenConflictResolverAverageUse >= listTokenConflictResolverPoolSize){			 
 			listTokenConflictResolverPoolSize+= listTokenConflictResolverAverageUse;
@@ -193,30 +345,43 @@ public class ConflictHandlerPool{
 		//System.out.println("listTokenConflictResolver "+this.listTokenConflictResolverAverageUse);
 		
 		
-		if(boundInternalConflictResolverFree + boundInternalConflictResolverAverageUse >= boundInternalConflictResolverPoolSize){			 
-			boundInternalConflictResolverPoolSize+= boundInternalConflictResolverAverageUse;
-			BoundInternalConflictResolver[] increased = new BoundInternalConflictResolver[boundInternalConflictResolverPoolSize];
-			System.arraycopy(this.boundInternalConflictResolver, 0, increased, 0, boundInternalConflictResolverFree);
-			this.boundInternalConflictResolver = increased;
+		if(boundAmbiguousElementConflictResolverFree + boundAmbiguousElementConflictResolverAverageUse >= boundAmbiguousElementConflictResolverPoolSize){			 
+			boundAmbiguousElementConflictResolverPoolSize+= boundAmbiguousElementConflictResolverAverageUse;
+			BoundAmbiguousElementConflictResolver[] increased = new BoundAmbiguousElementConflictResolver[boundAmbiguousElementConflictResolverPoolSize];
+			System.arraycopy(this.boundAmbiguousElementConflictResolver, 0, increased, 0, boundAmbiguousElementConflictResolverFree);
+			this.boundAmbiguousElementConflictResolver = increased;
 		}
-		System.arraycopy(boundInternalConflictResolver, 0, this.boundInternalConflictResolver, boundInternalConflictResolverFree, boundInternalConflictResolverAverageUse);
-		boundInternalConflictResolverFree += boundInternalConflictResolverAverageUse;
-		if(this.boundInternalConflictResolverAverageUse != 0) this.boundInternalConflictResolverAverageUse = (this.boundInternalConflictResolverAverageUse + boundInternalConflictResolverAverageUse)/2;
-		else this.boundInternalConflictResolverAverageUse = boundInternalConflictResolverAverageUse;
-		//System.out.println("boundInternalConflictResolver "+this.boundInternalConflictResolverAverageUse);
+		System.arraycopy(boundAmbiguousElementConflictResolver, 0, this.boundAmbiguousElementConflictResolver, boundAmbiguousElementConflictResolverFree, boundAmbiguousElementConflictResolverAverageUse);
+		boundAmbiguousElementConflictResolverFree += boundAmbiguousElementConflictResolverAverageUse;
+		if(this.boundAmbiguousElementConflictResolverAverageUse != 0) this.boundAmbiguousElementConflictResolverAverageUse = (this.boundAmbiguousElementConflictResolverAverageUse + boundAmbiguousElementConflictResolverAverageUse)/2;
+		else this.boundAmbiguousElementConflictResolverAverageUse = boundAmbiguousElementConflictResolverAverageUse;
+		//System.out.println("boundAmbiguousElementConflictResolver "+this.boundAmbiguousElementConflictResolverAverageUse);
 		
 		
-		if(contextConflictResolverFree + contextConflictResolverAverageUse >= contextConflictResolverPoolSize){			 
-			contextConflictResolverPoolSize+= contextConflictResolverAverageUse;
-			ContextConflictResolver[] increased = new ContextConflictResolver[contextConflictResolverPoolSize];
-			System.arraycopy(this.contextConflictResolver, 0, increased, 0, contextConflictResolverFree);
-			this.contextConflictResolver = increased;
+		if(boundUnresolvedElementConflictResolverFree + boundUnresolvedElementConflictResolverAverageUse >= boundUnresolvedElementConflictResolverPoolSize){			 
+			boundUnresolvedElementConflictResolverPoolSize+= boundUnresolvedElementConflictResolverAverageUse;
+			BoundUnresolvedElementConflictResolver[] increased = new BoundUnresolvedElementConflictResolver[boundUnresolvedElementConflictResolverPoolSize];
+			System.arraycopy(this.boundUnresolvedElementConflictResolver, 0, increased, 0, boundUnresolvedElementConflictResolverFree);
+			this.boundUnresolvedElementConflictResolver = increased;
 		}
-		System.arraycopy(contextConflictResolver, 0, this.contextConflictResolver, contextConflictResolverFree, contextConflictResolverAverageUse);
-		contextConflictResolverFree += contextConflictResolverAverageUse;
-		if(this.contextConflictResolverAverageUse != 0) this.contextConflictResolverAverageUse = (this.contextConflictResolverAverageUse + contextConflictResolverAverageUse)/2;
-		else this.contextConflictResolverAverageUse = contextConflictResolverAverageUse;
-		//System.out.println("contextConflictResolver "+this.contextConflictResolverAverageUse);		
+		System.arraycopy(boundUnresolvedElementConflictResolver, 0, this.boundUnresolvedElementConflictResolver, boundUnresolvedElementConflictResolverFree, boundUnresolvedElementConflictResolverAverageUse);
+		boundUnresolvedElementConflictResolverFree += boundUnresolvedElementConflictResolverAverageUse;
+		if(this.boundUnresolvedElementConflictResolverAverageUse != 0) this.boundUnresolvedElementConflictResolverAverageUse = (this.boundUnresolvedElementConflictResolverAverageUse + boundUnresolvedElementConflictResolverAverageUse)/2;
+		else this.boundUnresolvedElementConflictResolverAverageUse = boundUnresolvedElementConflictResolverAverageUse;
+		//System.out.println("boundUnresolvedElementConflictResolver "+this.boundUnresolvedElementConflictResolverAverageUse);
+		
+		
+		if(boundAttributeConflictResolverFree + boundAttributeConflictResolverAverageUse >= boundAttributeConflictResolverPoolSize){			 
+			boundAttributeConflictResolverPoolSize+= boundAttributeConflictResolverAverageUse;
+			BoundAttributeConflictResolver[] increased = new BoundAttributeConflictResolver[boundAttributeConflictResolverPoolSize];
+			System.arraycopy(this.boundAttributeConflictResolver, 0, increased, 0, boundAttributeConflictResolverFree);
+			this.boundAttributeConflictResolver = increased;
+		}
+		System.arraycopy(boundAttributeConflictResolver, 0, this.boundAttributeConflictResolver, boundAttributeConflictResolverFree, boundAttributeConflictResolverAverageUse);
+		boundAttributeConflictResolverFree += boundAttributeConflictResolverAverageUse;
+		if(this.boundAttributeConflictResolverAverageUse != 0) this.boundAttributeConflictResolverAverageUse = (this.boundAttributeConflictResolverAverageUse + boundAttributeConflictResolverAverageUse)/2;
+		else this.boundAttributeConflictResolverAverageUse = boundAttributeConflictResolverAverageUse;
+		//System.out.println("boundAttributeConflictResolver "+this.boundAttributeConflictResolverAverageUse);		
 		
 	}
 	

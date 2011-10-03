@@ -19,6 +19,8 @@ package serene.validation.handlers.content.impl;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.xml.sax.SAXException;
+
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 
@@ -83,7 +85,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		return null;
 	}
 	
-	public void handleChars(char[] chars, DataActiveType type){
+	public void handleChars(char[] chars, DataActiveType type) throws SAXException{
 		charsItemMatches.clear();		
 		textMatches.clear();
 		dataMatches.clear();
@@ -102,7 +104,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		handleAddToParent(type);
 	}
 	
-	public void handleChars(char[] chars, StructuredDataActiveType type){
+	public void handleChars(char[] chars, StructuredDataActiveType type) throws SAXException{
 		charsItemMatches.clear();
 		textMatches.clear();
 		dataMatches.clear();
@@ -123,7 +125,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		if(!listMatches.isEmpty())validateListPattern(chars, type);
 		handleAddToParent(type);		
 	}
-	public void handleChars(char[] chars, CharsActiveType type, boolean isComplexContent){		
+	public void handleChars(char[] chars, CharsActiveType type, boolean isComplexContent) throws SAXException{		
 		charsItemMatches.clear();
         if(isComplexContent){
             textMatches.clear();
@@ -161,7 +163,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 	}
 		
 	
-	public void handleString(String value, DataActiveType type){
+	public void handleString(String value, DataActiveType type) throws SAXException{
 		charsItemMatches.clear();
 		textMatches.clear();
 		dataMatches.clear();
@@ -179,7 +181,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		
 		handleAddToParent(type);
 	}
-	public void handleString(String value, StructuredDataActiveType type){
+	public void handleString(String value, StructuredDataActiveType type) throws SAXException{
 		charsItemMatches.clear();
 		textMatches.clear();
 		dataMatches.clear();
@@ -201,7 +203,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		
 		handleAddToParent(type);
 	}
-	public void handleString(String value, CharsActiveType type, boolean isComplexContent){
+	public void handleString(String value, CharsActiveType type, boolean isComplexContent) throws SAXException{
         charsItemMatches.clear();
         if(isComplexContent){
             textMatches.clear();
@@ -240,7 +242,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		handleAddToParent(type);
 	}
 	
-	void validateData(char[] chars, DataActiveType type){
+	void validateData(char[] chars, DataActiveType type) throws SAXException{
 		for(int i = 0; i < dataMatches.size(); i++){
 			AData data = dataMatches.get(i);
 			try{
@@ -267,7 +269,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		}
 	}
 	
-	void validateData(String value, DataActiveType type){		
+	void validateData(String value, DataActiveType type) throws SAXException{		
 		for(int i = 0; i < dataMatches.size(); i++){
 			AData data = dataMatches.get(i);
 			try{
@@ -350,7 +352,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		}
 	}
 	
-	void validateListPattern(char[] chars, StructuredDataActiveType type){		
+	void validateListPattern(char[] chars, StructuredDataActiveType type) throws SAXException{		
 		ListPatternTester ept = pool.getListPatternTester(charsItemMatches, totalCount, errorCatcher);  
 		for(int i = 0; i < listMatches.size(); i++){
 			AListPattern list = listMatches.get(i);
@@ -359,7 +361,7 @@ abstract class AbstractCVH implements CharactersEventHandler{
 		ept.recycle();
 	}
 	
-	void validateListPattern(String value, StructuredDataActiveType type){		
+	void validateListPattern(String value, StructuredDataActiveType type) throws SAXException{		
 		ListPatternTester ept = pool.getListPatternTester(charsItemMatches, totalCount, errorCatcher);  
 		for(int i = 0; i < listMatches.size(); i++){
 			AListPattern list = listMatches.get(i);

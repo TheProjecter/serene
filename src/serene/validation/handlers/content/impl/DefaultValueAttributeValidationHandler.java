@@ -19,6 +19,8 @@ package serene.validation.handlers.content.impl;
 
 import java.util.List;
 
+import org.xml.sax.SAXException;
+
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.CharsActiveType;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
@@ -75,11 +77,11 @@ class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler 
         return null;
     }
     
-	public void handleAttribute(String value){
+	public void handleAttribute(String value) throws SAXException{
 		validateValue(value);
 	}	
     
-    void validateValue(String value){
+    void validateValue(String value) throws SAXException{
 		if(!attribute.allowsChars()){
 			errorCatcher.unexpectedAttributeValue(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), attribute);
 			return;

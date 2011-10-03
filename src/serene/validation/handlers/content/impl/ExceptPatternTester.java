@@ -19,6 +19,8 @@ package serene.validation.handlers.content.impl;
 import java.util.Arrays;
 import java.util.List;
 
+import org.xml.sax.SAXException;
+
 import org.relaxng.datatype.ValidationContext;
 import org.relaxng.datatype.DatatypeException;
 
@@ -73,7 +75,7 @@ class ExceptPatternTester extends AbstractCVH{
 	public void handleChars(char[] chars, DataActiveType type){
 		throw new IllegalStateException();
 	}
-	public void handleChars(char[] chars, StructuredDataActiveType type){	
+	public void handleChars(char[] chars, StructuredDataActiveType type) throws SAXException{	
 		state.handleChars(chars, type);
 	}
 	public void handleChars(char[] chars, CharsActiveType type, boolean isComplexContent){
@@ -84,7 +86,7 @@ class ExceptPatternTester extends AbstractCVH{
 	public void handleString(String value, DataActiveType type){
 		throw new IllegalStateException();
 	}	
-	public void handleString(String value, StructuredDataActiveType type){
+	public void handleString(String value, StructuredDataActiveType type) throws SAXException{
 		state.handleString(value, type);
 	}
 	public void handleString(String value, CharsActiveType type, boolean isComplexContent){

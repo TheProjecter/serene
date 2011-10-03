@@ -25,6 +25,8 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.active.components.AElement;
 
 import serene.validation.handlers.error.ContextErrorHandlerManager;
+import serene.validation.handlers.error.MessageReporter;
+import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.validation.handlers.content.BoundElementHandler;
 
@@ -151,35 +153,33 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
         return baph;
     }
     
-	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{		
+	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{	    		
 		validateContext();	
 		reportContextErrors(restrictToFileName, locator);	
 		elementTasksBinding();			
 		validateInContext();		
 	}	
-	
+		
+		
 	void validateInContext(){
-		int candidatesCount = candidates.size();		
-		int qualifiedCount = candidatesCount - candidatesConflictHandler.getDisqualifiedCount();		
-		if(qualifiedCount == 0){
+	    int conflictResolutionIndex = contextErrorHandler[contextErrorHandlerIndex] == null ? getConflictResolutionId() : contextErrorHandler[contextErrorHandlerIndex].getConflictResolutionId();
+		if(conflictResolutionIndex == MessageReporter.UNRESOLVED){						
 			// Shift all with errors, hope the parent context disqualifies all but 1
-			// Why shift, they all have errors already, noone in his right mind should bind them??? 
+			// Why shift, they all have errors already??? 
 			// Maybe the parent actually expects one of them and not shifting 
-			// results in a fake error.						
-			//parent.addChildElement(candidateDefinitions);
-			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, queue, queueStartEntry, mapCandidateToQueue());
-		}else if(qualifiedCount == 1){			
+			// results in a fake error.			
+			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter(), queue, queueStartEntry, mapCandidateToQueue());
+		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
 			AElement qElement = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
-			parent.addChildElement(qElement);
-		}else if(qualifiedCount > 1){
+			parent.addChildElement(qElement);			
+		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
 			// TODO Maybe a warning
-			// Shift all without errors, hope the parent conflict disqualifies all but one
-			// need to know:
-			// 	candidate - queue mapping
-			//	reservationStartEntry = queueStartEntry+1
-			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, candidatesConflictHandler, queue, queueStartEntry, mapCandidateToQueue());
+			// Shift all without errors, hope the parent conflict disqualifies all but one	
+			ConflictMessageReporter cmr = null;
+			if(contextErrorHandler[contextErrorHandlerIndex] != null) cmr = contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();
+			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, candidatesConflictHandler, cmr, queue, queueStartEntry, mapCandidateToQueue());
 		}
-	}		
+	}
 	
 	private HashMap<AElement, Queue> mapCandidateToQueue(){
 		HashMap<AElement, Queue> map = new HashMap<AElement, Queue>();

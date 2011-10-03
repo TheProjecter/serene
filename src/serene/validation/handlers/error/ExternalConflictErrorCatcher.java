@@ -19,5 +19,5 @@ package serene.validation.handlers.error;
 import java.util.BitSet;
 
 interface ExternalConflictErrorCatcher extends ErrorCatcher{
-    void conflict(MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter[] candidatesMessages);
+    void conflict(int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter[] candidatesMessages);
 }

@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.handlers.content.impl;
 
+import org.xml.sax.SAXException;
+
 import sereneWrite.MessageWriter;
 
 abstract class ValidatingAEH extends ComparableAEH{
@@ -24,10 +26,10 @@ abstract class ValidatingAEH extends ComparableAEH{
 		super(debugWriter);
 	}
 	
-	public void handleAttribute(String value){
+	public void handleAttribute(String value) throws SAXException{
 		validateValue(value);
 		validateInContext();
 	}	
 	
-	abstract void validateValue(String value);	
+	abstract void validateValue(String value) throws SAXException;	
 }

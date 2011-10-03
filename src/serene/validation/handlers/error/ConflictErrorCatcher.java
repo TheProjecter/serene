@@ -96,7 +96,14 @@ interface ConflictErrorCatcher extends ErrorType{
 								int lineNumber,		
 								int columnNumber);    
     
-	void ambiguousElementContentError(int functionalEquivalenceCode, 
+	void unresolvedAmbiguousElementContentError(int functionalEquivalenceCode, 
+                                    String qName, 
+									String systemId, 
+									int lineNumber, 
+									int columnNumber, 
+									AElement[] possibleDefinitions);
+	
+	void unresolvedUnresolvedElementContentError(int functionalEquivalenceCode, 
                                     String qName, 
 									String systemId, 
 									int lineNumber, 
@@ -117,7 +124,8 @@ interface ConflictErrorCatcher extends ErrorType{
 									CharsActiveTypeItem[] possibleDefinitions);
 	
 
-    void ambiguousElementContentWarning(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
+    void ambiguousUnresolvedElementContentWarning(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
+    void ambiguousAmbiguousElementContentWarning(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
 	void ambiguousAttributeContentWarning(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions);
 	void ambiguousCharsContentWarning(int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
 
@@ -185,5 +193,5 @@ interface ConflictErrorCatcher extends ErrorType{
 								int expected, 
 								int found);
     
-    void conflict(int functionalEquivalenceCode, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter[] candidateMessages);
+    void conflict(int functionalEquivalenceCode, int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter[] candidateMessages);
 }

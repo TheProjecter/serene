@@ -91,7 +91,7 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.unknownAttribute( qName, systemId, lineNumber, columnNumber);		
 	}	
 	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);	
+		messageHandler.unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);
 	}	
 	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
 		messageHandler.unexpectedAmbiguousAttribute( qName, definition, systemId, lineNumber, columnNumber);	
@@ -123,8 +123,12 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.illegalContent(context, startQName, startSystemId, startLineNumber, startColumnNumber);
 	}
 	
-	public void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		messageHandler.ambiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		messageHandler.unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
+	
+	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		messageHandler.unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
@@ -135,8 +139,12 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.ambiguousCharsContentError(systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
-	public void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		messageHandler.ambiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		messageHandler.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	}
+	
+	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+		messageHandler.ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
 	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
@@ -211,10 +219,14 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
 	}
     
-    public  void conflict(MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){
-		messageHandler.conflict(commonMessages, candidatesCount, disqualified, candidateMessages);
+    public  void conflict(int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){
+		messageHandler.conflict(conflictResolutionId, commonMessages, candidatesCount, disqualified, candidateMessages);
     }
 	
+    public void internalConflict(ConflictMessageReporter conflictMessageReporter){
+	    candidatesConflictErrorHandler.delayMessageReporter(conflictMessageReporter, isCandidate); // isCandidate???
+    }
+    
 	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 				throws SAXException{
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, definition, locator, messageHandler, isCandidate);
@@ -224,7 +236,23 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 					throws SAXException{
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, locator, messageHandler, isCandidate);
 	}
-	
+    
+    public void record(int contextType, String qName, boolean restrictToFileName, Locator locator){
+	    messageHandler.setContextQName(qName);
+        messageHandler.setContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
+        messageHandler.setContextType(contextType);
+        messageHandler.setRestrictToFileName(restrictToFileName);
+	}
+		
+    
+    public int getConflictResolutionId(){
+        return messageHandler.getConflictResolutionId();
+    }
+	    
+    public ConflictMessageReporter getConflictMessageReporter(){
+        return messageHandler.getConflictMessageReporter(errorDispatcher);
+    } 
+    
 	public String toString(){
 		//return "CommonErrorHandler "+hashCode() ;
 		return "CommonErrorHandler ";

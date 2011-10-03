@@ -18,6 +18,8 @@ package serene.validation.handlers.content.impl;
 
 import java.util.List;
 
+import org.xml.sax.SAXException;
+
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 
@@ -73,7 +75,7 @@ abstract class ListPatternTesterState extends AbstractCVH  implements ErrorCatch
 		throw new IllegalStateException();
 	}	
 	
-	void validateData(char[] chars, DataActiveType type){		
+	void validateData(char[] chars, DataActiveType type) throws SAXException{		
 		for(int i = 0; i < dataMatches.size(); i++){
 			AData data = dataMatches.get(i);
 			try{
@@ -101,7 +103,7 @@ abstract class ListPatternTesterState extends AbstractCVH  implements ErrorCatch
 		}
 	}
 	
-	void validateData(String value, DataActiveType type){		
+	void validateData(String value, DataActiveType type) throws SAXException{		
 		for(int i = 0; i < dataMatches.size(); i++){
 			AData data = dataMatches.get(i);
 			try{

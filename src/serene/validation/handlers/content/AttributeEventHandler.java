@@ -21,6 +21,6 @@ import org.xml.sax.SAXException;
 
 
 public interface AttributeEventHandler extends MarkupEventHandler{
-	void handleAttribute(String value);
+	void handleAttribute(String value) throws SAXException;
 	 ElementEventHandler getParentHandler();		
 }

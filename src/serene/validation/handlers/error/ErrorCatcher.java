@@ -18,6 +18,8 @@ package serene.validation.handlers.error;
 
 import java.util.List;
 
+import org.xml.sax.SAXException;
+
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ActiveTypeItem;
@@ -51,11 +53,13 @@ public interface ErrorCatcher extends ErrorType{
 	void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber);	
 	void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber);
 	
-	void ambiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
+	void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
+	void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
 	void ambiguousAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions);
 	void ambiguousCharsContentError(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
 	
-	void ambiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
+	void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
+	void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
 	void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions);
 	void ambiguousCharsContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
 	
@@ -85,4 +89,6 @@ public interface ErrorCatcher extends ErrorType{
 	void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
     
 	void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found);
+	
+	void internalConflict(ConflictMessageReporter conflictMessageReporter) throws SAXException;
 } 

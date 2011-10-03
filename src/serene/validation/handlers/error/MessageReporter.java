@@ -21,22 +21,26 @@ import org.xml.sax.SAXException;
 
 import serene.validation.schema.active.components.AElement;
 
-interface MessageReporter{    
+public interface MessageReporter{    
     int UNRESOLVED = 0;
     int RESOLVED = 1;    
     int AMBIGUOUS = 2;
     
     void setContextType(int contextType);
 	void setContextQName(String qName);
-	void setContextLocation(String systemId, int lineNumber, int columnNumber);
+	void setContextLocation(String publicId, String systemId, int lineNumber, int columnNumber);
 	void setContextDefinition(AElement definition);    
+	void setRestrictToFileName(boolean restrictToFileName);
     
     void setParent(MessageReporter parent);
     
-    void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException;
+    void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException;
     void report(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException;
     String getCandidateErrorMessage(String prefix, boolean restrictToFileName);
     String getErrorMessage(String prefix, boolean restrictToFileName);
     
     void setConflictResolutionId(int conflictResolutionId);
+    int getConflictResolutionId();
+    
+    ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher);
 }
