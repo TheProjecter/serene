@@ -179,19 +179,19 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
 	}
 	
 		
-	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String qName, String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int itemId, String qName, String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.misplacedElement(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+		contextErrorHandler.misplacedContent(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-    public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
+    public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.misplacedElement(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+		contextErrorHandler.misplacedContent(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
     

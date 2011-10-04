@@ -547,12 +547,13 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         }
 	}
 	
-	public void misplacedElement(int candidateIndex, int functionalEquivalenceCode, 
+	public void misplacedContent(int candidateIndex, int functionalEquivalenceCode, 
                                             APattern contextDefinition, 
 											String startSystemId, 
 											int startLineNumber, 
 											int startColumnNumber, 
 											APattern definition, 
+											int itemId, 
 											String qName, 
 											String systemId, 
 											int lineNumber, 
@@ -561,12 +562,13 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 											APattern reper){//not stored, only used for internal conflict handling
         recordError(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex);
         if(mustRecordErrorMessage(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex)){
-            localMessageHandler.misplacedElement(functionalEquivalenceCode,
+            localMessageHandler.misplacedContent(functionalEquivalenceCode,
                                                         contextDefinition, 
                                                         startSystemId, 
                                                         startLineNumber, 
                                                         startColumnNumber, 
-                                                        definition, 
+                                                        definition,
+                                                        itemId, 
                                                         qName, 
                                                         systemId, 
                                                         lineNumber, 
@@ -576,12 +578,13 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             setErrorMessageRecorded(MISPLACED_ELEMENT, functionalEquivalenceCode);
         }
 	}
-    public void misplacedElement(int candidateIndex, int functionalEquivalenceCode, 
+    public void misplacedContent(int candidateIndex, int functionalEquivalenceCode, 
                                             APattern contextDefinition, 
 											String startSystemId, 
 											int startLineNumber, 
 											int startColumnNumber, 
-											APattern definition, 
+											APattern definition,
+											int[] itemId, 
 											String[] qName, 
 											String[] systemId, 
 											int[] lineNumber, 
@@ -590,12 +593,13 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 											APattern reper){//not stored, only used for internal conflict handling
         recordError(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex);		        
         if(mustRecordErrorMessage(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex)){
-            localMessageHandler.misplacedElement(functionalEquivalenceCode,
+            localMessageHandler.misplacedContent(functionalEquivalenceCode,
                                                             contextDefinition, 
                                                             startSystemId, 
                                                             startLineNumber, 
                                                             startColumnNumber, 
-                                                            definition, 
+                                                            definition,
+                                                            itemId, 
                                                             qName, 
                                                             systemId, 
                                                             lineNumber, 

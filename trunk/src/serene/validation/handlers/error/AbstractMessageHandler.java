@@ -109,6 +109,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	int[] misplacedStartLineNumber;
 	int[] misplacedStartColumnNumber;
 	APattern[][] misplacedDefinition;
+	int[][][] misplacedItemId;
 	String[][][] misplacedQName;	
 	String[][][] misplacedSystemId;
 	int[][][] misplacedLineNumber;
@@ -866,7 +867,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 				+"\n"+prefix+"Misplaced content in the document structure starting at "+getLocation(restrictToFileName, misplacedStartSystemId[i])+":"+misplacedStartLineNumber[i]+":"+misplacedStartColumnNumber[i]+", corresponding to definition <"+misplacedContext[i].getQName()+"> at "+misplacedContext[i].getLocation(restrictToFileName)+ ":";
 				for(int j = 0; j < misplacedDefinition[i].length; j++){
 					for(int k = 0; k < misplacedQName[i][j].length; k++){
-						message += "\n"+prefix+"<"+misplacedQName[i][j][k]+"> at "+getLocation(restrictToFileName, misplacedSystemId[i][j][k])+":"+misplacedLineNumber[i][j][k]+":"+misplacedColumnNumber[i][j][k];
+						message += "\n"+prefix+getItemDescription(misplacedItemId[i][j][k], misplacedQName[i][j][k])+" at "+getLocation(restrictToFileName, misplacedSystemId[i][j][k])+":"+misplacedLineNumber[i][j][k]+":"+misplacedColumnNumber[i][j][k];
 					}
 					message += ", corresponding to definition <"+misplacedDefinition[i][j].getQName()+"> at "+misplacedDefinition[i][j].getLocation(restrictToFileName);
 				}

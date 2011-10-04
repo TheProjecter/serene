@@ -1,0 +1,30 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\syntax\listPattern\listOrder\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/listPattern/listOrder/document1.xml:2:15 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
+Order error.
+Misplaced content in the document structure starting at document1.xml:2:9, corresponding to definition <group> at schema.rng:4:12:
+list token "y" at document1.xml:2:9, corresponding to definition <value> at schema.rng:6:28.
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/listPattern/listOrder/document2.xml:2:16 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
+Order error.
+Misplaced content in the document structure starting at document2.xml:2:10, corresponding to definition <group> at schema.rng:4:12:
+list token "y" at document2.xml:2:10, corresponding to definition <value> at schema.rng:6:28.
+
+
+
+TESTED DOCUMENT document3.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/listPattern/listOrder/document3.xml:3:9 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
+Order error.
+Misplaced content in the document structure starting at document3.xml:2:7, corresponding to definition <group> at schema.rng:4:12:
+list token "y" at document3.xml:2:7, corresponding to definition <value> at schema.rng:6:28.

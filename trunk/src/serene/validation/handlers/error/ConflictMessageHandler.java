@@ -596,12 +596,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }	
     
-	public void misplacedElement(int functionalEquivalenceCode, 
+	public void misplacedContent(int functionalEquivalenceCode, 
                                             APattern contextDefinition, 
 											String startSystemId, 
 											int startLineNumber, 
 											int startColumnNumber, 
-											APattern definition, 
+											APattern definition,
+											int itemId, 
 											String qName, 
 											String systemId, 
 											int lineNumber, 
@@ -619,6 +620,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 				misplacedStartLineNumber = new int[misplacedSize];
 				misplacedStartColumnNumber = new int[misplacedSize];
 				misplacedDefinition = new APattern[misplacedSize][1];
+				misplacedItemId = new int[misplacedSize][1][1];
 				misplacedQName = new String[misplacedSize][1][1];
 				misplacedSystemId = new String[misplacedSize][1][1];			
 				misplacedLineNumber = new int[misplacedSize][1][1];
@@ -630,7 +632,8 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 				misplacedStartSystemId[misplacedIndex] = startSystemId;
 				misplacedStartLineNumber[misplacedIndex] = startLineNumber;
 				misplacedStartColumnNumber[misplacedIndex] = startColumnNumber;
-				misplacedDefinition[misplacedIndex][0] = definition; 
+				misplacedDefinition[misplacedIndex][0] = definition;
+				misplacedItemId[misplacedIndex][0][0] = itemId;
 				misplacedQName[misplacedIndex][0][0] = qName; 		
 				misplacedSystemId[misplacedIndex][0][0] = systemId;
 				misplacedLineNumber[misplacedIndex][0][0] = lineNumber;
@@ -648,7 +651,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
                     && misplacedStartColumnNumber[i] == startColumnNumber){
 					for(int j = 0; j < misplacedDefinition[i].length; j++){
 						if(misplacedDefinition[i][j].equals(definition)){
-							int length = misplacedQName[i][j].length;
+						    int length = misplacedItemId[i][j].length;
+							int[] increasedII = new int[(length+1)];
+							System.arraycopy(misplacedItemId[i][j], 0, increasedII, 0, length);
+							misplacedItemId[i][j] = increasedII;
+							misplacedItemId[i][j][length] = itemId;
+							
+							length = misplacedQName[i][j].length;
 							String[] increasedQN = new String[(length+1)];
 							System.arraycopy(misplacedQName[i][j], 0, increasedQN, 0, length);
 							misplacedQName[i][j] = increasedQN;
@@ -681,6 +690,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 					misplacedDefinition[i] = increasedDef;
 					misplacedDefinition[i][length] = definition; 
 										
+					
+					int[][] increasedII = new int[(length+1)][];
+					System.arraycopy(misplacedItemId[i], 0, increasedII, 0, length);
+					misplacedItemId[i] = increasedII;			
+					misplacedItemId[i][length] = new int[1];
+					misplacedItemId[i][length][0] = itemId;
 					
 					String[][] increasedQN = new String[(length+1)][];
 					System.arraycopy(misplacedQName[i], 0, increasedQN, 0, length);
@@ -739,6 +754,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			misplacedDefinition[misplacedIndex] = new APattern[1];
 			misplacedDefinition[misplacedIndex][0] = definition; 
 			
+			int[][][] increasedII = new int[misplacedSize][][];
+			System.arraycopy(misplacedItemId, 0, increasedII, 0, misplacedIndex);
+			misplacedItemId = increasedII;
+			misplacedItemId[misplacedIndex] = new int[1][1];			
+			misplacedItemId[misplacedIndex][0][0] = itemId; 		
+			
 			String[][][] increasedQN = new String[misplacedSize][][];
 			System.arraycopy(misplacedQName, 0, increasedQN, 0, misplacedIndex);
 			misplacedQName = increasedQN;
@@ -770,12 +791,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		}
 		
 	}
-    public void misplacedElement(int functionalEquivalenceCode, 
+    public void misplacedContent(int functionalEquivalenceCode, 
                                             APattern contextDefinition, 
 											String startSystemId, 
 											int startLineNumber, 
 											int startColumnNumber, 
 											APattern definition, 
+											int[] itemId, 
 											String[] qName, 
 											String[] systemId, 
 											int[] lineNumber, 
@@ -784,7 +806,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 											APattern reper){//not stored, only used for internal conflict handling
 		/*
 		for(int i = 0; i < qName.length; i++){	
-			misplacedElement(contextDefinition, 
+			misplacedContent(contextDefinition, 
 									startSystemId, 
 									startLineNumber, 
 									startColumnNumber,															
@@ -807,6 +829,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 				misplacedStartLineNumber = new int[misplacedSize];
 				misplacedStartColumnNumber = new int[misplacedSize];
 				misplacedDefinition = new APattern[misplacedSize][1];
+				misplacedItemId = new int[misplacedSize][1][];
 				misplacedQName = new String[misplacedSize][1][];
 				misplacedSystemId = new String[misplacedSize][1][];			
 				misplacedLineNumber = new int[misplacedSize][1][];
@@ -818,7 +841,8 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 				misplacedStartSystemId[misplacedIndex] = startSystemId;
 				misplacedStartLineNumber[misplacedIndex] = startLineNumber;
 				misplacedStartColumnNumber[misplacedIndex] = startColumnNumber;
-				misplacedDefinition[misplacedIndex][0] = definition; 
+				misplacedDefinition[misplacedIndex][0] = definition;
+				misplacedItemId[misplacedIndex][0] = itemId;
 				misplacedQName[misplacedIndex][0] = qName; 		
 				misplacedSystemId[misplacedIndex][0] = systemId;
 				misplacedLineNumber[misplacedIndex][0] = lineNumber;
@@ -838,7 +862,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 						if(misplacedDefinition[i][j].equals(definition)){
                             int addedLength = qName.length; 
                             
-							int length = misplacedQName[i][j].length;
+                            int length = misplacedItemId[i][j].length;
+							int[] increasedII = new int[length+addedLength];
+							System.arraycopy(misplacedItemId[i][j], 0, increasedII, 0, length);
+							misplacedItemId[i][j] = increasedII;
+                            System.arraycopy(itemId, 0, misplacedItemId[i][j], length, addedLength);
+                            
+							length = misplacedQName[i][j].length;
 							String[] increasedQN = new String[length+addedLength];
 							System.arraycopy(misplacedQName[i][j], 0, increasedQN, 0, length);
 							misplacedQName[i][j] = increasedQN;
@@ -871,6 +901,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 					misplacedDefinition[i] = increasedDef;
 					misplacedDefinition[i][length] = definition; 
 										
+					int[][] increasedII = new int[(length+1)][];
+					System.arraycopy(misplacedItemId[i], 0, increasedII, 0, length);
+					misplacedItemId[i] = increasedII;
+					misplacedItemId[i][length] = itemId;
 					
 					String[][] increasedQN = new String[(length+1)][];
 					System.arraycopy(misplacedQName[i], 0, increasedQN, 0, length);
@@ -925,6 +959,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			misplacedDefinition[misplacedIndex] = new APattern[1];
 			misplacedDefinition[misplacedIndex][0] = definition; 
 			
+			int[][][] increasedII = new int[misplacedSize][][];
+			System.arraycopy(misplacedItemId, 0, increasedII, 0, misplacedIndex);
+			misplacedItemId = increasedII;
+			misplacedItemId[misplacedIndex] = new int[1][];			
+			misplacedItemId[misplacedIndex][0] = itemId;
+			
 			String[][][] increasedQN = new String[misplacedSize][][];
 			System.arraycopy(misplacedQName, 0, increasedQN, 0, misplacedIndex);
 			misplacedQName = increasedQN;
@@ -964,6 +1004,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         misplacedStartLineNumber = null;
         misplacedStartColumnNumber = null;
         misplacedDefinition = null;
+        misplacedItemId = null;
         misplacedQName = null;
         misplacedSystemId = null;			
         misplacedLineNumber = null;
@@ -982,6 +1023,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(misplacedStartLineNumber, removeIndex+1, misplacedStartLineNumber, removeIndex, moved);
             System.arraycopy(misplacedStartColumnNumber, removeIndex+1, misplacedStartColumnNumber, removeIndex, moved);
             System.arraycopy(misplacedDefinition, removeIndex+1, misplacedDefinition, removeIndex, moved);
+            System.arraycopy(misplacedItemId, removeIndex+1, misplacedItemId, removeIndex, moved);
             System.arraycopy(misplacedQName, removeIndex+1, misplacedQName, removeIndex, moved);
             System.arraycopy(misplacedSystemId, removeIndex+1, misplacedSystemId, removeIndex, moved);
             System.arraycopy(misplacedLineNumber, removeIndex+1, misplacedLineNumber, removeIndex, moved);

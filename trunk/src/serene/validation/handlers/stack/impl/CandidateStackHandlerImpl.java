@@ -637,7 +637,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	}
 	
 		
-	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){	
+	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){	
 		if(stackConflictsHandler.isConflictRule(definition)){
 			stackConflictsHandler.disqualify(definition);
 			hasDisqualifyingError = true;
@@ -645,12 +645,12 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 			stackConflictsHandler.disqualify(reper);
 			hasDisqualifyingError = true;
 		}else if(reportPreviousMisplaced){			
-			errorCatcher.misplacedElement(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+			errorCatcher.misplacedContent(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
 			parent.reportedPreviousMisplaced();
 		}
 	}
 	
-	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String qName, String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int itemId, String qName, String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
 		if(stackConflictsHandler.isConflictRule(sourceDefinition)){
 			stackConflictsHandler.disqualify(sourceDefinition);
 			hasDisqualifyingError = true;
@@ -658,7 +658,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 			stackConflictsHandler.disqualify(reper);
 			hasDisqualifyingError = true;
 		}else if(reportPreviousMisplaced){			
-			errorCatcher.misplacedElement(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+			errorCatcher.misplacedContent(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
 			parent.reportedCurrentMisplaced();
 		}
 	}

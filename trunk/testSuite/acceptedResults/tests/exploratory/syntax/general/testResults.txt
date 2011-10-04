@@ -7,8 +7,8 @@ Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element w
 	Syntax error. Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
 	Order error.
 	Misplaced content in the document structure starting at schema.rng:25:20, corresponding to definition <group name class, patterns> at RELAXNG Specification 3.Full Syntax: element with name class child:
-	<rng:interleave> at schema.rng:25:20
-	<rng:interleave> at schema.rng:29:20, corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax: pattern.
+	element <rng:interleave> at schema.rng:25:20
+	null at schema.rng:29:20, corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax: pattern.
 	Excessive content.
 	In the document structure starting at schema.rng:25:20, corresponding to definition <group name class, patterns> at RELAXNG Specification 3.Full Syntax: element with name class child,  expected 1 occurrence corresponding to definition <nameClass> at RELAXNG Specification 3.Full Syntax: name class, found 3 starting at: 
 	element <rng:name> at schema.rng:33:38
