@@ -21,6 +21,11 @@ import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.DatatypeBuilder;
 import org.relaxng.datatype.DatatypeException;
 
+import org.apache.xerces.impl.dv.SchemaDVFactory;
+import org.apache.xerces.impl.dv.XSSimpleType;
+
+import serene.datatype.xsd.XsdValidationContext;
+
 import serene.datatype.util.StringNormalizer;
 
 import sereneWrite.MessageWriter;
@@ -32,16 +37,25 @@ class InternalLibrary implements DatatypeLibrary{
     Datatype datatypeLibraryURIDT;
     Datatype combineDT;    
     
+    
 	MessageWriter debugWriter;
 	
 	public InternalLibrary(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
         
-        qNameDT = new QNameDT();
-        ncNameDT = new NCNameDT();
         hrefURIDT = new HrefURIDT();
         datatypeLibraryURIDT = new DatatypeLibraryURIDT();
         combineDT = new CombineDT();
+    
+        SchemaDVFactory xercesFactory = SchemaDVFactory.getInstance("org.apache.xerces.impl.dv.xs.FullDVFactory");
+        if(xercesFactory == null){
+            xercesFactory = SchemaDVFactory.getInstance();
+        }
+        
+        XsdValidationContext xsdValidationContext = new XsdValidationContext(debugWriter);
+        
+        qNameDT = new QNameDT(xsdValidationContext, xercesFactory.getBuiltInType("QName"), debugWriter);
+        ncNameDT = new NCNameDT(xsdValidationContext, xercesFactory.getBuiltInType("NCName"), debugWriter);
 	}
 	
 	public Datatype createDatatype(String typeLocalName) throws DatatypeException{

@@ -63,17 +63,17 @@ Character content at schema.rng:43:25 is not allowed by the element's schema def
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:48:17 Syntax error. Element <rng:ref> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: ref contains errors: 
 Illegal datatype.
-Value of attribute "name" at schema.rng:47:35 does not match the datatype required by schema definition <attribute> at RELAXNG Specification 3.Full Syntax: name attribute with NCName value. Code point(hex) 3a ':' is not a valid name character.
+Value of attribute "name" at schema.rng:47:35 does not match the datatype required by schema definition <attribute> at RELAXNG Specification 3.Full Syntax: name attribute with NCName value. cvc-datatype-valid.1.2.1: 'foo:defineBar' is not a valid value for 'NCName'.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:57:17 Syntax error. Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
 Illegal datatype.
-Value of attribute "name" at schema.rng:52:34 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: name attribute with QName value. Prefix was not declared.
+Value of attribute "name" at schema.rng:52:34 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: name attribute with QName value. cvc-datatype-valid.1.2.1: 'foo::bar' is not a valid value for 'QName'.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:66:17 Syntax error. Element <rng:element> is unresolved by content validation, all candidate definitions resulted in errors:
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
 	Syntax error. Element <rng:name> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: name contains errors: 
 	Illegal datatype.
-	Character content at schema.rng:61:49 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: name. Code point(hex) 20 ' ' is not a valid name character. Code point(hex) 20 ' ' is not a valid name character. Code point(hex) 20 ' ' is not a valid name character. Code point(hex) 20 ' ' is not a valid name character. Code point(hex) 20 ' ' is not a valid name character. Code point(hex) 20 ' ' is not a valid name character.
+	Character content at schema.rng:61:49 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: name. cvc-datatype-valid.1.2.1: 'Fo      ot' is not a valid value for 'QName'.
 	Syntax error. Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
 	Unexpected attribute.
 	Attribute "name" at schema.rng:59:29, corresponding to one of the definitions: 

@@ -1,5 +1,5 @@
 /*
-Copyright 2010 Radu Cernuta 
+Copyright 2011 Radu Cernuta 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,57 +14,78 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.internal.datatype;
+
 
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 import org.relaxng.datatype.DatatypeStreamingValidator;
 
-import serene.internal.datatype.xmlName.XMLNameHandler;
-import serene.internal.datatype.xmlName.NameInvalidException;
-import serene.internal.datatype.xmlName.NameReservedException;
+import org.apache.xerces.impl.dv.XSSimpleType;
+import org.apache.xerces.impl.dv.InvalidDatatypeValueException;
+
+import serene.datatype.xsd.XsdValidationContext;
 
 import sereneWrite.MessageWriter;
 
 class NCNameDT implements Datatype{
-	XMLNameHandler nameHandler;
-	NCNameDT(){
-		nameHandler = new XMLNameHandler();
-		nameHandler.version("1.0");
-	}
-	public boolean isValid(String str, ValidationContext vc) {	
-	    String strtr = str.trim();
-		try{
-			// TODO xml version from ValidationContext
-			nameHandler.handleNCName(strtr);
-			return true;			
-		}catch(NameInvalidException nie){
-			return false; 
-		}catch(NameReservedException nre){
-			return true;
-		}
+    boolean needsExtraChecking;
+    boolean needsFacetChecking;
+    boolean needsToNormalize;
+    
+    XsdValidationContext xsdValidationContext;
+    
+    XSSimpleType xercesType;
+    
+    NCNameDT(XsdValidationContext xsdValidationContext,
+                XSSimpleType xercesType, 
+                MessageWriter debugWriter){
+        this.xercesType = xercesType;
+        this.xsdValidationContext = xsdValidationContext;
+        
+        needsExtraChecking = false;
+        needsFacetChecking = false;
+        needsToNormalize = true;        
+    }
+        
+    public boolean isValid(String str, ValidationContext vc) {
+        try{
+            checkValid(str, vc);
+            return true;
+        }catch(DatatypeException de){
+            return false;    
+        }
 	}
 
 	public void checkValid(String str, ValidationContext vc) throws DatatypeException {
-	    String strtr = str.trim();		
 		try{
-			// TODO xml version from ValidationContext
-			nameHandler.handleNCName(strtr);						
-		}catch(NameInvalidException nie){
-			throw new DatatypeException(nie.getMessage()); 
-		}catch(NameReservedException nre){
-			/*throw new DatatypeException(nre.getMessage());*/
-		}
+            xsdValidationContext.setNeedsExtraChecking(needsExtraChecking);
+            xsdValidationContext.setNeedsFacetChecking(needsFacetChecking);
+            xsdValidationContext.setNeedsToNormalize(needsToNormalize);
+            xsdValidationContext.setRngValidationContext(vc);
+            xercesType.validate(str, xsdValidationContext, null);
+        }catch(InvalidDatatypeValueException xercesException){
+            throw new DatatypeException(xercesException.getMessage());
+        }
 	}
 
 	public Object createValue(String str, ValidationContext vc) {
-	    String strtr = str.trim();
-		return strtr;
+		try{
+            xsdValidationContext.setNeedsExtraChecking(needsExtraChecking);
+            xsdValidationContext.setNeedsFacetChecking(needsFacetChecking);
+            xsdValidationContext.setNeedsToNormalize(needsToNormalize);
+            xsdValidationContext.setRngValidationContext(vc);
+            return xercesType.validate(str, xsdValidationContext, null);
+        }catch(InvalidDatatypeValueException xercesException){
+            //throw new DatatypeException(xercesException.getMessage());
+            return null;
+        }
 	}
 
 	public boolean isContextDependent() {
-		return true;
+		return false;
 	}
 
 	public boolean alwaysValid() {
@@ -84,6 +105,10 @@ class NCNameDT implements Datatype{
 	}
 
 	public DatatypeStreamingValidator createStreamingValidator(ValidationContext vc) {
-		throw new UnsupportedOperationException("Serene does not support streaming validation yet");
-	}	
+		throw new UnsupportedOperationException("Serene doesn't support streaming validation yet");
+	}
+ 
+    public String toString(){
+        return "NCNameDT ";
+    }
 }
