@@ -60,6 +60,7 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 	
 	RuleHandlerRecycler recycler;
 	
+	int ittemId;
 	String starttQName;
 	String starttSystemId;
 	int starttLineNumber;
@@ -115,17 +116,17 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 		return rule;
 	}
 	//boolean handleChildShift(APattern pattern, int expectedOrderHandlingCount) subclass
-	public boolean handleChildShift(APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public boolean handleChildShift(APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
 		//handleChildShift(startSystemId, startLineNumber, startColumnNumber, startQName, pattern);		
 		//handleStateSaturationReduce();
 		throw new UnsupportedOperationException();
 	}	
-	public boolean handleChildShift(int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public boolean handleChildShift(int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
 		//handleChildShift(startSystemId, startLineNumber, startColumnNumber, startQName, pattern);		
 		//handleStateSaturationReduce();
 		throw new UnsupportedOperationException();
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
 		//handleChildShift(startSystemId, startLineNumber, startColumnNumber, startQName, pattern);		
 		//handleStateSaturationReduce();
 		throw new UnsupportedOperationException();
@@ -169,8 +170,8 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 				}
 			}
 		}
-		if(MAX < MIN) stackHandler.blockReduce(this, MIN, rule, starttQName, starttSystemId, starttLineNumber, starttColumnNumber);
-		else stackHandler.limitReduce(this, MIN, MAX, rule, starttQName, starttSystemId, starttLineNumber, starttColumnNumber);
+		if(MAX < MIN) stackHandler.blockReduce(this, MIN, rule, ittemId, starttQName, starttSystemId, starttLineNumber, starttColumnNumber);
+		else stackHandler.limitReduce(this, MIN, MAX, rule, ittemId, starttQName, starttSystemId, starttLineNumber, starttColumnNumber);
 	}
 	
 	public boolean handleContentOrder(int expectedOrderHandlingCount, APattern childDefinition, APattern sourceDefinition){
@@ -196,6 +197,10 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 	public StructureDoubleHandler getCopy(StructureHandler parent, StackHandler stackHandler, ErrorCatcher errorCatcher){
 		// TODO
 		throw new UnsupportedOperationException("TODO");
+	}
+	
+	public int getItemId(){
+	    throw new IllegalStateException();
 	}
 	public String getStartQName(){
 		throw new IllegalStateException();
@@ -233,6 +238,7 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 	//End StructureHandler------------------------------------------------------------
 	
 	void setStart(){
+	    ittemId = validationItemLocator.getItemId();
 		starttSystemId = validationItemLocator.getSystemId();		
 		starttLineNumber = validationItemLocator.getLineNumber();
 		starttColumnNumber = validationItemLocator.getColumnNumber();

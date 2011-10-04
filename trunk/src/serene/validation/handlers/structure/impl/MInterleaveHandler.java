@@ -35,6 +35,7 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
+import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
@@ -51,6 +52,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 	
 	// children in the order they come
 	private APattern[] definition;
+	private int[] itemId;
 	private String[] qName;
 	private String[] systemId;
 	private int[] lineNumber;
@@ -74,6 +76,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 		childrenSize = 10;
 		
 		definition = new APattern[childrenSize];
+		itemId = new int[childrenSize];
 		qName = new String[childrenSize];
 		systemId = new String[childrenSize];
 		lineNumber = new int[childrenSize];
@@ -124,21 +127,21 @@ public class MInterleaveHandler extends InterleaveHandler{
 				return false;//TODO problem is that it did shift, but in the order's reshift, so this is not 100% correct
 			}				
 		}
-		handleParticleShift(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), validationItemLocator.getQName(), pattern);
+		handleParticleShift(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), validationItemLocator.getQName(), validationItemLocator.getItemId(), pattern);
 		//handleStateSaturationReduce();
 		return true;
 	}
-	public boolean handleChildShift(APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, pattern);		
+	public boolean handleChildShift(APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
 		//handleStateSaturationReduce();
 		return true;
 	}
-	public boolean handleChildShift(int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, pattern);		
+	public boolean handleChildShift(int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
 		//handleStateSaturationReduce();
 		return true;
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
 		throw new UnsupportedOperationException("Serene does not yet support interleave patterns "
 			+"containing other compositors(group, interleave) with multiple cardinality.");
 	}
@@ -150,7 +153,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 			}
 		}
 		int occurrenceCount = computeOccurrencesCount();		
-		stackHandler.blockReduce(this, occurrenceCount, rule, qName[0], systemId[0], lineNumber[0], columnNumber[0]);
+		stackHandler.blockReduce(this, occurrenceCount, rule, itemId[0], qName[0], systemId[0], lineNumber[0], columnNumber[0]);
 	}
 	
 	
@@ -180,6 +183,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 						starttColumnNumber,
 						starttQName,
 						definition,
+						itemId,
 						qName,
 						systemId,
 						lineNumber,
@@ -206,6 +210,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 					starttColumnNumber,
 					starttQName,
 					definition,
+					itemId,
 					qName,
 					systemId,
 					lineNumber,
@@ -230,7 +235,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 	
 	
 	//Start ValidationHandler---------------------------------------------------------		
-	void handleParticleShift(String sysId, int ln, int cn, String qn, APattern cd){		
+	void handleParticleShift(String sysId, int ln, int cn, String qn, int iti, APattern cd){		
 		if(++childIndex == childrenSize)increaseChildrenStorageSize();
 		if(childIndex == 0)setStart();
 		
@@ -238,6 +243,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 		lineNumber[childIndex] = ln;
 		columnNumber[childIndex] = cn;
 		qName[childIndex] = qn;
+		itemId[childIndex] = iti;
 		definition[childIndex] = cd;
 		
 		// for(int i = 0; i < childrenSize; i++){		
@@ -280,7 +286,8 @@ public class MInterleaveHandler extends InterleaveHandler{
 		for(int i = 0; i < childrenSize; i++){
 			definition[i] = null;
 			qName[i] = null;
-			systemId[i] = null;			
+			systemId[i] = null;
+			itemId[i] = ValidationItemLocator.NONE;
 		}
 		childIndex = -1;
 		
@@ -307,6 +314,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 							int startColumnNumber,
 							String startQName,
 							APattern[] definition,
+							int[] itemId,
 							String[] qName,
 							String[] systemId,
 							int[] lineNumber,
@@ -351,6 +359,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 		this.childrenSize = childrenSize;
 		
 		this.definition = new APattern[childrenSize];
+		this.itemId = new int[childrenSize];
 		this.qName = new String[childrenSize];
 		this.systemId = new String[childrenSize];
 		this.lineNumber = new int[childrenSize];
@@ -358,6 +367,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 		
 		for(int i = 0; i <= childIndex; i++){
 			this.definition[i] = definition[i];
+			this.itemId[i] = itemId[i];
 			this.qName[i] = qName[i];
 			this.systemId[i] = systemId[i];
 			this.lineNumber[i] = lineNumber[i];
@@ -376,6 +386,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 														lineNumber[mValidationLoopCounter],
 														columnNumber[mValidationLoopCounter],
 														qName[mValidationLoopCounter],
+														itemId[mValidationLoopCounter],
 														definition[mValidationLoopCounter]);
 			if(mValidationLoopCounter == childIndex){				
 				if(!currentSecondaryHandler.isSatisfied()){					
@@ -423,6 +434,10 @@ public class MInterleaveHandler extends InterleaveHandler{
 		APattern[] increasedD = new APattern[childrenSize];
 		System.arraycopy(definition, 0, increasedD, 0, childIndex);
 		definition = increasedD;
+		
+		int[] increasedITI = new int[childrenSize];
+		System.arraycopy(itemId, 0, increasedITI, 0, childIndex);
+		itemId = increasedITI;
 		
 		String[] increasedQN = new String[childrenSize];
 		System.arraycopy(qName, 0, increasedQN, 0, childIndex);

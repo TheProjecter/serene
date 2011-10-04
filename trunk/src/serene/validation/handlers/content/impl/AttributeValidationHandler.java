@@ -195,19 +195,19 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
     
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.excessiveContent(context, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler.excessiveContent(context, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
@@ -315,11 +315,11 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.characterContentValueError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler.characterContentValueError(charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){

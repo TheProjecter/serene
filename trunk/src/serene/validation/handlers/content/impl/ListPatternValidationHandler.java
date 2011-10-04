@@ -55,7 +55,8 @@ class ListPatternValidationHandler implements DataEventHandler,
     SpaceCharsHandler spaceHandler;
     
     AbstractSDVH parent;
-    char[] token;
+    char[][] tokens;
+    int currentTokenIndex;
     AListPattern listPattern;
         
     ErrorCatcher errorCatcher;    
@@ -65,6 +66,7 @@ class ListPatternValidationHandler implements DataEventHandler,
     
     ListPatternValidationHandler(MessageWriter debugWriter){
         this.debugWriter = debugWriter;
+        currentTokenIndex = -1;
     }
         
     
@@ -82,10 +84,11 @@ class ListPatternValidationHandler implements DataEventHandler,
     
     void reset(){
         parent = null;
-        token = null;
         listPattern = null;
         
-        errorCatcher = null;        
+        errorCatcher = null;
+
+        currentTokenIndex = -1;        
     }
     
     public void recycle(){
@@ -102,15 +105,19 @@ class ListPatternValidationHandler implements DataEventHandler,
         
         DataValidationHandler dvh = pool.getDataValidationHandler(this, this, this);        
         
-        char[][] tokens = spaceHandler.removeSpace(chars);
+        tokens = spaceHandler.removeSpace(chars);
         
-		for(int i = 0; i < tokens.length; i++){
-			token = tokens[i];
-			dvh.handleChars(token, context); 
+		for(currentTokenIndex = 0; currentTokenIndex < tokens.length; currentTokenIndex++){
+		    validationItemLocator.newListToken(new String(tokens[currentTokenIndex]), validationItemLocator.getSystemId(), validationItemLocator.getPublicId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+			dvh.handleChars(tokens[currentTokenIndex], context); 
 			dvh.reset();
+			validationItemLocator.closeListToken();
 		}
 		dvh.recycle();
 		
+		//****temporary
+		currentTokenIndex--;
+		//****temporary
 		stackHandler.endValidation();
 		stackHandler.recycle();
 		stackHandler = null;
@@ -121,15 +128,19 @@ class ListPatternValidationHandler implements DataEventHandler,
 	    
 	    DataValidationHandler dvh = pool.getDataValidationHandler(this, this, this);
 	    
-	    char[][] tokens = spaceHandler.removeSpace(value.toCharArray());
+	    tokens = spaceHandler.removeSpace(value.toCharArray());
         
-		for(int i = 0; i < tokens.length; i++){
-			token = tokens[i];
-			dvh.handleChars(token, context);   
+		for(currentTokenIndex = 0; currentTokenIndex < tokens.length; currentTokenIndex++){
+		    validationItemLocator.newListToken(new String(tokens[currentTokenIndex]), validationItemLocator.getSystemId(), validationItemLocator.getPublicId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+			dvh.handleChars(tokens[currentTokenIndex], context);   
 			dvh.reset();
+			validationItemLocator.closeListToken();
 		}
 		dvh.recycle();
 		
+		//****temporary
+		currentTokenIndex--;
+		//****temporary
 		stackHandler.endValidation();
 		stackHandler.recycle();
 		stackHandler = null;
@@ -144,12 +155,12 @@ class ListPatternValidationHandler implements DataEventHandler,
     }
 	public void addData(List<DatatypedActiveTypeItem> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){	    
 	    if(!stackHandler.handlesConflict()) stackHandler = listPattern.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllTokenDefinitions(candidateDefinitions, token, temporaryMessageStorage);
+		stackHandler.shiftAllTokenDefinitions(candidateDefinitions, tokens[currentTokenIndex], temporaryMessageStorage);
 	}
 	
 	public void addData(List<DatatypedActiveTypeItem> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){	    
 	    if(!stackHandler.handlesConflict()) stackHandler = listPattern.getStackHandler(stackHandler, this);
-		stackHandler.shiftAllTokenDefinitions(candidateDefinitions, token, disqualified, temporaryMessageStorage);
+		stackHandler.shiftAllTokenDefinitions(candidateDefinitions, tokens[currentTokenIndex], disqualified, temporaryMessageStorage);
 	}
 //==============================================================================
 
@@ -184,12 +195,12 @@ class ListPatternValidationHandler implements DataEventHandler,
 	}
 	
 		
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
-		errorCatcher.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+		errorCatcher.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
-		errorCatcher.excessiveContent(context, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
+		errorCatcher.excessiveContent(context, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
 	}
 	
 	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
@@ -237,24 +248,24 @@ class ListPatternValidationHandler implements DataEventHandler,
 	}
 	
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		errorCatcher.listTokenDatatypeError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		errorCatcher.listTokenDatatypeError(new String(tokens[currentTokenIndex]), charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
 	}
 	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		errorCatcher.listTokenDatatypeError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		errorCatcher.listTokenDatatypeError(new String(tokens[currentTokenIndex]), charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
 	}
 	
-	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-		errorCatcher.listTokenValueError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+		errorCatcher.listTokenValueError(new String(tokens[currentTokenIndex]), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-		errorCatcher.listTokenValueError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		errorCatcher.listTokenValueError(new String(tokens[currentTokenIndex]), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
 	
 	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-		errorCatcher.listTokenExceptedError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		errorCatcher.listTokenExceptedError(new String(tokens[currentTokenIndex]), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}	
 	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-		errorCatcher.listTokenExceptedError(new String(token), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		errorCatcher.listTokenExceptedError(new String(tokens[currentTokenIndex]), charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
 	
 	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){

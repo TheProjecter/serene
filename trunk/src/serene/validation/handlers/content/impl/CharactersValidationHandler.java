@@ -38,6 +38,8 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.handlers.content.CharactersEventHandler;
 import serene.validation.handlers.content.MarkupEventHandler;
 
+import serene.validation.handlers.content.util.ValidationItemLocator;
+
 import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 import serene.validation.handlers.error.ErrorCatcher;
@@ -220,13 +222,13 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	}
 	
 	boolean mustHandleError(char[] chars, APattern pattern){
-	    if(validationItemLocator.isElementContext()){
+	    if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){
 			if(matches.size() == 1){
 			    if(pattern.isRequiredBranch())return true;
 			    return !(chars.length == 0 || spaceHandler.isSpace(chars));
             }
             return true;
-		}else if(validationItemLocator.isAttributeContext()){
+		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
             return true;
 		}else{
 			throw new IllegalStateException();
@@ -238,9 +240,9 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	    
 	    setCurrentErrorCatcher();
 	    
-	    if(validationItemLocator.isElementContext()){			
+	    if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
 			currentErrorCatcher.characterContentDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
-		}else if(validationItemLocator.isAttributeContext()){
+		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
 			currentErrorCatcher.attributeValueDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage);
 		}else{
 			throw new IllegalStateException();
@@ -252,9 +254,9 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	    
 	    setCurrentErrorCatcher();
 	    
-	    if(validationItemLocator.isElementContext()){			
-			currentErrorCatcher.characterContentValueError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
-		}else if(validationItemLocator.isAttributeContext()){
+	    if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
+			currentErrorCatcher.characterContentValueError(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
+		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
 			currentErrorCatcher.attributeValueValueError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value);
 		}else{
 			throw new IllegalStateException();
@@ -305,16 +307,16 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	}
 	
 		
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+		currentErrorCatcher.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.excessiveContent(context, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+		currentErrorCatcher.excessiveContent(context, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
 	}
 	
 	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
@@ -379,7 +381,7 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 		throw new IllegalStateException();
 	}
 	
-	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		throw new IllegalStateException();
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){

@@ -70,22 +70,22 @@ abstract class InnerPatternHandler extends StructureValidationHandler{
 				return false;//TODO problem is that it did shift, but in the order's reshift, so this is not 100% correct
 			}				
 		}
-		handleParticleShift(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), validationItemLocator.getQName(), pattern);
+		handleParticleShift(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), validationItemLocator.getQName(), validationItemLocator.getItemId(), pattern);
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, pattern);		
+	public boolean handleChildShift(APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, pattern);		
+	public boolean handleChildShift(int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, pattern);		
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
@@ -150,9 +150,9 @@ abstract class InnerPatternHandler extends StructureValidationHandler{
 	
 	
 	//Start ValidationHandler---------------------------------------------------------		
-	void handleParticleShift(String systemId, int lineNumber, int columnNumber, String qName, APattern childPattern){
+	void handleParticleShift(String systemId, int lineNumber, int columnNumber, String qName, int itemId, APattern childPattern){
 		setCurrentChildParticleHandler(childPattern);
-		currentChildParticleHandler.handleOccurrence(qName, systemId, lineNumber, columnNumber);
+		currentChildParticleHandler.handleOccurrence(itemId, qName, systemId, lineNumber, columnNumber);
 	}
 	void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver){
 		setCurrentChildParticleHandler(childPattern);

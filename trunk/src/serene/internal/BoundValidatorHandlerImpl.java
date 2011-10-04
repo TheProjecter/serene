@@ -257,8 +257,9 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 							String localName, 
 							String qName) throws SAXException{
 		char[] charContent = charsBuffer.removeCharsArray();
+		if(charContent.length == 0)validationItemLocator.newCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
 		elementHandler.handleLastCharacters(charContent);
-        if(charContent.length > 0)validationItemLocator.closeCharsContent(); 
+        validationItemLocator.closeCharsContent();
 		
 		elementHandler.handleEndElement(restrictToFileName, locator);	
 		ElementEventHandler parent = elementHandler.getParentHandler(); 

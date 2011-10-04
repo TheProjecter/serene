@@ -539,7 +539,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 									String startSystemId,
 									int startLineNumber,
 									int startColumnNumber,
-									APattern definition, 
+									APattern definition,
+									int[] itemId, 
 									String[] qName, 
 									String[] systemId, 
 									int[] lineNumber, 
@@ -552,6 +553,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			excessiveStartLineNumber = new int[excessiveSize];
 			excessiveStartColumnNumber = new int[excessiveSize];
 			excessiveDefinition = new APattern[excessiveSize];
+			excessiveItemId = new int[excessiveSize][];
 			excessiveQName = new String[excessiveSize][];			
 			excessiveSystemId = new String[excessiveSize][];			
 			excessiveLineNumber = new int[excessiveSize][];
@@ -577,6 +579,10 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(excessiveDefinition, 0, increasedED, 0, excessiveIndex);
 			excessiveDefinition = increasedED;
 			
+			int[][] increasedII = new int[excessiveSize][];
+			System.arraycopy(excessiveItemId, 0, increasedII, 0, excessiveIndex);
+			excessiveItemId = increasedII;
+			
 			String[][] increasedQN = new String[excessiveSize][];
 			System.arraycopy(excessiveQName, 0, increasedQN, 0, excessiveIndex);
 			excessiveQName = increasedQN;
@@ -599,19 +605,15 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		excessiveStartLineNumber[excessiveIndex] = startLineNumber;
 		excessiveStartColumnNumber[excessiveIndex] = startColumnNumber;
 		excessiveDefinition[excessiveIndex] = definition;
+		excessiveItemId[excessiveIndex] = itemId;
 		excessiveQName[excessiveIndex] = qName;
 		excessiveSystemId[excessiveIndex] = systemId;
 		excessiveLineNumber[excessiveIndex] = lineNumber;
 		excessiveColumnNumber[excessiveIndex] = columnNumber;		
-		
-		String excessive = "";
-		for(int i = 0; i < qName.length; i++){
-			excessive+="\n"+systemId[i]+":"+lineNumber[i]+":"+columnNumber[i]+":"+qName[i];
-		}
-		excessive.trim();
 	}   
 	public void excessiveContent(Rule context, 
 								APattern definition, 
+								int itemId, 
 								String qName, 
 								String systemId, 
 								int lineNumber,		
@@ -623,7 +625,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			    
                 recorded =  true;
                 
-				int length = excessiveQName[i].length;
+                int length = excessiveItemId[i].length;
+                int[] increasedII = new int[length+1];
+                System.arraycopy(excessiveItemId[i], 0, increasedII, 0, length);
+                excessiveItemId[i] = increasedII;
+                excessiveItemId[i][length] = itemId;
+                
+				length = excessiveQName[i].length;
 				String[] increasedQN = new String[(length+1)];
 				System.arraycopy(excessiveQName[i], 0, increasedQN, 0, length);
 				excessiveQName[i] = increasedQN;
@@ -661,6 +669,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         excessiveStartLineNumber = null;
         excessiveStartColumnNumber = null;
         excessiveDefinition = null;
+        excessiveItemId = null;
         excessiveQName = null;			
         excessiveSystemId = null;			
         excessiveLineNumber = null;
@@ -1361,22 +1370,18 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
         
         
-	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
         errorTotalCount++;
 		if(valueSizeCC == 0){
 			valueSizeCC = 1;
 			valueIndexCC = 0;
-			valueElementQNameCC = new String[valueSizeCC];
 			valueCharsSystemIdCC = new String[valueSizeCC];
 			valueCharsLineNumberCC = new int[valueSizeCC];
 			valueCharsColumnNumberCC = new int[valueSizeCC];
 			valueCharsDefinitionCC = new AValue[valueSizeCC];
 		}else if(++valueIndexCC == valueSizeCC){
-			String[] increasedEQ = new String[++valueSizeCC];
-			System.arraycopy(valueElementQNameCC, 0, increasedEQ, 0, valueIndexCC);
-			valueElementQNameCC = increasedEQ;
 						
-			String[] increasedCSI = new String[valueSizeCC];
+			String[] increasedCSI = new String[++valueSizeCC];
 			System.arraycopy(valueCharsSystemIdCC, 0, increasedCSI, 0, valueIndexCC);
 			valueCharsSystemIdCC = increasedCSI;
 			
@@ -1392,7 +1397,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(valueCharsDefinitionCC, 0, increasedCD, 0, valueIndexCC);
 			valueCharsDefinitionCC = increasedCD;			
 		}
-		valueElementQNameCC[valueIndexCC] = elementQName;
 		valueCharsSystemIdCC[valueIndexCC] = charsSystemId;
 		valueCharsLineNumberCC[valueIndexCC] = charsLineNumber;
 		valueCharsColumnNumberCC[valueIndexCC] = columnNumber;
@@ -1402,7 +1406,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         errorTotalCount -= valueSizeCC;
         valueSizeCC = 0;
         valueIndexCC = -1;
-        valueElementQNameCC = null;
         valueCharsSystemIdCC = null;
         valueCharsLineNumberCC = null;
         valueCharsColumnNumberCC = null;

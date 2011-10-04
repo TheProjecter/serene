@@ -77,7 +77,7 @@ public interface StructureHandler extends RuleHandler{
 	* Returns true if the shift did not determine the reduce of the parent and 
 	* the handler created by the shift remains for further processing.
 	*/
-	boolean handleChildShift(APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber);
+	boolean handleChildShift(APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber);
 		
 	/**
 	* Handles an occurrence corresponding to the child pattern with respect to 
@@ -92,7 +92,7 @@ public interface StructureHandler extends RuleHandler{
 	* Returns true if the shift did not determine the reduce of the parent and 
 	* the handler created by the shift remains for further processing.
 	*/
-	boolean handleChildShift(int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber);
+	boolean handleChildShift(int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber);
 	
 	/**
 	* Handles an occurrence corresponding to the child pattern with respect to 
@@ -105,7 +105,7 @@ public interface StructureHandler extends RuleHandler{
 	* Returns true if the shift did not determine the reduce of the parent and 
 	* the handler created by the shift remains for further processing.
 	*/
-	boolean handleChildShift(int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber);
+	boolean handleChildShift(int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber);
 	
 	
 	
@@ -197,6 +197,7 @@ public interface StructureHandler extends RuleHandler{
 	StructureHandler getCopy(IntList reduceCountList, StackHandler stackHandler, ErrorCatcher errorCatcher);
 	StructureHandler getCopy(IntList reduceCountList, IntList startedCountList, StackHandler stackHandler, ErrorCatcher errorCatcher);
 	
+	int getItemId();
 	String getStartQName();
 	String getStartSystemId();
 	int getStartLineNumber();

@@ -80,7 +80,7 @@ public interface StackHandler extends FunctionallyEquivalable{
 	* one by one, setting every time the StructureHandler corresponding to the
 	* pattern.
 	*/
-	void blockReduce(StructureHandler handler, int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber);
+	void blockReduce(StructureHandler handler, int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber);
 	
 	/**
 	* It is used for certain compositors that use limit handling for their children
@@ -91,7 +91,7 @@ public interface StackHandler extends FunctionallyEquivalable{
 	* this will throw an UnsupportedOperationException error because here it not
 	* shifting all the occurrences might introduce errors.  
 	*/
-	void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber);
+	void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber);
 	
 	
 	/**

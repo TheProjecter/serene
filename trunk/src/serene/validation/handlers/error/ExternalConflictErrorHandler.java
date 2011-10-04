@@ -178,22 +178,22 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
         if(isCandidate){
             int functionalEquivalenceCode = /*context.functionalEquivalenceCode()+*/
                                             excessiveDefinition.functionalEquivalenceCode();
             for(int i = 0; i < qName.length; i++){
                 functionalEquivalenceCode += qName[i].hashCode();
             }
-            messageHandler.excessiveContent(functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
-            candidatesConflictErrorHandler.excessiveContent(candidateIndex, functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+            messageHandler.excessiveContent(functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
+            candidatesConflictErrorHandler.excessiveContent(candidateIndex, functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
         }else{
-            messageHandler.excessiveContent(-1, context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+            messageHandler.excessiveContent(-1, context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
         }
 	}
-	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){        
-		messageHandler.excessiveContent(-1, context, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
-        if(isCandidate)candidatesConflictErrorHandler.excessiveContent(candidateIndex, -1, context, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){        
+		messageHandler.excessiveContent(-1, context, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
+        if(isCandidate)candidatesConflictErrorHandler.excessiveContent(candidateIndex, -1, context, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
 	}
 	
 	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
@@ -359,14 +359,13 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
         if(isCandidate){
-            int functionalEquivalenceCode = elementQName.hashCode()+
-                                               charsDefinition.functionalEquivalenceCode();
-            messageHandler.characterContentValueError(functionalEquivalenceCode, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
-            candidatesConflictErrorHandler.characterContentValueError(candidateIndex, functionalEquivalenceCode, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+            int functionalEquivalenceCode = charsDefinition.functionalEquivalenceCode();
+            messageHandler.characterContentValueError(functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+            candidatesConflictErrorHandler.characterContentValueError(candidateIndex, functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }else{
-            messageHandler.characterContentValueError(-1, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+            messageHandler.characterContentValueError(-1, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){

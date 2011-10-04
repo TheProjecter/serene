@@ -613,6 +613,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 									int startLineNumber,
 									int startColumnNumber,
 									APattern definition, 
+									int[] itemId, 
 									String[] qName, 
 									String[] systemId, 
 									int[] lineNumber, 
@@ -624,7 +625,8 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
                                                             startSystemId,
                                                             startLineNumber,
                                                             startColumnNumber,
-                                                            definition, 
+                                                            definition,
+                                                            itemId, 
                                                             qName, 
                                                             systemId, 
                                                             lineNumber, 
@@ -634,7 +636,8 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 	}   
 	public void excessiveContent(int candidateIndex, int functionalEquivalenceCode, 
                                 Rule context, 
-								APattern definition, 
+								APattern definition,
+								int itemId, 
 								String qName, 
 								String systemId, 
 								int lineNumber,		
@@ -643,7 +646,8 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         try{
         localMessageHandler.excessiveContent(functionalEquivalenceCode, 
                                                                 context, 
-                                                                definition, 
+                                                                definition,
+                                                                itemId, 
                                                                 qName, 
                                                                 systemId, 
                                                                 lineNumber,		
@@ -827,10 +831,10 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 	}
         
         
-	public void characterContentValueError(int candidateIndex, int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(int candidateIndex, int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
         recordError(CHARACTER_CONTENT_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);
 	    if(mustRecordErrorMessage(CHARACTER_CONTENT_VALUE_ERROR, functionalEquivalenceCode, candidateIndex)){
-            localMessageHandler.characterContentValueError(functionalEquivalenceCode, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+            localMessageHandler.characterContentValueError(functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
             setErrorMessageRecorded(CHARACTER_CONTENT_VALUE_ERROR, functionalEquivalenceCode);
         }
 	}

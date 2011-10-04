@@ -997,6 +997,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 									int startLineNumber,
 									int startColumnNumber,
 									APattern definition, 
+									int[] itemId, 
 									String[] qName, 
 									String[] systemId, 
 									int[] lineNumber, 
@@ -1009,6 +1010,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			excessiveStartLineNumber = new int[excessiveSize];
 			excessiveStartColumnNumber = new int[excessiveSize];
 			excessiveDefinition = new APattern[excessiveSize];
+			excessiveItemId = new int[excessiveSize][];
 			excessiveQName = new String[excessiveSize][];			
 			excessiveSystemId = new String[excessiveSize][];			
 			excessiveLineNumber = new int[excessiveSize][];
@@ -1034,6 +1036,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			APattern[] increasedED = new APattern[excessiveSize];
 			System.arraycopy(excessiveDefinition, 0, increasedED, 0, excessiveIndex);
 			excessiveDefinition = increasedED;
+			
+			int[][] increasedII = new int[excessiveSize][];
+			System.arraycopy(excessiveItemId, 0, increasedII, 0, excessiveIndex);
+			excessiveItemId = increasedII;
 			
 			String[][] increasedQN = new String[excessiveSize][];
 			System.arraycopy(excessiveQName, 0, increasedQN, 0, excessiveIndex);
@@ -1061,6 +1067,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		excessiveStartLineNumber[excessiveIndex] = startLineNumber;
 		excessiveStartColumnNumber[excessiveIndex] = startColumnNumber;
 		excessiveDefinition[excessiveIndex] = definition;
+		excessiveItemId[excessiveIndex] = itemId;
 		excessiveQName[excessiveIndex] = qName;
 		excessiveSystemId[excessiveIndex] = systemId;
 		excessiveLineNumber[excessiveIndex] = lineNumber;
@@ -1070,7 +1077,8 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 	}   
 	public void excessiveContent(int functionalEquivalenceCode, 
                                 Rule context, 
-								APattern definition, 
+								APattern definition,
+								int itemId, 
 								String qName, 
 								String systemId, 
 								int lineNumber,		
@@ -1083,7 +1091,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			    
                 recorded =  true;
                 
-				int length = excessiveQName[i].length;
+                int length = excessiveItemId[i].length;
+                int[] increasedII = new int[length+1];
+                System.arraycopy(excessiveItemId[i], 0, increasedII, 0, length);
+                excessiveItemId[i] = increasedII;
+                excessiveItemId[i][length] = itemId;
+                
+				length = excessiveQName[i].length;
 				String[] increasedQN = new String[(length+1)];
 				System.arraycopy(excessiveQName[i], 0, increasedQN, 0, length);
 				excessiveQName[i] = increasedQN;
@@ -1121,6 +1135,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         excessiveStartLineNumber = null;
         excessiveStartColumnNumber = null;
         excessiveDefinition = null;
+        excessiveItemId = null;
         excessiveQName = null;			
         excessiveSystemId = null;			
         excessiveLineNumber = null;
@@ -1138,7 +1153,8 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(excessiveStartSystemId, removeIndex+1, excessiveStartSystemId, removeIndex, moved);
             System.arraycopy(excessiveStartLineNumber, removeIndex+1, excessiveStartLineNumber, removeIndex, moved);
             System.arraycopy(excessiveStartColumnNumber, removeIndex+1, excessiveStartColumnNumber, removeIndex, moved);
-            System.arraycopy(excessiveDefinition, removeIndex+1, excessiveDefinition, removeIndex, moved);
+            System.arraycopy(excessiveDefinition, removeIndex+1, excessiveDefinition, removeIndex, moved);            
+            System.arraycopy(excessiveItemId, removeIndex+1, excessiveItemId, removeIndex, moved);
             System.arraycopy(excessiveQName, removeIndex+1, excessiveQName, removeIndex, moved);
             System.arraycopy(excessiveSystemId, removeIndex+1, excessiveSystemId, removeIndex, moved);
             System.arraycopy(excessiveLineNumber, removeIndex+1, excessiveLineNumber, removeIndex, moved);
@@ -2144,12 +2160,11 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
         
         
-	public void characterContentValueError(int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
         errorTotalCount++;
 		if(valueSizeCC == 0){
 			valueSizeCC = 1;
 			valueIndexCC = 0;
-			valueElementQNameCC = new String[valueSizeCC];
 			valueCharsSystemIdCC = new String[valueSizeCC];
 			valueCharsLineNumberCC = new int[valueSizeCC];
 			valueCharsColumnNumberCC = new int[valueSizeCC];
@@ -2157,11 +2172,8 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             
             valueFECCC = new int[valueSizeCC];
 		}else if(++valueIndexCC == valueSizeCC){
-			String[] increasedEQ = new String[++valueSizeCC];
-			System.arraycopy(valueElementQNameCC, 0, increasedEQ, 0, valueIndexCC);
-			valueElementQNameCC = increasedEQ;
 						
-			String[] increasedCSI = new String[valueSizeCC];
+			String[] increasedCSI = new String[++valueSizeCC];
 			System.arraycopy(valueCharsSystemIdCC, 0, increasedCSI, 0, valueIndexCC);
 			valueCharsSystemIdCC = increasedCSI;
 			
@@ -2182,7 +2194,6 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			valueFECCC = increasedFEC;
 						
 		}
-		valueElementQNameCC[valueIndexCC] = elementQName;
 		valueCharsSystemIdCC[valueIndexCC] = charsSystemId;
 		valueCharsLineNumberCC[valueIndexCC] = charsLineNumber;
 		valueCharsColumnNumberCC[valueIndexCC] = columnNumber;
@@ -2194,7 +2205,6 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         errorTotalCount -= valueSizeCC;
         valueSizeCC = 0;
         valueIndexCC = -1;
-        valueElementQNameCC = null;
         valueCharsSystemIdCC = null;
         valueCharsLineNumberCC = null;
         valueCharsColumnNumberCC = null;
@@ -2208,7 +2218,6 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         valueIndexCC--;
         errorTotalCount--;
         if(moved > 0){  
-            System.arraycopy(valueElementQNameCC, removeIndex+1, valueElementQNameCC, removeIndex, moved);
             System.arraycopy(valueCharsSystemIdCC, removeIndex+1, valueCharsSystemIdCC, removeIndex, moved);
             System.arraycopy(valueCharsLineNumberCC, removeIndex+1, valueCharsLineNumberCC, removeIndex, moved);
             System.arraycopy(valueCharsColumnNumberCC, removeIndex+1, valueCharsColumnNumberCC, removeIndex, moved);

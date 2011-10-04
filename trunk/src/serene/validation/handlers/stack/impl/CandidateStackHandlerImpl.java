@@ -412,10 +412,10 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		isCurrentHandlerReseted = true;
 	}
 		
-	public void blockReduce(StructureHandler handler, int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public void blockReduce(StructureHandler handler, int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
 		//TODO make sure the conflict rule is right
 		if(!stackConflictsHandler.isConflictRule(pattern)){
-			super.blockReduce(handler, count, pattern, startQName, startSystemId, lineNumber, columnNumber);
+			super.blockReduce(handler, count, pattern, itemId, startQName, startSystemId, lineNumber, columnNumber);
 			return;
 		}
 		//System.out.println("************** 5");
@@ -436,11 +436,11 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		}
 		if(shifted)parent.closeContentStructure(pattern);// must be last so it doesn't remove location data before error messages
 	}
-	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
 		//System.out.println("************** 6");
 		//TODO make sure the conflict rule is right
 		if(!stackConflictsHandler.isConflictRule(pattern)){
-			super.limitReduce(handler, MIN, MAX, pattern, startQName, startSystemId, lineNumber, columnNumber);
+			super.limitReduce(handler, MIN, MAX, pattern, itemId, startQName, startSystemId, lineNumber, columnNumber);
 			return;
 		}
 		// TODO the checks for Exception
@@ -663,21 +663,21 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		}
 	}
 	
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
 		if(stackConflictsHandler.isConflictRule(excessiveDefinition)){
 			stackConflictsHandler.disqualify(excessiveDefinition);
 			hasDisqualifyingError = true;
 		}else if(reportExcessive){
-			errorCatcher.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+			errorCatcher.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
 			parent.reportedExcessive();
 		}
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
 		if(stackConflictsHandler.isConflictRule(excessiveDefinition)){
 			//throw new IllegalStateException(); it could be the last one, processed even disqualified
 		}else if(reportExcessive){	
-			errorCatcher.excessiveContent(context, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+			errorCatcher.excessiveContent(context, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
 			parent.reportedExcessive();
 		}		
 	}
@@ -756,7 +756,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		throw new IllegalStateException();
 	}
 	
-	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		throw new IllegalStateException();
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
