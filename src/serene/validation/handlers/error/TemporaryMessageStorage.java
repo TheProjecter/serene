@@ -147,6 +147,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 	
 	// {11}
 	Rule[] illegalContext;
+	int[] illegalItemId;
 	String[] illegalQName;
 	String[] illegalStartSystemId;
 	int[] illegalStartLineNumber;
@@ -1679,6 +1680,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
     }
 	
 	public void illegalContent(Rule context, 
+	                        int startItemId, 
 							String startQName, 
 							String startSystemId, 
 							int startLineNumber, 
@@ -1688,6 +1690,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 			illegalSize = 1;
 			illegalIndex = 0;
 			illegalContext = new APattern[illegalSize];
+			illegalItemId = new int[illegalSize];
 			illegalQName = new String[illegalSize];
 			illegalStartSystemId = new String[illegalSize];			
 			illegalStartLineNumber = new int[illegalSize];
@@ -1696,6 +1699,10 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 			APattern[] increasedEC = new APattern[++illegalSize];
 			System.arraycopy(illegalContext, 0, increasedEC, 0, illegalIndex);
 			illegalContext = increasedEC;
+			
+			int[] increasedII = new int[illegalSize];
+			System.arraycopy(illegalItemId, 0, increasedII, 0, illegalIndex);
+			illegalItemId = increasedII;
 			
 			String[] increasedQN = new String[illegalSize];
 			System.arraycopy(illegalQName, 0, increasedQN, 0, illegalIndex);
@@ -1714,6 +1721,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 			illegalStartColumnNumber = increasedSCN;			
 		}
 		illegalContext[illegalIndex] = context;
+		illegalItemId[illegalIndex] = startItemId;
 		illegalQName[illegalIndex] = startQName;
 		illegalStartSystemId[illegalIndex] = startSystemId;
 		illegalStartLineNumber[illegalIndex] = startLineNumber;
@@ -2491,6 +2499,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		if(illegalIndex >= 0){
 			for(int i = 0; i <= illegalIndex; i++){
 				errorCatcher.illegalContent(illegalContext[i],
+				                        illegalItemId[i],
                                         illegalQName[i],
                                         illegalStartSystemId[i],
                                         illegalStartLineNumber[i],

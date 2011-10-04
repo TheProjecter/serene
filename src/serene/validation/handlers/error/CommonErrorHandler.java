@@ -119,8 +119,8 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.missingContent(context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
 	}
 	
-	public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
-		messageHandler.illegalContent(context, startQName, startSystemId, startLineNumber, startColumnNumber);
+	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+		messageHandler.illegalContent(context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
 	}
 	
 	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){

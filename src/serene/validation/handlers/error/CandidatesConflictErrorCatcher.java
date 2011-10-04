@@ -143,6 +143,7 @@ interface CandidatesConflictErrorCatcher extends ErrorType{
     
 	void illegalContent(int candidateIndex, int functionalEquivalenceCode, 
                             Rule context, 
+                            int startItemId, 
 							String startQName, 
 							String startSystemId, 
 							int startLineNumber, 

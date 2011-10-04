@@ -1389,6 +1389,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
 	public void illegalContent(Rule context, 
+	                        int startItemId, 
 							String startQName, 
 							String startSystemId, 
 							int startLineNumber, 
@@ -1398,6 +1399,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			illegalSize = 1;
 			illegalIndex = 0;
 			illegalContext = new APattern[illegalSize];
+			illegalItemId = new int[illegalSize];
 			illegalQName = new String[illegalSize];
 			illegalStartSystemId = new String[illegalSize];			
 			illegalStartLineNumber = new int[illegalSize];
@@ -1406,6 +1408,10 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			APattern[] increasedEC = new APattern[++illegalSize];
 			System.arraycopy(illegalContext, 0, increasedEC, 0, illegalIndex);
 			illegalContext = increasedEC;
+			
+			int[] increasedII = new int[illegalSize];
+			System.arraycopy(illegalItemId, 0, increasedII, 0, illegalIndex);
+			illegalItemId = increasedII;
 			
 			String[] increasedQN = new String[illegalSize];
 			System.arraycopy(illegalQName, 0, increasedQN, 0, illegalIndex);
@@ -1424,6 +1430,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			illegalStartColumnNumber = increasedSCN;			
 		}
 		illegalContext[illegalIndex] = context;
+		illegalItemId[illegalIndex] = startItemId;
 		illegalQName[illegalIndex] = startQName;
 		illegalStartSystemId[illegalIndex] = startSystemId;
 		illegalStartLineNumber[illegalIndex] = startLineNumber;
@@ -1434,6 +1441,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         illegalSize = 0;
         illegalIndex = -1;
         illegalContext = null;
+        illegalItemId = null;
         illegalQName = null;
         illegalStartSystemId = null;			
         illegalStartLineNumber = null;

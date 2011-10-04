@@ -219,11 +219,11 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
     
-    public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+    public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.illegalContent(context, startQName, startSystemId, startLineNumber, startColumnNumber);
+		contextErrorHandler.illegalContent(context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
     

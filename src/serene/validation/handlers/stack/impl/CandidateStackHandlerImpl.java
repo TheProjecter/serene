@@ -692,12 +692,12 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		}	
 	}
 	
-	public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
 		if(contextConflictsDescriptor.isConflictRule(context)){
 			stackConflictsHandler.disqualify(context);//disqualify all since you don't know which is the real cause
 			hasDisqualifyingError = true;
 		}else if(reportIllegal){
-			errorCatcher.illegalContent(context, startQName, startSystemId, startLineNumber, startColumnNumber);
+			errorCatcher.illegalContent(context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
 			parent.reportedIllegal();
 		}		
 	}

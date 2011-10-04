@@ -149,6 +149,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	
 	// {11}
 	Rule[] illegalContext;
+	int[] illegalItemId;
 	String[] illegalQName;
 	String[] illegalStartSystemId;
 	int[] illegalStartLineNumber;
@@ -909,7 +910,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(illegalIndex >= 0){
 			for(int i = 0; i <= illegalIndex; i++){
 				message += "\n"+prefix+"Illegal content."
-							+"\n"+prefix+"The document structure starting with <"+illegalQName[i] +"> at "+getLocation(restrictToFileName, illegalStartSystemId[i])+":"+illegalStartLineNumber[i]+":"+illegalStartColumnNumber[i]+" does not match schema definition <"+illegalContext[i].getQName()+"> at "+illegalContext[i].getLocation(restrictToFileName)+".";
+							+"\n"+prefix+"The document structure starting with "+getItemDescription(illegalItemId[i], illegalQName[i])+" at "+getLocation(restrictToFileName, illegalStartSystemId[i])+":"+illegalStartLineNumber[i]+":"+illegalStartColumnNumber[i]+" does not match schema definition <"+illegalContext[i].getQName()+"> at "+illegalContext[i].getLocation(restrictToFileName)+".";
 			}			
 		}
 		// {12 A}

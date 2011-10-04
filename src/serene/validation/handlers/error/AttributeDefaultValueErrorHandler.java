@@ -142,17 +142,19 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
 	}
 	
 	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
-		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
+		/*String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Missing content in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+". ";
-        errorMessages.add(message);
+        errorMessages.add(message);*/
+        throw new IllegalStateException();
 	}
 
-	public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
-		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
+	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+		/*String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Illegal content in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+". ";
-        errorMessages.add(message);
+        errorMessages.add(message);*/
+        throw new IllegalStateException();        
 	}
 	
 	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){

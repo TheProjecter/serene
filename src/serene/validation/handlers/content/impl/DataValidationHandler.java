@@ -262,7 +262,7 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 		throw new IllegalStateException();
 	}
 	
-	public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
 		throw new IllegalStateException();
 	}
 	

@@ -145,6 +145,7 @@ interface ConflictErrorCatcher extends ErrorType{
     
 	void illegalContent(int functionalEquivalenceCode, 
                             Rule context, 
+                            int startItemId, 
 							String startQName, 
 							String startSystemId, 
 							int startLineNumber, 
