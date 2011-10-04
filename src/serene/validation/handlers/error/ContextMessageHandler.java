@@ -333,11 +333,12 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         unexpectedAmbiguousAttributeColumnNumber = null;
     }
 	
-	public void misplacedElement(APattern contextDefinition, 
+	public void misplacedContent(APattern contextDefinition, 
 											String startSystemId, 
 											int startLineNumber, 
 											int startColumnNumber, 
 											APattern definition, 
+											int itemId, 
 											String qName, 
 											String systemId, 
 											int lineNumber, 
@@ -355,29 +356,40 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 				misplacedStartLineNumber = new int[misplacedSize];
 				misplacedStartColumnNumber = new int[misplacedSize];
 				misplacedDefinition = new APattern[misplacedSize][1];
+				misplacedItemId = new int[misplacedSize][1][1];
 				misplacedQName = new String[misplacedSize][1][1];
 				misplacedSystemId = new String[misplacedSize][1][1];			
 				misplacedLineNumber = new int[misplacedSize][1][1];
 				misplacedColumnNumber = new int[misplacedSize][1][1];
-				
+                
 				misplacedContext[misplacedIndex] = contextDefinition;
 				misplacedStartSystemId[misplacedIndex] = startSystemId;
 				misplacedStartLineNumber[misplacedIndex] = startLineNumber;
 				misplacedStartColumnNumber[misplacedIndex] = startColumnNumber;
-				misplacedDefinition[misplacedIndex][0] = definition; 
+				misplacedDefinition[misplacedIndex][0] = definition;
+				misplacedItemId[misplacedIndex][0][0] = itemId;
 				misplacedQName[misplacedIndex][0][0] = qName; 		
 				misplacedSystemId[misplacedIndex][0][0] = systemId;
 				misplacedLineNumber[misplacedIndex][0][0] = lineNumber;
 				misplacedColumnNumber[misplacedIndex][0][0] = columnNumber;
-				
+                
 				break all;
 			}
             
 			for(int i = 0; i < misplacedSize; i++){
-				if(misplacedContext[i].equals(contextDefinition)){
+				if(misplacedContext[i].equals(contextDefinition)
+                    && misplacedStartSystemId[i].equals(startSystemId)			
+                    && misplacedStartLineNumber[i] == startLineNumber
+                    && misplacedStartColumnNumber[i] == startColumnNumber){
 					for(int j = 0; j < misplacedDefinition[i].length; j++){
 						if(misplacedDefinition[i][j].equals(definition)){
-							int length = misplacedQName[i][j].length;
+						    int length = misplacedItemId[i][j].length;
+							int[] increasedII = new int[(length+1)];
+							System.arraycopy(misplacedItemId[i][j], 0, increasedII, 0, length);
+							misplacedItemId[i][j] = increasedII;
+							misplacedItemId[i][j][length] = itemId;
+							
+							length = misplacedQName[i][j].length;
 							String[] increasedQN = new String[(length+1)];
 							System.arraycopy(misplacedQName[i][j], 0, increasedQN, 0, length);
 							misplacedQName[i][j] = increasedQN;
@@ -410,6 +422,12 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 					misplacedDefinition[i] = increasedDef;
 					misplacedDefinition[i][length] = definition; 
 										
+					
+					int[][] increasedII = new int[(length+1)][];
+					System.arraycopy(misplacedItemId[i], 0, increasedII, 0, length);
+					misplacedItemId[i] = increasedII;			
+					misplacedItemId[i][length] = new int[1];
+					misplacedItemId[i][length][0] = itemId;
 					
 					String[][] increasedQN = new String[(length+1)][];
 					System.arraycopy(misplacedQName[i], 0, increasedQN, 0, length);
@@ -468,6 +486,12 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			misplacedDefinition[misplacedIndex] = new APattern[1];
 			misplacedDefinition[misplacedIndex][0] = definition; 
 			
+			int[][][] increasedII = new int[misplacedSize][][];
+			System.arraycopy(misplacedItemId, 0, increasedII, 0, misplacedIndex);
+			misplacedItemId = increasedII;
+			misplacedItemId[misplacedIndex] = new int[1][1];			
+			misplacedItemId[misplacedIndex][0][0] = itemId; 		
+			
 			String[][][] increasedQN = new String[misplacedSize][][];
 			System.arraycopy(misplacedQName, 0, increasedQN, 0, misplacedIndex);
 			misplacedQName = increasedQN;
@@ -493,11 +517,12 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			misplacedColumnNumber[misplacedIndex][0][0] = columnNumber;
 		}
 	}
-    public void misplacedElement(APattern contextDefinition, 
+    public void misplacedContent(APattern contextDefinition, 
 											String startSystemId, 
 											int startLineNumber, 
 											int startColumnNumber, 
-											APattern definition, 
+											APattern definition,
+											int[] itemId, 
 											String[] qName, 
 											String[] systemId, 
 											int[] lineNumber, 
@@ -505,18 +530,186 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 											APattern[] sourceDefinition, 
 											APattern reper){//not stored, only used for internal conflict handling
 		
-		for(int i = 0; i < qName.length; i++){	
-			misplacedElement(contextDefinition, 
+		/*for(int i = 0; i < qName.length; i++){	
+			misplacedContent(contextDefinition, 
 									startSystemId, 
 									startLineNumber, 
 									startColumnNumber,															
 									definition, 
+									itemId[i], 
 									qName[i],
 									systemId[i], 
 									lineNumber[i], 
 									columnNumber[i],
 									sourceDefinition[i],
 									reper);
+		}*/
+		
+		all: {	           
+			if(misplacedSize == 0){
+                errorTotalCount++;
+				misplacedSize = 1;
+				misplacedIndex = 0;	
+				misplacedContext = new APattern[misplacedSize];	
+				misplacedStartSystemId = new String[misplacedSize];			
+				misplacedStartLineNumber = new int[misplacedSize];
+				misplacedStartColumnNumber = new int[misplacedSize];
+				misplacedDefinition = new APattern[misplacedSize][1];
+				misplacedItemId = new int[misplacedSize][1][];
+				misplacedQName = new String[misplacedSize][1][];
+				misplacedSystemId = new String[misplacedSize][1][];			
+				misplacedLineNumber = new int[misplacedSize][1][];
+				misplacedColumnNumber = new int[misplacedSize][1][];
+                
+				misplacedContext[misplacedIndex] = contextDefinition;
+				misplacedStartSystemId[misplacedIndex] = startSystemId;
+				misplacedStartLineNumber[misplacedIndex] = startLineNumber;
+				misplacedStartColumnNumber[misplacedIndex] = startColumnNumber;
+				misplacedDefinition[misplacedIndex][0] = definition;
+				misplacedItemId[misplacedIndex][0] = itemId;
+				misplacedQName[misplacedIndex][0] = qName; 		
+				misplacedSystemId[misplacedIndex][0] = systemId;
+				misplacedLineNumber[misplacedIndex][0] = lineNumber;
+				misplacedColumnNumber[misplacedIndex][0] = columnNumber;
+                
+				break all;
+			}
+            
+			for(int i = 0; i < misplacedSize; i++){
+				if(misplacedContext[i].equals(contextDefinition)
+                    && misplacedStartSystemId[i].equals(startSystemId)			
+                    && misplacedStartLineNumber[i] == startLineNumber
+                    && misplacedStartColumnNumber[i] == startColumnNumber){
+					for(int j = 0; j < misplacedDefinition[i].length; j++){                        
+						if(misplacedDefinition[i][j].equals(definition)){
+                            int addedLength = qName.length; 
+                            
+                            int length = misplacedItemId[i][j].length;
+							int[] increasedII = new int[length+addedLength];
+							System.arraycopy(misplacedItemId[i][j], 0, increasedII, 0, length);
+							misplacedItemId[i][j] = increasedII;
+                            System.arraycopy(itemId, 0, misplacedItemId[i][j], length, addedLength);
+                            
+							length = misplacedQName[i][j].length;
+							String[] increasedQN = new String[length+addedLength];
+							System.arraycopy(misplacedQName[i][j], 0, increasedQN, 0, length);
+							misplacedQName[i][j] = increasedQN;
+                            System.arraycopy(qName, 0, misplacedQName[i][j], length, addedLength);
+							
+							length = misplacedSystemId[i][j].length;
+							String[] increasedSI = new String[length+addedLength];
+							System.arraycopy(misplacedSystemId[i][j], 0, increasedSI, 0, length);
+							misplacedSystemId[i][j] = increasedSI;
+                            System.arraycopy(systemId, 0, misplacedSystemId[i][j], length, addedLength);
+							
+							length = misplacedLineNumber[i][j].length;
+							int[] increasedLN = new int[length+addedLength];
+							System.arraycopy(misplacedLineNumber[i][j], 0, increasedLN, 0, length);
+							misplacedLineNumber[i][j] = increasedLN;
+                            System.arraycopy(lineNumber, 0, misplacedLineNumber[i][j], length, addedLength);
+														
+							length = misplacedColumnNumber[i][j].length;
+							int[] increasedCN = new int[length+addedLength];
+							System.arraycopy(misplacedColumnNumber[i][j], 0, increasedCN, 0, length);
+							misplacedColumnNumber[i][j] = increasedCN;
+                            System.arraycopy(columnNumber, 0, misplacedColumnNumber[i][j], length, addedLength);
+							
+							break all;
+						}
+					}                   
+					int length = misplacedDefinition[i].length;					
+					APattern[] increasedDef = new APattern[(length+1)];					
+					System.arraycopy(misplacedDefinition[i], 0, increasedDef, 0, length);
+					misplacedDefinition[i] = increasedDef;
+					misplacedDefinition[i][length] = definition; 
+										
+					int[][] increasedII = new int[(length+1)][];
+					System.arraycopy(misplacedItemId[i], 0, increasedII, 0, length);
+					misplacedItemId[i] = increasedII;
+					misplacedItemId[i][length] = itemId;
+					
+					String[][] increasedQN = new String[(length+1)][];
+					System.arraycopy(misplacedQName[i], 0, increasedQN, 0, length);
+					misplacedQName[i] = increasedQN;
+					misplacedQName[i][length] = qName;
+										
+					String[][] increasedSI = new String[(length+1)][];
+					System.arraycopy(misplacedSystemId[i], 0, increasedSI, 0, length);
+					misplacedSystemId[i] = increasedSI;
+					misplacedSystemId[i][length] = systemId;
+					
+					int[][] increasedLN = new int[(length+1)][];
+					System.arraycopy(misplacedLineNumber[i], 0, increasedLN, 0, length);
+					misplacedLineNumber[i] = increasedLN;
+					misplacedLineNumber[i][length] = lineNumber;
+										
+					int[][] increasedCN = new int[(length+1)][];
+					System.arraycopy(misplacedColumnNumber[i], 0, increasedCN, 0, length);
+					misplacedColumnNumber[i] = increasedCN;
+					misplacedColumnNumber[i][length] = columnNumber;
+					
+					break all;
+				}
+			}
+            
+            errorTotalCount++;
+			APattern[] increasedCDef = new APattern[++misplacedSize];
+                                                                  // ISSUE 194 added ++
+			System.arraycopy(misplacedContext, 0, increasedCDef, 0, ++misplacedIndex);
+			misplacedContext = increasedCDef;
+            // ISSUE 194 removed ++
+			misplacedContext[misplacedIndex] = contextDefinition;
+			
+			String[] increasedSSI = new String[misplacedSize];
+			System.arraycopy(misplacedStartSystemId, 0, increasedSSI, 0, misplacedIndex);
+			misplacedStartSystemId = increasedSSI;
+			misplacedStartSystemId[misplacedIndex] = startSystemId;
+			
+			int[] increasedSLN = new int[misplacedSize];
+			System.arraycopy(misplacedStartLineNumber, 0, increasedSLN, 0, misplacedIndex);
+			misplacedStartLineNumber = increasedSLN;
+			misplacedStartLineNumber[misplacedIndex] = startLineNumber;
+			
+			int[] increasedSCN = new int[misplacedSize];
+			System.arraycopy(misplacedStartColumnNumber, 0, increasedSCN, 0, misplacedIndex);
+			misplacedStartColumnNumber = increasedSCN;
+			misplacedStartColumnNumber[misplacedIndex] = startColumnNumber;
+			
+			APattern[][] increasedDef = new APattern[misplacedSize][];
+			System.arraycopy(misplacedDefinition, 0, increasedDef, 0, misplacedIndex);
+			misplacedDefinition = increasedDef;
+			misplacedDefinition[misplacedIndex] = new APattern[1];
+			misplacedDefinition[misplacedIndex][0] = definition; 
+			
+			int[][][] increasedII = new int[misplacedSize][][];
+			System.arraycopy(misplacedItemId, 0, increasedII, 0, misplacedIndex);
+			misplacedItemId = increasedII;
+			misplacedItemId[misplacedIndex] = new int[1][];			
+			misplacedItemId[misplacedIndex][0] = itemId;
+			
+			String[][][] increasedQN = new String[misplacedSize][][];
+			System.arraycopy(misplacedQName, 0, increasedQN, 0, misplacedIndex);
+			misplacedQName = increasedQN;
+			misplacedQName[misplacedIndex] = new String[1][];			
+			misplacedQName[misplacedIndex][0] = qName; 			
+			
+			String[][][] increasedSI = new String[misplacedSize][][];
+			System.arraycopy(misplacedSystemId, 0, increasedSI, 0, misplacedIndex);
+			misplacedSystemId = increasedSI;
+			misplacedSystemId[misplacedIndex] = new String[1][];
+			misplacedSystemId[misplacedIndex][0] = systemId;
+						
+			int[][][] increasedLN = new int[misplacedSize][][];
+			System.arraycopy(misplacedLineNumber, 0, increasedLN, 0, misplacedIndex);
+			misplacedLineNumber = increasedLN;
+			misplacedLineNumber[misplacedIndex] = new int[1][];
+			misplacedLineNumber[misplacedIndex][0] = lineNumber;
+			
+			int[][][] increasedCN = new int[misplacedSize][][];
+			System.arraycopy(misplacedColumnNumber, 0, increasedCN, 0, misplacedIndex);
+			misplacedColumnNumber = increasedCN;
+			misplacedColumnNumber[misplacedIndex] = new int[1][];
+			misplacedColumnNumber[misplacedIndex][0] = columnNumber;
 		}
 	}
     public void clearMisplacedElement(){
@@ -528,6 +721,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         misplacedStartLineNumber = null;
         misplacedStartColumnNumber = null;
         misplacedDefinition = null;
+        misplacedItemId = null;
         misplacedQName = null;
         misplacedSystemId = null;			
         misplacedLineNumber = null;

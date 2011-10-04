@@ -150,7 +150,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	}
 	
 	
-	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
         if(isCandidate){            
             int functionalEquivalenceCode = contextDefinition.functionalEquivalenceCode()+
                                                 definition.functionalEquivalenceCode();
@@ -158,23 +158,23 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
                 functionalEquivalenceCode += qName[i].hashCode()+
                                                 sourceDefinition[i].functionalEquivalenceCode();
             }
-            messageHandler.misplacedElement(functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
-            candidatesConflictErrorHandler.misplacedElement(candidateIndex, functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+            messageHandler.misplacedContent(functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+            candidatesConflictErrorHandler.misplacedContent(candidateIndex, functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
         }else{
-            messageHandler.misplacedElement(-1, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+            messageHandler.misplacedContent(-1, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
         }
 	}
 	
-	public void misplacedElement(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int itemId, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
         if(isCandidate){
             int functionalEquivalenceCode = contextDefinition.functionalEquivalenceCode()+
 											definition.functionalEquivalenceCode()+ 
 											qName.hashCode()+
 											sourceDefinition.functionalEquivalenceCode();		
-            messageHandler.misplacedElement(functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
-            candidatesConflictErrorHandler.misplacedElement(candidateIndex, functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+            messageHandler.misplacedContent(functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+            candidatesConflictErrorHandler.misplacedContent(candidateIndex, functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
         }else{
-            messageHandler.misplacedElement(-1, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+            messageHandler.misplacedContent(-1, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
         }
 	}
 	

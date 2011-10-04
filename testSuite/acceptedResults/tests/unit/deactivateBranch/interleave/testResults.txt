@@ -13,7 +13,7 @@ TESTED DOCUMENT document2.xml
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/interleave/document2.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Order error.
 Misplaced content in the document structure starting at document2.xml:3:10, corresponding to definition <group> at schema.rng:4:14:
-<bb> at document2.xml:3:10, corresponding to definition <group> at schema.rng:8:20.
+element <bb> at document2.xml:3:10, corresponding to definition <group> at schema.rng:8:20.
 
 
 
@@ -22,7 +22,7 @@ TESTED DOCUMENT document3.xml
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/interleave/document3.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Order error.
 Misplaced content in the document structure starting at document3.xml:3:10, corresponding to definition <group> at schema.rng:4:14:
-<dd> at document3.xml:5:10, corresponding to definition <element> at schema.rng:16:32.
+element <dd> at document3.xml:5:10, corresponding to definition <element> at schema.rng:16:32.
 
 
 
@@ -31,7 +31,7 @@ TESTED DOCUMENT document4.xml
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/interleave/document4.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Order error.
 Misplaced content in the document structure starting at document4.xml:3:10, corresponding to definition <group> at schema.rng:4:14:
-<dd> at document4.xml:4:10, corresponding to definition <element> at schema.rng:16:32.
+element <dd> at document4.xml:4:10, corresponding to definition <element> at schema.rng:16:32.
 
 
 
@@ -40,7 +40,7 @@ TESTED DOCUMENT document5.xml
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/interleave/document5.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Order error.
 Misplaced content in the document structure starting at document5.xml:4:10, corresponding to definition <group> at schema.rng:8:20:
-<cc> at document5.xml:4:10, corresponding to definition <element> at schema.rng:12:36.
+element <cc> at document5.xml:4:10, corresponding to definition <element> at schema.rng:12:36.
 
 
 
@@ -49,7 +49,7 @@ TESTED DOCUMENT document6.xml
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/interleave/document6.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Order error.
 Misplaced content in the document structure starting at document6.xml:3:10, corresponding to definition <group> at schema.rng:4:14:
-<bb> at document6.xml:3:10, corresponding to definition <group> at schema.rng:8:20.
+element <bb> at document6.xml:3:10, corresponding to definition <group> at schema.rng:8:20.
 
 
 
@@ -58,7 +58,7 @@ TESTED DOCUMENT document7.xml
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/interleave/document7.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Order error.
 Misplaced content in the document structure starting at document7.xml:3:10, corresponding to definition <group> at schema.rng:4:14:
-<dd> at document7.xml:5:10, corresponding to definition <element> at schema.rng:16:32.
+element <dd> at document7.xml:5:10, corresponding to definition <element> at schema.rng:16:32.
 Order error.
 Misplaced content in the document structure starting at document7.xml:4:10, corresponding to definition <group> at schema.rng:8:20:
-<cc> at document7.xml:4:10, corresponding to definition <element> at schema.rng:12:36.
+element <cc> at document7.xml:4:10, corresponding to definition <element> at schema.rng:12:36.

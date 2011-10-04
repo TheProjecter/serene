@@ -42,6 +42,7 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 	
 	int[] childIndex;
 	APattern[] childDefinition;
+	int[][] childItemId;
 	String[][] childQName;
 	String[][] childSystemId;
 	int[][] childLineNumber;
@@ -67,6 +68,7 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		childIndex[1] = -1;
 				
 		childDefinition = new APattern[correctChildIndexesSize];
+		childItemId = new int[correctChildIndexesSize][];
 		childQName = new String[correctChildIndexesSize][];
 		childSystemId = new String[correctChildIndexesSize][];
 		childLineNumber = new int[correctChildIndexesSize][];
@@ -115,7 +117,8 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		
 		APattern reper = null;
 		boolean[] prevConflict = null;
-		APattern prevDefinition = null; 
+		APattern prevDefinition = null;
+		int[] prevItemId = null;
 		String[] prevQName = null; 
 		String[] prevSystemId = null; 
 		int[] prevLineNumber = null; 
@@ -143,7 +146,8 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 				orderIndex = PREVIOUS_MISPLACED;
 				
 				reper = child;
-				prevDefinition = childDefinition[lastCorrectChildIndexIndex]; 
+				prevDefinition = childDefinition[lastCorrectChildIndexIndex];
+				prevItemId = childItemId[lastCorrectChildIndexIndex];
 				prevQName = childQName[lastCorrectChildIndexIndex];
 				prevSystemId = childSystemId[lastCorrectChildIndexIndex]; 
 				prevLineNumber = childLineNumber[lastCorrectChildIndexIndex]; 
@@ -160,7 +164,8 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 				orderIndex = PREVIOUS_MISPLACED;				
 				
 				reper = child;
-				prevDefinition = childDefinition[lastCorrectChildIndexIndex]; 
+				prevDefinition = childDefinition[lastCorrectChildIndexIndex];
+				prevItemId = childItemId[lastCorrectChildIndexIndex];
 				prevQName = childQName[lastCorrectChildIndexIndex];
 				prevSystemId = childSystemId[lastCorrectChildIndexIndex]; 
 				prevLineNumber = childLineNumber[lastCorrectChildIndexIndex]; 
@@ -194,11 +199,12 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 				}
 				
 				if(orderIndex == CURRENT_MISPLACED){					
-					errorCatcher.misplacedElement(rule, 
+					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//validationItemLocator.getSystemId(), 
 														contextLineNumber, //validationItemLocator.getLineNumber(), 
 														contextColumnNumber, //validationItemLocator.getColumnNumber(), 
 														child, 
+														validationItemLocator.getItemId(),
 														validationItemLocator.getQName(),
 														validationItemLocator.getSystemId(), 
 														validationItemLocator.getLineNumber(), 
@@ -206,11 +212,12 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 														sourceDefinition, 
 														reper);
 				}else if(orderIndex == PREVIOUS_MISPLACED){						
-					errorCatcher.misplacedElement(rule, 
+					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//validationItemLocator.getSystemId(), 
 														contextLineNumber, //validationItemLocator.getLineNumber(), 
 														contextColumnNumber, //validationItemLocator.getColumnNumber(),															
-														prevDefinition, 
+														prevDefinition,
+														prevItemId,
 														prevQName,
 														prevSystemId, 
 														prevLineNumber, 
@@ -238,11 +245,12 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 			}
 				
 			if(orderIndex == CURRENT_MISPLACED){				
-				errorCatcher.misplacedElement(rule, 
+				errorCatcher.misplacedContent(rule, 
 													contextSystemId,//validationItemLocator.getSystemId(), 
 													contextLineNumber, //validationItemLocator.getLineNumber(), 
 													contextColumnNumber, //validationItemLocator.getColumnNumber(), 
 													child, 
+													validationItemLocator.getItemId(),
 													validationItemLocator.getQName(),
 													validationItemLocator.getSystemId(), 
 													validationItemLocator.getLineNumber(), 
@@ -250,11 +258,12 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 													sourceDefinition,
 													reper);
 				}else if(orderIndex == PREVIOUS_MISPLACED){
-					errorCatcher.misplacedElement(rule, 
+					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//validationItemLocator.getSystemId(), 
 														contextLineNumber, //validationItemLocator.getLineNumber(), 
 														contextColumnNumber, //validationItemLocator.getColumnNumber(),															
-														prevDefinition, 
+														prevDefinition,
+														prevItemId,
 														prevQName,
 														prevSystemId, 
 														prevLineNumber, 
@@ -274,7 +283,8 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		
 		APattern reper = null;
 		boolean[] prevConflict = null;
-		APattern prevDefinition = null; 
+		APattern prevDefinition = null;
+		int[] prevItemId = null;
 		String[] prevQName = null; 
 		String[] prevSystemId = null; 
 		int[] prevLineNumber = null; 
@@ -306,7 +316,8 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 				orderIndex = PREVIOUS_MISPLACED;
 				
 				reper = child;
-				prevDefinition = childDefinition[lastCorrectChildIndexIndex]; 
+				prevDefinition = childDefinition[lastCorrectChildIndexIndex];
+				prevItemId = childItemId[lastCorrectChildIndexIndex];
 				prevQName = childQName[lastCorrectChildIndexIndex];
 				prevSystemId = childSystemId[lastCorrectChildIndexIndex]; 
 				prevLineNumber = childLineNumber[lastCorrectChildIndexIndex]; 
@@ -323,7 +334,8 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 				orderIndex = PREVIOUS_MISPLACED;				
 				
 				reper = child;
-				prevDefinition = childDefinition[lastCorrectChildIndexIndex]; 
+				prevDefinition = childDefinition[lastCorrectChildIndexIndex];
+				prevItemId = childItemId[lastCorrectChildIndexIndex];
 				prevQName = childQName[lastCorrectChildIndexIndex];
 				prevSystemId = childSystemId[lastCorrectChildIndexIndex]; 
 				prevLineNumber = childLineNumber[lastCorrectChildIndexIndex]; 
@@ -355,11 +367,12 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 				}
 				
 				if(orderIndex == CURRENT_MISPLACED){					
-					errorCatcher.misplacedElement(rule, 
+					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//validationItemLocator.getSystemId(), 
 														contextLineNumber, //validationItemLocator.getLineNumber(), 
 														contextColumnNumber, //validationItemLocator.getColumnNumber(), 
 														child, 
+														validationItemLocator.getItemId(),
 														validationItemLocator.getQName(),
 														validationItemLocator.getSystemId(), 
 														validationItemLocator.getLineNumber(), 
@@ -367,11 +380,12 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 														sourceDefinition, 
 														reper);
 				}else if(orderIndex == PREVIOUS_MISPLACED){						
-					errorCatcher.misplacedElement(rule, 
+					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//validationItemLocator.getSystemId(), 
 														contextLineNumber, //validationItemLocator.getLineNumber(), 
 														contextColumnNumber, //validationItemLocator.getColumnNumber(),															
-														prevDefinition, 
+														prevDefinition,
+														prevItemId,
 														prevQName,
 														prevSystemId, 
 														prevLineNumber, 
@@ -399,11 +413,12 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 			}
 				
 			if(orderIndex == CURRENT_MISPLACED){				
-				errorCatcher.misplacedElement(rule, 
+				errorCatcher.misplacedContent(rule, 
 													contextSystemId,//validationItemLocator.getSystemId(), 
 													contextLineNumber, //validationItemLocator.getLineNumber(), 
 													contextColumnNumber, //validationItemLocator.getColumnNumber(), 
 													child, 
+													validationItemLocator.getItemId(),
 													validationItemLocator.getQName(),
 													validationItemLocator.getSystemId(), 
 													validationItemLocator.getLineNumber(), 
@@ -411,12 +426,13 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 													sourceDefinition,
 													reper);
 				}else if(orderIndex == PREVIOUS_MISPLACED){
-					errorCatcher.misplacedElement(rule, 
+					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//validationItemLocator.getSystemId(), 
 														contextLineNumber, //validationItemLocator.getLineNumber(), 
 														contextColumnNumber, //validationItemLocator.getColumnNumber(),															
-														prevDefinition, 
-														prevQName,
+														prevDefinition,
+														prevItemId,
+														prevQName,														
 														prevSystemId, 
 														prevLineNumber, 
 														prevColumnNumber,
@@ -453,6 +469,7 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 						starttQName,
 						childIndex,
 						childDefinition,
+						childItemId,
 						childQName,
 						childSystemId,
 						childLineNumber,
@@ -481,6 +498,7 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 						starttQName,
 						childIndex,
 						childDefinition,
+						childItemId,
 						childQName,
 						childSystemId,
 						childLineNumber,
@@ -532,6 +550,7 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		childIndex[1] = -1;
 		for(int i = 0; i < correctChildIndexesSize; i++){
 			childDefinition[i] = null;
+			childItemId[i] = null;
 			childQName[i] = null;
 			childSystemId[i] = null;
 			childLineNumber[i] = null;
@@ -572,6 +591,7 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 							String startQName,
 							int[] childIndex,
 							APattern[] childDefinition,
+							int[][] childItemId,
 							String[][] childQName,
 							String[][] childSystemId,
 							int[][] childLineNumber,
@@ -582,6 +602,7 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		if(this.correctChildIndexesSize < correctChildIndexesSize){
 			this.childIndex = new int[correctChildIndexesSize];
 			this.childDefinition = new APattern[correctChildIndexesSize];
+			this.childItemId = new int[correctChildIndexesSize][];
 			this.childQName = new String[correctChildIndexesSize][];
 			this.childSystemId = new String[correctChildIndexesSize][];
 			this.childLineNumber = new int[correctChildIndexesSize][];
@@ -597,6 +618,9 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 			this.childIndex[i] = childIndex[i];						
 			this.childDefinition[i] = childDefinition[i];
 						
+			this.childItemId[i] = new int[childItemId[i].length];
+			System.arraycopy(childItemId[i], 0, this.childItemId[i], 0, childItemId[i].length);
+			
 			this.childQName[i] = new String[childQName[i].length];
 			System.arraycopy(childQName[i], 0, this.childQName[i], 0, childQName[i].length);
 
@@ -665,6 +689,16 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 			System.arraycopy(childDefinition, 0, increasedDefinition, 0, lastCorrectChildIndexIndex);
 			childDefinition = increasedDefinition;
 			
+			int[][] increasedCII = new int[correctChildIndexesSize][];
+			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
+				if(childItemId[i] != null){
+					increasedCII[i] = new int[childItemId[i].length];
+					System.arraycopy(childItemId[i], 0, increasedCII[i], 0, childItemId[i].length);
+				}
+			}
+			//System.arraycopy(childItemId, 0, increasedCII, 0, lastCorrectChildIndexIndex);
+			childItemId = increasedCII;
+			
 			String increasedQName[][] = new String[correctChildIndexesSize][];
 			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
 				if(childQName[i] != null){
@@ -718,6 +752,9 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		childIndex[lastCorrectChildIndexIndex] = newChildIndex;		
 		childDefinition[lastCorrectChildIndexIndex] = definition;
 		
+		childItemId[lastCorrectChildIndexIndex] = new int[1];
+		childItemId[lastCorrectChildIndexIndex][0] = validationItemLocator.getItemId();
+		
 		childQName[lastCorrectChildIndexIndex] = new String[1];
 		childQName[lastCorrectChildIndexIndex][0] = validationItemLocator.getQName();
 		
@@ -740,6 +777,10 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		int newLength = (oldLength+1);
 		
 		
+		int increasedCII[] = new int[newLength];
+		System.arraycopy(childItemId[lastCorrectChildIndexIndex], 0, increasedCII, 0, oldLength);
+		childItemId[lastCorrectChildIndexIndex] = increasedCII;
+					
 		String increasedQName[] = new String[newLength];
 		System.arraycopy(childQName[lastCorrectChildIndexIndex], 0, increasedQName, 0, oldLength);
 		childQName[lastCorrectChildIndexIndex] = increasedQName;

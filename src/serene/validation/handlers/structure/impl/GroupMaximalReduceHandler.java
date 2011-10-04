@@ -41,6 +41,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 	
 	int[] childIndex;
 	APattern[] childDefinition;
+	int[][] childItemId;
 	String[][] childQName;
 	String[][] childSystemId;
 	int[][] childLineNumber;
@@ -63,6 +64,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 		childIndex[1] = -1;
 		
 		childDefinition = new APattern[correctChildIndexesSize];
+		childItemId = new int[correctChildIndexesSize][];
 		childQName = new String[correctChildIndexesSize][];
 		childSystemId = new String[correctChildIndexesSize][];
 		childLineNumber = new int[correctChildIndexesSize][];
@@ -106,7 +108,8 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 		
 		APattern reper = null;
 		boolean[] prevConflict = null;
-		APattern prevDefinition = null; 
+		APattern prevDefinition = null;
+		int[] prevItemId = null;
 		String[] prevQName = null; 
 		String[] prevSystemId = null; 
 		int[] prevLineNumber = null; 
@@ -133,7 +136,8 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 				orderIndex = PREVIOUS_MISPLACED;
 				
 				reper = child;
-				prevDefinition = childDefinition[lastCorrectChildIndexIndex]; 
+				prevDefinition = childDefinition[lastCorrectChildIndexIndex];
+				prevItemId = childItemId[lastCorrectChildIndexIndex];
 				prevQName = childQName[lastCorrectChildIndexIndex];
 				prevSystemId = childSystemId[lastCorrectChildIndexIndex]; 
 				prevLineNumber = childLineNumber[lastCorrectChildIndexIndex]; 
@@ -150,7 +154,8 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 				orderIndex = PREVIOUS_MISPLACED;				
 				
 				reper = child;
-				prevDefinition = childDefinition[lastCorrectChildIndexIndex]; 
+				prevDefinition = childDefinition[lastCorrectChildIndexIndex];
+				prevItemId = childItemId[lastCorrectChildIndexIndex];
 				prevQName = childQName[lastCorrectChildIndexIndex];
 				prevSystemId = childSystemId[lastCorrectChildIndexIndex]; 
 				prevLineNumber = childLineNumber[lastCorrectChildIndexIndex]; 
@@ -182,11 +187,12 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 				}
 				
 				if(orderIndex == CURRENT_MISPLACED){					
-					errorCatcher.misplacedElement(rule, 
+					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//validationItemLocator.getSystemId(), 
 														contextLineNumber, //validationItemLocator.getLineNumber(), 
 														contextColumnNumber, //validationItemLocator.getColumnNumber(), 
 														child, 
+														validationItemLocator.getItemId(),
 														validationItemLocator.getQName(),
 														validationItemLocator.getSystemId(), 
 														validationItemLocator.getLineNumber(), 
@@ -194,11 +200,12 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 														sourceDefinition, 
 														reper);
 				}else if(orderIndex == PREVIOUS_MISPLACED){						
-					errorCatcher.misplacedElement(rule, 
+					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//validationItemLocator.getSystemId(), 
 														contextLineNumber, //validationItemLocator.getLineNumber(), 
 														contextColumnNumber, //validationItemLocator.getColumnNumber(),															
-														prevDefinition, 
+														prevDefinition,
+														prevItemId,
 														prevQName,
 														prevSystemId, 
 														prevLineNumber, 
@@ -226,11 +233,12 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 			}
 				
 			if(orderIndex == CURRENT_MISPLACED){				
-				errorCatcher.misplacedElement(rule, 
+				errorCatcher.misplacedContent(rule, 
 													contextSystemId,//validationItemLocator.getSystemId(), 
 													contextLineNumber, //validationItemLocator.getLineNumber(), 
 													contextColumnNumber, //validationItemLocator.getColumnNumber(), 
-													child, 
+													child,
+													validationItemLocator.getItemId(),
 													validationItemLocator.getQName(),
 													validationItemLocator.getSystemId(), 
 													validationItemLocator.getLineNumber(), 
@@ -238,11 +246,12 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 													sourceDefinition,
 													reper);
 				}else if(orderIndex == PREVIOUS_MISPLACED){
-					errorCatcher.misplacedElement(rule, 
+					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//validationItemLocator.getSystemId(), 
 														contextLineNumber, //validationItemLocator.getLineNumber(), 
 														contextColumnNumber, //validationItemLocator.getColumnNumber(),															
-														prevDefinition, 
+														prevDefinition,
+														prevItemId,
 														prevQName,
 														prevSystemId, 
 														prevLineNumber, 
@@ -282,6 +291,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 						starttQName,
 						childIndex,
 						childDefinition,
+						childItemId,
 						childQName,
 						childSystemId,
 						childLineNumber,
@@ -308,6 +318,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 						starttQName,
 						childIndex,
 						childDefinition,
+						childItemId,
 						childQName,
 						childSystemId,
 						childLineNumber,
@@ -356,6 +367,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 		childIndex[1] = -1;
 		for(int i = 0; i < correctChildIndexesSize; i++){
 			childDefinition[i] = null;
+			childItemId[i] = null;
 			childQName[i] = null;
 			childSystemId[i] = null;
 			childLineNumber[i] = null;
@@ -394,6 +406,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 							String startQName,
 							int[] childIndex,
 							APattern[] childDefinition,
+							int[][] childItemId,
 							String[][] childQName,
 							String[][] childSystemId,
 							int[][] childLineNumber,
@@ -404,6 +417,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 		if(this.correctChildIndexesSize < correctChildIndexesSize){
 			this.childIndex = new int[correctChildIndexesSize];
 			this.childDefinition = new APattern[correctChildIndexesSize];
+			this.childItemId = new int[correctChildIndexesSize][];
 			this.childQName = new String[correctChildIndexesSize][];
 			this.childSystemId = new String[correctChildIndexesSize][];
 			this.childLineNumber = new int[correctChildIndexesSize][];
@@ -418,6 +432,9 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 			this.childIndex[i] = childIndex[i];
 			this.childDefinition[i] = childDefinition[i];
 						
+			this.childItemId[i] = new int[childItemId[i].length];
+			System.arraycopy(childItemId[i], 0, this.childItemId[i], 0, childItemId[i].length);
+			
 			this.childQName[i] = new String[childQName[i].length];
 			System.arraycopy(childQName[i], 0, this.childQName[i], 0, childQName[i].length);
 			
@@ -487,6 +504,16 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 			System.arraycopy(childDefinition, 0, increasedDefinition, 0, lastCorrectChildIndexIndex);
 			childDefinition = increasedDefinition;
 			
+			int[][] increasedCII = new int[correctChildIndexesSize][];
+			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
+				if(childItemId[i] != null){
+					increasedCII[i] = new int[childItemId[i].length];
+					System.arraycopy(childItemId[i], 0, increasedCII[i], 0, childItemId[i].length);
+				}
+			}
+			//System.arraycopy(childItemId, 0, increasedItemId, 0, lastCorrectChildIndexIndex);
+			childItemId = increasedCII;
+			
 			String increasedQName[][] = new String[correctChildIndexesSize][];
 			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
 				if(childQName[i] != null){
@@ -540,6 +567,9 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 		childIndex[lastCorrectChildIndexIndex] = newChildIndex;
 		childDefinition[lastCorrectChildIndexIndex] = definition;
 		
+		childItemId[lastCorrectChildIndexIndex] = new int[1];
+		childItemId[lastCorrectChildIndexIndex][0] = validationItemLocator.getItemId();
+		
 		childQName[lastCorrectChildIndexIndex] = new String[1];
 		childQName[lastCorrectChildIndexIndex][0] = validationItemLocator.getQName();
 		
@@ -561,6 +591,10 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 		int oldLength = childQName[lastCorrectChildIndexIndex].length;
 		int newLength = (oldLength+1);
 		
+		int[] increasedCII = new int[newLength];
+		System.arraycopy(childItemId[lastCorrectChildIndexIndex], 0, increasedCII, 0, oldLength);
+		childItemId[lastCorrectChildIndexIndex] = increasedCII;
+					
 		String increasedQName[] = new String[newLength];
 		System.arraycopy(childQName[lastCorrectChildIndexIndex], 0, increasedQName, 0, oldLength);
 		childQName[lastCorrectChildIndexIndex] = increasedQName;
@@ -583,6 +617,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 		
 		int newIndex = oldLength;
 		
+		childItemId[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getItemId();
 		childQName[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getQName();
 		childSystemId[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getSystemId();
 		childLineNumber[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getLineNumber();
@@ -591,6 +626,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 	}	
 	private void removeLastCorrectChildIndex(){
 		childDefinition[lastCorrectChildIndexIndex] = null;
+		childItemId[lastCorrectChildIndexIndex] = null;
 		childQName[lastCorrectChildIndexIndex] = null;
 		childSystemId[lastCorrectChildIndexIndex] = null;
 		childLineNumber[lastCorrectChildIndexIndex] = null;
