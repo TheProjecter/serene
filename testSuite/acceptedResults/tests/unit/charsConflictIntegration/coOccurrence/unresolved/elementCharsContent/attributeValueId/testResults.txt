@@ -49,8 +49,8 @@ Character content at document5.xml:21:2 does not match the datatype required by 
 TESTED DOCUMENT document6.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/coOccurrence/unresolved/elementCharsContent/attributeValueId/document6.xml:22:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:22:66 contains errors: 
-Unresolved content.
-Attribute "bar" at document6.xml:20:15 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "bar" at document6.xml:20:15 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:25:31
 <attribute> at schema.rng:31:31.
 
@@ -59,8 +59,8 @@ Attribute "bar" at document6.xml:20:15 cannot be resolved, all candidates result
 TESTED DOCUMENT document7.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/coOccurrence/unresolved/elementCharsContent/attributeValueId/document7.xml:22:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:22:66 contains errors: 
-Unresolved content.
-Attribute "bar" at document7.xml:20:15 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "bar" at document7.xml:20:15 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:25:31
 <attribute> at schema.rng:31:31.
 Unresolved character content.

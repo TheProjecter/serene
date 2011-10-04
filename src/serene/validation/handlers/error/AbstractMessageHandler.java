@@ -912,7 +912,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		// {12 A}
 		if(unresolvedAmbiguousElementIndexEE >= 0){
 			for(int i = 0; i <= unresolvedAmbiguousElementIndexEE; i++){
-				message += "\n"+prefix+"Unresolved content."
+				message += "\n"+prefix+"Unresolved element."
 						+"\n"+prefix+"Element <"+unresolvedAmbiguousElementQNameEE[i] + "> at "+getLocation(restrictToFileName, unresolvedAmbiguousElementSystemIdEE[i])+":"+unresolvedAmbiguousElementLineNumberEE[i]+":"+unresolvedAmbiguousElementColumnNumberEE[i]
 						+", ambiguous after content validation, cannot be resolved by in context validation either, all candidates resulted in errors. Possible definitions: ";
 				for(int j = 0; j < unresolvedAmbiguousElementDefinitionEE[i].length; j++){
@@ -924,7 +924,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		// {12 U}
 		if(unresolvedUnresolvedElementIndexEE >= 0){
 			for(int i = 0; i <= unresolvedUnresolvedElementIndexEE; i++){
-				message += "\n"+prefix+"Unresolved content."
+				message += "\n"+prefix+"Unresolved element."
 						+"\n"+prefix+"Element <"+unresolvedUnresolvedElementQNameEE[i] + "> at "+getLocation(restrictToFileName, unresolvedUnresolvedElementSystemIdEE[i])+":"+unresolvedUnresolvedElementLineNumberEE[i]+":"+unresolvedUnresolvedElementColumnNumberEE[i]
 						+", unresolved by content validation, cannot be resolved by in context validation either, all candidates resulted in errors.";
 				
@@ -933,9 +933,9 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		// {13}
 		if(unresolvedAttributeIndexEE >= 0){
 			for(int i = 0; i <= unresolvedAttributeIndexEE; i++){
-				message += "\n"+prefix+"Unresolved content."
+				message += "\n"+prefix+"Unresolved attribute."
 						+"\n"+prefix+"Attribute \""+unresolvedAttributeQNameEE[i] + "\" at "+getLocation(restrictToFileName, unresolvedAttributeSystemIdEE[i])+":"+unresolvedAttributeLineNumberEE[i]+":"+unresolvedAttributeColumnNumberEE[i]
-						+" cannot be resolved, all candidates resulted in errors. Possible definitions: ";
+						+" cannot be resolved, all candidates resulted in errors. Available definitions: ";
 				for(int j = 0; j < unresolvedAttributeDefinitionEE[i].length; j++){
 					message += "\n"+prefix+"<"+unresolvedAttributeDefinitionEE[i][j].getQName()+"> at "+unresolvedAttributeDefinitionEE[i][j].getLocation(restrictToFileName);
 				}
@@ -1180,7 +1180,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		// {w1 U}
 		if(ambiguousUnresolvedElementIndexWW >= 0){
 			for(int i = 0; i <= ambiguousUnresolvedElementIndexWW; i++){
-				message += "\n"+prefix+"Ambiguous content."
+				message += "\n"+prefix+"Ambiguous element."
 						+"\n"+prefix+"Element <"+ambiguousUnresolvedElementQNameWW[i] + "> at "+getLocation(restrictToFileName, ambiguousUnresolvedElementSystemIdWW[i])+":"+ambiguousUnresolvedElementLineNumberWW[i]+":"+ambiguousUnresolvedElementColumnNumberWW[i]
 						+", unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.";				
 			}
@@ -1188,7 +1188,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		// {w1 A}
 		if(ambiguousAmbiguousElementIndexWW >= 0){
 			for(int i = 0; i <= ambiguousAmbiguousElementIndexWW; i++){
-				message += "\n"+prefix+"Ambiguous content."
+				message += "\n"+prefix+"Ambiguous element."
 						+"\n"+prefix+"Element <"+ambiguousAmbiguousElementQNameWW[i] + "> at "+getLocation(restrictToFileName, ambiguousAmbiguousElementSystemIdWW[i])+":"+ambiguousAmbiguousElementLineNumberWW[i]+":"+ambiguousAmbiguousElementColumnNumberWW[i]
 						+", ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:";
 				for(int j = 0; j < ambiguousAmbiguousElementDefinitionWW[i].length; j++){
@@ -1201,9 +1201,9 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		// {w2}
 		if(ambiguousAttributeIndexWW >= 0){
 			for(int i = 0; i <= ambiguousAttributeIndexWW; i++){
-				message += "\n"+prefix+"Ambiguous content."
+				message += "\n"+prefix+"Ambiguous attribute."
 						+"\n"+prefix+"Attribute \""+ambiguousAttributeQNameWW[i] + "\" at "+getLocation(restrictToFileName, ambiguousAttributeSystemIdWW[i])+":"+ambiguousAttributeLineNumberWW[i]+":"+ambiguousAttributeColumnNumberWW[i]
-						+" cannot be resolved to a single definition, all candidates could be correct. Possible definitions: ";
+						+" cannot be resolved to a single definition, several candidates could be correct. Possible definitions: ";
 				for(int j = 0; j < ambiguousAttributeDefinitionWW[i].length; j++){
 					message += "\n"+prefix+"<"+ambiguousAttributeDefinitionWW[i][j].getQName()+"> at "+ambiguousAttributeDefinitionWW[i][j].getLocation(restrictToFileName);
 				}

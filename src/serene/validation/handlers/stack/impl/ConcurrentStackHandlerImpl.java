@@ -890,9 +890,8 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		}
 		temporary.clear();
 		
-		for(int i = lastQualifiedIndex+1; i < attributeDefinitions.size(); i++){
-		    attribute = attributeDefinitions.get(i);				
-			resolver.addCandidate(attribute);
+		for(++lastQualifiedIndex; lastQualifiedIndex < attributeDefinitions.size(); lastQualifiedIndex++){
+		    resolver.addCandidate(attributeDefinitions.get(lastQualifiedIndex));
 		}
 	}
 	
@@ -996,9 +995,8 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		}
 		temporary.clear();
 		
-		for(int i = lastQualifiedIndex+1; i < attributeDefinitions.size(); i++){
-		    attribute = attributeDefinitions.get(i);				
-			resolver.addCandidate(attribute);
+		for(++lastQualifiedIndex; lastQualifiedIndex < attributeDefinitions.size(); lastQualifiedIndex++){
+		    resolver.addCandidate(attributeDefinitions.get(lastQualifiedIndex));
 		}
 	} 	
 		 	

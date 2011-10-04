@@ -31,8 +31,8 @@ Value of attribute "baz" at document3.xml:19:16 does not match the datatype requ
 TESTED DOCUMENT document4.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/unresolved/elementValueId/document4.xml:19:17 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
-Unresolved content.
-Attribute "baz" at document4.xml:19:17 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "baz" at document4.xml:19:17 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:27:31
 <attribute> at schema.rng:35:31.
 
@@ -73,11 +73,11 @@ Candidate definition <element> at schema.rng:32:29 contains errors:
 	Character content at document7.xml:20:12 does not match the value required by schema definition <value> at schema.rng:33:33.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/unresolved/elementValueId/document7.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
-Unresolved content.
-Attribute "baz" at document7.xml:19:16 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "baz" at document7.xml:19:16 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:27:31
 <attribute> at schema.rng:35:31.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/unresolved/elementValueId/document7.xml:21:7 Syntax warning. Element <foo> corresponding to definition <element> at schema.rng:21:66 generates warning: 
-Ambiguous content.
+Ambiguous element.
 Element <bar> at document7.xml:20:10, unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.

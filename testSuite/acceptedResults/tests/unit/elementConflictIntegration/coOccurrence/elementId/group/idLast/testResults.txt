@@ -21,7 +21,7 @@ Candidate definition <element> at schema.rng:17:29 contains errors:
 	In the document structure starting at document1.xml:4:11, corresponding to definition <element> at schema.rng:17:29, expected 1 occurrence corresponding to definition <element> at schema.rng:18:32, found 0.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/elementConflictIntegration/coOccurrence/elementId/group/idLast/document1.xml:5:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
-Unresolved content.
+Unresolved element.
 Element <bar> at document1.xml:4:11, unresolved by content validation, cannot be resolved by in context validation either, all candidates resulted in errors.
 
 

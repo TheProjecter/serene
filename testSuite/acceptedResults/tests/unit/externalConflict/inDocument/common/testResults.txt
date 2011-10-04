@@ -7,7 +7,7 @@ TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\ext
 TESTED DOCUMENT document1.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/common/document1.xml:27:8 Syntax error. Element <root> corresponding to definition <element> at schema.rng:23:26 contains errors: 
-Unresolved content.
+Unresolved element.
 Element <aa> at document1.xml:22:6, ambiguous after content validation, cannot be resolved by in context validation either, all candidates resulted in errors. Possible definitions: 
 <element> at schema.rng:25:26
 <element> at schema.rng:28:26.
@@ -21,7 +21,7 @@ Unexpected character content.
 Character content at document2.xml:24:14 is not allowed by the element's schema definition <element> at schema.rng:37:25.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/common/document2.xml:28:8 Syntax error. Element <root> corresponding to definition <element> at schema.rng:23:26 contains errors: 
-Unresolved content.
+Unresolved element.
 Element <aa> at document2.xml:22:6, ambiguous after content validation, cannot be resolved by in context validation either, all candidates resulted in errors. Possible definitions: 
 <element> at schema.rng:25:26
 <element> at schema.rng:28:26.

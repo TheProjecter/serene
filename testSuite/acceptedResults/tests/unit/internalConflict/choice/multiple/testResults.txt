@@ -7,17 +7,17 @@ TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\int
 TESTED DOCUMENT document1.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/document1.xml:25:8 Syntax warning. Element <root> corresponding to definition <element> at schema.rng:23:26 generates warning: 
-Ambiguous content.
+Ambiguous element.
 Element <aa> at document1.xml:22:7, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
 <element> at schema.rng:26:27
 <element> at schema.rng:31:15
 <element> at schema.rng:37:15.
-Ambiguous content.
+Ambiguous element.
 Element <aa> at document1.xml:23:7, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
 <element> at schema.rng:26:27
 <element> at schema.rng:31:15
 <element> at schema.rng:37:15.
-Ambiguous content.
+Ambiguous element.
 Element <aa> at document1.xml:24:7, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
 <element> at schema.rng:26:27
 <element> at schema.rng:31:15
@@ -32,15 +32,15 @@ TESTED DOCUMENT document2.xml
 TESTED DOCUMENT document3.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/document3.xml:25:8 Syntax warning. Element <root> corresponding to definition <element> at schema.rng:23:26 generates warning: 
-Ambiguous content.
+Ambiguous element.
 Element <foo> at document3.xml:22:8, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
 <element> at schema.rng:31:15
 <element> at schema.rng:37:15.
-Ambiguous content.
+Ambiguous element.
 Element <foo> at document3.xml:23:8, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
 <element> at schema.rng:31:15
 <element> at schema.rng:37:15.
-Ambiguous content.
+Ambiguous element.
 Element <foo> at document3.xml:24:8, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
 <element> at schema.rng:31:15
 <element> at schema.rng:37:15.
@@ -50,11 +50,11 @@ Element <foo> at document3.xml:24:8, ambiguous after content validation, cannot 
 TESTED DOCUMENT document4.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/choice/multiple/document4.xml:24:8 Syntax warning. Element <root> corresponding to definition <element> at schema.rng:23:26 generates warning: 
-Ambiguous content.
+Ambiguous element.
 Element <aa> at document4.xml:22:7, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
 <element> at schema.rng:31:15
 <element> at schema.rng:37:15.
-Ambiguous content.
+Ambiguous element.
 Element <foo> at document4.xml:23:8, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
 <element> at schema.rng:31:15
 <element> at schema.rng:37:15.

@@ -246,7 +246,7 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
 	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
-                        +" Ambiguous value, possible definitions: ";
+                        +" Unresolved value, all candidates resulted in errors, available definitions: ";
         for(CharsActiveTypeItem definition : possibleDefinitions){
             message += "\n<"+definition.getQName()+"> at "+definition.getLocation(restrictToFileName);
         }

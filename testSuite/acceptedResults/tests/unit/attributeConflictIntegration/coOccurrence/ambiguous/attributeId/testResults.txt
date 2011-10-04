@@ -35,8 +35,8 @@ TESTED DOCUMENT document6.xml
 TESTED DOCUMENT document7.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/ambiguous/attributeId/document7.xml:19:29 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
-Unresolved content.
-Attribute "baz" at document7.xml:19:29 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "baz" at document7.xml:19:29 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:25:32
 <attribute> at schema.rng:29:31
 <attribute> at schema.rng:35:31.
@@ -50,8 +50,8 @@ TESTED DOCUMENT document8.xml
 TESTED DOCUMENT document9.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/ambiguous/attributeId/document9.xml:19:26 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
-Unresolved content.
-Attribute "baz" at document9.xml:19:26 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "baz" at document9.xml:19:26 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:25:32
 <attribute> at schema.rng:29:31
 <attribute> at schema.rng:35:31.
