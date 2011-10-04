@@ -47,7 +47,7 @@ public class UnresolvedListTokenConflictResolver extends ListTokenConflictResolv
             temporaryMessageStorage[qualified.nextSetBit(0)].transferMessages(errorCatcher);
         }else{
             CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
-            errorCatcher.unresolvedListTokenInContextError(new String(token), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedListTokenInContextError(token, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
         }
     }	
 		
