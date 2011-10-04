@@ -412,7 +412,7 @@ class StartMessageHandler implements MessageReporter{
        
 		if(unresolvedAmbiguousElementQNameEE != null){
 			for(int i = 0; i <= unresolvedAmbiguousElementIndexEE; i++){
-				message += "\n"+prefix+"Unresolved content."
+				message += "\n"+prefix+"Unresolved element."
 						+"\n"+prefix+"Element <"+unresolvedAmbiguousElementQNameEE[i] + "> at "+getLocation(restrictToFileName, unresolvedAmbiguousElementSystemIdEE[i])+":"+unresolvedAmbiguousElementLineNumberEE[i]+":"+unresolvedAmbiguousElementColumnNumberEE[i]
 						+", ambiguous after content validation, cannot be resolved by in context validation either, all candidates resulted in errors. Possible definitions: ";
 				for(int j = 0; j < unresolvedAmbiguousElementDefinitionEE[i].length; j++){
@@ -425,7 +425,7 @@ class StartMessageHandler implements MessageReporter{
 		// {12 U}
 		if(unresolvedUnresolvedElementQNameEE != null){
 			for(int i = 0; i <= unresolvedUnresolvedElementIndexEE; i++){
-				message += "\n"+prefix+"Unresolved content."
+				message += "\n"+prefix+"Unresolved element."
 						+"\n"+prefix+"Element <"+unresolvedUnresolvedElementQNameEE[i] + "> at "+getLocation(restrictToFileName, unresolvedUnresolvedElementSystemIdEE[i])+":"+unresolvedUnresolvedElementLineNumberEE[i]+":"+unresolvedUnresolvedElementColumnNumberEE[i]
 						+", unresolved by content validation, cannot be resolved by in context validation either, all candidates resulted in errors.";
 				
@@ -440,7 +440,7 @@ class StartMessageHandler implements MessageReporter{
 		// {w1}
 		if(ambiguousUnresolvedElementQNameWW != null){
 			for(int i = 0; i <= ambiguousUnresolvedElementIndexWW; i++){
-				message += "\n"+prefix+"Ambiguous content."
+				message += "\n"+prefix+"Ambiguous element."
 						+"\n"+prefix+"Element <"+ambiguousUnresolvedElementQNameWW[i] + "> at "+getLocation(restrictToFileName, ambiguousUnresolvedElementSystemIdWW[i])+":"+ambiguousUnresolvedElementLineNumberWW[i]+":"+ambiguousUnresolvedElementColumnNumberWW[i]
 						+", unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.";				
 			}
@@ -449,9 +449,9 @@ class StartMessageHandler implements MessageReporter{
 		
 		if(ambiguousAmbiguousElementQNameWW != null){
 			for(int i = 0; i <= ambiguousAmbiguousElementIndexWW; i++){
-				message += "\n"+prefix+"Ambiguous content."
+				message += "\n"+prefix+"Ambiguous element."
 						+"\n"+prefix+"Element <"+ambiguousAmbiguousElementQNameWW[i] + "> at "+getLocation(restrictToFileName, ambiguousAmbiguousElementSystemIdWW[i])+":"+ambiguousAmbiguousElementLineNumberWW[i]+":"+ambiguousAmbiguousElementColumnNumberWW[i]
-						+", ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:";
+						+", ambiguous after content validation, cannot be desambiguated by in context validation, several candidates could be correct. Possible definitions:";
 				for(int j = 0; j < ambiguousAmbiguousElementDefinitionWW[i].length; j++){
 					message += "\n"+prefix+"<"+ambiguousAmbiguousElementDefinitionWW[i][j].getQName()+"> at "+ambiguousAmbiguousElementDefinitionWW[i][j].getLocation(restrictToFileName);
 				}

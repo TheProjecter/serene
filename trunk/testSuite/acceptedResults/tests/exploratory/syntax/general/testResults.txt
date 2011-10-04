@@ -54,7 +54,7 @@ In the document structure starting at schema.rng:23:16, corresponding to definit
 <rng:ref> at schema.rng:38:30.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:39:14 Syntax warning. Element <rng:start> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: start generates warning: 
-Ambiguous content.
+Ambiguous element.
 Element <rng:element> at schema.rng:23:16, unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:48:17 Syntax error. Element <rng:choice> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: choice in pattern context contains errors: 
@@ -99,7 +99,7 @@ Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element w
 	is not part of the parent's content model.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:68:15 Syntax warning. Element <rng:define> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: define generates warning: 
-Ambiguous content.
+Ambiguous element.
 Element <rng:element> at schema.rng:59:29, unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.
 
 null:-1:-1 Simplification 4.18 error. No correspoding definition was found for element <rng:ref> at schema.rng:47:35.

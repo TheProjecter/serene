@@ -35,8 +35,8 @@ TESTED DOCUMENT document6.xml
 TESTED DOCUMENT document7.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/ambiguous/attributeValueId/document7.xml:19:28 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
-Unresolved content.
-Attribute "baz" at document7.xml:19:28 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "baz" at document7.xml:19:28 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:27:32
 <attribute> at schema.rng:33:31
 <attribute> at schema.rng:41:31.
@@ -50,8 +50,8 @@ TESTED DOCUMENT document8.xml
 TESTED DOCUMENT document9.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/ambiguous/attributeValueId/document9.xml:19:25 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
-Unresolved content.
-Attribute "baz" at document9.xml:19:25 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "baz" at document9.xml:19:25 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:27:32
 <attribute> at schema.rng:33:31
 <attribute> at schema.rng:41:31.
@@ -65,14 +65,14 @@ TESTED DOCUMENT document10.xml
 TESTED DOCUMENT document11.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/ambiguous/attributeValueId/document11.xml:18:27 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
-Unresolved content.
-Attribute "bar" at document11.xml:18:27 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "bar" at document11.xml:18:27 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:24:31
 <attribute> at schema.rng:30:31.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/ambiguous/attributeValueId/document11.xml:18:27 Syntax warning. Element <foo> corresponding to definition <element> at schema.rng:21:66 generates warning: 
-Ambiguous content.
-Attribute "baz" at document11.xml:18:27 cannot be resolved to a single definition, all candidates could be correct. Possible definitions: 
+Ambiguous attribute.
+Attribute "baz" at document11.xml:18:27 cannot be resolved to a single definition, several candidates could be correct. Possible definitions: 
 <attribute> at schema.rng:27:32
 <attribute> at schema.rng:33:31.
 
@@ -81,15 +81,15 @@ Attribute "baz" at document11.xml:18:27 cannot be resolved to a single definitio
 TESTED DOCUMENT document12.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/ambiguous/attributeValueId/document12.xml:18:24 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
-Unresolved content.
-Attribute "bar" at document12.xml:18:24 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "bar" at document12.xml:18:24 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:24:31
 <attribute> at schema.rng:30:31
 <attribute> at schema.rng:38:31.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/ambiguous/attributeValueId/document12.xml:18:24 Syntax warning. Element <foo> corresponding to definition <element> at schema.rng:21:66 generates warning: 
-Ambiguous content.
-Attribute "baz" at document12.xml:18:24 cannot be resolved to a single definition, all candidates could be correct. Possible definitions: 
+Ambiguous attribute.
+Attribute "baz" at document12.xml:18:24 cannot be resolved to a single definition, several candidates could be correct. Possible definitions: 
 <attribute> at schema.rng:27:32
 <attribute> at schema.rng:33:31
 <attribute> at schema.rng:41:31.
@@ -99,13 +99,13 @@ Attribute "baz" at document12.xml:18:24 cannot be resolved to a single definitio
 TESTED DOCUMENT document13.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/ambiguous/attributeValueId/document13.xml:18:24 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
-Unresolved content.
-Attribute "bar" at document13.xml:18:24 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "bar" at document13.xml:18:24 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:24:31
 <attribute> at schema.rng:38:31.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/ambiguous/attributeValueId/document13.xml:18:24 Syntax warning. Element <foo> corresponding to definition <element> at schema.rng:21:66 generates warning: 
-Ambiguous content.
-Attribute "baz" at document13.xml:18:24 cannot be resolved to a single definition, all candidates could be correct. Possible definitions: 
+Ambiguous attribute.
+Attribute "baz" at document13.xml:18:24 cannot be resolved to a single definition, several candidates could be correct. Possible definitions: 
 <attribute> at schema.rng:27:32
 <attribute> at schema.rng:41:31.

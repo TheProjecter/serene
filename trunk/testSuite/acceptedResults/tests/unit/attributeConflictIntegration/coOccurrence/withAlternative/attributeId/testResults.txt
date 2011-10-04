@@ -11,8 +11,8 @@ TESTED DOCUMENT document1.xml
 TESTED DOCUMENT document2.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/withAlternative/attributeId/document2.xml:19:26 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
-Unresolved content.
-Attribute "baz" at document2.xml:19:26 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "baz" at document2.xml:19:26 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:28:31
 <attribute> at schema.rng:34:31.
 
@@ -21,8 +21,8 @@ Attribute "baz" at document2.xml:19:26 cannot be resolved, all candidates result
 TESTED DOCUMENT document3.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/withAlternative/attributeId/document3.xml:19:28 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
-Unresolved content.
-Attribute "baz" at document3.xml:19:28 cannot be resolved, all candidates resulted in errors. Possible definitions: 
+Unresolved attribute.
+Attribute "baz" at document3.xml:19:28 cannot be resolved, all candidates resulted in errors. Available definitions: 
 <attribute> at schema.rng:28:31
 <attribute> at schema.rng:34:31.
 
