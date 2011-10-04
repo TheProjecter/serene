@@ -28,14 +28,14 @@ import sereneWrite.MessageWriter;
 * number is greater than 1, it reports ambiguous content.   
 */
 public abstract class ListTokenConflictResolver extends CharsConflictResolver{
-    char[] token;
+    String token;
 	public ListTokenConflictResolver(MessageWriter debugWriter){				
 		super(debugWriter);
 	}
 	
-	void init(char[] token, TemporaryMessageStorage[] temporaryMessageStorage){
+	void init(TemporaryMessageStorage[] temporaryMessageStorage){
 		super.init(temporaryMessageStorage);
-        this.token = token;
+        this.token = validationItemLocator.getQName();
 	}
     
 	void reset(){		

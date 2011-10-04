@@ -63,8 +63,8 @@ public interface StackHandler extends FunctionallyEquivalable{
 	void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
 	void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
     
-	void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, char[] token, TemporaryMessageStorage[] temporaryMessageStorage);
-	void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, char[] token, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
+	void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
+	void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
 	
 	void reduce(StructureHandler handler);
 	

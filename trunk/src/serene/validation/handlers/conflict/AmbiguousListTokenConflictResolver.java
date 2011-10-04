@@ -40,9 +40,8 @@ public class AmbiguousListTokenConflictResolver extends ListTokenConflictResolve
 		super(debugWriter);
 	}
 	
-	void init(char[] token, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+	void init(BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 		super.init(temporaryMessageStorage);
-        this.token = token;
         this.disqualified = disqualified;
 	}
 	
@@ -55,7 +54,7 @@ public class AmbiguousListTokenConflictResolver extends ListTokenConflictResolve
 	public void resolve(ErrorCatcher errorCatcher){
         if(qualified.cardinality() == 0){
             CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
-            errorCatcher.unresolvedListTokenInContextError(new String(token), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedListTokenInContextError(token, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
         }else if(qualified.cardinality() > 1){ 
             int j = 0;
             for(int i = 0; i < candidateDefinitions.size(); i++){			
@@ -65,7 +64,7 @@ public class AmbiguousListTokenConflictResolver extends ListTokenConflictResolve
                 }
             }
             CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
-            errorCatcher.ambiguousListTokenInContextWarning(new String(token), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
         }else{
             if(temporaryMessageStorage != null && temporaryMessageStorage[qualified.nextSetBit(0)] != null)temporaryMessageStorage[qualified.nextSetBit(0)].transferMessages(errorCatcher);        
         }

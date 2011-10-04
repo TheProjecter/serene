@@ -133,9 +133,8 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 			errorCatcher.characterContentExceptedError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data); 
 		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
 			errorCatcher.attributeValueExceptedError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data);
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){
-		    // doesn't really matter since it will be overriden in the ListPatternValidationHandler 
-			errorCatcher.characterContentExceptedError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data);
+		}else if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){ 
+			errorCatcher.listTokenExceptedError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data);
 		}else{
 			throw new IllegalStateException();
 		}
@@ -143,7 +142,6 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 //StructuredDataContentTypeHandler
 //==============================================================================
     public void addStructuredData(StructuredDataActiveTypeItem data){
-        if(stackHandler == null) stackHandler = exceptPattern.getStackHandler(this);
         stackHandler.shift(data);
     }	
 	public void addStructuredData(List<StructuredDataActiveTypeItem> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){	   

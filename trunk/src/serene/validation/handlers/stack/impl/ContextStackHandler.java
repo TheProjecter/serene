@@ -121,11 +121,11 @@ public class ContextStackHandler  implements  StackHandler{
 		throw new IllegalStateException();
 	}
 	
-	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, char[] token, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		throw new IllegalStateException();
 	}
 	
-	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, char[] token, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 		throw new IllegalStateException();
 	}
 	

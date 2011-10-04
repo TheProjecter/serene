@@ -193,7 +193,7 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	    setCurrentErrorCatcher();
 	    
 	    if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){			
-			currentErrorCatcher.characterContentDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
+			currentErrorCatcher.listTokenDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
 		}else{
 			throw new IllegalStateException();
 		}		
@@ -204,7 +204,7 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	    setCurrentErrorCatcher();
 	    
 	    if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){			
-			currentErrorCatcher.characterContentValueError(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
+			currentErrorCatcher.listTokenValueError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
 		}else{
 			throw new IllegalStateException();
 		}
@@ -317,14 +317,11 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	}
 	
 	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-		externalConflictHandler.disqualify(currentIndex);
-		setCurrentErrorCatcher();
-		currentErrorCatcher.characterContentExceptedError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
-	}	
+		throw new IllegalStateException();
+	}
+	
 	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-		externalConflictHandler.disqualify(currentIndex);
-		setCurrentErrorCatcher();
-		currentErrorCatcher.attributeValueExceptedError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		throw new IllegalStateException();
 	}
 	
 	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
@@ -348,7 +345,9 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 		throw new IllegalStateException();
 	}
 	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-		throw new IllegalStateException();
+		externalConflictHandler.disqualify(currentIndex);
+		setCurrentErrorCatcher();
+		currentErrorCatcher.listTokenExceptedError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}	
     public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		throw new IllegalStateException();

@@ -1211,7 +1211,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 	}
     
 	
-	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, char[] token, TemporaryMessageStorage[] temporaryMessageStorage){		
+	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){		
 				
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -1225,7 +1225,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 			
-		UnresolvedListTokenConflictResolver resolver = conflictHandlerPool.getUnresolvedListTokenConflictResolver(token, temporaryMessageStorage);
+		UnresolvedListTokenConflictResolver resolver = conflictHandlerPool.getUnresolvedListTokenConflictResolver(temporaryMessageStorage);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
@@ -1300,7 +1300,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, char[] token, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
+	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
 				
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -1314,7 +1314,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 			
-		AmbiguousListTokenConflictResolver resolver = conflictHandlerPool.getAmbiguousListTokenConflictResolver(token, disqualified, temporaryMessageStorage);
+		AmbiguousListTokenConflictResolver resolver = conflictHandlerPool.getAmbiguousListTokenConflictResolver(disqualified, temporaryMessageStorage);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);

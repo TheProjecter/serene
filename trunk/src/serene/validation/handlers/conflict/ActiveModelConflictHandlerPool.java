@@ -441,16 +441,16 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		unresolvedCharsConflictResolver[unresolvedCharsConflictResolverFree++] = icr;
 	}
         
-    public AmbiguousListTokenConflictResolver getAmbiguousListTokenConflictResolver(char[] token, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){				
+    public AmbiguousListTokenConflictResolver getAmbiguousListTokenConflictResolver(BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){				
 		if(ambiguousListTokenConflictResolverFree == 0){
 			// ambiguousListTokenConflictResolverCreated++;
 			AmbiguousListTokenConflictResolver icr = new AmbiguousListTokenConflictResolver(debugWriter);
 			icr.init(this, validationItemLocator);
-			icr.init(token, disqualified, temporaryMessageStorage);			
+			icr.init(disqualified, temporaryMessageStorage);			
 			return icr;			
 		}else{
 			AmbiguousListTokenConflictResolver icr = ambiguousListTokenConflictResolver[--ambiguousListTokenConflictResolverFree];
-			icr.init(token, disqualified, temporaryMessageStorage);
+			icr.init(disqualified, temporaryMessageStorage);
 			return icr;
 		}		
 	}
@@ -464,16 +464,16 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		ambiguousListTokenConflictResolver[ambiguousListTokenConflictResolverFree++] = icr;
 	}
 	
-	public UnresolvedListTokenConflictResolver getUnresolvedListTokenConflictResolver(char[] token, TemporaryMessageStorage[] temporaryMessageStorage){				
+	public UnresolvedListTokenConflictResolver getUnresolvedListTokenConflictResolver(TemporaryMessageStorage[] temporaryMessageStorage){				
 		if(unresolvedListTokenConflictResolverFree == 0){
 			// unresolvedListTokenConflictResolverCreated++;
 			UnresolvedListTokenConflictResolver icr = new UnresolvedListTokenConflictResolver(debugWriter);
 			icr.init(this, validationItemLocator);
-			icr.init(token, temporaryMessageStorage);			
+			icr.init(temporaryMessageStorage);
 			return icr;			
 		}else{
 			UnresolvedListTokenConflictResolver icr = unresolvedListTokenConflictResolver[--unresolvedListTokenConflictResolverFree];
-			icr.init(token, temporaryMessageStorage);
+			icr.init(temporaryMessageStorage);
 			return icr;
 		}		
 	}
