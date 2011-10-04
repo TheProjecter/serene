@@ -1,5 +1,5 @@
 /*
-Copyright 2010 Radu Cernuta 
+Copyright 2011 Radu Cernuta 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,79 +14,74 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+
 package serene.internal.datatype;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
 
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 import org.relaxng.datatype.DatatypeStreamingValidator;
 
-import serene.internal.datatype.xmlName.XMLNameHandler;
-import serene.internal.datatype.xmlName.NameInvalidException;
-import serene.internal.datatype.xmlName.NameReservedException;
+import org.apache.xerces.impl.dv.XSSimpleType;
+import org.apache.xerces.impl.dv.InvalidDatatypeValueException;
+
+import serene.datatype.xsd.XsdValidationContext;
 
 import sereneWrite.MessageWriter;
 
 class QNameDT implements Datatype{
-	XMLNameHandler nameHandler;
-	QNameDT(){
-		nameHandler = new XMLNameHandler();
-		nameHandler.version("1.0");
-	}
-	public boolean isValid(String str, ValidationContext vc) {		
-		try{
-			String trimed = str.trim();
-            int colon = trimed.indexOf(':');
-            String prefix = null;
-            String namespace = null;            
-            if(colon > 0){
-                prefix = trimed.substring(0, colon);
-                namespace = vc.resolveNamespacePrefix(prefix);
-                if(namespace == null) return false;
-            }          
-			nameHandler.handleQName(trimed);
-			return true;			
-		}catch(NameInvalidException nie){
-			return false; 
-		}catch(NameReservedException nre){
-			return true;
-		}
+    boolean needsExtraChecking;
+    boolean needsFacetChecking;
+    boolean needsToNormalize;
+    
+    XsdValidationContext xsdValidationContext;
+    
+    XSSimpleType xercesType;
+    
+    QNameDT(XsdValidationContext xsdValidationContext,
+                XSSimpleType xercesType, 
+                MessageWriter debugWriter){
+        this.xercesType = xercesType;
+        this.xsdValidationContext = xsdValidationContext;
+        
+        needsExtraChecking = false;
+        needsFacetChecking = false;
+        needsToNormalize = true;        
+    }
+        
+    public boolean isValid(String str, ValidationContext vc) {
+        try{
+            checkValid(str, vc);
+            return true;
+        }catch(DatatypeException de){
+            return false;    
+        }
 	}
 
-	public void checkValid(String str, ValidationContext vc) throws DatatypeException{
+	public void checkValid(String str, ValidationContext vc) throws DatatypeException {
 		try{
-			String trimed = str.trim();
-            int colon = trimed.indexOf(':');
-            String prefix = null;
-            String namespace = null;            
-            if(colon > 0){
-                prefix = trimed.substring(0, colon);
-                namespace = vc.resolveNamespacePrefix(prefix);
-                if(namespace == null) throw new DatatypeException("Prefix was not declared.");
-            }
-			nameHandler.handleQName(trimed);						
-		}catch(NameInvalidException nie){
-			throw new DatatypeException(nie.getMessage()); 
-		}catch(NameReservedException nre){
-			//System.out.println(nre);			
-			//throw new DatatypeException(nre.getMessage());
-		}
+            xsdValidationContext.setNeedsExtraChecking(needsExtraChecking);
+            xsdValidationContext.setNeedsFacetChecking(needsFacetChecking);
+            xsdValidationContext.setNeedsToNormalize(needsToNormalize);
+            xsdValidationContext.setRngValidationContext(vc);
+            xercesType.validate(str, xsdValidationContext, null);
+        }catch(InvalidDatatypeValueException xercesException){
+            throw new DatatypeException(xercesException.getMessage());
+        }
 	}
 
 	public Object createValue(String str, ValidationContext vc) {
-        int colonIndex = str.indexOf(':');
-        String prefix = XMLConstants.DEFAULT_NS_PREFIX;
-        String nsURI = XMLConstants.NULL_NS_URI;
-        String localPart = str;
-		if(colonIndex > -1){
-            prefix = str.substring(0, colonIndex);
-            localPart = str.substring(colonIndex+1);
-            nsURI = vc.resolveNamespacePrefix(prefix);
+		try{
+            xsdValidationContext.setNeedsExtraChecking(needsExtraChecking);
+            xsdValidationContext.setNeedsFacetChecking(needsFacetChecking);
+            xsdValidationContext.setNeedsToNormalize(needsToNormalize);
+            xsdValidationContext.setRngValidationContext(vc);
+            return xercesType.validate(str, xsdValidationContext, null);
+        }catch(InvalidDatatypeValueException xercesException){
+            //throw new DatatypeException(xercesException.getMessage());
+            return null;
         }
-        return new QName(nsURI, localPart, prefix);
 	}
 
 	public boolean isContextDependent() {
@@ -101,7 +96,7 @@ class QNameDT implements Datatype{
 		return ID_TYPE_NULL;
 	}
 
-	public boolean sameValue(Object obj1, Object obj2) {        
+	public boolean sameValue(Object obj1, Object obj2) {
 		return obj1.equals(obj2);
 	}
 
@@ -112,8 +107,8 @@ class QNameDT implements Datatype{
 	public DatatypeStreamingValidator createStreamingValidator(ValidationContext vc) {
 		throw new UnsupportedOperationException("Serene doesn't support streaming validation yet");
 	}
-
+ 
     public String toString(){
-        return "internal QNameDT";
-    }	
+        return "QNameDT ";
+    }
 }
