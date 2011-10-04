@@ -51,6 +51,9 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
     StructuredDataContentTypeHandler structuredDataContentTypeHandler;
     ErrorCatcher contextErrorCatcher;
     
+    ArrayList<AData> dataMatches;
+    ArrayList<AValue> valueMatches;
+	ArrayList<AListPattern> listMatches;
     ArrayList<StructuredDataActiveTypeItem> matches;
     
     ErrorCatcher currentErrorCatcher;
@@ -61,6 +64,9 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
     StructuredDataValidationHandler(MessageWriter debugWriter){
         super(debugWriter);
         
+        dataMatches = new ArrayList<AData>();
+        valueMatches = new ArrayList<AValue>();
+	    listMatches = new ArrayList<AListPattern>();
         matches = new ArrayList<StructuredDataActiveTypeItem>();   
         
         currentIndex = -1;
@@ -75,6 +81,9 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
     void reset(){
         super.reset(); 
         
+        dataMatches.clear();
+        valueMatches.clear();
+	    listMatches.clear();
 	    matches.clear();
 	    
 	    if(currentErrorCatcher != null)currentErrorCatcher = null;
@@ -91,26 +100,22 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	}
 	
     public void handleChars(char[] chars, StructuredDataActiveType type) throws SAXException{				
-        List<AData> dataMatches = null;
-        List<AValue> valueMatches = null;
-	    List<AListPattern> listMatches = null;
-	    
-	    int dataOffset = -1;    
+        int dataOffset = -1;    
         int valueOffset = -1; 	    
         int listOffset = -1;
         
         if(type.allowsDataContent()){
-		    dataMatches = matchHandler.getDataMatches(type);						
+		    dataMatches.addAll(matchHandler.getDataMatches(type));						
 			dataOffset = 0;
 			matches.addAll(dataMatches);
 		}	
 		if(type.allowsValueContent()){
-			valueMatches = matchHandler.getValueMatches(type);			
+			valueMatches.addAll(matchHandler.getValueMatches(type));			
 			valueOffset = matches.size();
 			matches.addAll(valueMatches);				
 		}	
 		if(type.allowsListPatternContent()){
-			listMatches = matchHandler.getListPatternMatches(type);
+			listMatches.addAll(matchHandler.getListPatternMatches(type));
 			listOffset = matches.size();
 			matches.addAll(listMatches);	
 		}
@@ -138,27 +143,23 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 		handleAddToParent();
 	}
 	
-	public void handleString(String value, StructuredDataActiveType type) throws SAXException{				
-		List<AData> dataMatches = null;
-        List<AValue> valueMatches = null;
-	    List<AListPattern> listMatches = null;
-	    
+	public void handleString(String value, StructuredDataActiveType type) throws SAXException{
 	    int dataOffset = -1;    
         int valueOffset = -1; 	    
         int listOffset = -1;
                 
         if(type.allowsDataContent()){
-		    dataMatches = matchHandler.getDataMatches(type);						
+		    dataMatches.addAll(matchHandler.getDataMatches(type));						
 			dataOffset = 0;
 			matches.addAll(dataMatches);
 		}	
 		if(type.allowsValueContent()){
-			valueMatches = matchHandler.getValueMatches(type);			
+			valueMatches.addAll(matchHandler.getValueMatches(type));			
 			valueOffset = matches.size();
 			matches.addAll(valueMatches);				
 		}	
 		if(type.allowsListPatternContent()){
-			listMatches = matchHandler.getListPatternMatches(type);
+			listMatches.addAll(matchHandler.getListPatternMatches(type));
 			listOffset = matches.size();
 			matches.addAll(listMatches);	
 		}

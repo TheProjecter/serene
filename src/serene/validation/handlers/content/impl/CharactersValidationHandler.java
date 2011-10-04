@@ -51,6 +51,9 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
     CharsContentTypeHandler charsContentTypeHandler;
     ErrorCatcher contextErrorCatcher;
     
+    ArrayList<AData> dataMatches;
+    ArrayList<AValue> valueMatches;
+	ArrayList<AListPattern> listMatches;
     ArrayList<CharsActiveTypeItem> matches;
     
     ErrorCatcher currentErrorCatcher;
@@ -59,6 +62,9 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
     CharactersValidationHandler(MessageWriter debugWriter){
         super(debugWriter);
         
+        dataMatches = new ArrayList<AData>();
+        valueMatches = new ArrayList<AValue>();
+	    listMatches = new ArrayList<AListPattern>();
         matches = new ArrayList<CharsActiveTypeItem>();
         
         currentIndex = -1;
@@ -67,6 +73,9 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
     void reset(){
         super.reset();
         
+        dataMatches.clear();
+        valueMatches.clear();
+	    listMatches.clear();
         matches.clear();
         
         if(currentErrorCatcher != null)currentErrorCatcher = null;
@@ -96,28 +105,24 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
                 return;
             }
         }
-        
-        List<AData> dataMatches = null;
-        List<AValue> valueMatches = null;
-	    List<AListPattern> listMatches = null;
-	    
+        	    
 	    int dataOffset = -1;    
         int valueOffset = -1; 	    
         int listOffset = -1;    
         int textOffset = -1;
 	    
         if(type.allowsDataContent()){
-		    dataMatches = matchHandler.getDataMatches(type);						
+		    dataMatches.addAll(matchHandler.getDataMatches(type));						
 			dataOffset = 0;
 			matches.addAll(dataMatches);
 		}	
 		if(type.allowsValueContent()){
-			valueMatches = matchHandler.getValueMatches(type);			
+			valueMatches.addAll(matchHandler.getValueMatches(type));			
 			valueOffset = matches.size();
 			matches.addAll(valueMatches);				
 		}	
 		if(type.allowsListPatternContent()){
-			listMatches = matchHandler.getListPatternMatches(type);
+			listMatches.addAll(matchHandler.getListPatternMatches(type));
 			listOffset = matches.size();
 			matches.addAll(listMatches);	
 		}
@@ -155,28 +160,24 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
                 return;
             }	            
         }
-        
-		List<AData> dataMatches = null;
-        List<AValue> valueMatches = null;
-	    List<AListPattern> listMatches = null;
-	    
+        	    
 	    int dataOffset = -1;    
         int valueOffset = -1; 	    
         int listOffset = -1;    
         int textOffset = -1;
         
         if(type.allowsDataContent()){
-		    dataMatches = matchHandler.getDataMatches(type);						
+		    dataMatches.addAll(matchHandler.getDataMatches(type));						
 			dataOffset = 0;
 			matches.addAll(dataMatches);
 		}	
 		if(type.allowsValueContent()){
-			valueMatches = matchHandler.getValueMatches(type);			
+			valueMatches.addAll(matchHandler.getValueMatches(type));			
 			valueOffset = matches.size();
 			matches.addAll(valueMatches);				
 		}	
 		if(type.allowsListPatternContent()){
-			listMatches = matchHandler.getListPatternMatches(type);
+			listMatches.addAll(matchHandler.getListPatternMatches(type));
 			listOffset = matches.size();
 			matches.addAll(listMatches);	
 		}

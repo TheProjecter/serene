@@ -59,6 +59,8 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
     DataContentTypeHandler dataContentTypeHandler;
     ErrorCatcher contextErrorCatcher;
     
+    ArrayList<AData> dataMatches;
+	ArrayList<AValue> valueMatches;
     ArrayList<DatatypedActiveTypeItem> matches;
     
     ErrorCatcher currentErrorCatcher;
@@ -67,6 +69,8 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	DataValidationHandler(MessageWriter debugWriter){
 		super(debugWriter);
 		
+		dataMatches = new ArrayList<AData>();
+		valueMatches = new ArrayList<AValue>();
 		matches = new ArrayList<DatatypedActiveTypeItem>();
 		
 		currentIndex = -1;
@@ -82,6 +86,8 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	void reset(){
 	    super.reset();
         
+	    dataMatches.clear();
+		valueMatches.clear();
 	    matches.clear();
 	    
 	    if(currentErrorCatcher != null)currentErrorCatcher = null;
@@ -98,24 +104,21 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	}
 	
 	public void handleChars(char[] chars, DataActiveType type) throws SAXException{
-	   List<AData> dataMatches = null;
-	   List<AValue> valueMatches = null;
-	    
 	   int dataOffset = -1;  
        int valueOffset = -1;
         
 	   if(type.allowsDataContent()){
-		    dataMatches = matchHandler.getDataMatches(type);						
+		    dataMatches.addAll(matchHandler.getDataMatches(type));						
 			dataOffset = 0;
 			matches.addAll(dataMatches);
 		}	
 		if(type.allowsValueContent()){
-			valueMatches = matchHandler.getValueMatches(type);			
+			valueMatches.addAll(matchHandler.getValueMatches(type));			
 			valueOffset = matches.size();
 			matches.addAll(valueMatches);				
 		}	
 		
-		if(dataMatches != null && dataMatches.size() > 0){
+		if(dataMatches != null && dataMatches.size() > 0){		    
 		    for(int i = 0; i < dataMatches.size(); i++){
 			    currentIndex = i + dataOffset;
 			    validateData(chars, type, dataMatches.get(i));
@@ -131,20 +134,17 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 		handleAddToParent();
 	}
 		
-	public void handleString(String value, DataActiveType type) throws SAXException{
-	    List<AData> dataMatches = null;
-	    List<AValue> valueMatches = null;
-	    	    
+	public void handleString(String value, DataActiveType type) throws SAXException{	    	    
 	    int dataOffset = -1;  
         int valueOffset = -1;
         
 		if(type.allowsDataContent()){
-			dataMatches = matchHandler.getDataMatches(type);
+			dataMatches.addAll(matchHandler.getDataMatches(type));
 			dataOffset = 0;
 			matches.addAll(dataMatches);			
 		}	
 		if(type.allowsValueContent()){
-			valueMatches = matchHandler.getValueMatches(type);
+			valueMatches.addAll(matchHandler.getValueMatches(type));
 			valueOffset = matches.size();
 			matches.addAll(valueMatches);
 		}

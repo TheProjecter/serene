@@ -113,7 +113,7 @@ abstract class AbstractDVH extends AbstractCH implements ErrorCatcher{
         }
 	}
 	
-	void validateValue(String value, DataActiveType type, AValue valuePattern){
+	void validateValue(String value, DataActiveType type, AValue valuePattern){	    
         try{				
             valuePattern.datatypeMatches(value, validationContext);
             if(!valuePattern.valueMatches(value, validationContext)){
