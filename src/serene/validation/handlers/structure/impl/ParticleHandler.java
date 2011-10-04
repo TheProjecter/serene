@@ -31,6 +31,7 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
+import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
@@ -59,6 +60,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	
 	
 	private APattern definition;
+	private int itemId[];
 	private String[] qName;
 	private String[] systemId;
 	private int[] lineNumber;
@@ -103,7 +105,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		
 		index = -1;
 		size = 0;
-		MAX_SIZE = 10;		
+		MAX_SIZE = 10;	
 	}
 	
 	public void init(RuleHandlerRecycler recycler){		
@@ -131,6 +133,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	void reset(){
 		if(size > MAX_SIZE){
 			size = MAX_SIZE;
+			itemId = new int[size];
 			qName = new String[size];			
 			systemId = new String[size];			
 			lineNumber = new int[size];
@@ -150,11 +153,13 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			//System.out.println("close particle 1 "+outerToString());
 			stackConflictsHandler.close(this);
 			stackConflictsHandler = null;
-		}
+		}		
 	}
 	public ParticleHandler getCopy(ChildEventHandler childEventHandler, ErrorCatcher errorCatcher){
 		ParticleHandler copy = definition.getParticleHandler(childEventHandler, errorCatcher);
 		
+		int[] cItemId = null;
+		if(itemId != null) cItemId = Arrays.copyOf(itemId, itemId.length);
 		String[] cQName = null;
 		if(qName != null) cQName = Arrays.copyOf(qName, qName.length);
 		String[] cSysId = null;
@@ -167,6 +172,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		copy.setState(occurs, 
 					state.getIndex(),
 					definition,
+					cItemId,
 					cQName,
 					cSysId,
 					cLinNb,
@@ -185,6 +191,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	private void setState(int occurs, 
 						int stateIndex,
 						APattern definition,
+						int[] itemId,
 						String[] qName,
 						String[] systemId,
 						int[] lineNumber,
@@ -209,6 +216,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		}
 		
 		this.definition = definition;
+		this.itemId = itemId;
 		this.qName = qName;
 		this.systemId = systemId;
 		this.lineNumber = lineNumber;
@@ -238,9 +246,9 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		return state.isSaturated();
 	}
 	
-	public void handleOccurrence(String qN, String sI, int lN, int cN){
+	public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
 		occurs++;		
-		state.handleOccurrence(qN, sI, lN, cN);
+		state.handleOccurrence(iti, qN, sI, lN, cN);
 	}
 		
 	public void handleOccurrence(StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver){
@@ -258,16 +266,21 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	}
 		
 	
-	void recordAllLocations(String qN, String sI, int lN, int cN){		
+	void recordAllLocations(int iti, String qN, String sI, int lN, int cN){		
 		if(size == 0){
 			size = 1;
-			index = 0;	
+			index = 0;			
+			itemId = new int[size];
 			qName = new String[size];			
 			systemId = new String[size];			
 			lineNumber = new int[size];
 			columnNumber = new int[size];			
-		}else if(++index == size){			
-			String[] increasedQN = new String[++size];
+		}else if(++index == size){		    
+            int[] increasedII = new int[++size];
+            System.arraycopy(itemId, 0, increasedII, 0, index);
+            itemId = increasedII;
+ 			
+			String[] increasedQN = new String[size];
 			System.arraycopy(qName, 0, increasedQN, 0, index);
 			qName = increasedQN;
 			
@@ -283,16 +296,17 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			System.arraycopy(columnNumber, 0, increasedCN, 0, index);
 			columnNumber = increasedCN;
 		}
+		itemId[index] = iti;
 		qName[index] = qN;
 		systemId[index] = sI;
 		lineNumber[index] = lN;
-		columnNumber[index] = cN;
-			
+		columnNumber[index] = cN;		
 	}
 	
-	void recordLastLocation(String qN, String sI, int lN, int cN){		
+	void recordLastLocation(int iti, String qN, String sI, int lN, int cN){		
 		if(size > MAX_SIZE){
 			size = MAX_SIZE;
+			itemId = new int[size];
 			qName = new String[size];			
 			systemId = new String[size];			
 			lineNumber = new int[size];
@@ -304,6 +318,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			}
 		}
 		index = 0;
+		itemId[index] = iti;
 		qName[index] = qN;
 		systemId[index] = sI;
 		lineNumber[index] = lN;
@@ -314,6 +329,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	void clearLocations(){		
 		if(size > MAX_SIZE){
 			size = MAX_SIZE;
+			itemId = new int[size];
 			qName = new String[size];			
 			systemId = new String[size];			
 			lineNumber = new int[size];
@@ -441,7 +457,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		}		
 		
 		
-		public void handleOccurrence(String qN, String sI, int lN, int cN){
+		public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
 			// if(orderedParent()){
 				// recordAllLocations(qN, sI, lN, cN);
 				// handleOccurrence();
@@ -456,7 +472,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 					childEventHandler.optionalChildSatisfied();
 					state = satisfiedNeverSaturated;
 				}else{
-					recordAllLocations(qN, sI, lN, cN);					
+					recordAllLocations(iti, qN, sI, lN, cN);					
 					if(occurs == occursSaturated){						
 						childEventHandler.optionalChildSatisfied();
 						childEventHandler.childSaturated();
@@ -475,7 +491,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 					childEventHandler.requiredChildSatisfied();
 					state = satisfiedNeverSaturated;
 				}else{
-					recordAllLocations(qN, sI, lN, cN);
+					recordAllLocations(iti, qN, sI, lN, cN);
 					if(occurs == occursSaturated){						
 						childEventHandler.requiredChildSatisfied();
 						childEventHandler.childSaturated();
@@ -583,7 +599,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			}
 		}
 
-		public void handleOccurrence(String qN, String sI, int lN, int cN){
+		public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
 			// if(orderedParent()){
 				// recordAllLocations(qN, sI, lN, cN);
 				// handleOccurrence();
@@ -599,7 +615,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 					childEventHandler.requiredChildSatisfied();
 					state = satisfiedNeverSaturated;
 				}else{
-					recordAllLocations(qN, sI, lN, cN);
+					recordAllLocations(iti, qN, sI, lN, cN);
 					if(occurs == occursSaturated){						
 						childEventHandler.requiredChildSatisfied();
 						childEventHandler.childSaturated();
@@ -702,8 +718,8 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			}
 		}
 		
-		public void handleOccurrence(String qN, String sI, int lN, int cN){
-			recordAllLocations(qN, sI, lN, cN);
+		public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
+			recordAllLocations(iti, qN, sI, lN, cN);
 			if(occurs == occursSaturated){				
 				childEventHandler.childSaturated();
 				state = saturated;
@@ -748,7 +764,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		}
 		void handleOccurrence(){}
 		
-		public void handleOccurrence(String qN, String sI, int lN, int cN){
+		public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
 			// if(orderedParent()){
 				// recordAllLocations(qN, sI, lN, cN);
 			// }
@@ -798,8 +814,8 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			state = excessive;//state must be set after passing event, so that the excessive content error reporting can be done here, with all data
 		}
 		
-		public void handleOccurrence(String qN, String sI, int lN, int cN){
-			recordAllLocations(qN, sI, lN, cN);
+		public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
+			recordAllLocations(iti, qN, sI, lN, cN);
 			handleOccurrence();			
 		}
 			
@@ -823,6 +839,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 											startLineNumber,
 											startColumnNumber,
 											definition, 
+											Arrays.copyOf(itemId, (index+1)),
 											Arrays.copyOf(qName, (index+1)), 
 											Arrays.copyOf(systemId, (index+1)), 
 											Arrays.copyOf(lineNumber, (index+1)), 
@@ -874,13 +891,13 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			childEventHandler.childExcessive();			
 		}
 		
-		public void handleOccurrence(String qN, String sI, int lN, int cN){
+		public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
 			// if(orderedParent()){
 				// recordAllLocations(qN, sI, lN, cN);
 				// handleOccurrence();
 				// return;
 			// }
-			recordAllLocations(qN, sI, lN, cN);
+			recordAllLocations(iti, qN, sI, lN, cN);
 			handleOccurrence();
 		}
 			
@@ -901,6 +918,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			}
 			errorCatcher.excessiveContent(context,											
 											definition, 
+											itemId[index],
 											qName[index],
 											systemId[index],
 											lineNumber[index],

@@ -107,25 +107,25 @@ public class ListPatternHandler extends StructureValidationHandler{
 				return false;//TODO problem is that it did shift, but in the order's reshift, so this is not 100% correct
 			}				
 		}
-		handleParticleShift(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), validationItemLocator.getQName(), pattern);		
+		handleParticleShift(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), validationItemLocator.getQName(), validationItemLocator.getItemId(), pattern);		
 		//handleStateSaturationReduce();
 		//throw new IllegalStateException();
 		return true;
 	}
-	public boolean handleChildShift(APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, pattern);		
+	public boolean handleChildShift(APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
 		//handleStateSaturationReduce();
 		//throw new IllegalStateException();//?????????????
 		return true;
 	}	
-	public boolean handleChildShift(int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, pattern);		
+	public boolean handleChildShift(int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
 		//handleStateSaturationReduce();
 		//throw new IllegalStateException();//?????????????
 		return true;
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, pattern);		
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
 		//handleStateSaturationReduce();
 		//throw new IllegalStateException();//?????????????
 		return true;
@@ -287,9 +287,9 @@ public class ListPatternHandler extends StructureValidationHandler{
 	
 	
 	//Start ValidationHandler---------------------------------------------------------		
-	void handleParticleShift(String systemId, int lineNumber, int columnNumber, String qName, APattern childPattern){
+	void handleParticleShift(String systemId, int lineNumber, int columnNumber, String qName, int itemId, APattern childPattern){
 		setChildParticleHandler(childPattern);
-		childParticleHandler.handleOccurrence(qName, systemId, lineNumber, columnNumber);
+		childParticleHandler.handleOccurrence(itemId, qName, systemId, lineNumber, columnNumber);
 	}	
 	void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver){
 		setChildParticleHandler(childPattern);

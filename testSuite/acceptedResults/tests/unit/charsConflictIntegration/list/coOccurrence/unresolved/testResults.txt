@@ -44,9 +44,9 @@ TESTED DOCUMENT document5.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/list/coOccurrence/unresolved/document5.xml:22:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
 Excessive content.
-In the document structure starting at document5.xml:21:7, corresponding to definition <list> at schema.rng:22:11,  expected 1 occurrence corresponding to definition <choice> at schema.rng:23:15, found 2: 
-<character content> at document5.xml:21:7
-<character content> at document5.xml:21:7.
+In the document structure starting at document5.xml:21:7, corresponding to definition <list> at schema.rng:22:11,  expected 1 occurrence corresponding to definition <choice> at schema.rng:23:15, found 2 starting at: 
+list token "bar1" at document5.xml:21:7
+list token "2" at document5.xml:21:7.
 Missing content.
 In the document structure starting at document5.xml:21:7, corresponding to definition <group> at schema.rng:24:16, expected 1 or more occurrences corresponding to definition <data> at schema.rng:27:39, found 0.
 Missing content.

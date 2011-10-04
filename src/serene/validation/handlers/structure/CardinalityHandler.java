@@ -35,7 +35,7 @@ public interface CardinalityHandler extends RuleHandler{
 			
 	int getIndex();
 	
-	void handleOccurrence(String qN, String sI, int lN, int cN);		
+	void handleOccurrence(int iti, String qN, String sI, int lN, int cN);		
 	void handleOccurrence(StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver);
 	void handleOccurrence(StackConflictsHandler stackConflictsHandler);
 	void reportExcessive(Rule context, String startSystemId, int startLineNumber, int startColumnNumber);

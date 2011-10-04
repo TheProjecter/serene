@@ -120,6 +120,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 	int[] excessiveStartLineNumber;
 	int[] excessiveStartColumnNumber;
 	APattern[] excessiveDefinition;
+	int[][] excessiveItemId;
 	String[][] excessiveQName;
 	String[][] excessiveSystemId;
 	int[][] excessiveLineNumber;
@@ -251,7 +252,6 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
    
 	
 	// {17}
-	String valueElementQNameCC[];
 	String valueCharsSystemIdCC[];//CC character content
 	int valueCharsLineNumberCC[];
 	int valueCharsColumnNumberCC[];
@@ -966,6 +966,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 									int startLineNumber,
 									int startColumnNumber,
 									APattern definition, 
+									int[] itemId, 
 									String[] qName, 
 									String[] systemId, 
 									int[] lineNumber, 
@@ -978,6 +979,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 			excessiveStartLineNumber = new int[excessiveSize];
 			excessiveStartColumnNumber = new int[excessiveSize];
 			excessiveDefinition = new APattern[excessiveSize];
+			excessiveItemId = new int[excessiveSize][];
 			excessiveQName = new String[excessiveSize][];			
 			excessiveSystemId = new String[excessiveSize][];			
 			excessiveLineNumber = new int[excessiveSize][];
@@ -1003,6 +1005,10 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 			System.arraycopy(excessiveDefinition, 0, increasedED, 0, excessiveIndex);
 			excessiveDefinition = increasedED;
 			
+			int[][] increasedII = new int[excessiveSize][];
+			System.arraycopy(excessiveItemId, 0, increasedII, 0, excessiveIndex);
+			excessiveItemId = increasedII;
+			
 			String[][] increasedQN = new String[excessiveSize][];
 			System.arraycopy(excessiveQName, 0, increasedQN, 0, excessiveIndex);
 			excessiveQName = increasedQN;
@@ -1025,19 +1031,15 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		excessiveStartLineNumber[excessiveIndex] = startLineNumber;
 		excessiveStartColumnNumber[excessiveIndex] = startColumnNumber;
 		excessiveDefinition[excessiveIndex] = definition;
+		excessiveItemId[excessiveIndex] = itemId;
 		excessiveQName[excessiveIndex] = qName;
 		excessiveSystemId[excessiveIndex] = systemId;
 		excessiveLineNumber[excessiveIndex] = lineNumber;
-		excessiveColumnNumber[excessiveIndex] = columnNumber;		
-		
-		String excessive = "";
-		for(int i = 0; i < qName.length; i++){
-			excessive+="\n"+systemId[i]+":"+lineNumber[i]+":"+columnNumber[i]+":"+qName[i];
-		}
-		excessive.trim();
+		excessiveColumnNumber[excessiveIndex] = columnNumber;
 	}   
 	public void excessiveContent(Rule context, 
 								APattern definition, 
+								int itemId, 
 								String qName, 
 								String systemId, 
 								int lineNumber,		
@@ -1049,7 +1051,13 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 			    
                 recorded =  true;
                 
-				int length = excessiveQName[i].length;
+                int length = excessiveItemId[i].length;
+                int[] increasedII = new int[length+1];
+                System.arraycopy(excessiveItemId[i], 0, increasedII, 0, length);
+                excessiveItemId[i] = increasedII;
+                excessiveItemId[i][length] = itemId;
+                
+				length = excessiveQName[i].length;
 				String[] increasedQN = new String[(length+1)];
 				System.arraycopy(excessiveQName[i], 0, increasedQN, 0, length);
 				excessiveQName[i] = increasedQN;
@@ -1632,22 +1640,17 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		datatypeErrorMessageAV[datatypeIndexAV] = datatypeErrorMessage;
 	}
 	    
-	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
         
 		if(valueSizeCC == 0){
 			valueSizeCC = 1;
 			valueIndexCC = 0;
-			valueElementQNameCC = new String[valueSizeCC];
 			valueCharsSystemIdCC = new String[valueSizeCC];
 			valueCharsLineNumberCC = new int[valueSizeCC];
 			valueCharsColumnNumberCC = new int[valueSizeCC];
 			valueCharsDefinitionCC = new AValue[valueSizeCC];
-		}else if(++valueIndexCC == valueSizeCC){
-			String[] increasedEQ = new String[++valueSizeCC];
-			System.arraycopy(valueElementQNameCC, 0, increasedEQ, 0, valueIndexCC);
-			valueElementQNameCC = increasedEQ;
-						
-			String[] increasedCSI = new String[valueSizeCC];
+		}else if(++valueIndexCC == valueSizeCC){						
+			String[] increasedCSI = new String[++valueSizeCC];
 			System.arraycopy(valueCharsSystemIdCC, 0, increasedCSI, 0, valueIndexCC);
 			valueCharsSystemIdCC = increasedCSI;
 			
@@ -1663,7 +1666,6 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 			System.arraycopy(valueCharsDefinitionCC, 0, increasedCD, 0, valueIndexCC);
 			valueCharsDefinitionCC = increasedCD;			
 		}
-		valueElementQNameCC[valueIndexCC] = elementQName;
 		valueCharsSystemIdCC[valueIndexCC] = charsSystemId;
 		valueCharsLineNumberCC[valueIndexCC] = charsLineNumber;
 		valueCharsColumnNumberCC[valueIndexCC] = columnNumber;
@@ -2285,6 +2287,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
                                         excessiveStartLineNumber[i],
                                         excessiveStartColumnNumber[i],
                                         excessiveDefinition[i],
+                                        excessiveItemId[i],
                                         excessiveQName[i],
                                         excessiveSystemId[i],
                                         excessiveLineNumber[i],
@@ -2374,8 +2377,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		// {17}
 		if(valueIndexCC >= 0){
 			for(int i = 0; i <= valueIndexCC; i++){
-			    errorCatcher.characterContentValueError(valueElementQNameCC[i],
-                                                    valueCharsSystemIdCC[i],
+			    errorCatcher.characterContentValueError(valueCharsSystemIdCC[i],
                                                     valueCharsLineNumberCC[i],
                                                     valueCharsColumnNumberCC[i],
                                                     valueCharsDefinitionCC[i]);	

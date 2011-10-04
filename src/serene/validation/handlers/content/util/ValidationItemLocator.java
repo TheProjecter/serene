@@ -11,15 +11,17 @@ import sereneWrite.MessageWriter;
 * of the current item(element, attribute, character content).
 */
 public class ValidationItemLocator implements Locator{
-
+    public static final int NONE = -1;
 	public static final int ROOT = 0;
-	public static final int ELEMENT = 0;
-	public static final int ATTRIBUTE = 1;
+	public static final int ELEMENT = 1;
+	public static final int ATTRIBUTE = 2;
+	public static final int CHARACTER_CONTENT = 3;
+	public static final int LIST_TOKEN = 4;
 		
 	int maxDepth;
 	int depth;
 	
-	int[] context;
+	int[] itemType;
 	String[] qName;
     String[] localName;
     String[] namespaceURI;
@@ -37,7 +39,7 @@ public class ValidationItemLocator implements Locator{
 		maxDepth = 13;
 		depth = ROOT;
 		
-		context = new int[maxDepth];
+		itemType = new int[maxDepth];
 		qName = new String[maxDepth];
         localName = new String[maxDepth]; 
         namespaceURI = new String[maxDepth];
@@ -46,7 +48,7 @@ public class ValidationItemLocator implements Locator{
 		lineNumber = new int[maxDepth];
 		columnNumber = new int[maxDepth]; 
 		
-		context[depth] = ELEMENT;
+		itemType[depth] = ELEMENT;
 		qName[depth] = null;
 		systemId[depth] = null;
 		publicId[depth] = null;
@@ -58,7 +60,7 @@ public class ValidationItemLocator implements Locator{
 		maxDepth = 13;
 		depth = ROOT;
 		
-		context = new int[maxDepth];
+		itemType = new int[maxDepth];
 		qName = new String[maxDepth];
         localName = new String[maxDepth]; 
         namespaceURI = new String[maxDepth];
@@ -67,7 +69,7 @@ public class ValidationItemLocator implements Locator{
 		lineNumber = new int[maxDepth];
 		columnNumber = new int[maxDepth]; 
 		
-		context[depth] = ELEMENT;
+		itemType[depth] = ELEMENT;
 		qName[depth] = null;
 		systemId[depth] = null;
 		publicId[depth] = null;
@@ -80,7 +82,7 @@ public class ValidationItemLocator implements Locator{
 		if(depth == maxDepth){				
 			increaseSize(10);
 		}		
-		context[depth] = ELEMENT;
+		itemType[depth] = ELEMENT;
 		qName[depth] = qn;
         localName[depth] = lN; 
         namespaceURI[depth] = uri;
@@ -104,7 +106,7 @@ public class ValidationItemLocator implements Locator{
 		if(depth == maxDepth){				
 			increaseSize(10);
 		}
-		context[depth] = ATTRIBUTE;		
+		itemType[depth] = ATTRIBUTE;		
 		qName[depth] = qn;
         localName[depth] = lN; 
         namespaceURI[depth] = uri;
@@ -130,14 +132,14 @@ public class ValidationItemLocator implements Locator{
 		if(depth == maxDepth){				
 			increaseSize(10);
 		}		
-		context[depth] = ELEMENT;
+		itemType[depth] = CHARACTER_CONTENT;
 		qName[depth] = "character content";
 		systemId[depth] = si;
 		publicId[depth]  = pi;
 		lineNumber[depth] = ln;
 		columnNumber[depth] = cn;
 	}
-	
+		
 	public void closeCharsContent(){	
 		if(!currentCharsContent)return;
 		qName[depth] = null;
@@ -146,13 +148,33 @@ public class ValidationItemLocator implements Locator{
 		depth--;
 		currentCharsContent = false;
 	}
-		
+	
+    public void newListToken(String token, String si, String pi, int ln, int cn){
+		depth++;
+		if(depth == maxDepth){				
+			increaseSize(10);
+		}		
+		itemType[depth] = LIST_TOKEN;
+		qName[depth] = token;
+		systemId[depth] = si;
+		publicId[depth]  = pi;
+		lineNumber[depth] = ln;
+		columnNumber[depth] = cn;
+	}
+
+    public void closeListToken(){	
+		qName[depth] = null;
+		systemId[depth] = null;
+		publicId[depth]  = null;
+		depth--;
+	}
+	
 	private void increaseSize(int amount){
 		maxDepth += amount;
 			
-		int[] increasedContext = new int[maxDepth];
-		System.arraycopy(context, 0, increasedContext, 0, depth);
-		context = increasedContext;
+		int[] increasedItemType = new int[maxDepth];
+		System.arraycopy(itemType, 0, increasedItemType, 0, depth);
+		itemType = increasedItemType;
 		
 		String[] increasedQName = new String[maxDepth];
 		System.arraycopy(qName, 0, increasedQName, 0, depth);
@@ -215,11 +237,7 @@ public class ValidationItemLocator implements Locator{
 		return columnNumber[depth];
 	}
 
-	public boolean isAttributeContext(){
-		return context[depth] == ATTRIBUTE;
+	public int getItemId(){
+	    return itemType[depth];
 	}
-
-	public boolean isElementContext(){
-		return context[depth] == ELEMENT;
-	} 	
 }

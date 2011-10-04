@@ -36,6 +36,7 @@ import serene.validation.schema.active.StructuredDataActiveType;
 import serene.validation.schema.active.Rule;
 
 import serene.validation.handlers.content.StructuredDataEventHandler;
+
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import serene.validation.handlers.stack.StackHandler;
@@ -128,10 +129,13 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	
 	void handleExcept(){
 	    if(hasError)return;		
-		if(validationItemLocator.isElementContext()){			
+		if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
 			errorCatcher.characterContentExceptedError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data); 
-		}else if(validationItemLocator.isAttributeContext()){
+		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
 			errorCatcher.attributeValueExceptedError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data);
+		}else if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){
+		    // doesn't really matter since it will be overriden in the ListPatternValidationHandler 
+			errorCatcher.characterContentExceptedError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data);
 		}else{
 			throw new IllegalStateException();
 		}
@@ -183,11 +187,11 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	}
 	
 	
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
 		hasError = true;
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
 		hasError = true;
 	}
 	
@@ -243,7 +247,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 		hasError = true;
 	}
 	
-	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		hasError = true;
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){

@@ -1424,11 +1424,11 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		throw new IllegalStateException();
 	}
 		
-	public void blockReduce(StructureHandler handler, int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public void blockReduce(StructureHandler handler, int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}
 	
-	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}
 

@@ -125,18 +125,20 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
 	}
 		
 	
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){		
-		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
+	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){		
+		/*String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Excessive content in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+". ";                 
-        errorMessages.add(message);
+        errorMessages.add(message);*/
+        throw new IllegalStateException();
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
-		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
+		/*String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Excessive content in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+". ";
-        errorMessages.add(message);
+        errorMessages.add(message);*/
+        throw new IllegalStateException();
 	}
 	
 	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
@@ -210,7 +212,7 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
         errorMessages.add(message);
 	}
 	
-	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		throw new IllegalStateException();        
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){

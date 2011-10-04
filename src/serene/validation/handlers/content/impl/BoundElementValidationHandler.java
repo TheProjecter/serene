@@ -205,7 +205,21 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
                 cvh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
                 cvh.recycle();
             }else if(!isIgnorable || !isBufferIgnorable){
-                unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+                //unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+                // append the content, it could be that the element following is an error            
+                if(chars.length > 0){
+                    charContentBuffer.append(chars, 0, chars.length);
+                }
+                
+                // see that the right location is used in the messages
+                if(charContentLineNumber != -1){
+                    validationItemLocator.closeCharsContent();
+                    validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
+                }
+                
+                CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
+                cvh.recycle();            
             }
         }else{
             if(!element.allowsChars()){
@@ -220,15 +234,13 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
             
             // see that the right location is used in the messages
             if(charContentLineNumber != -1){
-                if(chars.length > 0)validationItemLocator.closeCharsContent();
+                validationItemLocator.closeCharsContent();
                 validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
             }
             
             CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
             cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
             cvh.recycle();
-            
-            if(chars.length == 0)validationItemLocator.closeCharsContent();
         }
 		// Character content binding is not done by the InternalConflictResolver 
 		// because there are no differences between different internal pattern

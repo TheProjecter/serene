@@ -26,6 +26,8 @@ import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
+import serene.validation.handlers.content.util.ValidationItemLocator;
+
 import sereneWrite.MessageWriter;
 
 public abstract class CharsConflictResolver extends InternalConflictResolver{	
@@ -49,26 +51,30 @@ public abstract class CharsConflictResolver extends InternalConflictResolver{
     }
     
     void reportUnresolvedError(ErrorCatcher errorCatcher){
-        // TODO differentiate attribute value and element content
         CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
         //errorCatcher.ambiguousCharsContentErrorsystemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
-        if(validationItemLocator.isElementContext()){			
+        if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){
+            //only possible within the context of an except pattern			
 			errorCatcher.unresolvedCharacterContent(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
-		}else if(validationItemLocator.isAttributeContext()){
+		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ELEMENT){
+			errorCatcher.unresolvedCharacterContent(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
+		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
 			errorCatcher.unresolvedAttributeValue(validationItemLocator.getQName(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
-		}else{
+		}else{		    
 			throw new IllegalStateException();
 		}	
     }
     
     void reportAmbiguousWarning(ErrorCatcher errorCatcher){
-        // TODO differentiate attribute value and element content
         CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);        
-        if(validationItemLocator.isElementContext()){			
+        if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){
+            //only possible within the context of an except pattern		
 			errorCatcher.ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
-		}else if(validationItemLocator.isAttributeContext()){
+		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ELEMENT){
+			errorCatcher.ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
+		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
 		    errorCatcher.ambiguousAttributeValueWarning(validationItemLocator.getQName(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
-		}else{
+		}else{		    
 			throw new IllegalStateException();
 		}	
     }

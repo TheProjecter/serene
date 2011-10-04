@@ -38,6 +38,7 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.content.DataEventHandler;
+
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
@@ -183,17 +184,7 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	}
 	
 	boolean mustHandleError(char[] chars, APattern pattern){
-	    if(validationItemLocator.isElementContext()){
-			if(matches.size() == 1){
-			    if(pattern.isRequiredBranch())return true;
-			    return !(chars.length == 0 || spaceHandler.isSpace(chars));
-            }
-            return true;			
-		}else if(validationItemLocator.isAttributeContext()){
-            return true;
-		}else{
-			throw new IllegalStateException();
-		}
+		return true;
 	}
 	
 	
@@ -201,10 +192,8 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 	    
-	    if(validationItemLocator.isElementContext()){			
+	    if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){			
 			currentErrorCatcher.characterContentDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
-		}else if(validationItemLocator.isAttributeContext()){
-			currentErrorCatcher.attributeValueDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage);
 		}else{
 			throw new IllegalStateException();
 		}		
@@ -214,10 +203,8 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 	    
-	    if(validationItemLocator.isElementContext()){			
-			currentErrorCatcher.characterContentValueError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
-		}else if(validationItemLocator.isAttributeContext()){
-			currentErrorCatcher.attributeValueValueError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value);
+	    if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){			
+			currentErrorCatcher.characterContentValueError(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
 		}else{
 			throw new IllegalStateException();
 		}
@@ -263,11 +250,11 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	}
 	
 	
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
 		throw new IllegalStateException();
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();
 	}
 	
@@ -322,7 +309,7 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 		throw new IllegalStateException();
 	}
 	
-	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		throw new IllegalStateException();
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){

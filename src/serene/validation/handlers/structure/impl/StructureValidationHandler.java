@@ -56,6 +56,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	
 	protected RuleHandlerRecycler recycler;
 	
+	protected int ittemId;
 	protected String starttQName;
 	protected String starttSystemId;
 	protected int starttLineNumber;
@@ -98,6 +99,9 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	// int functionalEquivalenceCode(); subclass	
 	public abstract StructureValidationHandler getCopy(StackHandler stackHandler, ErrorCatcher errorCatcher);
 	public abstract StructureValidationHandler getCopy(StructureHandler parent, StackHandler stackHandler, ErrorCatcher errorCatcher);
+	public int getItemId(){
+	    return ittemId;
+	}
 	public String getStartQName(){
 		return starttQName;
 	}
@@ -124,7 +128,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 		stackHandler.reduce(this);
 	}
 	
-	abstract void handleParticleShift(String systemId, int lineNumber, int columnNumber, String qName, APattern childPattern);
+	abstract void handleParticleShift(String systemId, int lineNumber, int columnNumber, String qName, int itemId, APattern childPattern);
 	abstract void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver);
 	/*abstract void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler);*/	
 			
@@ -142,6 +146,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	// LATER really???	
 	
 	void setStart(){	
+	    ittemId = validationItemLocator.getItemId();
 		starttSystemId = validationItemLocator.getSystemId();		
 		starttLineNumber = validationItemLocator.getLineNumber();
 		starttColumnNumber = validationItemLocator.getColumnNumber();

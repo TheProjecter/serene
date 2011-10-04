@@ -8,9 +8,9 @@ TESTED DOCUMENT document1.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/listPattern/listGroup/document1.xml:2:15 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Excessive content.
-In the document structure starting at document1.xml:2:9, corresponding to definition <group> at schema.rng:4:12,  expected 1 occurrence corresponding to definition <value> at schema.rng:5:28, found 2: 
-<character content> at document1.xml:2:9
-<character content> at document1.xml:2:9.
+In the document structure starting at document1.xml:2:9, corresponding to definition <group> at schema.rng:4:12,  expected 1 occurrence corresponding to definition <value> at schema.rng:5:28, found 2 starting at: 
+list token "x" at document1.xml:2:9
+list token "y" at document1.xml:2:9.
 Illegal value.
 List token "y" at document1.xml:2:9 does not match the value required by schema definition <value> at schema.rng:5:28.
 
@@ -20,9 +20,9 @@ TESTED DOCUMENT document2.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/listPattern/listGroup/document2.xml:2:16 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Excessive content.
-In the document structure starting at document2.xml:2:10, corresponding to definition <group> at schema.rng:4:12,  expected 1 occurrence corresponding to definition <value> at schema.rng:5:28, found 2: 
-<character content> at document2.xml:2:10
-<character content> at document2.xml:2:10.
+In the document structure starting at document2.xml:2:10, corresponding to definition <group> at schema.rng:4:12,  expected 1 occurrence corresponding to definition <value> at schema.rng:5:28, found 2 starting at: 
+list token "x" at document2.xml:2:10
+list token "y" at document2.xml:2:10.
 Illegal value.
 List token "y" at document2.xml:2:10 does not match the value required by schema definition <value> at schema.rng:5:28.
 
@@ -32,9 +32,9 @@ TESTED DOCUMENT document3.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/listPattern/listGroup/document3.xml:3:9 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
 Excessive content.
-In the document structure starting at document3.xml:2:11, corresponding to definition <group> at schema.rng:4:12,  expected 1 occurrence corresponding to definition <value> at schema.rng:5:28, found 2: 
-<character content> at document3.xml:2:11
-<character content> at document3.xml:2:11.
+In the document structure starting at document3.xml:2:11, corresponding to definition <group> at schema.rng:4:12,  expected 1 occurrence corresponding to definition <value> at schema.rng:5:28, found 2 starting at: 
+list token "x" at document3.xml:2:11
+list token "y" at document3.xml:2:11.
 Illegal value.
 List token "y" at document3.xml:2:11 does not match the value required by schema definition <value> at schema.rng:5:28.
 

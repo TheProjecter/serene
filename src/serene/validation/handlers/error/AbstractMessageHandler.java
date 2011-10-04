@@ -40,6 +40,8 @@ import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
+import serene.validation.handlers.content.util.ValidationItemLocator;
+
 import sereneWrite.MessageWriter;
 
 public abstract class AbstractMessageHandler  extends AbstractMessageReporter{	
@@ -120,6 +122,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	int[] excessiveStartLineNumber;
 	int[] excessiveStartColumnNumber;
 	APattern[] excessiveDefinition;
+	int[][] excessiveItemId;
 	String[][] excessiveQName;
 	String[][] excessiveSystemId;
 	int[][] excessiveLineNumber;
@@ -251,7 +254,6 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
    
 	
 	// {17}
-	String valueElementQNameCC[];
 	String valueCharsSystemIdCC[];//CC character content
 	int valueCharsLineNumberCC[];
 	int valueCharsColumnNumberCC[];
@@ -876,9 +878,9 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 			for(int i = 0; i <= excessiveIndex; i++){
 				message += "\n"+prefix+"Excessive content."
 						+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, excessiveStartSystemId[i])+":"+excessiveStartLineNumber[i]+":"+excessiveStartColumnNumber[i]+", corresponding to definition <"+excessiveContext[i].getQName()+"> at "+excessiveContext[i].getLocation(restrictToFileName)+", "
-						+" expected "+getExpectedCardinality(excessiveDefinition[i].getMinOccurs(), excessiveDefinition[i].getMaxOccurs())+" corresponding to definition <"+excessiveDefinition[i].getQName()+"> at "+excessiveDefinition[i].getLocation(restrictToFileName)+", found "+excessiveQName[i].length+": ";
+						+" expected "+getExpectedCardinality(excessiveDefinition[i].getMinOccurs(), excessiveDefinition[i].getMaxOccurs())+" corresponding to definition <"+excessiveDefinition[i].getQName()+"> at "+excessiveDefinition[i].getLocation(restrictToFileName)+", found "+excessiveQName[i].length+" starting at: ";
 				for(int j = 0; j < excessiveQName[i].length; j++){
-					message += "\n"+prefix+"<"+excessiveQName[i][j]+"> at "+getLocation(restrictToFileName, excessiveSystemId[i][j])+":"+excessiveLineNumber[i][j]+":"+excessiveColumnNumber[i][j];
+					message += "\n"+prefix+getItemDescription(excessiveItemId[i][j], excessiveQName[i][j])+" at "+getLocation(restrictToFileName, excessiveSystemId[i][j])+":"+excessiveLineNumber[i][j]+":"+excessiveColumnNumber[i][j];
 				}
 				message += ".";
 			}
@@ -1096,6 +1098,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     
     String getErrorIntro(String prefix, boolean restrictToFileName){
         String intro = "";        
+        // TODO is context type still used?
         if(contextType == ContextErrorHandler.ELEMENT){
             if(conflictResolutionId == RESOLVED){
                 if(definition == null){
@@ -1128,7 +1131,8 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     }
     
     String getWarningIntro(String prefix, boolean restrictToFileName){        
-        String intro = "";        
+        String intro = "";      
+         // TODO is context type still used?
         if(contextType == ContextErrorHandler.ELEMENT){
             if(conflictResolutionId == RESOLVED){
                 if(definition == null){
@@ -1266,5 +1270,19 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         int nameIndex = systemId.lastIndexOf(File.separatorChar)+1;
         if(nameIndex == 0) nameIndex = systemId.lastIndexOf('/')+1;
         return systemId.substring(nameIndex);	
+    }
+    
+    private String getItemDescription(int itemId, String qName){
+        String description = null;
+        if(itemId == ValidationItemLocator.ELEMENT){
+            description = "element <"+qName+">";
+        }else if(itemId == ValidationItemLocator.ATTRIBUTE){
+            description = "attribute \""+qName+"\"";
+        }else if(itemId == ValidationItemLocator.CHARACTER_CONTENT){
+            description = "character content";
+        }else if(itemId == ValidationItemLocator.LIST_TOKEN){
+            description = "list token \""+qName+"\"";
+        }
+        return description;
     }
 }

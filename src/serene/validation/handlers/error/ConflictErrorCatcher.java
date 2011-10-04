@@ -83,6 +83,7 @@ interface ConflictErrorCatcher extends ErrorType{
 									int startLineNumber,
 									int startColumnNumber,
 									APattern definition, 
+									int[] itemId, 
 									String[] qName, 
 									String[] systemId, 
 									int[] lineNumber, 
@@ -91,6 +92,7 @@ interface ConflictErrorCatcher extends ErrorType{
 	void excessiveContent(int functionalEquivalenceCode, 
                                 Rule context, 
 								APattern definition, 
+								int itemId, 
 								String qName, 
 								String systemId, 
 								int lineNumber,		
@@ -153,7 +155,7 @@ interface ConflictErrorCatcher extends ErrorType{
 	void attributeValueDatatypeError(int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
         
         
-	void characterContentValueError(int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition);
+	void characterContentValueError(int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition);
     
 	void attributeValueValueError(int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition);
         

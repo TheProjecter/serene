@@ -33,9 +33,9 @@ TESTED DOCUMENT document4.xml
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/internalConflict/group/simple/document4.xml:25:8 Syntax error. Element <root> corresponding to definition <element> at schema.rng:23:26 contains errors: 
 Excessive content.
-In the document structure starting at document4.xml:22:7, corresponding to definition <group> at schema.rng:24:11,  expected 1 occurrence corresponding to definition <element> at schema.rng:28:14, found 2: 
-<bar> at document4.xml:23:8
-<bar> at document4.xml:24:8.
+In the document structure starting at document4.xml:22:7, corresponding to definition <group> at schema.rng:24:11,  expected 1 occurrence corresponding to definition <element> at schema.rng:28:14, found 2 starting at: 
+element <bar> at document4.xml:23:8
+element <bar> at document4.xml:24:8.
 Unresolved element.
 Element <aa> at document4.xml:22:7, ambiguous after content validation, cannot be resolved by in context validation either, all candidates resulted in errors. Possible definitions: 
 <element> at schema.rng:25:26

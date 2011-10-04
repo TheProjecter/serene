@@ -288,15 +288,13 @@ class ElementValidationHandler extends ValidatingEEH
                 
                 // see that the right location is used in the messages
                 if(charContentLineNumber != -1){
-                    if(chars.length > 0)validationItemLocator.closeCharsContent();
+                    validationItemLocator.closeCharsContent();
                     validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
                 }
                 
                 CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
                 cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
                 cvh.recycle();
-                
-                if(chars.length == 0)validationItemLocator.closeCharsContent();
             }
         }else{
             if(!element.allowsChars()){
@@ -313,15 +311,13 @@ class ElementValidationHandler extends ValidatingEEH
             
             // see that the right location is used in the messages
             if(charContentLineNumber != -1){
-                if(chars.length > 0)validationItemLocator.closeCharsContent();
+                validationItemLocator.closeCharsContent();
                 validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
             }
             
             CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
             cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
-            cvh.recycle();
-            
-            if(chars.length == 0)validationItemLocator.closeCharsContent();
+            cvh.recycle();            
         }				
 	}
 	
@@ -460,14 +456,14 @@ class ElementValidationHandler extends ValidatingEEH
 	}
 		
 	
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler[contextErrorHandlerIndex].excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, String qName, String systemId, int lineNumber, int columnNumber){
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].excessiveContent(context, excessiveDefinition, qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler[contextErrorHandlerIndex].excessiveContent(context, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
 	}
 	
 	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
@@ -537,9 +533,9 @@ class ElementValidationHandler extends ValidatingEEH
 		contextErrorHandler[contextErrorHandlerIndex].attributeValueDatatypeError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
 	}    
 	
-	public void characterContentValueError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].characterContentValueError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler[contextErrorHandlerIndex].characterContentValueError(charsSystemId, charsLineNumber, columnNumber, charsDefinition);
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
