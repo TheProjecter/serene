@@ -792,6 +792,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     
 	public void illegalContent(int candidateIndex, int functionalEquivalenceCode, 
                             Rule context, 
+                            int startItemId, 
 							String startQName, 
 							String startSystemId, 
 							int startLineNumber, 
@@ -800,6 +801,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         if(mustRecordErrorMessage(ILLEGAL_CONTENT, functionalEquivalenceCode, candidateIndex)){
             localMessageHandler.illegalContent(functionalEquivalenceCode,
                                                                 context, 
+                                                                startItemId, 
                                                                 startQName, 
                                                                 startSystemId, 
                                                                 startLineNumber, 

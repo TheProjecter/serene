@@ -104,7 +104,7 @@ public class StartErrorHandler extends AbstractContextErrorHandler{
 	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
 	}
 	
-	public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
         throw new IllegalStateException();
 	}
 	

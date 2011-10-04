@@ -215,13 +215,13 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 
-	public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
         if(isCandidate){
             int functionalEquivalenceCode = context.functionalEquivalenceCode();
-            messageHandler.illegalContent(functionalEquivalenceCode, context, startQName, startSystemId, startLineNumber, startColumnNumber);
-            candidatesConflictErrorHandler.illegalContent(candidateIndex, functionalEquivalenceCode, context, startQName, startSystemId, startLineNumber, startColumnNumber);
+            messageHandler.illegalContent(functionalEquivalenceCode, context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
+            candidatesConflictErrorHandler.illegalContent(candidateIndex, functionalEquivalenceCode, context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
         }else{
-            messageHandler.illegalContent(-1, context, startQName, startSystemId, startLineNumber, startColumnNumber);
+            messageHandler.illegalContent(-1, context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
         }
 	}
 	

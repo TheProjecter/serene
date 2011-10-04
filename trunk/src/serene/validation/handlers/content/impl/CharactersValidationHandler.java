@@ -326,10 +326,10 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 		currentErrorCatcher.missingContent(context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
 	}
 	
-	public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.illegalContent(context, startQName, startSystemId, startLineNumber, startColumnNumber);
+		currentErrorCatcher.illegalContent(context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
 	}
 		
 	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){

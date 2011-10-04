@@ -1951,6 +1951,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
 	public void illegalContent(int functionalEquivalenceCode, 
                             Rule context, 
+                            int startItemId, 
 							String startQName, 
 							String startSystemId, 
 							int startLineNumber, 
@@ -1960,6 +1961,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			illegalSize = 1;
 			illegalIndex = 0;
 			illegalContext = new APattern[illegalSize];
+			illegalItemId = new int[illegalSize];
 			illegalQName = new String[illegalSize];
 			illegalStartSystemId = new String[illegalSize];			
 			illegalStartLineNumber = new int[illegalSize];
@@ -1969,6 +1971,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			APattern[] increasedEC = new APattern[++illegalSize];
 			System.arraycopy(illegalContext, 0, increasedEC, 0, illegalIndex);
 			illegalContext = increasedEC;
+			
+			int[] increasedII = new int[illegalSize];
+			System.arraycopy(illegalItemId, 0, increasedII, 0, illegalIndex);
+			illegalItemId = increasedII;
 			
 			String[] increasedQN = new String[illegalSize];
 			System.arraycopy(illegalQName, 0, increasedQN, 0, illegalIndex);
@@ -1991,6 +1997,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			illegalFEC = increasedFEC;			
 		}
 		illegalContext[illegalIndex] = context;
+		illegalItemId[illegalIndex] = startItemId;
 		illegalQName[illegalIndex] = startQName;
 		illegalStartSystemId[illegalIndex] = startSystemId;
 		illegalStartLineNumber[illegalIndex] = startLineNumber;
@@ -2003,6 +2010,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         illegalSize = 0;
         illegalIndex = -1;
         illegalContext = null;
+        illegalItemId = null;
         illegalQName = null;
         illegalStartSystemId = null;			
         illegalStartLineNumber = null;
@@ -2017,6 +2025,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         errorTotalCount--;
         if(moved > 0){
             System.arraycopy(illegalContext, removeIndex+1, illegalContext, removeIndex, moved);
+            System.arraycopy(illegalItemId, removeIndex+1, illegalItemId, removeIndex, moved);
             System.arraycopy(illegalQName, removeIndex+1, illegalQName, removeIndex, moved);
             System.arraycopy(illegalStartSystemId, removeIndex+1, illegalStartSystemId, removeIndex, moved);
             System.arraycopy(illegalStartLineNumber, removeIndex+1, illegalStartLineNumber, removeIndex, moved);

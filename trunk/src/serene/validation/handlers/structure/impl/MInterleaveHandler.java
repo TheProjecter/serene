@@ -417,7 +417,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 	void excessiveOccurrence(){
 		if(secondaryHandlers.isEmpty()){
 			// System.out.println("ERROR: illegal content in document structure corresponding to interleave");
-			errorCatcher.illegalContent(rule, qName[0], systemId[0], lineNumber[0], columnNumber[0]);
+			errorCatcher.illegalContent(rule, itemId[0], qName[0], systemId[0], lineNumber[0], columnNumber[0]);
 			mValidationLoopCounter = childIndex+1;//stop the loop
 			return;
 		}

@@ -197,7 +197,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 		hasError = true;
 	}
 	
-	public void illegalContent(Rule context, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
 		hasError = true;
 	}
 	
