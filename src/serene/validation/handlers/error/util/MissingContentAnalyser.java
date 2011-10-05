@@ -16,6 +16,7 @@ limitations under the License.
 
 package serene.validation.handlers.error.util;
 
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
@@ -111,7 +112,7 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         sortingSubtreeAnalyser = new SortingSubtreeAnalyser();
     }
     
-    public IntList getPartiallyCommon(APattern[] definitions){
+    public BitSet getPartiallyCommon(APattern[] definitions){
         IntList[] comparableSubtrees = new IntList[definitions.length];
         for(int i = 0; i < definitions.length; i++){
             comparableSubtrees[i] = new IntList();
@@ -126,7 +127,7 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         relevantCache.clear();     
         
         
-        IntList partiallyCommon = new IntList();
+        BitSet partiallyCommon = new BitSet();
         for(int i = 0; i < comparableSubtrees.length; i++){
             if(isShortEnough(i, comparableSubtrees[i].size(), comparableSubtrees)){
                 compare(partiallyCommon, i, comparableSubtrees);
@@ -142,11 +143,11 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         return true;
     }
     
-    private void compare(IntList partiallyCommon, int index, IntList[]  comparableSubtrees){
+    private void compare(BitSet partiallyCommon, int index, IntList[]  comparableSubtrees){
         for(int i = 0; i < comparableSubtrees.length; i++){
             if(i != index && !matches(comparableSubtrees[index], comparableSubtrees[i])) return;
         }
-        partiallyCommon.add(index);
+        partiallyCommon.set(index);
     }
     
     private boolean matches(IntList lesser, IntList greater){

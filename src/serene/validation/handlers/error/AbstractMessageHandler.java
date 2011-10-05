@@ -42,6 +42,8 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.content.util.ValidationItemLocator;
 
+import serene.util.IntList;
+
 import sereneWrite.MessageWriter;
 
 public abstract class AbstractMessageHandler  extends AbstractMessageReporter{	
@@ -394,12 +396,12 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     MessageReporter[] candidateMessages;
     
     
-    int errorTotalCount;
+    int messageTotalCount;
 		
 	public AbstractMessageHandler(MessageWriter debugWriter){
 		super(debugWriter);
 			
-        errorTotalCount = 0;  
+        messageTotalCount = 0;  
         
         // {2}
         unknownElementIndex = -1;
@@ -600,6 +602,10 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	    return false;
 	}
 	
+	public boolean containsOtherErrorMessage(IntList exceptedErrorIds, IntList exceptedErrorCodes){
+	    throw new IllegalStateException();
+    }
+    
     public void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
         this.contextType = contextType;
         this.qName = qName;

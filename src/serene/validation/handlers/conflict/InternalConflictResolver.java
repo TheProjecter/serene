@@ -77,7 +77,7 @@ public abstract class InternalConflictResolver implements ConflictResolver{
 	}
 	
 	
-	public void qualify(int candidateIndex){
+	public void qualify(int candidateIndex){	    
 		qualified.set(candidateIndex);
 	}	
 }

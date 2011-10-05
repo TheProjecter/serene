@@ -37,6 +37,8 @@ import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
+import serene.util.IntList;
+
 import sereneWrite.MessageWriter;
 
 public class ConflictMessageHandler  extends AbstractMessageHandler implements ConflictErrorCatcher{	
@@ -157,7 +159,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 	int[] missingCompositorContentFEC;
     
     // {30}
-    
+    int conflictFEC;
     
 	public ConflictMessageHandler(MessageWriter debugWriter){
 		super(debugWriter);
@@ -185,7 +187,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
     
 	public void unknownElement(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unknownElementSize == 0){
 			unknownElementSize = 1;
 			unknownElementIndex = 0;	
@@ -220,10 +222,9 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		unknownElementLineNumber[unknownElementIndex] = lineNumber;
 		unknownElementColumnNumber[unknownElementIndex] = columnNumber;
         unknownElementFEC[unknownElementIndex] = functionalEquivalenceCode;
-	}
-	
+	}	
     public void clearUnknownElement(){
-        errorTotalCount -= unknownElementSize; 
+        messageTotalCount -= unknownElementSize; 
         unknownElementSize = 0;
         unknownElementIndex = -1;	
         unknownElementQName = null;			
@@ -235,12 +236,37 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }	
     public void clearUnknownElement(int messageId){
         int removeIndex = getRemoveIndex(messageId, unknownElementFEC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unknownElementIndex - removeIndex;
         unknownElementIndex--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(unknownElementQName, removeIndex+1, unknownElementQName, removeIndex, moved);
+            System.arraycopy(unknownElementSystemId, removeIndex+1, unknownElementSystemId, removeIndex, moved);
+            System.arraycopy(unknownElementLineNumber, removeIndex+1, unknownElementLineNumber, removeIndex, moved);
+            System.arraycopy(unknownElementColumnNumber, removeIndex+1, unknownElementColumnNumber, removeIndex, moved);
+            System.arraycopy(unknownElementFEC, removeIndex+1, unknownElementFEC, removeIndex, moved);               
+        }
+    }
+    void transferUnknownElement(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, unknownElementFEC);
+        
+        if(removeIndex == -1) return;
+        
+        other.unknownElement(unknownElementFEC[removeIndex],
+                            unknownElementQName[removeIndex], 
+                            unknownElementSystemId[removeIndex], 
+                            unknownElementLineNumber[removeIndex],
+                            unknownElementColumnNumber[removeIndex]);
+        
+        int moved = unknownElementIndex - removeIndex;
+        unknownElementIndex--;
+        messageTotalCount--;
+        if(moved > 0){
             System.arraycopy(unknownElementQName, removeIndex+1, unknownElementQName, removeIndex, moved);
+            System.arraycopy(unknownElementSystemId, removeIndex+1, unknownElementSystemId, removeIndex, moved);
             System.arraycopy(unknownElementLineNumber, removeIndex+1, unknownElementLineNumber, removeIndex, moved);
             System.arraycopy(unknownElementColumnNumber, removeIndex+1, unknownElementColumnNumber, removeIndex, moved);
             System.arraycopy(unknownElementFEC, removeIndex+1, unknownElementFEC, removeIndex, moved);               
@@ -248,7 +274,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     
 	public void unexpectedElement(int functionalEquivalenceCode, String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unexpectedElementSize == 0){
 			unexpectedElementSize = 1;
 			unexpectedElementIndex = 0;	
@@ -292,7 +318,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 	}
 		
 	public void clearUnexpectedElement(){
-        errorTotalCount -= unexpectedElementSize;
+        messageTotalCount -= unexpectedElementSize;
         unexpectedElementSize = 0;
         unexpectedElementIndex = -1;	
         unexpectedElementQName = null;
@@ -306,8 +332,35 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
     public void clearUnexpectedElement(int messageId){
         int removeIndex = getRemoveIndex(messageId, unexpectedElementFEC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unexpectedElementIndex - removeIndex;
-        errorTotalCount--;
+        messageTotalCount--;
+        unexpectedElementIndex--;
+        if(moved > 0){
+            System.arraycopy(unexpectedElementQName, removeIndex+1, unexpectedElementQName, removeIndex, moved);
+            System.arraycopy(unexpectedElementDefinition, removeIndex+1, unexpectedElementDefinition, removeIndex, moved);
+            System.arraycopy(unexpectedElementSystemId, removeIndex+1, unexpectedElementSystemId, removeIndex, moved);
+            System.arraycopy(unexpectedElementLineNumber, removeIndex+1, unexpectedElementLineNumber, removeIndex, moved);
+            System.arraycopy(unexpectedElementColumnNumber, removeIndex+1, unexpectedElementColumnNumber, removeIndex, moved);
+            System.arraycopy(unexpectedElementFEC, removeIndex+1, unexpectedElementFEC, removeIndex, moved);
+        }
+    }
+    void transferUnexpectedElement(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, unexpectedElementFEC);
+        
+        if(removeIndex == -1) return;
+                
+        other.unexpectedElement(unexpectedElementFEC[removeIndex],
+                                unexpectedElementQName[removeIndex],
+                                unexpectedElementDefinition[removeIndex],
+                                unexpectedElementSystemId[removeIndex],
+                                unexpectedElementLineNumber[removeIndex],
+                                unexpectedElementColumnNumber[removeIndex]);
+        
+        int moved = unexpectedElementIndex - removeIndex;
+        messageTotalCount--;
         unexpectedElementIndex--;
         if(moved > 0){
             System.arraycopy(unexpectedElementQName, removeIndex+1, unexpectedElementQName, removeIndex, moved);
@@ -319,9 +372,8 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }
     
-    
 	public void unexpectedAmbiguousElement(int functionalEquivalenceCode, String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unexpectedAmbiguousElementSize == 0){
 			unexpectedAmbiguousElementSize = 1;
 			unexpectedAmbiguousElementIndex = 0;	
@@ -365,7 +417,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 	}
 	
 	public void clearUnexpectedAmbiguousElement(){
-        errorTotalCount -= unexpectedAmbiguousElementSize;
+        messageTotalCount -= unexpectedAmbiguousElementSize;
         unexpectedAmbiguousElementSize = 0;
         unexpectedAmbiguousElementIndex = -1;	
         unexpectedAmbiguousElementQName = null;
@@ -378,9 +430,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearUnexpectedAmbiguousElement(int messageId){
         int removeIndex = getRemoveIndex(messageId, unexpectedAmbiguousElementFEC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unexpectedAmbiguousElementIndex - removeIndex;
         unexpectedAmbiguousElementIndex--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(unexpectedAmbiguousElementQName, removeIndex+1, unexpectedAmbiguousElementQName, removeIndex, moved);
             System.arraycopy(unexpectedAmbiguousElementDefinition, removeIndex+1, unexpectedAmbiguousElementDefinition, removeIndex, moved);
@@ -390,10 +445,33 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(unexpectedAmbiguousElementFEC, removeIndex+1, unexpectedAmbiguousElementFEC, removeIndex, moved);
         }
     }
-	
+	void transferUnexpectedAmbiguousElement(int messageId, ConflictMessageHandler other){
+	    int removeIndex = getRemoveIndex(messageId, unexpectedAmbiguousElementFEC);
+	    
+        if(removeIndex == -1) return;
+        	    
+	    other.unexpectedAmbiguousElement(unexpectedAmbiguousElementFEC[removeIndex],
+	                                    unexpectedAmbiguousElementQName[removeIndex],
+	                                    unexpectedAmbiguousElementDefinition[removeIndex],
+	                                    unexpectedAmbiguousElementSystemId[removeIndex],
+	                                    unexpectedAmbiguousElementLineNumber[removeIndex],
+	                                    unexpectedAmbiguousElementColumnNumber[removeIndex]);
+	    
+        int moved = unexpectedAmbiguousElementIndex - removeIndex;
+        unexpectedAmbiguousElementIndex--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(unexpectedAmbiguousElementQName, removeIndex+1, unexpectedAmbiguousElementQName, removeIndex, moved);
+            System.arraycopy(unexpectedAmbiguousElementDefinition, removeIndex+1, unexpectedAmbiguousElementDefinition, removeIndex, moved);
+            System.arraycopy(unexpectedAmbiguousElementSystemId, removeIndex+1, unexpectedAmbiguousElementSystemId, removeIndex, moved);	
+            System.arraycopy(unexpectedAmbiguousElementLineNumber, removeIndex+1, unexpectedAmbiguousElementLineNumber, removeIndex, moved);
+            System.arraycopy(unexpectedAmbiguousElementColumnNumber, removeIndex+1, unexpectedAmbiguousElementColumnNumber, removeIndex, moved);
+            System.arraycopy(unexpectedAmbiguousElementFEC, removeIndex+1, unexpectedAmbiguousElementFEC, removeIndex, moved);
+        }
+	}
 
     public void unknownAttribute(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unknownAttributeSize == 0){
 			unknownAttributeSize = 1;
 			unknownAttributeIndex = 0;	
@@ -429,7 +507,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         unknownAttributeFEC[unknownAttributeIndex] = functionalEquivalenceCode;
 	}
 	public void clearUnknownAttribute(){
-        errorTotalCount -= unknownAttributeSize;
+        messageTotalCount -= unknownAttributeSize;
         unknownAttributeSize = 0;
         unknownAttributeIndex = -1;	
         unknownAttributeQName = null;			
@@ -441,9 +519,34 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearUnknownAttribute(int messageId){
         int removeIndex = getRemoveIndex(messageId, unknownAttributeFEC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unknownAttributeIndex - removeIndex;
         unknownAttributeIndex--;
-        errorTotalCount--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(unknownAttributeQName, removeIndex+1, unknownAttributeQName, removeIndex, moved);
+            System.arraycopy(unknownAttributeSystemId, removeIndex+1, unknownAttributeSystemId, removeIndex, moved);
+            System.arraycopy(unknownAttributeLineNumber, removeIndex+1, unknownAttributeLineNumber, removeIndex, moved);
+            System.arraycopy(unknownAttributeColumnNumber, removeIndex+1, unknownAttributeColumnNumber, removeIndex, moved);
+            System.arraycopy(unknownAttributeFEC, removeIndex+1, unknownAttributeFEC, removeIndex, moved);
+        }
+    }
+    void transferUnknownAttribute(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, unknownAttributeFEC);
+        
+        if(removeIndex == -1) return;
+                
+        other.unknownAttribute(unknownAttributeFEC[removeIndex],
+                                unknownAttributeQName[removeIndex],
+                                unknownAttributeSystemId[removeIndex],
+                                unknownAttributeLineNumber[removeIndex],
+                                unknownAttributeColumnNumber[removeIndex]);
+        
+        int moved = unknownAttributeIndex - removeIndex;
+        unknownAttributeIndex--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(unknownAttributeQName, removeIndex+1, unknownAttributeQName, removeIndex, moved);
             System.arraycopy(unknownAttributeSystemId, removeIndex+1, unknownAttributeSystemId, removeIndex, moved);
@@ -456,7 +559,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
 	public void unexpectedAttribute(int functionalEquivalenceCode, String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
         
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unexpectedAttributeSize == 0){
 			unexpectedAttributeSize = 1;
 			unexpectedAttributeIndex = 0;	
@@ -499,7 +602,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         unexpectedAttributeFEC[unexpectedAttributeIndex] = functionalEquivalenceCode;
 	}
 	public void clearUnexpectedAttribute(){
-        errorTotalCount -= unexpectedAttributeSize;
+        messageTotalCount -= unexpectedAttributeSize;
         unexpectedAttributeSize = 0;
         unexpectedAttributeIndex = -1;	
         unexpectedAttributeQName = null;
@@ -512,9 +615,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearUnexpectedAttribute(int messageId){
         int removeIndex = getRemoveIndex(messageId, unexpectedAttributeFEC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unexpectedAttributeIndex - removeIndex;
         unexpectedAttributeIndex--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(unexpectedAttributeQName, removeIndex+1, unexpectedAttributeQName, removeIndex, moved);
             System.arraycopy(unexpectedAttributeDefinition, removeIndex+1, unexpectedAttributeDefinition, removeIndex, moved);
@@ -524,10 +630,33 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(unexpectedAttributeFEC, removeIndex+1, unexpectedAttributeFEC, removeIndex, moved);
         }
     }
+	void transferUnexpectedAttribute(int messageId, ConflictMessageHandler other){
+	    int removeIndex = getRemoveIndex(messageId, unexpectedAttributeFEC);
 	    
+        if(removeIndex == -1) return;
+        	    
+	    other.unexpectedAttribute(unexpectedAttributeFEC[removeIndex],
+	                                unexpectedAttributeQName[removeIndex],
+	                                unexpectedAttributeDefinition[removeIndex],
+	                                unexpectedAttributeSystemId[removeIndex],
+	                                unexpectedAttributeLineNumber[removeIndex],
+	                                unexpectedAttributeColumnNumber[removeIndex]);
+	    
+        int moved = unexpectedAttributeIndex - removeIndex;
+        unexpectedAttributeIndex--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(unexpectedAttributeQName, removeIndex+1, unexpectedAttributeQName, removeIndex, moved);
+            System.arraycopy(unexpectedAttributeDefinition, removeIndex+1, unexpectedAttributeDefinition, removeIndex, moved);
+            System.arraycopy(unexpectedAttributeSystemId, removeIndex+1, unexpectedAttributeSystemId, removeIndex, moved);
+            System.arraycopy(unexpectedAttributeLineNumber, removeIndex+1, unexpectedAttributeLineNumber, removeIndex, moved);
+            System.arraycopy(unexpectedAttributeColumnNumber, removeIndex+1, unexpectedAttributeColumnNumber, removeIndex, moved);
+            System.arraycopy(unexpectedAttributeFEC, removeIndex+1, unexpectedAttributeFEC, removeIndex, moved);
+        }
+	}   
 	
 	public void unexpectedAmbiguousAttribute(int functionalEquivalenceCode, String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unexpectedAmbiguousAttributeSize == 0){
 			unexpectedAmbiguousAttributeSize = 1;
 			unexpectedAmbiguousAttributeIndex = 0;	
@@ -570,7 +699,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         unexpectedAmbiguousAttributeFEC[unexpectedAmbiguousAttributeIndex] = functionalEquivalenceCode;
 	}
 	public void clearUnexpectedAmbiguousAttribute(){
-        errorTotalCount -= unexpectedAmbiguousAttributeSize;
+        messageTotalCount -= unexpectedAmbiguousAttributeSize;
         unexpectedAmbiguousAttributeSize = 0;
         unexpectedAmbiguousAttributeIndex = -1;	
         unexpectedAmbiguousAttributeQName = null;
@@ -583,9 +712,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearUnexpectedAmbiguousAttribute(int messageId){
         int removeIndex = getRemoveIndex(messageId, unexpectedAmbiguousAttributeFEC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unexpectedAmbiguousAttributeIndex - removeIndex;
         unexpectedAmbiguousAttributeIndex--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(unexpectedAmbiguousAttributeQName, removeIndex+1, unexpectedAmbiguousAttributeQName, removeIndex, moved);
             System.arraycopy(unexpectedAmbiguousAttributeDefinition, removeIndex+1, unexpectedAmbiguousAttributeDefinition, removeIndex, moved);
@@ -594,7 +726,32 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(unexpectedAmbiguousAttributeColumnNumber, removeIndex+1, unexpectedAmbiguousAttributeColumnNumber, removeIndex, moved);
             System.arraycopy(unexpectedAmbiguousAttributeFEC, removeIndex+1, unexpectedAmbiguousAttributeFEC, removeIndex, moved);
         }
-    }	
+    }
+    void transferUnexpectedAmbiguousAttribute(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, unexpectedAmbiguousAttributeFEC);
+        
+        if(removeIndex == -1) return;
+                
+        other.unexpectedAmbiguousAttribute(unexpectedAmbiguousAttributeFEC[removeIndex],
+                                   unexpectedAmbiguousAttributeQName[removeIndex],
+                                   unexpectedAmbiguousAttributeDefinition[removeIndex],
+                                   unexpectedAmbiguousAttributeSystemId[removeIndex],
+                                   unexpectedAmbiguousAttributeLineNumber[removeIndex],
+                                   unexpectedAmbiguousAttributeColumnNumber[removeIndex]);
+        
+        int moved = unexpectedAmbiguousAttributeIndex - removeIndex;
+        unexpectedAmbiguousAttributeIndex--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(unexpectedAmbiguousAttributeQName, removeIndex+1, unexpectedAmbiguousAttributeQName, removeIndex, moved);
+            System.arraycopy(unexpectedAmbiguousAttributeDefinition, removeIndex+1, unexpectedAmbiguousAttributeDefinition, removeIndex, moved);
+            System.arraycopy(unexpectedAmbiguousAttributeSystemId, removeIndex+1, unexpectedAmbiguousAttributeSystemId, removeIndex, moved);
+            System.arraycopy(unexpectedAmbiguousAttributeLineNumber, removeIndex+1, unexpectedAmbiguousAttributeLineNumber, removeIndex, moved);
+            System.arraycopy(unexpectedAmbiguousAttributeColumnNumber, removeIndex+1, unexpectedAmbiguousAttributeColumnNumber, removeIndex, moved);
+            System.arraycopy(unexpectedAmbiguousAttributeFEC, removeIndex+1, unexpectedAmbiguousAttributeFEC, removeIndex, moved);
+        }
+    }
+	
     
 	public void misplacedContent(int functionalEquivalenceCode, 
                                             APattern contextDefinition, 
@@ -612,7 +769,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         
 		all: {	           
 			if(misplacedSize == 0){
-                errorTotalCount++;
+                messageTotalCount++;
 				misplacedSize = 1;
 				misplacedIndex = 0;	
 				misplacedContext = new APattern[misplacedSize];	
@@ -725,7 +882,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 				}
 			}
             
-            errorTotalCount++;
+            messageTotalCount++;
 			APattern[] increasedCDef = new APattern[++misplacedSize];
                                                                   // ISSUE 194 added ++
 			System.arraycopy(misplacedContext, 0, increasedCDef, 0, ++misplacedIndex);
@@ -821,7 +978,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         
         all: {	           
 			if(misplacedSize == 0){
-                errorTotalCount++;
+                messageTotalCount++;
 				misplacedSize = 1;
 				misplacedIndex = 0;	
 				misplacedContext = new APattern[misplacedSize];	
@@ -930,7 +1087,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 				}
 			}
             
-            errorTotalCount++;
+            messageTotalCount++;
 			APattern[] increasedCDef = new APattern[++misplacedSize];
                                                                   // ISSUE 194 added ++
 			System.arraycopy(misplacedContext, 0, increasedCDef, 0, ++misplacedIndex);
@@ -995,8 +1152,8 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			misplacedFEC[misplacedIndex] = functionalEquivalenceCode;
 		}
 	}
-    public void clearMisplacedElement(){
-        errorTotalCount -= misplacedSize;
+    public void clearMisplacedContent(){
+        messageTotalCount -= misplacedSize;
         misplacedSize = 0;
         misplacedIndex = -1;	
         misplacedContext = null;	
@@ -1012,11 +1169,14 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         
         misplacedFEC = null;
     }
-    public void clearMisplacedElement(int messageId){        
+    public void clearMisplacedContent(int messageId){        
         int removeIndex = getRemoveIndex(messageId, misplacedFEC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = misplacedIndex - removeIndex;
         misplacedIndex--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(misplacedContext, removeIndex+1, misplacedContext, removeIndex, moved);
             System.arraycopy(misplacedStartSystemId, removeIndex+1, misplacedStartSystemId, removeIndex, moved);
@@ -1031,7 +1191,46 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(misplacedFEC, removeIndex+1, misplacedFEC, removeIndex, moved);
         }
     }	
-			
+	void transferMisplacedContent(int messageId, ConflictMessageHandler other){
+	    int removeIndex = getRemoveIndex(messageId, misplacedFEC);
+	    
+        if(removeIndex == -1) return;
+        	    
+	    APattern[] sourceDefinition = null;
+	    APattern reper = null;
+	    for(int j = 0; j < misplacedQName[removeIndex].length; j++){
+            other.misplacedContent(misplacedFEC[removeIndex],
+                                    misplacedContext[removeIndex],
+                                    misplacedStartSystemId[removeIndex],
+                                    misplacedStartLineNumber[removeIndex],
+                                    misplacedStartColumnNumber[removeIndex],
+                                    misplacedDefinition[removeIndex][j],
+                                    misplacedItemId[removeIndex][j],
+                                    misplacedQName[removeIndex][j],
+                                    misplacedSystemId[removeIndex][j],
+                                    misplacedLineNumber[removeIndex][j],
+                                    misplacedColumnNumber[removeIndex][j],
+                                    sourceDefinition,
+                                    reper);
+        }
+	    
+        int moved = misplacedIndex - removeIndex;
+        misplacedIndex--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(misplacedContext, removeIndex+1, misplacedContext, removeIndex, moved);
+            System.arraycopy(misplacedStartSystemId, removeIndex+1, misplacedStartSystemId, removeIndex, moved);
+            System.arraycopy(misplacedStartLineNumber, removeIndex+1, misplacedStartLineNumber, removeIndex, moved);
+            System.arraycopy(misplacedStartColumnNumber, removeIndex+1, misplacedStartColumnNumber, removeIndex, moved);
+            System.arraycopy(misplacedDefinition, removeIndex+1, misplacedDefinition, removeIndex, moved);
+            System.arraycopy(misplacedItemId, removeIndex+1, misplacedItemId, removeIndex, moved);
+            System.arraycopy(misplacedQName, removeIndex+1, misplacedQName, removeIndex, moved);
+            System.arraycopy(misplacedSystemId, removeIndex+1, misplacedSystemId, removeIndex, moved);
+            System.arraycopy(misplacedLineNumber, removeIndex+1, misplacedLineNumber, removeIndex, moved);
+            System.arraycopy(misplacedColumnNumber, removeIndex+1, misplacedColumnNumber, removeIndex, moved);
+            System.arraycopy(misplacedFEC, removeIndex+1, misplacedFEC, removeIndex, moved);
+        }
+	}		
 	
 	public void excessiveContent(int functionalEquivalenceCode, 
                                     Rule context,
@@ -1103,7 +1302,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(excessiveFEC, 0, increasedFEC, 0, excessiveIndex);
 			excessiveFEC = increasedFEC;
 		}
-        errorTotalCount++;
+        messageTotalCount++;
 		excessiveContext[excessiveIndex] = context;
 		excessiveStartSystemId[excessiveIndex] = startSystemId;
 		excessiveStartLineNumber[excessiveIndex] = startLineNumber;
@@ -1169,7 +1368,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         if(!recorded) throw new IllegalArgumentException();
 	}
 	public void clearExcessiveContent(){
-        errorTotalCount -= excessiveSize;
+        messageTotalCount -= excessiveSize;
         excessiveSize = 0;
         excessiveIndex = -1;
         excessiveContext = null;
@@ -1187,9 +1386,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearExcessiveContent(int messageId){
         int removeIndex = getRemoveIndex(messageId, excessiveFEC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = excessiveIndex - removeIndex;
         excessiveIndex--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(excessiveContext, removeIndex+1, excessiveContext, removeIndex, moved);
             System.arraycopy(excessiveStartSystemId, removeIndex+1, excessiveStartSystemId, removeIndex, moved);
@@ -1204,6 +1406,40 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(excessiveFEC, removeIndex+1, excessiveFEC, removeIndex, moved);
         }
     }    
+    void transferExcessiveContent(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, excessiveFEC);
+        
+        if(removeIndex == -1) return;
+                
+        other.excessiveContent(excessiveFEC[removeIndex],
+                                excessiveContext[removeIndex],
+                                excessiveStartSystemId[removeIndex],
+                                excessiveStartLineNumber[removeIndex],
+                                excessiveStartColumnNumber[removeIndex],
+                                excessiveDefinition[removeIndex],
+                                excessiveItemId[removeIndex],
+                                excessiveQName[removeIndex],
+                                excessiveSystemId[removeIndex],
+                                excessiveLineNumber[removeIndex],
+                                excessiveColumnNumber[removeIndex]);
+        
+        int moved = excessiveIndex - removeIndex;
+        excessiveIndex--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(excessiveContext, removeIndex+1, excessiveContext, removeIndex, moved);
+            System.arraycopy(excessiveStartSystemId, removeIndex+1, excessiveStartSystemId, removeIndex, moved);
+            System.arraycopy(excessiveStartLineNumber, removeIndex+1, excessiveStartLineNumber, removeIndex, moved);
+            System.arraycopy(excessiveStartColumnNumber, removeIndex+1, excessiveStartColumnNumber, removeIndex, moved);
+            System.arraycopy(excessiveDefinition, removeIndex+1, excessiveDefinition, removeIndex, moved);            
+            System.arraycopy(excessiveItemId, removeIndex+1, excessiveItemId, removeIndex, moved);
+            System.arraycopy(excessiveQName, removeIndex+1, excessiveQName, removeIndex, moved);
+            System.arraycopy(excessiveSystemId, removeIndex+1, excessiveSystemId, removeIndex, moved);
+            System.arraycopy(excessiveLineNumber, removeIndex+1, excessiveLineNumber, removeIndex, moved);
+            System.arraycopy(excessiveColumnNumber, removeIndex+1, excessiveColumnNumber, removeIndex, moved);
+            System.arraycopy(excessiveFEC, removeIndex+1, excessiveFEC, removeIndex, moved);
+        }
+    }
     
     
 	public void unresolvedAmbiguousElementContentError(int functionalEquivalenceCode, 
@@ -1212,7 +1448,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unresolvedAmbiguousElementSizeEE == 0){
 			unresolvedAmbiguousElementSizeEE = 1;
 			unresolvedAmbiguousElementIndexEE = 0;	
@@ -1256,7 +1492,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		
 	}
 	public void clearUnresolvedAmbiguousElementContentError(){
-        errorTotalCount -= unresolvedAmbiguousElementSizeEE;
+        messageTotalCount -= unresolvedAmbiguousElementSizeEE;
         unresolvedAmbiguousElementSizeEE = 0;
         unresolvedAmbiguousElementIndexEE = -1;	
         unresolvedAmbiguousElementQNameEE = null;			
@@ -1269,9 +1505,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearUnresolvedAmbiguousElementContentError(int messageId){        
         int removeIndex = getRemoveIndex(messageId, unresolvedAmbiguousElementFECEE);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unresolvedAmbiguousElementIndexEE - removeIndex;
         unresolvedAmbiguousElementIndexEE--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(unresolvedAmbiguousElementQNameEE, removeIndex+1, unresolvedAmbiguousElementQNameEE, removeIndex, moved);
             System.arraycopy(unresolvedAmbiguousElementSystemIdEE, removeIndex+1, unresolvedAmbiguousElementSystemIdEE, removeIndex, moved);
@@ -1281,14 +1520,38 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(unresolvedAmbiguousElementFECEE, removeIndex+1, unresolvedAmbiguousElementFECEE, removeIndex, moved);
         }
     }
-    
+    void transferUnresolvedAmbiguousElementContentError(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, unresolvedAmbiguousElementFECEE);
+        
+        if(removeIndex == -1) return;
+                
+        other.unresolvedAmbiguousElementContentError(unresolvedAmbiguousElementFECEE[removeIndex],
+                                                    unresolvedAmbiguousElementQNameEE[removeIndex],
+                                                    unresolvedAmbiguousElementSystemIdEE[removeIndex],
+                                                    unresolvedAmbiguousElementLineNumberEE[removeIndex],
+                                                    unresolvedAmbiguousElementColumnNumberEE[removeIndex],
+                                                    unresolvedAmbiguousElementDefinitionEE[removeIndex]);
+        
+        int moved = unresolvedAmbiguousElementIndexEE - removeIndex;
+        unresolvedAmbiguousElementIndexEE--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(unresolvedAmbiguousElementQNameEE, removeIndex+1, unresolvedAmbiguousElementQNameEE, removeIndex, moved);
+            System.arraycopy(unresolvedAmbiguousElementSystemIdEE, removeIndex+1, unresolvedAmbiguousElementSystemIdEE, removeIndex, moved);
+            System.arraycopy(unresolvedAmbiguousElementLineNumberEE, removeIndex+1, unresolvedAmbiguousElementLineNumberEE, removeIndex, moved);
+            System.arraycopy(unresolvedAmbiguousElementColumnNumberEE, removeIndex+1, unresolvedAmbiguousElementColumnNumberEE, removeIndex, moved);
+            System.arraycopy(unresolvedAmbiguousElementDefinitionEE, removeIndex+1, unresolvedAmbiguousElementDefinitionEE, removeIndex, moved);
+            System.arraycopy(unresolvedAmbiguousElementFECEE, removeIndex+1, unresolvedAmbiguousElementFECEE, removeIndex, moved);
+        }
+    }
+        
     public void unresolvedUnresolvedElementContentError(int functionalEquivalenceCode, 
                                     String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unresolvedUnresolvedElementSizeEE == 0){
 			unresolvedUnresolvedElementSizeEE = 1;
 			unresolvedUnresolvedElementIndexEE = 0;	
@@ -1332,7 +1595,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		
 	}
 	public void clearUnresolvedUnresolvedElementContentError(){
-        errorTotalCount -= unresolvedUnresolvedElementSizeEE;
+        messageTotalCount -= unresolvedUnresolvedElementSizeEE;
         unresolvedUnresolvedElementSizeEE = 0;
         unresolvedUnresolvedElementIndexEE = -1;	
         unresolvedUnresolvedElementQNameEE = null;			
@@ -1345,9 +1608,36 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearUnresolvedUnresolvedElementContentError(int messageId){        
         int removeIndex = getRemoveIndex(messageId, unresolvedUnresolvedElementFECEE);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unresolvedUnresolvedElementIndexEE - removeIndex;
         unresolvedUnresolvedElementIndexEE--;
-        errorTotalCount--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(unresolvedUnresolvedElementQNameEE, removeIndex+1, unresolvedUnresolvedElementQNameEE, removeIndex, moved);
+            System.arraycopy(unresolvedUnresolvedElementSystemIdEE, removeIndex+1, unresolvedUnresolvedElementSystemIdEE, removeIndex, moved);
+            System.arraycopy(unresolvedUnresolvedElementLineNumberEE, removeIndex+1, unresolvedUnresolvedElementLineNumberEE, removeIndex, moved);
+            System.arraycopy(unresolvedUnresolvedElementColumnNumberEE, removeIndex+1, unresolvedUnresolvedElementColumnNumberEE, removeIndex, moved);
+            System.arraycopy(unresolvedUnresolvedElementDefinitionEE, removeIndex+1, unresolvedUnresolvedElementDefinitionEE, removeIndex, moved);
+            System.arraycopy(unresolvedUnresolvedElementFECEE, removeIndex+1, unresolvedUnresolvedElementFECEE, removeIndex, moved);
+        }
+    }
+    void transferUnresolvedUnresolvedElementContentError(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, unresolvedUnresolvedElementFECEE);
+        
+        if(removeIndex == -1) return;
+                
+        other.unresolvedUnresolvedElementContentError(unresolvedUnresolvedElementFECEE[removeIndex],
+                                                        unresolvedUnresolvedElementQNameEE[removeIndex],
+                                                        unresolvedUnresolvedElementSystemIdEE[removeIndex],
+                                                        unresolvedUnresolvedElementLineNumberEE[removeIndex],
+                                                        unresolvedUnresolvedElementColumnNumberEE[removeIndex],
+                                                        unresolvedUnresolvedElementDefinitionEE[removeIndex]);
+        
+        int moved = unresolvedUnresolvedElementIndexEE - removeIndex;
+        unresolvedUnresolvedElementIndexEE--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(unresolvedUnresolvedElementQNameEE, removeIndex+1, unresolvedUnresolvedElementQNameEE, removeIndex, moved);
             System.arraycopy(unresolvedUnresolvedElementSystemIdEE, removeIndex+1, unresolvedUnresolvedElementSystemIdEE, removeIndex, moved);
@@ -1359,14 +1649,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     
     
-    
 	public void unresolvedAttributeContentError(int functionalEquivalenceCode, 
                                     String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AAttribute[] possibleDefinitions){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unresolvedAttributeSizeEE == 0){
 			unresolvedAttributeSizeEE = 1;
 			unresolvedAttributeIndexEE = 0;	
@@ -1410,7 +1699,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		
 	}
     public void clearUnresolvedAttributeContentError(){
-        errorTotalCount -= unresolvedAttributeSizeEE;
+        messageTotalCount -= unresolvedAttributeSizeEE;
         unresolvedAttributeSizeEE = 0;
         unresolvedAttributeIndexEE = -1;	
         unresolvedAttributeQNameEE = null;			
@@ -1423,9 +1712,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
 	public void clearUnresolvedAttributeContentError(int messageId){
         int removeIndex = getRemoveIndex(messageId, unresolvedAttributeFECEE);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unresolvedAttributeIndexEE - removeIndex;
         unresolvedAttributeIndexEE--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(unresolvedAttributeQNameEE, removeIndex+1, unresolvedAttributeQNameEE, removeIndex, moved);
             System.arraycopy(unresolvedAttributeSystemIdEE, removeIndex+1, unresolvedAttributeSystemIdEE, removeIndex, moved);
@@ -1435,14 +1727,39 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(unresolvedAttributeFECEE, removeIndex+1, unresolvedAttributeFECEE, removeIndex, moved);
         }
     }
-	
+	void transferUnresolvedAttributeContentError(int messageId, ConflictMessageHandler other){
+	    int removeIndex = getRemoveIndex(messageId, unresolvedAttributeFECEE);
+	    
+        if(removeIndex == -1) return;
+        	    
+	    other.unresolvedAttributeContentError(unresolvedAttributeFECEE[removeIndex],
+	                                            unresolvedAttributeQNameEE[removeIndex],
+	                                            unresolvedAttributeSystemIdEE[removeIndex],
+	                                            unresolvedAttributeLineNumberEE[removeIndex],
+	                                            unresolvedAttributeColumnNumberEE[removeIndex],
+	                                            unresolvedAttributeDefinitionEE[removeIndex]);
+	    
+        int moved = unresolvedAttributeIndexEE - removeIndex;
+        unresolvedAttributeIndexEE--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(unresolvedAttributeQNameEE, removeIndex+1, unresolvedAttributeQNameEE, removeIndex, moved);
+            System.arraycopy(unresolvedAttributeSystemIdEE, removeIndex+1, unresolvedAttributeSystemIdEE, removeIndex, moved);
+            System.arraycopy(unresolvedAttributeLineNumberEE, removeIndex+1, unresolvedAttributeLineNumberEE, removeIndex, moved);
+            System.arraycopy(unresolvedAttributeColumnNumberEE, removeIndex+1, unresolvedAttributeColumnNumberEE, removeIndex, moved);
+            System.arraycopy(unresolvedAttributeDefinitionEE, removeIndex+1, unresolvedAttributeDefinitionEE, removeIndex, moved);    
+            System.arraycopy(unresolvedAttributeFECEE, removeIndex+1, unresolvedAttributeFECEE, removeIndex, moved);
+        }
+	}
+    
+    
 	public void ambiguousUnresolvedElementContentWarning(int functionalEquivalenceCode,
                                     String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(ambiguousUnresolvedElementSizeWW == 0){
 			ambiguousUnresolvedElementSizeWW = 1;
 			ambiguousUnresolvedElementIndexWW = 0;	
@@ -1488,7 +1805,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
 	}
 	public void clearAmbiguousUnresolvedElementContentWarning(){
-        errorTotalCount -= ambiguousUnresolvedElementSizeWW;
+        messageTotalCount -= ambiguousUnresolvedElementSizeWW;
         ambiguousUnresolvedElementSizeWW = 0;
         ambiguousUnresolvedElementIndexWW = -1;	
         ambiguousUnresolvedElementQNameWW = null;			
@@ -1501,9 +1818,36 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearAmbiguousUnresolvedElementContentWarning(int messageId){        
         int removeIndex = getRemoveIndex(messageId, ambiguousUnresolvedElementFECWW);
+        
+        if(removeIndex == -1) return;
+        
         int moved = ambiguousUnresolvedElementIndexWW - removeIndex;
         ambiguousUnresolvedElementIndexWW--;
-        errorTotalCount--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(ambiguousUnresolvedElementQNameWW, removeIndex+1, ambiguousUnresolvedElementQNameWW, removeIndex, moved);
+            System.arraycopy(ambiguousUnresolvedElementSystemIdWW, removeIndex+1, ambiguousUnresolvedElementSystemIdWW, removeIndex, moved);
+            System.arraycopy(ambiguousUnresolvedElementLineNumberWW, removeIndex+1, ambiguousUnresolvedElementLineNumberWW, removeIndex, moved);
+            System.arraycopy(ambiguousUnresolvedElementColumnNumberWW, removeIndex+1, ambiguousUnresolvedElementColumnNumberWW, removeIndex, moved);
+            System.arraycopy(ambiguousUnresolvedElementDefinitionWW, removeIndex+1, ambiguousUnresolvedElementDefinitionWW, removeIndex, moved);
+            System.arraycopy(ambiguousUnresolvedElementFECWW, removeIndex+1, ambiguousUnresolvedElementFECWW, removeIndex, moved);
+        }
+    }
+    public void transferAmbiguousUnresolvedElementContentWarning(int messageId, ConflictMessageHandler other){        
+        int removeIndex = getRemoveIndex(messageId, ambiguousUnresolvedElementFECWW);
+        
+        if(removeIndex == -1) return;
+                
+        other.ambiguousUnresolvedElementContentWarning(ambiguousUnresolvedElementFECWW[removeIndex],
+                                                    ambiguousUnresolvedElementQNameWW[removeIndex],
+                                                    ambiguousUnresolvedElementSystemIdWW[removeIndex],
+                                                    ambiguousUnresolvedElementLineNumberWW[removeIndex],
+                                                    ambiguousUnresolvedElementColumnNumberWW[removeIndex],
+                                                    ambiguousUnresolvedElementDefinitionWW[removeIndex]);
+        
+        int moved = ambiguousUnresolvedElementIndexWW - removeIndex;
+        ambiguousUnresolvedElementIndexWW--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(ambiguousUnresolvedElementQNameWW, removeIndex+1, ambiguousUnresolvedElementQNameWW, removeIndex, moved);
             System.arraycopy(ambiguousUnresolvedElementSystemIdWW, removeIndex+1, ambiguousUnresolvedElementSystemIdWW, removeIndex, moved);
@@ -1521,7 +1865,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(ambiguousAmbiguousElementSizeWW == 0){
 			ambiguousAmbiguousElementSizeWW = 1;
 			ambiguousAmbiguousElementIndexWW = 0;	
@@ -1566,7 +1910,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         ambiguousAmbiguousElementFECWW[ambiguousAmbiguousElementIndexWW] = functionalEquivalenceCode;
 	}
 	public void clearAmbiguousAmbiguousElementContentWarning(){
-        errorTotalCount -= ambiguousAmbiguousElementSizeWW;
+        messageTotalCount -= ambiguousAmbiguousElementSizeWW;
         ambiguousAmbiguousElementSizeWW = 0;
         ambiguousAmbiguousElementIndexWW = -1;	
         ambiguousAmbiguousElementQNameWW = null;			
@@ -1579,9 +1923,36 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearAmbiguousAmbiguousElementContentWarning(int messageId){        
         int removeIndex = getRemoveIndex(messageId, ambiguousAmbiguousElementFECWW);
+        
+        if(removeIndex == -1) return;
+        
         int moved = ambiguousAmbiguousElementIndexWW - removeIndex;
         ambiguousAmbiguousElementIndexWW--;
-        errorTotalCount--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(ambiguousAmbiguousElementQNameWW, removeIndex+1, ambiguousAmbiguousElementQNameWW, removeIndex, moved);
+            System.arraycopy(ambiguousAmbiguousElementSystemIdWW, removeIndex+1, ambiguousAmbiguousElementSystemIdWW, removeIndex, moved);
+            System.arraycopy(ambiguousAmbiguousElementLineNumberWW, removeIndex+1, ambiguousAmbiguousElementLineNumberWW, removeIndex, moved);
+            System.arraycopy(ambiguousAmbiguousElementColumnNumberWW, removeIndex+1, ambiguousAmbiguousElementColumnNumberWW, removeIndex, moved);
+            System.arraycopy(ambiguousAmbiguousElementDefinitionWW, removeIndex+1, ambiguousAmbiguousElementDefinitionWW, removeIndex, moved);
+            System.arraycopy(ambiguousAmbiguousElementFECWW, removeIndex+1, ambiguousAmbiguousElementFECWW, removeIndex, moved);
+        }
+    }
+    public void transferAmbiguousAmbiguousElementContentWarning(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, ambiguousAmbiguousElementFECWW);
+        
+        if(removeIndex == -1) return;
+                
+        other.ambiguousAmbiguousElementContentWarning(ambiguousAmbiguousElementFECWW[removeIndex],
+                                                    ambiguousAmbiguousElementQNameWW[removeIndex],
+                                                    ambiguousAmbiguousElementSystemIdWW[removeIndex],
+                                                    ambiguousAmbiguousElementLineNumberWW[removeIndex],
+                                                    ambiguousAmbiguousElementColumnNumberWW[removeIndex],
+                                                    ambiguousAmbiguousElementDefinitionWW[removeIndex]);
+        
+        int moved = ambiguousAmbiguousElementIndexWW - removeIndex;
+        ambiguousAmbiguousElementIndexWW--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(ambiguousAmbiguousElementQNameWW, removeIndex+1, ambiguousAmbiguousElementQNameWW, removeIndex, moved);
             System.arraycopy(ambiguousAmbiguousElementSystemIdWW, removeIndex+1, ambiguousAmbiguousElementSystemIdWW, removeIndex, moved);
@@ -1592,14 +1963,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }
     
-    
 	public void ambiguousAttributeContentWarning(int functionalEquivalenceCode,
                                     String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AAttribute[] possibleDefinitions){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(ambiguousAttributeSizeWW == 0){
 			ambiguousAttributeSizeWW = 1;
 			ambiguousAttributeIndexWW = 0;	
@@ -1645,7 +2015,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		
 	}
 	public void clearAmbiguousAttributeContentWarning(){
-        errorTotalCount -= ambiguousAttributeSizeWW;
+        messageTotalCount -= ambiguousAttributeSizeWW;
         ambiguousAttributeSizeWW = 0;
         ambiguousAttributeIndexWW = -1;	
         ambiguousAttributeQNameWW = null;			
@@ -1656,9 +2026,36 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
 	public void clearAmbiguousAttributeContentWarning(int messageId){
         int removeIndex = getRemoveIndex(messageId, ambiguousAttributeFECWW);
+        
+        if(removeIndex == -1) return;
+        
         int moved = ambiguousAttributeIndexWW - removeIndex;
         ambiguousAttributeIndexWW--;
-        errorTotalCount--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(ambiguousAttributeQNameWW, removeIndex+1, ambiguousAttributeQNameWW, removeIndex, moved);
+            System.arraycopy(ambiguousAttributeSystemIdWW, removeIndex+1, ambiguousAttributeSystemIdWW, removeIndex, moved);
+            System.arraycopy(ambiguousAttributeLineNumberWW, removeIndex+1, ambiguousAttributeLineNumberWW, removeIndex, moved);
+            System.arraycopy(ambiguousAttributeColumnNumberWW, removeIndex+1, ambiguousAttributeColumnNumberWW, removeIndex, moved);
+            System.arraycopy(ambiguousAttributeDefinitionWW, removeIndex+1, ambiguousAttributeDefinitionWW, removeIndex, moved);    
+            System.arraycopy(ambiguousAttributeFECWW, removeIndex+1, ambiguousAttributeFECWW, removeIndex, moved);
+        }
+    }
+    public void transferAmbiguousAttributeContentWarning(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, ambiguousAttributeFECWW);
+        
+        if(removeIndex == -1) return;
+                
+        other.ambiguousAttributeContentWarning(ambiguousAttributeFECWW[removeIndex],
+                                            ambiguousAttributeQNameWW[removeIndex],
+                                            ambiguousAttributeSystemIdWW[removeIndex],
+                                            ambiguousAttributeLineNumberWW[removeIndex],
+                                            ambiguousAttributeColumnNumberWW[removeIndex],
+                                            ambiguousAttributeDefinitionWW[removeIndex]);
+        
+        int moved = ambiguousAttributeIndexWW - removeIndex;
+        ambiguousAttributeIndexWW--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(ambiguousAttributeQNameWW, removeIndex+1, ambiguousAttributeQNameWW, removeIndex, moved);
             System.arraycopy(ambiguousAttributeSystemIdWW, removeIndex+1, ambiguousAttributeSystemIdWW, removeIndex, moved);
@@ -1669,12 +2066,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }
     
+    
 	public void ambiguousCharacterContentWarning(int functionalEquivalenceCode,
                                     String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									CharsActiveTypeItem[] possibleDefinitions){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(ambiguousCharsSizeWW == 0){
 			ambiguousCharsSizeWW = 1;
 			ambiguousCharsIndexWW = 0;
@@ -1714,7 +2112,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         
 	}
 	public void clearAmbiguousCharacterContentWarning(){
-        errorTotalCount -= ambiguousCharsSizeWW;
+        messageTotalCount -= ambiguousCharsSizeWW;
         ambiguousCharsSizeWW = 0;
         ambiguousCharsIndexWW = -1;
         ambiguousCharsSystemIdWW = null;			
@@ -1724,9 +2122,34 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
 	public void clearAmbiguousCharacterContentWarning(int messageId){
         int removeIndex = getRemoveIndex(messageId, ambiguousCharsFECWW);
+        
+        if(removeIndex == -1) return;
+        
         int moved = ambiguousCharsIndexWW - removeIndex;
         ambiguousCharsIndexWW--;
-        errorTotalCount--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(ambiguousCharsSystemIdWW, removeIndex+1, ambiguousCharsSystemIdWW, removeIndex, moved);
+            System.arraycopy(ambiguousCharsLineNumberWW, removeIndex+1, ambiguousCharsLineNumberWW, removeIndex, moved);
+            System.arraycopy(ambiguousCharsColumnNumberWW, removeIndex+1, ambiguousCharsColumnNumberWW, removeIndex, moved);
+            System.arraycopy(ambiguousCharsDefinitionWW, removeIndex+1, ambiguousCharsDefinitionWW, removeIndex, moved);
+            System.arraycopy(ambiguousCharsFECWW, removeIndex+1, ambiguousCharsFECWW, removeIndex, moved);
+        }
+    }
+    public void transferAmbiguousCharacterContentWarning(int messageId, ConflictMessageHandler other){    
+        int removeIndex = getRemoveIndex(messageId, ambiguousCharsFECWW);
+        
+        if(removeIndex == -1) return;
+                
+        other.ambiguousCharacterContentWarning(ambiguousCharsFECWW[removeIndex],
+                                        ambiguousCharsSystemIdWW[removeIndex],
+                                        ambiguousCharsLineNumberWW[removeIndex],
+                                        ambiguousCharsColumnNumberWW[removeIndex],
+                                        ambiguousCharsDefinitionWW[removeIndex]);
+                
+        int moved = ambiguousCharsIndexWW - removeIndex;
+        ambiguousCharsIndexWW--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(ambiguousCharsSystemIdWW, removeIndex+1, ambiguousCharsSystemIdWW, removeIndex, moved);
             System.arraycopy(ambiguousCharsLineNumberWW, removeIndex+1, ambiguousCharsLineNumberWW, removeIndex, moved);
@@ -1743,7 +2166,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 									int lineNumber, 
 									int columnNumber, 
 									CharsActiveTypeItem[] possibleDefinitions){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(ambiguousAVSizeWW == 0){
 			ambiguousAVSizeWW = 1;
 			ambiguousAVIndexWW = 0;
@@ -1789,7 +2212,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         
 	}
 	public void clearAmbiguousAttributeValueWarning(){
-        errorTotalCount -= ambiguousAVSizeWW;
+        messageTotalCount -= ambiguousAVSizeWW;
         ambiguousAVSizeWW = 0;
         ambiguousAVIndexWW = -1;
         ambiguousAVAttributeQNameWW = null;
@@ -1800,9 +2223,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
 	public void clearAmbiguousAttributeValueWarning(int messageId){
         int removeIndex = getRemoveIndex(messageId, ambiguousAVFECWW);
+        
+        if(removeIndex == -1) return;
+        
         int moved = ambiguousAVIndexWW - removeIndex;
         ambiguousAVIndexWW--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){            
             System.arraycopy(ambiguousAVAttributeQNameWW, removeIndex+1, ambiguousAVAttributeQNameWW, removeIndex, moved);
             System.arraycopy(ambiguousAVSystemIdWW, removeIndex+1, ambiguousAVSystemIdWW, removeIndex, moved);
@@ -1812,7 +2238,30 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(ambiguousAVFECWW, removeIndex+1, ambiguousAVFECWW, removeIndex, moved);
         }
     }
-	
+	public void transferAmbiguousAttributeValueWarning(int messageId, ConflictMessageHandler other){
+	    int removeIndex = getRemoveIndex(messageId, ambiguousAVFECWW);
+	    
+        if(removeIndex == -1) return;
+        	    
+	    other.ambiguousAttributeValueWarning(ambiguousAVFECWW[removeIndex],
+	                                        ambiguousAVAttributeQNameWW[removeIndex],
+	                                        ambiguousAVSystemIdWW[removeIndex],
+	                                        ambiguousAVLineNumberWW[removeIndex],
+	                                        ambiguousAVColumnNumberWW[removeIndex],
+	                                        ambiguousAVDefinitionWW[removeIndex]);	    
+	    
+        int moved = ambiguousAVIndexWW - removeIndex;
+        ambiguousAVIndexWW--;
+        messageTotalCount--;
+        if(moved > 0){            
+            System.arraycopy(ambiguousAVAttributeQNameWW, removeIndex+1, ambiguousAVAttributeQNameWW, removeIndex, moved);
+            System.arraycopy(ambiguousAVSystemIdWW, removeIndex+1, ambiguousAVSystemIdWW, removeIndex, moved);
+            System.arraycopy(ambiguousAVLineNumberWW, removeIndex+1, ambiguousAVLineNumberWW, removeIndex, moved);
+            System.arraycopy(ambiguousAVColumnNumberWW, removeIndex+1, ambiguousAVColumnNumberWW, removeIndex, moved);
+            System.arraycopy(ambiguousAVDefinitionWW, removeIndex+1, ambiguousAVDefinitionWW, removeIndex, moved);
+            System.arraycopy(ambiguousAVFECWW, removeIndex+1, ambiguousAVFECWW, removeIndex, moved);
+        }
+	}
 	
 	
 	
@@ -1828,7 +2277,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 								String[] systemId, 
 								int[] lineNumber, 
 								int[] columnNumber){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(missingSize == 0){
 			missingSize = 1;
 			missingIndex = 0;
@@ -1909,7 +2358,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		
     }
 	public void clearMissingContent(){
-        errorTotalCount -= missingSize;
+        messageTotalCount -= missingSize;
         missingSize = 0;
         missingIndex = -1;
         missingContext = null;
@@ -1928,9 +2377,48 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearMissingContent(int messageId){
         int removeIndex = getRemoveIndex(messageId, missingFEC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = missingIndex - removeIndex;
         missingIndex--;
-        errorTotalCount--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(missingContext, removeIndex+1, missingContext, removeIndex, moved);
+            System.arraycopy(missingStartSystemId, removeIndex+1, missingStartSystemId, removeIndex, moved);
+            System.arraycopy(missingStartLineNumber, removeIndex+1, missingStartLineNumber, removeIndex, moved);
+            System.arraycopy(missingStartColumnNumber, removeIndex+1, missingStartColumnNumber, removeIndex, moved);
+            System.arraycopy(missingDefinition, removeIndex+1, missingDefinition, removeIndex, moved);
+            System.arraycopy(missingExpected, removeIndex+1, missingExpected, removeIndex, moved);
+            System.arraycopy(missingFound, removeIndex+1, missingFound, removeIndex, moved);
+            System.arraycopy(missingQName, removeIndex+1, missingQName, removeIndex, moved);
+            System.arraycopy(missingSystemId, removeIndex+1, missingSystemId, removeIndex, moved);
+            System.arraycopy(missingLineNumber, removeIndex+1, missingLineNumber, removeIndex, moved);
+            System.arraycopy(missingColumnNumber, removeIndex+1, missingColumnNumber, removeIndex, moved);
+            System.arraycopy(missingFEC, removeIndex+1, missingFEC, removeIndex, moved);
+        }
+    }
+    void transferMissingContent(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, missingFEC);
+        
+        if(removeIndex == -1) return;
+                
+        other.missingContent(missingFEC[removeIndex],
+                                missingContext[removeIndex],
+                                missingStartSystemId[removeIndex],
+                                missingStartLineNumber[removeIndex],
+                                missingStartColumnNumber[removeIndex],
+                                missingDefinition[removeIndex],
+                                missingExpected[removeIndex],
+                                missingFound[removeIndex],
+                                missingQName[removeIndex],
+                                missingSystemId[removeIndex],
+                                missingLineNumber[removeIndex],
+                                missingColumnNumber[removeIndex]);
+        
+        int moved = missingIndex - removeIndex;
+        missingIndex--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(missingContext, removeIndex+1, missingContext, removeIndex, moved);
             System.arraycopy(missingStartSystemId, removeIndex+1, missingStartSystemId, removeIndex, moved);
@@ -1948,7 +2436,6 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     
     
-    
 	public void illegalContent(int functionalEquivalenceCode, 
                             Rule context, 
                             int startItemId, 
@@ -1956,7 +2443,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 							String startSystemId, 
 							int startLineNumber, 
 							int startColumnNumber){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(illegalSize == 0){
 			illegalSize = 1;
 			illegalIndex = 0;
@@ -2006,7 +2493,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         illegalFEC[illegalIndex] = functionalEquivalenceCode;
 	}
     public void clearIllegalContent(){
-        errorTotalCount -= illegalSize;
+        messageTotalCount -= illegalSize;
         illegalSize = 0;
         illegalIndex = -1;
         illegalContext = null;
@@ -2020,9 +2507,38 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
 	public void clearIllegalContent(int messageId){
         int removeIndex = getRemoveIndex(messageId, illegalFEC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = illegalIndex - removeIndex;
         illegalIndex--;
-        errorTotalCount--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(illegalContext, removeIndex+1, illegalContext, removeIndex, moved);
+            System.arraycopy(illegalItemId, removeIndex+1, illegalItemId, removeIndex, moved);
+            System.arraycopy(illegalQName, removeIndex+1, illegalQName, removeIndex, moved);
+            System.arraycopy(illegalStartSystemId, removeIndex+1, illegalStartSystemId, removeIndex, moved);
+            System.arraycopy(illegalStartLineNumber, removeIndex+1, illegalStartLineNumber, removeIndex, moved);
+            System.arraycopy(illegalStartColumnNumber, removeIndex+1, illegalStartColumnNumber, removeIndex, moved);
+            System.arraycopy(illegalFEC, removeIndex+1, illegalFEC, removeIndex, moved);
+        }
+    }
+    void transferIllegalContent(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, illegalFEC);
+        
+        if(removeIndex == -1) return;
+                
+        other.illegalContent(illegalFEC[removeIndex],
+                                illegalContext[removeIndex],
+                                illegalItemId[removeIndex],
+                                illegalQName[removeIndex],
+                                illegalStartSystemId[removeIndex],
+                                illegalStartLineNumber[removeIndex],
+                                illegalStartColumnNumber[removeIndex]);
+        
+        int moved = illegalIndex - removeIndex;
+        illegalIndex--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(illegalContext, removeIndex+1, illegalContext, removeIndex, moved);
             System.arraycopy(illegalItemId, removeIndex+1, illegalItemId, removeIndex, moved);
@@ -2034,22 +2550,21 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }
     
-    
 	public void undeterminedByContent(int functionalEquivalenceCode, String qName, String candidateMessages){
-        errorTotalCount++;
+        messageTotalCount++;
 		undeterminedQName = qName;
 		undeterminedCandidateMessages = candidateMessages; 
 		
 	}
     public void clearUndeterminedByContent(){
-        errorTotalCount--;
+        messageTotalCount--;
         undeterminedQName = null;
 		undeterminedCandidateMessages = null;
     }
 	
     // {15}
 	public void characterContentDatatypeError(int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(datatypeSizeCC == 0){
 			datatypeSizeCC = 1;
 			datatypeIndexCC = 0;
@@ -2100,7 +2615,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         datatypeFECCC[datatypeIndexCC] = functionalEquivalenceCode;
 	}
 	public void clearCharacterContentDatatypeError(){
-        errorTotalCount -= datatypeSizeCC;
+        messageTotalCount -= datatypeSizeCC;
         datatypeSizeCC = 0;
         datatypeIndexCC = -1;
         datatypeElementQNameCC = null;
@@ -2114,9 +2629,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearCharacterContentDatatypeError(int messageId){
         int removeIndex = getRemoveIndex(messageId, datatypeFECCC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = datatypeIndexCC - removeIndex;
         datatypeIndexCC--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(datatypeElementQNameCC, removeIndex+1, datatypeElementQNameCC, removeIndex, moved);
             System.arraycopy(datatypeCharsSystemIdCC, removeIndex+1, datatypeCharsSystemIdCC, removeIndex, moved);
@@ -2127,11 +2645,36 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(datatypeFECCC, removeIndex+1, datatypeFECCC, removeIndex, moved);
         }
     }
+    void transferCharacterContentDatatypeError(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, datatypeFECCC);
         
+        if(removeIndex == -1) return;
+                
+        other.characterContentDatatypeError(datatypeFECCC[removeIndex],
+                                            datatypeElementQNameCC[removeIndex],
+                                            datatypeCharsSystemIdCC[removeIndex],
+                                            datatypeCharsLineNumberCC[removeIndex],
+                                            datatypeCharsColumnNumberCC[removeIndex],
+                                            datatypeCharsDefinitionCC[removeIndex],
+                                            datatypeErrorMessageCC[removeIndex]);
+        
+        int moved = datatypeIndexCC - removeIndex;
+        datatypeIndexCC--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(datatypeElementQNameCC, removeIndex+1, datatypeElementQNameCC, removeIndex, moved);
+            System.arraycopy(datatypeCharsSystemIdCC, removeIndex+1, datatypeCharsSystemIdCC, removeIndex, moved);
+            System.arraycopy(datatypeCharsLineNumberCC, removeIndex+1, datatypeCharsLineNumberCC, removeIndex, moved);
+            System.arraycopy(datatypeCharsColumnNumberCC, removeIndex+1, datatypeCharsColumnNumberCC, removeIndex, moved);
+            System.arraycopy(datatypeCharsDefinitionCC, removeIndex+1, datatypeCharsDefinitionCC, removeIndex, moved);
+            System.arraycopy(datatypeErrorMessageCC, removeIndex+1, datatypeErrorMessageCC, removeIndex, moved);
+            System.arraycopy(datatypeFECCC, removeIndex+1, datatypeFECCC, removeIndex, moved);
+        }
+    }    
     
     //{16}
 	public void attributeValueDatatypeError(int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(datatypeSizeAV == 0){
 			datatypeSizeAV = 1;
 			datatypeIndexAV = 0;
@@ -2182,7 +2725,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         datatypeFECAV[datatypeIndexAV] = functionalEquivalenceCode;
 	}
 	public void clearAttributeValueDatatypeError(){
-        errorTotalCount -= datatypeSizeAV;
+        messageTotalCount -= datatypeSizeAV;
         datatypeSizeAV = 0;
         datatypeIndexAV = -1;
         datatypeAttributeQNameAV = null;
@@ -2196,9 +2739,38 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearAttributeValueDatatypeError(int messageId){
         int removeIndex = getRemoveIndex(messageId, datatypeFECAV);
+        
+        if(removeIndex == -1) return;
+        
         int moved = datatypeIndexAV - removeIndex;
         datatypeIndexAV--;
-        errorTotalCount--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(datatypeAttributeQNameAV, removeIndex+1, datatypeAttributeQNameAV, removeIndex, moved);
+            System.arraycopy(datatypeCharsSystemIdAV, removeIndex+1, datatypeCharsSystemIdAV, removeIndex, moved);
+            System.arraycopy(datatypeCharsLineNumberAV, removeIndex+1, datatypeCharsLineNumberAV, removeIndex, moved);
+            System.arraycopy(datatypeCharsColumnNumberAV, removeIndex+1, datatypeCharsColumnNumberAV, removeIndex, moved);
+            System.arraycopy(datatypeCharsDefinitionAV, removeIndex+1, datatypeCharsDefinitionAV, removeIndex, moved);
+            System.arraycopy(datatypeErrorMessageAV, removeIndex+1, datatypeErrorMessageAV, removeIndex, moved);
+            System.arraycopy(datatypeFECAV, removeIndex+1, datatypeFECAV, removeIndex, moved);
+        }
+    }
+    void transferAttributeValueDatatypeError(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, datatypeFECAV);
+        
+        if(removeIndex == -1) return;
+                
+        other.attributeValueDatatypeError(datatypeFECAV[removeIndex],
+                                            datatypeAttributeQNameAV[removeIndex],
+                                            datatypeCharsSystemIdAV[removeIndex],
+                                            datatypeCharsLineNumberAV[removeIndex],
+                                            datatypeCharsColumnNumberAV[removeIndex],
+                                            datatypeCharsDefinitionAV[removeIndex],
+                                            datatypeErrorMessageAV[removeIndex]);
+        
+        int moved = datatypeIndexAV - removeIndex;
+        datatypeIndexAV--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(datatypeAttributeQNameAV, removeIndex+1, datatypeAttributeQNameAV, removeIndex, moved);
             System.arraycopy(datatypeCharsSystemIdAV, removeIndex+1, datatypeCharsSystemIdAV, removeIndex, moved);
@@ -2212,7 +2784,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         
         
 	public void characterContentValueError(int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(valueSizeCC == 0){
 			valueSizeCC = 1;
 			valueIndexCC = 0;
@@ -2253,7 +2825,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         valueFECCC[valueIndexCC] = functionalEquivalenceCode;
 	}
     public void clearCharacterContentValueError(){
-        errorTotalCount -= valueSizeCC;
+        messageTotalCount -= valueSizeCC;
         valueSizeCC = 0;
         valueIndexCC = -1;
         valueCharsSystemIdCC = null;
@@ -2265,9 +2837,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearCharacterContentValueError(int messageId){
         int removeIndex = getRemoveIndex(messageId, valueFECCC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = valueIndexCC - removeIndex;
         valueIndexCC--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){  
             System.arraycopy(valueCharsSystemIdCC, removeIndex+1, valueCharsSystemIdCC, removeIndex, moved);
             System.arraycopy(valueCharsLineNumberCC, removeIndex+1, valueCharsLineNumberCC, removeIndex, moved);
@@ -2276,10 +2851,31 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(valueFECCC, removeIndex+1, valueFECCC, removeIndex, moved);
         }
     }
+    void transferCharacterContentValueError(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, valueFECCC);
         
+        if(removeIndex == -1) return;
+                
+        other.characterContentValueError(valueFECCC[removeIndex],
+                                          valueCharsSystemIdCC[removeIndex],
+                                          valueCharsLineNumberCC[removeIndex],
+                                          valueCharsColumnNumberCC[removeIndex],
+                                          valueCharsDefinitionCC[removeIndex]);
+        
+        int moved = valueIndexCC - removeIndex;
+        valueIndexCC--;
+        messageTotalCount--;
+        if(moved > 0){  
+            System.arraycopy(valueCharsSystemIdCC, removeIndex+1, valueCharsSystemIdCC, removeIndex, moved);
+            System.arraycopy(valueCharsLineNumberCC, removeIndex+1, valueCharsLineNumberCC, removeIndex, moved);
+            System.arraycopy(valueCharsColumnNumberCC, removeIndex+1, valueCharsColumnNumberCC, removeIndex, moved);
+            System.arraycopy(valueCharsDefinitionCC, removeIndex+1, valueCharsDefinitionCC, removeIndex, moved);
+            System.arraycopy(valueFECCC, removeIndex+1, valueFECCC, removeIndex, moved);
+        }
+    }   
     
 	public void attributeValueValueError(int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(valueSizeAV == 0){
 			valueSizeAV = 1;
 			valueIndexAV = 0;
@@ -2314,7 +2910,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             int[] increasedFEC = new int[valueSizeAV];
 			System.arraycopy(valueFECAV, 0, increasedFEC, 0, valueIndexAV);
 			valueFECAV = increasedFEC;
-		}
+		}		
 		valueAttributeQNameAV[valueIndexAV] = attributeQName;
 		valueCharsSystemIdAV[valueIndexAV] = charsSystemId;
 		valueCharsLineNumberAV[valueIndexAV] = charsLineNumber;
@@ -2322,9 +2918,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		valueCharsDefinitionAV[valueIndexAV] = charsDefinition;
         
         valueFECAV[valueIndexAV] = functionalEquivalenceCode;
+        
 	}
 	public void clearAttributeValueValueError(){
-        errorTotalCount -= valueSizeAV;
+        messageTotalCount -= valueSizeAV;
         valueSizeAV = 0;
         valueIndexAV = -1;
         valueAttributeQNameAV = null;
@@ -2337,9 +2934,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }    
     public void clearAttributeValueValueError(int messageId){
         int removeIndex = getRemoveIndex(messageId, valueFECAV);
+        
+        if(removeIndex == -1) return;
+        
         int moved = valueIndexAV - removeIndex;
-        valueSizeAV--;
-        errorTotalCount--;
+        valueIndexAV--;
+        messageTotalCount--;
         if(moved > 0){  
             System.arraycopy(valueAttributeQNameAV, removeIndex+1, valueAttributeQNameAV, removeIndex, moved);
             System.arraycopy(valueCharsSystemIdAV, removeIndex+1, valueCharsSystemIdAV, removeIndex, moved);
@@ -2349,10 +2949,33 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(valueFECAV, removeIndex+1, valueFECAV, removeIndex, moved);
         }
     }
+    void transferAttributeValueValueError(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, valueFECAV);
         
+        if(removeIndex == -1) return;
+                
+        other.attributeValueValueError(valueFECAV[removeIndex],
+                                        valueAttributeQNameAV[removeIndex],
+                                        valueCharsSystemIdAV[removeIndex],
+                                        valueCharsLineNumberAV[removeIndex],
+                                        valueCharsColumnNumberAV[removeIndex],
+                                        valueCharsDefinitionAV[removeIndex]);
+        
+        int moved = valueIndexAV - removeIndex;
+        valueIndexAV--;
+        messageTotalCount--;
+        if(moved > 0){  
+            System.arraycopy(valueAttributeQNameAV, removeIndex+1, valueAttributeQNameAV, removeIndex, moved);
+            System.arraycopy(valueCharsSystemIdAV, removeIndex+1, valueCharsSystemIdAV, removeIndex, moved);
+            System.arraycopy(valueCharsLineNumberAV, removeIndex+1, valueCharsLineNumberAV, removeIndex, moved);
+            System.arraycopy(valueCharsColumnNumberAV, removeIndex+1, valueCharsColumnNumberAV, removeIndex, moved);
+            System.arraycopy(valueCharsDefinitionAV, removeIndex+1, valueCharsDefinitionAV, removeIndex, moved);
+            System.arraycopy(valueFECAV, removeIndex+1, valueFECAV, removeIndex, moved);
+        }
+    }    
     
 	public void characterContentExceptedError(int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(exceptSizeCC == 0){
 			exceptSizeCC = 1;
 			exceptIndexCC = 0;
@@ -2397,7 +3020,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         exceptFECCC[exceptIndexCC] = functionalEquivalenceCode;
 	}
     public void clearCharacterContentExceptedError(){
-        errorTotalCount -= exceptSizeCC;
+        messageTotalCount -= exceptSizeCC;
         exceptSizeCC = 0;
         exceptIndexCC = -1;
         exceptElementQNameCC = null;
@@ -2410,9 +3033,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearCharacterContentExceptedError(int messageId){
         int removeIndex = getRemoveIndex(messageId, exceptFECCC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = exceptIndexCC - removeIndex;
         exceptIndexCC--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(exceptElementQNameCC, removeIndex+1, exceptElementQNameCC, removeIndex, moved);
             System.arraycopy(exceptCharsSystemIdCC, removeIndex+1, exceptCharsSystemIdCC, removeIndex, moved);
@@ -2422,10 +3048,34 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(exceptFECCC, removeIndex+1, exceptFECCC, removeIndex, moved);
         }
     }
-    
+    void transferCharacterContentExceptedError(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, exceptFECCC);
+        
+        if(removeIndex == -1) return;
+                
+        other.characterContentExceptedError(exceptFECCC[removeIndex],
+                                            exceptElementQNameCC[removeIndex],
+                                            exceptCharsSystemIdCC[removeIndex],
+                                            exceptCharsLineNumberCC[removeIndex],
+                                            exceptCharsColumnNumberCC[removeIndex],
+                                            exceptCharsDefinitionCC[removeIndex]);
+        
+        int moved = exceptIndexCC - removeIndex;
+        exceptIndexCC--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(exceptElementQNameCC, removeIndex+1, exceptElementQNameCC, removeIndex, moved);
+            System.arraycopy(exceptCharsSystemIdCC, removeIndex+1, exceptCharsSystemIdCC, removeIndex, moved);
+            System.arraycopy(exceptCharsLineNumberCC, removeIndex+1, exceptCharsLineNumberCC, removeIndex, moved);
+            System.arraycopy(exceptCharsColumnNumberCC, removeIndex+1, exceptCharsColumnNumberCC, removeIndex, moved);
+            System.arraycopy(exceptCharsDefinitionCC, removeIndex+1, exceptCharsDefinitionCC, removeIndex, moved);
+            System.arraycopy(exceptFECCC, removeIndex+1, exceptFECCC, removeIndex, moved);
+        }
+    }
+        
         
 	public void attributeValueExceptedError(int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(exceptSizeAV == 0){
 			exceptSizeAV = 1;
 			exceptIndexAV = 0;
@@ -2470,7 +3120,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         exceptFECAV[exceptIndexAV] = functionalEquivalenceCode;
 	}
 	public void clearAttributeValueExceptedError(){
-        errorTotalCount -= exceptSizeAV;
+        messageTotalCount -= exceptSizeAV;
         exceptSizeAV = 0;
         exceptIndexAV = -1;
         exceptAttributeQNameAV = null;
@@ -2483,9 +3133,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearAttributeValueExceptedError(int messageId){
         int removeIndex = getRemoveIndex(messageId, exceptFECAV);
+        
+        if(removeIndex == -1) return;
+        
         int moved = exceptIndexAV - removeIndex;
         exceptIndexAV--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(exceptAttributeQNameAV, removeIndex+1, exceptAttributeQNameAV, removeIndex, moved);
             System.arraycopy(exceptCharsSystemIdAV, removeIndex+1, exceptCharsSystemIdAV, removeIndex, moved);
@@ -2495,10 +3148,34 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(exceptFECAV, removeIndex+1, exceptFECAV, removeIndex, moved);
         }
     }
+    void transferAttributeValueExceptedError(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, exceptFECAV);
         
+        if(removeIndex == -1) return;
+                
+        other.attributeValueExceptedError(exceptFECAV[removeIndex],
+                                        exceptAttributeQNameAV[removeIndex],
+                                        exceptCharsSystemIdAV[removeIndex],
+                                        exceptCharsLineNumberAV[removeIndex],
+                                        exceptCharsColumnNumberAV[removeIndex],
+                                        exceptCharsDefinitionAV[removeIndex]);
+        
+        int moved = exceptIndexAV - removeIndex;
+        exceptIndexAV--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(exceptAttributeQNameAV, removeIndex+1, exceptAttributeQNameAV, removeIndex, moved);
+            System.arraycopy(exceptCharsSystemIdAV, removeIndex+1, exceptCharsSystemIdAV, removeIndex, moved);
+            System.arraycopy(exceptCharsLineNumberAV, removeIndex+1, exceptCharsLineNumberAV, removeIndex, moved);
+            System.arraycopy(exceptCharsColumnNumberAV, removeIndex+1, exceptCharsColumnNumberAV, removeIndex, moved);
+            System.arraycopy(exceptCharsDefinitionAV, removeIndex+1, exceptCharsDefinitionAV, removeIndex, moved);
+            System.arraycopy(exceptFECAV, removeIndex+1, exceptFECAV, removeIndex, moved);
+        }
+    }    
+    
     
 	public void unexpectedCharacterContent(int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unexpectedSizeCC == 0){
 			unexpectedSizeCC = 1;
 			unexpectedIndexCC = 0;		
@@ -2537,7 +3214,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         unexpectedFECCC[unexpectedIndexCC] = functionalEquivalenceCode;
 	}
     public void clearUnexpectedCharacterContent(){
-        errorTotalCount -= unexpectedSizeCC;
+        messageTotalCount -= unexpectedSizeCC;
         unexpectedSizeCC = 0;
         unexpectedIndexCC = -1;		
         unexpectedCharsSystemIdCC = null;
@@ -2549,9 +3226,34 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearUnexpectedCharacterContent(int messageId){
         int removeIndex = getRemoveIndex(messageId, unexpectedFECCC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unexpectedIndexCC - removeIndex;
         unexpectedIndexCC--;
-        errorTotalCount--;
+        messageTotalCount--;
+        if(moved > 0){              
+            System.arraycopy(unexpectedCharsSystemIdCC, removeIndex+1, unexpectedCharsSystemIdCC, removeIndex, moved);
+            System.arraycopy(unexpectedCharsLineNumberCC, removeIndex+1, unexpectedCharsLineNumberCC, removeIndex, moved);
+            System.arraycopy(unexpectedCharsColumnNumberCC, removeIndex+1, unexpectedCharsColumnNumberCC, removeIndex, moved);
+            System.arraycopy(unexpectedContextDefinitionCC, removeIndex+1, unexpectedContextDefinitionCC, removeIndex, moved);
+            System.arraycopy(unexpectedFECCC, removeIndex+1, unexpectedFECCC, removeIndex, moved);
+        }
+    }
+    void transferUnexpectedCharacterContent(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, unexpectedFECCC);
+        
+        if(removeIndex == -1) return;
+                
+        other.unexpectedCharacterContent(unexpectedFECCC[removeIndex],
+                                        unexpectedCharsSystemIdCC[removeIndex],
+                                        unexpectedCharsLineNumberCC[removeIndex],
+                                        unexpectedCharsColumnNumberCC[removeIndex],
+                                        unexpectedContextDefinitionCC[removeIndex]);
+        
+        int moved = unexpectedIndexCC - removeIndex;
+        unexpectedIndexCC--;
+        messageTotalCount--;
         if(moved > 0){              
             System.arraycopy(unexpectedCharsSystemIdCC, removeIndex+1, unexpectedCharsSystemIdCC, removeIndex, moved);
             System.arraycopy(unexpectedCharsLineNumberCC, removeIndex+1, unexpectedCharsLineNumberCC, removeIndex, moved);
@@ -2561,9 +3263,8 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }
     
-    
 	public void unexpectedAttributeValue(int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unexpectedSizeAV == 0){
 			unexpectedSizeAV = 1;
 			unexpectedIndexAV = 0;		
@@ -2602,7 +3303,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         unexpectedFECAV[unexpectedIndexAV] = functionalEquivalenceCode;
 	}
 	public void clearUnexpectedAttributeValue(){
-        errorTotalCount -= unexpectedSizeAV;
+        messageTotalCount -= unexpectedSizeAV;
         unexpectedSizeAV = 0;
         unexpectedIndexAV = -1;		
         unexpectedCharsSystemIdAV = null;
@@ -2614,9 +3315,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearUnexpectedAttributeValue(int messageId){
         int removeIndex = getRemoveIndex(messageId, unexpectedFECAV);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unexpectedIndexAV - removeIndex;
         unexpectedIndexAV--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){  
             System.arraycopy(unexpectedCharsSystemIdAV, removeIndex+1, unexpectedCharsSystemIdAV, removeIndex, moved);
             System.arraycopy(unexpectedCharsLineNumberAV, removeIndex+1, unexpectedCharsLineNumberAV, removeIndex, moved);
@@ -2625,10 +3329,31 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(unexpectedFECAV, removeIndex+1, unexpectedFECAV, removeIndex, moved);
         }
     }
+    void transferUnexpectedAttributeValue(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, unexpectedFECAV);
         
+        if(removeIndex == -1) return;
+                
+        other.unexpectedAttributeValue(unexpectedFECAV[removeIndex],
+                                        unexpectedCharsSystemIdAV[removeIndex],
+                                        unexpectedCharsLineNumberAV[removeIndex],
+                                        unexpectedCharsColumnNumberAV[removeIndex],
+                                        unexpectedContextDefinitionAV[removeIndex]);
+        
+        int moved = unexpectedIndexAV - removeIndex;
+        unexpectedIndexAV--;
+        messageTotalCount--;
+        if(moved > 0){  
+            System.arraycopy(unexpectedCharsSystemIdAV, removeIndex+1, unexpectedCharsSystemIdAV, removeIndex, moved);
+            System.arraycopy(unexpectedCharsLineNumberAV, removeIndex+1, unexpectedCharsLineNumberAV, removeIndex, moved);
+            System.arraycopy(unexpectedCharsColumnNumberAV, removeIndex+1, unexpectedCharsColumnNumberAV, removeIndex, moved);
+            System.arraycopy(unexpectedContextDefinitionAV, removeIndex+1, unexpectedContextDefinitionAV, removeIndex, moved);
+            System.arraycopy(unexpectedFECAV, removeIndex+1, unexpectedFECAV, removeIndex, moved);
+        }
+    }    
     
 	public void unresolvedCharacterContent(int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unresolvedSizeCC == 0){
 			unresolvedSizeCC = 1;
 			unresolvedIndexCC = 0;		
@@ -2667,7 +3392,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         unresolvedFECCC[unresolvedIndexCC] = functionalEquivalenceCode;
 	}
     public void clearUnresolvedCharacterContent(){
-        errorTotalCount -= unresolvedSizeCC;
+        messageTotalCount -= unresolvedSizeCC;
         unresolvedSizeCC = 0;
         unresolvedIndexCC = -1;		
         unresolvedCharsSystemIdEECC = null;
@@ -2679,9 +3404,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearUnresolvedCharacterContent(int messageId){
         int removeIndex = getRemoveIndex(messageId, unresolvedFECCC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unresolvedIndexCC - removeIndex;
         unresolvedIndexCC--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(unresolvedCharsSystemIdEECC, removeIndex+1, unresolvedCharsSystemIdEECC, removeIndex, moved);
             System.arraycopy(unresolvedCharsLineNumberEECC, removeIndex+1, unresolvedCharsLineNumberEECC, removeIndex, moved);
@@ -2690,11 +3418,33 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(unresolvedFECCC, removeIndex+1, unresolvedFECCC, removeIndex, moved);
         }
     }
-    
+    void transferUnresolvedCharacterContent(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, unresolvedFECCC);
+        
+        if(removeIndex == -1) return;
+                
+        other.unresolvedCharacterContent(unresolvedFECCC[removeIndex],
+                                        unresolvedCharsSystemIdEECC[removeIndex],
+                                        unresolvedCharsLineNumberEECC[removeIndex],
+                                        unresolvedCharsColumnNumberEECC[removeIndex],
+                                        unresolvedPossibleDefinitionsCC[removeIndex]);
+        
+        int moved = unresolvedIndexCC - removeIndex;
+        unresolvedIndexCC--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(unresolvedCharsSystemIdEECC, removeIndex+1, unresolvedCharsSystemIdEECC, removeIndex, moved);
+            System.arraycopy(unresolvedCharsLineNumberEECC, removeIndex+1, unresolvedCharsLineNumberEECC, removeIndex, moved);
+            System.arraycopy(unresolvedCharsColumnNumberEECC, removeIndex+1, unresolvedCharsColumnNumberEECC, removeIndex, moved);
+            System.arraycopy(unresolvedPossibleDefinitionsCC, removeIndex+1, unresolvedPossibleDefinitionsCC, removeIndex, moved);
+            System.arraycopy(unresolvedFECCC, removeIndex+1, unresolvedFECCC, removeIndex, moved);
+        }
+    }
+        
     
 	// {24}
 	public void unresolvedAttributeValue(int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(unresolvedSizeAV == 0){
 			unresolvedSizeAV = 1;
 			unresolvedIndexAV = 0;
@@ -2739,7 +3489,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         unresolvedFECAV[unresolvedIndexAV] = functionalEquivalenceCode;
 	}
 	public void clearUnresolvedAttributeValue(){
-        errorTotalCount -= unresolvedSizeAV;
+        messageTotalCount -= unresolvedSizeAV;
         unresolvedSizeAV = 0;
         unresolvedIndexAV = -1;
         unresolvedAttributeQNameEEAV = null;
@@ -2752,9 +3502,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearUnresolvedAttributeValue(int messageId){
         int removeIndex = getRemoveIndex(messageId, unresolvedFECAV);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unresolvedIndexAV - removeIndex;
         unresolvedIndexAV--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(unresolvedAttributeQNameEEAV, removeIndex+1, unresolvedAttributeQNameEEAV, removeIndex, moved);
             System.arraycopy(unresolvedCharsSystemIdEEAV, removeIndex+1, unresolvedCharsSystemIdEEAV, removeIndex, moved);
@@ -2764,11 +3517,35 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(unresolvedFECAV, removeIndex+1, unresolvedFECAV, removeIndex, moved);
         }
     }
+    void transferUnresolvedAttributeValue(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, unresolvedFECAV);
         
+        if(removeIndex == -1) return;
+                
+        other.unresolvedAttributeValue(unresolvedFECAV[removeIndex],
+                                        unresolvedAttributeQNameEEAV[removeIndex],
+                                        unresolvedCharsSystemIdEEAV[removeIndex],
+                                        unresolvedCharsLineNumberEEAV[removeIndex],
+                                        unresolvedCharsColumnNumberEEAV[removeIndex],
+                                        unresolvedPossibleDefinitionsAV[removeIndex]);
+        
+        int moved = unresolvedIndexAV - removeIndex;
+        unresolvedIndexAV--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(unresolvedAttributeQNameEEAV, removeIndex+1, unresolvedAttributeQNameEEAV, removeIndex, moved);
+            System.arraycopy(unresolvedCharsSystemIdEEAV, removeIndex+1, unresolvedCharsSystemIdEEAV, removeIndex, moved);
+            System.arraycopy(unresolvedCharsLineNumberEEAV, removeIndex+1, unresolvedCharsLineNumberEEAV, removeIndex, moved);
+            System.arraycopy(unresolvedCharsColumnNumberEEAV, removeIndex+1, unresolvedCharsColumnNumberEEAV, removeIndex, moved);
+            System.arraycopy(unresolvedPossibleDefinitionsAV, removeIndex+1, unresolvedPossibleDefinitionsAV, removeIndex, moved);
+            System.arraycopy(unresolvedFECAV, removeIndex+1, unresolvedFECAV, removeIndex, moved);
+        }
+    }
+    
     
     // {25}
 	public void listTokenDatatypeError(int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(datatypeSizeLP == 0){
 			datatypeSizeLP = 1;
 			datatypeIndexLP = 0;
@@ -2819,7 +3596,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         datatypeFECLP[datatypeIndexLP] = functionalEquivalenceCode;
 	}
     public void clearListTokenDatatypeError(){
-        errorTotalCount -= datatypeSizeLP;
+        messageTotalCount -= datatypeSizeLP;
         datatypeSizeLP = 0;
         datatypeIndexLP = -1;
         datatypeTokenLP = null;
@@ -2833,9 +3610,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearListTokenDatatypeError(int messageId){
         int removeIndex = getRemoveIndex(messageId, datatypeFECLP);
+        
+        if(removeIndex == -1) return;
+        
         int moved = datatypeIndexLP - removeIndex;
         datatypeIndexLP--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){    
             System.arraycopy(datatypeTokenLP, removeIndex+1, datatypeTokenLP, removeIndex, moved);
             System.arraycopy(datatypeCharsSystemIdLP, removeIndex+1, datatypeCharsSystemIdLP, removeIndex, moved);
@@ -2846,10 +3626,35 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(datatypeFECLP, removeIndex+1, datatypeFECLP, removeIndex, moved);
         }
     }
+    void transferListTokenDatatypeError(int messageId, ConflictMessageHandler other){ 
+        int removeIndex = getRemoveIndex(messageId, datatypeFECLP);
         
+        if(removeIndex == -1) return;
+                
+        other.listTokenDatatypeError(datatypeFECLP[removeIndex],
+                                    datatypeTokenLP[removeIndex],
+                                    datatypeCharsSystemIdLP[removeIndex],
+                                    datatypeCharsLineNumberLP[removeIndex],
+                                    datatypeCharsColumnNumberLP[removeIndex],
+                                    datatypeCharsDefinitionLP[removeIndex],
+                                    datatypeErrorMessageLP[removeIndex]);
+        
+        int moved = datatypeIndexLP - removeIndex;
+        datatypeIndexLP--;
+        messageTotalCount--;
+        if(moved > 0){    
+            System.arraycopy(datatypeTokenLP, removeIndex+1, datatypeTokenLP, removeIndex, moved);
+            System.arraycopy(datatypeCharsSystemIdLP, removeIndex+1, datatypeCharsSystemIdLP, removeIndex, moved);
+            System.arraycopy(datatypeCharsLineNumberLP, removeIndex+1, datatypeCharsLineNumberLP, removeIndex, moved);
+            System.arraycopy(datatypeCharsColumnNumberLP, removeIndex+1, datatypeCharsColumnNumberLP, removeIndex, moved);
+            System.arraycopy(datatypeCharsDefinitionLP, removeIndex+1, datatypeCharsDefinitionLP, removeIndex, moved);
+            System.arraycopy(datatypeErrorMessageLP, removeIndex+1, datatypeErrorMessageLP, removeIndex, moved);
+            System.arraycopy(datatypeFECLP, removeIndex+1, datatypeFECLP, removeIndex, moved);
+        }
+    }   
         
 	public void listTokenValueError(int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(valueSizeLP == 0){
 			valueSizeLP = 1;
 			valueIndexLP = 0;
@@ -2894,7 +3699,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         valueFECLP[valueIndexLP] = functionalEquivalenceCode;
 	}
     public void clearListTokenValueError(){
-        errorTotalCount -= valueSizeLP;
+        messageTotalCount -= valueSizeLP;
         valueSizeLP = 0;
         valueIndexLP = -1;
         valueTokenLP = null;
@@ -2907,9 +3712,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearListTokenValueError(int messageId){
         int removeIndex = getRemoveIndex(messageId, valueFECLP);
+        
+        if(removeIndex == -1) return;
+        
         int moved = valueIndexLP - removeIndex;
         valueIndexLP--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(valueTokenLP, removeIndex+1, valueTokenLP, removeIndex, moved);
             System.arraycopy(valueCharsSystemIdLP, removeIndex+1, valueCharsSystemIdLP, removeIndex, moved);
@@ -2919,10 +3727,34 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(valueFECLP, removeIndex+1, valueFECLP, removeIndex, moved);
         }
     }
+    void transferListTokenValueError(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, valueFECLP);
         
+        if(removeIndex == -1) return;
+                
+        other.listTokenValueError(valueFECLP[removeIndex],
+                                   valueTokenLP[removeIndex],
+                                   valueCharsSystemIdLP[removeIndex],
+                                   valueCharsLineNumberLP[removeIndex],
+                                   valueCharsColumnNumberLP[removeIndex],
+                                   valueCharsDefinitionLP[removeIndex]);
+        
+        int moved = valueIndexLP - removeIndex;
+        valueIndexLP--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(valueTokenLP, removeIndex+1, valueTokenLP, removeIndex, moved);
+            System.arraycopy(valueCharsSystemIdLP, removeIndex+1, valueCharsSystemIdLP, removeIndex, moved);
+            System.arraycopy(valueCharsLineNumberLP, removeIndex+1, valueCharsLineNumberLP, removeIndex, moved);
+            System.arraycopy(valueCharsColumnNumberLP, removeIndex+1, valueCharsColumnNumberLP, removeIndex, moved);
+            System.arraycopy(valueCharsDefinitionLP, removeIndex+1, valueCharsDefinitionLP, removeIndex, moved);    
+            System.arraycopy(valueFECLP, removeIndex+1, valueFECLP, removeIndex, moved);
+        }
+    }
+    
     
 	public void listTokenExceptedError(int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(exceptSizeLP == 0){
 			exceptSizeLP = 1;
 			exceptIndexLP = 0;
@@ -2967,7 +3799,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         exceptFECLP[exceptIndexLP] = functionalEquivalenceCode;
 	}
     public void clearListTokenExceptedError(){
-        errorTotalCount -= exceptSizeLP;
+        messageTotalCount -= exceptSizeLP;
         exceptSizeLP = 0;
         exceptIndexLP = -1;
         exceptTokenLP = null;
@@ -2980,9 +3812,36 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearListTokenExceptedError(int messageId){
         int removeIndex = getRemoveIndex(messageId, exceptFECLP);
+        
+        if(removeIndex == -1) return;
+        
         int moved = exceptIndexLP - removeIndex;
         exceptIndexLP--;
-        errorTotalCount--;
+        messageTotalCount--;
+        if(moved > 0){    
+            System.arraycopy(exceptTokenLP, removeIndex+1, exceptTokenLP, removeIndex, moved);
+            System.arraycopy(exceptCharsSystemIdLP, removeIndex+1, exceptCharsSystemIdLP, removeIndex, moved);
+            System.arraycopy(exceptCharsLineNumberLP, removeIndex+1, exceptCharsLineNumberLP, removeIndex, moved);
+            System.arraycopy(exceptCharsColumnNumberLP, removeIndex+1, exceptCharsColumnNumberLP, removeIndex, moved);
+            System.arraycopy(exceptCharsDefinitionLP, removeIndex+1, exceptCharsDefinitionLP, removeIndex, moved);
+            System.arraycopy(exceptFECLP, removeIndex+1, exceptFECLP, removeIndex, moved);
+        }
+    }
+    void transferListTokenExceptedError(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, exceptFECLP);
+        
+        if(removeIndex == -1) return;
+                
+        other.listTokenExceptedError(exceptFECLP[removeIndex],
+                                    exceptTokenLP[removeIndex],
+                                    exceptCharsSystemIdLP[removeIndex],
+                                    exceptCharsLineNumberLP[removeIndex],
+                                    exceptCharsColumnNumberLP[removeIndex],
+                                    exceptCharsDefinitionLP[removeIndex]);
+        
+        int moved = exceptIndexLP - removeIndex;
+        exceptIndexLP--;
+        messageTotalCount--;
         if(moved > 0){    
             System.arraycopy(exceptTokenLP, removeIndex+1, exceptTokenLP, removeIndex, moved);
             System.arraycopy(exceptCharsSystemIdLP, removeIndex+1, exceptCharsSystemIdLP, removeIndex, moved);
@@ -2993,8 +3852,9 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }
     
+    
     public void unresolvedListTokenInContextError(int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        errorTotalCount++;
+        messageTotalCount++;
         if(unresolvedSizeLPICE == 0){
 			unresolvedSizeLPICE = 1;
 			unresolvedIndexLPICE = 0;
@@ -3039,7 +3899,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         unresolvedFECLPICE[unresolvedIndexLPICE] = functionalEquivalenceCode;
     }
     public void clearUnresolvedListTokenInContextError(){
-        errorTotalCount -= unresolvedSizeLPICE;
+        messageTotalCount -= unresolvedSizeLPICE;
         unresolvedSizeLPICE = 0;
         unresolvedIndexLPICE = -1;
         unresolvedTokenLPICE = null;
@@ -3052,9 +3912,36 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearUnresolvedListTokenInContextError(int messageId){
         int removeIndex = getRemoveIndex(messageId, unresolvedFECLPICE);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unresolvedIndexLPICE - removeIndex;
         unresolvedIndexLPICE--;
-        errorTotalCount--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(unresolvedTokenLPICE, removeIndex+1, unresolvedTokenLPICE, removeIndex, moved);
+            System.arraycopy(unresolvedCharsSystemIdEELPICE, removeIndex+1, unresolvedCharsSystemIdEELPICE, removeIndex, moved);
+            System.arraycopy(unresolvedCharsLineNumberEELPICE, removeIndex+1, unresolvedCharsLineNumberEELPICE, removeIndex, moved);
+            System.arraycopy(unresolvedCharsColumnNumberEELPICE, removeIndex+1, unresolvedCharsColumnNumberEELPICE, removeIndex, moved);
+            System.arraycopy(unresolvedPossibleDefinitionsLPICE, removeIndex+1, unresolvedPossibleDefinitionsLPICE, removeIndex, moved);
+            System.arraycopy(unresolvedFECLPICE, removeIndex+1, unresolvedFECLPICE, removeIndex, moved);
+        }
+    }
+    void transferUnresolvedListTokenInContextError(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, unresolvedFECLPICE);
+        
+        if(removeIndex == -1) return;
+                
+        other.unresolvedListTokenInContextError(unresolvedFECLPICE[removeIndex],
+                                            unresolvedTokenLPICE[removeIndex],
+                                            unresolvedCharsSystemIdEELPICE[removeIndex],
+                                            unresolvedCharsLineNumberEELPICE[removeIndex],
+                                            unresolvedCharsColumnNumberEELPICE[removeIndex],
+                                            unresolvedPossibleDefinitionsLPICE[removeIndex]);
+        
+        int moved = unresolvedIndexLPICE - removeIndex;
+        unresolvedIndexLPICE--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(unresolvedTokenLPICE, removeIndex+1, unresolvedTokenLPICE, removeIndex, moved);
             System.arraycopy(unresolvedCharsSystemIdEELPICE, removeIndex+1, unresolvedCharsSystemIdEELPICE, removeIndex, moved);
@@ -3066,8 +3953,9 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     
     
+    
     public void ambiguousListTokenInContextWarning(int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        errorTotalCount++;
+        messageTotalCount++;
         if(ambiguousSizeLPICW == 0){
 			ambiguousSizeLPICW = 1;
 			ambiguousIndexLPICW = 0;
@@ -3112,7 +4000,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         ambiguousFECLPICW[ambiguousIndexLPICW] = functionalEquivalenceCode;
     }       
     public void clearAmbiguousListTokenInContextWarning(){
-        errorTotalCount -= ambiguousSizeLPICW;
+        messageTotalCount -= ambiguousSizeLPICW;
         ambiguousSizeLPICW = 0;
         ambiguousIndexLPICW = -1;
         ambiguousTokenLPICW = null;
@@ -3123,9 +4011,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearAmbiguousListTokenInContextWarning(int messageId){
         int removeIndex = getRemoveIndex(messageId, ambiguousFECLPICW);
+        
+        if(removeIndex == -1) return;
+        
         int moved = ambiguousIndexLPICW - removeIndex;
         ambiguousIndexLPICW--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(ambiguousTokenLPICW, removeIndex+1, ambiguousTokenLPICW, removeIndex, moved);
             System.arraycopy(ambiguousCharsSystemIdEELPICW, removeIndex+1, ambiguousCharsSystemIdEELPICW, removeIndex, moved);
@@ -3135,7 +4026,32 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(ambiguousFECLPICW, removeIndex+1, ambiguousFECLPICW, removeIndex, moved);
         }
     }
-    
+    void transferAmbiguousListTokenInContextWarning(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, ambiguousFECLPICW);
+        
+        if(removeIndex == -1) return;
+                
+        other.ambiguousListTokenInContextWarning(ambiguousFECLPICW[removeIndex],
+                                                ambiguousTokenLPICW[removeIndex],
+                                                ambiguousCharsSystemIdEELPICW[removeIndex],
+                                                ambiguousCharsLineNumberEELPICW[removeIndex],
+                                                ambiguousCharsColumnNumberEELPICW[removeIndex],
+                                                ambiguousPossibleDefinitionsLPICW[removeIndex]);
+        
+        int moved = ambiguousIndexLPICW - removeIndex;
+        ambiguousIndexLPICW--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(ambiguousTokenLPICW, removeIndex+1, ambiguousTokenLPICW, removeIndex, moved);
+            System.arraycopy(ambiguousCharsSystemIdEELPICW, removeIndex+1, ambiguousCharsSystemIdEELPICW, removeIndex, moved);
+            System.arraycopy(ambiguousCharsLineNumberEELPICW, removeIndex+1, ambiguousCharsLineNumberEELPICW, removeIndex, moved);
+            System.arraycopy(ambiguousCharsColumnNumberEELPICW, removeIndex+1, ambiguousCharsColumnNumberEELPICW, removeIndex, moved);
+            System.arraycopy(ambiguousPossibleDefinitionsLPICW, removeIndex+1, ambiguousPossibleDefinitionsLPICW, removeIndex, moved);
+            System.arraycopy(ambiguousFECLPICW, removeIndex+1, ambiguousFECLPICW, removeIndex, moved);
+        }
+    }
+        
+        
     
 	public void missingCompositorContent(int functionalEquivalenceCode, 
                                 Rule context, 
@@ -3145,7 +4061,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 								APattern definition, 
 								int expected, 
 								int found){
-        errorTotalCount++;
+        messageTotalCount++;
 		if(missingCompositorContentSize == 0){
 			missingCompositorContentSize = 1;
 			missingCompositorContentIndex = 0;
@@ -3203,7 +4119,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 				
 	}    
 	public void clearMissingCompositorContent(){
-        errorTotalCount -= missingCompositorContentSize;
+        messageTotalCount -= missingCompositorContentSize;
         missingCompositorContentSize = 0;
         missingCompositorContentIndex = -1;
         missingCompositorContentContext = null;
@@ -3218,9 +4134,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     public void clearMissingCompositorContent(int messageId){
         int removeIndex = getRemoveIndex(messageId, missingCompositorContentFEC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = missingCompositorContentIndex - removeIndex;
         missingCompositorContentIndex--;
-        errorTotalCount--;
+        messageTotalCount--;
         if(moved > 0){
             System.arraycopy(missingCompositorContentContext, removeIndex+1, missingCompositorContentContext, removeIndex, moved);
             System.arraycopy(missingCompositorContentStartSystemId, removeIndex+1, missingCompositorContentStartSystemId, removeIndex, moved);
@@ -3232,14 +4151,45 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             System.arraycopy(missingCompositorContentFEC, removeIndex+1, missingCompositorContentFEC, removeIndex, moved);
         }
     }
+    void transferMissingCompositorContent(int messageId, ConflictMessageHandler other){
+        int removeIndex = getRemoveIndex(messageId, missingCompositorContentFEC);
+        
+        if(removeIndex == -1) return;
+                
+        other.missingCompositorContent(missingCompositorContentFEC[removeIndex],
+                                    missingCompositorContentContext[removeIndex],
+                                    missingCompositorContentStartSystemId[removeIndex],
+                                    missingCompositorContentStartLineNumber[removeIndex],
+                                    missingCompositorContentStartColumnNumber[removeIndex],
+                                    missingCompositorContentDefinition[removeIndex],
+                                    missingCompositorContentExpected[removeIndex],
+                                    missingCompositorContentFound[removeIndex]);
+        
+        int moved = missingCompositorContentIndex - removeIndex;
+        missingCompositorContentIndex--;
+        messageTotalCount--;
+        if(moved > 0){
+            System.arraycopy(missingCompositorContentContext, removeIndex+1, missingCompositorContentContext, removeIndex, moved);
+            System.arraycopy(missingCompositorContentStartSystemId, removeIndex+1, missingCompositorContentStartSystemId, removeIndex, moved);
+            System.arraycopy(missingCompositorContentStartLineNumber, removeIndex+1, missingCompositorContentStartLineNumber, removeIndex, moved);
+            System.arraycopy(missingCompositorContentStartColumnNumber, removeIndex+1, missingCompositorContentStartColumnNumber, removeIndex, moved);
+            System.arraycopy(missingCompositorContentDefinition, removeIndex+1, missingCompositorContentDefinition, removeIndex, moved);
+            System.arraycopy(missingCompositorContentExpected, removeIndex+1, missingCompositorContentExpected, removeIndex, moved);
+            System.arraycopy(missingCompositorContentFound, removeIndex+1, missingCompositorContentFound, removeIndex, moved);
+            System.arraycopy(missingCompositorContentFEC, removeIndex+1, missingCompositorContentFEC, removeIndex, moved);
+        }        
+    }
     
     /*
     public void clearUnknownElement(int messageId){
         int removeIndex = getRemoveIndex(messageId, unknownElementFEC);
+        
+        if(removeIndex == -1) return;
+        
         int moved = unknownElementIndex - removeIndex;
         if(moved > 0){            
             someIndex--;
-            errorTotalCount--;
+            messageTotalCount--;
             System.arraycopy(something, removeIndex+1, something, removeIndex, moved);               
         }
     }*/
@@ -3247,155 +4197,169 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
  
     int getRemoveIndex(int messageId, int[] messageCodes){
         int index = -1;
+        //if(messageCodes == null) return index;// for warnings that have not been recorded TODO why?
 		for(int i = 0; i < messageCodes.length; i++){
 			if(messageId == messageCodes[i]){
 				index = i;
 				break;
 			}
 		}
-		if(index == -1){
+		/*if(index == -1){
             throw new IllegalArgumentException();
-        }
+        }*/
         return index;
     }
     
     
     public  void conflict(int functionalEquivalenceCode, int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter[] candidateMessages){
-        errorTotalCount++;
+        messageTotalCount++;
         this.conflictResolutionId = conflictResolutionId;
         this.candidatesCount = candidatesCount;
         this.commonMessages = commonMessages;
         this.disqualified = disqualified;
-        this.candidateMessages = candidateMessages;        
+        this.candidateMessages = candidateMessages;  
+        conflictFEC = functionalEquivalenceCode;
     }
-    
     public void clearConflict(){
-        errorTotalCount--;
+        messageTotalCount--;
         conflictResolutionId = RESOLVED;
         candidatesCount = -1;
         commonMessages = null;
         disqualified = null;
         candidateMessages = null;
+        conflictFEC = -1;
     }
-	
-    int getErrorMessageCount(){
-        return errorTotalCount;
+	void transferConflict(int messageId, ConflictMessageHandler other){
+	    other.conflict(conflictFEC, conflictResolutionId, commonMessages, candidatesCount, disqualified, candidateMessages);
+	    
+	    messageTotalCount--;
+        conflictResolutionId = RESOLVED;
+        candidatesCount = -1;
+        commonMessages = null;
+        disqualified = null;
+        candidateMessages = null;
+        conflictFEC = -1;
+	}
+    
+    // TODO consider replacing with booleans
+    int getMessageTotalCount(){
+        return messageTotalCount;
     }    
     
     void clearLastMessage(int errorId){		
         if(errorId == UNKNOWN_ELEMENT){
             if(unknownElementIndex < 0) throw new IllegalArgumentException();
             unknownElementIndex--;
-            errorTotalCount--;            
+            messageTotalCount--;            
         }else if(errorId == UNEXPECTED_ELEMENT){        
             if(unexpectedElementIndex < 0) throw new IllegalArgumentException();
             unexpectedElementIndex--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == UNEXPECTED_AMBIGUOUS_ELEMENT){
             if(unexpectedAmbiguousElementIndex < 0) throw new IllegalArgumentException();
             unexpectedAmbiguousElementIndex--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == UNKNOWN_ATTRIBUTE){
             if(unknownAttributeIndex < 0) throw new IllegalArgumentException();
             unknownAttributeIndex--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == UNEXPECTED_ATTRIBUTE){
             if(unexpectedAttributeIndex < 0) throw new IllegalArgumentException();
             unexpectedAttributeIndex--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == UNEXPECTED_AMBIGUOUS_ATTRIBUTE){
             if(unexpectedAmbiguousAttributeIndex < 0) throw new IllegalArgumentException();
             unexpectedAmbiguousAttributeIndex--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == MISPLACED_ELEMENT){
             if(misplacedIndex < 0) throw new IllegalArgumentException();
             misplacedIndex--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == EXCESSIVE_CONTENT){
             if(excessiveIndex < 0) throw new IllegalArgumentException();
             excessiveIndex--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == UNRESOLVED_AMBIGUOUS_ELEMENT_CONTENT_ERROR){
             if(unresolvedAmbiguousElementIndexEE < 0) throw new IllegalArgumentException();
             unresolvedAmbiguousElementIndexEE--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == UNRESOLVED_ATTRIBUTE_CONTENT_ERROR){
             if(unresolvedAttributeIndexEE < 0) throw new IllegalArgumentException();
             unresolvedAttributeIndexEE--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == MISSING_CONTENT){
             if(missingIndex < 0) throw new IllegalArgumentException();
             missingIndex--;	  
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == ILLEGAL_CONTENT){
             if(illegalIndex < 0) throw new IllegalArgumentException();
             illegalIndex--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == UNDETERMINED_BY_CONTENT){
             if(undeterminedQName == null) throw new IllegalArgumentException();
             undeterminedQName = null;
             undeterminedCandidateMessages = null;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == CHARACTER_CONTENT_DATATYPE_ERROR){
             if(datatypeIndexCC < 0) throw new IllegalArgumentException();
             datatypeIndexCC--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == ATTRIBUTE_VALUE_DATATYPE_ERROR){
             if(datatypeIndexAV < 0) throw new IllegalArgumentException();
             datatypeIndexAV--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == CHARACTER_CONTENT_VALUE_ERROR){
             if(valueIndexCC < 0) throw new IllegalArgumentException();
             valueIndexCC--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == ATTRIBUTE_VALUE_VALUE_ERROR){
             if(valueIndexAV < 0) throw new IllegalArgumentException();
             valueIndexAV--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == CHARACTER_CONTENT_EXCEPTED_ERROR){
             if(exceptIndexCC < 0) throw new IllegalArgumentException();
             exceptIndexCC--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == ATTRIBUTE_VALUE_EXCEPTED_ERROR){
             if(exceptIndexAV < 0) throw new IllegalArgumentException();
             exceptIndexAV--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == UNEXPECTED_CHARACTER_CONTENT){
             if(unexpectedIndexCC < 0) throw new IllegalArgumentException();
             unexpectedIndexCC--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == UNEXPECTED_ATTRIBUTE_VALUE){
             if(unexpectedIndexAV < 0) throw new IllegalArgumentException();
             unexpectedIndexAV--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == UNRESOLVED_CHARACTER_CONTENT){
             if(unresolvedIndexCC < 0) throw new IllegalArgumentException();
             unresolvedIndexCC--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == UNRESOLVED_ATTRIBUTE_VALUE){
             if(unresolvedIndexAV < 0) throw new IllegalArgumentException();
             unresolvedIndexAV--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == LIST_TOKEN_DATATYPE_ERROR){
             if(datatypeIndexLP < 0) throw new IllegalArgumentException();
             datatypeIndexLP--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == LIST_TOKEN_VALUE_ERROR){
             if(valueIndexLP < 0) throw new IllegalArgumentException();
             valueIndexLP--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == LIST_TOKEN_EXCEPTED_ERROR){
             if(exceptIndexLP < 0) throw new IllegalArgumentException();
             exceptIndexLP--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR){
             if(unresolvedIndexLPICE < 0) throw new IllegalArgumentException();
             unresolvedIndexLPICE--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == MISSING_COMPOSITOR_CONTENT){
             if(missingCompositorContentIndex < 0) throw new IllegalArgumentException();
             missingCompositorContentIndex--;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == CONFLICT){
             if(disqualified == null) throw new IllegalArgumentException();
             clearConflict();
@@ -3426,7 +4390,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             clearUnexpectedAmbiguousAttribute(messageId);
         }else if(errorId == MISPLACED_ELEMENT){
             if(misplacedIndex < 0) throw new IllegalArgumentException();
-            clearMisplacedElement(messageId);
+            clearMisplacedContent(messageId);
         }else if(errorId == EXCESSIVE_CONTENT){
             if(excessiveIndex < 0) throw new IllegalArgumentException();
             clearExcessiveContent(messageId);
@@ -3449,7 +4413,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             if(undeterminedQName == null) throw new IllegalArgumentException();
             undeterminedQName = null;
             undeterminedCandidateMessages = null;
-            errorTotalCount--;
+            messageTotalCount--;
         }else if(errorId == CHARACTER_CONTENT_DATATYPE_ERROR){
             if(datatypeIndexCC < 0) throw new IllegalArgumentException();
             clearCharacterContentDatatypeError(messageId);
@@ -3502,6 +4466,102 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             throw new IllegalArgumentException();
         }
     }
+    
+    void transferErrorMessage(int errorId, int messageId, ConflictMessageHandler other){
+        // TODO add return codes for feedback and control 		
+        if(errorId == UNKNOWN_ELEMENT){
+            if(unknownElementIndex < 0) return;
+            transferUnknownElement(messageId, other);            
+        }else if(errorId == UNEXPECTED_ELEMENT){        
+            if(unexpectedElementIndex < 0) return;
+            transferUnexpectedElement(messageId, other);
+        }else if(errorId == UNEXPECTED_AMBIGUOUS_ELEMENT){
+            if(unexpectedAmbiguousElementIndex < 0) return;
+            transferUnexpectedAmbiguousElement(messageId, other);
+        }else if(errorId == UNKNOWN_ATTRIBUTE){
+            if(unknownAttributeIndex < 0) return;
+            transferUnknownAttribute(messageId, other);
+        }else if(errorId == UNEXPECTED_ATTRIBUTE){
+            if(unexpectedAttributeIndex < 0) return;
+            transferUnexpectedAttribute(messageId, other);
+        }else if(errorId == UNEXPECTED_AMBIGUOUS_ATTRIBUTE){
+            if(unexpectedAmbiguousAttributeIndex < 0) return;
+            transferUnexpectedAmbiguousAttribute(messageId, other);
+        }else if(errorId == MISPLACED_ELEMENT){
+            if(misplacedIndex < 0) return;
+            transferMisplacedContent(messageId, other);
+        }else if(errorId == EXCESSIVE_CONTENT){
+            if(excessiveIndex < 0) return;
+            transferExcessiveContent(messageId, other);
+        }else if(errorId == UNRESOLVED_AMBIGUOUS_ELEMENT_CONTENT_ERROR){
+            if(unresolvedAmbiguousElementIndexEE < 0) return;
+            transferUnresolvedAmbiguousElementContentError(messageId, other);
+        }else if(errorId == UNRESOLVED_UNRESOLVED_ELEMENT_CONTENT_ERROR){
+            if(unresolvedUnresolvedElementIndexEE < 0) return;
+            transferUnresolvedUnresolvedElementContentError(messageId, other);
+        }else if(errorId == UNRESOLVED_ATTRIBUTE_CONTENT_ERROR){
+            if(unresolvedAttributeIndexEE < 0) return;
+            transferUnresolvedAttributeContentError(messageId, other);
+        }else if(errorId == MISSING_CONTENT){
+            if(missingIndex < 0) return;
+            transferMissingContent(messageId, other);
+        }else if(errorId == ILLEGAL_CONTENT){
+            if(illegalIndex < 0) return;
+            transferIllegalContent(messageId, other);
+        }else if(errorId == UNDETERMINED_BY_CONTENT){
+            return;
+        }else if(errorId == CHARACTER_CONTENT_DATATYPE_ERROR){
+            if(datatypeIndexCC < 0) return;
+            transferCharacterContentDatatypeError(messageId, other);
+        }else if(errorId == ATTRIBUTE_VALUE_DATATYPE_ERROR){
+            if(datatypeIndexAV < 0) return;
+            transferAttributeValueDatatypeError(messageId, other);
+        }else if(errorId == CHARACTER_CONTENT_VALUE_ERROR){
+            if(valueIndexCC < 0) return;
+            transferCharacterContentValueError(messageId, other);
+        }else if(errorId == ATTRIBUTE_VALUE_VALUE_ERROR){
+            if(valueIndexAV < 0) return;
+            transferAttributeValueValueError(messageId, other);
+        }else if(errorId == CHARACTER_CONTENT_EXCEPTED_ERROR){
+            if(exceptIndexCC < 0) return;
+            transferCharacterContentExceptedError(messageId, other);
+        }else if(errorId == ATTRIBUTE_VALUE_EXCEPTED_ERROR){
+            if(exceptIndexAV < 0) return;
+            transferAttributeValueExceptedError(messageId, other);
+        }else if(errorId == UNEXPECTED_CHARACTER_CONTENT){
+            if(unexpectedIndexCC < 0) return;
+            transferUnexpectedCharacterContent(messageId, other);
+        }else if(errorId == UNEXPECTED_ATTRIBUTE_VALUE){
+            if(unexpectedIndexAV < 0) return;
+            transferUnexpectedAttributeValue(messageId, other);
+        }else if(errorId == UNRESOLVED_CHARACTER_CONTENT){
+            if(unresolvedIndexCC < 0) return;
+            transferUnresolvedCharacterContent(messageId, other);
+        }else if(errorId == UNRESOLVED_ATTRIBUTE_VALUE){
+            if(unresolvedIndexAV < 0) return;
+            transferUnresolvedAttributeValue(messageId, other);
+        }else if(errorId == LIST_TOKEN_DATATYPE_ERROR){
+            if(datatypeIndexLP < 0) return;
+            transferListTokenDatatypeError(messageId, other);
+        }else if(errorId == LIST_TOKEN_VALUE_ERROR){
+            if(valueIndexLP < 0) return;
+            transferListTokenValueError(messageId, other);
+        }else if(errorId == LIST_TOKEN_EXCEPTED_ERROR){
+            if(exceptIndexLP < 0) return;
+            transferListTokenExceptedError(messageId, other);
+        }else if(errorId == UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR){
+            if(unresolvedIndexLPICE < 0) return;
+            transferUnresolvedListTokenInContextError(messageId, other);
+        }else if(errorId == MISSING_COMPOSITOR_CONTENT){
+            if(missingCompositorContentIndex < 0) return;
+            transferMissingCompositorContent(messageId, other);
+        }else if(errorId == CONFLICT){
+            if(disqualified == null) return;
+            transferConflict(messageId, other);
+        }else{
+            return;
+        }
+    }
         
     
     void clearWarningMessage(int warningId, int messageId){        
@@ -3526,7 +4586,30 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }else{
             throw new IllegalArgumentException();
         }
+    }
     
+    void transferWarningMessage(int warningId, int messageId, ConflictMessageHandler other){        
+        if(warningId == AMBIGUOUS_UNRESOLVED_ELEMENT_CONTENT_WARNING){
+            //if(ambiguousUnresolvedElementIndexWW < 0) throw new IllegalArgumentException();
+            transferAmbiguousUnresolvedElementContentWarning(messageId, other);
+        }else if(warningId == AMBIGUOUS_AMBIGUOUS_ELEMENT_CONTENT_WARNING){
+            if(ambiguousAmbiguousElementIndexWW < 0) throw new IllegalArgumentException();
+            transferAmbiguousAmbiguousElementContentWarning(messageId, other);
+        }else if(warningId == AMBIGUOUS_ATTRIBUTE_CONTENT_WARNING){
+            if(ambiguousAttributeIndexWW < 0) throw new IllegalArgumentException();
+            transferAmbiguousAttributeContentWarning(messageId, other);
+        }else if(warningId == AMBIGUOUS_CHARACTER_CONTENT_WARNING){
+            if(ambiguousCharsIndexWW < 0) throw new IllegalArgumentException();
+            transferAmbiguousCharacterContentWarning(messageId, other);
+        }else if(warningId == AMBIGUOUS_ATTRIBUTE_VALUE_WARNING){
+            if(ambiguousAVIndexWW < 0) throw new IllegalArgumentException();
+            transferAmbiguousAttributeValueWarning(messageId, other);
+        }else if(warningId == AMBIGUOUS_LIST_TOKEN_IN_CONTEXT_WARNING){            
+            if(ambiguousIndexLPICW < 0) throw new IllegalArgumentException();
+            transferAmbiguousListTokenInContextWarning(messageId, other);
+        }else{
+            throw new IllegalArgumentException();
+        }
     }
     
     public void clear(){
@@ -3538,7 +4621,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		clearUnknownAttribute();
         clearUnexpectedAttribute();
         clearUnexpectedAmbiguousAttribute();        
-        clearMisplacedElement();
+        clearMisplacedContent();
         clearExcessiveContent();
         clearUnresolvedAmbiguousElementContentError();
         clearUnresolvedUnresolvedElementContentError();
@@ -3569,7 +4652,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         clearMissingCompositorContent();
         clearConflict();
         
-        errorTotalCount = 0;
+        messageTotalCount = 0;
         
         parent = null;
     
@@ -3580,4 +4663,276 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         columnNumber = -1;
         conflictResolutionId = UNRESOLVED;
     }   
+    
+    public boolean containsOtherErrorMessage(IntList exceptedErrorIds, IntList exceptedErrorCodes){
+        
+	    if(unknownElementIndex >= 0){
+	        if(!exceptedErrorIds.contains(UNKNOWN_ELEMENT)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unknownElementFEC.length; i++){
+	                if(!exceptedErrorCodes.contains(unknownElementFEC[i]))return true;
+	            }
+	        }
+	    }
+	    if( unexpectedElementIndex >= 0){
+	        if(!exceptedErrorIds.contains(UNEXPECTED_ELEMENT)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unexpectedElementFEC.length; i++){
+	                if(!exceptedErrorCodes.contains(unexpectedElementFEC[i]))return true;
+	            }
+	        }
+	    }
+	    if(unexpectedAmbiguousElementIndex  >= 0){
+	        if(!exceptedErrorIds.contains(UNEXPECTED_AMBIGUOUS_ELEMENT)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unexpectedAmbiguousElementFEC.length; i++){
+	                if(!exceptedErrorCodes.contains(unexpectedAmbiguousElementFEC[i]))return true;
+	            }
+	        }
+	    }
+	    if(unknownAttributeIndex  >= 0){
+	        if(!exceptedErrorIds.contains(UNKNOWN_ATTRIBUTE)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unknownAttributeFEC.length; i++){
+	                if(!exceptedErrorCodes.contains(unknownAttributeFEC[i]))return true;
+	            }
+	        }
+	    }
+	    if(unexpectedAttributeIndex  >= 0){
+	        if(!exceptedErrorIds.contains(UNEXPECTED_ATTRIBUTE)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unexpectedAttributeFEC.length; i++){
+	                if(!exceptedErrorCodes.contains(unexpectedAttributeFEC[i]))return true;
+	            }
+	        }
+	    }
+	    if(unexpectedAmbiguousAttributeIndex >= 0){
+	        if(!exceptedErrorIds.contains(UNEXPECTED_AMBIGUOUS_ATTRIBUTE)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unexpectedAmbiguousAttributeFEC.length; i++){
+	                if(!exceptedErrorCodes.contains(unexpectedAmbiguousAttributeFEC[i]))return true;
+	            }
+	        }
+	    }
+	    if(misplacedIndex  >= 0){
+	        if(!exceptedErrorIds.contains(MISPLACED_ELEMENT)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < misplacedFEC.length; i++){
+	                if(!exceptedErrorCodes.contains(misplacedFEC[i]))return true;
+	            }
+	        }
+	    }
+	    if(excessiveIndex  >= 0){
+	        if(!exceptedErrorIds.contains(EXCESSIVE_CONTENT)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < excessiveFEC.length; i++){
+	                if(!exceptedErrorCodes.contains(excessiveFEC[i]))return true;
+	            }
+	        }
+	    }
+	    if(missingIndex >= 0){
+	        if(!exceptedErrorIds.contains(MISSING_CONTENT)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < missingFEC.length; i++){
+	                if(!exceptedErrorCodes.contains(missingFEC[i]))return true;
+	            }
+	        }
+	    }
+	    if(illegalIndex >= 0){
+	        if(!exceptedErrorIds.contains(ILLEGAL_CONTENT)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < illegalFEC.length; i++){
+	                if(!exceptedErrorCodes.contains(illegalFEC[i]))return true;
+	            }
+	        }
+	    }
+	    if(unresolvedAmbiguousElementIndexEE >= 0){
+	        if(!exceptedErrorIds.contains(UNRESOLVED_AMBIGUOUS_ELEMENT_CONTENT_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unresolvedAmbiguousElementFECEE.length; i++){
+	                if(!exceptedErrorCodes.contains(unresolvedAmbiguousElementFECEE[i]))return true;
+	            }
+	        }
+	    }
+	    if(unresolvedUnresolvedElementIndexEE >= 0){
+	        if(!exceptedErrorIds.contains(UNRESOLVED_UNRESOLVED_ELEMENT_CONTENT_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unresolvedUnresolvedElementFECEE.length; i++){
+	                if(!exceptedErrorCodes.contains(unresolvedUnresolvedElementFECEE[i]))return true;
+	            }
+	        }
+	    }
+	    if(unresolvedAttributeIndexEE >= 0){
+	        if(!exceptedErrorIds.contains(UNRESOLVED_ATTRIBUTE_CONTENT_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unresolvedAttributeFECEE.length; i++){
+	                if(!exceptedErrorCodes.contains(unresolvedAttributeFECEE[i]))return true;
+	            }
+	        }
+	    }
+	    if(datatypeIndexCC >= 0){
+	        if(!exceptedErrorIds.contains(CHARACTER_CONTENT_DATATYPE_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < datatypeFECCC.length; i++){
+	                if(!exceptedErrorCodes.contains(datatypeFECCC[i]))return true;
+	            }
+	        }
+	    }
+	    if(datatypeIndexAV >= 0){
+	        if(!exceptedErrorIds.contains(ATTRIBUTE_VALUE_DATATYPE_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < datatypeFECAV.length; i++){
+	                if(!exceptedErrorCodes.contains(datatypeFECAV[i]))return true;
+	            }
+	        }
+	    }
+	    if(valueIndexCC >= 0){
+	        if(!exceptedErrorIds.contains(CHARACTER_CONTENT_VALUE_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < valueFECCC.length; i++){
+	                if(!exceptedErrorCodes.contains(valueFECCC[i]))return true;
+	            }
+	        }
+	    }
+	    if(valueIndexAV >= 0){
+	        if(!exceptedErrorIds.contains(ATTRIBUTE_VALUE_VALUE_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < valueFECAV.length; i++){
+	                if(!exceptedErrorCodes.contains(valueFECAV[i]))return true;
+	            }
+	        }
+	    }
+	    if(exceptIndexCC >= 0){
+	        if(!exceptedErrorIds.contains(CHARACTER_CONTENT_EXCEPTED_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < exceptFECCC.length; i++){
+	                if(!exceptedErrorCodes.contains(exceptFECCC[i]))return true;
+	            }
+	        }
+	    }
+	    if(exceptIndexAV >= 0){
+	        if(!exceptedErrorIds.contains(ATTRIBUTE_VALUE_EXCEPTED_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < exceptFECAV.length; i++){
+	                if(!exceptedErrorCodes.contains(exceptFECAV[i]))return true;
+	            }
+	        }
+	    }
+	    if(unexpectedIndexCC >= 0){
+	        if(!exceptedErrorIds.contains(UNEXPECTED_CHARACTER_CONTENT)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unexpectedFECCC.length; i++){
+	                if(!exceptedErrorCodes.contains(unexpectedFECCC[i]))return true;
+	            }
+	        }
+	    }
+	    if(unexpectedIndexAV >= 0){
+	        if(!exceptedErrorIds.contains(UNEXPECTED_ATTRIBUTE_VALUE)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unexpectedFECAV.length; i++){
+	                if(!exceptedErrorCodes.contains(unexpectedFECAV[i]))return true;
+	            }
+	        }
+	    }
+	    if(unresolvedIndexCC >= 0){
+	        if(!exceptedErrorIds.contains(UNRESOLVED_CHARACTER_CONTENT)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unresolvedFECCC.length; i++){
+	                if(!exceptedErrorCodes.contains(unresolvedFECCC[i]))return true;
+	            }
+	        }
+	    }
+	    if(unresolvedIndexAV >= 0){
+	        if(!exceptedErrorIds.contains(UNEXPECTED_ATTRIBUTE_VALUE)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unresolvedFECAV.length; i++){
+	                if(!exceptedErrorCodes.contains(unresolvedFECAV[i]))return true;
+	            }
+	        }
+	    }
+	    if(datatypeIndexLP >= 0){
+	        if(!exceptedErrorIds.contains(LIST_TOKEN_DATATYPE_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < datatypeFECLP.length; i++){
+	                if(!exceptedErrorCodes.contains(datatypeFECLP[i]))return true;
+	            }
+	        }
+	    }
+	    if(valueIndexLP >= 0){
+	        if(!exceptedErrorIds.contains(LIST_TOKEN_VALUE_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < valueFECLP.length; i++){
+	                if(!exceptedErrorCodes.contains(valueFECLP[i]))return true;
+	            }
+	        }
+	    }
+	    if(exceptIndexLP >= 0){
+	        if(!exceptedErrorIds.contains(LIST_TOKEN_EXCEPTED_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < exceptFECLP.length; i++){
+	                if(!exceptedErrorCodes.contains(exceptFECLP[i]))return true;
+	            }
+	        }
+	    }
+	    if(unresolvedIndexLPICE >= 0){
+	        if(!exceptedErrorIds.contains(UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < unresolvedFECLPICE.length; i++){
+	                if(!exceptedErrorCodes.contains(unresolvedFECLPICE[i]))return true;
+	            }
+	        }
+	    }
+	    if(missingCompositorContentIndex >= 0){
+	        if(!exceptedErrorIds.contains(MISSING_COMPOSITOR_CONTENT)){
+	            return true;
+	        }else{
+	            for(int i = 0; i < missingCompositorContentFEC.length; i++){
+	                if(!exceptedErrorCodes.contains(missingCompositorContentFEC[i]))return true;
+	            }
+	        }
+	    }
+	    if(commonMessages != null && commonMessages.containsErrorMessage())return true;
+	    if(disqualified != null && disqualified.cardinality() == candidatesCount){
+	        if(exceptedErrorCodes.contains(conflictFEC)) return false;
+	        return true;
+	    }else if(disqualified != null){	        
+	        for(int i = 0; i < candidatesCount; i++){	            
+	            if(!disqualified.get(i)
+	                && candidateMessages[i] != null
+	            && candidateMessages[i].containsErrorMessage()){
+	                return true;
+	            }
+	        }
+	    }
+	    
+	    if(parent != null)return parent.containsErrorMessage();
+	    return false;
+    }
 }

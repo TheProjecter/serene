@@ -1,0 +1,19 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\externalConflict\reportingMissingContent\common\resolved\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/reportingMissingContent/common/resolved/document1.xml:23:8 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:31:27 contains errors: 
+Missing content.
+In the document structure starting at document1.xml:22:15, corresponding to definition <group added by element simplification> at schema.rng:31:27, expected 1 occurrence corresponding to definition <ref> at schema.rng:35:33, found 0.
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/reportingMissingContent/common/resolved/document2.xml:23:8 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:25:27 contains errors: 
+Missing content.
+In the document structure starting at document2.xml:22:15, corresponding to definition <group added by element simplification> at schema.rng:25:27, expected 1 occurrence corresponding to definition <ref> at schema.rng:29:30, found 0.

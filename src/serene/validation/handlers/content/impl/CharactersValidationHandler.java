@@ -243,7 +243,7 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	    
 	    if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
 			currentErrorCatcher.characterContentDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
+		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){		   
 			currentErrorCatcher.attributeValueDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage);
 		}else{
 			throw new IllegalStateException();
@@ -257,7 +257,7 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	    
 	    if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
 			currentErrorCatcher.characterContentValueError(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
+		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){		    
 			currentErrorCatcher.attributeValueValueError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value);
 		}else{
 			throw new IllegalStateException();

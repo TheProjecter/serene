@@ -2447,7 +2447,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		    APattern[] sourceDefinition = null;
 		    APattern reper = null;
 			for(int i = 0; i <= misplacedIndex; i++){
-			    for(int j = 0; j < misplacedQName.length; j++){
+			    for(int j = 0; j < misplacedQName[i].length; j++){
                     errorCatcher.misplacedContent(misplacedContext[i],
                                             misplacedStartSystemId[i],
                                             misplacedStartLineNumber[i],

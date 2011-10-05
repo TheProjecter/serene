@@ -9,6 +9,8 @@ TESTED DOCUMENT document1.xml
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/document1.xml:23:7 Syntax error. Ambiguous element <aa> contains errors common to all possible definitions: 
 Missing content.
 In the document structure starting at document1.xml:22:6, corresponding to definition <element> at schema.rng:25:26, expected 1 occurrence corresponding to definition <ref> at schema.rng:26:29, found 0.
+Missing content.
+In the document structure starting at document1.xml:22:6, corresponding to definition <element> at schema.rng:28:26, expected 1 occurrence corresponding to definition <ref> at schema.rng:29:29, found 0.
 
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/inDocument/shiftAllLosers/document1.xml:24:8 Syntax error. Element <root> corresponding to definition <element> at schema.rng:23:26 contains errors: 
 Unresolved element.

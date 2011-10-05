@@ -1,3 +1,19 @@
+/*
+Copyright 2011 Radu Cernuta 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package serene.validation.handlers.error;
 
 import java.util.Arrays;
@@ -23,14 +39,14 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import sereneWrite.MessageWriter;
 
-public class ContextMessageHandler  extends AbstractMessageHandler implements ExternalConflictErrorCatcher{	
+public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{	
+
     
-	public ContextMessageHandler(MessageWriter debugWriter){
+	public CandidatesConflictMessageHandler(MessageWriter debugWriter){
 		super(debugWriter);
 	}	
-    
 	
-	public ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher){
+    public ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher){
         return new ConflictMessageReporter(parent,
                                     contextType,
                                     qName,
@@ -51,15 +67,19 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
     
     
-	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
-        messageTotalCount++;
+	public void unknownElement(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber){
+        for(int i = 0; i <= unknownElementIndex; i++){
+	        if(unknownElementFEC[i] == functionalEquivalenceCode) return;
+	    }
+	        
 		if(unknownElementSize == 0){
 			unknownElementSize = 1;
 			unknownElementIndex = 0;	
 			unknownElementQName = new String[unknownElementSize];			
 			unknownElementSystemId = new String[unknownElementSize];			
 			unknownElementLineNumber = new int[unknownElementSize];
-			unknownElementColumnNumber = new int[unknownElementSize];			
+			unknownElementColumnNumber = new int[unknownElementSize];
+            unknownElementFEC = new int[unknownElementSize];
 		}else if(++unknownElementIndex == unknownElementSize){			
 			String[] increasedQN = new String[++unknownElementSize];
 			System.arraycopy(unknownElementQName, 0, increasedQN, 0, unknownElementIndex);
@@ -76,25 +96,24 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[unknownElementSize];
 			System.arraycopy(unknownElementColumnNumber, 0, increasedCN, 0, unknownElementIndex);
 			unknownElementColumnNumber = increasedCN;
+            
+            int[] increasedFEC = new int[unknownElementSize];
+			System.arraycopy(unknownElementFEC, 0, increasedFEC, 0, unknownElementIndex);
+			unknownElementFEC = increasedFEC;
 		}
+		messageTotalCount++;
 		unknownElementQName[unknownElementIndex] = qName;
 		unknownElementSystemId[unknownElementIndex] = systemId;
 		unknownElementLineNumber[unknownElementIndex] = lineNumber;
 		unknownElementColumnNumber[unknownElementIndex] = columnNumber;
+        unknownElementFEC[unknownElementIndex] = functionalEquivalenceCode;
 	}
-	
-    public void clearUnknownElement(){
-        messageTotalCount -= unknownElementSize; 
-        unknownElementSize = 0;
-        unknownElementIndex = -1;	
-        unknownElementQName = null;			
-        unknownElementSystemId = null;			
-        unknownElementLineNumber = null;
-        unknownElementColumnNumber = null;
-    }
-	
-	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
-        messageTotalCount++;
+    
+	public void unexpectedElement(int functionalEquivalenceCode, String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	    for(int i = 0; i <= unexpectedElementIndex; i++){
+	        if(unexpectedElementFEC[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(unexpectedElementSize == 0){
 			unexpectedElementSize = 1;
 			unexpectedElementIndex = 0;	
@@ -102,7 +121,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			unexpectedElementDefinition = new SimplifiedComponent[unexpectedElementSize];
 			unexpectedElementSystemId = new String[unexpectedElementSize];			
 			unexpectedElementLineNumber = new int[unexpectedElementSize];
-			unexpectedElementColumnNumber = new int[unexpectedElementSize];			
+			unexpectedElementColumnNumber = new int[unexpectedElementSize];
+            unexpectedElementFEC = new int[unexpectedElementSize];			
 		}else if(++unexpectedElementIndex == unexpectedElementSize){			
 			String[] increasedQN = new String[++unexpectedElementSize];
 			System.arraycopy(unexpectedElementQName, 0, increasedQN, 0, unexpectedElementIndex);
@@ -123,36 +143,35 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[unexpectedElementSize];
 			System.arraycopy(unexpectedElementColumnNumber, 0, increasedCN, 0, unexpectedElementIndex);
 			unexpectedElementColumnNumber = increasedCN;
+            
+            int[] increasedFEC = new int[unexpectedElementSize];
+			System.arraycopy(unexpectedElementFEC, 0, increasedFEC, 0, unexpectedElementIndex);
+			unexpectedElementFEC = increasedFEC;
 		}
+		messageTotalCount++;
 		unexpectedElementQName[unexpectedElementIndex] = qName;
 		unexpectedElementDefinition[unexpectedElementIndex] = definition;
 		unexpectedElementSystemId[unexpectedElementIndex] = systemId;
 		unexpectedElementLineNumber[unexpectedElementIndex] = lineNumber;
 		unexpectedElementColumnNumber[unexpectedElementIndex] = columnNumber;
+        unexpectedElementFEC[unexpectedElementIndex] = functionalEquivalenceCode;
 	}
 		
-	public void clearUnexpectedElement(){
-        messageTotalCount -= unexpectedElementSize;
-        unexpectedElementSize = 0;
-        unexpectedElementIndex = -1;	
-        unexpectedElementQName = null;
-        unexpectedElementDefinition = null;
-        unexpectedElementSystemId = null;			
-        unexpectedElementLineNumber = null;
-        unexpectedElementColumnNumber = null;
-    }
     
-    
-	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
-        messageTotalCount++;
-		if(unexpectedAmbiguousElementSize == 0){
+	public void unexpectedAmbiguousElement(int functionalEquivalenceCode, String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
+	    for(int i = 0; i <= unexpectedAmbiguousElementIndex; i++){
+	        if(unexpectedAmbiguousElementFEC[i] == functionalEquivalenceCode) return;
+	    }
+	    
+        if(unexpectedAmbiguousElementSize == 0){
 			unexpectedAmbiguousElementSize = 1;
 			unexpectedAmbiguousElementIndex = 0;	
 			unexpectedAmbiguousElementQName = new String[unexpectedAmbiguousElementSize];
 			unexpectedAmbiguousElementDefinition = new SimplifiedComponent[unexpectedAmbiguousElementSize][];
 			unexpectedAmbiguousElementSystemId = new String[unexpectedAmbiguousElementSize];			
 			unexpectedAmbiguousElementLineNumber = new int[unexpectedAmbiguousElementSize];
-			unexpectedAmbiguousElementColumnNumber = new int[unexpectedAmbiguousElementSize];			
+			unexpectedAmbiguousElementColumnNumber = new int[unexpectedAmbiguousElementSize];
+            unexpectedAmbiguousElementFEC = new int[unexpectedAmbiguousElementSize];			
 		}else if(++unexpectedAmbiguousElementIndex == unexpectedAmbiguousElementSize){			
 			String[] increasedQN = new String[++unexpectedAmbiguousElementSize];
 			System.arraycopy(unexpectedAmbiguousElementQName, 0, increasedQN, 0, unexpectedAmbiguousElementIndex);
@@ -173,36 +192,34 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[unexpectedAmbiguousElementSize];
 			System.arraycopy(unexpectedAmbiguousElementColumnNumber, 0, increasedCN, 0, unexpectedAmbiguousElementIndex);
 			unexpectedAmbiguousElementColumnNumber = increasedCN;
+            
+            int[] increasedFEC = new int[unexpectedAmbiguousElementSize];
+			System.arraycopy(unexpectedAmbiguousElementFEC, 0, increasedFEC, 0, unexpectedAmbiguousElementIndex);
+			unexpectedAmbiguousElementFEC = increasedFEC;
 		}
+		messageTotalCount++;
 		unexpectedAmbiguousElementQName[unexpectedAmbiguousElementIndex] = qName;
 		unexpectedAmbiguousElementDefinition[unexpectedAmbiguousElementIndex] = possibleDefinitions;
 		unexpectedAmbiguousElementSystemId[unexpectedAmbiguousElementIndex] = systemId;
 		unexpectedAmbiguousElementLineNumber[unexpectedAmbiguousElementIndex] = lineNumber;
 		unexpectedAmbiguousElementColumnNumber[unexpectedAmbiguousElementIndex] = columnNumber;
+        unexpectedAmbiguousElementFEC[unexpectedAmbiguousElementIndex] = functionalEquivalenceCode;
 	}
-	
-	public void clearUnexpectedAmbiguousElement(){
-        messageTotalCount -= unexpectedAmbiguousElementSize;
-        unexpectedAmbiguousElementSize = 0;
-        unexpectedAmbiguousElementIndex = -1;	
-        unexpectedAmbiguousElementQName = null;
-        unexpectedAmbiguousElementDefinition = null;
-        unexpectedAmbiguousElementSystemId = null;			
-        unexpectedAmbiguousElementLineNumber = null;
-        unexpectedAmbiguousElementColumnNumber = null;
-    }
-	
-	
-	
-	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
-        messageTotalCount++;
+		
+
+    public void unknownAttribute(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber){
+        for(int i = 0; i <= unknownAttributeIndex; i++){
+	        if(unknownAttributeFEC[i] == functionalEquivalenceCode) return;
+	    }
+	    
 		if(unknownAttributeSize == 0){
 			unknownAttributeSize = 1;
 			unknownAttributeIndex = 0;	
 			unknownAttributeQName = new String[unknownAttributeSize];			
 			unknownAttributeSystemId = new String[unknownAttributeSize];			
 			unknownAttributeLineNumber = new int[unknownAttributeSize];
-			unknownAttributeColumnNumber = new int[unknownAttributeSize];			
+			unknownAttributeColumnNumber = new int[unknownAttributeSize];
+			unknownAttributeFEC = new int[unknownAttributeSize];			
 		}else if(++unknownAttributeIndex == unknownAttributeSize){			
 			String[] increasedQN = new String[++unknownAttributeSize];
 			System.arraycopy(unknownAttributeQName, 0, increasedQN, 0, unknownAttributeIndex);
@@ -219,25 +236,25 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[unknownAttributeSize];
 			System.arraycopy(unknownAttributeColumnNumber, 0, increasedCN, 0, unknownAttributeIndex);
 			unknownAttributeColumnNumber = increasedCN;
+            
+            int[] increasedFEC = new int[unknownAttributeSize];
+			System.arraycopy(unknownAttributeFEC, 0, increasedFEC, 0, unknownAttributeIndex);
+			unknownAttributeFEC = increasedFEC;
 		}
+		messageTotalCount++;
 		unknownAttributeQName[unknownAttributeIndex] = qName;
 		unknownAttributeSystemId[unknownAttributeIndex] = systemId;
 		unknownAttributeLineNumber[unknownAttributeIndex] = lineNumber;
 		unknownAttributeColumnNumber[unknownAttributeIndex] = columnNumber;
+        unknownAttributeFEC[unknownAttributeIndex] = functionalEquivalenceCode;
 	}
-	public void clearUnknownAttribute(){
-        messageTotalCount -= unknownAttributeSize;
-        unknownAttributeSize = 0;
-        unknownAttributeIndex = -1;	
-        unknownAttributeQName = null;			
-        unknownAttributeSystemId = null;			
-        unknownAttributeLineNumber = null;
-        unknownAttributeColumnNumber = null;
-    }
 	
-	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
-        
-        messageTotalCount++;
+    
+	public void unexpectedAttribute(int functionalEquivalenceCode, String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+        for(int i = 0; i <= unexpectedAttributeIndex; i++){
+	        if(unexpectedAttributeFEC[i] == functionalEquivalenceCode) return;
+	    }
+	    
 		if(unexpectedAttributeSize == 0){
 			unexpectedAttributeSize = 1;
 			unexpectedAttributeIndex = 0;	
@@ -245,7 +262,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			unexpectedAttributeDefinition = new SimplifiedComponent[unexpectedAttributeSize];
 			unexpectedAttributeSystemId = new String[unexpectedAttributeSize];			
 			unexpectedAttributeLineNumber = new int[unexpectedAttributeSize];
-			unexpectedAttributeColumnNumber = new int[unexpectedAttributeSize];			
+			unexpectedAttributeColumnNumber = new int[unexpectedAttributeSize];
+            unexpectedAttributeFEC = new int[unexpectedAttributeSize];			
 		}else if(++unexpectedAttributeIndex == unexpectedAttributeSize){			
 			String[] increasedQN = new String[++unexpectedAttributeSize];
 			System.arraycopy(unexpectedAttributeQName, 0, increasedQN, 0, unexpectedAttributeIndex);
@@ -266,27 +284,26 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[unexpectedAttributeSize];
 			System.arraycopy(unexpectedAttributeColumnNumber, 0, increasedCN, 0, unexpectedAttributeIndex);
 			unexpectedAttributeColumnNumber = increasedCN;
+            
+            int[] increasedFEC = new int[unexpectedAttributeSize];
+			System.arraycopy(unexpectedAttributeFEC, 0, increasedFEC, 0, unexpectedAttributeIndex);
+			unexpectedAttributeFEC = increasedFEC;
 		}
+		messageTotalCount++;
 		unexpectedAttributeQName[unexpectedAttributeIndex] = qName;
 		unexpectedAttributeDefinition[unexpectedAttributeIndex] = definition;
 		unexpectedAttributeSystemId[unexpectedAttributeIndex] = systemId;
 		unexpectedAttributeLineNumber[unexpectedAttributeIndex] = lineNumber;
 		unexpectedAttributeColumnNumber[unexpectedAttributeIndex] = columnNumber;
+        unexpectedAttributeFEC[unexpectedAttributeIndex] = functionalEquivalenceCode;
 	}
-	public void clearUnexpectedAttribute(){
-        messageTotalCount -= unexpectedAttributeSize;
-        unexpectedAttributeSize = 0;
-        unexpectedAttributeIndex = -1;	
-        unexpectedAttributeQName = null;
-        unexpectedAttributeDefinition = null;
-        unexpectedAttributeSystemId = null;			
-        unexpectedAttributeLineNumber = null;
-        unexpectedAttributeColumnNumber = null;
-    }
+	    
 	
-	
-	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
-        messageTotalCount++;
+	public void unexpectedAmbiguousAttribute(int functionalEquivalenceCode, String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
+	    for(int i = 0; i <= unexpectedAmbiguousAttributeIndex; i++){
+	        if(unexpectedAmbiguousAttributeFEC[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(unexpectedAmbiguousAttributeSize == 0){
 			unexpectedAmbiguousAttributeSize = 1;
 			unexpectedAmbiguousAttributeIndex = 0;	
@@ -294,7 +311,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			unexpectedAmbiguousAttributeDefinition = new SimplifiedComponent[unexpectedAmbiguousAttributeSize][];
 			unexpectedAmbiguousAttributeSystemId = new String[unexpectedAmbiguousAttributeSize];			
 			unexpectedAmbiguousAttributeLineNumber = new int[unexpectedAmbiguousAttributeSize];
-			unexpectedAmbiguousAttributeColumnNumber = new int[unexpectedAmbiguousAttributeSize];			
+			unexpectedAmbiguousAttributeColumnNumber = new int[unexpectedAmbiguousAttributeSize];
+            unexpectedAmbiguousAttributeFEC = new int[unexpectedAmbiguousAttributeSize];			
 		}else if(++unexpectedAmbiguousAttributeIndex == unexpectedAmbiguousAttributeSize){			
 			String[] increasedQN = new String[++unexpectedAmbiguousAttributeSize];
 			System.arraycopy(unexpectedAmbiguousAttributeQName, 0, increasedQN, 0, unexpectedAmbiguousAttributeIndex);
@@ -315,29 +333,27 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[unexpectedAmbiguousAttributeSize];
 			System.arraycopy(unexpectedAmbiguousAttributeColumnNumber, 0, increasedCN, 0, unexpectedAmbiguousAttributeIndex);
 			unexpectedAmbiguousAttributeColumnNumber = increasedCN;
+            
+            int[] increasedFEC = new int[unexpectedAmbiguousAttributeSize];
+			System.arraycopy(unexpectedAmbiguousAttributeFEC, 0, increasedFEC, 0, unexpectedAmbiguousAttributeIndex);
+			unexpectedAmbiguousAttributeFEC = increasedFEC;
 		}
+		messageTotalCount++;
 		unexpectedAmbiguousAttributeQName[unexpectedAmbiguousAttributeIndex] = qName;
 		unexpectedAmbiguousAttributeDefinition[unexpectedAmbiguousAttributeIndex] = possibleDefinitions;
 		unexpectedAmbiguousAttributeSystemId[unexpectedAmbiguousAttributeIndex] = systemId;
 		unexpectedAmbiguousAttributeLineNumber[unexpectedAmbiguousAttributeIndex] = lineNumber;
 		unexpectedAmbiguousAttributeColumnNumber[unexpectedAmbiguousAttributeIndex] = columnNumber;
+        unexpectedAmbiguousAttributeFEC[unexpectedAmbiguousAttributeIndex] = functionalEquivalenceCode;
 	}
-	public void clearUnexpectedAmbiguousAttribute(){
-        messageTotalCount -= unexpectedAmbiguousAttributeSize;
-        unexpectedAmbiguousAttributeSize = 0;
-        unexpectedAmbiguousAttributeIndex = -1;	
-        unexpectedAmbiguousAttributeQName = null;
-        unexpectedAmbiguousAttributeDefinition = null;
-        unexpectedAmbiguousAttributeSystemId = null;			
-        unexpectedAmbiguousAttributeLineNumber = null;
-        unexpectedAmbiguousAttributeColumnNumber = null;
-    }
 	
-	public void misplacedContent(APattern contextDefinition, 
+    
+	public void misplacedContent(int functionalEquivalenceCode, 
+                                            APattern contextDefinition, 
 											String startSystemId, 
 											int startLineNumber, 
 											int startColumnNumber, 
-											APattern definition, 
+											APattern definition,
 											int itemId, 
 											String qName, 
 											String systemId, 
@@ -345,6 +361,9 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 											int columnNumber,
 											APattern sourceDefinition, 
 											APattern reper){//not stored, only used for internal conflict handling
+	    for(int i = 0; i <= misplacedIndex; i++){
+	        if(misplacedFEC[i] == functionalEquivalenceCode) return;
+	    }
         
 		all: {	           
 			if(misplacedSize == 0){
@@ -361,6 +380,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 				misplacedSystemId = new String[misplacedSize][1][1];			
 				misplacedLineNumber = new int[misplacedSize][1][1];
 				misplacedColumnNumber = new int[misplacedSize][1][1];
+				
+                misplacedFEC = new int[misplacedSize];
                 
 				misplacedContext[misplacedIndex] = contextDefinition;
 				misplacedStartSystemId[misplacedIndex] = startSystemId;
@@ -372,6 +393,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 				misplacedSystemId[misplacedIndex][0][0] = systemId;
 				misplacedLineNumber[misplacedIndex][0][0] = lineNumber;
 				misplacedColumnNumber[misplacedIndex][0][0] = columnNumber;
+				
+                misplacedFEC[misplacedIndex] = functionalEquivalenceCode;
                 
 				break all;
 			}
@@ -515,13 +538,20 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			misplacedColumnNumber = increasedCN;
 			misplacedColumnNumber[misplacedIndex] = new int[1][1];
 			misplacedColumnNumber[misplacedIndex][0][0] = columnNumber;
+            
+            int[] increasedFEC = new int[misplacedSize];
+			System.arraycopy(misplacedFEC, 0, increasedFEC, 0, misplacedIndex);
+			misplacedFEC = increasedFEC;
+			misplacedFEC[misplacedIndex] = functionalEquivalenceCode;
 		}
+		
 	}
-    public void misplacedContent(APattern contextDefinition, 
+    public void misplacedContent(int functionalEquivalenceCode, 
+                                            APattern contextDefinition, 
 											String startSystemId, 
 											int startLineNumber, 
 											int startColumnNumber, 
-											APattern definition,
+											APattern definition, 
 											int[] itemId, 
 											String[] qName, 
 											String[] systemId, 
@@ -529,23 +559,25 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 											int[] columnNumber,
 											APattern[] sourceDefinition, 
 											APattern reper){//not stored, only used for internal conflict handling
-		
-		/*for(int i = 0; i < qName.length; i++){	
+	    for(int i = 0; i <= misplacedIndex; i++){
+	        if(misplacedFEC[i] == functionalEquivalenceCode) return;
+	    }
+		/*
+		for(int i = 0; i < qName.length; i++){	
 			misplacedContent(contextDefinition, 
 									startSystemId, 
 									startLineNumber, 
 									startColumnNumber,															
 									definition, 
-									itemId[i], 
 									qName[i],
 									systemId[i], 
 									lineNumber[i], 
 									columnNumber[i],
 									sourceDefinition[i],
 									reper);
-		}*/
-		
-		all: {	           
+		}	*/
+        
+        all: {	           
 			if(misplacedSize == 0){
                 messageTotalCount++;
 				misplacedSize = 1;
@@ -560,6 +592,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 				misplacedSystemId = new String[misplacedSize][1][];			
 				misplacedLineNumber = new int[misplacedSize][1][];
 				misplacedColumnNumber = new int[misplacedSize][1][];
+				
+                misplacedFEC = new int[misplacedSize];
                 
 				misplacedContext[misplacedIndex] = contextDefinition;
 				misplacedStartSystemId[misplacedIndex] = startSystemId;
@@ -571,6 +605,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 				misplacedSystemId[misplacedIndex][0] = systemId;
 				misplacedLineNumber[misplacedIndex][0] = lineNumber;
 				misplacedColumnNumber[misplacedIndex][0] = columnNumber;
+				
+                misplacedFEC[misplacedIndex] = functionalEquivalenceCode;
                 
 				break all;
 			}
@@ -710,35 +746,32 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			misplacedColumnNumber = increasedCN;
 			misplacedColumnNumber[misplacedIndex] = new int[1][];
 			misplacedColumnNumber[misplacedIndex][0] = columnNumber;
+            
+            int[] increasedFEC = new int[misplacedSize];
+			System.arraycopy(misplacedFEC, 0, increasedFEC, 0, misplacedIndex);
+			misplacedFEC = increasedFEC;
+			misplacedFEC[misplacedIndex] = functionalEquivalenceCode;
 		}
 	}
-    public void clearMisplacedElement(){
-        messageTotalCount -= misplacedSize;
-        misplacedSize = 0;
-        misplacedIndex = -1;	
-        misplacedContext = null;	
-        misplacedStartSystemId = null;			
-        misplacedStartLineNumber = null;
-        misplacedStartColumnNumber = null;
-        misplacedDefinition = null;
-        misplacedItemId = null;
-        misplacedQName = null;
-        misplacedSystemId = null;			
-        misplacedLineNumber = null;
-        misplacedColumnNumber = null;
-    }	
 			
 	
-	public void excessiveContent(Rule context,
+	public void excessiveContent(int functionalEquivalenceCode, 
+                                    Rule context,
 									String startSystemId,
 									int startLineNumber,
 									int startColumnNumber,
-									APattern definition,
+									APattern definition, 
 									int[] itemId, 
 									String[] qName, 
 									String[] systemId, 
 									int[] lineNumber, 
 									int[] columnNumber){
+	    for(int i = 0; i <= excessiveIndex; i++){
+	        if(excessiveFEC[i] == functionalEquivalenceCode){
+	            if(excessiveDefinition[i] == definition )return;
+	        } 
+	    }
+	    
 		if(excessiveSize == 0){            
 			excessiveSize = 1;
 			excessiveIndex = 0;
@@ -751,7 +784,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			excessiveQName = new String[excessiveSize][];			
 			excessiveSystemId = new String[excessiveSize][];			
 			excessiveLineNumber = new int[excessiveSize][];
-			excessiveColumnNumber = new int[excessiveSize][];			
+			excessiveColumnNumber = new int[excessiveSize][];
+            excessiveFEC = new int[excessiveSize];			
 		}else if(++excessiveIndex == excessiveSize){
 			APattern[] increasedEC = new APattern[++excessiveSize];
 			System.arraycopy(excessiveContext, 0, increasedEC, 0, excessiveIndex);
@@ -792,6 +826,10 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[][] increasedCN = new int[excessiveSize][];
 			System.arraycopy(excessiveColumnNumber, 0, increasedCN, 0, excessiveIndex);
 			excessiveColumnNumber = increasedCN;
+            
+            int[] increasedFEC = new int[excessiveSize];
+			System.arraycopy(excessiveFEC, 0, increasedFEC, 0, excessiveIndex);
+			excessiveFEC = increasedFEC;
 		}
         messageTotalCount++;
 		excessiveContext[excessiveIndex] = context;
@@ -803,15 +841,19 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		excessiveQName[excessiveIndex] = qName;
 		excessiveSystemId[excessiveIndex] = systemId;
 		excessiveLineNumber[excessiveIndex] = lineNumber;
-		excessiveColumnNumber[excessiveIndex] = columnNumber;		
+		excessiveColumnNumber[excessiveIndex] = columnNumber;
+        excessiveFEC[excessiveIndex] = functionalEquivalenceCode;		
+		
 	}   
-	public void excessiveContent(Rule context, 
-								APattern definition, 
+	public void excessiveContent(int functionalEquivalenceCode, 
+                                Rule context, 
+								APattern definition,
 								int itemId, 
 								String qName, 
 								String systemId, 
 								int lineNumber,		
 								int columnNumber){
+        // TODO review the functionalEquivalenceCode handling
         boolean recorded = false;
 		for(int i = 0; i < excessiveSize; i++){
 			if(excessiveContext[i].equals(context) &&
@@ -847,36 +889,25 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 				int[] increasedCN = new int[(length+1)];
 				System.arraycopy(excessiveColumnNumber[i], 0, increasedCN, 0, length);
 				excessiveColumnNumber[i] = increasedCN;
-				excessiveColumnNumber[i][length] = columnNumber;
-								
+				excessiveColumnNumber[i][length] = columnNumber;				
+               
 				break;
 			}
 		}		
         if(!recorded) throw new IllegalArgumentException();
 	}
-	public void clearExcessiveContent(){
-        messageTotalCount -= excessiveSize;
-        excessiveSize = 0;
-        excessiveIndex = -1;
-        excessiveContext = null;
-        excessiveStartSystemId = null;			
-        excessiveStartLineNumber = null;
-        excessiveStartColumnNumber = null;
-        excessiveDefinition = null;
-        excessiveItemId = null;
-        excessiveQName = null;			
-        excessiveSystemId = null;			
-        excessiveLineNumber = null;
-        excessiveColumnNumber = null;
-    }
+	    
     
-    
-	public void unresolvedAmbiguousElementContentError(String qName, 
+	public void unresolvedAmbiguousElementContentError(int functionalEquivalenceCode, 
+                                    String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
-        messageTotalCount++;
+	    for(int i = 0; i <= unresolvedAmbiguousElementIndexEE; i++){
+	        if(unresolvedAmbiguousElementFECEE[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(unresolvedAmbiguousElementSizeEE == 0){
 			unresolvedAmbiguousElementSizeEE = 1;
 			unresolvedAmbiguousElementIndexEE = 0;	
@@ -885,6 +916,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			unresolvedAmbiguousElementLineNumberEE = new int[unresolvedAmbiguousElementSizeEE];
 			unresolvedAmbiguousElementColumnNumberEE = new int[unresolvedAmbiguousElementSizeEE];
 			unresolvedAmbiguousElementDefinitionEE = new AElement[unresolvedAmbiguousElementSizeEE][];
+            unresolvedAmbiguousElementFECEE = new int[unresolvedAmbiguousElementSizeEE];
 		}else if(++unresolvedAmbiguousElementIndexEE == unresolvedAmbiguousElementSizeEE){			
 			String[] increasedQN = new String[++unresolvedAmbiguousElementSizeEE];
 			System.arraycopy(unresolvedAmbiguousElementQNameEE, 0, increasedQN, 0, unresolvedAmbiguousElementIndexEE);
@@ -905,31 +937,32 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[unresolvedAmbiguousElementSizeEE];
 			System.arraycopy(unresolvedAmbiguousElementColumnNumberEE, 0, increasedCN, 0, unresolvedAmbiguousElementIndexEE);
 			unresolvedAmbiguousElementColumnNumberEE = increasedCN;
+            
+            int[] increasedFEC = new int[unresolvedAmbiguousElementSizeEE];
+			System.arraycopy(unresolvedAmbiguousElementFECEE, 0, increasedFEC, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementFECEE = increasedFEC;
 		}
+		messageTotalCount++;
 		unresolvedAmbiguousElementQNameEE[unresolvedAmbiguousElementIndexEE] = qName;		
 		unresolvedAmbiguousElementSystemIdEE[unresolvedAmbiguousElementIndexEE] = systemId;
 		unresolvedAmbiguousElementLineNumberEE[unresolvedAmbiguousElementIndexEE] = lineNumber;
 		unresolvedAmbiguousElementColumnNumberEE[unresolvedAmbiguousElementIndexEE] = columnNumber;
 		unresolvedAmbiguousElementDefinitionEE[unresolvedAmbiguousElementIndexEE] = possibleDefinitions;
+        unresolvedAmbiguousElementFECEE[unresolvedAmbiguousElementIndexEE] = functionalEquivalenceCode;
+		
 	}
-	public void clearUnresolvedAmbiguousElementContentError(){
-        messageTotalCount -= unresolvedAmbiguousElementSizeEE;
-        unresolvedAmbiguousElementSizeEE = 0;
-        unresolvedAmbiguousElementIndexEE = -1;	
-        unresolvedAmbiguousElementQNameEE = null;			
-        unresolvedAmbiguousElementSystemIdEE = null;			
-        unresolvedAmbiguousElementLineNumberEE = null;
-        unresolvedAmbiguousElementColumnNumberEE = null;
-        unresolvedAmbiguousElementDefinitionEE = null;
-    }
+	
     
-    
-    public void unresolvedUnresolvedElementContentError(String qName, 
+    public void unresolvedUnresolvedElementContentError(int functionalEquivalenceCode, 
+                                    String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
-        messageTotalCount++;
+	    for(int i = 0; i <= unresolvedUnresolvedElementIndexEE; i++){
+	        if(unresolvedUnresolvedElementFECEE[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(unresolvedUnresolvedElementSizeEE == 0){
 			unresolvedUnresolvedElementSizeEE = 1;
 			unresolvedUnresolvedElementIndexEE = 0;	
@@ -938,6 +971,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			unresolvedUnresolvedElementLineNumberEE = new int[unresolvedUnresolvedElementSizeEE];
 			unresolvedUnresolvedElementColumnNumberEE = new int[unresolvedUnresolvedElementSizeEE];
 			unresolvedUnresolvedElementDefinitionEE = new AElement[unresolvedUnresolvedElementSizeEE][];
+            unresolvedUnresolvedElementFECEE = new int[unresolvedUnresolvedElementSizeEE];
 		}else if(++unresolvedUnresolvedElementIndexEE == unresolvedUnresolvedElementSizeEE){			
 			String[] increasedQN = new String[++unresolvedUnresolvedElementSizeEE];
 			System.arraycopy(unresolvedUnresolvedElementQNameEE, 0, increasedQN, 0, unresolvedUnresolvedElementIndexEE);
@@ -958,31 +992,32 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[unresolvedUnresolvedElementSizeEE];
 			System.arraycopy(unresolvedUnresolvedElementColumnNumberEE, 0, increasedCN, 0, unresolvedUnresolvedElementIndexEE);
 			unresolvedUnresolvedElementColumnNumberEE = increasedCN;
+            
+            int[] increasedFEC = new int[unresolvedUnresolvedElementSizeEE];
+			System.arraycopy(unresolvedUnresolvedElementFECEE, 0, increasedFEC, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementFECEE = increasedFEC;
 		}
+		messageTotalCount++;
 		unresolvedUnresolvedElementQNameEE[unresolvedUnresolvedElementIndexEE] = qName;		
 		unresolvedUnresolvedElementSystemIdEE[unresolvedUnresolvedElementIndexEE] = systemId;
 		unresolvedUnresolvedElementLineNumberEE[unresolvedUnresolvedElementIndexEE] = lineNumber;
 		unresolvedUnresolvedElementColumnNumberEE[unresolvedUnresolvedElementIndexEE] = columnNumber;
 		unresolvedUnresolvedElementDefinitionEE[unresolvedUnresolvedElementIndexEE] = possibleDefinitions;
+        unresolvedUnresolvedElementFECEE[unresolvedUnresolvedElementIndexEE] = functionalEquivalenceCode;
+		
 	}
-	public void clearUnresolvedUnresolvedElementContentError(){
-        messageTotalCount -= unresolvedUnresolvedElementSizeEE;
-        unresolvedUnresolvedElementSizeEE = 0;
-        unresolvedUnresolvedElementIndexEE = -1;	
-        unresolvedUnresolvedElementQNameEE = null;			
-        unresolvedUnresolvedElementSystemIdEE = null;			
-        unresolvedUnresolvedElementLineNumberEE = null;
-        unresolvedUnresolvedElementColumnNumberEE = null;
-        unresolvedUnresolvedElementDefinitionEE = null;
-    }
     
     
-	public void unresolvedAttributeContentError(String qName, 
+	public void unresolvedAttributeContentError(int functionalEquivalenceCode, 
+                                    String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AAttribute[] possibleDefinitions){
-        messageTotalCount++;
+	    for(int i = 0; i <= unresolvedAttributeIndexEE; i++){
+	        if(unresolvedAttributeFECEE[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(unresolvedAttributeSizeEE == 0){
 			unresolvedAttributeSizeEE = 1;
 			unresolvedAttributeIndexEE = 0;	
@@ -991,6 +1026,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			unresolvedAttributeLineNumberEE = new int[unresolvedAttributeSizeEE];
 			unresolvedAttributeColumnNumberEE = new int[unresolvedAttributeSizeEE];
 			unresolvedAttributeDefinitionEE = new AAttribute[unresolvedAttributeSizeEE][];
+            unresolvedAttributeFECEE = new int[unresolvedAttributeSizeEE];
 		}else if(++unresolvedAttributeIndexEE == unresolvedAttributeSizeEE){			
 			String[] increasedQN = new String[++unresolvedAttributeSizeEE];
 			System.arraycopy(unresolvedAttributeQNameEE, 0, increasedQN, 0, unresolvedAttributeIndexEE);
@@ -1011,31 +1047,31 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[unresolvedAttributeSizeEE];
 			System.arraycopy(unresolvedAttributeColumnNumberEE, 0, increasedCN, 0, unresolvedAttributeIndexEE);
 			unresolvedAttributeColumnNumberEE = increasedCN;
+            
+            int[] increasedFEC = new int[unresolvedAttributeSizeEE];
+			System.arraycopy(unresolvedAttributeFECEE, 0, increasedFEC, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeFECEE = increasedFEC;
 		}
+		messageTotalCount++;
 		unresolvedAttributeQNameEE[unresolvedAttributeIndexEE] = qName;		
 		unresolvedAttributeSystemIdEE[unresolvedAttributeIndexEE] = systemId;
 		unresolvedAttributeLineNumberEE[unresolvedAttributeIndexEE] = lineNumber;
 		unresolvedAttributeColumnNumberEE[unresolvedAttributeIndexEE] = columnNumber;
-		unresolvedAttributeDefinitionEE[unresolvedAttributeIndexEE] = possibleDefinitions;
+		unresolvedAttributeDefinitionEE[unresolvedAttributeIndexEE] = possibleDefinitions;	
+		unresolvedAttributeFECEE[unresolvedAttributeIndexEE] = functionalEquivalenceCode;
+		
 	}
-	public void clearUnresolvedAttributeContentError(){
-        messageTotalCount -= unresolvedAttributeSizeEE;
-        unresolvedAttributeSizeEE = 0;
-        unresolvedAttributeIndexEE = -1;	
-        unresolvedAttributeQNameEE = null;			
-        unresolvedAttributeSystemIdEE = null;			
-        unresolvedAttributeLineNumberEE = null;
-        unresolvedAttributeColumnNumberEE = null;
-        unresolvedAttributeDefinitionEE = null;
-    }
 	
-	
-	public void ambiguousUnresolvedElementContentWarning(String qName, 
+	public void ambiguousUnresolvedElementContentWarning(int functionalEquivalenceCode,
+                                    String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
-        messageTotalCount++;
+	    for(int i = 0; i <= ambiguousUnresolvedElementIndexWW; i++){
+	        if(ambiguousUnresolvedElementFECWW[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(ambiguousUnresolvedElementSizeWW == 0){
 			ambiguousUnresolvedElementSizeWW = 1;
 			ambiguousUnresolvedElementIndexWW = 0;	
@@ -1044,6 +1080,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			ambiguousUnresolvedElementLineNumberWW = new int[ambiguousUnresolvedElementSizeWW];
 			ambiguousUnresolvedElementColumnNumberWW = new int[ambiguousUnresolvedElementSizeWW];
 			ambiguousUnresolvedElementDefinitionWW = new AElement[ambiguousUnresolvedElementSizeWW][];
+            
+            ambiguousUnresolvedElementFECWW = new int[ambiguousUnresolvedElementSizeWW];
 		}else if(++ambiguousUnresolvedElementIndexWW == ambiguousUnresolvedElementSizeWW){			
 			String[] increasedQN = new String[++ambiguousUnresolvedElementSizeWW];
 			System.arraycopy(ambiguousUnresolvedElementQNameWW, 0, increasedQN, 0, ambiguousUnresolvedElementIndexWW);
@@ -1064,31 +1102,33 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[ambiguousUnresolvedElementSizeWW];
 			System.arraycopy(ambiguousUnresolvedElementColumnNumberWW, 0, increasedCN, 0, ambiguousUnresolvedElementIndexWW);
 			ambiguousUnresolvedElementColumnNumberWW = increasedCN;
+            
+            int[] increasedFEC = new int[ambiguousUnresolvedElementSizeWW];
+			System.arraycopy(ambiguousUnresolvedElementFECWW, 0, increasedFEC, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementFECWW = increasedFEC;
 		}
+		messageTotalCount++;
 		ambiguousUnresolvedElementQNameWW[ambiguousUnresolvedElementIndexWW] = qName;		
 		ambiguousUnresolvedElementSystemIdWW[ambiguousUnresolvedElementIndexWW] = systemId;
 		ambiguousUnresolvedElementLineNumberWW[ambiguousUnresolvedElementIndexWW] = lineNumber;
 		ambiguousUnresolvedElementColumnNumberWW[ambiguousUnresolvedElementIndexWW] = columnNumber;
-		ambiguousUnresolvedElementDefinitionWW[ambiguousUnresolvedElementIndexWW] = possibleDefinitions;        
+		ambiguousUnresolvedElementDefinitionWW[ambiguousUnresolvedElementIndexWW] = possibleDefinitions;
+        
+        ambiguousUnresolvedElementFECWW[ambiguousUnresolvedElementIndexWW] = functionalEquivalenceCode;
+    
 	}
-	public void clearAmbiguousUnresolvedElementContentWarning(){
-        messageTotalCount -= ambiguousUnresolvedElementSizeWW;
-        ambiguousUnresolvedElementSizeWW = 0;
-        ambiguousUnresolvedElementIndexWW = -1;	
-        ambiguousUnresolvedElementQNameWW = null;			
-        ambiguousUnresolvedElementSystemIdWW = null;			
-        ambiguousUnresolvedElementLineNumberWW = null;
-        ambiguousUnresolvedElementColumnNumberWW = null;
-        ambiguousUnresolvedElementDefinitionWW = null;
-    }
     
     
-    public void ambiguousAmbiguousElementContentWarning(String qName, 
+    public void ambiguousAmbiguousElementContentWarning(int functionalEquivalenceCode,
+                                    String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
-        messageTotalCount++;
+	    for(int i = 0; i <= ambiguousAmbiguousElementIndexWW; i++){
+	        if(ambiguousAmbiguousElementFECWW[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(ambiguousAmbiguousElementSizeWW == 0){
 			ambiguousAmbiguousElementSizeWW = 1;
 			ambiguousAmbiguousElementIndexWW = 0;	
@@ -1097,6 +1137,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			ambiguousAmbiguousElementLineNumberWW = new int[ambiguousAmbiguousElementSizeWW];
 			ambiguousAmbiguousElementColumnNumberWW = new int[ambiguousAmbiguousElementSizeWW];
 			ambiguousAmbiguousElementDefinitionWW = new AElement[ambiguousAmbiguousElementSizeWW][];
+            
+            ambiguousAmbiguousElementFECWW = new int[ambiguousAmbiguousElementSizeWW];
 		}else if(++ambiguousAmbiguousElementIndexWW == ambiguousAmbiguousElementSizeWW){			
 			String[] increasedQN = new String[++ambiguousAmbiguousElementSizeWW];
 			System.arraycopy(ambiguousAmbiguousElementQNameWW, 0, increasedQN, 0, ambiguousAmbiguousElementIndexWW);
@@ -1117,30 +1159,32 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[ambiguousAmbiguousElementSizeWW];
 			System.arraycopy(ambiguousAmbiguousElementColumnNumberWW, 0, increasedCN, 0, ambiguousAmbiguousElementIndexWW);
 			ambiguousAmbiguousElementColumnNumberWW = increasedCN;
+            
+            int[] increasedFEC = new int[ambiguousAmbiguousElementSizeWW];
+			System.arraycopy(ambiguousAmbiguousElementFECWW, 0, increasedFEC, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementFECWW = increasedFEC;
 		}
+		messageTotalCount++;
 		ambiguousAmbiguousElementQNameWW[ambiguousAmbiguousElementIndexWW] = qName;		
 		ambiguousAmbiguousElementSystemIdWW[ambiguousAmbiguousElementIndexWW] = systemId;
 		ambiguousAmbiguousElementLineNumberWW[ambiguousAmbiguousElementIndexWW] = lineNumber;
 		ambiguousAmbiguousElementColumnNumberWW[ambiguousAmbiguousElementIndexWW] = columnNumber;
-		ambiguousAmbiguousElementDefinitionWW[ambiguousAmbiguousElementIndexWW] = possibleDefinitions;        
-	}
-	public void clearAmbiguousAmbiguousElementContentWarning(){
-        messageTotalCount -= ambiguousAmbiguousElementSizeWW;
-        ambiguousAmbiguousElementSizeWW = 0;
-        ambiguousAmbiguousElementIndexWW = -1;	
-        ambiguousAmbiguousElementQNameWW = null;			
-        ambiguousAmbiguousElementSystemIdWW = null;			
-        ambiguousAmbiguousElementLineNumberWW = null;
-        ambiguousAmbiguousElementColumnNumberWW = null;
-        ambiguousAmbiguousElementDefinitionWW = null;
-    }
+		ambiguousAmbiguousElementDefinitionWW[ambiguousAmbiguousElementIndexWW] = possibleDefinitions;
         
-	public void ambiguousAttributeContentWarning(String qName, 
+        ambiguousAmbiguousElementFECWW[ambiguousAmbiguousElementIndexWW] = functionalEquivalenceCode;
+	}
+    
+    
+	public void ambiguousAttributeContentWarning(int functionalEquivalenceCode,
+                                    String qName, 
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									AAttribute[] possibleDefinitions){
-        messageTotalCount++;
+	    for(int i = 0; i <= ambiguousAttributeIndexWW; i++){
+	        if(ambiguousAttributeFECWW[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(ambiguousAttributeSizeWW == 0){
 			ambiguousAttributeSizeWW = 1;
 			ambiguousAttributeIndexWW = 0;	
@@ -1149,6 +1193,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			ambiguousAttributeLineNumberWW = new int[ambiguousAttributeSizeWW];
 			ambiguousAttributeColumnNumberWW = new int[ambiguousAttributeSizeWW];
 			ambiguousAttributeDefinitionWW = new AAttribute[ambiguousAttributeSizeWW][];
+            
+            ambiguousAttributeFECWW = new int[ambiguousAttributeSizeWW];
 		}else if(++ambiguousAttributeIndexWW == ambiguousAttributeSizeWW){			
 			String[] increasedQN = new String[++ambiguousAttributeSizeWW];
 			System.arraycopy(ambiguousAttributeQNameWW, 0, increasedQN, 0, ambiguousAttributeIndexWW);
@@ -1169,29 +1215,31 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[ambiguousAttributeSizeWW];
 			System.arraycopy(ambiguousAttributeColumnNumberWW, 0, increasedCN, 0, ambiguousAttributeIndexWW);
 			ambiguousAttributeColumnNumberWW = increasedCN;
+            
+            int[] increasedFEC = new int[ambiguousAttributeSizeWW];
+			System.arraycopy(ambiguousAttributeFECWW, 0, increasedFEC, 0, ambiguousAttributeIndexWW);
+			ambiguousAttributeFECWW = increasedFEC;
 		}
+		messageTotalCount++;
 		ambiguousAttributeQNameWW[ambiguousAttributeIndexWW] = qName;		
 		ambiguousAttributeSystemIdWW[ambiguousAttributeIndexWW] = systemId;
 		ambiguousAttributeLineNumberWW[ambiguousAttributeIndexWW] = lineNumber;
 		ambiguousAttributeColumnNumberWW[ambiguousAttributeIndexWW] = columnNumber;
 		ambiguousAttributeDefinitionWW[ambiguousAttributeIndexWW] = possibleDefinitions;
+        
+        ambiguousAttributeFECWW[ambiguousAttributeIndexWW] = functionalEquivalenceCode;
+		
 	}
-	public void clearAmbiguousAttributeContentWarning(){
-        messageTotalCount -= ambiguousAttributeSizeWW;
-        ambiguousAttributeSizeWW = 0;
-        ambiguousAttributeIndexWW = -1;	
-        ambiguousAttributeQNameWW = null;			
-        ambiguousAttributeSystemIdWW = null;			
-        ambiguousAttributeLineNumberWW = null;
-        ambiguousAttributeColumnNumberWW = null;
-        ambiguousAttributeDefinitionWW = null;
-    }
-	
-	public void ambiguousCharacterContentWarning(String systemId, 
+    
+	public void ambiguousCharacterContentWarning(int functionalEquivalenceCode,
+                                    String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									CharsActiveTypeItem[] possibleDefinitions){
-        messageTotalCount++;
+	    for(int i = 0; i <= ambiguousCharsIndexWW; i++){
+	        if(ambiguousCharsFECWW[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(ambiguousCharsSizeWW == 0){
 			ambiguousCharsSizeWW = 1;
 			ambiguousCharsIndexWW = 0;
@@ -1199,6 +1247,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			ambiguousCharsLineNumberWW = new int[ambiguousCharsSizeWW];
 			ambiguousCharsColumnNumberWW = new int[ambiguousCharsSizeWW];
 			ambiguousCharsDefinitionWW = new CharsActiveTypeItem[ambiguousCharsSizeWW][];
+            
+            ambiguousCharsFECWW = new int[ambiguousCharsSizeWW];
 		}else if(++ambiguousCharsIndexWW == ambiguousCharsSizeWW){			
 			CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[++ambiguousCharsSizeWW][];
 			System.arraycopy(ambiguousCharsDefinitionWW, 0, increasedDef, 0, ambiguousCharsIndexWW);
@@ -1215,28 +1265,32 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[ambiguousCharsSizeWW];
 			System.arraycopy(ambiguousCharsColumnNumberWW, 0, increasedCN, 0, ambiguousCharsIndexWW);
 			ambiguousCharsColumnNumberWW = increasedCN;
-		}		
+            
+            int[] increasedFEC = new int[ambiguousCharsSizeWW];
+			System.arraycopy(ambiguousCharsFECWW, 0, increasedFEC, 0, ambiguousCharsIndexWW);
+			ambiguousCharsFECWW = increasedFEC;
+		}
+        messageTotalCount++;        
 		ambiguousCharsSystemIdWW[ambiguousCharsIndexWW] = systemId;
 		ambiguousCharsLineNumberWW[ambiguousCharsIndexWW] = lineNumber;
 		ambiguousCharsColumnNumberWW[ambiguousCharsIndexWW] = columnNumber;
-		ambiguousCharsDefinitionWW[ambiguousCharsIndexWW] = possibleDefinitions;
+		ambiguousCharsDefinitionWW[ambiguousCharsIndexWW] = possibleDefinitions;	
+		
+        ambiguousCharsFECWW[ambiguousCharsIndexWW] = functionalEquivalenceCode;
+        
 	}
-	public void clearAmbiguousCharacterContentWarning(){
-        messageTotalCount -= ambiguousCharsSizeWW;
-        ambiguousCharsSizeWW = 0;
-        ambiguousCharsIndexWW = -1;
-        ambiguousCharsSystemIdWW = null;			
-        ambiguousCharsLineNumberWW = null;
-        ambiguousCharsColumnNumberWW = null;
-        ambiguousCharsDefinitionWW = null;
-    }
-	
-	public void ambiguousAttributeValueWarning(String attributeQName, 
-	                                String systemId, 
+    
+    
+    public void ambiguousAttributeValueWarning(int functionalEquivalenceCode,
+                                    String attributeQName,
+                                    String systemId, 
 									int lineNumber, 
 									int columnNumber, 
 									CharsActiveTypeItem[] possibleDefinitions){
-        messageTotalCount++;
+	    for(int i = 0; i <= ambiguousAVIndexWW; i++){
+	        if(ambiguousAVFECWW[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(ambiguousAVSizeWW == 0){
 			ambiguousAVSizeWW = 1;
 			ambiguousAVIndexWW = 0;
@@ -1245,17 +1299,19 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			ambiguousAVLineNumberWW = new int[ambiguousAVSizeWW];
 			ambiguousAVColumnNumberWW = new int[ambiguousAVSizeWW];
 			ambiguousAVDefinitionWW = new CharsActiveTypeItem[ambiguousAVSizeWW][];
+            
+            ambiguousAVFECWW = new int[ambiguousAVSizeWW];
 		}else if(++ambiguousAVIndexWW == ambiguousAVSizeWW){			
 			CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[++ambiguousAVSizeWW][];
 			System.arraycopy(ambiguousAVDefinitionWW, 0, increasedDef, 0, ambiguousAVIndexWW);
 			ambiguousAVDefinitionWW = increasedDef;
 			
 			String[] increasedAQ = new String[ambiguousAVSizeWW];
-			System.arraycopy(ambiguousAVSystemIdWW, 0, increasedAQ, 0, ambiguousAVIndexWW);
+			System.arraycopy(ambiguousAVAttributeQNameWW, 0, increasedAQ, 0, ambiguousAVIndexWW);
 			ambiguousAVAttributeQNameWW = increasedAQ;
 			
 			String[] increasedSI = new String[ambiguousAVSizeWW];
-			System.arraycopy(ambiguousAVAttributeQNameWW, 0, increasedSI, 0, ambiguousAVIndexWW);
+			System.arraycopy(ambiguousAVSystemIdWW, 0, increasedSI, 0, ambiguousAVIndexWW);
 			ambiguousAVSystemIdWW = increasedSI;
 						
 			int[] increasedLN = new int[ambiguousAVSizeWW];
@@ -1265,29 +1321,25 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[] increasedCN = new int[ambiguousAVSizeWW];
 			System.arraycopy(ambiguousAVColumnNumberWW, 0, increasedCN, 0, ambiguousAVIndexWW);
 			ambiguousAVColumnNumberWW = increasedCN;
-		}		
-		ambiguousAVAttributeQNameWW[ambiguousAVIndexWW] = attributeQName;;
+            
+            int[] increasedFEC = new int[ambiguousAVSizeWW];
+			System.arraycopy(ambiguousAVFECWW, 0, increasedFEC, 0, ambiguousAVIndexWW);
+			ambiguousAVFECWW = increasedFEC;
+		}
+        messageTotalCount++;        
+		ambiguousAVAttributeQNameWW[ambiguousAVIndexWW] = attributeQName;
 		ambiguousAVSystemIdWW[ambiguousAVIndexWW] = systemId;
 		ambiguousAVLineNumberWW[ambiguousAVIndexWW] = lineNumber;
 		ambiguousAVColumnNumberWW[ambiguousAVIndexWW] = columnNumber;
-		ambiguousAVDefinitionWW[ambiguousAVIndexWW] = possibleDefinitions;
-	}
-	public void clearAmbiguousAttributeValueWarning(){
-        messageTotalCount -= ambiguousAVSizeWW;
-        ambiguousAVSizeWW = 0;
-        ambiguousAVIndexWW = -1;
-        ambiguousAVAttributeQNameWW = null;
-        ambiguousAVSystemIdWW = null;			
-        ambiguousAVLineNumberWW = null;
-        ambiguousAVColumnNumberWW = null;
-        ambiguousAVDefinitionWW = null;
-    }
+		ambiguousAVDefinitionWW[ambiguousAVIndexWW] = possibleDefinitions;	
+		
+        ambiguousAVFECWW[ambiguousAVIndexWW] = functionalEquivalenceCode;
+        
+	}	
 	
 	
-	
-	
-	
-	public void missingContent(Rule context, 
+	public void missingContent(int functionalEquivalenceCode, 
+                                Rule context, 
 								String startSystemId, 
 								int startLineNumber, 
 								int startColumnNumber,								 
@@ -1297,8 +1349,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 								String[] qName, 
 								String[] systemId, 
 								int[] lineNumber, 
-								int[] columnNumber){	    
-        messageTotalCount++;
+								int[] columnNumber){
+	    for(int i = 0; i <= missingIndex; i++){
+	        if(missingFEC[i] == functionalEquivalenceCode){
+	            if(missingDefinition[i] == definition )return;
+	        } 
+	    }
+	            
 		if(missingSize == 0){
 			missingSize = 1;
 			missingIndex = 0;
@@ -1312,7 +1369,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			missingQName = new String[missingSize][];			
 			missingSystemId = new String[missingSize][];			
 			missingLineNumber = new int[missingSize][];
-			missingColumnNumber = new int[missingSize][];			
+			missingColumnNumber = new int[missingSize][];
+            missingFEC = new int[missingSize];			
 		}else if(++missingIndex == missingSize){
 			APattern[] increasedEC = new APattern[++missingSize];
 			System.arraycopy(missingContext, 0, increasedEC, 0, missingIndex);
@@ -1357,7 +1415,12 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			int[][] increasedCN = new int[missingSize][];
 			System.arraycopy(missingColumnNumber, 0, increasedCN, 0, missingIndex);
 			missingColumnNumber = increasedCN;
+            
+            int[] increasedFEC = new int[missingSize];
+			System.arraycopy(missingFEC, 0, increasedFEC, 0, missingIndex);
+			missingFEC = increasedFEC;
 		}
+		messageTotalCount++;
 		missingContext[missingIndex] = context;
 		missingStartSystemId[missingIndex] = startSystemId;
 		missingStartLineNumber[missingIndex] = startLineNumber;
@@ -1369,32 +1432,24 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		if(systemId != null)missingSystemId[missingIndex] = systemId;
 		missingLineNumber[missingIndex] = lineNumber;
 		missingColumnNumber[missingIndex] = columnNumber;
-		//throw new IllegalStateException();
-    }
-	public void clearMissingContent(){
-        messageTotalCount -= missingSize;
-        missingSize = 0;
-        missingIndex = -1;
-        missingContext = null;
-        missingStartSystemId = null;			
-        missingStartLineNumber = null;
-        missingStartColumnNumber = null;
-        missingDefinition = null;
-        missingExpected = null;
-        missingFound = null;
-        missingQName = null;			
-        missingSystemId = null;			
-        missingLineNumber = null;
-        missingColumnNumber = null;
-    }
+        
+        missingFEC[missingIndex] = functionalEquivalenceCode;
+		
+    }    
     
-	public void illegalContent(Rule context, 
-	                        int startItemId, 
+	public void illegalContent(int functionalEquivalenceCode, 
+                            Rule context, 
+                            int startItemId, 
 							String startQName, 
 							String startSystemId, 
 							int startLineNumber, 
 							int startColumnNumber){
-        messageTotalCount++;
+	    for(int i = 0; i <= illegalIndex; i++){
+	        if(illegalFEC[i] == functionalEquivalenceCode) {
+	            if(illegalContext[i] == context )return;
+	        } 
+	    }
+	            
 		if(illegalSize == 0){
 			illegalSize = 1;
 			illegalIndex = 0;
@@ -1403,7 +1458,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			illegalQName = new String[illegalSize];
 			illegalStartSystemId = new String[illegalSize];			
 			illegalStartLineNumber = new int[illegalSize];
-			illegalStartColumnNumber = new int[illegalSize];						
+			illegalStartColumnNumber = new int[illegalSize];
+            illegalFEC = new int[illegalSize];
 		}else if(++illegalIndex == illegalSize){
 			APattern[] increasedEC = new APattern[++illegalSize];
 			System.arraycopy(illegalContext, 0, increasedEC, 0, illegalIndex);
@@ -1427,41 +1483,30 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			int[] increasedSCN = new int[illegalSize];
 			System.arraycopy(illegalStartColumnNumber, 0, increasedSCN, 0, illegalIndex);
-			illegalStartColumnNumber = increasedSCN;			
+			illegalStartColumnNumber = increasedSCN;
+
+            int[] increasedFEC = new int[illegalSize];
+			System.arraycopy(illegalFEC, 0, increasedFEC, 0, illegalIndex);
+			illegalFEC = increasedFEC;			
 		}
+		messageTotalCount++;
 		illegalContext[illegalIndex] = context;
 		illegalItemId[illegalIndex] = startItemId;
 		illegalQName[illegalIndex] = startQName;
 		illegalStartSystemId[illegalIndex] = startSystemId;
 		illegalStartLineNumber[illegalIndex] = startLineNumber;
 		illegalStartColumnNumber[illegalIndex] = startColumnNumber;
-	}
-	public void clearIllegalContent(){
-        messageTotalCount -= illegalSize;
-        illegalSize = 0;
-        illegalIndex = -1;
-        illegalContext = null;
-        illegalItemId = null;
-        illegalQName = null;
-        illegalStartSystemId = null;			
-        illegalStartLineNumber = null;
-        illegalStartColumnNumber = null;
-    }
         
-	public void undeterminedByContent(String qName, String candidateMessages){
-        messageTotalCount++;
-		undeterminedQName = qName;
-		undeterminedCandidateMessages = candidateMessages;
+        illegalFEC[illegalIndex] = functionalEquivalenceCode;
 	}
-    public void clearUndeterminedByContent(){
-        messageTotalCount--;
-        undeterminedQName = null;
-		undeterminedCandidateMessages = null;
-    }
-	
+    
+    	
     // {15}
-	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        messageTotalCount++;
+	public void characterContentDatatypeError(int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+        for(int i = 0; i <= datatypeIndexCC; i++){
+	        if(datatypeFECCC[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(datatypeSizeCC == 0){
 			datatypeSizeCC = 1;
 			datatypeIndexCC = 0;
@@ -1471,6 +1516,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			datatypeCharsColumnNumberCC = new int[datatypeSizeCC];
 			datatypeCharsDefinitionCC = new DatatypedActiveTypeItem[datatypeSizeCC];
 			datatypeErrorMessageCC = new String[datatypeSizeCC];
+            
+            datatypeFECCC = new int[datatypeSizeCC];
 		}else if(++datatypeIndexCC == datatypeSizeCC){
 			String[] increasedEQ = new String[++datatypeSizeCC];
 			System.arraycopy(datatypeElementQNameCC, 0, increasedEQ, 0, datatypeIndexCC);
@@ -1495,29 +1542,29 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			String[] increasedEM = new String[datatypeSizeCC];
 			System.arraycopy(datatypeErrorMessageCC, 0, increasedEM, 0, datatypeIndexCC);
 			datatypeErrorMessageCC = increasedEM;
+            
+            int[] increasedFEC = new int[datatypeSizeCC];
+			System.arraycopy(datatypeFECCC, 0, increasedFEC, 0, datatypeIndexCC);
+			datatypeFECCC = increasedFEC;
 		}
+		messageTotalCount++;
 		datatypeElementQNameCC[datatypeIndexCC] = elementQName;
 		datatypeCharsSystemIdCC[datatypeIndexCC] = charsSystemId;
 		datatypeCharsLineNumberCC[datatypeIndexCC] = charsLineNumber;
 		datatypeCharsColumnNumberCC[datatypeIndexCC] = columnNumber;
 		datatypeCharsDefinitionCC[datatypeIndexCC] = charsDefinition;
-		datatypeErrorMessageCC[datatypeIndexCC] = datatypeErrorMessage;        
-	}
-	public void clearCharacterContentDatatypeError(){
-        messageTotalCount -= datatypeSizeCC;
-        datatypeSizeCC = 0;
-        datatypeIndexCC = -1;
-        datatypeElementQNameCC = null;
-        datatypeCharsSystemIdCC = null;
-        datatypeCharsLineNumberCC = null;
-        datatypeCharsColumnNumberCC = null;
-        datatypeCharsDefinitionCC = null;
-        datatypeErrorMessageCC = null;
-    }
+		datatypeErrorMessageCC[datatypeIndexCC] = datatypeErrorMessage;
         
+        datatypeFECCC[datatypeIndexCC] = functionalEquivalenceCode;
+	}
+        
+    
     //{16}
-	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        messageTotalCount++;
+	public void attributeValueDatatypeError(int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	    for(int i = 0; i <= datatypeIndexAV; i++){
+	        if(datatypeFECAV[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(datatypeSizeAV == 0){
 			datatypeSizeAV = 1;
 			datatypeIndexAV = 0;
@@ -1527,6 +1574,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			datatypeCharsColumnNumberAV = new int[datatypeSizeAV];
 			datatypeCharsDefinitionAV = new DatatypedActiveTypeItem[datatypeSizeAV];
 			datatypeErrorMessageAV = new String[datatypeSizeAV];
+            
+            datatypeFECAV = new int[datatypeSizeAV];
 		}else if(++datatypeIndexAV == datatypeSizeAV){
 			String[] increasedEQ = new String[++datatypeSizeAV];
 			System.arraycopy(datatypeAttributeQNameAV, 0, increasedEQ, 0, datatypeIndexAV);
@@ -1551,29 +1600,28 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			String[] increasedEM = new String[datatypeSizeAV];
 			System.arraycopy(datatypeErrorMessageAV, 0, increasedEM, 0, datatypeIndexAV);
 			datatypeErrorMessageAV = increasedEM;
+            
+            int[] increasedFEC = new int[datatypeSizeAV];
+			System.arraycopy(datatypeFECAV, 0, increasedFEC, 0, datatypeIndexAV);
+			datatypeFECAV = increasedFEC;
 		}
+		messageTotalCount++;
 		datatypeAttributeQNameAV[datatypeIndexAV] = attributeQName;
 		datatypeCharsSystemIdAV[datatypeIndexAV] = charsSystemId;
 		datatypeCharsLineNumberAV[datatypeIndexAV] = charsLineNumber;
 		datatypeCharsColumnNumberAV[datatypeIndexAV] = columnNumber;
 		datatypeCharsDefinitionAV[datatypeIndexAV] = charsDefinition;
 		datatypeErrorMessageAV[datatypeIndexAV] = datatypeErrorMessage;
+        
+        datatypeFECAV[datatypeIndexAV] = functionalEquivalenceCode;
 	}
-	public void clearAttributeValueDatatypeError(){
-        messageTotalCount -= datatypeSizeAV;
-        datatypeSizeAV = 0;
-        datatypeIndexAV = -1;
-        datatypeAttributeQNameAV = null;
-        datatypeCharsSystemIdAV = null;
-        datatypeCharsLineNumberAV = null;
-        datatypeCharsColumnNumberAV = null;
-        datatypeCharsDefinitionAV = null;
-        datatypeErrorMessageAV = null;
-    }
         
         
-	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        messageTotalCount++;
+	public void characterContentValueError(int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	    for(int i = 0; i <= valueIndexCC; i++){
+	        if(valueFECCC[i] == functionalEquivalenceCode) return;
+	    }
+	    
 		if(valueSizeCC == 0){
 			valueSizeCC = 1;
 			valueIndexCC = 0;
@@ -1581,6 +1629,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			valueCharsLineNumberCC = new int[valueSizeCC];
 			valueCharsColumnNumberCC = new int[valueSizeCC];
 			valueCharsDefinitionCC = new AValue[valueSizeCC];
+            
+            valueFECCC = new int[valueSizeCC];
 		}else if(++valueIndexCC == valueSizeCC){
 						
 			String[] increasedCSI = new String[++valueSizeCC];
@@ -1597,25 +1647,28 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			AValue[] increasedCD = new AValue[valueSizeCC];
 			System.arraycopy(valueCharsDefinitionCC, 0, increasedCD, 0, valueIndexCC);
-			valueCharsDefinitionCC = increasedCD;			
+			valueCharsDefinitionCC = increasedCD;
+
+            int[] increasedFEC = new int[valueSizeCC];
+			System.arraycopy(valueFECCC, 0, increasedFEC, 0, valueIndexCC);
+			valueFECCC = increasedFEC;
+						
 		}
+		messageTotalCount++;
 		valueCharsSystemIdCC[valueIndexCC] = charsSystemId;
 		valueCharsLineNumberCC[valueIndexCC] = charsLineNumber;
 		valueCharsColumnNumberCC[valueIndexCC] = columnNumber;
 		valueCharsDefinitionCC[valueIndexCC] = charsDefinition;
+        
+        valueFECCC[valueIndexCC] = functionalEquivalenceCode;
 	}
-    public void clearCharacterContentValueError(){
-        messageTotalCount -= valueSizeCC;
-        valueSizeCC = 0;
-        valueIndexCC = -1;
-        valueCharsSystemIdCC = null;
-        valueCharsLineNumberCC = null;
-        valueCharsColumnNumberCC = null;
-        valueCharsDefinitionCC = null;
-    }
+        
     
-	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        messageTotalCount++;
+	public void attributeValueValueError(int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	    for(int i = 0; i <= valueIndexAV; i++){
+	        if(valueFECAV[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(valueSizeAV == 0){
 			valueSizeAV = 1;
 			valueIndexAV = 0;
@@ -1624,6 +1677,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			valueCharsLineNumberAV = new int[valueSizeAV];
 			valueCharsColumnNumberAV = new int[valueSizeAV];
 			valueCharsDefinitionAV = new AValue[valueSizeAV];
+            
+            valueFECAV = new int[valueSizeAV];
 		}else if(++valueIndexAV == valueSizeAV){
 			String[] increasedEQ = new String[++valueSizeAV];
 			System.arraycopy(valueAttributeQNameAV, 0, increasedEQ, 0, valueIndexAV);
@@ -1644,27 +1699,27 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			AValue[] increasedCD = new AValue[valueSizeAV];
 			System.arraycopy(valueCharsDefinitionAV, 0, increasedCD, 0, valueIndexAV);
 			valueCharsDefinitionAV = increasedCD;
+            
+            int[] increasedFEC = new int[valueSizeAV];
+			System.arraycopy(valueFECAV, 0, increasedFEC, 0, valueIndexAV);
+			valueFECAV = increasedFEC;
 		}
+		messageTotalCount++;
 		valueAttributeQNameAV[valueIndexAV] = attributeQName;
 		valueCharsSystemIdAV[valueIndexAV] = charsSystemId;
 		valueCharsLineNumberAV[valueIndexAV] = charsLineNumber;
 		valueCharsColumnNumberAV[valueIndexAV] = columnNumber;
 		valueCharsDefinitionAV[valueIndexAV] = charsDefinition;
+        
+        valueFECAV[valueIndexAV] = functionalEquivalenceCode;
 	}
-	public void clearAttributeValueValueError(){
-        messageTotalCount -= valueSizeAV;
-        valueSizeAV = 0;
-        valueIndexAV = -1;
-        valueAttributeQNameAV = null;
-        valueCharsSystemIdAV = null;
-        valueCharsLineNumberAV = null;
-        valueCharsColumnNumberAV = null;
-        valueCharsDefinitionAV = null;
-    }
+        
     
-    
-	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        messageTotalCount++;
+	public void characterContentExceptedError(int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	    for(int i = 0; i <= exceptIndexCC; i++){
+	        if(exceptFECCC[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(exceptSizeCC == 0){
 			exceptSizeCC = 1;
 			exceptIndexCC = 0;
@@ -1673,6 +1728,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			exceptCharsLineNumberCC = new int[exceptSizeCC];
 			exceptCharsColumnNumberCC = new int[exceptSizeCC];
 			exceptCharsDefinitionCC = new AData[exceptSizeCC];
+            
+            exceptFECCC = new int[exceptSizeCC];
 		}else if(++exceptIndexCC == exceptSizeCC){
 			String[] increasedEQ = new String[++exceptSizeCC];
 			System.arraycopy(exceptElementQNameCC, 0, increasedEQ, 0, exceptIndexCC);
@@ -1692,27 +1749,28 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			AData[] increasedCD = new AData[exceptSizeCC];
 			System.arraycopy(exceptCharsDefinitionCC, 0, increasedCD, 0, exceptIndexCC);
-			exceptCharsDefinitionCC = increasedCD;			
+			exceptCharsDefinitionCC = increasedCD;	
+            
+            int[] increasedFEC = new int[exceptSizeCC];
+			System.arraycopy(exceptFECCC, 0, increasedFEC, 0, exceptIndexCC);
+			exceptFECCC = increasedFEC;
 		}
+		messageTotalCount++;
 		exceptElementQNameCC[exceptIndexCC] = elementQName;
 		exceptCharsSystemIdCC[exceptIndexCC] = charsSystemId;
 		exceptCharsLineNumberCC[exceptIndexCC] = charsLineNumber;
 		exceptCharsColumnNumberCC[exceptIndexCC] = columnNumber;
 		exceptCharsDefinitionCC[exceptIndexCC] = charsDefinition;
+        
+        exceptFECCC[exceptIndexCC] = functionalEquivalenceCode;
 	}
-    public void clearCharacterContentExceptedError(){
-        messageTotalCount -= exceptSizeCC;
-        exceptSizeCC = 0;
-        exceptIndexCC = -1;
-        exceptElementQNameCC = null;
-        exceptCharsSystemIdCC = null;
-        exceptCharsLineNumberCC = null;
-        exceptCharsColumnNumberCC = null;
-        exceptCharsDefinitionCC = null;
-    }
     
-	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        messageTotalCount++;
+        
+	public void attributeValueExceptedError(int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	    for(int i = 0; i <= exceptIndexAV; i++){
+	        if(exceptFECAV[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(exceptSizeAV == 0){
 			exceptSizeAV = 1;
 			exceptIndexAV = 0;
@@ -1721,6 +1779,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			exceptCharsLineNumberAV = new int[exceptSizeAV];
 			exceptCharsColumnNumberAV = new int[exceptSizeAV];
 			exceptCharsDefinitionAV = new AData[exceptSizeAV];
+            
+            exceptFECAV = new int[exceptSizeAV];
 		}else if(++exceptIndexAV == exceptSizeAV){
 			String[] increasedEQ = new String[++exceptSizeAV];
 			System.arraycopy(exceptAttributeQNameAV, 0, increasedEQ, 0, exceptIndexAV);
@@ -1741,26 +1801,27 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			AData[] increasedCD = new AData[exceptSizeAV];
 			System.arraycopy(exceptCharsDefinitionAV, 0, increasedCD, 0, exceptIndexAV);
 			exceptCharsDefinitionAV = increasedCD;
+            
+            int[] increasedFEC = new int[exceptSizeAV];
+			System.arraycopy(exceptFECAV, 0, increasedFEC, 0, exceptIndexAV);
+			exceptFECAV = increasedFEC;
 		}
+		messageTotalCount++;
 		exceptAttributeQNameAV[exceptIndexAV] = attributeQName;
 		exceptCharsSystemIdAV[exceptIndexAV] = charsSystemId;
 		exceptCharsLineNumberAV[exceptIndexAV] = charsLineNumber;
 		exceptCharsColumnNumberAV[exceptIndexAV] = columnNumber;
 		exceptCharsDefinitionAV[exceptIndexAV] = charsDefinition;
+        
+        exceptFECAV[exceptIndexAV] = functionalEquivalenceCode;
 	}
-	public void clearAttributeValueExceptedError(){
-        messageTotalCount -= exceptSizeAV;
-        exceptSizeAV = 0;
-        exceptIndexAV = -1;
-        exceptAttributeQNameAV = null;
-        exceptCharsSystemIdAV = null;
-        exceptCharsLineNumberAV = null;
-        exceptCharsColumnNumberAV = null;
-        exceptCharsDefinitionAV = null;
-    }
+        
     
-	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
-        messageTotalCount++;
+	public void unexpectedCharacterContent(int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
+	    for(int i = 0; i <= unexpectedIndexCC; i++){
+	        if(unexpectedFECCC[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(unexpectedSizeCC == 0){
 			unexpectedSizeCC = 1;
 			unexpectedIndexCC = 0;		
@@ -1768,6 +1829,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			unexpectedCharsLineNumberCC = new int[unexpectedSizeCC];
 			unexpectedCharsColumnNumberCC = new int[unexpectedSizeCC];
 			unexpectedContextDefinitionCC = new AElement[unexpectedSizeCC];
+            
+            unexpectedFECCC = new int[unexpectedSizeCC];
 		}else if(++unexpectedIndexCC == unexpectedSizeCC){
 			String[] increasedCSI = new String[++unexpectedSizeCC];
 			System.arraycopy(unexpectedCharsSystemIdCC, 0, increasedCSI, 0, unexpectedIndexCC);
@@ -1783,25 +1846,27 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			AElement[] increasedCD = new AElement[unexpectedSizeCC];
 			System.arraycopy(unexpectedContextDefinitionCC, 0, increasedCD, 0, unexpectedIndexCC);
-			unexpectedContextDefinitionCC = increasedCD;			
+			unexpectedContextDefinitionCC = increasedCD;
+
+            int[] increasedFEC = new int[unexpectedSizeCC];
+			System.arraycopy(unexpectedFECCC, 0, increasedFEC, 0, unexpectedIndexCC);
+			unexpectedFECCC = increasedFEC;			
 		}
+		messageTotalCount++;
 		unexpectedCharsSystemIdCC[unexpectedIndexCC] = charsSystemId;
 		unexpectedCharsLineNumberCC[unexpectedIndexCC] = charsLineNumber;
 		unexpectedCharsColumnNumberCC[unexpectedIndexCC] = columnNumber;
 		unexpectedContextDefinitionCC[unexpectedIndexCC] = elementDefinition;
+        
+        unexpectedFECCC[unexpectedIndexCC] = functionalEquivalenceCode;
 	}
-    public void clearUnexpectedCharacterContent(){
-        messageTotalCount -= unexpectedSizeCC;
-        unexpectedSizeCC = 0;
-        unexpectedIndexCC = -1;		
-        unexpectedCharsSystemIdCC = null;
-        unexpectedCharsLineNumberCC = null;
-        unexpectedCharsColumnNumberCC = null;
-        unexpectedContextDefinitionCC = null;
-    }
     
-	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
-        messageTotalCount++;
+    
+	public void unexpectedAttributeValue(int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
+	    for(int i = 0; i <= unexpectedIndexAV; i++){
+	        if(unexpectedFECAV[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(unexpectedSizeAV == 0){
 			unexpectedSizeAV = 1;
 			unexpectedIndexAV = 0;		
@@ -1809,6 +1874,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			unexpectedCharsLineNumberAV = new int[unexpectedSizeAV];
 			unexpectedCharsColumnNumberAV = new int[unexpectedSizeAV];
 			unexpectedContextDefinitionAV = new AAttribute[unexpectedSizeAV];
+            
+            unexpectedFECAV = new int[unexpectedSizeAV];
 		}else if(++unexpectedIndexAV == unexpectedSizeAV){
 			String[] increasedCSI = new String[++unexpectedSizeAV];
 			System.arraycopy(unexpectedCharsSystemIdAV, 0, increasedCSI, 0, unexpectedIndexAV);
@@ -1824,25 +1891,27 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			AAttribute[] increasedCD = new AAttribute[unexpectedSizeAV];
 			System.arraycopy(unexpectedContextDefinitionAV, 0, increasedCD, 0, unexpectedIndexAV);
-			unexpectedContextDefinitionAV = increasedCD;			
+			unexpectedContextDefinitionAV = increasedCD;
+
+            int[] increasedFEC = new int[unexpectedSizeAV];
+			System.arraycopy(unexpectedFECAV, 0, increasedFEC, 0, unexpectedIndexAV);
+			unexpectedFECAV = increasedFEC;			
 		}
+		messageTotalCount++;
 		unexpectedCharsSystemIdAV[unexpectedIndexAV] = charsSystemId;
 		unexpectedCharsLineNumberAV[unexpectedIndexAV] = charsLineNumber;
 		unexpectedCharsColumnNumberAV[unexpectedIndexAV] = columnNumber;
 		unexpectedContextDefinitionAV[unexpectedIndexAV] = attributeDefinition;
+        
+        unexpectedFECAV[unexpectedIndexAV] = functionalEquivalenceCode;
 	}
-	public void clearUnexpectedAttributeValue(){
-        messageTotalCount -= unexpectedSizeAV;
-        unexpectedSizeAV = 0;
-        unexpectedIndexAV = -1;		
-        unexpectedCharsSystemIdAV = null;
-        unexpectedCharsLineNumberAV = null;
-        unexpectedCharsColumnNumberAV = null;
-        unexpectedContextDefinitionAV = null;
-    }
+        
     
-	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        messageTotalCount++;
+	public void unresolvedCharacterContent(int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	    for(int i = 0; i <= unresolvedIndexCC; i++){
+	        if(unresolvedFECCC[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(unresolvedSizeCC == 0){
 			unresolvedSizeCC = 1;
 			unresolvedIndexCC = 0;		
@@ -1850,6 +1919,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			unresolvedCharsLineNumberEECC = new int[unresolvedSizeCC];
 			unresolvedCharsColumnNumberEECC = new int[unresolvedSizeCC];
 			unresolvedPossibleDefinitionsCC = new CharsActiveTypeItem[unresolvedSizeCC][];
+            
+            unresolvedFECCC = new int[unresolvedSizeCC];
 		}else if(++unresolvedIndexCC == unresolvedSizeCC){
 			String[] increasedCSI = new String[++unresolvedSizeCC];
 			System.arraycopy(unresolvedCharsSystemIdEECC, 0, increasedCSI, 0, unresolvedIndexCC);
@@ -1865,26 +1936,28 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[unresolvedSizeCC][];
 			System.arraycopy(unresolvedPossibleDefinitionsCC, 0, increasedPD, 0, unresolvedIndexCC);
-			unresolvedPossibleDefinitionsCC = increasedPD;			
+			unresolvedPossibleDefinitionsCC = increasedPD;
+
+            int[] increasedFEC = new int[unresolvedSizeCC];
+			System.arraycopy(unresolvedFECCC, 0, increasedFEC, 0, unresolvedIndexCC);
+			unresolvedFECCC = increasedFEC;			
 		}
+		messageTotalCount++;
 		unresolvedCharsSystemIdEECC[unresolvedIndexCC] = systemId;
 		unresolvedCharsLineNumberEECC[unresolvedIndexCC] = lineNumber;
 		unresolvedCharsColumnNumberEECC[unresolvedIndexCC] = columnNumber;
 		unresolvedPossibleDefinitionsCC[unresolvedIndexCC] = possibleDefinitions;
+        
+        unresolvedFECCC[unresolvedIndexCC] = functionalEquivalenceCode;
 	}
-    public void clearUnresolvedCharacterContent(){
-        messageTotalCount -= unresolvedSizeCC;
-        unresolvedSizeCC = 0;
-        unresolvedIndexCC = -1;		
-        unresolvedCharsSystemIdEECC = null;
-        unresolvedCharsLineNumberEECC = null;
-        unresolvedCharsColumnNumberEECC = null;
-        unresolvedPossibleDefinitionsCC = null;
-    }
+	
     
 	// {24}
-	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        messageTotalCount++;
+	public void unresolvedAttributeValue(int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	    for(int i = 0; i <= unresolvedIndexAV; i++){
+	        if(unresolvedFECAV[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(unresolvedSizeAV == 0){
 			unresolvedSizeAV = 1;
 			unresolvedIndexAV = 0;
@@ -1893,6 +1966,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			unresolvedCharsLineNumberEEAV = new int[unresolvedSizeAV];
 			unresolvedCharsColumnNumberEEAV = new int[unresolvedSizeAV];
 			unresolvedPossibleDefinitionsAV = new CharsActiveTypeItem[unresolvedSizeAV][];
+            
+            unresolvedFECAV = new int[unresolvedSizeAV];
 		}else if(++unresolvedIndexAV == unresolvedSizeAV){
 			String[] increasedAQ = new String[++unresolvedSizeAV];
 			System.arraycopy(unresolvedAttributeQNameEEAV, 0, increasedAQ, 0, unresolvedIndexAV);
@@ -1912,29 +1987,29 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[unresolvedSizeAV][];
 			System.arraycopy(unresolvedPossibleDefinitionsAV, 0, increasedPD, 0, unresolvedIndexAV);
-			unresolvedPossibleDefinitionsAV = increasedPD;			
+			unresolvedPossibleDefinitionsAV = increasedPD;
+
+            int[] increasedFEC = new int[unresolvedSizeAV];
+			System.arraycopy(unresolvedFECAV, 0, increasedFEC, 0, unresolvedIndexAV);
+			unresolvedFECAV = increasedFEC;			
 		}
+		messageTotalCount++;
 		unresolvedAttributeQNameEEAV[unresolvedIndexAV] = attributeQName;
 		unresolvedCharsSystemIdEEAV[unresolvedIndexAV] = systemId;
 		unresolvedCharsLineNumberEEAV[unresolvedIndexAV] = lineNumber;
 		unresolvedCharsColumnNumberEEAV[unresolvedIndexAV] = columnNumber;
 		unresolvedPossibleDefinitionsAV[unresolvedIndexAV] = possibleDefinitions;
+        
+        unresolvedFECAV[unresolvedIndexAV] = functionalEquivalenceCode;
 	}
-	public void clearUnresolvedAttributeValue(){
-        messageTotalCount -= unresolvedSizeAV;
-        unresolvedSizeAV = 0;
-        unresolvedIndexAV = -1;
-        unresolvedAttributeQNameEEAV = null;
-        unresolvedCharsSystemIdEEAV = null;
-        unresolvedCharsLineNumberEEAV = null;
-        unresolvedCharsColumnNumberEEAV = null;
-        unresolvedPossibleDefinitionsAV = null;
-    }
-    
+        
     
     // {25}
-	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        messageTotalCount++;
+	public void listTokenDatatypeError(int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	    for(int i = 0; i <= datatypeIndexLP; i++){
+	        if(datatypeFECLP[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(datatypeSizeLP == 0){
 			datatypeSizeLP = 1;
 			datatypeIndexLP = 0;
@@ -1944,6 +2019,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			datatypeCharsColumnNumberLP = new int[datatypeSizeLP];
 			datatypeCharsDefinitionLP = new DatatypedActiveTypeItem[datatypeSizeLP];
 			datatypeErrorMessageLP = new String[datatypeSizeLP];
+            
+            datatypeFECLP = new int[datatypeSizeLP];
 		}else if(++datatypeIndexLP == datatypeSizeLP){
 			String[] increasedT = new String[++datatypeSizeLP];
 			System.arraycopy(datatypeTokenLP, 0, increasedT, 0, datatypeIndexLP);
@@ -1968,29 +2045,28 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			String[] increasedEM = new String[datatypeSizeLP];
 			System.arraycopy(datatypeErrorMessageLP, 0, increasedEM, 0, datatypeIndexLP);
 			datatypeErrorMessageLP = increasedEM;
+            
+            int[] increasedFEC = new int[datatypeSizeLP];
+			System.arraycopy(datatypeFECLP, 0, increasedFEC, 0, datatypeIndexLP);
+			datatypeFECLP = increasedFEC;
 		}
+		messageTotalCount++;
 		datatypeTokenLP[datatypeIndexLP] = token;
 		datatypeCharsSystemIdLP[datatypeIndexLP] = charsSystemId;
 		datatypeCharsLineNumberLP[datatypeIndexLP] = charsLineNumber;
 		datatypeCharsColumnNumberLP[datatypeIndexLP] = columnNumber;
 		datatypeCharsDefinitionLP[datatypeIndexLP] = charsDefinition;
 		datatypeErrorMessageLP[datatypeIndexLP] = datatypeErrorMessage;
-	}
-    public void clearListTokenDatatypeError(){
-        messageTotalCount -= datatypeSizeLP;
-        datatypeSizeLP = 0;
-        datatypeIndexLP = -1;
-        datatypeTokenLP = null;
-        datatypeCharsSystemIdLP = null;
-        datatypeCharsLineNumberLP = null;
-        datatypeCharsColumnNumberLP = null;
-        datatypeCharsDefinitionLP = null;
-        datatypeErrorMessageLP = null;
-    }
-    
         
-	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        messageTotalCount++;
+        datatypeFECLP[datatypeIndexLP] = functionalEquivalenceCode;
+	}
+        
+        
+	public void listTokenValueError(int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	    for(int i = 0; i <= valueIndexLP; i++){
+	        if(valueFECLP[i] == functionalEquivalenceCode) return;
+	    }
+	            
 		if(valueSizeLP == 0){
 			valueSizeLP = 1;
 			valueIndexLP = 0;
@@ -1999,6 +2075,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			valueCharsLineNumberLP = new int[valueSizeLP];
 			valueCharsColumnNumberLP = new int[valueSizeLP];
 			valueCharsDefinitionLP = new AValue[valueSizeLP];
+            
+            valueFECLP = new int[valueSizeLP];
 		}else if(++valueIndexLP == valueSizeLP){
 			String[] increasedT = new String[++valueSizeLP];
 			System.arraycopy(valueTokenLP, 0, increasedT, 0, valueIndexLP);
@@ -2018,27 +2096,28 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			AValue[] increasedCD = new AValue[valueSizeLP];
 			System.arraycopy(valueCharsDefinitionLP, 0, increasedCD, 0, valueIndexLP);
-			valueCharsDefinitionLP = increasedCD;			
+			valueCharsDefinitionLP = increasedCD;	
+            
+            int[] increasedFEC = new int[valueSizeLP];
+			System.arraycopy(valueFECLP, 0, increasedFEC, 0, valueIndexLP);
+			valueFECLP = increasedFEC;
 		}
+		messageTotalCount++;
 		valueTokenLP[valueIndexLP] = token;
 		valueCharsSystemIdLP[valueIndexLP] = charsSystemId;
 		valueCharsLineNumberLP[valueIndexLP] = charsLineNumber;
 		valueCharsColumnNumberLP[valueIndexLP] = columnNumber;
 		valueCharsDefinitionLP[valueIndexLP] = charsDefinition;
+        
+        valueFECLP[valueIndexLP] = functionalEquivalenceCode;
 	}
-    public void clearListTokenValueError(){
-        messageTotalCount -= valueSizeLP;
-        valueSizeLP = 0;
-        valueIndexLP = -1;
-        valueTokenLP = null;
-        valueCharsSystemIdLP = null;
-        valueCharsLineNumberLP = null;
-        valueCharsColumnNumberLP = null;
-        valueCharsDefinitionLP = null;
-    }
+        
     
-	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        messageTotalCount++;
+	public void listTokenExceptedError(int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	    for(int i = 0; i <= exceptIndexLP; i++){
+	        if(exceptFECLP[i] == functionalEquivalenceCode) return;
+	    }
+	    
 		if(exceptSizeLP == 0){
 			exceptSizeLP = 1;
 			exceptIndexLP = 0;
@@ -2047,6 +2126,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			exceptCharsLineNumberLP = new int[exceptSizeLP];
 			exceptCharsColumnNumberLP = new int[exceptSizeLP];
 			exceptCharsDefinitionLP = new AData[exceptSizeLP];
+            
+            exceptFECLP = new int[exceptSizeLP];
 		}else if(++exceptIndexLP == exceptSizeLP){
 			String[] increasedT = new String[++exceptSizeLP];
 			System.arraycopy(exceptTokenLP, 0, increasedT, 0, exceptIndexLP);
@@ -2066,27 +2147,28 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			AData[] increasedCD = new AData[exceptSizeLP];
 			System.arraycopy(exceptCharsDefinitionLP, 0, increasedCD, 0, exceptIndexLP);
-			exceptCharsDefinitionLP = increasedCD;			
+			exceptCharsDefinitionLP = increasedCD;	
+            
+            int[] increasedFEC = new int[exceptSizeLP];
+			System.arraycopy(exceptFECLP, 0, increasedFEC, 0, exceptIndexLP);
+			exceptFECLP = increasedFEC;
 		}
+		messageTotalCount++;
 		exceptTokenLP[exceptIndexLP] = token;
 		exceptCharsSystemIdLP[exceptIndexLP] = charsSystemId;
 		exceptCharsLineNumberLP[exceptIndexLP] = charsLineNumber;
 		exceptCharsColumnNumberLP[exceptIndexLP] = columnNumber;
 		exceptCharsDefinitionLP[exceptIndexLP] = charsDefinition;
+        
+        exceptFECLP[exceptIndexLP] = functionalEquivalenceCode;
 	}
-    public void clearListTokenExceptedError(){
-        messageTotalCount -= exceptSizeLP;
-        exceptSizeLP = 0;
-        exceptIndexLP = -1;
-        exceptTokenLP = null;
-        exceptCharsSystemIdLP = null;
-        exceptCharsLineNumberLP = null;
-        exceptCharsColumnNumberLP = null;
-        exceptCharsDefinitionLP = null;
-    }
-    	    
-    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        messageTotalCount++;
+	
+    
+    public void unresolvedListTokenInContextError(int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        for(int i = 0; i <= unresolvedIndexLPICE; i++){
+	        if(unresolvedFECLPICE[i] == functionalEquivalenceCode) return;
+	    }
+	            
         if(unresolvedSizeLPICE == 0){
 			unresolvedSizeLPICE = 1;
 			unresolvedIndexLPICE = 0;
@@ -2095,6 +2177,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			unresolvedCharsLineNumberEELPICE = new int[unresolvedSizeLPICE];
 			unresolvedCharsColumnNumberEELPICE = new int[unresolvedSizeLPICE];
 			unresolvedPossibleDefinitionsLPICE = new CharsActiveTypeItem[unresolvedSizeLPICE][];
+            
+            unresolvedFECLPICE = new int[unresolvedSizeLPICE];
 		}else if(++unresolvedIndexLPICE == unresolvedSizeLPICE){
 			String[] increasedT = new String[++unresolvedSizeLPICE];
 			System.arraycopy(unresolvedTokenLPICE, 0, increasedT, 0, unresolvedIndexLPICE);
@@ -2114,27 +2198,28 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[unresolvedSizeLPICE][];
 			System.arraycopy(unresolvedPossibleDefinitionsLPICE, 0, increasedPD, 0, unresolvedIndexLPICE);
-			unresolvedPossibleDefinitionsLPICE = increasedPD;			
+			unresolvedPossibleDefinitionsLPICE = increasedPD;	
+            
+            int[] increasedFECLPICEN = new int[unresolvedSizeLPICE];
+			System.arraycopy(unresolvedFECLPICE, 0, increasedFECLPICEN, 0, unresolvedIndexLPICE);
+			unresolvedFECLPICE = increasedFECLPICEN;
 		}
+		messageTotalCount++;
 		unresolvedTokenLPICE[unresolvedIndexLPICE] = token;
 		unresolvedCharsSystemIdEELPICE[unresolvedIndexLPICE] = systemId;
 		unresolvedCharsLineNumberEELPICE[unresolvedIndexLPICE] = lineNumber;
 		unresolvedCharsColumnNumberEELPICE[unresolvedIndexLPICE] = columnNumber;
 		unresolvedPossibleDefinitionsLPICE[unresolvedIndexLPICE] = possibleDefinitions;
-    }
-    public void clearUnresolvedListTokenInContextError(){
-        messageTotalCount -= unresolvedSizeLPICE;
-        unresolvedSizeLPICE = 0;
-        unresolvedIndexLPICE = -1;
-        unresolvedTokenLPICE = null;
-        unresolvedCharsSystemIdEELPICE = null;
-        unresolvedCharsLineNumberEELPICE = null;
-        unresolvedCharsColumnNumberEELPICE = null;
-        unresolvedPossibleDefinitionsLPICE = null;
+        
+        unresolvedFECLPICE[unresolvedIndexLPICE] = functionalEquivalenceCode;
     }
     
-    public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        messageTotalCount++;
+    
+    public void ambiguousListTokenInContextWarning(int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+        for(int i = 0; i <= ambiguousIndexLPICW; i++){
+	        if(ambiguousFECLPICW[i] == functionalEquivalenceCode) return;
+	    }
+	            
         if(ambiguousSizeLPICW == 0){
 			ambiguousSizeLPICW = 1;
 			ambiguousIndexLPICW = 0;
@@ -2143,6 +2228,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			ambiguousCharsLineNumberEELPICW = new int[ambiguousSizeLPICW];
 			ambiguousCharsColumnNumberEELPICW = new int[ambiguousSizeLPICW];
 			ambiguousPossibleDefinitionsLPICW = new CharsActiveTypeItem[ambiguousSizeLPICW][];
+            
+            ambiguousFECLPICW = new int[ambiguousSizeLPICW];
 		}else if(++ambiguousIndexLPICW == ambiguousSizeLPICW){
 			String[] increasedT = new String[++ambiguousSizeLPICW];
 			System.arraycopy(ambiguousTokenLPICW, 0, increasedT, 0, ambiguousIndexLPICW);
@@ -2162,33 +2249,37 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			CharsActiveTypeItem[][] increasedPD = new CharsActiveTypeItem[ambiguousSizeLPICW][];
 			System.arraycopy(ambiguousPossibleDefinitionsLPICW, 0, increasedPD, 0, ambiguousIndexLPICW);
-			ambiguousPossibleDefinitionsLPICW = increasedPD;			
+			ambiguousPossibleDefinitionsLPICW = increasedPD;
+
+            int[] increasedFEC = new int[ambiguousSizeLPICW];
+			System.arraycopy(ambiguousFECLPICW, 0, increasedFEC, 0, ambiguousIndexLPICW);
+			ambiguousFECLPICW = increasedFEC;			
 		}
+		messageTotalCount++;
 		ambiguousTokenLPICW[ambiguousIndexLPICW] = token;
 		ambiguousCharsSystemIdEELPICW[ambiguousIndexLPICW] = systemId;
 		ambiguousCharsLineNumberEELPICW[ambiguousIndexLPICW] = lineNumber;
 		ambiguousCharsColumnNumberEELPICW[ambiguousIndexLPICW] = columnNumber;
 		ambiguousPossibleDefinitionsLPICW[ambiguousIndexLPICW] = possibleDefinitions;
-    }    
-    public void clearAmbiguousListTokenInContextWarning(){
-        messageTotalCount -= ambiguousSizeLPICW;
-        ambiguousSizeLPICW = 0;
-        ambiguousIndexLPICW = -1;
-        ambiguousTokenLPICW = null;
-        ambiguousCharsSystemIdEELPICW = null;
-        ambiguousCharsLineNumberEELPICW = null;
-        ambiguousCharsColumnNumberEELPICW = null;
-        ambiguousPossibleDefinitionsLPICW = null;
-    }
+        
+        ambiguousFECLPICW[ambiguousIndexLPICW] = functionalEquivalenceCode;
+    }   
     
-	public void missingCompositorContent(Rule context, 
+    
+	public void missingCompositorContent(int functionalEquivalenceCode, 
+                                Rule context, 
 								String startSystemId, 
 								int startLineNumber, 
 								int startColumnNumber,								 
 								APattern definition, 
 								int expected, 
 								int found){
-        messageTotalCount++;
+	    for(int i = 0; i <= missingCompositorContentIndex; i++){
+	        if(missingCompositorContentFEC[i] == functionalEquivalenceCode){
+	            if(missingCompositorContentDefinition[i] == definition )return;
+	        }   
+	    }
+	            
 		if(missingCompositorContentSize == 0){
 			missingCompositorContentSize = 1;
 			missingCompositorContentIndex = 0;
@@ -2199,6 +2290,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			missingCompositorContentDefinition = new APattern[missingCompositorContentSize];
 			missingCompositorContentExpected = new int[missingCompositorContentSize];
 			missingCompositorContentFound = new int[missingCompositorContentSize];			
+            
+            missingCompositorContentFEC = new int[missingCompositorContentSize];
 		}else if(++missingCompositorContentIndex == missingCompositorContentSize){
 			APattern[] increasedEC = new APattern[++missingCompositorContentSize];
 			System.arraycopy(missingCompositorContentContext, 0, increasedEC, 0, missingCompositorContentIndex);
@@ -2228,7 +2321,11 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(missingCompositorContentFound, 0, increasedF, 0, missingCompositorContentIndex);
 			missingCompositorContentFound = increasedF;			
 		
+            int[] increasedFEC = new int[missingCompositorContentSize];
+			System.arraycopy(missingCompositorContentFEC, 0, increasedFEC, 0, missingCompositorContentIndex);
+			missingCompositorContentFEC = increasedFEC;
 		}
+		messageTotalCount++;
 		missingCompositorContentContext[missingCompositorContentIndex] = context;
 		missingCompositorContentStartSystemId[missingCompositorContentIndex] = startSystemId;
 		missingCompositorContentStartLineNumber[missingCompositorContentIndex] = startLineNumber;
@@ -2236,226 +2333,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		missingCompositorContentDefinition[missingCompositorContentIndex] = definition;
 		missingCompositorContentExpected[missingCompositorContentIndex] = expected;
 		missingCompositorContentFound[missingCompositorContentIndex] = found;
+        
+        missingCompositorContentFEC[missingCompositorContentIndex] = functionalEquivalenceCode;
 				
 	}	
-    
-    
-	public void clearMissingCompositorContent(){
-        messageTotalCount -= missingCompositorContentSize;
-        missingCompositorContentSize = 0;
-        missingCompositorContentIndex = -1;
-        missingCompositorContentContext = null;
-        missingCompositorContentStartSystemId = null;			
-        missingCompositorContentStartLineNumber = null;
-        missingCompositorContentStartColumnNumber = null;
-        missingCompositorContentDefinition = null;
-        missingCompositorContentExpected = null;
-        missingCompositorContentFound = null;
-    }
-    
-    
-    public  void conflict(int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter[] candidateMessages){
-        messageTotalCount++;
-        this.conflictResolutionId = conflictResolutionId;
-        this.candidatesCount = candidatesCount;
-        this.commonMessages = commonMessages;
-        this.disqualified = disqualified;
-        this.candidateMessages = candidateMessages;
-    }
-    
-    public void clearConflict(){
-        messageTotalCount--;
-        conflictResolutionId = RESOLVED;
-        candidatesCount = -1;
-        commonMessages = null;
-        disqualified = null;
-        candidateMessages = null;
-    }
-	
-    int getMessageTotalCount(){
-        return messageTotalCount;
-    }    
-    
-    void clearLastMessage(int errorId){		
-        if(errorId == UNKNOWN_ELEMENT){
-            if(unknownElementIndex < 0) throw new IllegalArgumentException();
-            unknownElementIndex--;
-            messageTotalCount--;            
-        }else if(errorId == UNEXPECTED_ELEMENT){        
-            if(unexpectedElementIndex < 0) throw new IllegalArgumentException();
-            unexpectedElementIndex--;
-            messageTotalCount--;
-        }else if(errorId == UNEXPECTED_AMBIGUOUS_ELEMENT){
-            if(unexpectedAmbiguousElementIndex < 0) throw new IllegalArgumentException();
-            unexpectedAmbiguousElementIndex--;
-            messageTotalCount--;
-        }else if(errorId == UNKNOWN_ATTRIBUTE){
-            if(unknownAttributeIndex < 0) throw new IllegalArgumentException();
-            unknownAttributeIndex--;
-            messageTotalCount--;
-        }else if(errorId == UNEXPECTED_ATTRIBUTE){
-            if(unexpectedAttributeIndex < 0) throw new IllegalArgumentException();
-            unexpectedAttributeIndex--;
-            messageTotalCount--;
-        }else if(errorId == UNEXPECTED_AMBIGUOUS_ATTRIBUTE){
-            if(unexpectedAmbiguousAttributeIndex < 0) throw new IllegalArgumentException();
-            unexpectedAmbiguousAttributeIndex--;
-            messageTotalCount--;
-        }else if(errorId == MISPLACED_ELEMENT){
-            if(misplacedIndex < 0) throw new IllegalArgumentException();
-            misplacedIndex--;
-            messageTotalCount--;
-        }else if(errorId == EXCESSIVE_CONTENT){
-            if(excessiveIndex < 0) throw new IllegalArgumentException();
-            excessiveIndex--;
-            messageTotalCount--;
-        }else if(errorId == UNRESOLVED_AMBIGUOUS_ELEMENT_CONTENT_ERROR){
-            if(unresolvedAmbiguousElementIndexEE < 0) throw new IllegalArgumentException();
-            unresolvedAmbiguousElementIndexEE--;
-            messageTotalCount--;
-        }else if(errorId == UNRESOLVED_UNRESOLVED_ELEMENT_CONTENT_ERROR){
-            if(unresolvedUnresolvedElementIndexEE < 0) throw new IllegalArgumentException();
-            unresolvedUnresolvedElementIndexEE--;
-            messageTotalCount--;
-        }else if(errorId == UNRESOLVED_ATTRIBUTE_CONTENT_ERROR){
-            if(unresolvedAttributeIndexEE < 0) throw new IllegalArgumentException();
-            unresolvedAttributeIndexEE--;
-            messageTotalCount--;
-        }else if(errorId == MISSING_CONTENT){
-            if(missingIndex < 0) throw new IllegalArgumentException();
-            missingIndex--;	  
-            messageTotalCount--;
-        }else if(errorId == ILLEGAL_CONTENT){
-            if(illegalIndex < 0) throw new IllegalArgumentException();
-            illegalIndex--;
-            messageTotalCount--;
-        }else if(errorId == UNDETERMINED_BY_CONTENT){
-            if(undeterminedQName == null) throw new IllegalArgumentException();
-            undeterminedQName = null;
-            undeterminedCandidateMessages = null;
-            messageTotalCount--;
-        }else if(errorId == CHARACTER_CONTENT_DATATYPE_ERROR){
-            if(datatypeIndexCC < 0) throw new IllegalArgumentException();
-            datatypeIndexCC--;
-            messageTotalCount--;
-        }else if(errorId == ATTRIBUTE_VALUE_DATATYPE_ERROR){
-            if(datatypeIndexAV < 0) throw new IllegalArgumentException();
-            datatypeIndexAV--;
-            messageTotalCount--;
-        }else if(errorId == CHARACTER_CONTENT_VALUE_ERROR){
-            if(valueIndexCC < 0) throw new IllegalArgumentException();
-            valueIndexCC--;
-            messageTotalCount--;
-        }else if(errorId == ATTRIBUTE_VALUE_VALUE_ERROR){
-            if(valueIndexAV < 0) throw new IllegalArgumentException();
-            valueIndexAV--;
-            messageTotalCount--;
-        }else if(errorId == CHARACTER_CONTENT_EXCEPTED_ERROR){
-            if(exceptIndexCC < 0) throw new IllegalArgumentException();
-            exceptIndexCC--;
-            messageTotalCount--;
-        }else if(errorId == ATTRIBUTE_VALUE_EXCEPTED_ERROR){
-            if(exceptIndexAV < 0) throw new IllegalArgumentException();
-            exceptIndexAV--;
-            messageTotalCount--;
-        }else if(errorId == UNEXPECTED_CHARACTER_CONTENT){
-            if(unexpectedIndexCC < 0) throw new IllegalArgumentException();
-            unexpectedIndexCC--;
-            messageTotalCount--;
-        }else if(errorId == UNEXPECTED_ATTRIBUTE_VALUE){
-            if(unexpectedIndexAV < 0) throw new IllegalArgumentException();
-            unexpectedIndexAV--;
-            messageTotalCount--;
-        }else if(errorId == UNRESOLVED_CHARACTER_CONTENT){
-            if(unresolvedIndexCC < 0) throw new IllegalArgumentException();
-            unresolvedIndexCC--;
-            messageTotalCount--;
-        }else if(errorId == UNRESOLVED_ATTRIBUTE_VALUE){
-            if(unresolvedIndexAV < 0) throw new IllegalArgumentException();
-            unresolvedIndexAV--;
-            messageTotalCount--;
-        }else if(errorId == LIST_TOKEN_DATATYPE_ERROR){
-            if(datatypeIndexLP < 0) throw new IllegalArgumentException();
-            datatypeIndexLP--;
-            messageTotalCount--;
-        }else if(errorId == LIST_TOKEN_VALUE_ERROR){
-            if(valueIndexLP < 0) throw new IllegalArgumentException();
-            valueIndexLP--;
-            messageTotalCount--;
-        }else if(errorId == LIST_TOKEN_EXCEPTED_ERROR){
-            if(exceptIndexLP < 0) throw new IllegalArgumentException();
-            exceptIndexLP--;
-            messageTotalCount--;
-        }else if(errorId == UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR){
-            if(unresolvedIndexLPICE < 0) throw new IllegalArgumentException();
-            unresolvedIndexLPICE--;
-            messageTotalCount--;
-        }else if(errorId == MISSING_COMPOSITOR_CONTENT){
-            if(missingCompositorContentIndex < 0) throw new IllegalArgumentException();
-            missingCompositorContentIndex--;
-            messageTotalCount--;
-        }else if(errorId == CONFLICT){
-            if(disqualified == null) throw new IllegalArgumentException();
-            clearConflict();
-        }else{
-            throw new IllegalArgumentException();
-        }
-    }
-    
-    
-    public void clear(){
-        // TODO check sizes to only clear when full
-        // and refactor the creation of new instances in the ErrorHandlers
-        clearUnknownElement();
-		clearUnexpectedElement();
-		clearUnexpectedAmbiguousElement();
-		clearUnknownAttribute();
-        clearUnexpectedAttribute();
-        clearUnexpectedAmbiguousAttribute();        
-        clearMisplacedElement();
-        clearExcessiveContent();
-        clearUnresolvedAmbiguousElementContentError();
-        clearUnresolvedUnresolvedElementContentError();
-        clearUnresolvedAttributeContentError();
-        clearAmbiguousUnresolvedElementContentWarning();
-        clearAmbiguousAmbiguousElementContentWarning();
-        clearAmbiguousAttributeContentWarning();
-        clearAmbiguousCharacterContentWarning();
-        clearAmbiguousAttributeValueWarning();
-        clearMissingContent();
-        clearIllegalContent();
-        clearUndeterminedByContent();
-        clearCharacterContentDatatypeError();
-        clearAttributeValueDatatypeError();
-        clearCharacterContentValueError();
-        clearAttributeValueValueError();
-        clearCharacterContentExceptedError();
-        clearAttributeValueExceptedError();
-        clearUnexpectedCharacterContent();
-        clearUnexpectedAttributeValue();
-        clearUnresolvedCharacterContent();
-        clearUnresolvedAttributeValue();
-        clearListTokenDatatypeError();
-        clearListTokenValueError();
-        clearListTokenExceptedError();
-        clearUnresolvedListTokenInContextError();
-        clearAmbiguousListTokenInContextWarning();
-        clearMissingCompositorContent();
-        clearConflict();
-        
-        messageTotalCount = 0;
-        
-        parent = null;
-    
-        qName = null;
-        definition = null;
-        systemId = null;
-        lineNumber = -1;
-        columnNumber = -1;
-        conflictResolutionId = RESOLVED;
-    }
-    
-    public void internalConflict(ConflictMessageReporter conflictMessageReporter){
-	    throw new IllegalStateException();
-    }   
 }

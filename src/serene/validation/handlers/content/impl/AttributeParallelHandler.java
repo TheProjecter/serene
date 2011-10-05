@@ -179,6 +179,9 @@ class AttributeParallelHandler extends ValidatingAEH{
             uniqueSample.handleAttribute(value);  
             reset();
         }
+        public String toString(){
+            return contextToString()+" COMMON";
+        }
     }
     class Conflict extends State{
         void add(ComparableAEH individualHandler){
@@ -190,5 +193,25 @@ class AttributeParallelHandler extends ValidatingAEH{
                 individualHandler.handleAttribute(value);
             }
         }
+        
+        public String toString(){
+            return contextToString()+" CONFLICT";
+        }
     }
+    
+    public String toString(){
+		if( state != null)	return state.toString();
+		else return contextToString();
+	}
+	
+	String contextToString(){
+		String s = "[";
+		for(int i = 0; i < individualHandlers.size(); i++){
+			if(candidatesConflictHandler.isDisqualified(i)) s+= "disqualified ";
+			s+=(individualHandlers.get(i).toString()+", ");
+		}
+		if(individualHandlers.size() > 0)s = s.substring(0, s.length()-2)+"]";
+		else s = s+"]";
+		return "AttributeParallelHandler individualHandlers"+s+" "+candidatesConflictHandler.toString()+" state";
+	}
 }
