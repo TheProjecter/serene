@@ -225,24 +225,7 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 	public ConcurrentStackHandler getStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher){		
 		throw new UnsupportedOperationException();
 	}	
-	/*public ConcurrentStackHandler getStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
-		throw new UnsupportedOperationException();
-	}
-	public ConcurrentStackHandler getStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
-		throw new UnsupportedOperationException();
-	}
-	public StackHandler getStackHandler(StackHandler originalHandler, int candidatesCount, ErrorCatcher errorCatcher){
-		throw new UnsupportedOperationException();
-	}
-	public StackHandler getStackHandler(StackHandler originalHandler, int candidatesCount, ExternalConflictHandler conflictHandler, ErrorCatcher errorCatcher){
-		throw new UnsupportedOperationException();
-	}
-	public StackHandler getStackHandler(StackHandler originalHandler, int candidatesCount, ExternalConflictHandler conflictHandler, ErrorCatcher errorCatcher, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
-		throw new UnsupportedOperationException();
-	}
-	public StackHandler getStackHandler(StackHandler originalHandler, int candidatesCount, ExternalConflictHandler conflictHandler, ErrorCatcher errorCatcher, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
-		throw new UnsupportedOperationException();
-	}*/
+	
 	//--------------------------------------------------------------------------
 	
 	//DataActiveType

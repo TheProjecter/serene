@@ -40,6 +40,8 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
+import serene.validation.handlers.error.util.MissingContentAnalyser;
+
 import serene.util.IntList;
 
 import sereneWrite.MessageWriter;
@@ -58,6 +60,10 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     */
     int[][] errorCodes;
     BitSet[][]errorCandidates;
+        
+    APattern[] missingContentDefinitions;
+    MissingContentAnalyser missingContentAnalyser;
+    
     /**
     * Keeps track of all the error messages that have actually been recorded in 
     * the message handler for the reported error. It is necessary because it is 
@@ -69,6 +75,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     */
     int[][] recordedErrorMessages;
     
+    BitSet cumulatorDummy;
     
     int[][] warningCodes;
     // TODO
@@ -80,7 +87,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     ExternalConflictHandler conflictHandler;
     List<AElement> candidates;
     int candidatesCount;    
-    ArrayList<ConflictMessageHandler> candidateMessageHandlers;
+    ConflictMessageHandler[] candidateMessageHandlers;
     
     ConflictMessageHandler localMessageHandler;    
     MessageReporter[] candidateDelayedMessages;
@@ -101,16 +108,17 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         warningCodes = new int[WARNING_COUNT][];
         warningCandidates = new BitSet[WARNING_COUNT][];
         recordedWarningMessages = new int[WARNING_COUNT][];
-        
-        candidateMessageHandlers = new ArrayList<ConflictMessageHandler>();        
+
+        cumulatorDummy = new BitSet();        
 	}	       
     
     public void init(){
         localMessageHandler = new ConflictMessageHandler(debugWriter);
     }
     
-    void addCandidateMessageHandler(ConflictMessageHandler messageHandler){
-        candidateMessageHandlers.add(messageHandler);        
+    void addCandidateMessageHandler(int candidateIndex, ConflictMessageHandler messageHandler){
+        if(candidateMessageHandlers == null) candidateMessageHandlers = new ConflictMessageHandler[candidatesCount];
+        candidateMessageHandlers[candidateIndex] = messageHandler;        
     }
 	
     public void setCandidates(List<AElement> candidates){
@@ -119,26 +127,81 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         conflictHandler.init(candidatesCount);
     }
     
-    public void endValidationStage(){        
+    public void endValidationStage(){     
+        // There are three situations that need to be detected:      
+        //      => common error:         an errorId/FEC combination is present to all the candidates
+        //      => disqualifying error:  an errorId/FEC combination is present to some of the candidates, but not the others
+        //      => partially common error: for MISSING_CONTENT error present to all candidates with several different FECs 
+        //          where there is at least one candidate whose missingDefinition constitutes a subset of the other candidates' definitions   
+        //          
         for(int i = 0; i < ERROR_COUNT; i++){
-            if(errorCandidates[i] !=  null){
-                for(int j = 0; j < errorCandidates[i].length; j++){
-                    if(errorCandidates[i][j].cardinality() == candidatesCount){
-                        for(ConflictMessageHandler candidate: candidateMessageHandlers){
-                            candidate.clearErrorMessage(i, errorCodes[i][j]);
-                        }                 
-                    }else{
-                        conflictHandler.disqualify(errorCandidates[i][j]);
-                        if(recordedErrorMessages[i] != null){
-                            for(int k = 0; k < recordedErrorMessages[i].length; k++){
-                                if(recordedErrorMessages[i][k] == errorCodes[i][j]){
-                                    localMessageHandler.clearErrorMessage(i, errorCodes[i][j]);
-                                    break;
+            if(errorCandidates[i] !=  null){                
+                if(i == MISSING_CONTENT 
+                        && errorCandidates[i].length > 1 
+                        && allCandidatesPresentError(i)){
+                   if(missingContentAnalyser == null) missingContentAnalyser = new MissingContentAnalyser(debugWriter);
+                   IntList partiallyCommon = missingContentAnalyser.getPartiallyCommon(missingContentDefinitions);
+                   if(partiallyCommon.isEmpty()){
+                       for(int j = 0; j < errorCandidates[i].length; j++){
+                           conflictHandler.disqualify(errorCandidates[i][j]);
+                            if(recordedErrorMessages[i] != null){
+                                for(int k = 0; k < recordedErrorMessages[i].length; k++){
+                                    if(recordedErrorMessages[i][k] == errorCodes[i][j]){
+                                        localMessageHandler.clearErrorMessage(i, errorCodes[i][j]);
+                                        break;
+                                    }
                                 }
                             }
-                        }
-                            
-                    }                    
+                       }
+                   }else if(partiallyCommon.size() == candidatesCount){
+                       for(int j = 0; j < errorCandidates[i].length; j++){
+                           for(int k = 0; k < errorCandidates[i][j].length(); k++){
+                               if(errorCandidates[i][j].get(k))candidateMessageHandlers[k].clearErrorMessage(i, errorCodes[i][j]);
+                           }
+                       }
+                   }else{
+                       for(int j = 0; j < errorCandidates[i].length; j++){
+                           if(!partiallyCommon.contains(j)){
+                               conflictHandler.disqualify(errorCandidates[i][j]);
+                                if(recordedErrorMessages[i] != null){
+                                    for(int k = 0; k < recordedErrorMessages[i].length; k++){
+                                        if(recordedErrorMessages[i][k] == errorCodes[i][j]){
+                                            localMessageHandler.clearErrorMessage(i, errorCodes[i][j]);
+                                            break;
+                                        }
+                                    }
+                                }
+                           }else{
+                               if(recordedErrorMessages[i] != null){
+                                    for(int k = 0; k < recordedErrorMessages[i].length; k++){
+                                        if(recordedErrorMessages[i][k] == errorCodes[i][j]){
+                                            localMessageHandler.clearErrorMessage(i, errorCodes[i][j]);
+                                            break;
+                                        }
+                                    }
+                                }
+                           }
+                       }
+                   }
+                }else{
+                    for(int j = 0; j < errorCandidates[i].length; j++){
+                        if(errorCandidates[i][j].cardinality() == candidatesCount){
+                            for(ConflictMessageHandler candidate: candidateMessageHandlers){                            
+                                candidate.clearErrorMessage(i, errorCodes[i][j]);
+                            }                 
+                        }else{                        
+                            conflictHandler.disqualify(errorCandidates[i][j]);
+                            if(recordedErrorMessages[i] != null){
+                                for(int k = 0; k < recordedErrorMessages[i].length; k++){
+                                    if(recordedErrorMessages[i][k] == errorCodes[i][j]){
+                                        localMessageHandler.clearErrorMessage(i, errorCodes[i][j]);
+                                        break;
+                                    }
+                                }
+                            }
+                                
+                        }                    
+                    }
                 }
                 recordedErrorMessages[i] = null;
                 errorCandidates[i] = null;
@@ -173,6 +236,16 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         }
     }
     
+    
+    private boolean allCandidatesPresentError(int errorId){
+        cumulatorDummy.clear();
+        for(int j = 0; j < errorCandidates[errorId].length; j++){
+           cumulatorDummy.or(errorCandidates[errorId][j]);
+           if(cumulatorDummy.cardinality() == candidatesCount) return true;
+        }   
+        return false;
+    }
+    
     // In case the result is ambiguous (several qualified candidates) it attempts 
     // to disqualify all those with errors in the subtree (delayed messages), but 
     // the result of the operation is only kept if it doesn't result in 
@@ -181,7 +254,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     public void endContextValidation(){
         int disqualifiedCount = conflictHandler.getDisqualifiedCount();
         int qualifiedCount = candidatesCount - disqualifiedCount;
-        
         if(qualifiedCount == 0){
             allDisqualified = true;
             return;
@@ -202,6 +274,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         BitSet disqualified = conflictHandler.getDisqualified();// it's a clone, not the actual object, so it can be modified without changing the conflict handler
         for(int i = 0; i < candidatesCount; i++){
             if(candidateDelayedMessages[i] != null){
+                // candidateDelayedMessages is MessageReporter
                 if(!disqualified.get(i)){
                     disqualified.set(i);
                     if(!hasDelayedMessages)  hasDelayedMessages = true;
@@ -310,6 +383,51 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         }
     }
 
+    void recordError(int errorFunctionalEquivalenceCode, int candidateIndex, APattern missingDefinition){
+        if(errorCodes[MISSING_CONTENT] == null){          
+            errorCodes[MISSING_CONTENT] = new int[1];
+            errorCandidates[MISSING_CONTENT] = new BitSet[1];
+            
+            errorCodes[MISSING_CONTENT][0] = errorFunctionalEquivalenceCode;
+            errorCandidates[MISSING_CONTENT][0] = new BitSet();
+            errorCandidates[MISSING_CONTENT][0].set(candidateIndex);
+            
+            missingContentDefinitions = new APattern[1];
+            missingContentDefinitions[0] = missingDefinition;
+            return;
+        }        
+        boolean existingError = false;
+        for(int i = errorCodes[MISSING_CONTENT].length - 1; i >=0; i--){
+            if(errorCodes[MISSING_CONTENT][i] == errorFunctionalEquivalenceCode){
+                errorCandidates[MISSING_CONTENT][i].set(candidateIndex);
+                existingError = true;
+            }
+        }
+        if(!existingError){
+            //increase size of arrays for the error id
+            //record the errorFunctionalEquivalenceCode and candidateIndex
+            int length = errorCodes[MISSING_CONTENT].length;
+            
+            int[] increasedCodes = new int[length+1];
+            System.arraycopy(errorCodes[MISSING_CONTENT], 0, increasedCodes, 0, length);
+            errorCodes[MISSING_CONTENT] = increasedCodes;
+            errorCodes[MISSING_CONTENT][length] = errorFunctionalEquivalenceCode;
+            
+            BitSet[] increasedCandidates = new BitSet[length+1];
+            System.arraycopy(errorCandidates[MISSING_CONTENT], 0, increasedCandidates, 0, length);
+            errorCandidates[MISSING_CONTENT] = increasedCandidates;
+            errorCandidates[MISSING_CONTENT][length] = new BitSet();
+            errorCandidates[MISSING_CONTENT][length].set(candidateIndex);
+            
+            
+            APattern[] increasedRDI = new APattern[length+1];
+            System.arraycopy(missingContentDefinitions, 0, increasedRDI, 0, length);
+            missingContentDefinitions = increasedRDI;
+            missingContentDefinitions[length] = missingDefinition;
+        }
+    }
+    
+    
     void recordWarning(int warningId, int warningFunctionalEquivalenceCode, int candidateIndex){       
         if(warningCodes[warningId] == null){          
             warningCodes[warningId] = new int[1];
@@ -760,7 +878,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     }    
 	
 	
-	public void missingContent(int candidateIndex, int functionalEquivalenceCode, 
+	public void missingContent(int candidateIndex, int functionalEquivalenceCode,
                                 Rule context, 
 								String startSystemId, 
 								int startLineNumber, 
@@ -772,7 +890,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 								String[] systemId, 
 								int[] lineNumber, 
 								int[] columnNumber){
-        recordError(MISSING_CONTENT, functionalEquivalenceCode, candidateIndex);
+        recordError(functionalEquivalenceCode, candidateIndex, definition);
         if(mustRecordErrorMessage(MISSING_CONTENT, functionalEquivalenceCode, candidateIndex)){
             localMessageHandler.missingContent(functionalEquivalenceCode,
                                                                 context, 
@@ -990,7 +1108,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         Arrays.fill(recordedErrorMessages, null);
         
         conflictHandler.clear();
-        candidateMessageHandlers.clear();
+        if(candidateMessageHandlers != null) candidateMessageHandlers = null;
         candidatesCount = -1;
         candidateDelayedMessages = null;
         commonMessages = null;

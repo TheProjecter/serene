@@ -109,8 +109,6 @@ public class IntList{
 		}
 		if(index == -1)return false;
 		
-		int oldValue = list[index];
-	
 		int numMoved = lastIndex - index;
 		if (numMoved > 0)
 			System.arraycopy(list, index+1, list, index,
@@ -119,6 +117,15 @@ public class IntList{
 		return  true;
     }
 
+	public void removeFromIndex(int index) {
+	    if(index < 0 || index > lastIndex) throw new IllegalArgumentException();
+	    
+	    int numMoved = lastIndex - index;
+		if (numMoved > 0)
+			System.arraycopy(list, index+1, list, index,
+					 numMoved);
+		lastIndex--;
+	}
 	
 	public void trimToSize(){
 		size = lastIndex+1; 

@@ -37,6 +37,8 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
+import serene.util.IntList;
+
 interface CandidatesConflictErrorCatcher extends ErrorType{	
     void unknownElement(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber);	
 	void unexpectedElement(int candidateIndex, int functionalEquivalenceCode, String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber);
@@ -128,7 +130,7 @@ interface CandidatesConflictErrorCatcher extends ErrorType{
 	void ambiguousCharacterContentWarning(int candidateIndex, int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
 	void ambiguousAttributeValueWarning(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);	
 	
-	void missingContent(int candidateIndex, int functionalEquivalenceCode, 
+	void missingContent(int candidateIndex, int functionalEquivalenceCode,
                                 Rule context, 
 								String startSystemId, 
 								int startLineNumber, 
