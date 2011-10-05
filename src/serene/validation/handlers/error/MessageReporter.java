@@ -43,4 +43,6 @@ public interface MessageReporter{
     int getConflictResolutionId();
     
     ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher);
+    
+    boolean containsErrorMessage();
 }

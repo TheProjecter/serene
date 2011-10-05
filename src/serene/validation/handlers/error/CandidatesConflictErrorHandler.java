@@ -269,15 +269,20 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             for(int i = 0; i < candidateDelayedMessages.length; i++){
                 if(i != winnerIndex && candidateDelayedMessages[i] != null) candidateDelayedMessages[i] = null;
             }
+            return;
         }
         
         BitSet disqualified = conflictHandler.getDisqualified();// it's a clone, not the actual object, so it can be modified without changing the conflict handler
+        
         for(int i = 0; i < candidatesCount; i++){
-            if(candidateDelayedMessages[i] != null){
-                // candidateDelayedMessages is MessageReporter
-                if(!disqualified.get(i)){
-                    disqualified.set(i);
-                    if(!hasDelayedMessages)  hasDelayedMessages = true;
+            if(candidateDelayedMessages[i] != null){                
+                if(candidateDelayedMessages[i].containsErrorMessage()){
+                    if(!disqualified.get(i)){
+                        disqualified.set(i);
+                        if(!hasDelayedMessages)  hasDelayedMessages = true;
+                    }else{
+                        candidateDelayedMessages[i] = null;
+                    }
                 }else{
                     candidateDelayedMessages[i] = null;
                 }
@@ -289,8 +294,11 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         }
         
         hasDelayedMessages = false;
-        for(int i = 0; i < candidatesCount; i++){
-            if(disqualified.get(i))candidateDelayedMessages[i] = null;
+        conflictHandler.disqualify(disqualified);
+        for(int i = 0; i < candidatesCount; i++){            
+            if(disqualified.get(i)){
+                candidateDelayedMessages[i] = null; 
+            }
             else if(!hasDelayedMessages && candidateDelayedMessages[i] != null) hasDelayedMessages = true;
         }
     }

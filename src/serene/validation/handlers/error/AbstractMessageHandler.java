@@ -555,6 +555,51 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         // {30}
 	}  
     
+	public boolean containsErrorMessage(){
+	    if(unknownElementIndex >= 0
+	        || unexpectedElementIndex >= 0
+	        || unexpectedAmbiguousElementIndex  >= 0
+	        || unknownAttributeIndex  >= 0
+	        || unexpectedAttributeIndex  >= 0
+	        || unexpectedAmbiguousAttributeIndex >= 0
+	        || misplacedIndex  >= 0
+	        || excessiveIndex  >= 0
+	        || missingIndex >= 0
+	        || illegalIndex >= 0
+	        || unresolvedAmbiguousElementIndexEE >= 0
+	        || unresolvedUnresolvedElementIndexEE >= 0
+	        || unresolvedAttributeIndexEE >= 0
+	        || datatypeIndexCC >= 0
+	        || datatypeIndexAV >= 0
+	        || valueIndexCC >= 0
+	        || valueIndexAV >= 0
+	        || exceptIndexCC >= 0
+	        || exceptIndexAV >= 0
+	        || unexpectedIndexCC >= 0
+	        || unexpectedIndexAV >= 0
+	        || unresolvedIndexCC >= 0
+	        || unresolvedIndexAV >= 0
+	        || datatypeIndexLP >= 0
+	        || valueIndexLP >= 0
+	        || exceptIndexLP >= 0
+	        || unresolvedIndexLPICE >= 0
+	        || missingCompositorContentIndex >= 0) return true;
+	    
+	    if(commonMessages != null && commonMessages.containsErrorMessage())return true;	    
+	    if(disqualified != null && disqualified.cardinality() == candidatesCount){
+	        return true;
+	    }else if(disqualified != null){	        
+	        for(int i = 0; i < candidatesCount; i++){
+	            if(!disqualified.get(i)
+	                && candidateMessages[i] != null
+	                && candidateMessages[i].containsErrorMessage())return true;
+	        }
+	    }
+	    	
+	    if(parent != null)return parent.containsErrorMessage();
+	    return false;
+	}
+	
     public void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
         this.contextType = contextType;
         this.qName = qName;
