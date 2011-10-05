@@ -1,0 +1,43 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\externalConflict\missingContentPartiallyCommon\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/missingContentPartiallyCommon/document1.xml:23:8 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:25:27 contains errors: 
+Missing content.
+In the document structure starting at document1.xml:22:16, corresponding to definition <group added by element simplification> at schema.rng:25:27, expected 1 occurrence corresponding to definition <ref> at schema.rng:27:30, found 0.
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/missingContentPartiallyCommon/document2.xml:24:8 Syntax error. Element <baz> corresponding to definition <element> at schema.rng:43:25 contains errors: 
+Missing content.
+In the document structure starting at document2.xml:23:15, corresponding to definition <element> at schema.rng:43:25, expected 1 occurrence corresponding to definition <ref> at schema.rng:44:28, found 0.
+
+
+
+TESTED DOCUMENT document3.xml
+
+
+
+TESTED DOCUMENT document4.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/missingContentPartiallyCommon/document4.xml:23:8 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:29:27 contains errors: 
+Missing content.
+In the document structure starting at document4.xml:22:16, corresponding to definition <group added by element simplification> at schema.rng:29:27, expected 1 occurrence corresponding to definition <interleave> at schema.rng:31:21, found 0.
+
+
+
+TESTED DOCUMENT document5.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/missingContentPartiallyCommon/document5.xml:24:8 Syntax error. Element <baz> corresponding to definition <element> at schema.rng:43:25 contains errors: 
+Missing content.
+In the document structure starting at document5.xml:23:15, corresponding to definition <element> at schema.rng:43:25, expected 1 occurrence corresponding to definition <ref> at schema.rng:44:28, found 0.
+
+
+
+TESTED DOCUMENT document6.xml

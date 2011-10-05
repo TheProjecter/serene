@@ -56,10 +56,10 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	int candidateIndex;    
     CandidatesConflictErrorHandler candidatesConflictErrorHandler;
     boolean isCandidate;
-		
+
 	public ExternalConflictErrorHandler(MessageWriter debugWriter){
 		super(debugWriter);
-		id = ContextErrorHandlerManager.CONFLICT;
+		id = ContextErrorHandlerManager.CONFLICT;		
 	}
 	
 	public void recycle(){
@@ -77,7 +77,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         this.isCandidate = isCandidate;
         
 		messageHandler = new ConflictMessageHandler(debugWriter);
-        if(isCandidate)candidatesConflictErrorHandler.addCandidateMessageHandler(messageHandler);
+        if(isCandidate)candidatesConflictErrorHandler.addCandidateMessageHandler(candidateIndex, messageHandler);
 	}	
 	public boolean isCandidate(){
         return isCandidate;
@@ -206,8 +206,8 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
                 for(int i = 0; i < qName.length; i++){
                     functionalEquivalenceCode += qName[i].hashCode();
                 }
-            }        
-            
+            }
+
             messageHandler.missingContent(functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
             candidatesConflictErrorHandler.missingContent(candidateIndex, functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
         }else{
