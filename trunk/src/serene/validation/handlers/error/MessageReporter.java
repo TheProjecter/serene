@@ -21,6 +21,8 @@ import org.xml.sax.SAXException;
 
 import serene.validation.schema.active.components.AElement;
 
+import serene.util.IntList;
+
 public interface MessageReporter{    
     int UNRESOLVED = 0;
     int RESOLVED = 1;    
@@ -45,4 +47,6 @@ public interface MessageReporter{
     ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher);
     
     boolean containsErrorMessage();
+    
+    boolean containsOtherErrorMessage(IntList exceptedErrorIds, IntList exceptedErrorCodes);
 }

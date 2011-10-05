@@ -36,7 +36,7 @@ public class AmbiguousElementConflictResolver extends ElementConflictResolver{
 	public AmbiguousElementConflictResolver(MessageWriter debugWriter){				
 		super(debugWriter);
 	}
-	
+		
 	public void recycle(){
 		reset();
 		pool.recycle(this);
@@ -59,7 +59,7 @@ public class AmbiguousElementConflictResolver extends ElementConflictResolver{
                 errorCatcher.internalConflict(conflictMessageReporter);
             }
             int j = 0;
-            for(int i = 0; i < candidateDefinitions.size(); i++){			
+            for(int i = 0; i < candidateDefinitions.size(); i++){
                 if(!qualified.get(j++)){
                     candidateDefinitions.remove(i);
                     i--;

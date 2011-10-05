@@ -232,7 +232,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	public void startElement(String namespaceURI, 
 							String localName, 
 							String qName, 
-							Attributes attributes) throws SAXException{		
+							Attributes attributes) throws SAXException{	
 		char[] charContent = charsBuffer.removeCharsArray();		
 		if(charContent.length > 0){			
 			elementHandler.handleInnerCharacters(charContent);		
@@ -255,7 +255,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	
 	public void endElement(String namespaceURI, 
 							String localName, 
-							String qName) throws SAXException{
+							String qName) throws SAXException{ 
 		char[] charContent = charsBuffer.removeCharsArray();
 		if(charContent.length == 0)validationItemLocator.newCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
 		elementHandler.handleLastCharacters(charContent);

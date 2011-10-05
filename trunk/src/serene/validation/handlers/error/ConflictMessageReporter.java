@@ -25,6 +25,8 @@ import org.xml.sax.SAXParseException;
 
 import serene.validation.schema.active.components.AElement;
 
+import serene.util.IntList;
+
 import sereneWrite.MessageWriter;
 
 public class ConflictMessageReporter extends AbstractMessageReporter{
@@ -102,6 +104,23 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     }
     
     public boolean containsErrorMessage(){
+        if(commonMessages != null && commonMessages.containsErrorMessage())return true; 
+	    if(disqualified != null && disqualified.cardinality() == candidatesCount){
+	        return true;
+	    }else if(disqualified != null){
+	        for(int i = 0; i < candidatesCount; i++){
+	            if(!disqualified.get(i)
+	                && candidateMessages[i] != null
+	                && candidateMessages[i].containsErrorMessage())return true;
+	        }
+	    }
+	        
+	    if(parent != null)return parent.containsErrorMessage();
+	    return false;
+    }
+    
+    public boolean containsOtherErrorMessage(IntList exceptedErrorIds, IntList exceptedErrorCodes){
+        // TODO review!!!
         if(commonMessages != null && commonMessages.containsErrorMessage())return true; 
 	    if(disqualified != null && disqualified.cardinality() == candidatesCount){
 	        return true;

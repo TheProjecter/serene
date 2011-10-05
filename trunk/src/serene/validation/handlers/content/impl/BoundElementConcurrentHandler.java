@@ -163,7 +163,7 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		
 	void validateInContext(){
 	    int conflictResolutionIndex = contextErrorHandler[contextErrorHandlerIndex] == null ? getConflictResolutionId() : contextErrorHandler[contextErrorHandlerIndex].getConflictResolutionId();
-		if(conflictResolutionIndex == MessageReporter.UNRESOLVED){						
+		if(conflictResolutionIndex == MessageReporter.UNRESOLVED){
 			// Shift all with errors, hope the parent context disqualifies all but 1
 			// Why shift, they all have errors already??? 
 			// Maybe the parent actually expects one of them and not shifting 

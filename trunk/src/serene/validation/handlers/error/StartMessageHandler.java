@@ -29,6 +29,8 @@ import serene.validation.schema.active.components.AElement;
 
 import sereneWrite.MessageWriter;
 
+import serene.util.IntList;
+
 class StartMessageHandler implements MessageReporter{
     
     AElement start;
@@ -332,6 +334,11 @@ class StartMessageHandler implements MessageReporter{
             || unresolvedUnresolvedElementQNameEE != null) return true;
         return false;
     }    
+    
+    public boolean containsOtherErrorMessage(IntList exceptedErrorIds, IntList exceptedErrorCodes){
+        throw new IllegalStateException();
+    }
+    
     public ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher){
         throw new IllegalStateException();
     } 

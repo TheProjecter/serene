@@ -310,7 +310,7 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
 	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
-        contextErrorHandler.setCandidate(false);
+        contextErrorHandler.setCandidate(false);        
 		contextErrorHandler.attributeValueDatatypeError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
@@ -325,7 +325,7 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
-        contextErrorHandler.setCandidate(false);
+        contextErrorHandler.setCandidate(false);        
 		contextErrorHandler.attributeValueValueError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}

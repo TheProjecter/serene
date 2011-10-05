@@ -87,108 +87,108 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
     }
     
 	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
-        if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode();
+	    int functionalEquivalenceCode = qName.hashCode();
+        if(isCandidate){            
             messageHandler.unknownElement(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber);
             candidatesConflictErrorHandler.unknownElement(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber);
         }else{
-            messageHandler.unknownElement(-1, qName, systemId, lineNumber, columnNumber);
+            messageHandler.unknownElement(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber);
         }
 	}	
 	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
-        if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode()+definition.hashCode();
+	    int functionalEquivalenceCode = qName.hashCode()+definition.hashCode();
+        if(isCandidate){            
             messageHandler.unexpectedElement(functionalEquivalenceCode, qName, definition, systemId, lineNumber, columnNumber);
             candidatesConflictErrorHandler.unexpectedElement(candidateIndex,  functionalEquivalenceCode, qName, definition, systemId, lineNumber, columnNumber);
         }else{
-            messageHandler.unexpectedElement(-1, qName, definition, systemId, lineNumber, columnNumber);
+            messageHandler.unexpectedElement(functionalEquivalenceCode, qName, definition, systemId, lineNumber, columnNumber);
         }
 	}	
 	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
-        if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode();
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].hashCode();
-            }
+	    int functionalEquivalenceCode = qName.hashCode();
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].hashCode();
+        }
+        if(isCandidate){            
             messageHandler.unexpectedAmbiguousElement(functionalEquivalenceCode, qName, possibleDefinitions, systemId, lineNumber, columnNumber);
             candidatesConflictErrorHandler.unexpectedAmbiguousElement(candidateIndex, functionalEquivalenceCode, qName, possibleDefinitions, systemId, lineNumber, columnNumber);
         }else{
-            messageHandler.unexpectedAmbiguousElement(-1, qName, possibleDefinitions, systemId, lineNumber, columnNumber);
+            messageHandler.unexpectedAmbiguousElement(functionalEquivalenceCode, qName, possibleDefinitions, systemId, lineNumber, columnNumber);
         }
 	}
 	
 	
 	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
+	    int functionalEquivalenceCode = qName.hashCode();
         if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode();
             messageHandler.unknownAttribute(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber);
             candidatesConflictErrorHandler.unknownAttribute(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber);
         }else{
-            messageHandler.unknownAttribute(-1, qName, systemId, lineNumber, columnNumber);
+            messageHandler.unknownAttribute(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber);
         }
 	}	
-	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){	    
-        if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode()+definition.hashCode();
+	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	    int functionalEquivalenceCode = qName.hashCode()+definition.hashCode();	    
+        if(isCandidate){            
             messageHandler.unexpectedAttribute(functionalEquivalenceCode, qName, definition, systemId, lineNumber, columnNumber);
             candidatesConflictErrorHandler.unexpectedAttribute(candidateIndex, functionalEquivalenceCode, qName, definition, systemId, lineNumber, columnNumber);
         }else{
-            messageHandler.unexpectedAttribute(-1, qName, definition, systemId, lineNumber, columnNumber);
+            messageHandler.unexpectedAttribute(functionalEquivalenceCode, qName, definition, systemId, lineNumber, columnNumber);
         }
 	}	
 	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
-        if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode();
-            for(int i = 0; i < definition.length; i++){
-                functionalEquivalenceCode += definition[i].hashCode();
-            }
+	    int functionalEquivalenceCode = qName.hashCode();
+        for(int i = 0; i < definition.length; i++){
+            functionalEquivalenceCode += definition[i].hashCode();
+        }
+        if(isCandidate){            
             messageHandler.unexpectedAmbiguousAttribute(functionalEquivalenceCode, qName, definition, systemId, lineNumber, columnNumber);
             candidatesConflictErrorHandler.unexpectedAmbiguousAttribute( candidateIndex, functionalEquivalenceCode, qName, definition, systemId, lineNumber, columnNumber);
         }else{
-            messageHandler.unexpectedAmbiguousAttribute(-1, qName, definition, systemId, lineNumber, columnNumber);
+            messageHandler.unexpectedAmbiguousAttribute(functionalEquivalenceCode, qName, definition, systemId, lineNumber, columnNumber);
         }
 	}
 	
 	
 	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
-        if(isCandidate){            
-            int functionalEquivalenceCode = contextDefinition.functionalEquivalenceCode()+
+	    int functionalEquivalenceCode = contextDefinition.functionalEquivalenceCode()+
                                                 definition.functionalEquivalenceCode();
-            for(int i = 0; i < qName.length; i++){
-                functionalEquivalenceCode += qName[i].hashCode()+
-                                                sourceDefinition[i].functionalEquivalenceCode();
-            }
+        for(int i = 0; i < qName.length; i++){
+            functionalEquivalenceCode += qName[i].hashCode()+
+                                            sourceDefinition[i].functionalEquivalenceCode();
+        }
+        if(isCandidate){
             messageHandler.misplacedContent(functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
             candidatesConflictErrorHandler.misplacedContent(candidateIndex, functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
         }else{
-            messageHandler.misplacedContent(-1, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+            messageHandler.misplacedContent(functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
         }
 	}
 	
 	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int itemId, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
-        if(isCandidate){
-            int functionalEquivalenceCode = contextDefinition.functionalEquivalenceCode()+
+	    int functionalEquivalenceCode = contextDefinition.functionalEquivalenceCode()+
 											definition.functionalEquivalenceCode()+ 
 											qName.hashCode()+
-											sourceDefinition.functionalEquivalenceCode();		
+											sourceDefinition.functionalEquivalenceCode();
+        if(isCandidate){
             messageHandler.misplacedContent(functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
             candidatesConflictErrorHandler.misplacedContent(candidateIndex, functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
         }else{
-            messageHandler.misplacedContent(-1, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+            messageHandler.misplacedContent(functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
         }
 	}
 	
 	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
-        if(isCandidate){
-            int functionalEquivalenceCode = /*context.functionalEquivalenceCode()+*/
+	    int functionalEquivalenceCode = /*context.functionalEquivalenceCode()+*/
                                             excessiveDefinition.functionalEquivalenceCode();
-            for(int i = 0; i < qName.length; i++){
-                functionalEquivalenceCode += qName[i].hashCode();
-            }
+        for(int i = 0; i < qName.length; i++){
+            functionalEquivalenceCode += qName[i].hashCode();
+        }
+        if(isCandidate){            
             messageHandler.excessiveContent(functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
             candidatesConflictErrorHandler.excessiveContent(candidateIndex, functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
         }else{
-            messageHandler.excessiveContent(-1, context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
+            messageHandler.excessiveContent(functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
         }
 	}
 	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){        
@@ -197,340 +197,345 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	}
 	
 	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
-        if(isCandidate){
-            int functionalEquivalenceCode = /*context.functionalEquivalenceCode()+*/
+	    int functionalEquivalenceCode = /*context.functionalEquivalenceCode()+*/
                                             missingDefinition.functionalEquivalenceCode()+
                                             expected+ 
                                             found;
-            if(qName != null){
-                for(int i = 0; i < qName.length; i++){
-                    functionalEquivalenceCode += qName[i].hashCode();
-                }
+        if(qName != null){
+            for(int i = 0; i < qName.length; i++){
+                functionalEquivalenceCode += qName[i].hashCode();
             }
-
+        }
+        if(isCandidate){
             messageHandler.missingContent(functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
             candidatesConflictErrorHandler.missingContent(candidateIndex, functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
         }else{
-            messageHandler.missingContent(-1, context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
+            messageHandler.missingContent(functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
         }
 	}
 
 	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
-        if(isCandidate){
-            int functionalEquivalenceCode = context.functionalEquivalenceCode();
+	    int functionalEquivalenceCode = context.functionalEquivalenceCode();
+        if(isCandidate){            
             messageHandler.illegalContent(functionalEquivalenceCode, context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
             candidatesConflictErrorHandler.illegalContent(candidateIndex, functionalEquivalenceCode, context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
         }else{
-            messageHandler.illegalContent(-1, context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
+            messageHandler.illegalContent(functionalEquivalenceCode, context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
         }
 	}
 	
 	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	    int functionalEquivalenceCode = qName.hashCode();
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+        }
         if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode();
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
             messageHandler.unresolvedAmbiguousElementContentError(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
             candidatesConflictErrorHandler.unresolvedAmbiguousElementContentError(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.unresolvedAmbiguousElementContentError(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedAmbiguousElementContentError(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	
 	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode();
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
+	    int functionalEquivalenceCode = qName.hashCode();
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+        }
+        if(isCandidate){            
             messageHandler.unresolvedUnresolvedElementContentError(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
             candidatesConflictErrorHandler.unresolvedUnresolvedElementContentError(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.unresolvedUnresolvedElementContentError(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedUnresolvedElementContentError(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	
 	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode();
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
+	    int functionalEquivalenceCode = qName.hashCode();
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+        }
+        if(isCandidate){            
             messageHandler.unresolvedAttributeContentError(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
             candidatesConflictErrorHandler.unresolvedAttributeContentError(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.unresolvedAttributeContentError(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedAttributeContentError(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	
 	
 	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode();
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
+	    int functionalEquivalenceCode = qName.hashCode();
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+        }
+        if(isCandidate){            
+            messageHandler.ambiguousUnresolvedElementContentWarning(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
             candidatesConflictErrorHandler.ambiguousUnresolvedElementContentWarning(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousUnresolvedElementContentWarning(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.ambiguousUnresolvedElementContentWarning(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	
 	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode();
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
+	    int functionalEquivalenceCode = qName.hashCode();
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+        }
+        if(isCandidate){            
+            messageHandler.ambiguousAmbiguousElementContentWarning(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
             candidatesConflictErrorHandler.ambiguousAmbiguousElementContentWarning(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousAmbiguousElementContentWarning(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.ambiguousAmbiguousElementContentWarning(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	
 	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode();
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
+	    int functionalEquivalenceCode = qName.hashCode();
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+        }
+        if(isCandidate){            
+            messageHandler.ambiguousAttributeContentWarning(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
             candidatesConflictErrorHandler.ambiguousAttributeContentWarning(candidateIndex, functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousAttributeContentWarning(-1, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.ambiguousAttributeContentWarning(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	
 	public void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = 0;
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
+	    int functionalEquivalenceCode = 0;
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+        }
+        if(isCandidate){            
+            messageHandler.ambiguousCharacterContentWarning(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
             candidatesConflictErrorHandler.ambiguousCharacterContentWarning(candidateIndex, functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousCharacterContentWarning(-1, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.ambiguousCharacterContentWarning(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	
 	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = 0;
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
+	    int functionalEquivalenceCode = 0;
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+        }
+        if(isCandidate){            
+            messageHandler.ambiguousAttributeValueWarning(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
             candidatesConflictErrorHandler.ambiguousAttributeValueWarning(candidateIndex, functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousAttributeValueWarning(-1, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.ambiguousAttributeValueWarning(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	
 	public void undeterminedByContent(String qName, String candidateMessages){
-        if(isCandidate){
-            int functionalEquivalenceCode = qName.hashCode()+
+	    int functionalEquivalenceCode = qName.hashCode()+
                                             candidateMessages.hashCode();
+        if(isCandidate){            
             messageHandler.undeterminedByContent(functionalEquivalenceCode, qName, candidateMessages);
             candidatesConflictErrorHandler.undeterminedByContent(candidateIndex, functionalEquivalenceCode, qName, candidateMessages);
         }else{
-            messageHandler.undeterminedByContent(-1, qName, candidateMessages);
+            messageHandler.undeterminedByContent(functionalEquivalenceCode, qName, candidateMessages);
         }
 	}	
 	
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        if(isCandidate){            
-            int functionalEquivalenceCode = elementQName.hashCode()+
+	    int functionalEquivalenceCode = elementQName.hashCode()+
                                                charsDefinition.functionalEquivalenceCode()+
                                                datatypeErrorMessage.hashCode();
+        if(isCandidate){
             messageHandler.characterContentDatatypeError(functionalEquivalenceCode, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
             candidatesConflictErrorHandler.characterContentDatatypeError(candidateIndex, functionalEquivalenceCode, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
         }else{
-            messageHandler.characterContentDatatypeError(-1, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+            messageHandler.characterContentDatatypeError(functionalEquivalenceCode, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
         }
 	}
 	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        if(isCandidate){
-            int functionalEquivalenceCode = attributeQName.hashCode()+
+	    int functionalEquivalenceCode = attributeQName.hashCode()+
                                            charsDefinition.functionalEquivalenceCode()+
                                            datatypeErrorMessage.hashCode();
+        if(isCandidate){            
             messageHandler.attributeValueDatatypeError(functionalEquivalenceCode, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
             candidatesConflictErrorHandler.attributeValueDatatypeError(candidateIndex, functionalEquivalenceCode, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
         }else{
-            messageHandler.attributeValueDatatypeError(-1, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+            messageHandler.attributeValueDatatypeError(functionalEquivalenceCode, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
         }
 	}
 	
 	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        if(isCandidate){
-            int functionalEquivalenceCode = charsDefinition.functionalEquivalenceCode();
+	    int functionalEquivalenceCode = charsDefinition.functionalEquivalenceCode();
+        if(isCandidate){            
             messageHandler.characterContentValueError(functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
             candidatesConflictErrorHandler.characterContentValueError(candidateIndex, functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }else{
-            messageHandler.characterContentValueError(-1, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+            messageHandler.characterContentValueError(functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }
 	}
 	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        if(isCandidate){
-            int functionalEquivalenceCode = attributeQName.hashCode()+
+	    int functionalEquivalenceCode = attributeQName.hashCode()+
                                            charsDefinition.functionalEquivalenceCode();
+        if(isCandidate){            
             messageHandler.attributeValueValueError(functionalEquivalenceCode, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
             candidatesConflictErrorHandler.attributeValueValueError(candidateIndex, functionalEquivalenceCode, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }else{
-            messageHandler.attributeValueValueError(-1, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+            messageHandler.attributeValueValueError(functionalEquivalenceCode, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }
 	}
 	
 	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        if(isCandidate){
-            int functionalEquivalenceCode = elementQName.hashCode()+
+	    int functionalEquivalenceCode = elementQName.hashCode()+
                                            charsDefinition.functionalEquivalenceCode();
+        if(isCandidate){            
             messageHandler.characterContentExceptedError(functionalEquivalenceCode, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
             candidatesConflictErrorHandler.characterContentExceptedError(candidateIndex, functionalEquivalenceCode, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }else{
-            messageHandler.characterContentExceptedError(-1, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+            messageHandler.characterContentExceptedError(functionalEquivalenceCode, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }
 	}	
 	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        if(isCandidate){
-            int functionalEquivalenceCode = attributeQName.hashCode()+
+	    int functionalEquivalenceCode = attributeQName.hashCode()+
                                            charsDefinition.functionalEquivalenceCode();
+        if(isCandidate){            
             messageHandler.attributeValueExceptedError(functionalEquivalenceCode, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
             candidatesConflictErrorHandler.attributeValueExceptedError(candidateIndex, functionalEquivalenceCode, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }else{
-            messageHandler.attributeValueExceptedError(-1, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+            messageHandler.attributeValueExceptedError(functionalEquivalenceCode, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }
 	}
 	
 	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
-        if(isCandidate){
-            //int functionalEquivalenceCode = elementDefinition.functionalEquivalenceCode();
-            int functionalEquivalenceCode = charsSystemId.hashCode()+
+	    //int functionalEquivalenceCode = elementDefinition.functionalEquivalenceCode();
+        int functionalEquivalenceCode = charsSystemId.hashCode()+
                                             charsLineNumber+
                                             columnNumber;
+        if(isCandidate){            
             messageHandler.unexpectedCharacterContent(functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, elementDefinition);
             candidatesConflictErrorHandler.unexpectedCharacterContent(candidateIndex, functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, elementDefinition);
         }else{
-            messageHandler.unexpectedCharacterContent(-1, charsSystemId, charsLineNumber, columnNumber, elementDefinition);
+            messageHandler.unexpectedCharacterContent(functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, elementDefinition);
         }
 	}	
 	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
-        if(isCandidate){
-            //int functionalEquivalenceCode = attributeDefinition.functionalEquivalenceCode();
-            int functionalEquivalenceCode = charsSystemId.hashCode()+
-                                                charsLineNumber+
-                                                columnNumber;
+	    //int functionalEquivalenceCode = attributeDefinition.functionalEquivalenceCode();
+        int functionalEquivalenceCode = charsSystemId.hashCode()+
+                                            charsLineNumber+
+                                            columnNumber;
+        if(isCandidate){            
             messageHandler.unexpectedAttributeValue(functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, attributeDefinition);
             candidatesConflictErrorHandler.unexpectedAttributeValue(candidateIndex, functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, attributeDefinition);
         }else{
-            messageHandler.unexpectedAttributeValue(-1, charsSystemId, charsLineNumber, columnNumber, attributeDefinition);
+            messageHandler.unexpectedAttributeValue(functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, attributeDefinition);
         }
 	}
 	
 	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = 0;
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
+	    int functionalEquivalenceCode = 0;
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+        }
+        if(isCandidate){            
             messageHandler.unresolvedCharacterContent(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
             candidatesConflictErrorHandler.unresolvedCharacterContent(candidateIndex, functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.unresolvedCharacterContent(-1, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedCharacterContent(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = attributeQName.hashCode();
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
+	    int functionalEquivalenceCode = attributeQName.hashCode();
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+        }
+        if(isCandidate){            
             messageHandler.unresolvedAttributeValue(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
             candidatesConflictErrorHandler.unresolvedAttributeValue(candidateIndex, functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.unresolvedAttributeValue(-1, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedAttributeValue(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
 	
 	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        if(isCandidate){
-            int functionalEquivalenceCode = token.hashCode()+
+	    int functionalEquivalenceCode = token.hashCode()+
                                         charsDefinition.functionalEquivalenceCode()+
                                         datatypeErrorMessage.hashCode();
+        if(isCandidate){            
             messageHandler.listTokenDatatypeError(functionalEquivalenceCode, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
             candidatesConflictErrorHandler.listTokenDatatypeError(candidateIndex, functionalEquivalenceCode, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
         }else{
-            messageHandler.listTokenDatatypeError(-1, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+            messageHandler.listTokenDatatypeError(functionalEquivalenceCode, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
         }
 	}
 	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        if(isCandidate){
-            int functionalEquivalenceCode = token.hashCode()+
+	    int functionalEquivalenceCode = token.hashCode()+
                                         charsDefinition.functionalEquivalenceCode();
+        if(isCandidate){            
             messageHandler.listTokenValueError(functionalEquivalenceCode, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
             candidatesConflictErrorHandler.listTokenValueError(candidateIndex, functionalEquivalenceCode, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }else{
-            messageHandler.listTokenValueError(-1, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+            messageHandler.listTokenValueError(functionalEquivalenceCode, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }
 	}
 	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        if(isCandidate){
-            int functionalEquivalenceCode = token.hashCode()+
+	    int functionalEquivalenceCode = token.hashCode()+
                                         charsDefinition.functionalEquivalenceCode();
+        if(isCandidate){            
             messageHandler.listTokenExceptedError(functionalEquivalenceCode, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
             candidatesConflictErrorHandler.listTokenExceptedError(candidateIndex, functionalEquivalenceCode, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }else{
-            messageHandler.listTokenExceptedError(-1, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+            messageHandler.listTokenExceptedError(functionalEquivalenceCode, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
         }
 	}
 
     public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = token.hashCode();
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
+        int functionalEquivalenceCode = token.hashCode();
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+        }
+        if(isCandidate){            
             messageHandler.unresolvedListTokenInContextError(functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
             candidatesConflictErrorHandler.unresolvedListTokenInContextError(candidateIndex, functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.unresolvedListTokenInContextError(-1, token, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.unresolvedListTokenInContextError(functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
     }    
 	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        if(isCandidate){
-            int functionalEquivalenceCode = token.hashCode();
-            for(int i = 0; i < possibleDefinitions.length; i++){
-                functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
-            }
+	    int functionalEquivalenceCode = token.hashCode();
+        for(int i = 0; i < possibleDefinitions.length; i++){
+            functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
+        }
+        if(isCandidate){            
+            messageHandler.ambiguousListTokenInContextWarning(functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
             candidatesConflictErrorHandler.ambiguousListTokenInContextWarning(candidateIndex, functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
         }else{
-            messageHandler.ambiguousListTokenInContextWarning(-1, token, systemId, lineNumber, columnNumber, possibleDefinitions);
+            messageHandler.ambiguousListTokenInContextWarning(functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
     }
     
 	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
-        if(isCandidate){
-            int functionalEquivalenceCode = context.functionalEquivalenceCode()+
+	    int functionalEquivalenceCode = context.functionalEquivalenceCode()+
                                         definition.functionalEquivalenceCode()+
                                         expected+
                                         found;
+        if(isCandidate){
             messageHandler.missingCompositorContent(functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
             candidatesConflictErrorHandler.missingCompositorContent(candidateIndex, functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
         }else{
-            messageHandler.missingCompositorContent(-1, context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
+            messageHandler.missingCompositorContent(functionalEquivalenceCode, context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
         }
 	}
     public  void conflict(int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){
-        if(isCandidate){
-            int functionalEquivalenceCode = disqualified.hashCode();                                        
-            if(commonMessages != null) functionalEquivalenceCode += commonMessages.hashCode();
-            if(candidateMessages != null){
-                for(int i = 0; i < candidateMessages.length; i++){
-                    if(candidateMessages[i] != null)functionalEquivalenceCode += candidateMessages[i].hashCode();
-                }
+        int functionalEquivalenceCode = disqualified.hashCode();                                        
+        if(commonMessages != null) functionalEquivalenceCode += commonMessages.hashCode();
+        if(candidateMessages != null){
+            for(int i = 0; i < candidateMessages.length; i++){
+                if(candidateMessages[i] != null)functionalEquivalenceCode += candidateMessages[i].hashCode();
             }
+        }
+        if(isCandidate){            
             messageHandler.conflict(functionalEquivalenceCode, conflictResolutionId, commonMessages, candidatesCount, disqualified, candidateMessages);
             candidatesConflictErrorHandler.conflict(candidateIndex, functionalEquivalenceCode, conflictResolutionId, commonMessages, candidatesCount, disqualified, candidateMessages);
         }else{
-            messageHandler.conflict(-1, conflictResolutionId, commonMessages, candidatesCount, disqualified, candidateMessages);
+            messageHandler.conflict(functionalEquivalenceCode, conflictResolutionId, commonMessages, candidatesCount, disqualified, candidateMessages);
         }
     }
     

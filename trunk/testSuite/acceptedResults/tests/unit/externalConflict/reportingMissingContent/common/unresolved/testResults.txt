@@ -1,0 +1,29 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\externalConflict\reportingMissingContent\common\unresolved\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/reportingMissingContent/common/unresolved/document1.xml:23:8 Syntax error. Candidate definitions of ambiguous element <foo> contain errors in their subtrees:
+Candidate definition <element> at schema.rng:25:27 contains errors: 
+	Syntax error. Element <foo> corresponding to definition <element> at schema.rng:25:27 contains errors: 
+	Illegal value.
+	Value of attribute "bar" at document1.xml:22:15 does not match the value required by schema definition <value> at schema.rng:27:20.
+Candidate definition <element> at schema.rng:31:27 contains errors: 
+	Syntax error. Element <foo> corresponding to definition <element> at schema.rng:31:27 contains errors: 
+	Illegal value.
+	Value of attribute "bar" at document1.xml:22:15 does not match the value required by schema definition <value> at schema.rng:33:20.
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/reportingMissingContent/common/unresolved/document1.xml:23:8 Syntax error. Ambiguous element <foo> contains errors common to all possible definitions: 
+Missing content.
+In the document structure starting at document1.xml:22:15, corresponding to definition <group added by element simplification> at schema.rng:25:27, expected 1 occurrence corresponding to definition <ref> at schema.rng:29:30, found 0.
+Missing content.
+In the document structure starting at document1.xml:22:15, corresponding to definition <group added by element simplification> at schema.rng:31:27, expected 1 occurrence corresponding to definition <ref> at schema.rng:35:33, found 0.
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/reportingMissingContent/common/unresolved/document1.xml:24:8 Syntax warning. Element <root> corresponding to definition <element> at schema.rng:23:26 generates warning: 
+Ambiguous element.
+Element <foo> at document1.xml:22:15, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
+<element> at schema.rng:25:27
+<element> at schema.rng:31:27.

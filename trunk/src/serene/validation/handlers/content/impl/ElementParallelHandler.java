@@ -99,7 +99,7 @@ class ElementParallelHandler extends CandidatesEEH{
 	
 	// called from the ValidatorHandlerImpl
 	public void handleAttributes(Attributes attributes, Locator locator) throws SAXException{
-        state.handleAttributes(attributes, locator);				
+        state.handleAttributes(attributes, locator);
 	}
 	
     // Used by: 
@@ -300,8 +300,8 @@ class ElementParallelHandler extends CandidatesEEH{
     
 	AttributeParallelHandler getAttributeParallelHandler() {
         return pool.getAttributeParallelHandler(this, candidatesConflictHandler, candidatesConflictErrorHandler);
-    }
-    int getHashCode(){return hashCode();}
+    }    
+    
 	class Conflict extends State{
 		void add(ComparableEEH individualHandler){					
 			individualHandlers.add(individualHandler);	
