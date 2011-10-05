@@ -46,6 +46,7 @@ public abstract class AbstractMessageReporter implements MessageReporter{
         conflictResolutionId = RESOLVED;
 	}	
     
+	
     public void setConflictResolutionId(int conflictResolutionId){
         this.conflictResolutionId = conflictResolutionId;
     }

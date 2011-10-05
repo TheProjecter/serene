@@ -324,6 +324,14 @@ class StartMessageHandler implements MessageReporter{
         ambiguousAmbiguousElementDefinitionWW = null;
     }
     
+    public boolean containsErrorMessage(){
+        if(unknownFoundQName != null
+            || unexpectedFoundQName != null
+            || ambiguousUnexpectedFoundQName != null
+            || unresolvedAmbiguousElementQNameEE != null
+            || unresolvedUnresolvedElementQNameEE != null) return true;
+        return false;
+    }    
     public ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher){
         throw new IllegalStateException();
     } 

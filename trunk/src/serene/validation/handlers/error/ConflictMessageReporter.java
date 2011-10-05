@@ -33,7 +33,7 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     int candidatesCount;
     BitSet disqualified;
     MessageReporter[] candidateMessages;
-    boolean restrictToFileName;
+    //boolean restrictToFileName;
     ErrorDispatcher errorDispatcher;
     
     int conflictInternalResolutionId;
@@ -99,6 +99,22 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
                                     candidateMessages,
                                     errorDispatcher,                                    
                                     debugWriter);
+    }
+    
+    public boolean containsErrorMessage(){
+        if(commonMessages != null && commonMessages.containsErrorMessage())return true; 
+	    if(disqualified != null && disqualified.cardinality() == candidatesCount){
+	        return true;
+	    }else if(disqualified != null){
+	        for(int i = 0; i < candidatesCount; i++){
+	            if(!disqualified.get(i)
+	                && candidateMessages[i] != null
+	                && candidateMessages[i].containsErrorMessage())return true;
+	        }
+	    }
+	        
+	    if(parent != null)return parent.containsErrorMessage();
+	    return false;
     }
     
     public void setConflictInternalResolution(int  conflictInternalResolutionId){
