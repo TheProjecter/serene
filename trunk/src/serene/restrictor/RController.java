@@ -1256,8 +1256,7 @@ public class RController implements RestrictingVisitor{
 			//System.out.println(" 13 "+message);
 			errorDispatcher.error(new SAXParseException(message, null));
 		}
-		if((moreContext || moreMultiChildrenContext) && !(listContext || exceptPatternContext72)){            
-            System.out.println("RESTRICTION "+data);
+		if((moreContext || moreMultiChildrenContext) && !(listContext || exceptPatternContext72)){
             // error 7.2 simple content type repeated in the context
 			String message = "Restrictions 7.2 error. "
 			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation(restrictToFileName)+":"
