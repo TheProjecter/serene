@@ -328,18 +328,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
             messageHandler.ambiguousAttributeValueWarning(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
         }
 	}
-	
-	public void undeterminedByContent(String qName, String candidateMessages){
-	    int functionalEquivalenceCode = qName.hashCode()+
-                                            candidateMessages.hashCode();
-        if(isCandidate){            
-            messageHandler.undeterminedByContent(functionalEquivalenceCode, qName, candidateMessages);
-            candidatesConflictErrorHandler.undeterminedByContent(candidateIndex, functionalEquivalenceCode, qName, candidateMessages);
-        }else{
-            messageHandler.undeterminedByContent(functionalEquivalenceCode, qName, candidateMessages);
-        }
-	}	
-	
+		
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 	    int functionalEquivalenceCode = elementQName.hashCode()+
                                                charsDefinition.functionalEquivalenceCode()+

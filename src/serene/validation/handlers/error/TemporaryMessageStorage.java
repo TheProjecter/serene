@@ -1728,12 +1728,6 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		illegalStartColumnNumber[illegalIndex] = startColumnNumber;
 	}
 	    
-	public void undeterminedByContent(String qName, String candidateMessages){
-        
-		undeterminedQName = qName;
-		undeterminedCandidateMessages = candidateMessages;
-	}
-    
     // {15}
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
         

@@ -354,13 +354,7 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.ambiguousAttributeValueWarning(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
-	
-	public void undeterminedByContent(String qName, String candidateMessages){
-	    externalConflictHandler.disqualify(currentIndex);
-	    setCurrentErrorCatcher();
-		currentErrorCatcher.undeterminedByContent(qName, candidateMessages);
-	}
-	
+		
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		throw new IllegalStateException();
 	}

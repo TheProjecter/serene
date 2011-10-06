@@ -1448,16 +1448,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         illegalStartColumnNumber = null;
     }
         
-	public void undeterminedByContent(String qName, String candidateMessages){
-        messageTotalCount++;
-		undeterminedQName = qName;
-		undeterminedCandidateMessages = candidateMessages;
-	}
-    public void clearUndeterminedByContent(){
-        messageTotalCount--;
-        undeterminedQName = null;
-		undeterminedCandidateMessages = null;
-    }
 	
     // {15}
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
@@ -2424,7 +2414,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         clearAmbiguousAttributeValueWarning();
         clearMissingContent();
         clearIllegalContent();
-        clearUndeterminedByContent();
         clearCharacterContentDatatypeError();
         clearAttributeValueDatatypeError();
         clearCharacterContentValueError();

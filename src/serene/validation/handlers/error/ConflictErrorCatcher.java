@@ -151,8 +151,6 @@ interface ConflictErrorCatcher extends ErrorType{
 							int startLineNumber, 
 							int startColumnNumber);
         
-	void undeterminedByContent(int functionalEquivalenceCode, String qName, String candidateMessages);
-	
 	void characterContentDatatypeError(int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
         
 	void attributeValueDatatypeError(int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);

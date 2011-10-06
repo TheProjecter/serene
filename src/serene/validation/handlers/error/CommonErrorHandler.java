@@ -154,10 +154,6 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 		messageHandler.ambiguousAttributeValueWarning(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
-
-	public void undeterminedByContent(String qName, String candidateMessages){
-		messageHandler.undeterminedByContent(qName, candidateMessages);
-	}
 	
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		messageHandler.characterContentDatatypeError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);

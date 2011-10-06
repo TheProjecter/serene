@@ -141,10 +141,6 @@ public class StartErrorHandler extends AbstractContextErrorHandler{
         throw new IllegalStateException();
 	}
 	
-	public void undeterminedByContent(String qName, String candidateMessages){
-        throw new IllegalStateException();
-	}
-
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
         throw new IllegalStateException();
 	}

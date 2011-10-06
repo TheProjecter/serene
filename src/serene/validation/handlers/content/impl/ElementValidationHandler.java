@@ -517,13 +517,6 @@ class ElementValidationHandler extends ValidatingEEH
 		contextErrorHandler[contextErrorHandlerIndex].ambiguousAttributeValueWarning(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
-	
-	
-	public void undeterminedByContent(String qName, String candidateMessages){
-		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].undeterminedByContent(qName, candidateMessages);
-	}
-
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].characterContentDatatypeError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);

@@ -737,11 +737,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 							int startColumnNumber){
         recordError(ILLEGAL_CONTENT, functionalEquivalenceCode, candidateIndex);        
 	}
-        
-	public void undeterminedByContent(int candidateIndex, int functionalEquivalenceCode, String qName, String candidateDelayedMessages){
-        recordError(UNDETERMINED_BY_CONTENT, functionalEquivalenceCode, candidateIndex);	    
-	}
-	
+    
     // {15}
 	public void characterContentDatatypeError(int candidateIndex, int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){	    
         recordError(CHARACTER_CONTENT_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);	    
