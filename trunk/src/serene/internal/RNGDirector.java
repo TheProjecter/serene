@@ -262,7 +262,7 @@ class RNGDirector{
 			externalRef();			
 			grammar();
 		}builder.endLevel();
-		builder.buildChoicePattern("choice pattern","RELAXNG Specification 3.Full Syntax: pattern");	
+		builder.buildChoicePattern("choice of pattern elements","RELAXNG Specification 3.Full Syntax: pattern");	
 		SPattern[] cp = builder.getAllCurrentPatterns();
 		refDefinitionTopPattern[0] = cp[0];
 	}	
@@ -275,7 +275,7 @@ class RNGDirector{
 			divGrammarContent();
 			include();
 		}builder.endLevel();
-		builder.buildChoicePattern("choice grammar content","RELAXNG Specification 3.Full Syntax: grammar content");
+		builder.buildChoicePattern("choice of grammar content definitions","RELAXNG Specification 3.Full Syntax: grammar content");
 		SPattern[] cp = builder.getAllCurrentPatterns();
 		refDefinitionTopPattern[2] = cp[0];
 	}
@@ -287,7 +287,7 @@ class RNGDirector{
 			define();
 			divIncludeContent();
 		}builder.endLevel();
-		builder.buildChoicePattern("choice include content","RELAXNG Specification 3.Full Syntax: include content");
+		builder.buildChoicePattern("choice of include content elements","RELAXNG Specification 3.Full Syntax: include content");
 		SPattern[] cp = builder.getAllCurrentPatterns();
 		refDefinitionTopPattern[3] = cp[0];
 	}	
@@ -300,7 +300,7 @@ class RNGDirector{
 			nsName();
 			choiceNameClass();
 		}builder.endLevel();
-		builder.buildChoicePattern("choice name class","RELAXNG Specification 3.Full Syntax: name class");
+		builder.buildChoicePattern("choice of name class elements","RELAXNG Specification 3.Full Syntax: name class");
 		SPattern[] cp = builder.getAllCurrentPatterns();
 		refDefinitionTopPattern[1] = cp[0];
 	}
@@ -1106,10 +1106,10 @@ class RNGDirector{
 				}builder.endLevel();
 				builder.buildOneOrMore("oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore");				
 			}builder.endLevel();
-			builder.buildGroup("group name class, patterns","RELAXNG Specification 3.Full Syntax: element with name class child");
+			builder.buildGroup("group of name class and pattern elements","RELAXNG Specification 3.Full Syntax: element with name class child");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave name class, patterns group and foreign elements","RELAXNG Specification 3.Full Syntax: element with name class child");		
+		builder.buildInterleave("interleaving of name class and pattern elements group with foreign elements","RELAXNG Specification 3.Full Syntax: element with name class child");		
 	}
 	
 	private void patternPlus(){				
@@ -1120,7 +1120,7 @@ class RNGDirector{
 			builder.buildOneOrMore("oneOrMore","RELAXNG Specification 3.Full Syntax: pattern content");			
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave patterns and foreign elements","RELAXNG Specification 3.Full Syntax: pattern content");	
+		builder.buildInterleave("interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: pattern content");	
 	}
 	
 	private void nameClassPatternSquare(){
@@ -1132,10 +1132,10 @@ class RNGDirector{
 				}builder.endLevel();
 				builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: optional");
 			}builder.endLevel();
-			builder.buildGroup("group name class, pattern group","RELAXNG Specification 3.Full Syntax: attribute with name class child");
+			builder.buildGroup("group of name class and pattern elements","RELAXNG Specification 3.Full Syntax: attribute with name class child");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave name class, pattern group and foreign elements","RELAXNG Specification 3.Full Syntax: attribute with name class child");		
+		builder.buildInterleave("interleaving of name class and pattern elements group with foreign elements","RELAXNG Specification 3.Full Syntax: attribute with name class child");		
 	}
 	
 	private void patternSquare(){				
@@ -1146,7 +1146,7 @@ class RNGDirector{
 			builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: optional");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave pattern and foreign elements","RELAXNG Specification 3.Full Syntax: attribute with name attribute");	
+		builder.buildInterleave("interleaving of pattern element and foreign elements","RELAXNG Specification 3.Full Syntax: attribute with name attribute");	
 	}
 	
 	private void paramStarExceptPatternSquare() throws DatatypeException{
@@ -1161,10 +1161,10 @@ class RNGDirector{
 				}builder.endLevel();
 				builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: optional");
 			}builder.endLevel();
-			builder.buildGroup("group param except","RELAXNG Specification 3.Full Syntax: data");
+			builder.buildGroup("group of param and except elements","RELAXNG Specification 3.Full Syntax: data");
 			foreignStar();
 		}builder.endLevel();
-		builder.buildInterleave("interleave param, except group and foreign elements","RELAXNG Specification 3.Full Syntax: data");					
+		builder.buildInterleave("interleave param and except elements group with foreign elements","RELAXNG Specification 3.Full Syntax: data");					
 	}	
 
 	private void pattern(){
@@ -1172,7 +1172,7 @@ class RNGDirector{
 			builder.buildRef(0,"pattern","RELAXNG Specification 3.Full Syntax: pattern");
 			foreignStar();
 		}builder.endLevel();
-		builder.buildInterleave("interleave pattern and foreign elements","RELAXNG Specification 3.Full Syntax: pattern content");
+		builder.buildInterleave("interleaving of pattern element and foreign elements","RELAXNG Specification 3.Full Syntax: pattern content");
 	}
 	
 	private void grammarContentStar(){				
@@ -1183,7 +1183,7 @@ class RNGDirector{
 			builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax: grammar content");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave grammar content and foreign elements","RELAXNG Specification 3.Full Syntax: grammar content");	
+		builder.buildInterleave("interleaving of grammar content elements with foreign elements","RELAXNG Specification 3.Full Syntax: grammar content");	
 	}
 	
 	private void includeContentStar(){				
@@ -1194,7 +1194,7 @@ class RNGDirector{
 			builder.buildZeroOrMore("zeroOrMore","RELAXNG Specification 3.Full Syntax: include content");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave include content and foreign elements","RELAXNG Specification 3.Full Syntax: include content");	
+		builder.buildInterleave("interleaving of include content elements with foreign elements","RELAXNG Specification 3.Full Syntax: include content");	
 	}
 
 	private void exceptNameClassSquare() throws DatatypeException{	
@@ -1205,7 +1205,7 @@ class RNGDirector{
 			builder.buildOptional("optional","RELAXNG Specification 3.Full Syntax: optional");
 			foreignStar();
 		}builder.endLevel();
-		builder.buildInterleave("interleave except and foreign elements","RELAXNG Specification 3.Full Syntax: infinite name class content");
+		builder.buildInterleave("interleaving of except element with foreign elements","RELAXNG Specification 3.Full Syntax: infinite name class content");
 	}
 	
 	private void nameClassPlus(){				
@@ -1216,7 +1216,7 @@ class RNGDirector{
 			builder.buildOneOrMore("oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore");
 			foreignStar();
 		}builder.endLevel();				
-		builder.buildInterleave("interleave name classes and foreign elements","RELAXNG Specification 3.Full Syntax: name class content");	
+		builder.buildInterleave("interleaving of name class elements with foreign elements","RELAXNG Specification 3.Full Syntax: name class content");	
 	}
 
 	private void foreignStar(){//zeroOrMore elements from any namespace except rng
