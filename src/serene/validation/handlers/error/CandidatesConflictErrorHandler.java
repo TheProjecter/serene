@@ -70,10 +70,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     IntList warningIds;
     int[][] warningCodes;
     int[][] warningsCount;
-    // TODO
-    // Not needed for disqualifications, can be replaced with simple int counts.
-    /*BitSet[][]warningCandidates;*/
-    /*int[][] recordedWarningMessages;*/
         
     IntList commonErrorIds;
     IntList commonErrorCodes;
@@ -102,13 +98,10 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         errorIds = new IntList();
         errorCodes = new int[4][];
         errorCandidates = new BitSet[4][];
-        /*recordedErrorMessages = new int[ERROR_COUNT][];*/
         
         warningIds = new IntList();
         warningCodes = new int[4][];
         warningsCount = new int[4][];
-        /*warningCandidates = new BitSet[WARNING_COUNT][];*/
-        /*recordedWarningMessages = new int[WARNING_COUNT][];*/
         
         missingContentCandidateIndexes = new IntList();
         
@@ -162,12 +155,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
                         for(int j = 0; j < errorCodes[i].length; j++){
                             commonErrorIds.add(errorId);
                             commonErrorCodes.add(errorCodes[i][j]);
-                        }                        
-                        /*for(int j = 0; j < errorCandidates[i].length; j++){
-                           for(int k = 0; k < errorCandidates[i][j].length(); k++){
-                               if(errorCandidates[i][j].get(k))candidateMessageHandlers[k].transferErrorMessage(errorId, errorCodes[i][j], localMessageHandler);
-                           }
-                        }*/
+                        }            
                     }else{
                         // PARTIALLY COMMON
                         int k = 0;                        
@@ -184,10 +172,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
                             // Store the errorId and the codes. Transfer at the end.
                             commonErrorIds.add(errorId);
                             commonErrorCodes.add(errorCodes[i][j]);
-                            /*for(ConflictMessageHandler candidate: candidateMessageHandlers){                            
-                                //candidate.clearErrorMessage(i, errorCodes[i][j]);
-                                candidate.transferErrorMessage(errorId, errorCodes[i][j], localMessageHandler);
-                            }*/               
                         }else{
                             // DISQUALIFYING
                             conflictHandler.disqualify(errorCandidates[i][j]);
@@ -212,10 +196,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
                         // Store the warningId and the codes. Transfer at the end.
                         commonWarningIds.add(warningId);
                         commonWarningCodes.add(warningCodes[i][j]);
-                        /*for(ConflictMessageHandler candidate: candidateMessageHandlers){                            
-                            //candidate.clearErrorMessage(i, warningCodes[i][j]);
-                            candidate.transferErrorMessage(warningId, warningCodes[i][j], localMessageHandler);
-                        }*/               
                     }                    
                 }
                 warningsCount[i] = null;
@@ -252,30 +232,18 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             allDisqualified = true;
             if(!commonErrorIds.isEmpty()){
                 transferAllCommonErrors();
-                commonErrorIds.clear();
-                commonErrorCodes.clear();
             }
             if(!commonWarningIds.isEmpty()){
                 transferAllCommonWarnings();
-                commonWarningIds.clear();
-                commonWarningCodes.clear();
             }
             return;
         }
         
-        if(candidateDelayedMessages == null){
-            if(qualifiedCount != 1){
-                if(!commonErrorIds.isEmpty()){
-                    transferQualifiedCommonErrors();
-                    commonErrorIds.clear();
-                    commonErrorCodes.clear();
-                }
-                if(!commonWarningIds.isEmpty()){
-                    transferQualifiedCommonWarnings();
-                    commonWarningIds.clear();
-                    commonWarningCodes.clear();
-                }
-            }
+        if(candidateDelayedMessages == null){           
+            if(!commonErrorIds.isEmpty()
+                || !commonWarningIds.isEmpty()){
+                throw new IllegalStateException();
+            }           
             return;
         }
         
@@ -285,10 +253,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             for(int i = 0; i < candidateDelayedMessages.length; i++){
                 if(i != winnerIndex && candidateDelayedMessages[i] != null) candidateDelayedMessages[i] = null;
             }
-            commonErrorIds.clear();
-            commonErrorCodes.clear();
-            commonWarningIds.clear();
-            commonWarningCodes.clear();
             return;
         }
         
@@ -313,13 +277,9 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         if(candidatesCount == disqualified.cardinality()){//using the subtree for disqualification results in unresolved, so it is not applied
             if(!commonErrorIds.isEmpty()){
                 transferQualifiedCommonErrors();
-                commonErrorIds.clear();
-                commonErrorCodes.clear();
             }
             if(!commonWarningIds.isEmpty()){
                 transferQualifiedCommonWarnings();
-                commonWarningIds.clear();
-                commonWarningCodes.clear();
             }
             return;
         }
@@ -339,13 +299,9 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         if(qualifiedCount != 1){
             if(!commonErrorIds.isEmpty()){
                 transferQualifiedCommonErrors();
-                commonErrorIds.clear();
-                commonErrorCodes.clear();
             }
             if(!commonWarningIds.isEmpty()){
                 transferQualifiedCommonWarnings();
-                commonWarningIds.clear();
-                commonWarningCodes.clear();
             }
         }
     }
@@ -541,75 +497,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             warningsCount[index][0] = 1;
         }
     }    
-        
-    /*boolean mustRecordErrorMessage(int errorId, int errorFunctionalEquivalenceCode, int candidateIndex){
-        return candidateIndex == getErrorRecordingIndex(errorId, errorFunctionalEquivalenceCode, candidateIndex);
-    }
-    
-    boolean mustRecordWarningMessage(int warningId, int warningFunctionalEquivalenceCode, int candidateIndex){
-        return candidateIndex == getWarningRecordingIndex(warningId, warningFunctionalEquivalenceCode, candidateIndex);
-    }*/
-    
-    /*int getErrorRecordingIndex(int errorId, int errorFunctionalEquivalenceCode, int candidateIndex){        
-        int firstQ = conflictHandler.getNextQualified(0);        
-        if(!isErrorMessageRecorded(errorId, errorFunctionalEquivalenceCode)  && candidateIndex > firstQ){ 
-            return candidateIndex;
-        }
-        return firstQ;
-    }
-
-    int getWarningRecordingIndex(int warningId, int warningFunctionalEquivalenceCode, int candidateIndex){        
-        int firstQ = conflictHandler.getNextQualified(0);        
-        if(!isWarningMessageRecorded(warningId, warningFunctionalEquivalenceCode)  && candidateIndex > firstQ){ 
-            return candidateIndex;
-        }
-        return firstQ;
-    }    
-    
-    
-    boolean isErrorMessageRecorded(int errorId, int errorFunctionalEquivalenceCode){
-        int[] recordedErrorCodes = recordedErrorMessages[errorId];
-        if( recordedErrorCodes == null ) return false;
-        for(int i = 0; i <  recordedErrorCodes.length; i++){
-            if(recordedErrorCodes[i] == errorFunctionalEquivalenceCode) return true;
-        }
-        return false;
-    }
-    
-    boolean isWarningMessageRecorded(int warningId, int warningFunctionalEquivalenceCode){
-        int[] recordedWarningCodes = recordedWarningMessages[warningId];
-        if( recordedWarningCodes == null ) return false;
-        for(int i = 0; i <  recordedWarningCodes.length; i++){
-            if(recordedWarningCodes[i] == warningFunctionalEquivalenceCode) return true;
-        }
-        return false;
-    }*/
-    
-    /*void setErrorMessageRecorded(int errorId, int errorFunctionalEquivalenceCode){
-        if( recordedErrorMessages[errorId] == null ){
-            recordedErrorMessages[errorId] = new int[1];
-            recordedErrorMessages[errorId][0] = errorFunctionalEquivalenceCode;
-            return;
-        }
-        int length = recordedErrorMessages[errorId].length;
-        int[] increased = new int[length+1];
-        System.arraycopy(recordedErrorMessages[errorId], 0, increased, 0, length);
-        recordedErrorMessages[errorId] = increased;
-        recordedErrorMessages[errorId][length] = errorFunctionalEquivalenceCode;
-    }*/
-    
-    /*void setWarningMessageRecorded(int warningId, int warningFunctionalEquivalenceCode){
-        if( recordedWarningMessages[warningId] == null ){
-            recordedWarningMessages[warningId] = new int[1];
-            recordedWarningMessages[warningId][0] = warningFunctionalEquivalenceCode;
-            return;
-        }
-        int length = recordedWarningMessages[warningId].length;
-        int[] increased = new int[length+1];
-        System.arraycopy(recordedWarningMessages[warningId], 0, increased, 0, length);
-        recordedWarningMessages[warningId] = increased;
-        recordedWarningMessages[warningId][length] = warningFunctionalEquivalenceCode;
-    }*/
     
     // from direct candidates and subtree through ExternalConflictErrorHandler    
     public void delayMessageReporter(int contextType, String qName, AElement definition, Locator locator, MessageReporter messageHandler, int candidateIndex){
@@ -695,53 +582,29 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     
 	public void unknownElement(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber){
         recordError(UNKNOWN_ELEMENT, functionalEquivalenceCode, candidateIndex);
-		/*if(mustRecordErrorMessage(UNKNOWN_ELEMENT, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.unknownElement(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber);
-            /*setErrorMessageRecorded(UNKNOWN_ELEMENT, functionalEquivalenceCode);
-        }*/
 	}	
 	
 	public void unexpectedElement(int candidateIndex, int functionalEquivalenceCode, String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
         recordError(UNEXPECTED_ELEMENT, functionalEquivalenceCode, candidateIndex);
-		/*if(mustRecordErrorMessage(UNEXPECTED_ELEMENT, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.unexpectedElement(functionalEquivalenceCode, qName, definition, systemId, lineNumber, columnNumber);
-            /*setErrorMessageRecorded(UNEXPECTED_ELEMENT, functionalEquivalenceCode);
-        }*/
 	}	
     
     
 	public void unexpectedAmbiguousElement(int candidateIndex, int functionalEquivalenceCode, String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
-        recordError(UNEXPECTED_AMBIGUOUS_ELEMENT, functionalEquivalenceCode, candidateIndex);     
-		/*if(mustRecordErrorMessage(UNEXPECTED_AMBIGUOUS_ELEMENT, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.unexpectedAmbiguousElement(functionalEquivalenceCode, qName, possibleDefinitions, systemId, lineNumber, columnNumber);
-            /*setErrorMessageRecorded(UNEXPECTED_AMBIGUOUS_ELEMENT, functionalEquivalenceCode);
-        }*/
+        recordError(UNEXPECTED_AMBIGUOUS_ELEMENT, functionalEquivalenceCode, candidateIndex);
 	}		
 	
 	
 	public void unknownAttribute(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber){
         recordError(UNKNOWN_ATTRIBUTE, functionalEquivalenceCode, candidateIndex);
-		/*if(mustRecordErrorMessage(UNKNOWN_ATTRIBUTE, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.unknownAttribute(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber);
-            /*setErrorMessageRecorded(UNKNOWN_ATTRIBUTE, functionalEquivalenceCode);
-        }*/
 	}
 	
 	public void unexpectedAttribute(int candidateIndex, int functionalEquivalenceCode, String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){	    
-        recordError(UNEXPECTED_ATTRIBUTE, functionalEquivalenceCode, candidateIndex);        
-		/*if(mustRecordErrorMessage(UNEXPECTED_ATTRIBUTE, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.unexpectedAttribute(functionalEquivalenceCode, qName, definition, systemId, lineNumber, columnNumber);
-            /*setErrorMessageRecorded(UNEXPECTED_ATTRIBUTE, functionalEquivalenceCode);
-        }*/
+        recordError(UNEXPECTED_ATTRIBUTE, functionalEquivalenceCode, candidateIndex);
 	}
 	
 	
 	public void unexpectedAmbiguousAttribute(int candidateIndex, int functionalEquivalenceCode, String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
         recordError(UNEXPECTED_AMBIGUOUS_ATTRIBUTE, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(UNEXPECTED_AMBIGUOUS_ATTRIBUTE, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.unexpectedAmbiguousAttribute(functionalEquivalenceCode, qName, possibleDefinitions, systemId, lineNumber, columnNumber);
-            /*setErrorMessageRecorded(UNEXPECTED_AMBIGUOUS_ATTRIBUTE, functionalEquivalenceCode);
-        }*/
 	}
 	
 	public void misplacedContent(int candidateIndex, int functionalEquivalenceCode, 
@@ -758,22 +621,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 											APattern sourceDefinition, 
 											APattern reper){//not stored, only used for internal conflict handling
         recordError(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordErrorMessage(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex)){*/
-            /*localMessageHandler.misplacedContent(functionalEquivalenceCode,
-                                                        contextDefinition, 
-                                                        startSystemId, 
-                                                        startLineNumber, 
-                                                        startColumnNumber, 
-                                                        definition,
-                                                        itemId, 
-                                                        qName, 
-                                                        systemId, 
-                                                        lineNumber, 
-                                                        columnNumber,
-                                                        sourceDefinition, 
-                                                        reper);*/
-            /*setErrorMessageRecorded(MISPLACED_ELEMENT, functionalEquivalenceCode);
-        }*/
 	}
     public void misplacedContent(int candidateIndex, int functionalEquivalenceCode, 
                                             APattern contextDefinition, 
@@ -788,23 +635,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 											int[] columnNumber,
 											APattern[] sourceDefinition, 
 											APattern reper){//not stored, only used for internal conflict handling
-        recordError(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex);		        
-        /*if(mustRecordErrorMessage(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex)){*/
-            /*localMessageHandler.misplacedContent(functionalEquivalenceCode,
-                                                            contextDefinition, 
-                                                            startSystemId, 
-                                                            startLineNumber, 
-                                                            startColumnNumber, 
-                                                            definition,
-                                                            itemId, 
-                                                            qName, 
-                                                            systemId, 
-                                                            lineNumber, 
-                                                            columnNumber,
-                                                            sourceDefinition, 
-                                                            reper);*/
-            /*setErrorMessageRecorded(MISPLACED_ELEMENT, functionalEquivalenceCode);
-        }*/
+        recordError(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex);
 	}
 			
 	
@@ -819,21 +650,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 									String[] systemId, 
 									int[] lineNumber, 
 									int[] columnNumber){
-        recordError(EXCESSIVE_CONTENT, functionalEquivalenceCode, candidateIndex);                     
-	    /*if(mustRecordErrorMessage(EXCESSIVE_CONTENT, functionalEquivalenceCode, candidateIndex)){*/
-            /*localMessageHandler.excessiveContent(functionalEquivalenceCode,
-                                                            context,
-                                                            startSystemId,
-                                                            startLineNumber,
-                                                            startColumnNumber,
-                                                            definition,
-                                                            itemId, 
-                                                            qName, 
-                                                            systemId, 
-                                                            lineNumber, 
-                                                            columnNumber);*/
-            /*setErrorMessageRecorded(EXCESSIVE_CONTENT, functionalEquivalenceCode);
-        }*/
+        recordError(EXCESSIVE_CONTENT, functionalEquivalenceCode, candidateIndex);
 	}   
 	public void excessiveContent(int candidateIndex, int functionalEquivalenceCode, 
                                 Rule context, 
@@ -843,21 +660,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 								String systemId, 
 								int lineNumber,		
 								int columnNumber){
-		//if(recordError(EXCESSIVE_CONTENT, candidateIndex))
-        /*try{
-        localMessageHandler.excessiveContent(functionalEquivalenceCode, 
-                                                                context, 
-                                                                definition,
-                                                                itemId, 
-                                                                qName, 
-                                                                systemId, 
-                                                                lineNumber,		
-                                                                columnNumber);
-        }catch(IllegalArgumentException e){
-            if(!conflictHandler.isDisqualified(candidateIndex)){
-                throw new IllegalStateException(e);
-            }
-        }*/
 	}
     
     
@@ -868,15 +670,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 									int columnNumber, 
 									AElement[] possibleDefinitions){
         recordError(UNRESOLVED_AMBIGUOUS_ELEMENT_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordErrorMessage(UNRESOLVED_AMBIGUOUS_ELEMENT_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            /*localMessageHandler.unresolvedAmbiguousElementContentError(functionalEquivalenceCode,
-                                                                qName, 
-                                                                systemId, 
-                                                                lineNumber, 
-                                                                columnNumber, 
-                                                                possibleDefinitions);*/
-            /*setErrorMessageRecorded(UNRESOLVED_AMBIGUOUS_ELEMENT_CONTENT_ERROR, functionalEquivalenceCode);
-        }*/
 	}
 	
 	public void unresolvedUnresolvedElementContentError(int candidateIndex, int functionalEquivalenceCode, 
@@ -885,16 +678,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 									int lineNumber, 
 									int columnNumber, 
 									AElement[] possibleDefinitions){
-        recordError(UNRESOLVED_UNRESOLVED_ELEMENT_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordErrorMessage(UNRESOLVED_UNRESOLVED_ELEMENT_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            /*localMessageHandler.unresolvedUnresolvedElementContentError(functionalEquivalenceCode,
-                                                                qName, 
-                                                                systemId, 
-                                                                lineNumber, 
-                                                                columnNumber, 
-                                                                possibleDefinitions);*/
-            /*setErrorMessageRecorded(UNRESOLVED_UNRESOLVED_ELEMENT_CONTENT_ERROR, functionalEquivalenceCode);
-        }*/
+        recordError(UNRESOLVED_UNRESOLVED_ELEMENT_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);        
 	}
     
     
@@ -904,56 +688,27 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 									int lineNumber, 
 									int columnNumber, 
 									AAttribute[] possibleDefinitions){
-        recordError(UNRESOLVED_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordErrorMessage(UNRESOLVED_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            /*localMessageHandler.unresolvedAttributeContentError(functionalEquivalenceCode,
-                                                                            qName, 
-                                                                            systemId, 
-                                                                            lineNumber, 
-                                                                            columnNumber, 
-                                                                            possibleDefinitions);*/
-            /*setErrorMessageRecorded(UNRESOLVED_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode);
-        }*/
+        recordError(UNRESOLVED_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);        
 	}
 
     public void ambiguousUnresolvedElementContentWarning(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-        recordWarning(AMBIGUOUS_UNRESOLVED_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordWarningMessage(AMBIGUOUS_UNRESOLVED_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.ambiguousUnresolvedElementContentWarning(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
-            /*setWarningMessageRecorded(AMBIGUOUS_UNRESOLVED_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode);
-        }*/
+        recordWarning(AMBIGUOUS_UNRESOLVED_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
     
     public void ambiguousAmbiguousElementContentWarning(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-        recordWarning(AMBIGUOUS_AMBIGUOUS_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordWarningMessage(AMBIGUOUS_AMBIGUOUS_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.ambiguousAmbiguousElementContentWarning(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
-            /*setWarningMessageRecorded(AMBIGUOUS_AMBIGUOUS_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode);
-        }*/
+        recordWarning(AMBIGUOUS_AMBIGUOUS_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
     
 	public void ambiguousAttributeContentWarning(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
-        recordWarning(AMBIGUOUS_ATTRIBUTE_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordWarningMessage(AMBIGUOUS_ATTRIBUTE_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.ambiguousAttributeContentWarning(functionalEquivalenceCode, qName, systemId, lineNumber, columnNumber, possibleDefinitions);
-            /*setWarningMessageRecorded(AMBIGUOUS_ATTRIBUTE_CONTENT_WARNING, functionalEquivalenceCode);
-        }*/
+        recordWarning(AMBIGUOUS_ATTRIBUTE_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
     
 	public void ambiguousCharacterContentWarning(int candidateIndex, int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        recordWarning(AMBIGUOUS_CHARACTER_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordWarningMessage(AMBIGUOUS_CHARACTER_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.ambiguousCharacterContentWarning(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
-            /*setWarningMessageRecorded(AMBIGUOUS_CHARACTER_CONTENT_WARNING, functionalEquivalenceCode);
-        }*/
+        recordWarning(AMBIGUOUS_CHARACTER_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
 
     public void ambiguousAttributeValueWarning(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        recordWarning(AMBIGUOUS_ATTRIBUTE_VALUE_WARNING, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordWarningMessage(AMBIGUOUS_ATTRIBUTE_VALUE_WARNING, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.ambiguousAttributeValueWarning(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
-            /*setWarningMessageRecorded(AMBIGUOUS_ATTRIBUTE_VALUE_WARNING, functionalEquivalenceCode);
-        }*/
+        recordWarning(AMBIGUOUS_ATTRIBUTE_VALUE_WARNING, functionalEquivalenceCode, candidateIndex);        
     }    
 	
 	
@@ -970,22 +725,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 								int[] lineNumber, 
 								int[] columnNumber){
 	    //if(definition.getQName().equals("name attribute with QName value"))throw new IllegalStateException();
-        recordMissingContentError(functionalEquivalenceCode, candidateIndex, definition);
-        /*if(mustRecordErrorMessage(MISSING_CONTENT, functionalEquivalenceCode, candidateIndex)){*/
-            /*localMessageHandler.missingContent(functionalEquivalenceCode,
-                                                                context, 
-                                                                startSystemId, 
-                                                                startLineNumber, 
-                                                                startColumnNumber,								 
-                                                                definition, 
-                                                                expected, 
-                                                                found,
-                                                                qName, 
-                                                                systemId, 
-                                                                lineNumber, 
-                                                                columnNumber);*/
-            /*setErrorMessageRecorded(MISSING_CONTENT, functionalEquivalenceCode);
-        }*/
+        recordMissingContentError(functionalEquivalenceCode, candidateIndex, definition);        
     }
     
 	public void illegalContent(int candidateIndex, int functionalEquivalenceCode, 
@@ -995,161 +735,83 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 							String startSystemId, 
 							int startLineNumber, 
 							int startColumnNumber){
-        recordError(ILLEGAL_CONTENT, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordErrorMessage(ILLEGAL_CONTENT, functionalEquivalenceCode, candidateIndex)){*/
-            /*localMessageHandler.illegalContent(functionalEquivalenceCode,
-                                                                context, 
-                                                                startItemId, 
-                                                                startQName, 
-                                                                startSystemId, 
-                                                                startLineNumber, 
-                                                                startColumnNumber);*/
-            /*setErrorMessageRecorded(ILLEGAL_CONTENT, functionalEquivalenceCode);
-        }*/
+        recordError(ILLEGAL_CONTENT, functionalEquivalenceCode, candidateIndex);        
 	}
         
 	public void undeterminedByContent(int candidateIndex, int functionalEquivalenceCode, String qName, String candidateDelayedMessages){
-        recordError(UNDETERMINED_BY_CONTENT, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(UNDETERMINED_BY_CONTENT, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.undeterminedByContent(functionalEquivalenceCode, qName, candidateDelayedMessages);
-            /*setErrorMessageRecorded(UNDETERMINED_BY_CONTENT, functionalEquivalenceCode);
-        }*/
+        recordError(UNDETERMINED_BY_CONTENT, functionalEquivalenceCode, candidateIndex);	    
 	}
 	
     // {15}
 	public void characterContentDatatypeError(int candidateIndex, int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){	    
-        recordError(CHARACTER_CONTENT_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(CHARACTER_CONTENT_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.characterContentDatatypeError(functionalEquivalenceCode, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
-            /*setErrorMessageRecorded(CHARACTER_CONTENT_DATATYPE_ERROR, functionalEquivalenceCode);
-        }*/
+        recordError(CHARACTER_CONTENT_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
         
     //{16}
 	public void attributeValueDatatypeError(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        recordError(ATTRIBUTE_VALUE_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(ATTRIBUTE_VALUE_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.attributeValueDatatypeError(functionalEquivalenceCode, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
-            /*setErrorMessageRecorded(ATTRIBUTE_VALUE_DATATYPE_ERROR, functionalEquivalenceCode);
-        }*/
+        recordError(ATTRIBUTE_VALUE_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
         
         
 	public void characterContentValueError(int candidateIndex, int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        recordError(CHARACTER_CONTENT_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(CHARACTER_CONTENT_VALUE_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.characterContentValueError(functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
-            /*setErrorMessageRecorded(CHARACTER_CONTENT_VALUE_ERROR, functionalEquivalenceCode);
-        }*/
+        recordError(CHARACTER_CONTENT_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
     
 	public void attributeValueValueError(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        recordError(ATTRIBUTE_VALUE_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(ATTRIBUTE_VALUE_VALUE_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.attributeValueValueError(functionalEquivalenceCode, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
-            /*setErrorMessageRecorded(ATTRIBUTE_VALUE_VALUE_ERROR, functionalEquivalenceCode);
-        }*/
+        recordError(ATTRIBUTE_VALUE_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
     
     
 	public void characterContentExceptedError(int candidateIndex, int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        recordError(CHARACTER_CONTENT_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(CHARACTER_CONTENT_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.characterContentExceptedError(functionalEquivalenceCode, elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
-            /*setErrorMessageRecorded(CHARACTER_CONTENT_EXCEPTED_ERROR, functionalEquivalenceCode);
-        }*/
+        recordError(CHARACTER_CONTENT_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
     
 	public void attributeValueExceptedError(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        recordError(ATTRIBUTE_VALUE_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(ATTRIBUTE_VALUE_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.attributeValueExceptedError(functionalEquivalenceCode, attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
-            /*setErrorMessageRecorded(ATTRIBUTE_VALUE_EXCEPTED_ERROR, functionalEquivalenceCode);
-        }*/
+        recordError(ATTRIBUTE_VALUE_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
     
 	public void unexpectedCharacterContent(int candidateIndex, int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
-        recordError(UNEXPECTED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(UNEXPECTED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.unexpectedCharacterContent(functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, elementDefinition);
-            /*setErrorMessageRecorded(UNEXPECTED_CHARACTER_CONTENT, functionalEquivalenceCode);
-        }*/
+        recordError(UNEXPECTED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex);	    
 	}
     
 	public void unexpectedAttributeValue(int candidateIndex, int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
-        recordError(UNEXPECTED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(UNEXPECTED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.unexpectedAttributeValue(functionalEquivalenceCode, charsSystemId, charsLineNumber, columnNumber, attributeDefinition);
-            /*setErrorMessageRecorded(UNEXPECTED_ATTRIBUTE_VALUE, functionalEquivalenceCode);
-        }*/
+        recordError(UNEXPECTED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex);	    
 	}
     
 	public void unresolvedCharacterContent(int candidateIndex, int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        recordError(UNRESOLVED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(UNRESOLVED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.unresolvedCharacterContent(functionalEquivalenceCode, systemId, lineNumber, columnNumber, possibleDefinitions);
-            /*setErrorMessageRecorded(UNRESOLVED_CHARACTER_CONTENT, functionalEquivalenceCode);
-        }*/
+        recordError(UNRESOLVED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex);	    
 	}
     
 	// {24}
 	public void unresolvedAttributeValue(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        recordError(UNRESOLVED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(UNRESOLVED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.unresolvedAttributeValue(functionalEquivalenceCode, attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
-            /*setErrorMessageRecorded(UNRESOLVED_ATTRIBUTE_VALUE, functionalEquivalenceCode);
-        }*/
+        recordError(UNRESOLVED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex);	    
 	}        
     
     
     // {25}
 	public void listTokenDatatypeError(int candidateIndex, int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        recordError(LIST_TOKEN_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordErrorMessage(LIST_TOKEN_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.listTokenDatatypeError(functionalEquivalenceCode, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
-            /*setErrorMessageRecorded(LIST_TOKEN_DATATYPE_ERROR, functionalEquivalenceCode);
-        }*/
+        recordError(LIST_TOKEN_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);        
 	}
     
         
 	public void listTokenValueError(int candidateIndex, int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        recordError(LIST_TOKEN_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);
-	    /*if(mustRecordErrorMessage(LIST_TOKEN_VALUE_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.listTokenValueError(functionalEquivalenceCode, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
-            /*setErrorMessageRecorded(LIST_TOKEN_VALUE_ERROR, functionalEquivalenceCode);
-        }*/
+        recordError(LIST_TOKEN_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}        
     
 	public void listTokenExceptedError(int candidateIndex, int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        recordError(LIST_TOKEN_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex);
-		/*if(mustRecordErrorMessage(LIST_TOKEN_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.listTokenExceptedError(functionalEquivalenceCode, token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
-            /*setErrorMessageRecorded(LIST_TOKEN_EXCEPTED_ERROR, functionalEquivalenceCode);
-        }*/
+        recordError(LIST_TOKEN_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex);		
 	}
     
     	    
     public void unresolvedListTokenInContextError(int candidateIndex, int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        recordError(UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordErrorMessage(UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.unresolvedListTokenInContextError(functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
-            /*setErrorMessageRecorded(UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR, functionalEquivalenceCode);
-        }*/
+        recordError(UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR, functionalEquivalenceCode, candidateIndex);        
     }
     public void ambiguousListTokenInContextWarning(int candidateIndex, int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-        recordWarning(AMBIGUOUS_LIST_TOKEN_IN_CONTEXT_WARNING, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordWarningMessage(AMBIGUOUS_LIST_TOKEN_IN_CONTEXT_WARNING, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.ambiguousListTokenInContextWarning(functionalEquivalenceCode, token, systemId, lineNumber, columnNumber, possibleDefinitions);
-            /*setWarningMessageRecorded(AMBIGUOUS_LIST_TOKEN_IN_CONTEXT_WARNING, functionalEquivalenceCode);
-        }*/
+        recordWarning(AMBIGUOUS_LIST_TOKEN_IN_CONTEXT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
     
     public  void conflict(int candidateIndex, int functionalEquivalenceCode, int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter[] candidateMessages){
-        recordError(CONFLICT, functionalEquivalenceCode, candidateIndex);        
-        /*if(mustRecordErrorMessage(CONFLICT, functionalEquivalenceCode, candidateIndex)){*/
-            //localMessageHandler.conflict(functionalEquivalenceCode, conflictResolutionId, commonMessages, candidatesCount, disqualified, candidateMessages);
-            /*setErrorMessageRecorded(CONFLICT, functionalEquivalenceCode);
-        }*/
+        recordError(CONFLICT, functionalEquivalenceCode, candidateIndex);
     }
         
 	public void missingCompositorContent(int candidateIndex, int functionalEquivalenceCode, 
@@ -1160,32 +822,13 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 								APattern definition, 
 								int expected, 
 								int found){
-        recordError(MISSING_COMPOSITOR_CONTENT, functionalEquivalenceCode, candidateIndex);
-        /*if(mustRecordErrorMessage(MISSING_COMPOSITOR_CONTENT, functionalEquivalenceCode, candidateIndex)){*/
-            /*localMessageHandler.missingCompositorContent(functionalEquivalenceCode,
-                                                                        context, 
-                                                                        startSystemId, 
-                                                                        startLineNumber, 
-                                                                        startColumnNumber,								 
-                                                                        definition, 
-                                                                        expected, 
-                                                                        found);*/
-            /*setErrorMessageRecorded(MISSING_COMPOSITOR_CONTENT, functionalEquivalenceCode);
-        }*/
+        recordError(MISSING_COMPOSITOR_CONTENT, functionalEquivalenceCode, candidateIndex);        
 	}
 
-    /*public void clearErrors(){
-        super.clearErrors();
-        for(int i = 0; i < ERROR_COUNT; i++){
-            candidatesWithError.add(null);
-        }       
-    }*/
-       
 
     public void clear(){
         Arrays.fill(errorCodes, null);
         Arrays.fill(errorCandidates, null);
-        /*Arrays.fill(recordedErrorMessages, null);*/
         
         conflictHandler.clear();
         if(candidateMessageHandlers != null) candidateMessageHandlers = null;
@@ -1195,5 +838,11 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         allDisqualified = false;
         hasDelayedMessages = false;
         candidatesCommonMessages = null;
+                
+        commonErrorIds.clear();
+        commonErrorCodes.clear();
+    
+        commonWarningIds.clear();
+        commonWarningCodes.clear();
     }	
 }
