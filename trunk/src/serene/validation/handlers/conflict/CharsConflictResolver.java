@@ -59,7 +59,7 @@ public abstract class CharsConflictResolver extends InternalConflictResolver{
 		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ELEMENT){
 			errorCatcher.unresolvedCharacterContent(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
 		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
-			errorCatcher.unresolvedAttributeValue(validationItemLocator.getQName(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+			errorCatcher.unresolvedAttributeValue(validationItemLocator.getItemIdentifier(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
 		}else{		    
 			throw new IllegalStateException();
 		}	
@@ -73,7 +73,7 @@ public abstract class CharsConflictResolver extends InternalConflictResolver{
 		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ELEMENT){
 			errorCatcher.ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
 		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
-		    errorCatcher.ambiguousAttributeValueWarning(validationItemLocator.getQName(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+		    errorCatcher.ambiguousAttributeValueWarning(validationItemLocator.getItemIdentifier(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
 		}else{		    
 			throw new IllegalStateException();
 		}	

@@ -160,7 +160,7 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 			// System.out.println(i+" "+maxCount+"//"+minimalStartedCount.get(i));
 			if(minimalStartedCount.get(i) >= maxCount){	
 				APattern reper = ((AGroup)rule).getChild(i);
-				errorCatcher.misplacedContent(rule, starttSystemId, starttLineNumber, starttColumnNumber, currentChild, validationItemLocator.getItemId(), validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), sourceDefinition, reper);
+				errorCatcher.misplacedContent(rule, starttSystemId, starttLineNumber, starttColumnNumber, currentChild, validationItemLocator.getItemId(), validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), sourceDefinition, reper);
 				//System.out.println("order error "+sourceDefinition
 				//	+"   MIN "+minimalStartedCount.get(i)+" MAX "+maxCount);
 				break;

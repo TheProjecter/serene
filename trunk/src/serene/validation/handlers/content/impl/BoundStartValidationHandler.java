@@ -81,11 +81,11 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 		List<SimplifiedComponent> elementMatches = matchHandler.matchElement(namespace, name);        
 		int matchCount = elementMatches.size();
 		if(matchCount == 0){            
-			unknownElement(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+			unknownElement(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
 		}else if(matchCount == 1){
-            unexpectedElement(validationItemLocator.getQName(), elementMatches.get(0), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+            unexpectedElement(validationItemLocator.getItemIdentifier(), elementMatches.get(0), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
 		}else{
-            unexpectedAmbiguousElement(validationItemLocator.getQName(), elementMatches.toArray(new SimplifiedComponent[elementMatches.size()]), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+            unexpectedAmbiguousElement(validationItemLocator.getItemIdentifier(), elementMatches.toArray(new SimplifiedComponent[elementMatches.size()]), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
 		}        
 	}
     
@@ -97,7 +97,7 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 
     void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
 		if(contextErrorHandler[contextErrorHandlerIndex] != null){
-			contextErrorHandler[contextErrorHandlerIndex].handle(ContextErrorHandler.ROOT, validationItemLocator.getQName(), element, restrictToFileName, locator);
+			contextErrorHandler[contextErrorHandlerIndex].handle(ContextErrorHandler.ROOT, validationItemLocator.getItemIdentifier(), element, restrictToFileName, locator);
 		}
 	}
 	//--------------------------------------------------------------------------

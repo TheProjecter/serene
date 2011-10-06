@@ -72,7 +72,7 @@ class BoundCandidateAttributeValidationHandler extends CandidateAttributeValidat
 		int definitionIndex = attribute.getDefinitionIndex();
 		AttributeBinder binder = bindingModel.getAttributeBinder(definitionIndex);		
 		if(binder != null){
-			binder.bindAttribute(queue, entry, definitionIndex, validationItemLocator.getNamespaceURI(), validationItemLocator.getLocalName(), validationItemLocator.getQName(), Datatype.ID_TYPE_NULL, value);
+			binder.bindAttribute(queue, entry, definitionIndex, validationItemLocator.getNamespaceURI(), validationItemLocator.getLocalName(), validationItemLocator.getItemIdentifier(), Datatype.ID_TYPE_NULL, value);
 		}
 	}
 	

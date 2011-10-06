@@ -578,7 +578,7 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 		childDefinition[lastCorrectChildIndexIndex] = definition;
 		
 		childQName[lastCorrectChildIndexIndex] = new String[1];
-		childQName[lastCorrectChildIndexIndex][0] = validationItemLocator.getQName();
+		childQName[lastCorrectChildIndexIndex][0] = validationItemLocator.getItemIdentifier();
 		
 		childSystemId[lastCorrectChildIndexIndex] = new String[1];
 		childSystemId[lastCorrectChildIndexIndex][0] = validationItemLocator.getSystemId();
@@ -621,7 +621,7 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 		
 		int newIndex = oldLength;
 		
-		childQName[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getQName();
+		childQName[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getItemIdentifier();
 		childSystemId[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getSystemId();
 		childLineNumber[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getLineNumber();
 		childColumnNumber[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getColumnNumber();

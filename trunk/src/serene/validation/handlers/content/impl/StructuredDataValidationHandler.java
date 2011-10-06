@@ -223,12 +223,12 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	    setCurrentErrorCatcher();
 	    
 	    if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
-			currentErrorCatcher.characterContentDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
+			currentErrorCatcher.characterContentDatatypeError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
 		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
-			currentErrorCatcher.attributeValueDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage);
+			currentErrorCatcher.attributeValueDatatypeError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage);
 		}else if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){
 		    // doesn't really matter since the report will come from except anyway			
-			currentErrorCatcher.characterContentDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
+			currentErrorCatcher.characterContentDatatypeError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
 		}else{
 			throw new IllegalStateException();
 		}		
@@ -241,7 +241,7 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	    if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
 			currentErrorCatcher.characterContentValueError(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
 		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
-			currentErrorCatcher.attributeValueValueError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value);
+			currentErrorCatcher.attributeValueValueError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value);
 		}else if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){
 		    // doesn't really matter since the report will come from except anyway			
 			currentErrorCatcher.characterContentValueError(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 

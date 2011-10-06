@@ -64,7 +64,7 @@ public abstract class InternalConflictResolver implements ConflictResolver{
 		this.systemId = validationItemLocator.getSystemId();
 		this.lineNumber = validationItemLocator.getLineNumber();
 		this.columnNumber = validationItemLocator.getColumnNumber();
-		this.qName = validationItemLocator.getQName();
+		this.qName = validationItemLocator.getItemIdentifier();
 	}
 
 	

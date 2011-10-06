@@ -37,7 +37,7 @@ class UnexpectedAttributeHandler extends ErrorAEH{
 	}
 	
 	void validateInContext(){
-		parent.unexpectedAttribute(validationItemLocator.getQName(), attribute, validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+		parent.unexpectedAttribute(validationItemLocator.getItemIdentifier(), attribute, validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
 	}
 
     boolean functionalEquivalent(ComparableAEH other){

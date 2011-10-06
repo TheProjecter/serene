@@ -35,7 +35,7 @@ public abstract class ListTokenConflictResolver extends CharsConflictResolver{
 	
 	void init(TemporaryMessageStorage[] temporaryMessageStorage){
 		super.init(temporaryMessageStorage);
-        this.token = validationItemLocator.getQName();
+        this.token = validationItemLocator.getItemIdentifier();
 	}
     
 	void reset(){		

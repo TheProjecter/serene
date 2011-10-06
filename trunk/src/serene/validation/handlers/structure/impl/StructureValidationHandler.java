@@ -150,7 +150,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 		starttSystemId = validationItemLocator.getSystemId();		
 		starttLineNumber = validationItemLocator.getLineNumber();
 		starttColumnNumber = validationItemLocator.getColumnNumber();
-		starttQName = validationItemLocator.getQName();
+		starttQName = validationItemLocator.getItemIdentifier();
 	}	
 	//End ValidationHandler-----------------------------------------------------------
 	

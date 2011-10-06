@@ -6,9 +6,8 @@ import sereneWrite.MessageWriter;
 
 
 /**
-* Stores location and qName data for the stack of document items involved in 
-* validation. It is the responsibility of the client to know about the nature 
-* of the current item(element, attribute, character content).
+* Stores location and item identification data for the stack of document items 
+* involved in validation. 
 */
 public class ValidationItemLocator implements Locator{
     public static final int NONE = -1;
@@ -21,8 +20,14 @@ public class ValidationItemLocator implements Locator{
 	int maxDepth;
 	int depth;
 	
-	int[] itemType;
-	String[] qName;
+	int[] itemId;
+	/**
+	* It is stored in order to be used for error messages, it is the qName for 
+	* elements and attributes and the value for list tokens. For attribute value 
+	* and element character content it should also the actual be the actual 
+	* string value, but that could be unpractical, so it is not stored. 
+	*/
+	String[] itemIdentifier;
     String[] localName;
     String[] namespaceURI;
 	String[] systemId;
@@ -39,8 +44,8 @@ public class ValidationItemLocator implements Locator{
 		maxDepth = 13;
 		depth = ROOT;
 		
-		itemType = new int[maxDepth];
-		qName = new String[maxDepth];
+		itemId = new int[maxDepth];
+		itemIdentifier = new String[maxDepth];
         localName = new String[maxDepth]; 
         namespaceURI = new String[maxDepth];
 		systemId = new String[maxDepth];
@@ -48,8 +53,8 @@ public class ValidationItemLocator implements Locator{
 		lineNumber = new int[maxDepth];
 		columnNumber = new int[maxDepth]; 
 		
-		itemType[depth] = ELEMENT;
-		qName[depth] = null;
+		itemId[depth] = ELEMENT;
+		itemIdentifier[depth] = null;
 		systemId[depth] = null;
 		publicId[depth] = null;
 		lineNumber[depth] = 0;
@@ -60,8 +65,8 @@ public class ValidationItemLocator implements Locator{
 		maxDepth = 13;
 		depth = ROOT;
 		
-		itemType = new int[maxDepth];
-		qName = new String[maxDepth];
+		itemId = new int[maxDepth];
+		itemIdentifier = new String[maxDepth];
         localName = new String[maxDepth]; 
         namespaceURI = new String[maxDepth];
 		systemId = new String[maxDepth];
@@ -69,8 +74,8 @@ public class ValidationItemLocator implements Locator{
 		lineNumber = new int[maxDepth];
 		columnNumber = new int[maxDepth]; 
 		
-		itemType[depth] = ELEMENT;
-		qName[depth] = null;
+		itemId[depth] = ELEMENT;
+		itemIdentifier[depth] = null;
 		systemId[depth] = null;
 		publicId[depth] = null;
 		lineNumber[depth] = 0;
@@ -82,8 +87,8 @@ public class ValidationItemLocator implements Locator{
 		if(depth == maxDepth){				
 			increaseSize(10);
 		}		
-		itemType[depth] = ELEMENT;
-		qName[depth] = qn;
+		itemId[depth] = ELEMENT;
+		itemIdentifier[depth] = qn;
         localName[depth] = lN; 
         namespaceURI[depth] = uri;
 		systemId[depth] = si;
@@ -93,7 +98,7 @@ public class ValidationItemLocator implements Locator{
 	}
 	
 	public void closeElement(){
-		qName[depth] = null;
+		itemIdentifier[depth] = null;
         localName[depth] = null; 
         namespaceURI[depth] = null;
 		systemId[depth] = null;
@@ -106,8 +111,8 @@ public class ValidationItemLocator implements Locator{
 		if(depth == maxDepth){				
 			increaseSize(10);
 		}
-		itemType[depth] = ATTRIBUTE;		
-		qName[depth] = qn;
+		itemId[depth] = ATTRIBUTE;		
+		itemIdentifier[depth] = qn;
         localName[depth] = lN; 
         namespaceURI[depth] = uri;
 		systemId[depth] = si;
@@ -117,7 +122,7 @@ public class ValidationItemLocator implements Locator{
 	}
 	
 	public void closeAttribute(){
-		qName[depth] = null;
+		itemIdentifier[depth] = null;
         localName[depth] = null; 
         namespaceURI[depth] = null;
 		systemId[depth] = null;
@@ -132,8 +137,8 @@ public class ValidationItemLocator implements Locator{
 		if(depth == maxDepth){				
 			increaseSize(10);
 		}		
-		itemType[depth] = CHARACTER_CONTENT;
-		qName[depth] = "character content";
+		itemId[depth] = CHARACTER_CONTENT;
+		itemIdentifier[depth] = "character content";
 		systemId[depth] = si;
 		publicId[depth]  = pi;
 		lineNumber[depth] = ln;
@@ -142,7 +147,7 @@ public class ValidationItemLocator implements Locator{
 		
 	public void closeCharsContent(){	
 		if(!currentCharsContent)return;
-		qName[depth] = null;
+		itemIdentifier[depth] = null;
 		systemId[depth] = null;
 		publicId[depth]  = null;
 		depth--;
@@ -154,8 +159,8 @@ public class ValidationItemLocator implements Locator{
 		if(depth == maxDepth){				
 			increaseSize(10);
 		}		
-		itemType[depth] = LIST_TOKEN;
-		qName[depth] = token;
+		itemId[depth] = LIST_TOKEN;
+		itemIdentifier[depth] = token;
 		systemId[depth] = si;
 		publicId[depth]  = pi;
 		lineNumber[depth] = ln;
@@ -163,7 +168,7 @@ public class ValidationItemLocator implements Locator{
 	}
 
     public void closeListToken(){	
-		qName[depth] = null;
+		itemIdentifier[depth] = null;
 		systemId[depth] = null;
 		publicId[depth]  = null;
 		depth--;
@@ -173,12 +178,12 @@ public class ValidationItemLocator implements Locator{
 		maxDepth += amount;
 			
 		int[] increasedItemType = new int[maxDepth];
-		System.arraycopy(itemType, 0, increasedItemType, 0, depth);
-		itemType = increasedItemType;
+		System.arraycopy(itemId, 0, increasedItemType, 0, depth);
+		itemId = increasedItemType;
 		
 		String[] increasedQName = new String[maxDepth];
-		System.arraycopy(qName, 0, increasedQName, 0, depth);
-		qName = increasedQName;
+		System.arraycopy(itemIdentifier, 0, increasedQName, 0, depth);
+		itemIdentifier = increasedQName;
         
         String[] increasedLocalName = new String[maxDepth];
 		System.arraycopy(localName, 0, increasedLocalName, 0, depth);
@@ -209,8 +214,8 @@ public class ValidationItemLocator implements Locator{
 		return depth;
 	}
 	
-	public String getQName(){
-		return qName[depth];
+	public String getItemIdentifier(){
+		return itemIdentifier[depth];
 	}
     
     public String getNamespaceURI(){
@@ -238,6 +243,6 @@ public class ValidationItemLocator implements Locator{
 	}
 
 	public int getItemId(){
-	    return itemType[depth];
+	    return itemId[depth];
 	}
 }
