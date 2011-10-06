@@ -423,11 +423,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		//int redundant = 0;
 		//int inactivated = 0;
 		for(int i = 0; i < lastQualifiedIndex; i++){
+		    AElement element = elementDefinitions.get(i);				
+		    resolver.addCandidate(element);
 			if(!conflictHandler.isDisqualified(i)){
-				AElement element = elementDefinitions.get(i);
-				
-				resolver.addCandidate(element);
-				
 				for(int j = 0; j < temporary.size(); j++){
 					//shifts++;
 					CandidateStackHandler temp = temporary.get(j);
@@ -499,6 +497,10 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}				
 		temporary.clear();
+		
+		for(++lastQualifiedIndex; lastQualifiedIndex < elementDefinitions.size(); lastQualifiedIndex++){
+		    resolver.addCandidate(elementDefinitions.get(lastQualifiedIndex));
+		}
 	}
 	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
 		reportExcessive = true;
@@ -521,11 +523,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		int lastQualifiedIndex = conflictHandler.getPreviousQualified(elementDefinitions.size());
 		
 		for(int i = 0; i < lastQualifiedIndex; i++){
+		    AElement element = elementDefinitions.get(i);
+			resolver.addCandidate(element);
 			if(!conflictHandler.isDisqualified(i)){
-				AElement element = elementDefinitions.get(i);
-				
-				resolver.addCandidate(element);
-				
 				for(int j = 0; j < temporary.size(); j++){
 					CandidateStackHandler temp = temporary.get(j);
 					if(temp != null){
@@ -589,6 +589,10 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}				
 		temporary.clear();
+		
+		for(++lastQualifiedIndex; lastQualifiedIndex < elementDefinitions.size(); lastQualifiedIndex++){
+		    resolver.addCandidate(elementDefinitions.get(lastQualifiedIndex));
+		}
 	}
 	
 		
@@ -824,11 +828,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		
 		
 		for(int i = 0; i < lastQualifiedIndex; i++){
+		    AAttribute attribute = attributeDefinitions.get(i);				
+		    resolver.addCandidate(attribute);
 			if(!disqualified.get(i)){
-				AAttribute attribute = attributeDefinitions.get(i);
-				
-				resolver.addCandidate(attribute);
-				
 				for(int j = 0; j < temporary.size(); j++){
 					CandidateStackHandler temp = temporary.get(j);
 					if(temp != null){
@@ -855,9 +857,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 						}
 					}
 				}
-			}else{
-			    AAttribute attribute = attributeDefinitions.get(i);				
-				resolver.addCandidate(attribute);
 			}
 		}
 		
@@ -928,11 +927,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
         }
 		
 		for(int i = 0; i < lastQualifiedIndex; i++){
+		    AAttribute attribute = attributeDefinitions.get(i);
+			resolver.addCandidate(attribute);
 			if(!disqualified.get(i)){
-				AAttribute attribute = attributeDefinitions.get(i);
-				
-				resolver.addCandidate(attribute);
-				
 				for(int j = 0; j < temporary.size(); j++){
 					CandidateStackHandler temp = temporary.get(j);
 					if(temp != null){
@@ -959,9 +956,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 						}
 					}
 				}
-			}else{
-			    AAttribute attribute = attributeDefinitions.get(i);				
-			    resolver.addCandidate(attribute);
 			}
 		}
 		
@@ -1327,12 +1321,10 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
             lastQualifiedIndex = -1;
         }
 		
-		for(int i = 0; i < lastQualifiedIndex; i++){	
-		    if(!disqualified.get(i)){			
-                CharsActiveTypeItem chars = charsDefinitions.get(i);
-            
-                resolver.addCandidate(chars);
-                
+		for(int i = 0; i < lastQualifiedIndex; i++){
+		    CharsActiveTypeItem chars = charsDefinitions.get(i);
+            resolver.addCandidate(chars);
+		    if(!disqualified.get(i)){
                 for(int j = 0; j < temporary.size(); j++){
                     CandidateStackHandler temp = temporary.get(j);
                     if(temp != null){
@@ -1361,9 +1353,6 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
                         }
                     }
                 }
-            }else{
-                CharsActiveTypeItem chars = charsDefinitions.get(i);		
-                resolver.addCandidate(chars);
             }
 		}
 				
