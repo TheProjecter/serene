@@ -6,7 +6,7 @@ file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalCon
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
 	Syntax error. Element <element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
 	Missing content.
-	In the document structure starting at schema.rng:3:11, corresponding to definition <group name class, patterns> at RELAXNG Specification 3.Full Syntax: element with name class child, expected 1 occurrence corresponding to definition <nameClass> at RELAXNG Specification 3.Full Syntax: name class, found 0.
+	In the document structure starting at schema.rng:3:11, corresponding to definition <group of name class and pattern elements> at RELAXNG Specification 3.Full Syntax: element with name class child, expected 1 occurrence corresponding to definition <nameClass> at RELAXNG Specification 3.Full Syntax: name class, found 0.
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
 	Syntax error. Element <element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
 	Missing content.

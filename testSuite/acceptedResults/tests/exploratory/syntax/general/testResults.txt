@@ -6,11 +6,11 @@ file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/synt
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
 	Syntax error. Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
 	Order error.
-	Misplaced content in the document structure starting at schema.rng:25:20, corresponding to definition <group name class, patterns> at RELAXNG Specification 3.Full Syntax: element with name class child:
+	Misplaced content in the document structure starting at schema.rng:25:20, corresponding to definition <group of name class and pattern elements> at RELAXNG Specification 3.Full Syntax: element with name class child:
 	element <rng:interleave> at schema.rng:25:20
 	null at schema.rng:29:20, corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax: pattern.
 	Excessive content.
-	In the document structure starting at schema.rng:25:20, corresponding to definition <group name class, patterns> at RELAXNG Specification 3.Full Syntax: element with name class child,  expected 1 occurrence corresponding to definition <nameClass> at RELAXNG Specification 3.Full Syntax: name class, found 3 starting at: 
+	In the document structure starting at schema.rng:25:20, corresponding to definition <group of name class and pattern elements> at RELAXNG Specification 3.Full Syntax: element with name class child,  expected 1 occurrence corresponding to definition <nameClass> at RELAXNG Specification 3.Full Syntax: name class, found 3 starting at: 
 	element <rng:name> at schema.rng:33:38
 	element <rng:name> at schema.rng:34:38
 	element <rng:name> at schema.rng:35:38.
@@ -48,7 +48,7 @@ Element <rng:ef> at schema.rng:24:32 corresponding to definition: <element> at R
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:39:14 Syntax error. Element <rng:start> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: start contains errors: 
 Excessive content.
-In the document structure starting at schema.rng:23:16, corresponding to definition <interleave pattern and foreign elements> at RELAXNG Specification 3.Full Syntax: pattern content,  expected 1 occurrence corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax: pattern, found 3 starting at: 
+In the document structure starting at schema.rng:23:16, corresponding to definition <interleaving of pattern element and foreign elements> at RELAXNG Specification 3.Full Syntax: pattern content,  expected 1 occurrence corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax: pattern, found 3 starting at: 
 element <rng:element> at schema.rng:23:16
 element <rng:ref> at schema.rng:37:30
 element <rng:ref> at schema.rng:38:30.
@@ -82,7 +82,7 @@ Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element w
 	<attribute> at RELAXNG Specification 3.Full Syntax: any attribute
 	is not part of the parent's content model.
 	Excessive content.
-	In the document structure starting at schema.rng:60:38, corresponding to definition <group name class, patterns> at RELAXNG Specification 3.Full Syntax: element with name class child,  expected 1 occurrence corresponding to definition <nameClass> at RELAXNG Specification 3.Full Syntax: name class, found 2 starting at: 
+	In the document structure starting at schema.rng:60:38, corresponding to definition <group of name class and pattern elements> at RELAXNG Specification 3.Full Syntax: element with name class child,  expected 1 occurrence corresponding to definition <nameClass> at RELAXNG Specification 3.Full Syntax: name class, found 2 starting at: 
 	element <rng:name> at schema.rng:60:38
 	element <rng:name> at schema.rng:61:38.
 Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
