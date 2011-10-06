@@ -23,20 +23,24 @@ limitations under the License.
 		<element name = "root">
 			<group>						
 				<element name = "aa">
-					<ref name="aaContent"/>
+					<ref name="aaContent1"/>
 				</element>	
 				<element name = "aa">
-					<ref name="aaContent"/>
+					<ref name="aaContent2"/>
 				</element>
 			</group>			
 		</element>
 	</start>
 	
-	<define name="aaContent">
+	<define name="aaContent1">
 		<element name = "bb">
-			<element name = "cc">
-				<empty/>
-			</element>
+		    <empty/>
 		</element>
+	</define>
+	
+	<define name="aaContent2">
+		<element name = "cc">
+            <empty/>
+        </element>
 	</define>
 </grammar>
