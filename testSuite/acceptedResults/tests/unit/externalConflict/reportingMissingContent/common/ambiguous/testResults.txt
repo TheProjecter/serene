@@ -15,6 +15,7 @@ In the document structure starting at document1.xml:22:15, corresponding to defi
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/reportingMissingContent/common/ambiguous/document1.xml:24:8 Syntax warning. Element <root> corresponding to definition <element> at schema.rng:23:26 generates warning: 
 Ambiguous element.
 Element <foo> at document1.xml:22:15, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
+<element> at schema.rng:31:27
 <element> at schema.rng:37:27.
 
 
@@ -30,4 +31,5 @@ In the document structure starting at document2.xml:22:15, corresponding to defi
 file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/externalConflict/reportingMissingContent/common/ambiguous/document2.xml:24:8 Syntax warning. Element <root> corresponding to definition <element> at schema.rng:23:26 generates warning: 
 Ambiguous element.
 Element <foo> at document2.xml:22:15, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
-<element> at schema.rng:25:27.
+<element> at schema.rng:25:27
+<element> at schema.rng:37:27.
