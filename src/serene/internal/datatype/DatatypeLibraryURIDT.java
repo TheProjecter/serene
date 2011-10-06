@@ -16,6 +16,7 @@ limitations under the License.
 
 package serene.internal.datatype;
 
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -24,44 +25,85 @@ import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 import org.relaxng.datatype.DatatypeStreamingValidator;
 
+import org.apache.xerces.impl.dv.XSSimpleType;
+import org.apache.xerces.impl.dv.InvalidDatatypeValueException;
+
+import serene.datatype.xsd.XsdValidationContext;
+
 import sereneWrite.MessageWriter;
 
 class DatatypeLibraryURIDT implements Datatype{
+    boolean needsExtraChecking;
+    boolean needsFacetChecking;
+    boolean needsToNormalize;
+    
+    XsdValidationContext xsdValidationContext;
+    
+    XSSimpleType xercesType;
+    
+    DatatypeLibraryURIDT(XsdValidationContext xsdValidationContext,
+                XSSimpleType xercesType, 
+                MessageWriter debugWriter){
+        this.xercesType = xercesType;
+        this.xsdValidationContext = xsdValidationContext;
+        
+        needsExtraChecking = false;
+        needsFacetChecking = false;
+        needsToNormalize = true;        
+    }
+
 	public boolean isValid(String str, ValidationContext vc) {
-		if(str.equals(""))return true;
+		if(str.equals(""))return true;		
 		try{
-			URI uri = new URI(str);
-			if(uri.getFragment() != null)return false;
-			if(!uri.isAbsolute())return false;
-			return true;
-		}catch(URISyntaxException use){
-			return false;
-		}
+            xsdValidationContext.setNeedsExtraChecking(needsExtraChecking);
+            xsdValidationContext.setNeedsFacetChecking(needsFacetChecking);
+            xsdValidationContext.setNeedsToNormalize(needsToNormalize);
+            xsdValidationContext.setRngValidationContext(vc);
+            xercesType.validate(str, xsdValidationContext, null);
+            try{
+                URI uri = new URI(str);
+                if(uri.getFragment() != null)return false;
+                if(!uri.isAbsolute())return false;
+                return true;
+            }catch(URISyntaxException use){
+                return false;
+            }
+        }catch(InvalidDatatypeValueException xercesException){
+            return false;
+        }
 	}
 
 	public void checkValid(String str, ValidationContext vc) throws DatatypeException {
 		if(str.equals(""))return;
 		try{
-			URI uri = new URI(str);
-			boolean relative = false;
-            boolean fragment = false;
-			if(uri.getFragment() != null){
-                fragment = true;
-			}
-			if(!uri.isAbsolute()){
-				relative = true;
-			}
-            if(fragment && relative){
-                throw new DatatypeException("Relative URI with fragment identifier.");
-            }else if(fragment){
-                throw new DatatypeException("Fragment identifier.");
-            }else if(relative){
-                throw new DatatypeException("Relative URI.");
+            xsdValidationContext.setNeedsExtraChecking(needsExtraChecking);
+            xsdValidationContext.setNeedsFacetChecking(needsFacetChecking);
+            xsdValidationContext.setNeedsToNormalize(needsToNormalize);
+            xsdValidationContext.setRngValidationContext(vc);
+            xercesType.validate(str, xsdValidationContext, null);
+            try{
+                URI uri = new URI(str);
+                boolean relative = false;
+                boolean fragment = false;
+                if(uri.getFragment() != null){
+                    fragment = true;
+                }
+                if(!uri.isAbsolute()){
+                    relative = true;
+                }
+                if(fragment && relative){
+                    throw new DatatypeException("Relative URI with fragment identifier.");
+                }else if(fragment){
+                    throw new DatatypeException("Fragment identifier.");
+                }else if(relative){
+                    throw new DatatypeException("Relative URI.");
+                }
+            }catch(URISyntaxException use){
+                throw new DatatypeException(use.getMessage());
             }
-		}catch(URISyntaxException use){
-			throw new DatatypeException(use.getMessage());
-		}
-			
+        }catch(InvalidDatatypeValueException xercesException){
+            throw new DatatypeException(xercesException.getMessage());
+        }	
 	}
 
 	public Object createValue(String str, ValidationContext vc) {

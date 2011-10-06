@@ -16,37 +16,75 @@ limitations under the License.
 
 package serene.internal.datatype;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 import org.relaxng.datatype.DatatypeStreamingValidator;
 
+import org.apache.xerces.impl.dv.XSSimpleType;
+import org.apache.xerces.impl.dv.InvalidDatatypeValueException;
+
+import serene.datatype.xsd.XsdValidationContext;
+
 import sereneWrite.MessageWriter;
 
 class HrefURIDT implements Datatype{
+    boolean needsExtraChecking;
+    boolean needsFacetChecking;
+    boolean needsToNormalize;
+    
+    XsdValidationContext xsdValidationContext;
+    
+    XSSimpleType xercesType;
+    
+    HrefURIDT(XsdValidationContext xsdValidationContext,
+                XSSimpleType xercesType, 
+                MessageWriter debugWriter){
+        this.xercesType = xercesType;
+        this.xsdValidationContext = xsdValidationContext;
+        
+        needsExtraChecking = false;
+        needsFacetChecking = false;
+        needsToNormalize = true;        
+    }
+    
 	public boolean isValid(String str, ValidationContext vc) {
 		try{
-			URI uri = new URI(str);
-			return true;
-		}catch(URISyntaxException use){
-			return false;
-		}
+            xsdValidationContext.setNeedsExtraChecking(needsExtraChecking);
+            xsdValidationContext.setNeedsFacetChecking(needsFacetChecking);
+            xsdValidationContext.setNeedsToNormalize(needsToNormalize);
+            xsdValidationContext.setRngValidationContext(vc);
+            xercesType.validate(str, xsdValidationContext, null);
+            return true;
+        }catch(InvalidDatatypeValueException xercesException){
+            return false;
+        }
 	}
 	
 
 	public void checkValid(String str, ValidationContext vc) throws DatatypeException {
 		try{
-			URI uri = new URI(str);
-		}catch(URISyntaxException use){
-			throw new DatatypeException(use.getMessage());
-		}
+            xsdValidationContext.setNeedsExtraChecking(needsExtraChecking);
+            xsdValidationContext.setNeedsFacetChecking(needsFacetChecking);
+            xsdValidationContext.setNeedsToNormalize(needsToNormalize);
+            xsdValidationContext.setRngValidationContext(vc);
+            xercesType.validate(str, xsdValidationContext, null);
+        }catch(InvalidDatatypeValueException xercesException){
+            throw new DatatypeException(xercesException.getMessage());
+        }
 	}
 
 	public Object createValue(String str, ValidationContext vc) {
-		return str;
+		try{
+            xsdValidationContext.setNeedsExtraChecking(needsExtraChecking);
+            xsdValidationContext.setNeedsFacetChecking(needsFacetChecking);
+            xsdValidationContext.setNeedsToNormalize(needsToNormalize);
+            xsdValidationContext.setRngValidationContext(vc);
+            return xercesType.validate(str, xsdValidationContext, null);
+        }catch(InvalidDatatypeValueException xercesException){
+            //throw new DatatypeException(xercesException.getMessage());
+            return null;
+        }
 	}
 
 	public boolean isContextDependent() {
