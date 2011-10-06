@@ -130,11 +130,11 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	void handleExcept(){
 	    if(hasError)return;		
 		if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
-			errorCatcher.characterContentExceptedError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data); 
+			errorCatcher.characterContentExceptedError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data); 
 		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
-			errorCatcher.attributeValueExceptedError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data);
+			errorCatcher.attributeValueExceptedError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data);
 		}else if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){ 
-			errorCatcher.listTokenExceptedError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data);
+			errorCatcher.listTokenExceptedError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data);
 		}else{
 			throw new IllegalStateException();
 		}

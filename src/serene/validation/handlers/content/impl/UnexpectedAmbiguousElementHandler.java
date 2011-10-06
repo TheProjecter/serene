@@ -45,7 +45,7 @@ class UnexpectedAmbiguousElementHandler extends ErrorEEH{
 	}
 	
 	void validateInContext(){
-		parent.unexpectedAmbiguousElement(validationItemLocator.getQName(), Arrays.copyOf(elements, elements.length), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+		parent.unexpectedAmbiguousElement(validationItemLocator.getItemIdentifier(), Arrays.copyOf(elements, elements.length), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
 	}
 	
 	boolean functionalEquivalent(ComparableEEH other){

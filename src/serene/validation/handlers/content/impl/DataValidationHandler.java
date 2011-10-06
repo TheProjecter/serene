@@ -193,7 +193,7 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	    setCurrentErrorCatcher();
 	    
 	    if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){			
-			currentErrorCatcher.listTokenDatatypeError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
+			currentErrorCatcher.listTokenDatatypeError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
 		}else{
 			throw new IllegalStateException();
 		}		
@@ -204,7 +204,7 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	    setCurrentErrorCatcher();
 	    
 	    if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){			
-			currentErrorCatcher.listTokenValueError(validationItemLocator.getQName(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
+			currentErrorCatcher.listTokenValueError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
 		}else{
 			throw new IllegalStateException();
 		}

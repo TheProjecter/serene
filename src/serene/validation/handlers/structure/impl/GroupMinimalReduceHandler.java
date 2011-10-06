@@ -193,7 +193,7 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 														contextColumnNumber, //validationItemLocator.getColumnNumber(), 
 														child, 
 														validationItemLocator.getItemId(),
-														validationItemLocator.getQName(),
+														validationItemLocator.getItemIdentifier(),
 														validationItemLocator.getSystemId(), 
 														validationItemLocator.getLineNumber(), 
 														validationItemLocator.getColumnNumber(), 
@@ -239,7 +239,7 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 													contextColumnNumber, //validationItemLocator.getColumnNumber(), 
 													child, 
 													validationItemLocator.getItemId(),
-													validationItemLocator.getQName(),
+													validationItemLocator.getItemIdentifier(),
 													validationItemLocator.getSystemId(), 
 													validationItemLocator.getLineNumber(), 
 													validationItemLocator.getColumnNumber(), 
@@ -571,7 +571,7 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 		childItemId[lastCorrectChildIndexIndex][0] = validationItemLocator.getItemId();
 		
 		childQName[lastCorrectChildIndexIndex] = new String[1];
-		childQName[lastCorrectChildIndexIndex][0] = validationItemLocator.getQName();
+		childQName[lastCorrectChildIndexIndex][0] = validationItemLocator.getItemIdentifier();
 		
 		childSystemId[lastCorrectChildIndexIndex] = new String[1];
 		childSystemId[lastCorrectChildIndexIndex][0] = validationItemLocator.getSystemId();
@@ -619,7 +619,7 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 		int newIndex = oldLength;
 		
 		childItemId[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getItemId();
-		childQName[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getQName();
+		childQName[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getItemIdentifier();
 		childSystemId[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getSystemId();
 		childLineNumber[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getLineNumber();
 		childColumnNumber[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getColumnNumber();
