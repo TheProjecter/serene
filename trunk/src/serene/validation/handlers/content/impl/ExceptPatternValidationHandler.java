@@ -232,11 +232,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	
 	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
 	}
-	
-	public void undeterminedByContent(String qName, String candidateMessages){
-		hasError = true;
-	}
-	
+		
 	
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		hasError = true;

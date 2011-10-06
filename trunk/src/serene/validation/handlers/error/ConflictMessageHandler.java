@@ -2550,18 +2550,6 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }
     
-	public void undeterminedByContent(int functionalEquivalenceCode, String qName, String candidateMessages){
-        messageTotalCount++;
-		undeterminedQName = qName;
-		undeterminedCandidateMessages = candidateMessages; 
-		
-	}
-    public void clearUndeterminedByContent(){
-        messageTotalCount--;
-        undeterminedQName = null;
-		undeterminedCandidateMessages = null;
-    }
-	
     // {15}
 	public void characterContentDatatypeError(int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
         messageTotalCount++;
@@ -4633,7 +4621,6 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         clearAmbiguousAttributeValueWarning();
         clearMissingContent();
         clearIllegalContent();
-        clearUndeterminedByContent();
         clearCharacterContentDatatypeError();
         clearAttributeValueDatatypeError();
         clearCharacterContentValueError();

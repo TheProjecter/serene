@@ -291,15 +291,6 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void undeterminedByContent(String qName, String candidateMessages){
-        ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
-        boolean oldIsCandidate = contextErrorHandler.isCandidate();
-        contextErrorHandler.setCandidate(false);
-		contextErrorHandler.undeterminedByContent(qName, candidateMessages);
-        contextErrorHandler.setCandidate(oldIsCandidate);
-	}
-
-
     public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();

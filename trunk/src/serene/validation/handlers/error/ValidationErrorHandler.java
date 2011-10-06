@@ -142,10 +142,6 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.ambiguousAttributeValueWarning(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}
 	
-	public void undeterminedByContent(String qName, String candidateMessages){
-		messageHandler.undeterminedByContent(qName, candidateMessages);
-	}
-
 	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		messageHandler.characterContentDatatypeError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
 	}
