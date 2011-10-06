@@ -43,8 +43,6 @@ class InternalLibrary implements DatatypeLibrary{
 	public InternalLibrary(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
         
-        hrefURIDT = new HrefURIDT();
-        datatypeLibraryURIDT = new DatatypeLibraryURIDT();
         combineDT = new CombineDT();
     
         SchemaDVFactory xercesFactory = SchemaDVFactory.getInstance("org.apache.xerces.impl.dv.xs.FullDVFactory");
@@ -53,6 +51,11 @@ class InternalLibrary implements DatatypeLibrary{
         }
         
         XsdValidationContext xsdValidationContext = new XsdValidationContext(debugWriter);
+        
+        XSSimpleType anyURIXerces = xercesFactory.getBuiltInType("anyURI");
+        
+        hrefURIDT = new HrefURIDT(xsdValidationContext, anyURIXerces, debugWriter);
+        datatypeLibraryURIDT = new DatatypeLibraryURIDT(xsdValidationContext, anyURIXerces, debugWriter);
         
         qNameDT = new QNameDT(xsdValidationContext, xercesFactory.getBuiltInType("QName"), debugWriter);
         ncNameDT = new NCNameDT(xsdValidationContext, xercesFactory.getBuiltInType("NCName"), debugWriter);

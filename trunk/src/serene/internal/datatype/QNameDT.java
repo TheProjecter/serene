@@ -52,11 +52,15 @@ class QNameDT implements Datatype{
         
     public boolean isValid(String str, ValidationContext vc) {
         try{
-            checkValid(str, vc);
+            xsdValidationContext.setNeedsExtraChecking(needsExtraChecking);
+            xsdValidationContext.setNeedsFacetChecking(needsFacetChecking);
+            xsdValidationContext.setNeedsToNormalize(needsToNormalize);
+            xsdValidationContext.setRngValidationContext(vc);
+            xercesType.validate(str, xsdValidationContext, null);
             return true;
-        }catch(DatatypeException de){
-            return false;    
-        }
+        }catch(InvalidDatatypeValueException xercesException){
+            return false;
+        }  
 	}
 
 	public void checkValid(String str, ValidationContext vc) throws DatatypeException {
@@ -68,9 +72,9 @@ class QNameDT implements Datatype{
             xercesType.validate(str, xsdValidationContext, null);
         }catch(InvalidDatatypeValueException xercesException){
             throw new DatatypeException(xercesException.getMessage());
-        }
+        }        
 	}
-
+	
 	public Object createValue(String str, ValidationContext vc) {
 		try{
             xsdValidationContext.setNeedsExtraChecking(needsExtraChecking);
