@@ -4,11 +4,27 @@
 = Features =
 <br>
 
+==Serene 0.6==
+
+Features added by this release:
+
+*{{{http://serenerng.org/features/restrictToFileName}}}*
+
+This is a *Serene* feature for the {{{javax.xml.validation.SchemaFactory}}}, {{{javax.xml.validation.ValidatorHandler}}} and {{{javax.xml.validation.Validator}}} which, when set to {{{true}}}, ensures that the location information in the error messages contains only the file name and not the full path URI for better readability. It only has effect on the error message text and does not influence the location information passed to the {{{SAXParseException}}}. By default it is set to {{{true}}}.
+
+
+
+No old features are removed by this release.
+
 ==Serene 0.5.3==
 
-No changes with this release.
+No new features are added by this release.
+
+No old features are removed by this release.
 
 ==Serene 0.5.2==
+
+New features added by this release: 
 
 *{{{http://serenerng.org/features//schemaFactory/features/parsedModelSchema}}}*
 
@@ -38,10 +54,13 @@ This is a *Serene* feature for the {{{javax.xml.validation.ValidatorHandler}}} a
 
 When this feature is set to true in the {{{javax.xml.validation.SchemaFactory}}}, internally also the *{{{http://serenerng.org/features/DTDCompatibility/level1/attributeIdType}}}* feature is set to {{{true}}}, so that the necessary internal model is built from the schema document. When this feature is set to true in the {{{javax.xml.validation.ValidatorHandler}}}, or {{{javax.xml.validation.Validator}}}, controls are performed to ensure that the necessary internal model is present and correct. 
 
+No old features are removed by this release.
+
 ==Serene 0.5.1==
 
-This release does not add new features.
+No new features are added by this release.
 
+No old features are removed by this release.
 
 ==Serene 0.5==
 
