@@ -151,7 +151,7 @@ public class Driver{
                 return;
             } 			
 			try{				
-				xmlReader.parse(new InputSource(schemaFile.toURI().toASCIIString()));
+				xmlReader.parse(new InputSource(docFile.toURI().toASCIIString()));
 			}catch(IOException e){
 				e.printStackTrace();
 			}catch(SAXParseException e){
