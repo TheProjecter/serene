@@ -9,7 +9,7 @@
         <BR>
     </P>
     <P>
-        The features implemented by <B>Serene 0.5.3</B> are:
+        The features implemented by <B>Serene 0.6</B> are:
     </P>
     <P>
         <CODE><B>http://xml.org/sax/features/namespace-prefixes</B></CODE>
@@ -48,7 +48,7 @@
         errors, but in the same time also signal the client when an error
         was recovered from and the schema object returned is meaningful. In
         this case the implementing class is <CODE>serene.datatype.MissingLibraryException</CODE>.
-        See <A HREF="#samples">samples</A> for an example.
+        See <A HREF="samples.html">samples</A> for an example.
     </P>
     <P>
         <CODE><B>http://serenerng.org/features//schemaFactory/features/parsedModelSchema</B></CODE>
@@ -136,11 +136,22 @@
         ensure that the necessary internal model is present and correct.
     </P>
     <P>
+        <CODE><B>http://serenerng.org/features/restrictToFileName</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>,
+        <CODE>javax.xml.validation.ValidatorHandler</CODE> and <CODE>javax.xml.validation.Validator</CODE>        
+        which, when set to <CODE>true</CODE>, ensures that the location information in the error
+        messages contains only the file name and not the full path URI for better readability. 
+        It only has effect on the error message text and does not influence the location information 
+        passed to the <CODE>SAXParseException</CODE>. By default it is set to <CODE>true</CODE>.
+    </P>
+    <P>
         <BR><BR>
     </P>
     <HR>
     <P>
-        Copyright &copy; 2010 Radu Cernuta
+        Copyright &copy; 2010, 2011 Radu Cernuta
     </P>
     <HR>
 </BODY>

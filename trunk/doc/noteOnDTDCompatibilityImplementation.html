@@ -9,13 +9,14 @@
         <BR>
     </P>
     <P>
-        The implementation of the DTD compatibility features is independent from 
-        the validation implementation and it is possible to control which 
-        features and levels are to be processed from the command line or through 
-        the <CODE>setFeature(String name, boolean value)</CODE> methods of the 
-        JAXP validation API. Furthermore, when a schema document contains errors 
-        with impact on the DTD compatibility handling, implementations of the 
-        abstract class <CODE>serene.SereneRecoverableException</CODE> extending 
+        This release introduces the implementation of the DTD compatibility
+        features. The implementation is independent from the validation implementation
+        and it is possible to control which features and levels are to be processed 
+        from the command line or through the <CODE>setFeature(String name, 
+        boolean value)</CODE> methods of the JAXP validation API.    
+        Furthermore, when a schema document contains errors with impact on the 
+        DTD compatibility handling, implementations of the abstract class
+        <CODE>serene.SereneRecoverableException</CODE> extending 
         <CODE>org.xml.sax.SAXParseException</CODE> are used, so that they can be 
         caught separately and the features set in the 
         <CODE>javax.xml.validation.ValidatorHandler</CODE> and
