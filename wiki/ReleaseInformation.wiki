@@ -7,6 +7,10 @@
 This page contains general release information. See additional wiki pages for details.
 
 
+==Serene 0.6==
+
+This release concentrates on further improving message quality. The accent is on error interpretation and reporting. Several bugs were fixed and a new feature added.  
+
 ==Serene 0.5.3==
 
 This release has been tested using the RELAX NG test suite. As a result, several bugs have been fixed and the handling of conflicts and the reporting of errors have been significantly improved. 
