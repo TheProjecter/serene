@@ -1,4 +1,5 @@
 #summary The areas Serene concentrates on.
+#labels Featured
 
 =Special Characteristics=
 <br>
@@ -35,4 +36,3 @@ When integrating the handling of element, attribute and list token conflicts the
 In order to achieve all this transparency, an approach was chosen where a distinction is made between the detection, interpretation and reporting of errors. This approach allows to group the messages produced by the disqualifying errors of different candidates during conflict handling and report them in the unresolved content error messages. Another consequence of this approach is the fact that while error detection happens where the error is, interpretation and reporting are delayed. The location information passed to the SAXParseException is that of the place where the error reporting is done. This is the end tag of the element in whose context the error took place. For conflicts, the errors of the entire subtree are reported at the end of the element in whose context the conflict is. Location information regarding the exact place where the error occurred is provided in the content of the message in a meaningful way.
 
 Using exactly the same algorithm for the syntax validation of both schemas and documents and, in the same time, trying to be meaningful means that the messages are always pointing to the rule that has been broken; that is a rule from the RELAX NG syntax specification in the case of schemas, and a pattern from the concerned schema in the case of documents.
-
