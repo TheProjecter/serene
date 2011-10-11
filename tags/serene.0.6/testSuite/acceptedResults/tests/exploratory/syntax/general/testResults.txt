@@ -1,0 +1,107 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\syntax\general\schema.rng
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:36:17 Syntax error. Element <rng:element> is unresolved by content validation, all candidate definitions resulted in errors:
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
+	Syntax error. Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
+	Order error.
+	Misplaced content in the document structure starting at schema.rng:25:20, corresponding to definition <group of name class and pattern elements> at RELAXNG Specification 3.Full Syntax: element with name class child:
+	element <rng:interleave> at schema.rng:25:20
+	null at schema.rng:29:20, corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax: pattern.
+	Excessive content.
+	In the document structure starting at schema.rng:25:20, corresponding to definition <group of name class and pattern elements> at RELAXNG Specification 3.Full Syntax: element with name class child,  expected 1 occurrence corresponding to definition <nameClass> at RELAXNG Specification 3.Full Syntax: name class, found 3 starting at: 
+	element <rng:name> at schema.rng:33:38
+	element <rng:name> at schema.rng:34:38
+	element <rng:name> at schema.rng:35:38.
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
+	Syntax error. Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
+	Unexpected element.
+	Element <rng:name> at schema.rng:33:38, corresponding to one of the schema definitions: 
+	<element> at RELAXNG Specification 3.Full Syntax: name
+	<element> at RELAXNG Specification 3.Full Syntax: any element
+	is not part of the parent's content model.
+	Unexpected element.
+	Element <rng:name> at schema.rng:34:38, corresponding to one of the schema definitions: 
+	<element> at RELAXNG Specification 3.Full Syntax: name
+	<element> at RELAXNG Specification 3.Full Syntax: any element
+	is not part of the parent's content model.
+	Unexpected element.
+	Element <rng:name> at schema.rng:35:38, corresponding to one of the schema definitions: 
+	<element> at RELAXNG Specification 3.Full Syntax: name
+	<element> at RELAXNG Specification 3.Full Syntax: any element
+	is not part of the parent's content model.
+	Missing content.
+	In the document structure starting at schema.rng:25:20, corresponding to definition <attributes and elements group> at RELAXNG Specification 3.Full Syntax: element with name attribute, expected 1 occurrence corresponding to definition <name attribute with QName value> at RELAXNG Specification 3.Full Syntax: name attribute with QName value, found 0.
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:28:21 Syntax error. Element <rng:interleave> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: interleave contains errors: 
+Unexpected element.
+Element <rng:ef> at schema.rng:26:33 corresponding to definition: <element> at RELAXNG Specification 3.Full Syntax: any element is not part of the parent's content model.
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:32:21 Syntax error. Element <rng:interleave> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: interleave contains errors: 
+Unexpected element.
+Element <rng:ef> at schema.rng:30:33 corresponding to definition: <element> at RELAXNG Specification 3.Full Syntax: any element is not part of the parent's content model.
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:36:17 Syntax error. Unresolved element <rng:element> contains errors common to all possible definitions: 
+Unexpected element.
+Element <rng:ef> at schema.rng:24:32 corresponding to definition: <element> at RELAXNG Specification 3.Full Syntax: any element is not part of the parent's content model.
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:39:14 Syntax error. Element <rng:start> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: start contains errors: 
+Excessive content.
+In the document structure starting at schema.rng:23:16, corresponding to definition <interleaving of pattern element and foreign elements> at RELAXNG Specification 3.Full Syntax: pattern content,  expected 1 occurrence corresponding to definition <pattern> at RELAXNG Specification 3.Full Syntax: pattern, found 3 starting at: 
+element <rng:element> at schema.rng:23:16
+element <rng:ref> at schema.rng:37:30
+element <rng:ref> at schema.rng:38:30.
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:39:14 Syntax warning. Element <rng:start> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: start generates warning: 
+Ambiguous element.
+Element <rng:element> at schema.rng:23:16, unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:48:17 Syntax error. Element <rng:choice> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: choice in pattern context contains errors: 
+Unexpected character content.
+Character content at schema.rng:43:25 is not allowed by the element's schema definition <element> at RELAXNG Specification 3.Full Syntax: choice in pattern context.
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:48:17 Syntax error. Element <rng:ref> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: ref contains errors: 
+Illegal datatype.
+Value of attribute "name" at schema.rng:47:35 does not match the datatype required by schema definition <attribute> at RELAXNG Specification 3.Full Syntax: name attribute with NCName value. cvc-datatype-valid.1.2.1: 'foo:defineBar' is not a valid value for 'NCName'.
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:57:17 Syntax error. Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
+Illegal datatype.
+Value of attribute "name" at schema.rng:52:34 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: name attribute with QName value. cvc-datatype-valid.1.2.1: 'foo::bar' is not a valid value for 'QName'.
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:66:17 Syntax error. Element <rng:element> is unresolved by content validation, all candidate definitions resulted in errors:
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
+	Syntax error. Element <rng:name> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: name contains errors: 
+	Illegal datatype.
+	Character content at schema.rng:61:49 does not match the datatype required by schema definition <data> at RELAXNG Specification 3.Full Syntax: name. cvc-datatype-valid.1.2.1: 'Fo      ot' is not a valid value for 'QName'.
+	Syntax error. Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
+	Unexpected attribute.
+	Attribute "name" at schema.rng:59:29, corresponding to one of the definitions: 
+	<attribute> at RELAXNG Specification 3.Full Syntax: name attribute with QName value
+	<attribute> at RELAXNG Specification 3.Full Syntax: name attribute with NCName value
+	<attribute> at RELAXNG Specification 3.Full Syntax: any attribute
+	is not part of the parent's content model.
+	Excessive content.
+	In the document structure starting at schema.rng:60:38, corresponding to definition <group of name class and pattern elements> at RELAXNG Specification 3.Full Syntax: element with name class child,  expected 1 occurrence corresponding to definition <nameClass> at RELAXNG Specification 3.Full Syntax: name class, found 2 starting at: 
+	element <rng:name> at schema.rng:60:38
+	element <rng:name> at schema.rng:61:38.
+Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
+	Syntax error. Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
+	Unexpected element.
+	Element <rng:name> at schema.rng:60:38, corresponding to one of the schema definitions: 
+	<element> at RELAXNG Specification 3.Full Syntax: name
+	<element> at RELAXNG Specification 3.Full Syntax: any element
+	is not part of the parent's content model.
+	Unexpected element.
+	Element <rng:name> at schema.rng:61:38, corresponding to one of the schema definitions: 
+	<element> at RELAXNG Specification 3.Full Syntax: name
+	<element> at RELAXNG Specification 3.Full Syntax: any element
+	is not part of the parent's content model.
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:68:15 Syntax warning. Element <rng:define> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: define generates warning: 
+Ambiguous element.
+Element <rng:element> at schema.rng:59:29, unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.
+
+null:-1:-1 Simplification 4.18 error. No correspoding definition was found for element <rng:ref> at schema.rng:47:35.
+
+null:-1:-1 Restrictions 7.1.5 error. Element <group added by define simplification> at schema.rng:51:34 is not expected as start of the schema.

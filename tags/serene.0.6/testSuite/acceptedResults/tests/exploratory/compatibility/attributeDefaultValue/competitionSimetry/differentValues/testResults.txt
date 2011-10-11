@@ -1,0 +1,7 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\compatibility\attributeDefaultValue\competitionSimetry\differentValues\schema.rng
+
+null:-1:-1 DTD compatibility error. Competing element definitions contain attribute definitions with the same name and different default values:
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/competitionSimetry/differentValues/schema.rng:39:29 with attribute definition <attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/competitionSimetry/differentValues/schema.rng:41:59 and default value "bb";
+<element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/competitionSimetry/differentValues/schema.rng:33:29 with attribute definition <attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/competitionSimetry/differentValues/schema.rng:48:54 and default value "aa".

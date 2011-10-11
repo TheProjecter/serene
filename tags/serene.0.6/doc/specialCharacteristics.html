@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<TITLE>Special Characteristics</TITLE>
+</HEAD>
+<BODY>
+    <H1>Special Characteristics</H1>
+    <P>
+        <BR>
+    </P>
+    <P>There are two areas <B>Serene</B>
+    is mainly concentrating on: the ambiguity and conflicts handling, and
+    the validation messages.</P>
+    <P><BR>
+    </P>
+    <H2><A NAME="ambiguityAndConflictsHandling"/>Ambiguity and Conflicts Handling</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        The type conflict of most interest is that where two or more schema 
+        definitions could apply to one document input occurrence in a certain 
+        context. The different candidate definitions are processed parallely and
+        are disqualified according to the errors they present. The terms used in 
+        <B>Serene</B> to describe the conflict resolution state are:
+        <UL>
+            <LI>
+                <P>
+                    <B>resolved</B> when all the candidate definitions but one 
+                    have been disqualified
+                </P>
+            <LI>
+                <P>
+                    <B>ambiguous</B> when there are several qualified candidates              
+                </P>
+            <LI>
+                <P>
+                    <B>unresolved</B> when all the candidates are disqualified
+                </P>
+        </UL>
+    </P>
+    <P>
+        The stages in the resolving of the an xml document occurrence with 
+        respect to the corresponding RELAX NG schema patterns are:
+        <BR>
+        <UL>
+            <LI>
+                <P>
+                    <B>initial matching</B> consists of the matching of an input element
+                    or attribute's name to the name class corresponding to one of the 
+                    definitions allowed by the schema in the respective context. Since 
+                    characters definition patterns (text, data, value, list) do not 
+                    have a name, in this stage, all the characters patterns defined 
+                    within a context are considered a match. For all types of input, 
+                    when no matches have been found, the input is interpreted as 
+                    unexpected or unknown in the context. In <B>ambiguous</B> states
+                    all candidates go to the next stage.
+                </P>
+            <LI>
+                <P>
+                    <B>pattern matching</B> consists of matching of a schema pattern 
+                    to the corresponding occurrence in the document based on the 
+                    content, this is done at the level of element definition pattern, 
+                    attribute definition pattern, characters definition pattern 
+                    (in <B>Serene</B> characters strings are considered to have a 
+                    structure since some patterns may contain <CODE>group</CODE>,
+                    <CODE>oneOrMore</CODE> etc). For improved message quality, it
+                    takes place in two steps: first only errors of the immediate 
+                    children are taken in account for disqualifying, if at the end 
+                    of content validation ambiguity is still present, errors of 
+                    the entire subtree are considered, this step favours 
+                    <B>ambiguous</B> over <B>unresolved</B> states. When, at the 
+                    end, the resolution state is <B>unresolved</B>, all candidates 
+                    go to the next stage. In <B>ambiguous</B> and <B>resolved</B> 
+                    states, depending on the resolution strategy, either all 
+                    candidates go to the next stage, or only the qualified ones.                    
+                </P>
+            <LI>
+                <P>
+                    <B>in context handling</B> consists of handling of an
+                    occurrence as part of the parent's context.
+                </P>
+        </UL>
+    </P>
+    <P>
+        With the <B>Serene 0.6</B> release, the integration of the conflict 
+        resolution stages is introduced. This delays the error reporting until 
+        the end of conflict handling and ensures that the different stages do not
+        generate separate messages any more. The main improvement is for the 
+        cases where after <B>pattern matching</B> the conflict is <B>unresolved</B>, 
+        but the <B>in context handling</B> eventually resolves it to one 
+        definition. In those cases the only error messages that get reported now 
+        are those of the winner definition and the corresponding subtree, as 
+        opposed to an unresolved content error message previously.
+    </P>
+    <P>
+        When integrating the handling of element, attribute and list token 
+        conflicts the strategy used is one that gives priority to the content 
+        over context. For element character content and attribute value other 
+        than list tokens the context has priority over content. When reporting 
+        element conflict errors the richness of information is favoured, for 
+        attribute, element character content and attribute value, which have a 
+        much simpler structure, readability is favoured over richness of 
+        information, so the details of the <B>pattern matching</B> errors are not 
+        reported. Moreover, in the later cases, warnings are only issued for 
+        trully <B>ambiguous</B> occurrences.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="messages"/>Messages</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene</B> attempts to deliver good, meaningful messages. In
+        the same time it attempts to handle all messages, including error and
+        warning messages resulted from the ambiguity and conflict handling,
+        in a uniform and transparent way. Also the syntax validation for the
+        schema documents and the validation of document syntax are handled
+        transparently using exactly the same algorithm. 
+    </P>
+    <P>
+        In order to achieve all this transparency, an approach was chosen
+        where a distinction is made between the detection, interpretation and
+        reporting of errors. This approach allows to group the messages
+        produced by the disqualifying errors of different candidates during
+        conflict handling and report them in the unresolved content error 
+        messages. Another consequence of this approach is
+        the fact that while error detection happens where the error is, 
+        interpretation and reporting are delayed. The location information 
+        passed to the <CODE>SAXParseException</CODE> is that of the place where 
+        the error reporting is done. This is the end tag of the element in whose 
+        context the error took place. For conflicts, the errors of the entire 
+        subtree are reported at the end of the element in whose context the 
+        conflict is. Location information regarding the exact place where the 
+        error occurred is provided in the content of the message in a meaningful 
+        way.
+    </P>    
+    <P>
+        Using exactly the same algorithm for the syntax validation of both
+        schemas and documents and, in the same time, trying to be meaningful
+        means that the messages are always pointing to the rule that has been
+        broken; that is a rule from the RELAX NG syntax specification in the
+        case of schemas, and a pattern from the concerned schema in the case
+        of documents.
+    </P>
+    <P>
+        <BR><BR>
+    </P>
+    <HR>
+    <P>
+        Copyright &copy; 2010, 2011 Radu Cernuta
+    </P>
+    <HR>
+</BODY>
+</HTML>

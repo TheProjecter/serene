@@ -1,0 +1,7 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\limitations\emptyAttribute\schema.rng
+
+null:-1:-1 Unsupported schema configuration. For the moment serene does not support <empty> in the context of <attribute>, path: 
+rng:attribute at schema.rng:25:36
+empty at schema.rng:26:17.

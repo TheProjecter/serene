@@ -1,0 +1,11 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\syntax\chars\list\except\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/list/except/document1.xml:21:25 Syntax error. Element <root> corresponding to definition <rng:element> at schema.rng:23:16 contains errors: 
+Excepted token.
+List token "bar" at document1.xml:21:18 matches a value excepted by schema definition <rng:data> at schema.rng:27:29.

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright 2011 Radu Cernuta 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<root>
+    <!--START STRING DATATYPES-->
+    <string type="correct">abc</string>    
+    <normalizedString type="correct">abc</normalizedString>
+    <token type="correct">abc</token>
+
+    <language type="correct">en-US</language>
+    <language type="correct">be-BE</language>
+    <language type="correct">foo-FOO</language>
+    <language type="incorrect">Syldavian</language>
+    
+    <NMTOKEN type="correct">1a2b-3c</NMTOKEN>
+    <NMTOKEN type="incorrect">1a 2b 3c</NMTOKEN>    
+    
+    <NMTOKENS type="correct">1a 2b 3c</NMTOKENS>
+    <NMTOKENS type="incorrect">1a,2b 3c</NMTOKENS>
+    
+    <Name type="correct">foo</Name>
+    <Name type="incorrect">555</Name>
+    
+    <NCName type="correct">a</NCName>
+    <NCName type="incorrect">a:b</NCName>
+    
+    <ID type="correct">aa</ID>
+    <ID type="correct">aa</ID>
+    <ID type="incorrect">a:b</ID>
+    <ID type="incorrect">1</ID>
+    
+    <IDREF type="correct">aa</IDREF>
+    <IDREF type="correct">bb</IDREF>
+    <IDREF type="incorrect">b:b</IDREF>
+    <IDREF type="incorrect">1</IDREF>
+    
+    <IDREFS type="correct">aa bb</IDREFS>
+    <IDREFS type="incorrect">a:a 1 bb</IDREFS>
+    
+    <ENTITY type="incorrect">aa</ENTITY>
+    <ENTITY type="incorrect">a:a</ENTITY>
+    <ENTITY type="incorrect">1</ENTITY>
+    
+    <ENTITIES type="incorrect">aa bb</ENTITIES>
+    <ENTITIES type="incorrect">a:a bb 1</ENTITIES>
+    <!--END STRING DATATYPES-->
+    
+    <anyURI type="correct">555</anyURI>
+    <anyURI type="correct">a</anyURI>
+    <anyURI type="incorrect">http://example.com/%%%</anyURI>
+    
+    <!--START NUMERIC DATATYPES-->
+    <decimal type="correct">175487313249843216849513576213579615321954531.246546874621968432168743513254965432132168513202341651321321</decimal>
+    <decimal type="incorrect">1754873132498432168495135 76213579615321954531.
+    246546874621968432168743513254965432132168513202341651321321</decimal>
+    <decimal type="incorrect">175487313249843216849513576213579615321954531,246546874621968432168743513254965432132168513202341651321321</decimal>
+    <decimal type="incorrect">a</decimal>
+        
+    <integer type="correct">175487313249843216849513576213579615321954531</integer>
+    <integer type="incorrect">175487313249843216849513576213579615321954531.0000000000</integer>
+    <integer type="incorrect">a</integer>
+    
+    <nonPositiveInteger type="correct">-175487313249843216849513576213579615321954531</nonPositiveInteger>
+    <nonPositiveInteger type="correct">0</nonPositiveInteger>
+    <nonPositiveInteger type="incorrect">1</nonPositiveInteger>
+    <nonPositiveInteger type="incorrect">a</nonPositiveInteger>
+    
+    <negativeInteger type="correct">-175487313249843216849513576213579615321954531</negativeInteger>
+    <negativeInteger type="incorrect">0</negativeInteger>
+    <negativeInteger type="incorrect">a</negativeInteger>
+    
+    <nonNegativeInteger type="correct">175487313249843216849513576213579615321954531</nonNegativeInteger>
+    <nonNegativeInteger type="correct">0</nonNegativeInteger>
+    <nonNegativeInteger type="incorrect">-1</nonNegativeInteger>
+    <nonNegativeInteger type="incorrect">a</nonNegativeInteger>
+
+    <positiveInteger type="correct">175487313249843216849513576213579615321954531</positiveInteger>
+    <positiveInteger type="incorrect">0</positiveInteger>
+    <positiveInteger type="incorrect">a</positiveInteger>
+    
+    <long type="correct">-9223372036854775808</long>
+    <long type="correct">9223372036854775807</long>
+    <long type="incorrect">-9223372036854775809</long>
+    <long type="incorrect">9223372036854775808</long>
+    <long type="incorrect">a</long>
+    
+    <int type="correct">-2147483648</int>
+    <int type="correct">2147483647</int>
+    <int type="incorrect">-2147483649</int>
+    <int type="incorrect">2147483648</int>
+    <int type="incorrect">a</int>
+    
+    <short type="correct">-32768</short>
+    <short type="correct">32767</short>
+    <short type="incorrect">-32769</short>
+    <short type="incorrect">32768</short>
+    <short type="incorrect">a</short>
+    
+    <byte type="correct">-128</byte>
+    <byte type="correct">127</byte>
+    <byte type="incorrect">-129</byte>
+    <byte type="incorrect">128</byte>
+    <byte type="incorrect">a</byte>
+    
+    <unsignedLong type="correct">0</unsignedLong>
+    <unsignedLong type="correct">18446744073709551615</unsignedLong>
+    <unsignedLong type="incorrect">-1</unsignedLong>
+    <unsignedLong type="incorrect">18446744073709551616</unsignedLong>
+    <unsignedLong type="incorrect">a</unsignedLong>
+    
+    <unsignedInt type="correct">0</unsignedInt>
+    <unsignedInt type="correct">4294967295</unsignedInt>
+    <unsignedInt type="incorrect">-1</unsignedInt>
+    <unsignedInt type="incorrect">4294967296</unsignedInt>
+    <unsignedInt type="incorrect">a</unsignedInt>
+    
+    <unsignedShort type="correct">0</unsignedShort>
+    <unsignedShort type="correct">65535</unsignedShort>
+    <unsignedShort type="incorrect">-1</unsignedShort>
+    <unsignedShort type="incorrect">65536</unsignedShort>
+    <unsignedShort type="incorrect">a</unsignedShort>
+    
+    <unsignedByte type="correct">0</unsignedByte>
+    <unsignedByte type="correct">255</unsignedByte>
+    <unsignedByte type="incorrect">-1</unsignedByte>
+    <unsignedByte type="incorrect">256</unsignedByte>
+    <unsignedByte type="incorrect">a</unsignedByte>
+    
+    <float type="correct">10e66</float>    
+    <float type="correct">3.4e-39</float>
+    <float type="correct">3.4e+39</float>
+    <float type="correct">-INF</float>
+    <float type="correct">INF</float>
+    <float type="correct">NaN</float>
+    <float type="incorrect">3.4e +39</float>
+    <float type="incorrect">3.4e+3.9</float>
+    <float type="incorrect">+INF</float>
+    <float type="incorrect">inf</float>
+    <float type="incorrect">NAN</float>
+    
+    <double type="correct">10E66</double>
+    <double type="correct">1.7e-309</double>
+    <double type="correct">1.7e+309</double>
+    <double type="correct">-INF</double>
+    <double type="correct">INF</double>
+    <double type="correct">NaN</double>
+    <double type="incorrect">1.7e -309</double>
+    <double type="incorrect">1.7e+3.09</double>
+    <double type="incorrect">+INF</double>
+    <double type="incorrect">inf</double>
+    <double type="incorrect">NAN</double>
+    
+    <boolean type="correct">0</boolean>
+    <boolean type="correct">false</boolean>
+    <boolean type="correct">1</boolean>
+    <boolean type="correct">true</boolean>
+    <boolean type="incorrect">-1</boolean>
+    <boolean type="incorrect">TRUE</boolean>
+    <boolean type="incorrect">FALSE</boolean>
+    <!--END NUMERIC DATATYPES-->
+    
+    <!--START DATE TIME DATATYPES-->
+    <dateTime type="correct">2010-10-27T21:32:52</dateTime>
+    <dateTime type="correct">-2010-10-27T21:32:52</dateTime>
+    <dateTime type="correct">-2010-10-27T21:32:52.12679</dateTime>
+    <dateTime type="correct">2010-10-27T21:32:52Z</dateTime>
+    <dateTime type="correct">2010-10-27T21:32:52+14:00</dateTime>
+    <dateTime type="incorrect">2010-10-27</dateTime>
+    <dateTime type="incorrect">2010-10-27T21:32</dateTime>
+    <dateTime type="incorrect">2010-10-27T25:32:52</dateTime>
+    <dateTime type="incorrect">2010-10-27T21:32:52+15:00</dateTime>
+    
+    <date type="correct">2010-10-27</date>
+    <date type="correct">-2010-10-27</date>
+    <date type="correct">2010-10-27Z</date>
+    <date type="correct">2010-10-27+14:00</date>
+    <date type="incorrect">2010-10</date>
+    <date type="incorrect">2010-02-30</date>
+    <date type="incorrect">2010-10-27+15:00</date>
+    
+    <gYearMonth type="correct">2010-10</gYearMonth>
+    <gYearMonth type="correct">-2010-10</gYearMonth>
+    <gYearMonth type="correct">2010-10+14:00</gYearMonth>
+    <gYearMonth type="correct">2010-10Z</gYearMonth>
+    <gYearMonth type="correct">2010-10</gYearMonth>
+    <gYearMonth type="incorrect">2010</gYearMonth>
+    <gYearMonth type="incorrect">2010-10+15:00</gYearMonth>
+    <gYearMonth type="incorrect">2010-13</gYearMonth>
+    
+    <gYear type="correct">2010</gYear>
+    <gYear type="correct">-2010</gYear>
+    <gYear type="correct">2010Z</gYear>
+    <gYear type="correct">2010+14:00</gYear>
+    <gYear type="incorrect">2010-10</gYear>
+    <gYear type="correct">10</gYear>
+    <gYear type="correct">010</gYear>
+    <gYear type="incorrect">2010+15:00</gYear>
+    
+    <time type="correct">21:32:52</time>
+    <time type="correct">21:32:52Z</time>
+    <time type="correct">21:32:52+14:00</time>
+    <time type="correct">21:32:52.12679</time>
+    <time type="incorrect">21:32</time>
+    <time type="incorrect">25:32:52</time>
+    <time type="incorrect">21:32:52+15:00</time>
+    <time type="incorrect">-21:32:52</time>
+    <time type="incorrect">1:32:52</time>
+    
+    <gDay type="correct">---01</gDay>
+    <gDay type="correct">---01Z</gDay>
+    <gDay type="correct">---01+14:00</gDay>
+    <gDay type="incorrect">---32</gDay>
+    <gDay type="incorrect">----1</gDay>
+    <gDay type="incorrect">---2</gDay>
+    <gDay type="incorrect">---01+15:00</gDay>
+    <gDay type="incorrect">01</gDay>
+    
+    <gMonthDay type="correct">--05-01</gMonthDay>
+    <gMonthDay type="correct">--05-01Z</gMonthDay>
+    <gMonthDay type="correct">--05-01+14:00</gMonthDay>
+    <gMonthDay type="correct">--05-01-14:00</gMonthDay>
+    <gMonthDay type="incorrect">--13-01</gMonthDay>
+    <gMonthDay type="incorrect">-05-01-</gMonthDay>
+    <gMonthDay type="incorrect">---5--1</gMonthDay>
+    <gMonthDay type="incorrect">--05-01-15:00</gMonthDay>
+        
+    <gMonth type="correct">--05</gMonth>
+    <gMonth type="correct">--05Z</gMonth>
+    <gMonth type="correct">--05+14:00</gMonth>
+    <gMonth type="correct">--05-14:00</gMonth>
+    <gMonth type="incorrect">-05-</gMonth>
+    <gMonth type="incorrect">---5</gMonth>
+    <gMonth type="incorrect">--18</gMonth>
+    <gMonth type="incorrect">--05+15:00</gMonth>
+    
+    <duration type="correct">P1Y2M3DT4H5M6S</duration>
+    <duration type="correct">PT4H5M6S</duration>
+    <duration type="incorrect">1Y2M3DT4H5M6S</duration>
+    <duration type="incorrect">P1Y2M3DT4H5M-6S</duration>
+    <duration type="incorrect">P1Y2M3D4H5M6S</duration>
+    <duration type="incorrect">P4H5M6S</duration>
+    <duration type="incorrect">P2M1Y</duration>
+    <!--END DATE TIME DATATYPES-->
+</root>

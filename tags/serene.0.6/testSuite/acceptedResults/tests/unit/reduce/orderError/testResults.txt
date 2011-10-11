@@ -1,0 +1,7 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\reduce\orderError\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml

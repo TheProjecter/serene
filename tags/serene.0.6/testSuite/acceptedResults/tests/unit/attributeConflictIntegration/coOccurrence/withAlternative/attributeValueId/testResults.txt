@@ -1,0 +1,39 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\attributeConflictIntegration\coOccurrence\withAlternative\attributeValueId\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/withAlternative/attributeValueId/document2.xml:19:25 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Unresolved attribute.
+Attribute "baz" at document2.xml:19:25 cannot be resolved, all candidates resulted in errors. Available definitions: 
+<attribute> at schema.rng:32:31
+<attribute> at schema.rng:40:31.
+
+
+
+TESTED DOCUMENT document3.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/withAlternative/attributeValueId/document3.xml:19:27 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Unresolved attribute.
+Attribute "baz" at document3.xml:19:27 cannot be resolved, all candidates resulted in errors. Available definitions: 
+<attribute> at schema.rng:32:31
+<attribute> at schema.rng:40:31.
+
+
+
+TESTED DOCUMENT document4.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/withAlternative/attributeValueId/document4.xml:19:25 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Excessive content.
+In the document structure starting at document4.xml:19:25, corresponding to definition <element> at schema.rng:21:66,  expected 1 occurrence corresponding to definition <choice> at schema.rng:22:11, found 2 starting at: 
+attribute "bar" at document4.xml:19:25
+attribute "baz" at document4.xml:19:25.
+Missing content.
+In the document structure starting at document4.xml:19:25, corresponding to definition <group> at schema.rng:36:12, expected 1 occurrence corresponding to definition <attribute> at schema.rng:37:31, found 0.

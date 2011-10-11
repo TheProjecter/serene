@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<element xmlns="http://relaxng.org/ns/structure/1.0" name="foo">
+   <interleave>
+      <group>
+            <element name="aa">
+                <empty/>
+            </element>
+            <group>
+                <element name="bb">
+                    <empty/>
+                </element>
+                <element name="cc">
+                    <empty/>
+                </element>
+            </group>
+            <element name="dd">
+                <empty/>
+            </element>
+      </group>
+   </interleave>
+</element>

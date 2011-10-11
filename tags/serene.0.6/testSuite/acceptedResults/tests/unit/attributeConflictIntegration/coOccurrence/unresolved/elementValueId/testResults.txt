@@ -1,0 +1,83 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\attributeConflictIntegration\coOccurrence\unresolved\elementValueId\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/unresolved/elementValueId/document1.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Missing content.
+In the document structure starting at document1.xml:20:10, corresponding to definition <group> at schema.rng:31:12, expected 1 occurrence corresponding to definition <attribute> at schema.rng:35:31, found 0.
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/unresolved/elementValueId/document2.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Illegal datatype.
+Value of attribute "baz" at document2.xml:19:16 does not match the datatype required by schema definition <data> at schema.rng:28:35. cvc-datatype-valid.1.2.1: 'baz' is not a valid value for 'boolean'.
+
+
+
+TESTED DOCUMENT document3.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/unresolved/elementValueId/document3.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Illegal datatype.
+Value of attribute "baz" at document3.xml:19:16 does not match the datatype required by schema definition <data> at schema.rng:36:35. cvc-datatype-valid.1.2.1: 'baz' is not a valid value for 'integer'.
+
+
+
+TESTED DOCUMENT document4.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/unresolved/elementValueId/document4.xml:19:17 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Unresolved attribute.
+Attribute "baz" at document4.xml:19:17 cannot be resolved, all candidates resulted in errors. Available definitions: 
+<attribute> at schema.rng:27:31
+<attribute> at schema.rng:35:31.
+
+
+
+TESTED DOCUMENT document5.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/unresolved/elementValueId/document5.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Excessive content.
+In the document structure starting at document5.xml:19:14, corresponding to definition <element> at schema.rng:21:66,  expected 1 occurrence corresponding to definition <choice> at schema.rng:22:11, found 2 starting at: 
+attribute "baz" at document5.xml:19:14
+element <bar> at document5.xml:20:10.
+Missing content.
+In the document structure starting at document5.xml:19:14, corresponding to definition <group> at schema.rng:31:12, expected 1 occurrence corresponding to definition <element> at schema.rng:32:29, found 0.
+Missing content.
+In the document structure starting at document5.xml:20:10, corresponding to definition <group> at schema.rng:23:12, expected 1 occurrence corresponding to definition <attribute> at schema.rng:27:31, found 0.
+
+
+
+TESTED DOCUMENT document6.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/unresolved/elementValueId/document6.xml:20:18 Syntax error. Element <bar> corresponding to definition <element> at schema.rng:32:29 contains errors: 
+Illegal value.
+Character content at document6.xml:20:12 does not match the value required by schema definition <value> at schema.rng:33:33.
+
+
+
+TESTED DOCUMENT document7.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/unresolved/elementValueId/document7.xml:20:18 Syntax error. Element <bar> is unresolved by content validation, all candidate definitions resulted in errors:
+Candidate definition <element> at schema.rng:24:29 contains errors: 
+	Syntax error. Element <bar> corresponding to definition <element> at schema.rng:24:29 contains errors: 
+	Illegal value.
+	Character content at document7.xml:20:12 does not match the value required by schema definition <value> at schema.rng:25:33.
+Candidate definition <element> at schema.rng:32:29 contains errors: 
+	Syntax error. Element <bar> corresponding to definition <element> at schema.rng:32:29 contains errors: 
+	Illegal value.
+	Character content at document7.xml:20:12 does not match the value required by schema definition <value> at schema.rng:33:33.
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/unresolved/elementValueId/document7.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Unresolved attribute.
+Attribute "baz" at document7.xml:19:16 cannot be resolved, all candidates resulted in errors. Available definitions: 
+<attribute> at schema.rng:27:31
+<attribute> at schema.rng:35:31.
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/attributeConflictIntegration/coOccurrence/unresolved/elementValueId/document7.xml:21:7 Syntax warning. Element <foo> corresponding to definition <element> at schema.rng:21:66 generates warning: 
+Ambiguous element.
+Element <bar> at document7.xml:20:10, unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.

@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<project name="Serene.0.5_Samples" default="pack">
+    <property name="source.dir" value="./src"/>
+	<property name="build.dir" value="./build"/>    
+    <property name="lib.dir" value="./lib"/>
+    
+    <target name="clean" description="Delete the ${build.dir} and ${lib.dir}.">
+		<echo>Cleaning...</echo>
+		<delete dir="${build.dir}"/>
+		<delete dir="${lib.dir}"/>
+	</target>
+    
+    <target name="prepare" depends="clean" description="Create the ${build.dir} and ${lib.dir} and adding the META-INF/services.">
+        <echo>Preparing...</echo>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${lib.dir}"/>
+        
+        <mkdir dir="${build.dir}/META-INF"/>
+        <mkdir dir="${build.dir}/META-INF/services"/>        
+        <copy file="${source.dir}/sereneSamples/org.relaxng.datatype.DatatypeLibraryFactory"
+            tofile="${build.dir}/META-INF/services/org.relaxng.datatype.DatatypeLibraryFactory"/>
+    </target>
+    
+     <target name="compile" depends="prepare" description="Compile ${source.dir} into ${build.dir}.">
+        <echo>Compiling...</echo>
+        <javac srcdir="${source.dir}" 
+               destdir="${build.dir}" 
+               classpath="../lib/ext/relaxngDatatype.jar;../lib/int/serene.jar" 
+               includeAntRuntime="false"
+               debug="true"
+               debugLevel="lines,source">
+            <compilerarg value="-Xlint"/>
+        </javac>
+    </target>
+    
+    <target name="pack" depends="compile" description="Create jar file ${lib.dir}/samples.jar">
+        <echo>Packing samples...</echo>
+        <jar destfile="${lib.dir}/samples.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Class-Path" value="../../lib/ext/xml-apis.jar ../../lib/ext/xercesImpl.jar ../../lib/ext/relaxngDatatype.jar ../../lib/int/serene.jar "/>
+            </manifest>
+        </jar>
+        <delete dir="${build.dir}"/>
+    </target>
+</project>
