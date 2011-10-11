@@ -1,5 +1,4 @@
 #summary Guidelines for reporting issues and contributing.
-#labels Featured
 
 = Participation Guidelines =
 <br>
