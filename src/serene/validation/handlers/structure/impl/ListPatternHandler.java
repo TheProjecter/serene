@@ -74,9 +74,13 @@ public class ListPatternHandler extends StructureValidationHandler{
 			childParticleHandler.recycle();
 			childParticleHandler = null;
 		}
-		contentHandler = noContent;		
-		starttQName = null;
-		starttSystemId = null;
+		contentHandler = noContent;
+		
+		if(isStartSet){
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    isStartSet = false;
+		    startInputRecordIndex = -1;
+		}
 		
 		recycler.recycle(this);;
 	}
@@ -101,31 +105,31 @@ public class ListPatternHandler extends StructureValidationHandler{
 	public AListPattern getRule(){
 		return rule;
 	}
-	public boolean handleChildShift(APattern pattern, int expectedOrderHandlingCount){
+	public boolean handleChildShiftAndOrder(APattern pattern, int expectedOrderHandlingCount){
 		if(expectedOrderHandlingCount > 0){
 			if(!handleContentOrder(expectedOrderHandlingCount, pattern, pattern)){
 				return false;//TODO problem is that it did shift, but in the order's reshift, so this is not 100% correct
 			}				
 		}
-		handleParticleShift(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getItemId(), pattern);		
+		handleParticleShift(inputStackDescriptor.getCurrentItemInputRecordIndex(), pattern);		
 		//handleStateSaturationReduce();
 		//throw new IllegalStateException();
 		return true;
 	}
-	public boolean handleChildShift(APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
+	public boolean handleChildShift(APattern pattern, int startInputRecordIndex){
+		handleParticleShift(startInputRecordIndex, pattern);		
 		//handleStateSaturationReduce();
 		//throw new IllegalStateException();//?????????????
 		return true;
 	}	
-	public boolean handleChildShift(int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
+	public boolean handleChildShift(int count, APattern pattern, int startInputRecordIndex){
+		handleParticleShift(startInputRecordIndex, pattern);		
 		//handleStateSaturationReduce();
 		//throw new IllegalStateException();//?????????????
 		return true;
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int startInputRecordIndex){
+		handleParticleShift(startInputRecordIndex, pattern);		
 		//handleStateSaturationReduce();
 		//throw new IllegalStateException();//?????????????
 		return true;
@@ -145,19 +149,19 @@ public class ListPatternHandler extends StructureValidationHandler{
 		return true;
 	}
 	// reduce
-	public boolean handleChildShift(APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber, StackConflictsHandler stackConflictsHandler){
+	public boolean handleChildShift(APattern pattern, int startInputRecordIndex, StackConflictsHandler stackConflictsHandler){
 		handleParticleShift(pattern, stackConflictsHandler);		
 		//handleStateSaturationReduce();
 		//throw new IllegalStateException();//?????????????
 		return true;
 	}	
-	public boolean handleChildShift(int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber, StackConflictsHandler stackConflictsHandler){
+	public boolean handleChildShift(int count, APattern pattern, int startInputRecordIndex, StackConflictsHandler stackConflictsHandler){
 		handleParticleShift(pattern, stackConflictsHandler);		
 		//handleStateSaturationReduce();
 		//throw new IllegalStateException();//?????????????
 		return true;
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber, StackConflictsHandler stackConflictsHandler){
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int startInputRecordIndex, StackConflictsHandler stackConflictsHandler){
 		handleParticleShift(pattern, stackConflictsHandler);		
 		//handleStateSaturationReduce();
 		//throw new IllegalStateException();//?????????????
@@ -182,13 +186,13 @@ public class ListPatternHandler extends StructureValidationHandler{
 		}
 		if(childParticleHandler != null){
 			if(contentHandler.isSatisfied()){
-				childParticleHandler.reportMissing(rule, starttSystemId, starttLineNumber, starttColumnNumber);
+				childParticleHandler.reportMissing(rule, startInputRecordIndex);
 			}
 		}else{
 			if(rule.isChildRequired()){
 				APattern child = rule.getChild();				
 				int minOccurs = child.getMinOccurs();
-				errorCatcher.missingContent(rule, starttSystemId, starttLineNumber, starttColumnNumber, child, minOccurs, 0, null, null, null, null);
+				errorCatcher.missingContent(rule, activeInputDescriptor.getSystemId(startInputRecordIndex), activeInputDescriptor.getLineNumber(startInputRecordIndex), activeInputDescriptor.getColumnNumber(startInputRecordIndex), child, minOccurs, 0, null, null, null, null);
 			}
 		}
 	}
@@ -251,17 +255,12 @@ public class ListPatternHandler extends StructureValidationHandler{
 						childParticleHandler, 
 						childStructureHandler, 
 						contentHandler.getContentIndex(),
-						starttSystemId,
-						starttLineNumber,
-						starttColumnNumber,
-						starttQName);
+						startInputRecordIndex,
+						isStartSet);
 		copy.setOriginal(this);
 		return copy;
 	}
 	public ListPatternHandler getCopy(StructureHandler parent, StackHandler stackHandler, ErrorCatcher errorCatcher){
-		// ElementHandler copy = rule.getStructureHandler(errorCatcher, stackHandler);
-		// copy.setState(stackHandler, errorCatcher, childParticleHandler, childStructureHandler, contentHandler.getContentIndex());
-		// return copy;
 		throw new IllegalStateException();
 	}
 	private void setOriginal(ListPatternHandler original){
@@ -287,9 +286,9 @@ public class ListPatternHandler extends StructureValidationHandler{
 	
 	
 	//Start ValidationHandler---------------------------------------------------------		
-	void handleParticleShift(String systemId, int lineNumber, int columnNumber, String qName, int itemId, APattern childPattern){
+	void handleParticleShift(int inputRecordIndex, APattern childPattern){
 		setChildParticleHandler(childPattern);
-		childParticleHandler.handleOccurrence(itemId, qName, systemId, lineNumber, columnNumber);
+		childParticleHandler.handleOccurrence(inputRecordIndex);
 	}	
 	void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver){
 		setChildParticleHandler(childPattern);
@@ -307,10 +306,8 @@ public class ListPatternHandler extends StructureValidationHandler{
 							ParticleHandler childParticleHandler, 
 							StructureHandler childStructureHandler,
 							int contentHandlerContentIndex,
-							String startSystemId,
-							int startLineNumber,
-							int startColumnNumber,
-							String startQName){
+							int startInputRecordIndex,
+							boolean isStartSet){
 		if(childParticleHandler != null)this.childParticleHandler = childParticleHandler.getCopy(this, errorCatcher);
 		if(childStructureHandler != null)this.childStructureHandler = childStructureHandler.getCopy(this, stackHandler, errorCatcher);
 		if(contentHandlerContentIndex == NO_CONTENT){
@@ -326,10 +323,15 @@ public class ListPatternHandler extends StructureValidationHandler{
 		}else{
 			throw new IllegalArgumentException();
 		}
-		this.starttSystemId = startSystemId;
-		this.starttLineNumber = startLineNumber;
-		this.starttColumnNumber = startColumnNumber;
-		this.starttQName = startQName;		
+		
+		if(this.isStartSet){
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+        }
+		this.startInputRecordIndex = startInputRecordIndex;
+		this.isStartSet = isStartSet;
+		if(isStartSet){		    
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		}
 	}
 	
 	
@@ -448,7 +450,7 @@ public class ListPatternHandler extends StructureValidationHandler{
 			throw new IllegalStateException();
 		}
 		public void childExcessive(){
-			childParticleHandler.reportExcessive(rule, starttSystemId, starttLineNumber, starttColumnNumber);
+			childParticleHandler.reportExcessive(rule, startInputRecordIndex);
 			contentHandler = excessiveContent;
 		}
 	}
@@ -483,7 +485,7 @@ public class ListPatternHandler extends StructureValidationHandler{
 			throw new IllegalStateException();
 		}
 		public void childExcessive(){
-			childParticleHandler.reportExcessive(rule, starttSystemId, starttLineNumber, starttColumnNumber);
+			childParticleHandler.reportExcessive(rule, startInputRecordIndex);
 		}
 		// TODO what exactly is the state here
 	}

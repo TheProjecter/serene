@@ -153,9 +153,11 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
 	    int functionalEquivalenceCode = contextDefinition.functionalEquivalenceCode()+
                                                 definition.functionalEquivalenceCode();
-        for(int i = 0; i < qName.length; i++){
-            functionalEquivalenceCode += qName[i].hashCode()+
-                                            sourceDefinition[i].functionalEquivalenceCode();
+        for(int i = 0; i < qName.length; i++){            
+            functionalEquivalenceCode += lineNumber[i]+
+                                            columnNumber[i];/*Quick hack, should work for the overwhelming majority of cases*/
+            // TODO 
+            // Replace with some integers representing the occurrence sequence. 
         }
         if(isCandidate){
             messageHandler.misplacedContent(functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
@@ -168,8 +170,9 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int itemId, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
 	    int functionalEquivalenceCode = contextDefinition.functionalEquivalenceCode()+
 											definition.functionalEquivalenceCode()+ 
-											qName.hashCode()+
-											sourceDefinition.functionalEquivalenceCode();
+											/*qName.hashCode()+
+											sourceDefinition.functionalEquivalenceCode()*/
+											+lineNumber + columnNumber;
         if(isCandidate){
             messageHandler.misplacedContent(functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
             candidatesConflictErrorHandler.misplacedContent(candidateIndex, functionalEquivalenceCode, contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);

@@ -108,6 +108,8 @@ import serene.SchemaModel;
 import serene.validation.handlers.error.ErrorDispatcher;
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
+
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.util.IntStack;
@@ -260,9 +262,10 @@ public class RNGSchemaFactory extends SchemaFactory{
         try{
             ValidatorErrorHandlerPool vehp = (ValidatorErrorHandlerPool)validatorHandler.getProperty(Constants.ERROR_HANDLER_POOL_PROPERTY);
             ValidatorEventHandlerPool ehp = (ValidatorEventHandlerPool)validatorHandler.getProperty(Constants.EVENT_HANDLER_POOL_PROPERTY);
-            InputStackDescriptor vil = (InputStackDescriptor)validatorHandler.getProperty(Constants.ITEM_LOCATOR_PROPERTY);
+            ActiveInputDescriptor aid = (ActiveInputDescriptor)validatorHandler.getProperty(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY);
+            InputStackDescriptor isd = (InputStackDescriptor)validatorHandler.getProperty(Constants.INPUT_STACK_DESCRIPTOR_PROPERTY);
             ControllerPool cp = (ControllerPool)restrictionController.getProperty(Constants.CONTROLLER_POOL_PROPERTY);
-            compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, vil, errorDispatcher, debugWriter);
+            compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, aid, isd, errorDispatcher, debugWriter);
             compatibilityHandler.setRestrictToFileName(restrictToFileName);
         }catch (SAXNotRecognizedException e) {
             e.printStackTrace();
@@ -659,9 +662,10 @@ public class RNGSchemaFactory extends SchemaFactory{
                     if(compatibilityHandler == null){                
                         ValidatorErrorHandlerPool vehp = (ValidatorErrorHandlerPool)validatorHandler.getProperty(Constants.ERROR_HANDLER_POOL_PROPERTY);
                         ValidatorEventHandlerPool ehp = (ValidatorEventHandlerPool)validatorHandler.getProperty(Constants.EVENT_HANDLER_POOL_PROPERTY);
-                        InputStackDescriptor vil = (InputStackDescriptor)validatorHandler.getProperty(Constants.ITEM_LOCATOR_PROPERTY);
+                        ActiveInputDescriptor aid = (ActiveInputDescriptor)validatorHandler.getProperty(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY);
+                        InputStackDescriptor isd = (InputStackDescriptor)validatorHandler.getProperty(Constants.INPUT_STACK_DESCRIPTOR_PROPERTY);
                         ControllerPool cp = (ControllerPool)restrictionController.getProperty(Constants.CONTROLLER_POOL_PROPERTY);
-                        compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, vil, errorDispatcher, debugWriter);                
+                        compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, aid, isd, errorDispatcher, debugWriter);                
                     }
                     if(level1AttributeDefaultValue) compatibilityHandler.setLevel1AttributeDefaultValue(true);
                     if(level1AttributeIdType) compatibilityHandler.setLevel1AttributeIdType(true);

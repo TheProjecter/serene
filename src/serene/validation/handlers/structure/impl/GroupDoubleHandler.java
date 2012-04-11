@@ -62,6 +62,13 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 		original = null;
 		minimalReduceStackHandler.recycle();
 		maximalReduceStackHandler.recycle();
+		
+		if(isStartSet){
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    isStartSet = false;
+		    startInputRecordIndex = -1;
+		}
+		
 		recycler.recycle(this);
 	}
 	
@@ -99,7 +106,7 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 	
 	// Always shift first on minimal and then on maximal, so that expectations are 
 	// always first created and then fullfiled.
-	public boolean handleChildShift(APattern pattern, int expectedOrderHandlingCount){
+	public boolean handleChildShiftAndOrder(APattern pattern, int expectedOrderHandlingCount){
 		// System.out.println("****"+this);		
 		// System.out.println(expectedOrderHandlingCount+"****"+pattern);
 		if(expectedOrderHandlingCount > 1){
@@ -160,7 +167,18 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 			// System.out.println(i+" "+maxCount+"//"+minimalStartedCount.get(i));
 			if(minimalStartedCount.get(i) >= maxCount){	
 				APattern reper = ((AGroup)rule).getChild(i);
-				errorCatcher.misplacedContent(rule, starttSystemId, starttLineNumber, starttColumnNumber, currentChild, inputStackDescriptor.getItemId(), inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), sourceDefinition, reper);
+				errorCatcher.misplacedContent(rule, 
+				                            activeInputDescriptor.getSystemId(startInputRecordIndex), 
+				                            activeInputDescriptor.getLineNumber(startInputRecordIndex), 
+				                            activeInputDescriptor.getColumnNumber(startInputRecordIndex), 
+				                            currentChild, 
+				                            inputStackDescriptor.getItemId(), 
+				                            inputStackDescriptor.getItemDescription(), 
+				                            inputStackDescriptor.getSystemId(), 
+				                            inputStackDescriptor.getLineNumber(), 
+				                            inputStackDescriptor.getColumnNumber(), 
+				                            sourceDefinition, 
+				                            reper);
 				//System.out.println("order error "+sourceDefinition
 				//	+"   MIN "+minimalStartedCount.get(i)+" MAX "+maxCount);
 				break;
@@ -183,10 +201,8 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 						errorCatcher, 
 						minimalReduceStackHandlerCopy,
 						maximalReduceStackHandlerCopy,
-						starttSystemId,
-						starttLineNumber,
-						starttColumnNumber,
-						starttQName);
+						startInputRecordIndex,
+						isStartSet);
 		copy.setOriginal(this);
 		return copy;
 	}
@@ -200,18 +216,21 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 							ErrorCatcher errorCatcher,
 							MinimalReduceStackHandler minimalReduceStackHandler,
 							MaximalReduceStackHandler maximalReduceStackHandler,
-							String startSystemId,
-							int startLineNumber,
-							int startColumnNumber,
-							String startQName){
+							int startInputRecordIndex,
+							boolean isStartSet){
 		this.stackHandler = stackHandler;
 		this.errorCatcher = errorCatcher;
 		this.minimalReduceStackHandler = minimalReduceStackHandler;
 		this.maximalReduceStackHandler = maximalReduceStackHandler;
-		this.starttSystemId = startSystemId;
-		this.starttLineNumber = startLineNumber;
-		this.starttColumnNumber = startColumnNumber;
-		this.starttQName = startQName;
+		
+		if(this.isStartSet){
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+        }
+		this.startInputRecordIndex = startInputRecordIndex;
+		this.isStartSet = isStartSet;
+		if(isStartSet){		    
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		}
 	}
 	
 	public void accept(RuleHandlerVisitor visitor){

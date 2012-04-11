@@ -98,17 +98,17 @@ public class ContextStackHandler  implements  StackHandler{
 	
 	public void shift(AElement element){		
 		setCurrentHandler(element);	
-		currentHandler.handleChildShift(element, expectedOrderHandlingCount);		
+		currentHandler.handleChildShiftAndOrder(element, expectedOrderHandlingCount);		
 	}	
 	
 	public void shift(AAttribute attribute){				
 		setCurrentHandler(attribute);	
-		currentHandler.handleChildShift(attribute, expectedOrderHandlingCount);		
+		currentHandler.handleChildShiftAndOrder(attribute, expectedOrderHandlingCount);		
 	}
 	
 	public void shift(CharsActiveTypeItem chars){				
 		setCurrentHandler(chars);		
-		currentHandler.handleChildShift(chars, expectedOrderHandlingCount);		
+		currentHandler.handleChildShiftAndOrder(chars, expectedOrderHandlingCount);		
 	}
 	
 	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter){
@@ -160,7 +160,7 @@ public class ContextStackHandler  implements  StackHandler{
 		if(!endingValidation && !isActive(handler, currentHandler))throw new IllegalArgumentException();
 		StructureHandler parent = handler.getParentHandler();
 		APattern pattern = (APattern)handler.getRule();
-		if(parent.handleChildShift(pattern, handler.getItemId(), handler.getStartQName(), handler.getStartSystemId(), handler.getStartLineNumber(), handler.getStartColumnNumber())){
+		if(parent.handleChildShift(pattern, /*handler.getItemId(), handler.getStartQName(), handler.getStartSystemId(), handler.getStartLineNumber(), handler.getStartColumnNumber())*/ handler.getStartInputRecordIndex())){
 			parent.closeContentStructure(pattern);// must be last so it does not remove location data before error messages
 			currentHandler = parent;
 		}
@@ -170,14 +170,14 @@ public class ContextStackHandler  implements  StackHandler{
 		reduce(handler);
 		 
 		setCurrentHandler(child);
-		currentHandler.handleChildShift(child, expectedOrderHandlingCount);
+		currentHandler.handleChildShiftAndOrder(child, expectedOrderHandlingCount);
 	}
 	
 	public void validatingReshift(StructureHandler handler, APattern child){
 		endSubtreeValidation(handler);
 		 
 		setCurrentHandler(child);
-		currentHandler.handleChildShift(child, expectedOrderHandlingCount);
+		currentHandler.handleChildShiftAndOrder(child, expectedOrderHandlingCount);
 	}
 	
 	// Changes the old currentHandler during path activation. The new currentHandler
@@ -188,7 +188,7 @@ public class ContextStackHandler  implements  StackHandler{
 		isCurrentHandlerReseted = true;
 	}
 		
-	public void blockReduce(StructureHandler handler, int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public void blockReduce(StructureHandler handler, int count, APattern pattern, int startInputRecordIndex){
 		// TODO the checks for Exception
 		if(!endingValidation && !isActive(handler, currentHandler))throw new IllegalArgumentException();
 		StructureHandler parent = handler.getParentHandler();	
@@ -199,13 +199,13 @@ public class ContextStackHandler  implements  StackHandler{
 			// to setCurrentHandler() through deactivate?
 			setCurrentHandler(pattern);
 			// it should be active at the first cycle of the loop//or it might not be the parent???
-			if(!currentHandler.handleChildShift(count, pattern, itemId, startQName, startSystemId, lineNumber, columnNumber)){
+			if(!currentHandler.handleChildShift(count, pattern, startInputRecordIndex)){
 				shifted = false;
 			}
 		}
 		if(shifted)parent.closeContentStructure(pattern);// must be last so it does not remove location data before error messages
 	}
-	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int startInputRecordIndex){
 		// TODO the checks for Exception
 		if(!endingValidation && !isActive(handler, currentHandler))throw new IllegalArgumentException();
 		StructureHandler parent = handler.getParentHandler();	
@@ -216,7 +216,7 @@ public class ContextStackHandler  implements  StackHandler{
 			// cardinality is not handled. MInterleaveHandler throws 
 			// UnsupportedOperationException if called.			
 			setCurrentHandler(pattern);			
-			if(!currentHandler.handleChildShift(MIN, MAX, pattern, itemId, startQName, startSystemId, lineNumber, columnNumber)){
+			if(!currentHandler.handleChildShift(MIN, MAX, pattern, startInputRecordIndex)){
 				shifted = false;
 			}
 		}

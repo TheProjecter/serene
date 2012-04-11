@@ -42,6 +42,8 @@ import serene.validation.handlers.match.MatchHandler;
 
 import serene.validation.handlers.content.ElementEventHandler;
 import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
+
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
@@ -81,7 +83,8 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	SpaceCharsHandler spaceHandler;
 	MatchHandler matchHandler;
 	ErrorDispatcher errorDispatcher;
-	InputStackDescriptor inputStackDescriptor;
+	ActiveInputDescriptor activeInputDescriptor;
+	InputStackDescriptor inputStackDescriptor;	
 	CharsBuffer charsBuffer;
 	DocumentContext documentContext;
 	
@@ -119,7 +122,8 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		this.schemaModel = schemaModel;
 							
 		errorDispatcher = new ErrorDispatcher(debugWriter);		
-		inputStackDescriptor = new InputStackDescriptor(debugWriter);
+		activeInputDescriptor = new ActiveInputDescriptor();
+		inputStackDescriptor = new InputStackDescriptor(activeInputDescriptor, debugWriter);
 		matchHandler  = new MatchHandler(debugWriter);		
 		charsBuffer = new CharsBuffer(debugWriter);		
 		spaceHandler = new SpaceCharsHandler(debugWriter);					
@@ -142,6 +146,10 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
         this.restrictToFileName = restrictToFileName;
 	}
     
+	protected void finalize(){			
+		eventHandlerPool.recycle();
+		errorHandlerPool.recycle();
+	}
     
 	public InputStackDescriptor getInputStackDescriptor(){
 		return inputStackDescriptor;
@@ -188,7 +196,8 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		errorDispatcher.init();
 		documentContext.reset();
 		inputStackDescriptor.clear();
-		activeModel = schemaModel.getActiveModel(inputStackDescriptor, 
+		activeModel = schemaModel.getActiveModel(activeInputDescriptor,
+		                                            inputStackDescriptor, 
 													errorDispatcher);
         if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
         matchHandler.setActiveModel(activeModel);
@@ -276,8 +285,11 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler.handleEndElement(restrictToFileName, locator);
 		elementHandler.recycle();
 		elementHandler = null;
+		inputStackDescriptor.popElement();
 		activeModel.recycle();
-		activeModel = null;				
+		activeModel = null;	
+		
+		activeInputDescriptor.printLeftOvers();
 	}
 
     public void setProperty(String name, Object object)
@@ -293,7 +305,9 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
             // recognized but not set, only for retrieval
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
             // recognized but not set, only for retrieval
-        }else if(name.equals(Constants.ITEM_LOCATOR_PROPERTY)){
+        }else if(name.equals(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY)){
+            // recognized but not set, only for retrieval
+        }else if(name.equals(Constants.INPUT_STACK_DESCRIPTOR_PROPERTY)){
             // recognized but not set, only for retrieval
         }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
@@ -315,7 +329,9 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
             return errorHandlerPool;
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
             return eventHandlerPool;
-        }else if(name.equals(Constants.ITEM_LOCATOR_PROPERTY)){
+        }else if(name.equals(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY)){
+            return activeInputDescriptor;
+        }else if(name.equals(Constants.INPUT_STACK_DESCRIPTOR_PROPERTY)){
             return inputStackDescriptor;
         }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){
             return matchHandler;

@@ -34,7 +34,9 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
 
 import serene.validation.handlers.match.MatchHandler;
+
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -73,10 +75,6 @@ public class ActiveModel  implements Reusable{
 	}
 	
 	protected void finalize(){
-		//ruleHandlerPool.releaseHandlers();
-		//stackHandlerPool.releaseHandlers();		
-		//conflictHandlerPool.releaseHandlers();
-		
 		ruleHandlerPool.recycle();
 		stackHandlerPool.recycle();		
 		conflictHandlerPool.recycle();
@@ -90,8 +88,8 @@ public class ActiveModel  implements Reusable{
 		
 	}
 	
-	public void init(InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
-		ruleHandlerPool.fill(inputStackDescriptor);
+	public void init(ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
+		ruleHandlerPool.fill(activeInputDescriptor, inputStackDescriptor);
 		stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool);		
 		conflictHandlerPool.fill(inputStackDescriptor);
 	}

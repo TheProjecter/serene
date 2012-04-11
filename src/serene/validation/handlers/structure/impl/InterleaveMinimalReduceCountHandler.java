@@ -90,28 +90,13 @@ public class InterleaveMinimalReduceCountHandler extends MinimalReduceCountHandl
 						satisfactionLevel,
 						saturationLevel,
 						contentHandler.getContentIndex(),
-						starttSystemId,
-						starttLineNumber,
-						starttColumnNumber,
-						starttQName);
+						startInputRecordIndex,
+						isStartSet);
 		copy.setOriginal(this);
 		return copy; 
 	}
 	public InterleaveMinimalReduceCountHandler getCopy(StructureHandler parent, StackHandler stackHandler, ErrorCatcher errorCatcher){
 		throw new IllegalStateException();
-		/*InterleaveMinimalReduceCountHandler copy = ((AInterleave)rule).getMinimalReduceCountHandler(errorCatcher, (StructureValidationHandler)parent, stackHandler);
-		copy.setState(stackHandler, 
-						errorCatcher, 
-						childParticleHandlers, 
-						childStructureHandlers,
-						satisfactionLevel,
-						saturationLevel,
-						contentHandler.getContentIndex(),
-						starttSystemId,
-						starttLineNumber,
-						starttColumnNumber,
-						starttQName);
-		return copy;*/
 	}
 	//String stackToString(); super
 	// String getStartQName() super
@@ -128,10 +113,8 @@ public class InterleaveMinimalReduceCountHandler extends MinimalReduceCountHandl
 						satisfactionLevel,
 						saturationLevel,
 						contentHandler.getContentIndex(),
-						starttSystemId,
-						starttLineNumber,
-						starttColumnNumber,
-						starttQName);
+						startInputRecordIndex,
+						isStartSet);
 		copy.setOriginal(this);
 		return copy;
 	}
@@ -159,10 +142,8 @@ public class InterleaveMinimalReduceCountHandler extends MinimalReduceCountHandl
 							int satisfactionLevel,
 							int saturationLevel,
 							int contentHandlerContentIndex,
-							String startSystemId,
-							int startLineNumber,
-							int startColumnNumber,
-							String startQName){
+							int startInputRecordIndex,
+							boolean isStartSet){
 		if(this.size < size){
 			childParticleHandlers = new ParticleHandler[size];
 			childStructureHandlers = new StructureHandler[size];
@@ -191,10 +172,15 @@ public class InterleaveMinimalReduceCountHandler extends MinimalReduceCountHandl
 		}
 		this.satisfactionLevel = satisfactionLevel;
 		this.saturationLevel = saturationLevel;
-		this.starttSystemId = startSystemId;
-		this.starttLineNumber = startLineNumber;
-		this.starttColumnNumber = startColumnNumber;
-		this.starttQName = startQName;		
+		
+		if(this.isStartSet){
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+        }
+		this.startInputRecordIndex = startInputRecordIndex;
+		this.isStartSet = isStartSet;
+		if(isStartSet){		    
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		}
 	}	
 	
 	public void accept(RuleHandlerVisitor visitor){

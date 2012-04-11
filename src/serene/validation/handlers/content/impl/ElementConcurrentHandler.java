@@ -160,7 +160,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
         boolean mustReport = localCandidatesConflictErrorHandler.mustReport();
         if(mustReport){
             if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-            localCandidatesConflictErrorHandler.handle(ContextErrorHandler.ELEMENT, inputStackDescriptor.getItemIdentifier(), restrictToFileName, locator, contextErrorHandler[contextErrorHandlerIndex]);
+            localCandidatesConflictErrorHandler.handle(ContextErrorHandler.ELEMENT, inputStackDescriptor.getItemDescription(), restrictToFileName, locator, contextErrorHandler[contextErrorHandlerIndex]);
         }
 	}
 	

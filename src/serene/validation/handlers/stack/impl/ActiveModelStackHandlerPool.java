@@ -109,7 +109,6 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
         full = false;
 	}
 	
-	
 	public void recycle(){
 		if(full)releaseHandlers();
 		pool.recycle(this);
@@ -165,14 +164,6 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	}
 	
 	public void releaseHandlers(){
-		// System.out.println("context created "+contextStackHCreated);
-		// System.out.println(Arrays.toString(contextStackH));
-		// System.out.println("candidate created "+candidateStackHCreated);
-		// System.out.println(Arrays.toString(candidateStackH));
-		// System.out.println("concurrent created "+concurrentStackHCreated);
-		// System.out.println(Arrays.toString(concurrentStackH));
-		// System.out.println("compositeConcurrent created "+compositeConcurrentStackHCreated);
-		// System.out.println(Arrays.toString(compositeConcurrentStackH));
 		pool.recycle(contextStackHFree,
 		            contextStackHFree - contextStackHMinFree,
 					contextStackH,
@@ -306,10 +297,6 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	    candidateStackHRequested++;
 		if(candidateStackHFree == 0){
 			candidateStackHCreated++;
-			// candidateStackHCreated++;
-			// System.out.println("candidate created "+candidateStackHCreated);
-			
-			
 			CandidateStackHandlerImpl csh = new CandidateStackHandlerImpl(debugWriter);
 			csh.init(inputStackDescriptor, this);			
 			csh.init(topHandler, 
@@ -321,10 +308,6 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 						errorCatcher);
 			return csh;			
 		}else{
-			
-			// System.out.println("candidate free "+candidateStackHFree);
-			
-			
 			CandidateStackHandlerImpl csh = candidateStackH[--candidateStackHFree];
 			csh.init(topHandler, 
 						currentRule,						
@@ -347,9 +330,6 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		candidateStackHRequested++;
 		if(candidateStackHFree == 0){
 			candidateStackHCreated++;
-			// System.out.println("candidate created "+candidateStackHCreated);
-			
-			
 			CandidateStackHandlerImpl csh = new CandidateStackHandlerImpl(debugWriter);
 			csh.init(inputStackDescriptor, this);			
 			csh.init(topHandler, 
@@ -359,10 +339,6 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 						errorCatcher);
 			return csh;			
 		}else{
-			
-			// System.out.println("candidate free "+candidateStackHFree);
-						
-			
 			CandidateStackHandlerImpl csh = candidateStackH[--candidateStackHFree];
 			csh.init(topHandler, 
 						currentRule,
@@ -388,20 +364,11 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		
 	public ConcurrentStackHandlerImpl getConcurrentStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher){				
 		if(concurrentStackHFree == 0){
-			
-			// concurrentStackHCreated++;			
-			// System.out.println("base created "+concurrentStackHCreated);
-			// System.out.println("base size "+concurrentStackHPoolSize);
-			
 			ConcurrentStackHandlerImpl csh = new ConcurrentStackHandlerImpl(debugWriter);
 			csh.init(inputStackDescriptor, conflictHandlerPool, this);
 			csh.init(originalHandler, errorCatcher);
 			return csh;			
 		}else{
-			
-			// System.out.println("base free "+concurrentStackHFree);
-			// System.out.println("base size "+concurrentStackHPoolSize);			
-			
 			ConcurrentStackHandlerImpl csh = concurrentStackH[--concurrentStackHFree];
 			csh.init(originalHandler, errorCatcher);
 			if(concurrentStackHFree < concurrentStackHMinFree) concurrentStackHMinFree = concurrentStackHFree;

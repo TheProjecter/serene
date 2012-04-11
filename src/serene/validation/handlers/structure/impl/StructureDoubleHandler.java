@@ -33,6 +33,7 @@ import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
 import serene.validation.handlers.structure.StructureHandler;
 
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.conflict.InternalConflictResolver;
@@ -54,17 +55,21 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 	MinimalReduceStackHandler minimalReduceStackHandler;
 	MaximalReduceStackHandler maximalReduceStackHandler;
 	
+	ActiveInputDescriptor activeInputDescriptor;
 	InputStackDescriptor inputStackDescriptor;	
+	
 	ErrorCatcher errorCatcher; 
 	StackHandler stackHandler;
 	
 	RuleHandlerRecycler recycler;
 	
-	int ittemId;
+	/*int ittemId;
 	String starttQName;
 	String starttSystemId;
 	int starttLineNumber;
-	int starttColumnNumber;	
+	int starttColumnNumber;*/
+    int startInputRecordIndex;	
+    boolean isStartSet;
 	
 	MessageWriter debugWriter;
 	
@@ -72,10 +77,14 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 		this.debugWriter = debugWriter;				
 		minimalReduceCount = new IntList();
 		maximalReduceCount = new IntList();
+		
+		startInputRecordIndex = -1;	
+        isStartSet = false;
 	}
 	
-	void init(RuleHandlerRecycler recycler, InputStackDescriptor inputStackDescriptor){				
+	void init(RuleHandlerRecycler recycler, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){				
 		this.recycler = recycler;
+		this.activeInputDescriptor = activeInputDescriptor;
 		this.inputStackDescriptor = inputStackDescriptor; 
 	}	
 	
@@ -115,18 +124,18 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 	public Rule getRule(){
 		return rule;
 	}
-	//boolean handleChildShift(APattern pattern, int expectedOrderHandlingCount) subclass
-	public boolean handleChildShift(APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	//boolean handleChildShiftAndOrder(APattern pattern, int expectedOrderHandlingCount) subclass
+	public boolean handleChildShift(APattern pattern, int startInputRecordIndex){
 		//handleChildShift(startSystemId, startLineNumber, startColumnNumber, startQName, pattern);		
 		//handleStateSaturationReduce();
 		throw new UnsupportedOperationException();
 	}	
-	public boolean handleChildShift(int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public boolean handleChildShift(int count, APattern pattern, int startInputRecordIndex){
 		//handleChildShift(startSystemId, startLineNumber, startColumnNumber, startQName, pattern);		
 		//handleStateSaturationReduce();
 		throw new UnsupportedOperationException();
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int startInputRecordIndex){
 		//handleChildShift(startSystemId, startLineNumber, startColumnNumber, startQName, pattern);		
 		//handleStateSaturationReduce();
 		throw new UnsupportedOperationException();
@@ -134,17 +143,17 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 	
 	
 	//reduce
-	public boolean handleChildShift(APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber, StackConflictsHandler stackConflictsHandler){
+	public boolean handleChildShift(APattern pattern, int startInputRecordIndex, StackConflictsHandler stackConflictsHandler){
 		//handleChildShift(startSystemId, startLineNumber, startColumnNumber, startQName, pattern);		
 		//handleStateSaturationReduce();
 		throw new UnsupportedOperationException();
 	}	
-	public boolean handleChildShift(int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber, StackConflictsHandler stackConflictsHandler){
+	public boolean handleChildShift(int count, APattern pattern, int startInputRecordIndex, StackConflictsHandler stackConflictsHandler){
 		//handleChildShift(startSystemId, startLineNumber, startColumnNumber, startQName, pattern);		
 		//handleStateSaturationReduce();
 		throw new UnsupportedOperationException();
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber, StackConflictsHandler stackConflictsHandler){
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int startInputRecordIndex, StackConflictsHandler stackConflictsHandler){
 		//handleChildShift(startSystemId, startLineNumber, startColumnNumber, startQName, pattern);		
 		//handleStateSaturationReduce();
 		throw new UnsupportedOperationException();
@@ -166,12 +175,12 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 					// found maximalReduceCount.get(i)
 					// expected at least MIN
 					// void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber);
-					errorCatcher.missingCompositorContent(rule, starttSystemId, starttLineNumber, starttColumnNumber, rule.getChild(i), MIN, maximalReduceCount.get(i));
+					errorCatcher.missingCompositorContent(rule, activeInputDescriptor.getSystemId(startInputRecordIndex), activeInputDescriptor.getLineNumber(startInputRecordIndex), activeInputDescriptor.getColumnNumber(startInputRecordIndex), rule.getChild(i), MIN, maximalReduceCount.get(i));
 				}
 			}
 		}
-		if(MAX < MIN) stackHandler.blockReduce(this, MIN, rule, ittemId, starttQName, starttSystemId, starttLineNumber, starttColumnNumber);
-		else stackHandler.limitReduce(this, MIN, MAX, rule, ittemId, starttQName, starttSystemId, starttLineNumber, starttColumnNumber);
+		if(MAX < MIN) stackHandler.blockReduce(this, MIN, rule, startInputRecordIndex);
+		else stackHandler.limitReduce(this, MIN, MAX, rule, startInputRecordIndex);
 	}
 	
 	public boolean handleContentOrder(int expectedOrderHandlingCount, APattern childDefinition, APattern sourceDefinition){
@@ -238,10 +247,17 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 	//End StructureHandler------------------------------------------------------------
 	
 	void setStart(){
-	    ittemId = inputStackDescriptor.getItemId();
+	    /*ittemId = inputStackDescriptor.getItemId();
 		starttSystemId = inputStackDescriptor.getSystemId();		
 		starttLineNumber = inputStackDescriptor.getLineNumber();
 		starttColumnNumber = inputStackDescriptor.getColumnNumber();
-		starttQName = inputStackDescriptor.getItemIdentifier();		
+		starttQName = inputStackDescriptor.getItemDescription();*/
+        startInputRecordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();
+        isStartSet = true;
+        activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
 	}	
+	
+	public int getStartInputRecordIndex(){
+	    return startInputRecordIndex;
+	}
 }

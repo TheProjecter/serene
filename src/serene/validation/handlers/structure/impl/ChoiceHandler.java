@@ -91,7 +91,7 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 		return childStructureHandler;
 	}	
 	// APattern getRule() super
-	public boolean handleChildShift(APattern pattern, int expectedOrderHandlingCount){
+	public boolean handleChildShiftAndOrder(APattern pattern, int expectedOrderHandlingCount){
 		if(currentChild != null && currentChild != pattern){
 			stackHandler.validatingReshift(this, pattern);
 			return false;			
@@ -103,40 +103,40 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 				return false;//TODO problem is that it did shift, but in the order's reshift, so this is not 100% correct
 			}				
 		}
-		handleParticleShift(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getItemId(), pattern);
+		handleParticleShift(inputStackDescriptor.getCurrentItemInputRecordIndex(), pattern);
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public boolean handleChildShift(APattern pattern, int startInputRecordIndex){
 		if(currentChild != null && currentChild != pattern){
 			stackHandler.validatingReshift(this, pattern);
 			return false;			
 		}else{
 			currentChild = pattern;
 		}
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
+		handleParticleShift(startInputRecordIndex, pattern);		
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public boolean handleChildShift(int count, APattern pattern, int startInputRecordIndex){
 		if(currentChild != null && currentChild != pattern){
 			stackHandler.validatingReshift(this, pattern);
 			return false;			
 		}else{
 			currentChild = pattern;
 		}
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
+		handleParticleShift(startInputRecordIndex, pattern);		
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int startInputRecordIndex){
 		if(currentChild != null && currentChild != pattern){
 			stackHandler.validatingReshift(this, pattern);
 			return false;			
 		}else{
 			currentChild = pattern;
 		}
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
+		handleParticleShift(startInputRecordIndex, pattern);		
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
@@ -160,7 +160,7 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 		return result;
 	}
 	//reduce
-	public boolean handleChildShift(APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber, StackConflictsHandler stackConflictsHandler){
+	public boolean handleChildShift(APattern pattern, int startInputRecordIndex, StackConflictsHandler stackConflictsHandler){
 		if(currentChild != null && currentChild != pattern){
 			stackHandler.validatingReshift(this, pattern);
 			return false;			
@@ -171,7 +171,7 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber, StackConflictsHandler stackConflictsHandler){
+	public boolean handleChildShift(int count, APattern pattern, int startInputRecordIndex, StackConflictsHandler stackConflictsHandler){
 		if(currentChild != null && currentChild != pattern){
 			stackHandler.validatingReshift(this, pattern);
 			return false;			
@@ -182,7 +182,7 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber, StackConflictsHandler stackConflictsHandler){
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int startInputRecordIndex, StackConflictsHandler stackConflictsHandler){
 		if(currentChild != null && currentChild != pattern){
 			stackHandler.validatingReshift(this, pattern);
 			return false;			
@@ -209,10 +209,8 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 					childParticleHandler, 
 					childStructureHandler,					
 					contentHandler.getContentIndex(),
-					starttSystemId,
-					starttLineNumber,
-					starttColumnNumber,
-					starttQName,
+					startInputRecordIndex,
+					isStartSet,
 					currentChild);
 		copy.setOriginal(this);
 		return copy; 		
@@ -224,10 +222,8 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 					childParticleHandler, 
 					childStructureHandler,					
 					contentHandler.getContentIndex(),
-					starttSystemId,
-					starttLineNumber,
-					starttColumnNumber,
-					starttQName,
+					startInputRecordIndex,
+					isStartSet,
 					currentChild);
 		copy.setOriginal(this);
 		return copy;
@@ -244,9 +240,9 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 	
 
 	//Start ValidationHandler---------------------------------------------------------		
-	void handleParticleShift(String systemId, int lineNumber, int columnNumber, String qName, int itemId, APattern childPattern){				
+	void handleParticleShift(int inputRecordIndex, APattern childPattern){				
 		setCurrentChildParticleHandler(childPattern);
-		currentChildParticleHandler.handleOccurrence(itemId, qName, systemId, lineNumber, columnNumber);
+		currentChildParticleHandler.handleOccurrence(inputRecordIndex);
 	}	
 	// void setStart() super	
 	//End ValidationHandler-----------------------------------------------------------
@@ -272,10 +268,8 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 							ParticleHandler childParticleHandler, 
 							StructureHandler childStructureHandler,							
 							int contentHandlerContentIndex,
-							String startSystemId,
-							int startLineNumber,
-							int startColumnNumber,
-							String startQName,
+							int startInputRecordIndex,
+							boolean isStartSet,
 							Rule currentChild){
 		if(childParticleHandler != null)this.childParticleHandler = childParticleHandler.getCopy(this, errorCatcher);
 		if(childStructureHandler != null)this.childStructureHandler = childStructureHandler.getCopy(this, stackHandler, errorCatcher);
@@ -290,10 +284,16 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 		}else{
 			throw new IllegalArgumentException();
 		}	
-		this.starttSystemId = startSystemId;
-		this.starttLineNumber = startLineNumber;
-		this.starttColumnNumber = startColumnNumber;
-		this.starttQName = startQName;
+		
+		if(this.isStartSet){
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+        }
+		this.startInputRecordIndex = startInputRecordIndex;
+		this.isStartSet = isStartSet;
+		if(isStartSet){		    
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		}
+		
 		this.currentChild = currentChild;	
 	}	
 	

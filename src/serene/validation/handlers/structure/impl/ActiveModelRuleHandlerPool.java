@@ -41,6 +41,7 @@ import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.Reusable;
@@ -236,6 +237,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	int interleaveMaximalReduceHandlerMinFree;
 	InterleaveMaximalReduceHandler[] interleaveMaximalReduceHandler;
 	
+	ActiveInputDescriptor activeInputDescriptor;
 	InputStackDescriptor inputStackDescriptor;
 		
 	boolean full;
@@ -278,6 +280,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
         full = false;
 	}
 	
+		
 	public int getParticleHandlerRequested(){
 	    return particleHandlerRequested;
 	}
@@ -287,7 +290,8 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		pool.recycle(this);
 	}
 	
-	public void fill(InputStackDescriptor inputStackDescriptor){
+	public void fill(ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){
+	    this.activeInputDescriptor = activeInputDescriptor;
 		this.inputStackDescriptor = inputStackDescriptor;
 		pool.fill(this,
 			 		particleHandler,
@@ -352,97 +356,97 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		particleHandlerFree = particleHandlerFillCount;
 		particleHandlerMinFree = particleHandlerFree;
 		for(int i = 0; i < particleHandlerFree; i++){	
-			particleHandler[i].init(this);
+			particleHandler[i].init(activeInputDescriptor, this);
 		}
 		
 		choiceHandlerFree = choiceHandlerFillCount;
 		choiceHandlerMinFree = choiceHandlerFree;
 		for(int i = 0; i < choiceHandlerFree; i++){	
-			choiceHandler[i].init(this, inputStackDescriptor);
+			choiceHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		groupHandlerFree = groupHandlerFillCount;
 		groupHandlerMinFree = groupHandlerFree;
 		for(int i = 0; i < groupHandlerFree; i++){	
-			groupHandler[i].init(this, inputStackDescriptor);
+			groupHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		grammarHandlerFree = grammarHandlerFillCount;
 		grammarHandlerMinFree = grammarHandlerFree;
 		for(int i = 0; i < grammarHandlerFree; i++){	
-			grammarHandler[i].init(this, inputStackDescriptor);
+			grammarHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		uinterleaveHandlerFree = uinterleaveHandlerFillCount;
 		uinterleaveHandlerMinFree = uinterleaveHandlerFree;
 		for(int i = 0; i < uinterleaveHandlerFree; i++){	
-			uinterleaveHandler[i].init(this, inputStackDescriptor);
+			uinterleaveHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		minterleaveHandlerFree = minterleaveHandlerFillCount;
 		minterleaveHandlerMinFree = minterleaveHandlerFree;
 		for(int i = 0; i < minterleaveHandlerFree; i++){	
-			minterleaveHandler[i].init(this, inputStackDescriptor);
+			minterleaveHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		sinterleaveHandlerFree = sinterleaveHandlerFillCount;
 		sinterleaveHandlerMinFree = sinterleaveHandlerFree;
 		for(int i = 0; i < sinterleaveHandlerFree; i++){	
-			sinterleaveHandler[i].init(this, inputStackDescriptor);
+			sinterleaveHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		refHandlerFree = refHandlerFillCount;
 		refHandlerMinFree = refHandlerFree;
 		for(int i = 0; i < refHandlerFree; i++){	
-			refHandler[i].init(this, inputStackDescriptor);
+			refHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		elementHandlerFree = elementHandlerFillCount;
 		elementHandlerMinFree = elementHandlerFree;
 		for(int i = 0; i < elementHandlerFree; i++){	
-			elementHandler[i].init(this, inputStackDescriptor);
+			elementHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		attributeHandlerFree = attributeHandlerFillCount;
 		attributeHandlerMinFree = attributeHandlerFree;
 		for(int i = 0; i < attributeHandlerFree; i++){	
-			attributeHandler[i].init(this, inputStackDescriptor);
+			attributeHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		exceptPatternHandlerFree = exceptPatternHandlerFillCount;
 		exceptPatternHandlerMinFree = exceptPatternHandlerFree;
 		for(int i = 0; i < exceptPatternHandlerFree; i++){	
-			exceptPatternHandler[i].init(this, inputStackDescriptor);
+			exceptPatternHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		listPatternHandlerFree = listPatternHandlerFillCount;
 		listPatternHandlerMinFree = listPatternHandlerFree;
 		for(int i = 0; i < listPatternHandlerFree; i++){	
-			listPatternHandler[i].init(this, inputStackDescriptor);
+			listPatternHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		groupDoubleHandlerFree = groupDoubleHandlerFillCount;
 		groupDoubleHandlerMinFree = groupDoubleHandlerFree;
 		for(int i = 0; i < groupDoubleHandlerFree; i++){	
-			groupDoubleHandler[i].init(this, inputStackDescriptor);
+			groupDoubleHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		interleaveDoubleHandlerFree = interleaveDoubleHandlerFillCount;
 		interleaveDoubleHandlerMinFree = interleaveDoubleHandlerFree;
 		for(int i = 0; i < interleaveDoubleHandlerFree; i++){	
-			interleaveDoubleHandler[i].init(this, inputStackDescriptor);
+			interleaveDoubleHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 
 		groupMinimalReduceCountHandlerFree = groupMinimalReduceCountHandlerFillCount;
 		groupMinimalReduceCountHandlerMinFree = groupMinimalReduceCountHandlerFree;
 		for(int i = 0; i < groupMinimalReduceCountHandlerFree; i++){	
-			groupMinimalReduceCountHandler[i].init(this, inputStackDescriptor);
+			groupMinimalReduceCountHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}	
 
 		groupMaximalReduceCountHandlerFree = groupMaximalReduceCountHandlerFillCount;
 		groupMaximalReduceCountHandlerMinFree = groupMaximalReduceCountHandlerFree;
 		for(int i = 0; i < groupMaximalReduceCountHandlerFree; i++){	
-			groupMaximalReduceCountHandler[i].init(this, inputStackDescriptor);
+			groupMaximalReduceCountHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 
 		
@@ -450,13 +454,13 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		interleaveMinimalReduceCountHandlerFree = interleaveMinimalReduceCountHandlerFillCount;
 		interleaveMinimalReduceCountHandlerMinFree = interleaveMinimalReduceCountHandlerFree;
 		for(int i = 0; i < interleaveMinimalReduceCountHandlerFree; i++){	
-			interleaveMinimalReduceCountHandler[i].init(this, inputStackDescriptor);
+			interleaveMinimalReduceCountHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}	
 		
 		interleaveMaximalReduceCountHandlerFree = interleaveMaximalReduceCountHandlerFillCount;
 		interleaveMaximalReduceCountHandlerMinFree = interleaveMaximalReduceCountHandlerFree;
 		for(int i = 0; i < interleaveMaximalReduceCountHandlerFree; i++){	
-			interleaveMaximalReduceCountHandler[i].init(this, inputStackDescriptor);
+			interleaveMaximalReduceCountHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		
@@ -465,61 +469,61 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		grammarMinimalReduceHandlerFree = grammarMinimalReduceHandlerFillCount;
 		grammarMinimalReduceHandlerMinFree = grammarMinimalReduceHandlerFree;
 		for(int i = 0; i < grammarMinimalReduceHandlerFree; i++){	
-			grammarMinimalReduceHandler[i].init(this, inputStackDescriptor);
+			grammarMinimalReduceHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}	
 				
 		grammarMaximalReduceHandlerFree = grammarMaximalReduceHandlerFillCount;
 		grammarMaximalReduceHandlerMinFree = grammarMaximalReduceHandlerFree;
 		for(int i = 0; i < grammarMaximalReduceHandlerFree; i++){	
-			grammarMaximalReduceHandler[i].init(this, inputStackDescriptor);
+			grammarMaximalReduceHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 				
 		refMinimalReduceHandlerFree = refMinimalReduceHandlerFillCount;
 		refMinimalReduceHandlerMinFree = refMinimalReduceHandlerFree;
 		for(int i = 0; i < refMinimalReduceHandlerFree; i++){	
-			refMinimalReduceHandler[i].init(this, inputStackDescriptor);
+			refMinimalReduceHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}	
 				
 		refMaximalReduceHandlerFree = refMaximalReduceHandlerFillCount;
 		refMaximalReduceHandlerMinFree = refMaximalReduceHandlerFree;
 		for(int i = 0; i < refMaximalReduceHandlerFree; i++){	
-			refMaximalReduceHandler[i].init(this, inputStackDescriptor);
+			refMaximalReduceHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 				
 		choiceMinimalReduceHandlerFree = choiceMinimalReduceHandlerFillCount;
 		choiceMinimalReduceHandlerMinFree = choiceMinimalReduceHandlerFree;
 		for(int i = 0; i < choiceMinimalReduceHandlerFree; i++){	
-			choiceMinimalReduceHandler[i].init(this, inputStackDescriptor);
+			choiceMinimalReduceHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}	
 		
 		choiceMaximalReduceHandlerFree = choiceMaximalReduceHandlerFillCount;
 		choiceMaximalReduceHandlerMinFree = choiceMaximalReduceHandlerFree;
 		for(int i = 0; i < choiceMaximalReduceHandlerFree; i++){	
-			choiceMaximalReduceHandler[i].init(this, inputStackDescriptor);
+			choiceMaximalReduceHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		groupMinimalReduceHandlerFree = groupMinimalReduceHandlerFillCount;
 		groupMinimalReduceHandlerMinFree = groupMinimalReduceHandlerFree;
 		for(int i = 0; i < groupMinimalReduceHandlerFree; i++){	
-			groupMinimalReduceHandler[i].init(this, inputStackDescriptor);
+			groupMinimalReduceHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}	
 		
 		groupMaximalReduceHandlerFree = groupMaximalReduceHandlerFillCount;
 		groupMaximalReduceHandlerMinFree = groupMaximalReduceHandlerFree;
 		for(int i = 0; i < groupMaximalReduceHandlerFree; i++){	
-			groupMaximalReduceHandler[i].init(this, inputStackDescriptor);
+			groupMaximalReduceHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		interleaveMinimalReduceHandlerFree = interleaveMinimalReduceHandlerFillCount;
 		interleaveMinimalReduceHandlerMinFree = interleaveMinimalReduceHandlerFree;		
 		for(int i = 0; i < interleaveMinimalReduceHandlerFree; i++){	
-			interleaveMinimalReduceHandler[i].init(this, inputStackDescriptor);
+			interleaveMinimalReduceHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}	
 		
 		interleaveMaximalReduceHandlerFree = interleaveMaximalReduceHandlerFillCount;
 		interleaveMaximalReduceHandlerMinFree = interleaveMaximalReduceHandlerFree;
 		for(int i = 0; i < interleaveMaximalReduceHandlerFree; i++){	
-			interleaveMaximalReduceHandler[i].init(this, inputStackDescriptor);
+			interleaveMaximalReduceHandler[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 	}
 	
@@ -616,7 +620,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(particleHandlerFree == 0){
 			particleHandlerCreated++;			
 			ParticleHandler ph = new ParticleHandler(debugWriter);
-			ph.init(this);
+			ph.init(activeInputDescriptor, this);
 			ph.init(childEventHandler, p, errorCatcher);
 			return ph;
 		}else{		    
@@ -645,7 +649,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(choiceHandlerFree == 0){
 			choiceHandlerCreated++;
 			ChoiceHandler ch = new ChoiceHandler(debugWriter);
-			ch.init(this, inputStackDescriptor);
+			ch.init(this, activeInputDescriptor, inputStackDescriptor);
 			ch.init(cp, errorCatcher, parent, stackHandler);
 			return ch;			
 		}else{
@@ -672,7 +676,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(groupHandlerFree == 0){
 			groupHandlerCreated++;
 			GroupHandler gh = new GroupHandler(debugWriter);
-			gh.init(this, inputStackDescriptor);			
+			gh.init(this, activeInputDescriptor, inputStackDescriptor);			
 			gh.init(g, errorCatcher, parent, stackHandler);
 			return gh;			
 		}else{
@@ -698,7 +702,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(refHandlerFree == 0){
 			// refHandlerCreated++;
 			RefHandler pih = new RefHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(r, errorCatcher, parent, stackHandler);
 			return pih;			
 		}else{
@@ -723,7 +727,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(grammarHandlerFree == 0){
 			// grammarHandlerCreated++;
 			GrammarHandler pih = new GrammarHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(g, errorCatcher, parent, stackHandler);
 			return pih;			
 		}else{
@@ -748,7 +752,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(uinterleaveHandlerFree == 0){
 			// uinterleaveHandlerCreated++;
 			UInterleaveHandler ih = new UInterleaveHandler(debugWriter);
-			ih.init(this, inputStackDescriptor);
+			ih.init(this, activeInputDescriptor, inputStackDescriptor);
 			ih.init(i, errorCatcher, parent, stackHandler);
 			return ih;			
 		}else{
@@ -773,7 +777,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(minterleaveHandlerFree == 0){
 			// minterleaveHandlerCreated++;
 			MInterleaveHandler ih = new MInterleaveHandler(debugWriter);
-			ih.init(this, inputStackDescriptor);
+			ih.init(this, activeInputDescriptor, inputStackDescriptor);
 			ih.init(i, errorCatcher, parent, stackHandler, this);
 			return ih;			
 		}else{
@@ -798,7 +802,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(sinterleaveHandlerFree == 0){
 			// sinterleaveHandlerCreated++;
 			SInterleaveHandler ih = new SInterleaveHandler(debugWriter);
-			ih.init(this, inputStackDescriptor);
+			ih.init(this, activeInputDescriptor, inputStackDescriptor);
 			ih.init(i, errorCatcher, parent, stackHandler, primaryHandler);
 			return ih;			
 		}else{
@@ -825,7 +829,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(elementHandlerFree == 0){
 			elementHandlerCreated++;
 			ElementHandler eh = new ElementHandler(debugWriter);
-			eh.init(this, inputStackDescriptor);
+			eh.init(this, activeInputDescriptor, inputStackDescriptor);
 			eh.init(e, errorCatcher, stackHandler);
 			return eh;			
 		}else{
@@ -851,7 +855,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(attributeHandlerFree == 0){
 			// attributeHandlerCreated++;
 			AttributeHandler ah = new AttributeHandler(debugWriter);
-			ah.init(this, inputStackDescriptor);
+			ah.init(this, activeInputDescriptor, inputStackDescriptor);
 			ah.init(a, errorCatcher, stackHandler);
 			return ah;			
 		}else{
@@ -876,7 +880,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(exceptPatternHandlerFree == 0){
 			// exceptPatternHandlerCreated++;
 			ExceptPatternHandler ah = new ExceptPatternHandler(debugWriter);
-			ah.init(this, inputStackDescriptor);
+			ah.init(this, activeInputDescriptor, inputStackDescriptor);
 			ah.init(a, errorCatcher, stackHandler);
 			return ah;			
 		}else{
@@ -901,7 +905,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(listPatternHandlerFree == 0){
 			// listPatternHandlerCreated++;
 			ListPatternHandler ah = new ListPatternHandler(debugWriter);
-			ah.init(this, inputStackDescriptor);
+			ah.init(this, activeInputDescriptor, inputStackDescriptor);
 			ah.init(a, errorCatcher, stackHandler);
 			return ah;			
 		}else{
@@ -926,7 +930,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(groupDoubleHandlerFree == 0){
 			// groupDoubleHandlerCreated++;
 			GroupDoubleHandler sih = new GroupDoubleHandler(debugWriter);
-			sih.init(this, inputStackDescriptor);
+			sih.init(this, activeInputDescriptor, inputStackDescriptor);
 			sih.init(pattern, errorCatcher, parent, stackHandler, stackHandlerPool);
 			return sih;			
 		}else{
@@ -951,7 +955,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(interleaveDoubleHandlerFree == 0){
 			// interleaveDoubleHandlerCreated++;
 			InterleaveDoubleHandler sih = new InterleaveDoubleHandler(debugWriter);
-			sih.init(this, inputStackDescriptor);
+			sih.init(this, activeInputDescriptor, inputStackDescriptor);
 			sih.init(pattern, errorCatcher, parent, stackHandler, stackHandlerPool);
 			return sih;			
 		}else{
@@ -976,7 +980,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(groupMinimalReduceCountHandlerFree == 0){
 			// groupMinimalReduceCountHandlerCreated++;
 			GroupMinimalReduceCountHandler pih = new GroupMinimalReduceCountHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(reduceCountList, startedCountList, g, errorCatcher, stackHandler);
 			return pih;			
 		}else{
@@ -1001,7 +1005,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(groupMaximalReduceCountHandlerFree == 0){
 			// groupMaximalReduceCountHandlerCreated++;
 			GroupMaximalReduceCountHandler pih = new GroupMaximalReduceCountHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(reduceCountList, startedCountList, g, errorCatcher, stackHandler);
 			return pih;			
 		}else{
@@ -1026,7 +1030,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(interleaveMinimalReduceCountHandlerFree == 0){
 			// interleaveMinimalReduceCountHandlerCreated++;
 			InterleaveMinimalReduceCountHandler pih = new InterleaveMinimalReduceCountHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(reduceCountList, i, errorCatcher, stackHandler);
 			return pih;			
 		}else{
@@ -1051,7 +1055,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(interleaveMaximalReduceCountHandlerFree == 0){
 			// interleaveMaximalReduceCountHandlerCreated++;
 			InterleaveMaximalReduceCountHandler pih = new InterleaveMaximalReduceCountHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(reduceCountList, i, errorCatcher, stackHandler);
 			return pih;			
 		}else{
@@ -1077,7 +1081,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(grammarMinimalReduceHandlerFree == 0){
 			// grammarMinimalReduceHandlerCreated++;
 			GrammarMinimalReduceHandler pih = new GrammarMinimalReduceHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(g, errorCatcher, parent, stackHandler);
 			return pih;			
 		}else{
@@ -1102,7 +1106,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(grammarMaximalReduceHandlerFree == 0){
 			// grammarMaximalReduceHandlerCreated++;
 			GrammarMaximalReduceHandler pih = new GrammarMaximalReduceHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(g, errorCatcher, parent, stackHandler);
 			return pih;			
 		}else{
@@ -1127,7 +1131,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(refMinimalReduceHandlerFree == 0){
 			// refMinimalReduceHandlerCreated++;
 			RefMinimalReduceHandler rmrh = new RefMinimalReduceHandler(debugWriter);
-			rmrh.init(this, inputStackDescriptor);
+			rmrh.init(this, activeInputDescriptor, inputStackDescriptor);
 			rmrh.init(r, errorCatcher, parent, stackHandler);
 			return rmrh;			
 		}else{
@@ -1152,7 +1156,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(refMaximalReduceHandlerFree == 0){
 			// refMaximalReduceHandlerCreated++;
 			RefMaximalReduceHandler pih = new RefMaximalReduceHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(r, errorCatcher, parent, stackHandler);
 			return pih;			
 		}else{
@@ -1177,7 +1181,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(choiceMinimalReduceHandlerFree == 0){
 			// choiceMinimalReduceHandlerCreated++;
 			ChoiceMinimalReduceHandler pih = new ChoiceMinimalReduceHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(c, errorCatcher, parent, stackHandler);
 			return pih;			
 		}else{
@@ -1202,7 +1206,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(choiceMaximalReduceHandlerFree == 0){
 			// choiceMaximalReduceHandlerCreated++;
 			ChoiceMaximalReduceHandler pih = new ChoiceMaximalReduceHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(c, errorCatcher, parent, stackHandler);
 			return pih;			
 		}else{
@@ -1227,7 +1231,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(groupMinimalReduceHandlerFree == 0){
 			// groupMinimalReduceHandlerCreated++;
 			GroupMinimalReduceHandler pih = new GroupMinimalReduceHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(g, errorCatcher, parent, stackHandler);
 			return pih;			
 		}else{
@@ -1252,7 +1256,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(groupMaximalReduceHandlerFree == 0){
 			// groupMaximalReduceHandlerCreated++;
 			GroupMaximalReduceHandler pih = new GroupMaximalReduceHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(g, errorCatcher, parent, stackHandler);
 			return pih;			
 		}else{
@@ -1277,7 +1281,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(interleaveMinimalReduceHandlerFree == 0){
 			// interleaveMinimalReduceHandlerCreated++;
 			InterleaveMinimalReduceHandler pih = new InterleaveMinimalReduceHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(i, errorCatcher, parent, stackHandler);
 			return pih;			
 		}else{
@@ -1302,7 +1306,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		if(interleaveMaximalReduceHandlerFree == 0){
 			// interleaveMaximalReduceHandlerCreated++;
 			InterleaveMaximalReduceHandler pih = new InterleaveMaximalReduceHandler(debugWriter);
-			pih.init(this, inputStackDescriptor);
+			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(i, errorCatcher, parent, stackHandler);
 			return pih;			
 		}else{

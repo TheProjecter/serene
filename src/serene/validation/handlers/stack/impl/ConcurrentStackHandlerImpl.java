@@ -726,7 +726,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundUnresolvedAttributeConflictResolver(temporaryMessageStorage,
 		                                                                             inputStackDescriptor.getNamespaceURI(),
                                                                                      inputStackDescriptor.getLocalName(),
-                                                                                     inputStackDescriptor.getItemIdentifier(),
+                                                                                     inputStackDescriptor.getItemDescription(),
                                                                                      value, 
                                                                                      targetQueue, 
                                                                                      targetEntry, 
@@ -909,7 +909,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		                                                                                    temporaryMessageStorage,
 		                                                                                    inputStackDescriptor.getNamespaceURI(),
                                                                                             inputStackDescriptor.getLocalName(),
-                                                                                            inputStackDescriptor.getItemIdentifier(),
+                                                                                            inputStackDescriptor.getItemDescription(),
                                                                                             value, 
                                                                                             targetQueue, 
                                                                                             targetEntry, 
@@ -1413,11 +1413,11 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		throw new IllegalStateException();
 	}
 		
-	public void blockReduce(StructureHandler handler, int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public void blockReduce(StructureHandler handler, int count, APattern pattern, int startInputRecordIndex){
 		throw new IllegalStateException();
 	}
 	
-	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int startInputRecordIndex){
 		throw new IllegalStateException();
 	}
 

@@ -235,7 +235,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 					boolean reportCompositorContentMissing){
 		setModifyers(reportExcessive, reportPreviousMisplaced, reportCurrentMisplaced, reportMissing, reportIllegal, reportCompositorContentMissing);
 		setCurrentHandler(element);
-		currentHandler.handleChildShift(element, expectedOrderHandlingCount);
+		currentHandler.handleChildShiftAndOrder(element, expectedOrderHandlingCount);
 		/*stackConflictsHandler.resolveInactiveConflicts();*/
 	}
 		
@@ -254,7 +254,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		setModifyers(reportExcessive, reportPreviousMisplaced, reportCurrentMisplaced, reportMissing, reportIllegal, reportCompositorContentMissing);		
 		stackConflictsHandler.record(element, resolver, definitionCandidateIndex);		
 		setCurrentHandler(element, innerPath, resolver);
-		currentHandler.handleChildShift(element, expectedOrderHandlingCount, stackConflictsHandler, resolver);
+		currentHandler.handleChildShift(element, expectedOrderHandlingCount, stackConflictsHandler, resolver);		
 		/*stackConflictsHandler.resolveInactiveConflicts();*/		
 	}
 	
@@ -265,7 +265,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 					boolean reportCompositorContentMissing){		
 		setModifyers(reportExcessive, reportMissing, reportIllegal, reportCompositorContentMissing);
 		setCurrentHandler(attribute);
-		currentHandler.handleChildShift(attribute, expectedOrderHandlingCount);		
+		currentHandler.handleChildShiftAndOrder(attribute, expectedOrderHandlingCount);		
 		/*stackConflictsHandler.resolveInactiveConflicts();*/
 	}
 		
@@ -296,7 +296,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 					boolean reportCompositorContentMissing){
 		setModifyers(reportExcessive, reportPreviousMisplaced, reportCurrentMisplaced, reportMissing, reportIllegal, reportCompositorContentMissing);
 		setCurrentHandler(chars);
-		currentHandler.handleChildShift(chars, expectedOrderHandlingCount);
+		currentHandler.handleChildShiftAndOrder(chars, expectedOrderHandlingCount);
 		/*stackConflictsHandler.resolveInactiveConflicts();*/
 	}
 	
@@ -370,7 +370,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		if(!endingValidation && !isActive(handler, currentHandler))throw new IllegalArgumentException();
 		StructureHandler parent = handler.getParentHandler();
 		APattern pattern = (APattern)handler.getRule();		
-		if(parent.handleChildShift(pattern, handler.getStartQName(), handler.getStartSystemId(), handler.getStartLineNumber(), handler.getStartColumnNumber(), stackConflictsHandler)){
+		if(parent.handleChildShift(pattern, handler.getStartInputRecordIndex(), stackConflictsHandler)){
 			parent.closeContentStructure(pattern);// must be last so it doesn't remove location data before error messages
 			currentHandler = parent;
 		}
@@ -411,10 +411,10 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		isCurrentHandlerReseted = true;
 	}
 		
-	public void blockReduce(StructureHandler handler, int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public void blockReduce(StructureHandler handler, int count, APattern pattern, int startInputRecordIndex){
 		//TODO make sure the conflict rule is right
 		if(!stackConflictsHandler.isConflictRule(pattern)){
-			super.blockReduce(handler, count, pattern, itemId, startQName, startSystemId, lineNumber, columnNumber);
+			super.blockReduce(handler, count, pattern, startInputRecordIndex);
 			return;
 		}
 		//System.out.println("************** 5");
@@ -429,17 +429,17 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 			// to setCurrentHandler() through deactivate?
 			setCurrentHandler(pattern, currentInnerPath, currentResolver);
 			// it should be active at the first cycle of the loop//or it might not be the parent???
-			if(!currentHandler.handleChildShift(count, pattern, startQName, startSystemId, lineNumber, columnNumber, stackConflictsHandler)){
+			if(!currentHandler.handleChildShift(count, pattern, startInputRecordIndex, stackConflictsHandler)){
 				shifted = false;
 			}
 		}
 		if(shifted)parent.closeContentStructure(pattern);// must be last so it doesn't remove location data before error messages
 	}
-	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int startInputRecordIndex){
 		//System.out.println("************** 6");
 		//TODO make sure the conflict rule is right
 		if(!stackConflictsHandler.isConflictRule(pattern)){
-			super.limitReduce(handler, MIN, MAX, pattern, itemId, startQName, startSystemId, lineNumber, columnNumber);
+			super.limitReduce(handler, MIN, MAX, pattern, startInputRecordIndex);
 			return;
 		}
 		// TODO the checks for Exception
@@ -452,7 +452,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 			// cardinality is not handled. MInterleaveHandler throws 
 			// UnsupportedOperationException if called.			
 			setCurrentHandler(pattern, currentInnerPath, currentResolver);			
-			if(!currentHandler.handleChildShift(MIN, MAX, pattern, startQName, startSystemId, lineNumber, columnNumber, stackConflictsHandler)){
+			if(!currentHandler.handleChildShift(MIN, MAX, pattern, startInputRecordIndex, stackConflictsHandler)){
 				shifted = false;
 			}
 		}
@@ -636,7 +636,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	}
 	
 		
-	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){	
+	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
 		if(stackConflictsHandler.isConflictRule(definition)){
 			stackConflictsHandler.disqualify(definition);
 			hasDisqualifyingError = true;
@@ -701,7 +701,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		}		
 	}
 	
-	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){	    
 		// TODO are you sure it is possible?
 		errorCatcher.unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
 	}

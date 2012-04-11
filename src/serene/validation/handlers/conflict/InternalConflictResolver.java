@@ -64,7 +64,7 @@ public abstract class InternalConflictResolver implements ConflictResolver{
 		this.systemId = inputStackDescriptor.getSystemId();
 		this.lineNumber = inputStackDescriptor.getLineNumber();
 		this.columnNumber = inputStackDescriptor.getColumnNumber();
-		this.qName = inputStackDescriptor.getItemIdentifier();
+		this.qName = inputStackDescriptor.getItemDescription();
 	}
 
 	

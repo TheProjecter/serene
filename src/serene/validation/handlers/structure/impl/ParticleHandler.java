@@ -30,9 +30,9 @@ import serene.validation.handlers.structure.RuleHandlerVisitor;
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
-import serene.validation.handlers.content.util.InputStackDescriptor;
-
 import serene.validation.handlers.error.ErrorCatcher;
+
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -40,52 +40,61 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
  
 	ParticleHandler original;
 	
-	private ErrorCatcher errorCatcher;
+	ActiveInputDescriptor activeInputDescriptor;
 	
-	private ChildEventHandler childEventHandler;
+	ErrorCatcher errorCatcher;
+	
+	ChildEventHandler childEventHandler;
 			
 	/**
 	* The minimum number of occurrences required for this particle.  
 	*/
-	private int occursSatisfied;	
+	int occursSatisfied;	
 	/**
 	* The maximum number of occurrences allowed for this particle. 
 	*/
-	private int occursSaturated;
+	int occursSaturated;
 	/**
 	* The actual number of occurrences recorded for this particle.
 	*/	
-	private int occurs;
+	int occurs;
 	
 	
-	private APattern definition;
-	private int itemId[];
-	private String[] qName;
-	private String[] systemId;
-	private int[] lineNumber;
-	private int[] columnNumber;
-	private int index;
-	private int size;
-	private int MAX_SIZE;//used to save memory, when reseting if size > MAX_SIZE, downsize 
+	APattern definition;
+	int[] correspondingInputRecordIndex;
+	int currentIndex;
+	int startSize;
+	int increaseSizeAmount;
+	int maxSize;
 	
-	private int recordAllLocations;
+	/*int itemId[];
+	String[] qName;
+	String[] systemId;
+	int[] lineNumber;
+	int[] columnNumber;
+	int index;
+	int size;
+	int MAX_SIZE;//used to save memory, when reseting if size > MAX_SIZE, downsize
+	*/
 	
-	//private final int RECORD_ALL = 0;//start
-	//private final int RECORD_LAST = 1;//excessive
-	//private final int RECORD_NONE = 2;//satisfied never full
+	//int maintainAllCorrespondingInputRecordIndex;
 	
-	private State state;
+	//final int RECORD_ALL = 0;//start
+	//final int RECORD_LAST = 1;//excessive
+	//final int RECORD_NONE = 2;//satisfied never full
 	
-	private State noOccurrence;
-	private State open;
-	private State satisfiedSimple;
-	private State satisfiedNeverSaturated;
-	private State saturated;
-	private State excessive;	
+	State state;
+	
+	State noOccurrence;
+	State open;
+	State satisfiedSimple;
+	State satisfiedNeverSaturated;
+	State saturated;
+	State excessive;	
 		
 	
 	
-	private RuleHandlerRecycler recycler;
+	RuleHandlerRecycler recycler;
 	
 	StackConflictsHandler stackConflictsHandler;
 	
@@ -101,15 +110,18 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		satisfiedSimple = new SatisfiedSimple();		
 		satisfiedNeverSaturated = new SatisfiedNeverSaturated();
 		state = noOccurrence;
-		
-		index = -1;
-		size = 0;
-		MAX_SIZE = 10;	
+				
+		currentIndex = -1;
+		startSize = 10;
+		increaseSizeAmount = 10;
+		maxSize = 20;
+		correspondingInputRecordIndex = new int[startSize];
 	}
 	
-	public void init(RuleHandlerRecycler recycler){		
+	public void init(ActiveInputDescriptor activeInputDescriptor, RuleHandlerRecycler recycler){
+        this.activeInputDescriptor = activeInputDescriptor;		
 		this.recycler = recycler;
-	} 
+	}
 		
 	public void init(ChildEventHandler childEventHandler, APattern definition, ErrorCatcher errorCatcher){		
 		this.childEventHandler = childEventHandler;
@@ -117,11 +129,13 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		this.occursSatisfied = definition.getMinOccurs();
 		this.occursSaturated = definition.getMaxOccurs();
 		this.errorCatcher = errorCatcher;
+		//System.out.println(hashCode()+" INIT so here it starts");
 	}
 	
 	public void recycle(){
 		original = null;
 		reset();
+		//System.out.println(hashCode()+" RECYCLE so here it stops");
 		recycler.recycle(this);		
 	}
 	
@@ -130,7 +144,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	}
 	
 	void reset(){
-		if(size > MAX_SIZE){
+		/*if(size > MAX_SIZE){
 			size = MAX_SIZE;
 			itemId = new int[size];
 			qName = new String[size];			
@@ -143,7 +157,17 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 				systemId[i] = null;
 			}
 		}
-		index = -1;
+		index = -1;*/
+		
+		//System.out.println(hashCode()+" START RESET UNREGISTERING");
+		for(int i = 0; i <= currentIndex; i++){
+		    activeInputDescriptor.unregisterClientForRecord(correspondingInputRecordIndex[i]);
+		}
+		//System.out.println(hashCode()+" END RESET UNREGISTERING");
+		if(correspondingInputRecordIndex.length > maxSize){
+		    correspondingInputRecordIndex = new int[startSize];
+		}
+		currentIndex = -1;
 		
 		occurs = 0;
 		state = noOccurrence;
@@ -157,7 +181,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	public ParticleHandler getCopy(ChildEventHandler childEventHandler, ErrorCatcher errorCatcher){
 		ParticleHandler copy = definition.getParticleHandler(childEventHandler, errorCatcher);
 		
-		int[] cItemId = null;
+		/*int[] cItemId = null;
 		if(itemId != null) cItemId = Arrays.copyOf(itemId, itemId.length);
 		String[] cQName = null;
 		if(qName != null) cQName = Arrays.copyOf(qName, qName.length);
@@ -166,37 +190,48 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		int[] cLinNb = null;
 		if(lineNumber != null) cLinNb = Arrays.copyOf(lineNumber, lineNumber.length);
 		int[] cColNb = null;
-		if(columnNumber != null) cColNb = Arrays.copyOf(columnNumber, columnNumber.length);
+		if(columnNumber != null) cColNb = Arrays.copyOf(columnNumber, columnNumber.length);*/
+		
+		int[] copyCorrespondingInputRecordIndex = new int[correspondingInputRecordIndex.length];
+		for(int i = 0; i <= currentIndex; i++){
+		    copyCorrespondingInputRecordIndex[i] = correspondingInputRecordIndex[i];
+		}
 		
 		copy.setState(occurs, 
 					state.getIndex(),
 					definition,
-					cItemId,
+					/*cItemId,
 					cQName,
 					cSysId,
 					cLinNb,
 					cColNb,
 					index,
-					size);
-		copy.setOriginal(this);
+					size*/
+					copyCorrespondingInputRecordIndex,
+					currentIndex,
+					this);
+		/*copy.setOriginal(this);*/
 		return copy;
 	}
-	private void setOriginal(ParticleHandler original){
+	/*private void setOriginal(ParticleHandler original){
 		this.original = original;
-	}
+	}*/
 	public ParticleHandler getOriginal(){
 		return original;
 	}
 	private void setState(int occurs, 
 						int stateIndex,
 						APattern definition,
-						int[] itemId,
+						/*int[] itemId,
 						String[] qName,
 						String[] systemId,
 						int[] lineNumber,
 						int[] columnNumber,
 						int index,
-						int size){	
+						int size*/
+						int[] correspondingInputRecordIndex,
+						int currentIndex,
+						ParticleHandler original){	
 		this.occurs = occurs;
 		if(stateIndex == CardinalityHandler.NO_OCCURRENCE){
 			state = noOccurrence;
@@ -215,14 +250,20 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		}
 		
 		this.definition = definition;
-		this.itemId = itemId;
+		/*this.itemId = itemId;
 		this.qName = qName;
 		this.systemId = systemId;
 		this.lineNumber = lineNumber;
 		this.columnNumber = columnNumber;
 		this.index = index;
-		this.size = size;
-	
+		this.size = size;*/
+		this.correspondingInputRecordIndex = correspondingInputRecordIndex;
+		this.currentIndex = currentIndex;		
+		this.original = original;
+		
+		//System.out.println(hashCode()+" START COPY REGISTERING");
+		if(currentIndex >= 0)activeInputDescriptor.registerClientForRecord(correspondingInputRecordIndex, 0, currentIndex+1);
+		//System.out.println(hashCode()+" END COPY REGISTERING");
 	}		
 	
 	public int getIndex(){
@@ -245,9 +286,9 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		return state.isSaturated();
 	}
 	
-	public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
+	public void handleOccurrence(int inputRecordIndex){
 		occurs++;		
-		state.handleOccurrence(iti, qN, sI, lN, cN);
+		state.handleOccurrence(inputRecordIndex);
 	}
 		
 	public void handleOccurrence(StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver){
@@ -265,7 +306,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	}
 		
 	
-	void recordAllLocations(int iti, String qN, String sI, int lN, int cN){		
+	/*void recordAllLocations(int iti, String qN, String sI, int lN, int cN){		
 		if(size == 0){
 			size = 1;
 			index = 0;			
@@ -300,9 +341,22 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		systemId[index] = sI;
 		lineNumber[index] = lN;
 		columnNumber[index] = cN;		
+	}*/
+	
+	void maintainAllCorrespondingInputRecordIndex(int lastIndex){
+	    if(++currentIndex == correspondingInputRecordIndex.length){
+	        int[] increased = new int[correspondingInputRecordIndex.length+increaseSizeAmount];
+	        System.arraycopy(increased, 0, correspondingInputRecordIndex, 0, currentIndex);;
+	        correspondingInputRecordIndex = increased;
+	    }
+	    correspondingInputRecordIndex[currentIndex] = lastIndex;
+	    
+	    //System.out.println(hashCode()+" START REGISTERING IN SEQUENCE");
+	    activeInputDescriptor.registerClientForRecord(lastIndex);
+	    //System.out.println(hashCode()+" END REGISTERING IN SEQUENCE");
 	}
 	
-	void recordLastLocation(int iti, String qN, String sI, int lN, int cN){		
+	/*void recordLastLocation(int iti, String qN, String sI, int lN, int cN){		
 		if(size > MAX_SIZE){
 			size = MAX_SIZE;
 			itemId = new int[size];
@@ -323,9 +377,19 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		lineNumber[index] = lN;
 		columnNumber[index] = cN;
 			
+	}*/
+	
+	void maintainLastCorrespondingInputRecordIndex(int lastIndex){
+	    clearCorrespondingInputRecordIndex();
+	    currentIndex = 0;
+	    correspondingInputRecordIndex[currentIndex] = lastIndex;
+	    
+	    //System.out.println(hashCode()+" START REGISTERING LAST");
+	    activeInputDescriptor.registerClientForRecord(lastIndex);
+	    //System.out.println(hashCode()+" START REGISTERING LAST");
 	}
 	
-	void clearLocations(){		
+	/*void clearLocations(){		
 		if(size > MAX_SIZE){
 			size = MAX_SIZE;
 			itemId = new int[size];
@@ -340,6 +404,15 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			}
 		}	
 		index = -1;
+	}*/
+	
+	void clearCorrespondingInputRecordIndex(){
+	    //System.out.println(hashCode()+" START UNREGISTERING FOR CLEAR");
+	    for(int i = 0; i <= currentIndex; i++){
+		    activeInputDescriptor.unregisterClientForRecord(correspondingInputRecordIndex[i]);
+		}
+	    currentIndex = -1;
+	    //System.out.println(hashCode()+" END UNREGISTERING FOR CLEAR");
 	}
 	
 	void registerWithStackConflictsHandler(StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver){
@@ -367,12 +440,12 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	public int getDistanceToSatisfaction(){
 		return occursSatisfied-occurs;
 	}
-	public void reportExcessive(Rule context, String startSystemId, int startLineNumber, int startColumnNumber){
-		state.reportExcessive(context, startSystemId, startLineNumber, startColumnNumber);
+	public void reportExcessive(Rule context, int startInputRecordIndex){
+		state.reportExcessive(context, startInputRecordIndex);
 	}
 	
-	public void reportMissing(Rule context, String startSystemId, int startLineNumber, int startColumnNumber){		
-		state.reportMissing(context, startSystemId, startLineNumber, startColumnNumber);
+	public void reportMissing(Rule context, int startInputRecordIndex){		
+		state.reportMissing(context, startInputRecordIndex);
 	}	
 	
 	public void accept(RuleHandlerVisitor visitor){
@@ -456,9 +529,9 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		}		
 		
 		
-		public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
+		public void handleOccurrence(int inputRecordIndex){
 			// if(orderedParent()){
-				// recordAllLocations(qN, sI, lN, cN);
+				// maintainAllCorrespondingInputRecordIndex(qN, sI, lN, cN);
 				// handleOccurrence();
 				// return;
 			// }			
@@ -471,7 +544,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 					childEventHandler.optionalChildSatisfied();
 					state = satisfiedNeverSaturated;
 				}else{
-					recordAllLocations(iti, qN, sI, lN, cN);					
+					maintainAllCorrespondingInputRecordIndex(inputRecordIndex);					
 					if(occurs == occursSaturated){						
 						childEventHandler.optionalChildSatisfied();
 						childEventHandler.childSaturated();
@@ -490,7 +563,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 					childEventHandler.requiredChildSatisfied();
 					state = satisfiedNeverSaturated;
 				}else{
-					recordAllLocations(iti, qN, sI, lN, cN);
+					maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
 					if(occurs == occursSaturated){						
 						childEventHandler.requiredChildSatisfied();
 						childEventHandler.childSaturated();
@@ -517,26 +590,33 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		}
 		
 		
-		public void reportExcessive(Rule context, String startSystemId, int startLineNumber, int startColumnNumber){
+		public void reportExcessive(Rule context, int startInputRecordIndex){
 			throw new IllegalStateException();
 		}
 		
-		public void reportMissing(Rule context, String startSystemId, int startLineNumber, int startColumnNumber){
+		public void reportMissing(Rule context, int startInputRecordIndex){
 			if(stackConflictsHandler != null){
 				stackConflictsHandler.disqualify(context);
 				return;
 			}	
 			errorCatcher.missingContent(context, 
-									startSystemId, 
+									/*startSystemId, 
 									startLineNumber, 
-									startColumnNumber, 
+									startColumnNumber,*/ 
+									activeInputDescriptor.getSystemId(startInputRecordIndex),
+									activeInputDescriptor.getLineNumber(startInputRecordIndex),
+									activeInputDescriptor.getColumnNumber(startInputRecordIndex),
 									definition, 
 									occursSatisfied, 
 									occurs, 
-									Arrays.copyOf(qName, (index+1)), 
+									activeInputDescriptor.getItemDescription(correspondingInputRecordIndex, 0, currentIndex+1),
+									activeInputDescriptor.getSystemId(correspondingInputRecordIndex, 0, currentIndex+1),
+									activeInputDescriptor.getLineNumber(correspondingInputRecordIndex, 0, currentIndex+1),
+									activeInputDescriptor.getColumnNumber(correspondingInputRecordIndex, 0, currentIndex+1)
+									/*Arrays.copyOf(qName, (index+1)), 
 									Arrays.copyOf(systemId, (index+1)), 
 									Arrays.copyOf(lineNumber, (index+1)), 
-									Arrays.copyOf(columnNumber, (index+1)));
+									Arrays.copyOf(columnNumber, (index+1))*/);
 		}
 		
 		public int getIndex(){
@@ -582,7 +662,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 						//System.out.println("close particle 6 "+outerToString());
 						unregisterWithStackConflictsHandler();
 					}
-					clearLocations();					 
+					clearCorrespondingInputRecordIndex();					 
 					childEventHandler.requiredChildSatisfied();
 					state = satisfiedNeverSaturated;
 				}else{
@@ -598,9 +678,9 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			}
 		}
 
-		public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
+		public void handleOccurrence(int inputRecordIndex){
 			// if(orderedParent()){
-				// recordAllLocations(qN, sI, lN, cN);
+				// maintainAllCorrespondingInputRecordIndex(qN, sI, lN, cN);
 				// handleOccurrence();
 				// return;
 			// }
@@ -610,11 +690,11 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 						//System.out.println("close particle 7 "+outerToString());
 						unregisterWithStackConflictsHandler();
 					}
-					clearLocations();					 
+					clearCorrespondingInputRecordIndex();					 
 					childEventHandler.requiredChildSatisfied();
 					state = satisfiedNeverSaturated;
 				}else{
-					recordAllLocations(iti, qN, sI, lN, cN);
+					maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
 					if(occurs == occursSaturated){						
 						childEventHandler.requiredChildSatisfied();
 						childEventHandler.childSaturated();
@@ -638,26 +718,33 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		}
 		
 		
-		public void reportExcessive(Rule context, String startSystemId, int startLineNumber, int startColumnNumber){
+		public void reportExcessive(Rule context, int startInputRecordIndex){
 			throw new IllegalStateException();
 		}
 		
-		public void reportMissing(Rule context, String startSystemId, int startLineNumber, int startColumnNumber){
+		public void reportMissing(Rule context, int startInputRecordIndex){
 			if(stackConflictsHandler != null){
 				stackConflictsHandler.disqualify(context);
 				return;
 			}	
 			errorCatcher.missingContent(context, 
-									startSystemId,
+									/*startSystemId,
 									startLineNumber, 
-									startColumnNumber, 
+									startColumnNumber,*/ 
+									activeInputDescriptor.getSystemId(startInputRecordIndex),
+									activeInputDescriptor.getLineNumber(startInputRecordIndex),
+									activeInputDescriptor.getColumnNumber(startInputRecordIndex),
 									definition, 
 									occursSatisfied, 
-									occurs, 
-									Arrays.copyOf(qName, (index+1)), 
+									occurs,
+									activeInputDescriptor.getItemDescription(correspondingInputRecordIndex, 0, currentIndex+1),
+									activeInputDescriptor.getSystemId(correspondingInputRecordIndex, 0, currentIndex+1),
+									activeInputDescriptor.getLineNumber(correspondingInputRecordIndex, 0, currentIndex+1),
+									activeInputDescriptor.getColumnNumber(correspondingInputRecordIndex, 0, currentIndex+1)
+									/*Arrays.copyOf(qName, (index+1)), 
 									Arrays.copyOf(systemId, (index+1)), 
 									Arrays.copyOf(lineNumber, (index+1)), 
-									Arrays.copyOf(columnNumber, (index+1)));
+									Arrays.copyOf(columnNumber, (index+1))*/);
 		}
 		
 		public int getIndex(){
@@ -692,11 +779,11 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			return false;
 		}
 		
-		public void reportExcessive(Rule context, String startSystemId, int startLineNumber, int startColumnNumber){			
+		public void reportExcessive(Rule context, int startInputRecordIndex){			
 			throw new IllegalStateException();
 		}
 		
-		public void reportMissing(Rule context, String startSystemId, int startLineNumber, int startColumnNumber){}
+		public void reportMissing(Rule context, int startInputRecordIndex){}
 		public void recycle(){
 			throw new UnsupportedOperationException();
 		}		
@@ -717,8 +804,8 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			}
 		}
 		
-		public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
-			recordAllLocations(iti, qN, sI, lN, cN);
+		public void handleOccurrence(int inputRecordIndex){
+			maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
 			if(occurs == occursSaturated){				
 				childEventHandler.childSaturated();
 				state = saturated;
@@ -763,9 +850,9 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		}
 		void handleOccurrence(){}
 		
-		public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
+		public void handleOccurrence(int inputRecordIndex){
 			// if(orderedParent()){
-				// recordAllLocations(qN, sI, lN, cN);
+				// maintainAllCorrespondingInputRecordIndex(qN, sI, lN, cN);
 			// }
 		}
 			
@@ -813,8 +900,8 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			state = excessive;//state must be set after passing event, so that the excessive content error reporting can be done here, with all data
 		}
 		
-		public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
-			recordAllLocations(iti, qN, sI, lN, cN);
+		public void handleOccurrence(int inputRecordIndex){
+			maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
 			handleOccurrence();			
 		}
 			
@@ -828,24 +915,32 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			handleOccurrence();
 		}
 		
-		public void reportExcessive(Rule context, String startSystemId, int startLineNumber, int startColumnNumber){
+		public void reportExcessive(Rule context, int startInputRecordIndex){
 			if(stackConflictsHandler != null){
 				stackConflictsHandler.disqualify(definition);
 				return;
 			}			
 			errorCatcher.excessiveContent(context, 
-											startSystemId, 
+											/*startSystemId, 
 											startLineNumber,
-											startColumnNumber,
+											startColumnNumber,*/
+											activeInputDescriptor.getSystemId(startInputRecordIndex),
+                                            activeInputDescriptor.getLineNumber(startInputRecordIndex),
+                                            activeInputDescriptor.getColumnNumber(startInputRecordIndex),
 											definition, 
-											Arrays.copyOf(itemId, (index+1)),
+											activeInputDescriptor.getItemId(correspondingInputRecordIndex, 0, currentIndex+1),
+											activeInputDescriptor.getItemDescription(correspondingInputRecordIndex, 0, currentIndex+1),
+                                            activeInputDescriptor.getSystemId(correspondingInputRecordIndex, 0, currentIndex+1),
+                                            activeInputDescriptor.getLineNumber(correspondingInputRecordIndex, 0, currentIndex+1),
+                                            activeInputDescriptor.getColumnNumber(correspondingInputRecordIndex, 0, currentIndex+1)
+											/*Arrays.copyOf(itemId, (index+1)),
 											Arrays.copyOf(qName, (index+1)), 
 											Arrays.copyOf(systemId, (index+1)), 
 											Arrays.copyOf(lineNumber, (index+1)), 
-											Arrays.copyOf(columnNumber, (index+1)));					
+											Arrays.copyOf(columnNumber, (index+1))*/);					
 		}
 		
-		public void reportMissing(Rule context, String startSystemId, int startLineNumber, int startColumnNumber){}
+		public void reportMissing(Rule context, int startInputRecordIndex){}
 		
 		public int getIndex(){
 			return SATURATED;
@@ -890,13 +985,13 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			childEventHandler.childExcessive();			
 		}
 		
-		public void handleOccurrence(int iti, String qN, String sI, int lN, int cN){
+		public void handleOccurrence(int inputRecordIndex){
 			// if(orderedParent()){
-				// recordAllLocations(qN, sI, lN, cN);
+				// maintainAllCorrespondingInputRecordIndex(qN, sI, lN, cN);
 				// handleOccurrence();
 				// return;
 			// }
-			recordAllLocations(iti, qN, sI, lN, cN);
+			maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
 			handleOccurrence();
 		}
 			
@@ -910,21 +1005,26 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			handleOccurrence();
 		}
 		
-		public void reportExcessive(Rule context, String startSystemId, int startLineNumber, int startColumnNumber){
+		public void reportExcessive(Rule context, int startInputRecordIndex){
 			if(stackConflictsHandler != null){
 				stackConflictsHandler.disqualify(definition);
 				return;
 			}
 			errorCatcher.excessiveContent(context,											
 											definition, 
-											itemId[index],
+											activeInputDescriptor.getItemId(correspondingInputRecordIndex[currentIndex]),
+											activeInputDescriptor.getItemDescription(correspondingInputRecordIndex[currentIndex]),
+                                            activeInputDescriptor.getSystemId(correspondingInputRecordIndex[currentIndex]),
+                                            activeInputDescriptor.getLineNumber(correspondingInputRecordIndex[currentIndex]),
+                                            activeInputDescriptor.getColumnNumber(correspondingInputRecordIndex[currentIndex])
+											/*itemId[index],
 											qName[index],
 											systemId[index],
 											lineNumber[index],
-											columnNumber[index]);			
+											columnNumber[index]*/);			
 		}
 		
-		public void reportMissing(Rule context, String startSystemId, int startLineNumber, int startColumnNumber){}
+		public void reportMissing(Rule context, int startInputRecordIndex){}
 		
 		public int getIndex(){
 			return EXCESSIVE;
