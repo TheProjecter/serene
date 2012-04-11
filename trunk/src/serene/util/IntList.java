@@ -17,21 +17,24 @@ limitations under the License.
 package serene.util;
 
 public class IntList{
-    private int[] list;
-	private int lastIndex;
-    private int size;
+    int[] list;
+	int lastIndex;
+    int initialSize;
+    int increaseSizeAmount;
 	
     public IntList() {
-		size = 5;
+		initialSize = 10;
+        increaseSizeAmount = 10;
 		lastIndex = -1;
-		list = new int[size];
+		list = new int[initialSize];
     }
 
 	
-	private IntList(int[] list, int lastIndex, int size) {
+	private IntList(int[] list, int lastIndex) {
 		this.list = list;
 		this.lastIndex = lastIndex;
-		this.size = size;
+		initialSize = 10;
+        increaseSizeAmount = 10;
     }
 
     public int size(){
@@ -83,7 +86,7 @@ public class IntList{
     }
     
     public boolean add(int i) {
-		if(++lastIndex == size)increaseSize();
+		if(++lastIndex == list.length)increaseSize();
 		list[lastIndex] = i;
 		return true;
     }
@@ -93,7 +96,7 @@ public class IntList{
 			throw new IndexOutOfBoundsException(
 			"Index: "+index+", Size: "+(lastIndex+1));
 	
-		if(lastIndex == size)increaseSize();
+		if(lastIndex == list.length)increaseSize();
 		System.arraycopy(list, index, list, index + 1,
 				 lastIndex - index);
 		list[index] = element;
@@ -128,10 +131,9 @@ public class IntList{
 	}
 	
 	public void trimToSize(){
-		size = lastIndex+1; 
-		int[] increased = new int[size];
-		System.arraycopy(list, 0, increased, 0, size);
-		list = increased;
+		int[] decreased = new int[lastIndex+1];
+		System.arraycopy(list, 0, decreased, 0, lastIndex+1);
+		list = decreased;
 	}
     
 	public void clear() {	
@@ -139,8 +141,8 @@ public class IntList{
     }
 	
 	private void increaseSize(){
-		int[] increased = new int[++size];
-		System.arraycopy(list, 0, increased, 0, size-1);
+		int[] increased = new int[increaseSizeAmount+list.length];
+		System.arraycopy(list, 0, increased, 0, list.length);
 		list = increased;
 	}
 	
@@ -180,9 +182,9 @@ public class IntList{
     }
 	
 	public IntList getCopy(){
-		int[] copyList = new int[size];
-		System.arraycopy(list, 0, copyList, 0, size);
-		return new IntList(copyList, lastIndex, size);
+		int[] copyList = new int[list.length];
+		System.arraycopy(list, 0, copyList, 0, list.length);
+		return new IntList(copyList, lastIndex);
 	}
 	public String toString(){
 		String s = "[";

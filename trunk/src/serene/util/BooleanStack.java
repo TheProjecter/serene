@@ -17,17 +17,19 @@ limitations under the License.
 package serene.util;
 
 public class BooleanStack{
-	private boolean[] stack;
-	private int topIndex;
-	private int size;
+	boolean[] stack;
+	int topIndex;
+	int initialSize;
+	int increaseSizeAmount;
 	
-	private boolean nullValue;	
-	private boolean isNullValueSet;
+	boolean nullValue;	
+	boolean isNullValueSet;
 	
 	public BooleanStack(){
-		size = 5;
 		topIndex = -1;
-		stack = new boolean[size];
+		initialSize = 10;
+	    increaseSizeAmount = 10;
+		stack = new boolean[initialSize];
 		
 		isNullValueSet = false;
 	}
@@ -46,7 +48,7 @@ public class BooleanStack{
 	}
 	
 	public void push(boolean b){
-		if(++topIndex == size)increaseSize();
+		if(++topIndex == stack.length)increaseSize();
 		stack[topIndex] = b;
 	}
 	
@@ -84,8 +86,8 @@ public class BooleanStack{
 	}
 	
 	private void increaseSize(){
-		boolean[] increased = new boolean[++size];
-		System.arraycopy(stack, 0, increased, 0, size-1);
+		boolean[] increased = new boolean[increaseSizeAmount+stack.length];
+		System.arraycopy(stack, 0, increased, 0, stack.length);
 		stack = increased;
 	}
 }

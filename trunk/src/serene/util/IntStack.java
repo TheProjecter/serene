@@ -17,17 +17,19 @@ limitations under the License.
 package serene.util;
 
 public class IntStack{
-	private int[] stack;
-	private int topIndex;
-	private int size;
+	int[] stack;
+	int topIndex;
+	int initialSize;
+	int increaseSizeAmount;
 	
-	private int nullValue;	
-	private boolean isNullValueSet;
+	int nullValue;	
+	boolean isNullValueSet;
 	
 	public IntStack(){
-		size = 5;
+		initialSize = 10;
+	    increaseSizeAmount = 10;
 		topIndex = -1;
-		stack = new int[size];
+		stack = new int[initialSize];
 		
 		isNullValueSet = false;
 	}
@@ -45,7 +47,7 @@ public class IntStack{
 	}
 	
 	public void push(int i){
-		if(++topIndex == size)increaseSize();
+		if(++topIndex == stack.length)increaseSize();
 		stack[topIndex] = i;
 	}
 	
@@ -83,8 +85,8 @@ public class IntStack{
 	}
 	
 	private void increaseSize(){
-		int[] increased = new int[++size];
-		System.arraycopy(stack, 0, increased, 0, size-1);
+		int[] increased = new int[increaseSizeAmount+stack.length];
+		System.arraycopy(stack, 0, increased, 0, stack.length);
 		stack = increased;
 	}
 }

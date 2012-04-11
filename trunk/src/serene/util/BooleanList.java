@@ -17,14 +17,16 @@ limitations under the License.
 package serene.util;
 
 public class BooleanList{
-    private boolean[] list;
-	private int lastIndex;
-    private int size;
+    boolean[] list;
+	int lastIndex;
+    int initialSize;
+    int increaseSizeAmount;
 
     public BooleanList() {
-		size = 5;
+		initialSize = 10;
+        increaseSizeAmount = 10;
 		lastIndex = -1;
-		list = new boolean[size];
+		list = new boolean[initialSize];
     }
 
     public int size(){
@@ -76,7 +78,7 @@ public class BooleanList{
     }
     
     public boolean add(boolean b) {
-		if(++lastIndex == size)increaseSize();
+		if(++lastIndex == list.length)increaseSize();
 		list[lastIndex] = b;
 		return true;
     }
@@ -86,7 +88,7 @@ public class BooleanList{
 			throw new IndexOutOfBoundsException(
 			"Index: "+index+", Size: "+(lastIndex+1));
 	
-		if(lastIndex == size)increaseSize();
+		if(lastIndex == list.length)increaseSize();
 		System.arraycopy(list, index, list, index + 1,
 				 lastIndex - index);
 		list[index] = b;
@@ -114,10 +116,10 @@ public class BooleanList{
 
 	
 	public void trimToSize(){
-		size = lastIndex+1; 
-		boolean[] increased = new boolean[size];
-		System.arraycopy(list, 0, increased, 0, size);
-		list = increased;
+		int size = lastIndex+1; 
+		boolean[] decreased = new boolean[size];
+		System.arraycopy(list, 0, decreased, 0, size);
+		list = decreased;
 	}
     
 	public void clear() {	
@@ -125,8 +127,8 @@ public class BooleanList{
     }
 	
 	private void increaseSize(){
-		boolean[] increased = new boolean[++size];
-		System.arraycopy(list, 0, increased, 0, size-1);
+		boolean[] increased = new boolean[increaseSizeAmount+list.length];
+		System.arraycopy(list, 0, increased, 0, list.length);
 		list = increased;
 	}
 	
