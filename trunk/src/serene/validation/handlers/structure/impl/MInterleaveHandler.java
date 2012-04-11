@@ -296,6 +296,10 @@ public class MInterleaveHandler extends InterleaveHandler{
 			sih.recycle();
 		}		
 		secondaryHandlers.clear();
+		
+		currentSecondaryHandler.recycle();
+		currentSecondaryHandler = null;
+		
 		lastShiftIndex.clear();
 		mValidationLoopCounter = -1;
 	}
