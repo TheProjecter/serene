@@ -40,7 +40,7 @@ class UnexpectedAmbiguousAttributeHandler extends ErrorAEH{
 	}
 	
 	void validateInContext(){		
-		parent.unexpectedAmbiguousAttribute(inputStackDescriptor.getItemIdentifier(), Arrays.copyOf(attributes, attributes.length), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
+		parent.unexpectedAmbiguousAttribute(inputStackDescriptor.getItemDescription(), Arrays.copyOf(attributes, attributes.length), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 	}
  
     boolean functionalEquivalent(ComparableAEH other){

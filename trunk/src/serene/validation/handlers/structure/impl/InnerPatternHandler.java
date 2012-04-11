@@ -64,28 +64,28 @@ abstract class InnerPatternHandler extends StructureValidationHandler{
 		return rule;
 	}
 	
-	public boolean handleChildShift(APattern pattern, int expectedOrderHandlingCount){		
+	public boolean handleChildShiftAndOrder(APattern pattern, int expectedOrderHandlingCount){		
 		if(expectedOrderHandlingCount > 0){
 			if(!handleContentOrder(expectedOrderHandlingCount, pattern, pattern)){
 				return false;//TODO problem is that it did shift, but in the order's reshift, so this is not 100% correct
 			}				
 		}
-		handleParticleShift(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getItemId(), pattern);
+		handleParticleShift(inputStackDescriptor.getCurrentItemInputRecordIndex(), pattern);
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
+	public boolean handleChildShift(APattern pattern, int startInputRecordIndex){
+		handleParticleShift(startInputRecordIndex, pattern);		
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
+	public boolean handleChildShift(int count, APattern pattern, int startInputRecordIndex){
+		handleParticleShift(startInputRecordIndex, pattern);		
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int startInputRecordIndex){
+		handleParticleShift(startInputRecordIndex, pattern);		
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
@@ -103,17 +103,17 @@ abstract class InnerPatternHandler extends StructureValidationHandler{
 	}
 	
 	//reduce
-	public boolean handleChildShift(APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber, StackConflictsHandler stackConflictsHandler){
+	public boolean handleChildShift(APattern pattern, int startInputRecordIndex, StackConflictsHandler stackConflictsHandler){
 		handleParticleShift(pattern, stackConflictsHandler);		
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber, StackConflictsHandler stackConflictsHandler){
+	public boolean handleChildShift(int count, APattern pattern, int startInputRecordIndex, StackConflictsHandler stackConflictsHandler){
 		handleParticleShift(pattern, stackConflictsHandler);		
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber, StackConflictsHandler stackConflictsHandler){
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int startInputRecordIndex, StackConflictsHandler stackConflictsHandler){
 		handleParticleShift(pattern, stackConflictsHandler);		
 		boolean result = !handleStateSaturationReduce();
 		return result;
@@ -150,9 +150,9 @@ abstract class InnerPatternHandler extends StructureValidationHandler{
 	
 	
 	//Start ValidationHandler---------------------------------------------------------		
-	void handleParticleShift(String systemId, int lineNumber, int columnNumber, String qName, int itemId, APattern childPattern){
+	void handleParticleShift(int inputRecordIndex, APattern childPattern){
 		setCurrentChildParticleHandler(childPattern);
-		currentChildParticleHandler.handleOccurrence(itemId, qName, systemId, lineNumber, columnNumber);
+		currentChildParticleHandler.handleOccurrence(inputRecordIndex);
 	}
 	void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver){
 		setCurrentChildParticleHandler(childPattern);

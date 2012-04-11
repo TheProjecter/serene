@@ -242,9 +242,9 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	    setCurrentErrorCatcher();
 	    
 	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
-			currentErrorCatcher.characterContentDatatypeError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), item, datatypeErrorMessage); 
+			currentErrorCatcher.characterContentDatatypeError(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), item, datatypeErrorMessage); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){		   
-			currentErrorCatcher.attributeValueDatatypeError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), item, datatypeErrorMessage);
+			currentErrorCatcher.attributeValueDatatypeError(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), item, datatypeErrorMessage);
 		}else{
 			throw new IllegalStateException();
 		}		
@@ -258,7 +258,7 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
 			currentErrorCatcher.characterContentValueError(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), value); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){		    
-			currentErrorCatcher.attributeValueValueError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), value);
+			currentErrorCatcher.attributeValueValueError(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), value);
 		}else{
 			throw new IllegalStateException();
 		}

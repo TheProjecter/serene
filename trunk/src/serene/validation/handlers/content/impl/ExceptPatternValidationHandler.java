@@ -130,11 +130,11 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	void handleExcept(){
 	    if(hasError)return;		
 		if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
-			errorCatcher.characterContentExceptedError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), data); 
+			errorCatcher.characterContentExceptedError(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), data); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
-			errorCatcher.attributeValueExceptedError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), data);
+			errorCatcher.attributeValueExceptedError(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), data);
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.LIST_TOKEN){ 
-			errorCatcher.listTokenExceptedError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), data);
+			errorCatcher.listTokenExceptedError(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), data);
 		}else{
 			throw new IllegalStateException();
 		}

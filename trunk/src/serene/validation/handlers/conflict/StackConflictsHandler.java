@@ -233,7 +233,7 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 		// for every active conflict resolver:
 		// remove mappings from handledConflicts
 		// remove mappings from handled indexes
-		// System.out.println(hashCode()+" DISQUALIFY "+definition);		
+		// System.out.println(hashCode()+" DISQUALIFY "+definition);			
 		Set<InternalConflictResolver> resolvers = handledResolvers.put(definition, null);
 		if(resolvers != null){
 			for(InternalConflictResolver resolver : resolvers){

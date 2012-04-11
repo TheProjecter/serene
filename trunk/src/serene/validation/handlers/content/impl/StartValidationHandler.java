@@ -84,11 +84,11 @@ class StartValidationHandler extends ElementValidationHandler{
 		List<SimplifiedComponent> elementMatches = matchHandler.matchElement(namespace, name);
 		int matchCount = elementMatches.size();
 		if(matchCount == 0){			            
-			unknownElement(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
+			unknownElement(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 		}else if(matchCount == 1){
-            unexpectedElement(inputStackDescriptor.getItemIdentifier(), elementMatches.get(0), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
+            unexpectedElement(inputStackDescriptor.getItemDescription(), elementMatches.get(0), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 		}else{
-            unexpectedAmbiguousElement(inputStackDescriptor.getItemIdentifier(), elementMatches.toArray(new SimplifiedComponent[elementMatches.size()]), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
+            unexpectedAmbiguousElement(inputStackDescriptor.getItemDescription(), elementMatches.toArray(new SimplifiedComponent[elementMatches.size()]), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 		}
 	}
     
@@ -99,7 +99,7 @@ class StartValidationHandler extends ElementValidationHandler{
 
     void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
 		if(contextErrorHandler[contextErrorHandlerIndex] != null){
-			contextErrorHandler[contextErrorHandlerIndex].handle(ContextErrorHandler.ROOT, inputStackDescriptor.getItemIdentifier(), element, restrictToFileName, locator);
+			contextErrorHandler[contextErrorHandlerIndex].handle(ContextErrorHandler.ROOT, inputStackDescriptor.getItemDescription(), element, restrictToFileName, locator);
 		}
 	}
     

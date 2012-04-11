@@ -82,7 +82,7 @@ abstract class UniqueChildPatternHandler extends InnerPatternHandler{
 		}
 		if(childParticleHandler != null){
 			if(!isReduceAcceptable()){
-				childParticleHandler.reportMissing(rule, starttSystemId, starttLineNumber, starttColumnNumber);
+				childParticleHandler.reportMissing(rule, startInputRecordIndex);
 			}
 			handleReduce();
 		}
@@ -199,9 +199,13 @@ abstract class UniqueChildPatternHandler extends InnerPatternHandler{
 			stackConflictsHandler.close(this);
 			stackConflictsHandler = null;
 		}
-		contentHandler = noContent;		
-		starttQName = null;
-		starttSystemId = null;
+		contentHandler = noContent;	
+		
+		if(isStartSet){
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    isStartSet = false;
+		    startInputRecordIndex = -1;
+		}
 	}
 	//End InnerPattern------------------------------------------------------------------
 	

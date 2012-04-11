@@ -68,10 +68,8 @@ public class RefHandler extends UniqueChildPatternHandler{
 					childParticleHandler, 
 					childStructureHandler,
 					contentHandler.getContentIndex(),
-					starttSystemId,
-					starttLineNumber,
-					starttColumnNumber,
-					starttQName);
+					startInputRecordIndex,
+					isStartSet);
 		copy.setOriginal(this);
 		return copy; 		
 	}
@@ -82,10 +80,8 @@ public class RefHandler extends UniqueChildPatternHandler{
 					childParticleHandler, 
 					childStructureHandler, 
 					contentHandler.getContentIndex(),
-					starttSystemId,
-					starttLineNumber,
-					starttColumnNumber,
-					starttQName);
+					startInputRecordIndex,
+					isStartSet);
 		copy.setOriginal(this);
 		return copy;
 	}	
@@ -104,10 +100,8 @@ public class RefHandler extends UniqueChildPatternHandler{
 							ParticleHandler childParticleHandler, 
 							StructureHandler childStructureHandler,
 							int contentHandlerContentIndex,
-							String startSystemId,
-							int startLineNumber,
-							int startColumnNumber,
-							String startQName){
+							int startInputRecordIndex,
+							boolean isStartSet){
 		if(childParticleHandler != null)this.childParticleHandler = childParticleHandler.getCopy(this, errorCatcher);
 		if(childStructureHandler != null)this.childStructureHandler = childStructureHandler.getCopy(this, stackHandler, errorCatcher);
 		if(contentHandlerContentIndex == NO_CONTENT){
@@ -121,10 +115,15 @@ public class RefHandler extends UniqueChildPatternHandler{
 		}else{
 			throw new IllegalArgumentException();
 		}	
-		this.starttSystemId = startSystemId;
-		this.starttLineNumber = startLineNumber;
-		this.starttColumnNumber = startColumnNumber;
-		this.starttQName = startQName;
+		
+		if(this.isStartSet){
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+        }
+		this.startInputRecordIndex = startInputRecordIndex;
+		this.isStartSet = isStartSet;
+		if(isStartSet){		    
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		}
 	}
 	public void accept(RuleHandlerVisitor visitor){
 		visitor.visit(this);

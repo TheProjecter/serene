@@ -35,11 +35,11 @@ public interface CardinalityHandler extends RuleHandler{
 			
 	int getIndex();
 	
-	void handleOccurrence(int iti, String qN, String sI, int lN, int cN);		
+	void handleOccurrence(int inputRecordIndex);		
 	void handleOccurrence(StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver);
 	void handleOccurrence(StackConflictsHandler stackConflictsHandler);
-	void reportExcessive(Rule context, String startSystemId, int startLineNumber, int startColumnNumber);
-	void reportMissing(Rule context, String startSystemId, int startLineNumber, int startColumnNumber);
+	void reportExcessive(Rule context, int startInputRecordIndex);
+	void reportMissing(Rule context, int startInputRecordIndex);
 	
 	CardinalityHandler getCopy(ChildEventHandler childEventHandler, ErrorCatcher errorCatcher);
 	

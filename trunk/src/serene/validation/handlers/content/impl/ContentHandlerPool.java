@@ -937,7 +937,7 @@ public class ContentHandlerPool{
 										boundAttributeVHFillCount,	
 										boundCandidateAttributeVHFillCount,
 										boundAttributeConcurrentHFillCount,
-                                        boundAttributeParallelHFillCount);
+                                        boundAttributeParallelHFillCount);       
 	}
 	
 	synchronized void recycle(int elementVHRecycledCount,

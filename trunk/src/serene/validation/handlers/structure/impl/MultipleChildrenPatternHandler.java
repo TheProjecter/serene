@@ -136,14 +136,14 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 					childStructureHandlers[i].handleValidatingReduce();
 					if(childParticleHandlers[i] == null) //this handler was already reduced as result of the child's reduction
 						break reduce; 
-					childParticleHandlers[i].reportMissing(rule, starttSystemId, starttLineNumber, starttColumnNumber);
+					childParticleHandlers[i].reportMissing(rule, startInputRecordIndex);
 				}else if(childParticleHandlers[i] != null){					
-					childParticleHandlers[i].reportMissing(rule, starttSystemId, starttLineNumber, starttColumnNumber);
+					childParticleHandlers[i].reportMissing(rule, startInputRecordIndex);
 				}else{
 					if(((MultipleChildrenAPattern)rule).isChildRequired(i)){						
 						APattern child = ((MultipleChildrenAPattern)rule).getChild(i);				
 						int minOccurs = child.getMinOccurs();
-						errorCatcher.missingContent(rule, starttSystemId, starttLineNumber, starttColumnNumber, child, minOccurs, 0, null, null, null, null);						
+						errorCatcher.missingContent(rule, activeInputDescriptor.getSystemId(startInputRecordIndex), activeInputDescriptor.getLineNumber(startInputRecordIndex), activeInputDescriptor.getColumnNumber(startInputRecordIndex), child, minOccurs, 0, null, null, null, null);						
 					}
 				}
 			}			
@@ -269,10 +269,14 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 			stackConflictsHandler = null;
 		}
 		contentHandler = noContent;
-		starttQName = null;
-		starttSystemId = null;
 		satisfactionLevel = 0;
 		saturationLevel = 0;
+		
+		if(isStartSet){
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    isStartSet = false;
+		    startInputRecordIndex = -1;
+		}
 	}			
 	//End InnerPattern------------------------------------------------------------------
 	
@@ -322,7 +326,7 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 		
 	
 	void reportExcessive(){
-		currentChildParticleHandler.reportExcessive(rule, starttSystemId, starttLineNumber, starttColumnNumber);
+		currentChildParticleHandler.reportExcessive(rule, startInputRecordIndex);
 	}
 	
 	public StructureHandler[] getStructureHandlers(){

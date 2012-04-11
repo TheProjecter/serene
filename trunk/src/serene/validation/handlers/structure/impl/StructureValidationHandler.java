@@ -26,6 +26,7 @@ import serene.validation.handlers.structure.RuleHandler;
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.conflict.InternalConflictResolver;
@@ -40,38 +41,43 @@ import sereneWrite.MessageWriter;
 
 public abstract class StructureValidationHandler implements StructureHandler, ChildEventHandler{
 	
-	protected StructureHandler parent;
+	StructureHandler parent;
 	
-	protected ContentHandler contentHandler;
-	protected ContentHandler noContent;
-	protected ContentHandler openContent;
-	protected ContentHandler satisfiedContent;
-	protected ContentHandler saturatedContent;
-	protected ContentHandler excessiveContent;
+	ContentHandler contentHandler;
+	ContentHandler noContent;
+	ContentHandler openContent;
+	ContentHandler satisfiedContent;
+	ContentHandler saturatedContent;
+	ContentHandler excessiveContent;
 
-
-	protected InputStackDescriptor inputStackDescriptor;	
-	protected ErrorCatcher errorCatcher; 
-	protected StackHandler stackHandler;
+	ActiveInputDescriptor activeInputDescriptor;
+	InputStackDescriptor inputStackDescriptor;	
+	ErrorCatcher errorCatcher; 
+	StackHandler stackHandler;
 	
-	protected RuleHandlerRecycler recycler;
+	RuleHandlerRecycler recycler;
 	
-	protected int ittemId;
-	protected String starttQName;
-	protected String starttSystemId;
-	protected int starttLineNumber;
-	protected int starttColumnNumber;	
+	/*int ittemId;
+	String starttQName;
+	String starttSystemId;
+	int starttLineNumber;
+	int starttColumnNumber;*/
+    int startInputRecordIndex;
+    boolean isStartSet;	
 	
 	
-	protected MessageWriter debugWriter;
+	MessageWriter debugWriter;
 	
 	StructureValidationHandler(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;		
+		startInputRecordIndex = -1;
+		isStartSet = false;	
 	}	
 		
-	void init(RuleHandlerRecycler recycler, InputStackDescriptor inputStackDescriptor){
+	void init(RuleHandlerRecycler recycler, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){
 		this.recycler = recycler;
-		this.inputStackDescriptor = inputStackDescriptor; 
+		this.inputStackDescriptor = inputStackDescriptor;
+		this.activeInputDescriptor = activeInputDescriptor;
 	}	
 	
 	//Start RuleHandler---------------------------------------------------------------
@@ -99,7 +105,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	// int functionalEquivalenceCode(); subclass	
 	public abstract StructureValidationHandler getCopy(StackHandler stackHandler, ErrorCatcher errorCatcher);
 	public abstract StructureValidationHandler getCopy(StructureHandler parent, StackHandler stackHandler, ErrorCatcher errorCatcher);
-	public int getItemId(){
+	/*public int getItemId(){
 	    return ittemId;
 	}
 	public String getStartQName(){
@@ -113,7 +119,11 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	}
 	public int getStartColumnNumber(){
 		return starttColumnNumber;
-	}		
+	}*/
+	
+	public int getStartInputRecordIndex(){
+	    return startInputRecordIndex;
+	}
 	public String stackToString(){
 		String s = "";
 		if(parent != null){
@@ -128,7 +138,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 		stackHandler.reduce(this);
 	}
 	
-	abstract void handleParticleShift(String systemId, int lineNumber, int columnNumber, String qName, int itemId, APattern childPattern);
+	abstract void handleParticleShift(int inputRecordIndex, APattern childPattern);
 	abstract void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver);
 	/*abstract void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler);*/	
 			
@@ -146,11 +156,21 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	// LATER really???	
 	
 	void setStart(){	
-	    ittemId = inputStackDescriptor.getItemId();
+	    /*ittemId = inputStackDescriptor.getItemId();
 		starttSystemId = inputStackDescriptor.getSystemId();		
 		starttLineNumber = inputStackDescriptor.getLineNumber();
 		starttColumnNumber = inputStackDescriptor.getColumnNumber();
-		starttQName = inputStackDescriptor.getItemIdentifier();
+		starttQName = inputStackDescriptor.getItemDescription();*/
+		if(isStartSet){
+		    //throw new IllegalStateException();
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    startInputRecordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		}else{
+            startInputRecordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();            
+            activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+            isStartSet = true;
+        }
 	}	
 	//End ValidationHandler-----------------------------------------------------------
 	
@@ -196,7 +216,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 		throw new IllegalStateException();
 	}
 	
-	protected abstract class ContentHandler implements RuleHandler, ChildEventHandler{
+	abstract class ContentHandler implements RuleHandler, ChildEventHandler{
 		public void recycle(){
 			throw new UnsupportedOperationException();
 		}
@@ -214,7 +234,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 		}
 	}
 		
-	protected abstract class AbstractNoContent extends ContentHandler{
+	abstract class AbstractNoContent extends ContentHandler{
 		public int getContentIndex(){
 			return NO_CONTENT;
 		}		
@@ -239,7 +259,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 		}		
 	}
 	
-	protected abstract class AbstractOpenContent extends ContentHandler{
+	abstract class AbstractOpenContent extends ContentHandler{
 		public int getContentIndex(){
 			return OPEN_CONTENT;
 		}		
@@ -256,7 +276,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 			return "CONTENT OPEN";
 		}		
 	}
-	protected abstract class AbstractSatisfiedContent extends ContentHandler{
+	abstract class AbstractSatisfiedContent extends ContentHandler{
 		public int getContentIndex(){
 			return SATISFIED_CONTENT;
 		}
@@ -271,7 +291,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 		}		
 	}	
 	
-	protected abstract class AbstractSaturatedContent extends ContentHandler{
+	abstract class AbstractSaturatedContent extends ContentHandler{
 		public int getContentIndex(){
 			return SATURATED_CONTENT;
 		}		
@@ -286,7 +306,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 		}		
 	}
 	
-	protected abstract class AbstractExcessiveContent extends ContentHandler{
+	abstract class AbstractExcessiveContent extends ContentHandler{
 		public int getContentIndex(){
 			return EXCESSIVE_CONTENT;
 		}

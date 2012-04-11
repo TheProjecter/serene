@@ -51,15 +51,19 @@ import sereneWrite.MessageWriter;
 public class MInterleaveHandler extends InterleaveHandler{
 	
 	// children in the order they come
-	private APattern[] definition;
-	private int[] itemId;
+	APattern[] definition;
+	/*private int[] itemId;
 	private String[] qName;
 	private String[] systemId;
 	private int[] lineNumber;
 	private int[] columnNumber;
 	private int childIndex;
-	private int childrenSize;
-	
+	private int childrenSize;*/
+	int[] childInputRecordIndex;
+	int currentChildIndex;
+	int childMaxSize;
+	int childInitialSize;
+	int increaseSizeAmount;
 	
 	ArrayList<SInterleaveHandler> secondaryHandlers;	
 	IntList lastShiftIndex;
@@ -72,7 +76,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 	MInterleaveHandler(MessageWriter debugWriter){
 		super(debugWriter);
 		
-		childIndex = -1;
+		/*childIndex = -1;
 		childrenSize = 10;
 		
 		definition = new APattern[childrenSize];
@@ -80,8 +84,16 @@ public class MInterleaveHandler extends InterleaveHandler{
 		qName = new String[childrenSize];
 		systemId = new String[childrenSize];
 		lineNumber = new int[childrenSize];
-		columnNumber = new int[childrenSize];	
+		columnNumber = new int[childrenSize];*/
 		
+		
+	    currentChildIndex = -1;
+	    childMaxSize = 20;
+	    childInitialSize = 10;
+	    increaseSizeAmount = 10;
+	    childInputRecordIndex = new int[childInitialSize];	
+	    definition = new APattern[childInitialSize];
+	    
 		secondaryHandlers = new ArrayList<SInterleaveHandler>();	
 		lastShiftIndex = new IntList();
 	}	
@@ -97,8 +109,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 		size = interleave.getChildrenCount();
 		if(size > childParticleHandlers.length){			
 			childStructureHandlers = new StructureHandler[size];
-		}				
-				
+		}	
 	}
 			
 	public void recycle(){
@@ -121,27 +132,27 @@ public class MInterleaveHandler extends InterleaveHandler{
 	
 	}
 	// APattern getRule() super		
-	public boolean handleChildShift(APattern pattern, int expectedOrderHandlingCount){		
+	public boolean handleChildShiftAndOrder(APattern pattern, int expectedOrderHandlingCount){		
 		if(expectedOrderHandlingCount > 0){
 			if(!handleContentOrder(expectedOrderHandlingCount, pattern, pattern)){
 				return false;//TODO problem is that it did shift, but in the order's reshift, so this is not 100% correct
 			}				
 		}
-		handleParticleShift(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getItemId(), pattern);
+		handleParticleShift(inputStackDescriptor.getCurrentItemInputRecordIndex(), pattern);
 		//handleStateSaturationReduce();
 		return true;
 	}
-	public boolean handleChildShift(APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
+	public boolean handleChildShift(APattern pattern, int startInputRecordIndex){
+		handleParticleShift(startInputRecordIndex, pattern);		
 		//handleStateSaturationReduce();
 		return true;
 	}
-	public boolean handleChildShift(int count, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
-		handleParticleShift(startSystemId, lineNumber, columnNumber, startQName, itemId, pattern);		
+	public boolean handleChildShift(int count, APattern pattern, int startInputRecordIndex){
+		handleParticleShift(startInputRecordIndex, pattern);		
 		//handleStateSaturationReduce();
 		return true;
 	}
-	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int itemId, String startQName, String startSystemId, int lineNumber, int columnNumber){
+	public boolean handleChildShift(int MIN, int MAX, APattern pattern, int startInputRecordIndex){
 		throw new UnsupportedOperationException("Serene does not yet support interleave patterns "
 			+"containing other compositors(group, interleave) with multiple cardinality.");
 	}
@@ -153,13 +164,13 @@ public class MInterleaveHandler extends InterleaveHandler{
 			}
 		}
 		int occurrenceCount = computeOccurrencesCount();		
-		stackHandler.blockReduce(this, occurrenceCount, rule, itemId[0], qName[0], systemId[0], lineNumber[0], columnNumber[0]);
+		stackHandler.blockReduce(this, occurrenceCount, rule, childInputRecordIndex[0]);
 	}
 	
 	
 	public int functionalEquivalenceCode(){		
 			int fec = super.functionalEquivalenceCode();	
-			for(int i = 0; i <= childIndex; i++){
+			for(int i = 0; i <= currentChildIndex; i++){
 				fec += definition[i].hashCode();
 			}
 			return fec;
@@ -178,18 +189,18 @@ public class MInterleaveHandler extends InterleaveHandler{
 						satisfactionLevel,
 						saturationLevel,
 						contentHandler.getContentIndex(),
-						starttSystemId,
-						starttLineNumber,
-						starttColumnNumber,
-						starttQName,
+						startInputRecordIndex,
+						isStartSet,
 						definition,
-						itemId,
+						/*itemId,
 						qName,
 						systemId,
 						lineNumber,
 						columnNumber,
 						childIndex,
-						childrenSize);
+						childrenSize*/
+						childInputRecordIndex,
+						currentChildIndex);
 		copy.setOriginal(this);
 		return copy; 
 	}
@@ -205,18 +216,18 @@ public class MInterleaveHandler extends InterleaveHandler{
 					satisfactionLevel,
 					saturationLevel,
 					contentHandler.getContentIndex(),
-					starttSystemId,
-					starttLineNumber,
-					starttColumnNumber,
-					starttQName,
+					startInputRecordIndex,
+					isStartSet,
 					definition,
-					itemId,
+					/*itemId,
 					qName,
 					systemId,
 					lineNumber,
 					columnNumber,
 					childIndex,
-					childrenSize);
+					childrenSize*/
+					childInputRecordIndex,
+					currentChildIndex);
 		copy.setOriginal(this);
 		return copy;
 	}
@@ -235,8 +246,8 @@ public class MInterleaveHandler extends InterleaveHandler{
 	
 	
 	//Start ValidationHandler---------------------------------------------------------		
-	void handleParticleShift(String sysId, int ln, int cn, String qn, int iti, APattern cd){		
-		if(++childIndex == childrenSize)increaseChildrenStorageSize();
+	void handleParticleShift(int inputRecordIndex, APattern cd){		
+		/*if(++childIndex == childrenSize)increaseChildrenStorageSize();
 		if(childIndex == 0)setStart();
 		
 		systemId[childIndex] = sysId;
@@ -245,11 +256,19 @@ public class MInterleaveHandler extends InterleaveHandler{
 		qName[childIndex] = qn;
 		itemId[childIndex] = iti;
 		definition[childIndex] = cd;
-		
+		*/
 		// for(int i = 0; i < childrenSize; i++){		
 			// System.out.print(qName[i]+" ");			
 		// }
 		// System.out.println();
+		
+		if(++currentChildIndex == childInputRecordIndex.length) increaseChildrenStorageSize();
+		if(currentChildIndex == 0)setStart();
+		
+		childInputRecordIndex[currentChildIndex] = inputRecordIndex;
+		definition[currentChildIndex] = cd;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex);
+		
 	}	
 	void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver){
 		throw new UnsupportedOperationException();
@@ -277,19 +296,19 @@ public class MInterleaveHandler extends InterleaveHandler{
 	void setEmptyState(){
 		closeContent();
 		contentHandler = noContent;
-		starttQName = null;
-		starttSystemId = null;
 		satisfactionLevel = 0;
 		saturationLevel = 0;				
 		//***		isReduceLocked = false;
 		
-		for(int i = 0; i < childrenSize; i++){
-			definition[i] = null;
-			qName[i] = null;
-			systemId[i] = null;
-			itemId[i] = InputStackDescriptor.NONE;
+		for(int i =0; i <= currentChildIndex; i++){		    
+		    activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[i]);
+		    definition[i] = null;
 		}
-		childIndex = -1;
+		if(definition.length > childMaxSize){
+		    definition = new APattern[childInitialSize];
+		    childInputRecordIndex = new int[childInitialSize];
+		}
+		currentChildIndex = -1;
 		
 		for(int i = 0; i < secondaryHandlers.size(); i++){
 			SInterleaveHandler sih = secondaryHandlers.get(i);
@@ -302,6 +321,12 @@ public class MInterleaveHandler extends InterleaveHandler{
 		
 		lastShiftIndex.clear();
 		mValidationLoopCounter = -1;
+		
+		if(isStartSet){
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    isStartSet = false;
+		    startInputRecordIndex = -1;
+		}	
 	}
 	//End InnerPattern--------------------------------------------------------------------
 
@@ -313,18 +338,18 @@ public class MInterleaveHandler extends InterleaveHandler{
 							int satisfactionLevel,
 							int saturationLevel,							
 							int contentHandlerContentIndex,
-							String startSystemId,
-							int startLineNumber,
-							int startColumnNumber,
-							String startQName,
+							int startInputRecordIndex,
+							boolean isStartSet,
 							APattern[] definition,
-							int[] itemId,
+							/*int[] itemId,
 							String[] qName,
 							String[] systemId,
 							int[] lineNumber,
 							int[] columnNumber,
 							int childIndex,
-							int childrenSize){
+							int childrenSize*/
+							int[] childInputRecordIndex,
+							int currentChildIndex){
 		
 		if(this.size < size){
 			childParticleHandlers = new ParticleHandler[size];
@@ -354,28 +379,24 @@ public class MInterleaveHandler extends InterleaveHandler{
 		}
 		this.satisfactionLevel = satisfactionLevel;
 		this.saturationLevel = saturationLevel;
-		this.starttSystemId = startSystemId;
-		this.starttLineNumber = startLineNumber;
-		this.starttColumnNumber = startColumnNumber;
-		this.starttQName = startQName;
-	
-		this.childIndex = childIndex;
-		this.childrenSize = childrenSize;
 		
-		this.definition = new APattern[childrenSize];
-		this.itemId = new int[childrenSize];
-		this.qName = new String[childrenSize];
-		this.systemId = new String[childrenSize];
-		this.lineNumber = new int[childrenSize];
-		this.columnNumber = new int[childrenSize];
+		if(this.isStartSet){
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+        }
+		this.startInputRecordIndex = startInputRecordIndex;
+		this.isStartSet = isStartSet;
+		if(isStartSet){		    
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		}
 		
-		for(int i = 0; i <= childIndex; i++){
-			this.definition[i] = definition[i];
-			this.itemId[i] = itemId[i];
-			this.qName[i] = qName[i];
-			this.systemId[i] = systemId[i];
-			this.lineNumber[i] = lineNumber[i];
-			this.columnNumber[i] = columnNumber[i];
+		
+		this.currentChildIndex = currentChildIndex;
+		
+		while(definition.length <= currentChildIndex) increaseChildrenStorageSize();
+		for(int i = 0; i <= currentChildIndex; i++){
+		    this.definition[i] = definition[i];
+		    this.childInputRecordIndex[i] = childInputRecordIndex[i];
+		    activeInputDescriptor.registerClientForRecord(childInputRecordIndex[i]);
 		}
 	}	
 	
@@ -384,7 +405,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 		// System.out.println("m validating reduce");
 		currentSecondaryHandler = pool.getSInterleaveHandler((AInterleave)rule, errorCatcher, null, stackHandler, this);
 		int occurrencesCount = 0;		
-		for(mValidationLoopCounter = 0; mValidationLoopCounter <= childIndex; mValidationLoopCounter++){
+		/*for(mValidationLoopCounter = 0; mValidationLoopCounter <= childIndex; mValidationLoopCounter++){
 			// System.out.println("\tloop "+mValidationLoopCounter+" "+qName[mValidationLoopCounter]);
 			currentSecondaryHandler.handleParticleShift(systemId[mValidationLoopCounter],
 														lineNumber[mValidationLoopCounter],
@@ -404,13 +425,33 @@ public class MInterleaveHandler extends InterleaveHandler{
 			if(secondaryHandlers.size() > occurrencesCount){
 				occurrencesCount = secondaryHandlers.size();
 			}
+		}*/
+		
+		for(mValidationLoopCounter = 0; mValidationLoopCounter <= currentChildIndex; mValidationLoopCounter++){
+			// System.out.println("\tloop "+mValidationLoopCounter+" "+qName[mValidationLoopCounter]);
+			currentSecondaryHandler.handleParticleShift(childInputRecordIndex[mValidationLoopCounter],
+														definition[mValidationLoopCounter]);
+			if(mValidationLoopCounter == currentChildIndex){				
+				if(!currentSecondaryHandler.isSatisfied()){					
+					// System.out.println("last unsatisfied "+mValidationLoopCounter+" "+qName[mValidationLoopCounter]);
+					currentSecondaryHandler.recycle();
+					currentSecondaryHandler = secondaryHandlers.remove(secondaryHandlers.size()-1);
+					mValidationLoopCounter = lastShiftIndex.removeLast();
+					// System.out.println("last unsatisfied go to "+mValidationLoopCounter+" "+qName[mValidationLoopCounter]);
+				}
+			}
+			if(secondaryHandlers.size() > occurrencesCount){
+				occurrencesCount = secondaryHandlers.size();
+			}
 		}
+		
 		// System.out.println("occurrences count "+secondaryHandlers.size()+" "+occurrencesCount);
 		return occurrencesCount;
 	}
 	
 	void satisfiedOccurrence(){
-		if(mValidationLoopCounter == childIndex)return;
+		/*if(mValidationLoopCounter == childIndex)return;*/
+		if(mValidationLoopCounter == currentChildIndex)return;		
 		secondaryHandlers.add(currentSecondaryHandler);
 		lastShiftIndex.add(mValidationLoopCounter);
 		currentSecondaryHandler = pool.getSInterleaveHandler((AInterleave)rule, errorCatcher, null, stackHandler, this);
@@ -418,10 +459,15 @@ public class MInterleaveHandler extends InterleaveHandler{
 		// System.out.println("satisfied "+secondaryHandlers);
 	}
 	
-	void excessiveOccurrence(){
-		if(secondaryHandlers.isEmpty()){
+	void excessiveOccurrence(){	    
+		/*if(secondaryHandlers.isEmpty()){
 			errorCatcher.illegalContent(rule, itemId[0], qName[0], systemId[0], lineNumber[0], columnNumber[0]);
 			mValidationLoopCounter = childIndex+1;//stop the loop
+			return;
+		}*/
+		if(secondaryHandlers.isEmpty()){
+			errorCatcher.illegalContent(rule, activeInputDescriptor.getItemId(childInputRecordIndex[0]), activeInputDescriptor.getItemDescription(childInputRecordIndex[0]), activeInputDescriptor.getSystemId(childInputRecordIndex[0]), activeInputDescriptor.getLineNumber(childInputRecordIndex[0]), activeInputDescriptor.getColumnNumber(childInputRecordIndex[0]));			
+			mValidationLoopCounter = currentChildIndex+1;//stop the loop
 			return;
 		}
 		// System.out.println("excessive "+mValidationLoopCounter+" "+qName[mValidationLoopCounter]);
@@ -432,7 +478,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 	}
 	
 	void increaseChildrenStorageSize(){
-		childrenSize += 10;
+		/*childrenSize += 10;
 		
 		APattern[] increasedD = new APattern[childrenSize];
 		System.arraycopy(definition, 0, increasedD, 0, childIndex);
@@ -456,7 +502,18 @@ public class MInterleaveHandler extends InterleaveHandler{
 		
 		int[] increasedCN = new int[childrenSize];
 		System.arraycopy(columnNumber, 0, increasedCN, 0, childIndex);
-		columnNumber = increasedCN;
+		columnNumber = increasedCN;*/
+		
+		int newSize = childInputRecordIndex.length + increaseSizeAmount;
+		
+		APattern[] increasedD = new APattern[newSize];
+		System.arraycopy(definition, 0, increasedD, 0, currentChildIndex);
+		definition = increasedD;
+		
+		int[] increasedCIRI = new int[newSize];
+		System.arraycopy(childInputRecordIndex, 0, increasedCIRI, 0, currentChildIndex);
+		childInputRecordIndex = increasedCIRI;
+		
 	}
 	public void accept(RuleHandlerVisitor visitor){
 		visitor.visit(this);

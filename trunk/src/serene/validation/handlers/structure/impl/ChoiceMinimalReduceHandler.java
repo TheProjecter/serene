@@ -95,10 +95,8 @@ public class ChoiceMinimalReduceHandler extends UCMinimalReduceHandler{
 					childParticleHandler, 
 					childStructureHandler, 
 					contentHandler.getContentIndex(),
-					starttSystemId,
-					starttLineNumber,
-					starttColumnNumber,
-					starttQName,
+					startInputRecordIndex,
+					isStartSet,
 					currentChild);
 		copy.setOriginal(this);
 		return copy;		
@@ -111,10 +109,8 @@ public class ChoiceMinimalReduceHandler extends UCMinimalReduceHandler{
 					childParticleHandler, 
 					childStructureHandler,
 					contentHandler.getContentIndex(),
-					starttSystemId,
-					starttLineNumber,
-					starttColumnNumber,
-					starttQName,
+					startInputRecordIndex,
+					isStartSet,
 					currentChild);
 		copy.setOriginal(this);
 		return copy;
@@ -149,10 +145,8 @@ public class ChoiceMinimalReduceHandler extends UCMinimalReduceHandler{
 							ParticleHandler childParticleHandler, 
 							StructureHandler childStructureHandler,
 							int contentHandlerContentIndex,
-							String startSystemId,
-							int startLineNumber,
-							int startColumnNumber,
-							String startQName,
+							int startInputRecordIndex,
+							boolean isStartSet,
 							Rule currentChild){
 		if(childParticleHandler != null)this.childParticleHandler = childParticleHandler.getCopy(this, errorCatcher);
 		if(childStructureHandler != null)this.childStructureHandler = childStructureHandler.getCopy(this, stackHandler, errorCatcher);
@@ -167,10 +161,16 @@ public class ChoiceMinimalReduceHandler extends UCMinimalReduceHandler{
 		}else{
 			throw new IllegalArgumentException();
 		}	
-		this.starttSystemId = startSystemId;
-		this.starttLineNumber = startLineNumber;
-		this.starttColumnNumber = startColumnNumber;
-		this.starttQName = startQName;
+		
+		if(this.isStartSet){
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+        }
+		this.startInputRecordIndex = startInputRecordIndex;
+		this.isStartSet = isStartSet;
+		if(isStartSet){		    
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		}
+		
 		this.currentChild = currentChild;	
 	}	
 	

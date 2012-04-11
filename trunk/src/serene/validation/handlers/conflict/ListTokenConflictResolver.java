@@ -35,7 +35,7 @@ public abstract class ListTokenConflictResolver extends CharsConflictResolver{
 	
 	void init(TemporaryMessageStorage[] temporaryMessageStorage){
 		super.init(temporaryMessageStorage);
-        this.token = inputStackDescriptor.getItemIdentifier();
+        this.token = inputStackDescriptor.getItemDescription();
 	}
     
 	void reset(){		

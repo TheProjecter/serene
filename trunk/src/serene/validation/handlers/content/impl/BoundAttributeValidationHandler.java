@@ -71,7 +71,7 @@ class BoundAttributeValidationHandler extends AttributeValidationHandler impleme
 		int definitionIndex = attribute.getDefinitionIndex();
 		AttributeBinder binder = bindingModel.getAttributeBinder(definitionIndex);
 		if(binder != null){
-			binder.bindAttribute(queue, entry, definitionIndex, inputStackDescriptor.getNamespaceURI(), inputStackDescriptor.getLocalName(), inputStackDescriptor.getItemIdentifier(), Datatype.ID_TYPE_NULL, value);
+			binder.bindAttribute(queue, entry, definitionIndex, inputStackDescriptor.getNamespaceURI(), inputStackDescriptor.getLocalName(), inputStackDescriptor.getItemDescription(), Datatype.ID_TYPE_NULL, value);
 		}
 	}
 	

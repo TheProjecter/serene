@@ -29,7 +29,7 @@ class UnknownAttributeHandler extends ErrorAEH{
 	}
 
 	void validateInContext(){
-		parent.unknownAttribute(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
+		parent.unknownAttribute(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 	}	
 
     boolean functionalEquivalent(ComparableAEH other){

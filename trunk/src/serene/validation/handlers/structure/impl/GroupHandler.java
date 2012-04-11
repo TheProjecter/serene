@@ -22,6 +22,7 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ActiveTypeItem;
 import serene.validation.schema.active.components.AGroup;
 import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.active.components.ARef;
 
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.RuleHandlerVisitor;
@@ -39,44 +40,44 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 	final int GOOD_ORDER = -1;	
 	final int CURRENT_MISPLACED = 0;
 	final int PREVIOUS_MISPLACED = 1;
-	
-	int[] childIndex;
-	APattern[] childDefinition;
-	int[][] childItemId;
-	String[][] childQName;
-	String[][] childSystemId;
-	int[][] childLineNumber;
-	int[][] childColumnNumber;
+		
+	APattern[] childDefinition;	
+	int[][] childInputRecordIndex;	
 	APattern[][] childSourceDefinition;
 	
-	int lastCorrectChildIndexIndex;
-	int correctChildIndexesSize;
+	int childRecordIndex;
+	int childRecordIncreaseSizeAmount;
+	int childRecordInitialSize;
+	
+    /**
+    * To keep track of the current index in the childInputRecordIndex and  
+    * childSourceDefinition so that it's not necessary to increment size, but
+    * it can grow with bigger steps.
+    */	
+	int[] childDetailsCurrentIndex;
+	int childDetailsInitialSize;
+	int childDetailsIncreaseSizeAmount;
+	
 	
 	GroupHandler original;
     
-    //ISSUE 194
-    boolean needFurtherOrderHandling;
     
 	GroupHandler(MessageWriter debugWriter){
 		super(debugWriter);
 	
-		lastCorrectChildIndexIndex = 1;
-		correctChildIndexesSize = 2;
+		childRecordIndex = -1;
+		childRecordInitialSize = 10;
+		childRecordIncreaseSizeAmount = 10;
 		
-		childIndex = new int[correctChildIndexesSize];
-		childIndex[0] = -1;
-		childIndex[1] = -1;
-				
-		childDefinition = new APattern[correctChildIndexesSize];
-		childItemId = new int[correctChildIndexesSize][];
-		childQName = new String[correctChildIndexesSize][];
-		childSystemId = new String[correctChildIndexesSize][];
-		childLineNumber = new int[correctChildIndexesSize][];
-		childColumnNumber = new int[correctChildIndexesSize][];
-		childSourceDefinition = new APattern[correctChildIndexesSize][];
+		
+		childDefinition = new APattern[childRecordInitialSize];
+		childInputRecordIndex = new int[childRecordInitialSize][];
+		childSourceDefinition = new APattern[childRecordInitialSize][];
         
-        //ISSUE 194
-        needFurtherOrderHandling = true;
+		childDetailsCurrentIndex = new int[childRecordInitialSize];
+		Arrays.fill(childDetailsCurrentIndex, -1);
+		childDetailsIncreaseSizeAmount = 10;
+		childDetailsInitialSize = 10;		
 	}
 
 	void init(AGroup group, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
@@ -94,8 +95,6 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 	}
 	
 	public void recycle(){
-        //ISSUE 194
-        needFurtherOrderHandling = true;
 		original = null;
 		setEmptyState();	
 		recycler.recycle(this);        
@@ -112,121 +111,126 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 	// boolean handleChildShift(AElement element, int expectedOrderHandlingCount) super
 	// void handleValidatingReduce() super
 	public boolean handleContentOrder(int expectedOrderHandlingCount, APattern child, APattern sourceDefinition){
-		int newChildIndex = child.getChildIndex();
+		
+	    /*System.out.println(hashCode()+" 1 "+inputStackDescriptor.getItemDescription()+" "+inputStackDescriptor.getLineNumber());
+	    System.out.println("child "+child.hashCode()+"  "+child.toString());
+	    System.out.println("sourceDefinition "+sourceDefinition.hashCode()+"  "+sourceDefinition.toString());*/
+	    
+	    
+	    int newChildIndex = child.getChildIndex();
+		int prevCorrectChildIndex = childRecordIndex < 0 ? -1 : childDefinition[childRecordIndex].getChildIndex();
+        int oldCorrectChildIndex = childRecordIndex-1 < 0 ? -1 : childDefinition[childRecordIndex-1].getChildIndex();
 		int orderIndex = GOOD_ORDER;
 		
+		/*System.out.println("oldCorrectChildIndex="+oldCorrectChildIndex);
+		System.out.println("prevCorrectChildIndex="+prevCorrectChildIndex);
+		System.out.println("newChildIndex="+newChildIndex);*/
+		    
 		APattern reper = null;
-		boolean[] prevConflict = null;
 		APattern prevDefinition = null;
-		int[] prevItemId = null;
-		String[] prevQName = null; 
-		String[] prevSystemId = null; 
-		int[] prevLineNumber = null; 
-		int[] prevColumnNumber = null; 
+		int[] prevChildInputRecordIndex = null;
 		APattern[] prevSourceDefinition = null;
-					
+		int prevDetailsCurrentIndex = -1; 		
 				
-		if(newChildIndex < childIndex[lastCorrectChildIndexIndex]){			
+		if(newChildIndex < prevCorrectChildIndex){			
 			// add here the reduce/reset part if the contentHandler is satisfied and reduction acceptable			
 			// return; the error is neihter located nor reported
 						
-			if(newChildIndex < childIndex[lastCorrectChildIndexIndex-1]){
+			if(newChildIndex < oldCorrectChildIndex){
 				//newChildIndex is misplaced
                 if(handleOrderUncheckedReduce(sourceDefinition)){					
                     return false;
                 }
 				orderIndex = CURRENT_MISPLACED;
-				reper = childDefinition[lastCorrectChildIndexIndex]; 				
+				reper = childDefinition[childRecordIndex]; 				
 				// do not store, it cannot be used for comparisons
-			}else if(newChildIndex == childIndex[lastCorrectChildIndexIndex-1]){				
-				// childIndex[lastCorrectChildIndexIndex] is misplaced
+			}else if(newChildIndex == oldCorrectChildIndex){				
+				// prevCorrectChildIndex is misplaced
                 if(handleOrderCheckedReduce(sourceDefinition)){					
                     return false;
                 }
 				orderIndex = PREVIOUS_MISPLACED;
 				
 				reper = child;
-				prevDefinition = childDefinition[lastCorrectChildIndexIndex];
-				prevItemId = childItemId[lastCorrectChildIndexIndex];
-				prevQName = childQName[lastCorrectChildIndexIndex];
-				prevSystemId = childSystemId[lastCorrectChildIndexIndex]; 
-				prevLineNumber = childLineNumber[lastCorrectChildIndexIndex]; 
-				prevColumnNumber = childColumnNumber[lastCorrectChildIndexIndex];
-				prevSourceDefinition = childSourceDefinition[lastCorrectChildIndexIndex];
+				prevDefinition = childDefinition[childRecordIndex];
+				prevChildInputRecordIndex = childInputRecordIndex[childRecordIndex];				
+				prevSourceDefinition = childSourceDefinition[childRecordIndex];
+				prevDetailsCurrentIndex = childDetailsCurrentIndex[childRecordIndex];
+				
+				activeInputDescriptor.registerClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
 				
 				removeLastCorrectChildIndex();					
 				addLastCorrectChildIndex(sourceDefinition);
 			}else{
-				//childIndex[lastCorrectChildIndexIndex] is misplaced
+				//prevCorrectChildIndex is misplaced
                 if(handleOrderCheckedReduce(sourceDefinition)){					
                     return false;
                 }
 				orderIndex = PREVIOUS_MISPLACED;				
 				
 				reper = child;
-				prevDefinition = childDefinition[lastCorrectChildIndexIndex];
-				prevItemId = childItemId[lastCorrectChildIndexIndex];
-				prevQName = childQName[lastCorrectChildIndexIndex];
-				prevSystemId = childSystemId[lastCorrectChildIndexIndex]; 
-				prevLineNumber = childLineNumber[lastCorrectChildIndexIndex]; 
-				prevColumnNumber = childColumnNumber[lastCorrectChildIndexIndex];
-				prevSourceDefinition = childSourceDefinition[lastCorrectChildIndexIndex];
+				prevDefinition = childDefinition[childRecordIndex];
+				prevChildInputRecordIndex = childInputRecordIndex[childRecordIndex];				
+				prevSourceDefinition = childSourceDefinition[childRecordIndex];
+				prevDetailsCurrentIndex = childDetailsCurrentIndex[childRecordIndex];
 				
+				activeInputDescriptor.registerClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
+								
 				removeLastCorrectChildIndex();				
-				addLastCorrectChildIndex(newChildIndex, child, sourceDefinition);
+				addLastCorrectChildIndex(child, sourceDefinition);
 			}
-		}else if(newChildIndex == childIndex[lastCorrectChildIndexIndex]){
+		}else if(newChildIndex == prevCorrectChildIndex){
 			addLastCorrectChildIndex(sourceDefinition);
 		}else{			
-			addLastCorrectChildIndex(newChildIndex, child, sourceDefinition);					
+			addLastCorrectChildIndex(child, sourceDefinition);					
 		}
-		if(--expectedOrderHandlingCount > 0 /*&& //ISSUE 194
-                                                /*needFurtherOrderHandling*/){
-		    needFurtherOrderHandling = false;
+		if(--expectedOrderHandlingCount > 0){
 			if(parent.handleContentOrder(expectedOrderHandlingCount, rule, sourceDefinition)){
 				// report errors
 				String contextSystemId;
 				int contextLineNumber;
 				int contextColumnNumber;
-				if(starttSystemId == null){// TODO could use setStart, think about it
+				if(!isStartSet){// TODO could use setStart, think about it
 					contextSystemId = inputStackDescriptor.getSystemId();
 					contextLineNumber = inputStackDescriptor.getLineNumber();
 					contextColumnNumber = inputStackDescriptor.getColumnNumber();
 				}else{
-					contextSystemId = starttSystemId;
-					contextLineNumber = starttLineNumber;
-					contextColumnNumber = starttColumnNumber;
+					contextSystemId = activeInputDescriptor.getSystemId(startInputRecordIndex);
+					contextLineNumber = activeInputDescriptor.getLineNumber(startInputRecordIndex);
+					contextColumnNumber = activeInputDescriptor.getColumnNumber(startInputRecordIndex);
 				}
 				
-				if(orderIndex == CURRENT_MISPLACED){					
+				if(orderIndex == CURRENT_MISPLACED){				
 					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//inputStackDescriptor.getSystemId(), 
 														contextLineNumber, //inputStackDescriptor.getLineNumber(), 
 														contextColumnNumber, //inputStackDescriptor.getColumnNumber(), 
 														child, 
 														inputStackDescriptor.getItemId(),
-														inputStackDescriptor.getItemIdentifier(),
+														inputStackDescriptor.getItemDescription(),
 														inputStackDescriptor.getSystemId(), 
 														inputStackDescriptor.getLineNumber(), 
-														inputStackDescriptor.getColumnNumber(), 
-														sourceDefinition, 
+														inputStackDescriptor.getColumnNumber(),
+														sourceDefinition,
 														reper);
-				}else if(orderIndex == PREVIOUS_MISPLACED){						
+				}else if(orderIndex == PREVIOUS_MISPLACED){
 					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//inputStackDescriptor.getSystemId(), 
 														contextLineNumber, //inputStackDescriptor.getLineNumber(), 
 														contextColumnNumber, //inputStackDescriptor.getColumnNumber(),															
 														prevDefinition,
-														prevItemId,
-														prevQName,
-														prevSystemId, 
-														prevLineNumber, 
-														prevColumnNumber,
+														activeInputDescriptor.getItemId(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														activeInputDescriptor.getItemDescription(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														activeInputDescriptor.getSystemId(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														activeInputDescriptor.getLineNumber(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														activeInputDescriptor.getColumnNumber(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),														
 														prevSourceDefinition,
 														reper);
+					activeInputDescriptor.unregisterClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
 				}
 				return true;
 			}else{
+			    if(prevChildInputRecordIndex != null)activeInputDescriptor.unregisterClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
 				return false;
 			}
 		}else{
@@ -234,27 +238,27 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 			String contextSystemId;
 			int contextLineNumber;
 			int contextColumnNumber;
-			if(starttSystemId == null){
+			if(!isStartSet){
 				contextSystemId = inputStackDescriptor.getSystemId();
 				contextLineNumber = inputStackDescriptor.getLineNumber();
 				contextColumnNumber = inputStackDescriptor.getColumnNumber();
 			}else{
-				contextSystemId = starttSystemId;
-				contextLineNumber = starttLineNumber;
-				contextColumnNumber = starttColumnNumber;
+				contextSystemId = activeInputDescriptor.getSystemId(startInputRecordIndex);
+				contextLineNumber = activeInputDescriptor.getLineNumber(startInputRecordIndex);
+				contextColumnNumber = activeInputDescriptor.getColumnNumber(startInputRecordIndex);
 			}
 				
-			if(orderIndex == CURRENT_MISPLACED){				
+			if(orderIndex == CURRENT_MISPLACED){			
 				errorCatcher.misplacedContent(rule, 
 													contextSystemId,//inputStackDescriptor.getSystemId(), 
 													contextLineNumber, //inputStackDescriptor.getLineNumber(), 
 													contextColumnNumber, //inputStackDescriptor.getColumnNumber(), 
 													child, 
 													inputStackDescriptor.getItemId(),
-													inputStackDescriptor.getItemIdentifier(),
+													inputStackDescriptor.getItemDescription(),
 													inputStackDescriptor.getSystemId(), 
 													inputStackDescriptor.getLineNumber(), 
-													inputStackDescriptor.getColumnNumber(), 
+													inputStackDescriptor.getColumnNumber(),
 													sourceDefinition,
 													reper);
 				}else if(orderIndex == PREVIOUS_MISPLACED){
@@ -263,92 +267,96 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 														contextLineNumber, //inputStackDescriptor.getLineNumber(), 
 														contextColumnNumber, //inputStackDescriptor.getColumnNumber(),															
 														prevDefinition,
-														prevItemId,
-														prevQName,
-														prevSystemId, 
-														prevLineNumber, 
-														prevColumnNumber,
+														activeInputDescriptor.getItemId(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														activeInputDescriptor.getItemDescription(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														activeInputDescriptor.getSystemId(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														activeInputDescriptor.getLineNumber(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														activeInputDescriptor.getColumnNumber(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
 														prevSourceDefinition,
 														reper);
+					activeInputDescriptor.unregisterClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
 				}
 		}
-		return true;
-		
+		return true;		
 	}
 	
 	
 	public boolean handleContentOrder(int expectedOrderHandlingCount, APattern child, APattern sourceDefinition, InternalConflictResolver resolver){
+	    /*System.out.println(hashCode()+" 2 "+inputStackDescriptor.getItemDescription()+" "+inputStackDescriptor.getLineNumber());
+	    System.out.println("child "+child.hashCode()+"  "+child.toString());
+	    System.out.println("sourceDefinition "+sourceDefinition.hashCode()+"  "+sourceDefinition.toString());*/
+	    	    
 		int newChildIndex = child.getChildIndex();
+		int prevCorrectChildIndex = childRecordIndex < 0 ? -1 : childDefinition[childRecordIndex].getChildIndex();
+        int oldCorrectChildIndex = childRecordIndex-1 < 0 ? -1 : childDefinition[childRecordIndex-1].getChildIndex();
 		int orderIndex = GOOD_ORDER;
 		
+		/*System.out.println("oldCorrectChildIndex="+oldCorrectChildIndex);
+		System.out.println("prevCorrectChildIndex="+prevCorrectChildIndex);
+		System.out.println("newChildIndex="+newChildIndex);*/
+		
 		APattern reper = null;
-		boolean[] prevConflict = null;
 		APattern prevDefinition = null;
-		int[] prevItemId = null;
-		String[] prevQName = null; 
-		String[] prevSystemId = null; 
-		int[] prevLineNumber = null; 
-		int[] prevColumnNumber = null; 
+		int[] prevChildInputRecordIndex = null;
 		APattern[] prevSourceDefinition = null;
+		int prevDetailsCurrentIndex = -1;
 
 		
 		if(stackConflictsHandler != null && stackConflictsHandler.isConflictRule(child)){
 			stackConflictsHandler.record(child, (AGroup)rule, resolver);
 		}
-		if(newChildIndex < childIndex[lastCorrectChildIndexIndex]){			
+		if(newChildIndex < prevCorrectChildIndex){			
 			// add here the reduce/reset part if the contentHandler is satisfied and reduction acceptable			
 			// return; the error is neihter located nor reported
 						
-			if(newChildIndex < childIndex[lastCorrectChildIndexIndex-1]){
+			if(newChildIndex < oldCorrectChildIndex){
 				//newChildIndex is misplaced
                 if(handleOrderUncheckedReduce(sourceDefinition)){					
                     return false;
                 }
                 
 				orderIndex = CURRENT_MISPLACED;
-				reper = childDefinition[lastCorrectChildIndexIndex]; 				
+				reper = childDefinition[childRecordIndex]; 				
 				// do not store, it cannot be used for comparisons
-			}else if(newChildIndex == childIndex[lastCorrectChildIndexIndex-1]){				
-				// childIndex[lastCorrectChildIndexIndex] is misplaced
+			}else if(newChildIndex == oldCorrectChildIndex){				
+				// cprevCorrectChildIndex is misplaced
                 if(handleOrderCheckedReduce(sourceDefinition)){					
                     return false;
                 }
 				orderIndex = PREVIOUS_MISPLACED;
 				
 				reper = child;
-				prevDefinition = childDefinition[lastCorrectChildIndexIndex];
-				prevItemId = childItemId[lastCorrectChildIndexIndex];
-				prevQName = childQName[lastCorrectChildIndexIndex];
-				prevSystemId = childSystemId[lastCorrectChildIndexIndex]; 
-				prevLineNumber = childLineNumber[lastCorrectChildIndexIndex]; 
-				prevColumnNumber = childColumnNumber[lastCorrectChildIndexIndex];
-				prevSourceDefinition = childSourceDefinition[lastCorrectChildIndexIndex];
+				prevDefinition = childDefinition[childRecordIndex];
+				prevChildInputRecordIndex = childInputRecordIndex[childRecordIndex];
+				prevSourceDefinition = childSourceDefinition[childRecordIndex];
+				prevDetailsCurrentIndex = childDetailsCurrentIndex[childRecordIndex];
+				
+				activeInputDescriptor.registerClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
 				
 				removeLastCorrectChildIndex();					
 				addLastCorrectChildIndex(sourceDefinition);
 			}else{
-				//childIndex[lastCorrectChildIndexIndex] is misplaced
+				//prevCorrectChildIndex is misplaced
                 if(handleOrderCheckedReduce(sourceDefinition)){					
                     return false;
                 }
 				orderIndex = PREVIOUS_MISPLACED;				
 				
 				reper = child;
-				prevDefinition = childDefinition[lastCorrectChildIndexIndex];
-				prevItemId = childItemId[lastCorrectChildIndexIndex];
-				prevQName = childQName[lastCorrectChildIndexIndex];
-				prevSystemId = childSystemId[lastCorrectChildIndexIndex]; 
-				prevLineNumber = childLineNumber[lastCorrectChildIndexIndex]; 
-				prevColumnNumber = childColumnNumber[lastCorrectChildIndexIndex];
-				prevSourceDefinition = childSourceDefinition[lastCorrectChildIndexIndex];
+				prevDefinition = childDefinition[childRecordIndex];
+				prevChildInputRecordIndex = childInputRecordIndex[childRecordIndex];
+				prevSourceDefinition = childSourceDefinition[childRecordIndex];
+				prevDetailsCurrentIndex = childDetailsCurrentIndex[childRecordIndex];
+				
+				activeInputDescriptor.registerClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
 				
 				removeLastCorrectChildIndex();				
-				addLastCorrectChildIndex(newChildIndex, child, sourceDefinition);
+				addLastCorrectChildIndex(child, sourceDefinition);
 			}
-		}else if(newChildIndex == childIndex[lastCorrectChildIndexIndex]){
+		}else if(newChildIndex == prevCorrectChildIndex){
 			addLastCorrectChildIndex(sourceDefinition);
 		}else{			
-			addLastCorrectChildIndex(newChildIndex, child, sourceDefinition);					
+			addLastCorrectChildIndex(child, sourceDefinition);					
 		}
 		if(--expectedOrderHandlingCount > 0){		
 			if(parent.handleContentOrder(expectedOrderHandlingCount, rule, sourceDefinition, resolver)){
@@ -356,89 +364,92 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 				String contextSystemId;
 				int contextLineNumber;
 				int contextColumnNumber;
-				if(starttSystemId == null){// TODO could use setStart, think about it
+				if(!isStartSet){// TODO could use setStart, think about it
 					contextSystemId = inputStackDescriptor.getSystemId();
 					contextLineNumber = inputStackDescriptor.getLineNumber();
 					contextColumnNumber = inputStackDescriptor.getColumnNumber();
 				}else{
-					contextSystemId = starttSystemId;
-					contextLineNumber = starttLineNumber;
-					contextColumnNumber = starttColumnNumber;
+					contextSystemId = activeInputDescriptor.getSystemId(startInputRecordIndex);
+					contextLineNumber = activeInputDescriptor.getLineNumber(startInputRecordIndex);
+					contextColumnNumber = activeInputDescriptor.getColumnNumber(startInputRecordIndex);
 				}
 				
-				if(orderIndex == CURRENT_MISPLACED){					
+				if(orderIndex == CURRENT_MISPLACED){				
 					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//inputStackDescriptor.getSystemId(), 
 														contextLineNumber, //inputStackDescriptor.getLineNumber(), 
 														contextColumnNumber, //inputStackDescriptor.getColumnNumber(), 
 														child, 
 														inputStackDescriptor.getItemId(),
-														inputStackDescriptor.getItemIdentifier(),
+														inputStackDescriptor.getItemDescription(),
 														inputStackDescriptor.getSystemId(), 
 														inputStackDescriptor.getLineNumber(), 
-														inputStackDescriptor.getColumnNumber(), 
-														sourceDefinition, 
+														inputStackDescriptor.getColumnNumber(),
+														sourceDefinition,
 														reper);
-				}else if(orderIndex == PREVIOUS_MISPLACED){						
-					errorCatcher.misplacedContent(rule, 
-														contextSystemId,//inputStackDescriptor.getSystemId(), 
-														contextLineNumber, //inputStackDescriptor.getLineNumber(), 
-														contextColumnNumber, //inputStackDescriptor.getColumnNumber(),															
-														prevDefinition,
-														prevItemId,
-														prevQName,
-														prevSystemId, 
-														prevLineNumber, 
-														prevColumnNumber,
-														prevSourceDefinition,
-														reper);
-				}
-				return true;
-			}else{
-				return false;
-			}
-		}else{
-			// report errors
-			String contextSystemId;
-			int contextLineNumber;
-			int contextColumnNumber;
-			if(starttSystemId == null){
-				contextSystemId = inputStackDescriptor.getSystemId();
-				contextLineNumber = inputStackDescriptor.getLineNumber();
-				contextColumnNumber = inputStackDescriptor.getColumnNumber();
-			}else{
-				contextSystemId = starttSystemId;
-				contextLineNumber = starttLineNumber;
-				contextColumnNumber = starttColumnNumber;
-			}
-				
-			if(orderIndex == CURRENT_MISPLACED){				
-				errorCatcher.misplacedContent(rule, 
-													contextSystemId,//inputStackDescriptor.getSystemId(), 
-													contextLineNumber, //inputStackDescriptor.getLineNumber(), 
-													contextColumnNumber, //inputStackDescriptor.getColumnNumber(), 
-													child, 
-													inputStackDescriptor.getItemId(),
-													inputStackDescriptor.getItemIdentifier(),
-													inputStackDescriptor.getSystemId(), 
-													inputStackDescriptor.getLineNumber(), 
-													inputStackDescriptor.getColumnNumber(), 
-													sourceDefinition,
-													reper);
 				}else if(orderIndex == PREVIOUS_MISPLACED){
 					errorCatcher.misplacedContent(rule, 
 														contextSystemId,//inputStackDescriptor.getSystemId(), 
 														contextLineNumber, //inputStackDescriptor.getLineNumber(), 
 														contextColumnNumber, //inputStackDescriptor.getColumnNumber(),															
 														prevDefinition,
-														prevItemId,
-														prevQName,														
-														prevSystemId, 
-														prevLineNumber, 
-														prevColumnNumber,
+														activeInputDescriptor.getItemId(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														activeInputDescriptor.getItemDescription(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														activeInputDescriptor.getSystemId(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														activeInputDescriptor.getLineNumber(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														activeInputDescriptor.getColumnNumber(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
 														prevSourceDefinition,
 														reper);
+					activeInputDescriptor.unregisterClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
 				}
+				return true;
+			}else{
+			    if(prevChildInputRecordIndex != null)activeInputDescriptor.unregisterClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
+				return false;				
+			}
+		}else{
+			// report errors
+			String contextSystemId;
+			int contextLineNumber;
+			int contextColumnNumber;
+			if(!isStartSet){
+				contextSystemId = inputStackDescriptor.getSystemId();
+				contextLineNumber = inputStackDescriptor.getLineNumber();
+				contextColumnNumber = inputStackDescriptor.getColumnNumber();
+			}else{
+				contextSystemId = activeInputDescriptor.getSystemId(startInputRecordIndex);
+				contextLineNumber = activeInputDescriptor.getLineNumber(startInputRecordIndex);
+				contextColumnNumber = activeInputDescriptor.getColumnNumber(startInputRecordIndex);
+			}
+				
+			if(orderIndex == CURRENT_MISPLACED){			
+				errorCatcher.misplacedContent(rule, 
+													contextSystemId,//inputStackDescriptor.getSystemId(), 
+													contextLineNumber, //inputStackDescriptor.getLineNumber(), 
+													contextColumnNumber, //inputStackDescriptor.getColumnNumber(), 
+													child, 
+													inputStackDescriptor.getItemId(),
+													inputStackDescriptor.getItemDescription(),
+													inputStackDescriptor.getSystemId(), 
+													inputStackDescriptor.getLineNumber(), 
+													inputStackDescriptor.getColumnNumber(),
+													sourceDefinition,
+													reper);
+            }else if(orderIndex == PREVIOUS_MISPLACED){
+                errorCatcher.misplacedContent(rule, 
+                                                    contextSystemId,//inputStackDescriptor.getSystemId(), 
+                                                    contextLineNumber, //inputStackDescriptor.getLineNumber(), 
+                                                    contextColumnNumber, //inputStackDescriptor.getColumnNumber(),															
+                                                    prevDefinition,
+                                                    activeInputDescriptor.getItemId(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+                                                    activeInputDescriptor.getItemDescription(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+                                                    activeInputDescriptor.getSystemId(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+                                                    activeInputDescriptor.getLineNumber(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+                                                    activeInputDescriptor.getColumnNumber(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+                                                    prevSourceDefinition,
+                                                    reper);
+                activeInputDescriptor.unregisterClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
+            }
 		}
 		return true;
 		
@@ -446,7 +457,7 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 
 	public int functionalEquivalenceCode(){		
 		int orderCode = 0;
-		for(int i  = 2; i <= lastCorrectChildIndexIndex; i++){
+		for(int i = 0; i <= childRecordIndex; i++){
 			orderCode += childDefinition[i].hashCode(); 
 		}
 		return super.functionalEquivalenceCode() + orderCode;
@@ -463,24 +474,17 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 						satisfactionLevel,
 						saturationLevel,
 						contentHandler.getContentIndex(),						
-						starttSystemId,
-						starttLineNumber,
-						starttColumnNumber,
-						starttQName,
-						childIndex,
+						startInputRecordIndex,
+						isStartSet,
 						childDefinition,
-						childItemId,
-						childQName,
-						childSystemId,
-						childLineNumber,
-						childColumnNumber,
+						childInputRecordIndex,
 						childSourceDefinition,
-						lastCorrectChildIndexIndex,
-						correctChildIndexesSize);
-		copy.setOriginal(this);
+						childRecordIndex,
+						childDetailsCurrentIndex);
+		copy.setOriginal(this);		
 		return copy;
 	}
-	public GroupHandler getCopy(StructureHandler parent, StackHandler stackHandler, ErrorCatcher errorCatcher){
+	public GroupHandler getCopy(StructureHandler parent, StackHandler stackHandler, ErrorCatcher errorCatcher){	    
 		GroupHandler copy = (GroupHandler)((AGroup)rule).getStructureHandler(errorCatcher, 
 													(StructureValidationHandler)parent, 
 													stackHandler);
@@ -492,20 +496,13 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 						satisfactionLevel,
 						saturationLevel,
 						contentHandler.getContentIndex(),						
-						starttSystemId,
-						starttLineNumber,
-						starttColumnNumber,
-						starttQName,
-						childIndex,
+						startInputRecordIndex,
+						isStartSet,
 						childDefinition,
-						childItemId,
-						childQName,
-						childSystemId,
-						childLineNumber,
-						childColumnNumber,
+						childInputRecordIndex,
 						childSourceDefinition,
-						lastCorrectChildIndexIndex,
-						correctChildIndexesSize);
+						childRecordIndex,
+						childDetailsCurrentIndex);
 		copy.setOriginal(this);
 		return copy;
 	}	
@@ -544,20 +541,17 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		if(stackConflictsHandler != null){
 			stackConflictsHandler.close((AGroup)rule);
 		}
-		super.setEmptyState();		
-		lastCorrectChildIndexIndex = 1;
-		childIndex[0] = -1;
-		childIndex[1] = -1;
-		for(int i = 0; i < correctChildIndexesSize; i++){
-			childDefinition[i] = null;
-			childItemId[i] = null;
-			childQName[i] = null;
-			childSystemId[i] = null;
-			childLineNumber[i] = null;
-			childColumnNumber[i] = null;
-			childSourceDefinition[i] = null;
-		}		
+		super.setEmptyState();
 		
+		for(int j = 0; j <= childRecordIndex; j++){
+		    for(int i = 0; i <= childDetailsCurrentIndex[j]; i++){
+		        activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[j][i]);
+		        childSourceDefinition[j][i] = null;
+		    }
+		    childDetailsCurrentIndex[j] = -1;
+		    childDefinition[j] = null;
+		}
+		childRecordIndex = -1;
 	}			
 	//End InnerPattern------------------------------------------------------------------
 	
@@ -585,58 +579,33 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 							int satisfactionLevel,
 							int saturationLevel,
 							int contentHandlerContentIndex,
-							String startSystemId,
-							int startLineNumber,
-							int startColumnNumber,
-							String startQName,
-							int[] childIndex,
+							int startInputRecordIndex,
+							boolean isStartSet,
 							APattern[] childDefinition,
-							int[][] childItemId,
-							String[][] childQName,
-							String[][] childSystemId,
-							int[][] childLineNumber,
-							int[][] childColumnNumber,
+							int[][] childInputRecordIndex,
 							APattern[][] childSourceDefinition,
-							int lastCorrectChildIndexIndex,
-							int correctChildIndexesSize){		
-		if(this.correctChildIndexesSize < correctChildIndexesSize){
-			this.childIndex = new int[correctChildIndexesSize];
-			this.childDefinition = new APattern[correctChildIndexesSize];
-			this.childItemId = new int[correctChildIndexesSize][];
-			this.childQName = new String[correctChildIndexesSize][];
-			this.childSystemId = new String[correctChildIndexesSize][];
-			this.childLineNumber = new int[correctChildIndexesSize][];
-			this.childColumnNumber = new int[correctChildIndexesSize][];
-			this.childSourceDefinition = new APattern[correctChildIndexesSize][];
-			
-			this.correctChildIndexesSize = correctChildIndexesSize;
-			this.childIndex[0] = -1;
-			this.childIndex[1] = -1;
+							int childRecordIndex,
+							int[] childDetailsCurrentIndex){		
+		if(this.childDefinition.length < childDefinition.length){
+			this.childDefinition = new APattern[childDefinition.length];
+			this.childInputRecordIndex = new int[childDefinition.length][];
+			this.childSourceDefinition = new APattern[childDefinition.length][];
+            this.childDetailsCurrentIndex = new int[childDefinition.length];			
 		}		
 		
-		for(int i = 2; i <= lastCorrectChildIndexIndex; i++){
-			this.childIndex[i] = childIndex[i];						
-			this.childDefinition[i] = childDefinition[i];
-						
-			this.childItemId[i] = new int[childItemId[i].length];
-			System.arraycopy(childItemId[i], 0, this.childItemId[i], 0, childItemId[i].length);
-			
-			this.childQName[i] = new String[childQName[i].length];
-			System.arraycopy(childQName[i], 0, this.childQName[i], 0, childQName[i].length);
-
-			this.childSystemId[i] = new String[childSystemId[i].length];
-			System.arraycopy(childSystemId[i], 0, this.childSystemId[i], 0, childSystemId[i].length);
-			
-			this.childLineNumber[i] = new int[childLineNumber[i].length];
-			System.arraycopy(childLineNumber[i], 0, this.childLineNumber[i], 0, childLineNumber[i].length);
-			
-			this.childColumnNumber[i] = new int[childColumnNumber[i].length];
-			System.arraycopy(childColumnNumber[i], 0, this.childColumnNumber[i], 0, childColumnNumber[i].length);
-						
-			this.childSourceDefinition[i] = new APattern[childSourceDefinition[i].length];
-			System.arraycopy(childSourceDefinition[i], 0, this.childSourceDefinition[i], 0, childSourceDefinition[i].length);
+		for(int i = 0; i <= childRecordIndex; i++){		
+		    this.childDefinition[i] = childDefinition[i];				
+            this.childDetailsCurrentIndex[i] = childDetailsCurrentIndex[i];    
+		    
+            this.childInputRecordIndex[i] = new int[childInputRecordIndex[i].length];                
+            this.childSourceDefinition[i] = new APattern[childSourceDefinition[i].length];
+            for(int j = 0; j <= childDetailsCurrentIndex[i]; j++){
+                this.childInputRecordIndex[i][j] = childInputRecordIndex[i][j];                
+                this.childSourceDefinition[i][j] = childSourceDefinition[i][j];
+                activeInputDescriptor.registerClientForRecord(childInputRecordIndex[i][j]);
+			}
 		}
-		this.lastCorrectChildIndexIndex = lastCorrectChildIndexIndex;
+		this.childRecordIndex = childRecordIndex;
 			
 		
 		if(this.size < size){
@@ -667,157 +636,100 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 		}
 		this.satisfactionLevel = satisfactionLevel;
 		this.saturationLevel = saturationLevel;
-		this.starttSystemId = startSystemId;
-		this.starttLineNumber = startLineNumber;
-		this.starttColumnNumber = startColumnNumber;
-		this.starttQName = startQName;
+		
+		if(this.isStartSet){
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+        }
+		this.startInputRecordIndex = startInputRecordIndex;
+		this.isStartSet = isStartSet;
+		if(isStartSet){		    
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		}
 	}	
 		
 	
 	
-	// -> creates new arrays at lastCorrectChildIndexIndex++
-	private void addLastCorrectChildIndex(int newChildIndex, APattern definition, APattern sourceDefinition){
-		if(++lastCorrectChildIndexIndex == correctChildIndexesSize){
+	// -> creates new arrays at childRecordIndex++
+	private void addLastCorrectChildIndex(APattern definition, APattern sourceDefinition){
+		if(++childRecordIndex == childDefinition.length){
 			
-			correctChildIndexesSize++;
+			int size = childDefinition.length+childRecordIncreaseSizeAmount;
 			
-			int increased[] = new int[correctChildIndexesSize];
-			System.arraycopy(childIndex, 0, increased, 0, lastCorrectChildIndexIndex);
-			childIndex = increased;
-			
-			APattern increasedDefinition[] = new APattern[correctChildIndexesSize];
-			System.arraycopy(childDefinition, 0, increasedDefinition, 0, lastCorrectChildIndexIndex);
+			APattern increasedDefinition[] = new APattern[size];
+			System.arraycopy(childDefinition, 0, increasedDefinition, 0, childRecordIndex);
 			childDefinition = increasedDefinition;
 			
-			int[][] increasedCII = new int[correctChildIndexesSize][];
-			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
-				if(childItemId[i] != null){
-					increasedCII[i] = new int[childItemId[i].length];
-					System.arraycopy(childItemId[i], 0, increasedCII[i], 0, childItemId[i].length);
-				}
-			}
-			//System.arraycopy(childItemId, 0, increasedCII, 0, lastCorrectChildIndexIndex);
-			childItemId = increasedCII;
+			int increasedCDCI[] = new int[size];
+			System.arraycopy(childDetailsCurrentIndex, 0, increasedCDCI, 0, childRecordIndex);
+			childDetailsCurrentIndex = increasedCDCI;			
+			Arrays.fill(childDetailsCurrentIndex, childRecordIndex, childDetailsCurrentIndex.length, -1);			
 			
-			String increasedQName[][] = new String[correctChildIndexesSize][];
-			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
-				if(childQName[i] != null){
-					increasedQName[i] = new String[childQName[i].length];
-					System.arraycopy(childQName[i], 0, increasedQName[i], 0, childQName[i].length);
+			int[][] increasedCII = new int[size][];
+			for(int i = 0; i < childRecordIndex; i++){
+				if(childInputRecordIndex[i] != null){
+					increasedCII[i] = new int[childInputRecordIndex[i].length];
+					System.arraycopy(childInputRecordIndex[i], 0, increasedCII[i], 0, childDetailsCurrentIndex[i]+1);
 				}
 			}
-			//System.arraycopy(childQName, 0, increasedQName, 0, lastCorrectChildIndexIndex);
-			childQName = increasedQName;
-						
-			String increasedSystemId[][] = new String[correctChildIndexesSize][];
-			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
-				if(childSystemId[i] != null){
-					increasedSystemId[i] = new String[childSystemId[i].length];
-					System.arraycopy(childSystemId[i], 0, increasedSystemId[i], 0, childSystemId[i].length);
-				}
-			}
-			//System.arraycopy(childSystemId, 0, increasedSystemId, 0, lastCorrectChildIndexIndex);
-			childSystemId = increasedSystemId;
+			//System.arraycopy(childInputRecordIndex, 0, increasedCII, 0, childRecordIndex);
+			childInputRecordIndex = increasedCII;
 			
-			int increasedLineNumber[][] = new int[correctChildIndexesSize][];
-			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
-				if(childLineNumber[i] != null){
-					increasedLineNumber[i] = new int[childLineNumber[i].length];
-					System.arraycopy(childLineNumber[i], 0, increasedLineNumber[i], 0, childLineNumber[i].length);
-				}
-			}
-			//System.arraycopy(childLineNumber, 0, increasedLineNumber, 0, lastCorrectChildIndexIndex);
-			childLineNumber = increasedLineNumber;
-						
-			int increasedColumnNumber[][] = new int[correctChildIndexesSize][];
-			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
-				if(childColumnNumber[i] != null){
-					increasedColumnNumber[i] = new int[childColumnNumber[i].length];
-					System.arraycopy(childColumnNumber[i], 0, increasedColumnNumber[i], 0, childColumnNumber[i].length);
-				}
-			}
-			//System.arraycopy(childColumnNumber, 0, increasedColumnNumber, 0, lastCorrectChildIndexIndex);
-			childColumnNumber = increasedColumnNumber;
-			
-			APattern increasedSourceDefinition[][] = new APattern[correctChildIndexesSize][];
-			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
+			APattern increasedSourceDefinition[][] = new APattern[size][];
+			for(int i = 0; i < childRecordIndex; i++){
 				if(childSourceDefinition[i] != null){
 					increasedSourceDefinition[i] = new APattern[childSourceDefinition[i].length];
-					System.arraycopy(childSourceDefinition[i], 0, increasedSourceDefinition[i], 0, childSourceDefinition[i].length);
+					System.arraycopy(childSourceDefinition[i], 0, increasedSourceDefinition[i], 0, childDetailsCurrentIndex[i]+1);
 				}
 			}
-			//System.arraycopy(childSourceDefinition, 0, increasedSourceDefinition, 0, lastCorrectChildIndexIndex);
+			//System.arraycopy(childSourceDefinition, 0, increasedSourceDefinition, 0, childRecordIndex);
 			childSourceDefinition = increasedSourceDefinition;
 		}
-		childIndex[lastCorrectChildIndexIndex] = newChildIndex;		
-		childDefinition[lastCorrectChildIndexIndex] = definition;
+		childDefinition[childRecordIndex] = definition;
+		childDetailsCurrentIndex[childRecordIndex] = 0;
 		
-		childItemId[lastCorrectChildIndexIndex] = new int[1];
-		childItemId[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getItemId();
+		childInputRecordIndex[childRecordIndex] = new int[childDetailsInitialSize];
+		childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = inputStackDescriptor.getCurrentItemInputRecordIndex();
 		
-		childQName[lastCorrectChildIndexIndex] = new String[1];
-		childQName[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getItemIdentifier();
 		
-		childSystemId[lastCorrectChildIndexIndex] = new String[1];
-		childSystemId[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getSystemId();
-		
-		childLineNumber[lastCorrectChildIndexIndex] = new int[1];
-		childLineNumber[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getLineNumber();
-		
-		childColumnNumber[lastCorrectChildIndexIndex] = new int[1];
-		childColumnNumber[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getColumnNumber();
-		
-		childSourceDefinition[lastCorrectChildIndexIndex] = new ActiveTypeItem[1];
-		childSourceDefinition[lastCorrectChildIndexIndex][0] = sourceDefinition;
-		
+		childSourceDefinition[childRecordIndex] = new ActiveTypeItem[childDetailsInitialSize];
+		childSourceDefinition[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = sourceDefinition;
+				
+		activeInputDescriptor.registerClientForRecord(childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]]);
 	}	
-	//-> adds to the end of the arrays from lastCorrectChildIndexIndex
-	private void addLastCorrectChildIndex(APattern sourceDefinition){	
-		int oldLength = childQName[lastCorrectChildIndexIndex].length;		
-		int newLength = (oldLength+1);
+	//-> adds to the end of the arrays from childRecordIndex
+	private void addLastCorrectChildIndex(APattern sourceDefinition){
+		int oldLength = childInputRecordIndex[childRecordIndex].length;	
+		childDetailsCurrentIndex[childRecordIndex] += 1;
+		
+		if(childDetailsCurrentIndex[childRecordIndex] == oldLength){
+		    int newLength = oldLength+childDetailsIncreaseSizeAmount;
 		
 		
-		int increasedCII[] = new int[newLength];
-		System.arraycopy(childItemId[lastCorrectChildIndexIndex], 0, increasedCII, 0, oldLength);
-		childItemId[lastCorrectChildIndexIndex] = increasedCII;
-					
-		String increasedQName[] = new String[newLength];
-		System.arraycopy(childQName[lastCorrectChildIndexIndex], 0, increasedQName, 0, oldLength);
-		childQName[lastCorrectChildIndexIndex] = increasedQName;
-					
-		String increasedSystemId[] = new String[newLength];
-		System.arraycopy(childSystemId[lastCorrectChildIndexIndex], 0, increasedSystemId, 0, oldLength);
-		childSystemId[lastCorrectChildIndexIndex] = increasedSystemId;
+            int increasedCII[] = new int[newLength];
+            System.arraycopy(childInputRecordIndex[childRecordIndex], 0, increasedCII, 0, oldLength);
+            childInputRecordIndex[childRecordIndex] = increasedCII;
+			
+            APattern increasedSourceDefinition[] = new APattern[newLength];
+            System.arraycopy(childSourceDefinition[childRecordIndex], 0, increasedSourceDefinition, 0, oldLength);
+            childSourceDefinition[childRecordIndex] = increasedSourceDefinition;
+        }
+				
+		childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = inputStackDescriptor.getCurrentItemInputRecordIndex();
+		childSourceDefinition[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = sourceDefinition;
 		
-		int increasedLineNumber[] = new int[newLength];
-		System.arraycopy(childLineNumber[lastCorrectChildIndexIndex], 0, increasedLineNumber, 0, oldLength);
-		childLineNumber[lastCorrectChildIndexIndex] = increasedLineNumber;
-					
-		int increasedColumnNumber[] = new int[newLength];
-		System.arraycopy(childColumnNumber[lastCorrectChildIndexIndex], 0, increasedColumnNumber, 0, oldLength);
-		childColumnNumber[lastCorrectChildIndexIndex] = increasedColumnNumber;
-		
-		APattern increasedSourceDefinition[] = new APattern[newLength];
-		System.arraycopy(childSourceDefinition[lastCorrectChildIndexIndex], 0, increasedSourceDefinition, 0, oldLength);
-		childSourceDefinition[lastCorrectChildIndexIndex] = increasedSourceDefinition;
-		
-		int newIndex = oldLength;
-		
-		childQName[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getItemIdentifier();
-		childSystemId[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getSystemId();
-		childLineNumber[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getLineNumber();
-		childColumnNumber[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getColumnNumber();
-		childSourceDefinition[lastCorrectChildIndexIndex][newIndex] = sourceDefinition;
+		activeInputDescriptor.registerClientForRecord(childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]]);
+	}	
 	
-	}	
 	private void removeLastCorrectChildIndex(){
-		childDefinition[lastCorrectChildIndexIndex] = null;
-		childQName[lastCorrectChildIndexIndex] = null;
-		childSystemId[lastCorrectChildIndexIndex] = null;
-		childLineNumber[lastCorrectChildIndexIndex] = null;
-		childColumnNumber[lastCorrectChildIndexIndex] = null;
-		childSourceDefinition[lastCorrectChildIndexIndex] = null;
-		lastCorrectChildIndexIndex--;
+	    for(int i = 0; i <= childDetailsCurrentIndex[childRecordIndex]; i++){
+	        activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[childRecordIndex][i]);
+	        childSourceDefinition[childRecordIndex][i] = null;
+	    }
+	    
+		childDefinition[childRecordIndex] = null;	
+		childDetailsCurrentIndex[childRecordIndex] = -1;
+		
+		childRecordIndex--;
 	}	
 	public void accept(RuleHandlerVisitor visitor){
 		visitor.visit(this);

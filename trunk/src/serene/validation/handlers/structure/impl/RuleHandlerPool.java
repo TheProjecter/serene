@@ -396,9 +396,7 @@ public class RuleHandlerPool{
 				GroupMinimalReduceHandler[] groupMinimalReduceHandlerToFill,
 				GroupMaximalReduceHandler[] groupMaximalReduceHandlerToFill,
 				InterleaveMinimalReduceHandler[] interleaveMinimalReduceHandlerToFill,
-				InterleaveMaximalReduceHandler[] interleaveMaximalReduceHandlerToFill){
-	    
-	    
+				InterleaveMaximalReduceHandler[] interleaveMaximalReduceHandlerToFill){	    
 		int particleHandlerFillCount;
 		if(particleHandlerToFill == null || particleHandlerToFill.length < particleHandlerAverageUse){
 			particleHandlerToFill = new ParticleHandler[particleHandlerAverageUse];

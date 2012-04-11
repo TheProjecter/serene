@@ -50,6 +50,8 @@ import serene.validation.handlers.match.MatchHandler;
 
 import serene.validation.handlers.content.ElementEventHandler;
 import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
+
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
@@ -85,6 +87,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 	SpaceCharsHandler spaceHandler;
 	MatchHandler matchHandler;
 	ErrorDispatcher errorDispatcher;
+	ActiveInputDescriptor activeInputDescriptor;
 	InputStackDescriptor inputStackDescriptor;
 	CharsBuffer charsBuffer;
 		
@@ -137,8 +140,9 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		
 		this.schemaModel = schemaModel;
 		                
-		errorDispatcher = new ErrorDispatcher(debugWriter);		
-		inputStackDescriptor = new InputStackDescriptor(debugWriter);
+		errorDispatcher = new ErrorDispatcher(debugWriter);
+        activeInputDescriptor = new ActiveInputDescriptor();		
+		inputStackDescriptor = new InputStackDescriptor(activeInputDescriptor, debugWriter);
 		matchHandler  = new MatchHandler(debugWriter);		
 		charsBuffer = new CharsBuffer(debugWriter);		
 		spaceHandler = new SpaceCharsHandler(debugWriter);					
@@ -212,7 +216,8 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		errorDispatcher.init();
 		documentContext.reset();        
 		inputStackDescriptor.clear();
-		activeModel = schemaModel.getActiveModel(inputStackDescriptor, 
+		activeModel = schemaModel.getActiveModel(activeInputDescriptor,
+		                                                inputStackDescriptor, 
 														errorDispatcher);
         if(activeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Due to errors in the schema document, it cannot be used for validation.");
         
@@ -285,7 +290,6 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 							String localName, 
 							String qName, 
 							Attributes attributes) throws SAXException{
-		//System.out.println((++count)+" "+locator.getLineNumber()+" "+qName);
 		char[] charContent = charsBuffer.removeCharsArray();
 		if(charContent.length > 0){			
 			elementHandler.handleInnerCharacters(charContent);		
@@ -359,12 +363,16 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler.handleEndElement(restrictToFileName, locator);
 		elementHandler.recycle();
 		elementHandler = null;
+		inputStackDescriptor.popElement();
 		activeModel.recycle();
 		activeModel = null;
         if(level1AttributeIdType){
             attributeIdTypeHandler.handleRefs(locator);
         }
         if(contentHandler != null) contentHandler.endDocument();
+        
+        
+        activeInputDescriptor.printLeftOvers();
 	}
 	
 	void xmlVersion(String version){}
@@ -445,7 +453,9 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
             // recognized but not set, only for retrieval
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
             // recognized but not set, only for retrieval
-        }else if(name.equals(Constants.ITEM_LOCATOR_PROPERTY)){
+        }else if(name.equals(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY)){
+            // recognized but not set, only for retrieval
+        }else if(name.equals(Constants.INPUT_STACK_DESCRIPTOR_PROPERTY)){
             // recognized but not set, only for retrieval
         }else if(name.equals(Constants.DOCUMENT_CONTEXT_PROPERTY)){
             // recognized but not set, only for retrieval
@@ -473,8 +483,10 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
             return errorHandlerPool;
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
             return eventHandlerPool;
-        }else if(name.equals(Constants.ITEM_LOCATOR_PROPERTY)){
+        }else if(name.equals(Constants.INPUT_STACK_DESCRIPTOR_PROPERTY)){
             return inputStackDescriptor;
+        }else if(name.equals(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY)){
+            return activeInputDescriptor;
         }else if(name.equals(Constants.DOCUMENT_CONTEXT_PROPERTY)){
             return documentContext;
         }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){

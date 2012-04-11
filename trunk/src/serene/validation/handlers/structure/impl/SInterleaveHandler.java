@@ -86,19 +86,9 @@ public class SInterleaveHandler extends InterleaveHandler{
 	// void handleValidatingReduce() super
 	// int functionalEquivalenceCode() super
 	public SInterleaveHandler getCopy(StackHandler stackHandler, ErrorCatcher errorCatcher){
-		/*InterleaveHandler copy = ((AInterleave)rule).getStructureHandler(errorCatcher, parent, stackHandler);
-		copy.setState(stackHandler, 
-						errorCatcher, 
-						childParticleHandlers, 
-						childStructureHandlers, 
-						contentHandler.getContentIndex());
-		return (SInterleaveHandler)copy;*/
 		throw new IllegalStateException();
 	}
 	public SInterleaveHandler getCopy(StructureHandler parent, StackHandler stackHandler, ErrorCatcher errorCatcher){
-		/*InterleaveHandler copy = ((AInterleave)rule).getStructureHandler(errorCatcher, (StructureValidationHandler)parent, stackHandler);
-		copy.setState(stackHandler, errorCatcher, childParticleHandlers, childStructureHandlers, contentHandler.getContentIndex());
-		return (SInterleaveHandler)copy;*/
 		throw new IllegalStateException();
 	}
 	public SInterleaveHandler getOriginal(){

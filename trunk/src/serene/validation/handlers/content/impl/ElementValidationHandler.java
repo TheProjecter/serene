@@ -236,7 +236,7 @@ class ElementValidationHandler extends ValidatingEEH
 	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
         for(int i = 0; i < HANDLER_COUNT; i++){
             if(contextErrorHandler[i] != null){            
-                contextErrorHandler[i].handle(ContextErrorHandler.ELEMENT, inputStackDescriptor.getItemIdentifier(), element, restrictToFileName, locator);
+                contextErrorHandler[i].handle(ContextErrorHandler.ELEMENT, inputStackDescriptor.getItemDescription(), element, restrictToFileName, locator);
             }
         }
 	}

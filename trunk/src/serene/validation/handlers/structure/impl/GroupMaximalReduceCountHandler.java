@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.handlers.structure.impl;
 
+import java.util.Arrays;
+
 import serene.util.IntList;
 
 import serene.validation.schema.active.components.APattern;
@@ -43,16 +45,22 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	final int CURRENT_MISPLACED = 0;
 	final int PREVIOUS_MISPLACED = 1;
 	
-	int[] childIndex;
-	APattern[] childDefinition;
-	String[][] childQName;
-	String[][] childSystemId;
-	int[][] childLineNumber;
-	int[][] childColumnNumber;
+	APattern[] childDefinition;	
+	int[][] childInputRecordIndex;	
 	APattern[][] childSourceDefinition;
 	
-	int lastCorrectChildIndexIndex;
-	int correctChildIndexesSize;
+	int childRecordIndex;
+	int childRecordIncreaseSizeAmount;
+	int childRecordInitialSize;
+	
+    /**
+    * To keep track of the current index in the childInputRecordIndex and  
+    * childSourceDefinition so that it's not necessary to increment size, but
+    * it can grow with bigger steps.
+    */	
+	int[] childDetailsCurrentIndex;
+	int childDetailsInitialSize;
+	int childDetailsIncreaseSizeAmount;
 
 	IntList startedCountList;
 	
@@ -60,19 +68,20 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	GroupMaximalReduceCountHandler(MessageWriter debugWriter){
 		super(debugWriter);
 	
-		lastCorrectChildIndexIndex = 1;
-		correctChildIndexesSize = 2;
+		childRecordIndex = -1;
+		childRecordInitialSize = 10;
+		childRecordIncreaseSizeAmount = 10;
 		
-		childIndex = new int[correctChildIndexesSize];
-		childIndex[0] = -1;
-		childIndex[1] = -1;
 		
-		childDefinition = new APattern[correctChildIndexesSize];
-		childQName = new String[correctChildIndexesSize][];
-		childSystemId = new String[correctChildIndexesSize][];
-		childLineNumber = new int[correctChildIndexesSize][];
-		childColumnNumber = new int[correctChildIndexesSize][];
-		childSourceDefinition = new APattern[correctChildIndexesSize][];
+		childDefinition = new APattern[childRecordInitialSize];
+		childInputRecordIndex = new int[childRecordInitialSize][];
+		childSourceDefinition = new APattern[childRecordInitialSize][];
+        
+		childDetailsCurrentIndex = new int[childRecordInitialSize];
+		Arrays.fill(childDetailsCurrentIndex, -1);
+		childDetailsIncreaseSizeAmount = 10;
+		childDetailsInitialSize = 10;
+		
 	}
 
 	void init(IntList reduceCountList, IntList startedCountList, AGroup group, ErrorCatcher errorCatcher, MaximalReduceStackHandler stackHandler){
@@ -136,7 +145,10 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	}
 	public boolean handleContentOrder(int expectedOrderHandlingCount, APattern child, APattern sourceDefinition){
 		int newChildIndex = child.getChildIndex();
-		if(newChildIndex < childIndex[lastCorrectChildIndexIndex]){
+		int prevCorrectChildIndex = childRecordIndex < 0 ? -1 : childDefinition[childRecordIndex].getChildIndex();
+		int orderIndex = GOOD_ORDER;
+		
+		if(newChildIndex < prevCorrectChildIndex){
 			// Set the currentChildParticleHandler so that the handleOrderReduce
 			// knows what to reduce. The decision and reduction takes place only
 			// on the current child.
@@ -147,10 +159,10 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 			if(handleCurrentChildOrderReduce(child, sourceDefinition)){
 				return false;
 			}
-		}else if(newChildIndex == childIndex[lastCorrectChildIndexIndex]){
+		}else if(newChildIndex == prevCorrectChildIndex){
 			addLastCorrectChildIndex(sourceDefinition);
 		}else{			
-			addLastCorrectChildIndex(newChildIndex, child, sourceDefinition);					
+			addLastCorrectChildIndex(child, sourceDefinition);					
 		}
 		return true;		
 	}
@@ -161,69 +173,18 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	
 	public int functionalEquivalenceCode(){
 		int orderCode = 0;
-		for(int i = 0; i < childIndex.length; i++){
-			orderCode += childIndex[i];
+		for(int i = 0; i <= childRecordIndex; i++){
+			orderCode += childDefinition[i].getChildIndex();
 		}	
-		orderCode *= childIndex.length;
+		orderCode *= (childRecordIndex+1);
 		orderCode *= 1000;
 		return super.functionalEquivalenceCode() + orderCode;
 	}	
 	public GroupMaximalReduceCountHandler getCopy(StackHandler stackHandler, ErrorCatcher errorCatcher){
 		throw new IllegalStateException();
-		/*
-		GroupMaximalReduceCountHandler copy = ((AGroup)rule).getStructureHandler(null,
-																				null,
-																				errorCatcher,
-																				(MaximalReduceStackHandler)stackHandler);
-		copy.setState(stackHandler, 
-						errorCatcher, 
-						childParticleHandlers, 
-						childStructureHandlers,
-						satisfactionLevel,
-						saturationLevel,
-						contentHandler.getContentIndex(),
-						starttSystemId,
-						starttLineNumber,
-						starttColumnNumber,
-						starttQName,
-						childIndex,
-						childDefinition,
-						childQName,
-						childSystemId,
-						childLineNumber,
-						childColumnNumber,
-						childSourceDefinition,
-						lastCorrectChildIndexIndex,
-						correctChildIndexesSize);
-		return copy;
-		*/
 	}
 	public GroupMaximalReduceCountHandler getCopy(StructureHandler parent, StackHandler stackHandler, ErrorCatcher errorCatcher){
 		throw new IllegalStateException();
-		/*GroupMaximalReduceCountHandler copy = ((AGroup)rule).getMaximalReduceCountHandler(errorCatcher, 
-													(StructureValidationHandler)parent, 
-													stackHandler);
-		copy.setState(stackHandler, 
-						errorCatcher, 
-						childParticleHandlers, 
-						childStructureHandlers,
-						satisfactionLevel,
-						saturationLevel,
-						contentHandler.getContentIndex(),
-						starttSystemId,
-						starttLineNumber,
-						starttColumnNumber,
-						starttQName,
-						childIndex,
-						childDefinition,
-						childQName,
-						childSystemId,
-						childLineNumber,
-						childColumnNumber,
-						childSourceDefinition,
-						lastCorrectChildIndexIndex,
-						correctChildIndexesSize);
-		return copy;*/
 	}	
 	public GroupMaximalReduceCountHandler getCopy(IntList reduceCountList, IntList startedCountList, StackHandler stackHandler, ErrorCatcher errorCatcher){
 		GroupMaximalReduceCountHandler copy = ((AGroup)rule).getStructureHandler(reduceCountList,
@@ -238,19 +199,13 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 						satisfactionLevel,
 						saturationLevel,
 						contentHandler.getContentIndex(),
-						starttSystemId,
-						starttLineNumber,
-						starttColumnNumber,
-						starttQName,
-						childIndex,
+						startInputRecordIndex,
+						isStartSet,
 						childDefinition,
-						childQName,
-						childSystemId,
-						childLineNumber,
-						childColumnNumber,
+						childInputRecordIndex,
 						childSourceDefinition,
-						lastCorrectChildIndexIndex,
-						correctChildIndexesSize);
+						childRecordIndex,
+						childDetailsCurrentIndex);
 		copy.setOriginal(this);
 		return copy;
 	}
@@ -325,17 +280,16 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	//for Reusable implementation
 	void setEmptyState(){
 		super.setEmptyState();
-		lastCorrectChildIndexIndex = 1;
-		childIndex[0] = -1;
-		childIndex[1] = -1;
-		for(int i = 0; i < correctChildIndexesSize; i++){
-			childDefinition[i] = null;
-			childQName[i] = null;
-			childSystemId[i] = null;
-			childLineNumber[i] = null;
-			childColumnNumber[i] = null;
-			childSourceDefinition[i] = null;
-		}		
+		
+		for(int j = 0; j <= childRecordIndex; j++){
+		    for(int i = 0; i <= childDetailsCurrentIndex[j]; i++){
+		        activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[j][i]);
+		        childSourceDefinition[j][i] = null;
+		    }
+		    childDetailsCurrentIndex[j] = -1;
+		    childDefinition[j] = null;
+		}
+		childRecordIndex = -1;
 		
 	}			
 	//End InnerPattern------------------------------------------------------------------
@@ -415,52 +369,34 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 							int satisfactionLevel,
 							int saturationLevel,
 							int contentHandlerContentIndex,
-							String startSystemId,
-							int startLineNumber,
-							int startColumnNumber,
-							String startQName,
-							int[] childIndex,
+							int startInputRecordIndex,
+							boolean isStartSet,
 							APattern[] childDefinition,
-							String[][] childQName,
-							String[][] childSystemId,
-							int[][] childLineNumber,
-							int[][] childColumnNumber,
+							int[][] childInputRecordIndex,
 							APattern[][] childSourceDefinition,
-							int lastCorrectChildIndexIndex,
-							int correctChildIndexesSize){		
-		if(this.correctChildIndexesSize < correctChildIndexesSize){
-			this.childIndex = new int[correctChildIndexesSize];
-			this.childDefinition = new APattern[correctChildIndexesSize];
-			this.childQName = new String[correctChildIndexesSize][];
-			this.childSystemId = new String[correctChildIndexesSize][];
-			this.childLineNumber = new int[correctChildIndexesSize][];
-			this.childColumnNumber = new int[correctChildIndexesSize][];
-			this.childSourceDefinition = new APattern[correctChildIndexesSize][];
-			
-			this.correctChildIndexesSize = correctChildIndexesSize;
-		}
+							int childRecordIndex,
+							int[] childDetailsCurrentIndex){		
+		if(this.childDefinition.length < childDefinition.length){
+			this.childDefinition = new APattern[childDefinition.length];
+			this.childInputRecordIndex = new int[childDefinition.length][];
+			this.childSourceDefinition = new APattern[childDefinition.length][];
+            this.childDetailsCurrentIndex = new int[childDefinition.length];			
+		}		
 		
-		
-		for(int i = 2; i <= lastCorrectChildIndexIndex; i++){
-			this.childIndex[i] = childIndex[i];			
-			this.childDefinition[i] = childDefinition[i];
-						
-			this.childQName[i] = new String[childQName[i].length];
-			System.arraycopy(childQName[i], 0, this.childQName[i], 0, childQName[i].length);
-			
-			this.childSystemId[i] = new String[childSystemId[i].length];
-			System.arraycopy(childSystemId[i], 0, this.childSystemId[i], 0, childSystemId[i].length);
-			
-			this.childLineNumber[i] = new int[childLineNumber[i].length];
-			System.arraycopy(childLineNumber[i], 0, this.childLineNumber[i], 0, childLineNumber[i].length);
-			
-			this.childColumnNumber[i] = new int[childColumnNumber[i].length];
-			System.arraycopy(childColumnNumber[i], 0, this.childColumnNumber[i], 0, childColumnNumber[i].length);
-						
-			this.childSourceDefinition[i] = new APattern[childSourceDefinition[i].length];
-			System.arraycopy(childSourceDefinition[i], 0, this.childSourceDefinition[i], 0, childSourceDefinition[i].length);
+		for(int i = 0; i <= childRecordIndex; i++){		
+		    this.childDefinition[i] = childDefinition[i];				
+            this.childDetailsCurrentIndex[i] = childDetailsCurrentIndex[i];    
+		    
+            this.childInputRecordIndex[i] = new int[childInputRecordIndex[i].length];                
+            this.childSourceDefinition[i] = new APattern[childSourceDefinition[i].length];
+            for(int j = 0; j <= childDetailsCurrentIndex[i]; j++){
+                this.childInputRecordIndex[i][j] = childInputRecordIndex[i][j];                
+                this.childSourceDefinition[i][j] = childSourceDefinition[i][j];
+                activeInputDescriptor.registerClientForRecord(childInputRecordIndex[i][j]);
+			}
 		}
-		this.lastCorrectChildIndexIndex = lastCorrectChildIndexIndex;
+		this.childRecordIndex = childRecordIndex;
+			
 		
 		if(this.size < size){
 			childParticleHandlers = new ParticleHandler[size];
@@ -490,10 +426,15 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 		}
 		this.satisfactionLevel = satisfactionLevel;
 		this.saturationLevel = saturationLevel;
-		this.starttSystemId = startSystemId;
-		this.starttLineNumber = startLineNumber;
-		this.starttColumnNumber = startColumnNumber;
-		this.starttQName = startQName;		
+		
+		if(this.isStartSet){
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+        }
+		this.startInputRecordIndex = startInputRecordIndex;
+		this.isStartSet = isStartSet;
+		if(isStartSet){		    
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		}
 	}
 	
 	// TODO 
@@ -511,130 +452,85 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	}
 	
 	// -> creates new arrays at lastCorrectChildIndexIndex++
-	private void addLastCorrectChildIndex(int newChildIndex, APattern definition, APattern sourceDefinition){
-		if(++lastCorrectChildIndexIndex == correctChildIndexesSize){
+	private void addLastCorrectChildIndex(APattern definition, APattern sourceDefinition){
+		if(++childRecordIndex == childDefinition.length){
 			
-			correctChildIndexesSize++;
+			int size = childDefinition.length+childRecordIncreaseSizeAmount;
 			
-			int increased[] = new int[correctChildIndexesSize];
-			System.arraycopy(childIndex, 0, increased, 0, lastCorrectChildIndexIndex);
-			childIndex = increased;
-			
-			APattern increasedDefinition[] = new APattern[correctChildIndexesSize];
-			System.arraycopy(childDefinition, 0, increasedDefinition, 0, lastCorrectChildIndexIndex);
+			APattern increasedDefinition[] = new APattern[size];
+			System.arraycopy(childDefinition, 0, increasedDefinition, 0, childRecordIndex);
 			childDefinition = increasedDefinition;
 			
-			String increasedQName[][] = new String[correctChildIndexesSize][];
-			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
-				if(childQName[i] != null){
-					increasedQName[i] = new String[childQName[i].length];
-					System.arraycopy(childQName[i], 0, increasedQName[i], 0, childQName[i].length);
-				}
-			}
-			//System.arraycopy(childQName, 0, increasedQName, 0, lastCorrectChildIndexIndex);
-			childQName = increasedQName;
-						
-			String increasedSystemId[][] = new String[correctChildIndexesSize][];
-			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
-				if(childSystemId[i] != null){
-					increasedSystemId[i] = new String[childSystemId[i].length];
-					System.arraycopy(childSystemId[i], 0, increasedSystemId[i], 0, childSystemId[i].length);
-				}
-			}
-			//System.arraycopy(childSystemId, 0, increasedSystemId, 0, lastCorrectChildIndexIndex);
-			childSystemId = increasedSystemId;
+			int increasedCDCI[] = new int[size];
+			System.arraycopy(childDetailsCurrentIndex, 0, increasedCDCI, 0, childRecordIndex);
+			childDetailsCurrentIndex = increasedCDCI;			
+			Arrays.fill(childDetailsCurrentIndex, childRecordIndex, childDetailsCurrentIndex.length, -1);			
 			
-			int increasedLineNumber[][] = new int[correctChildIndexesSize][];
-			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
-				if(childLineNumber[i] != null){
-					increasedLineNumber[i] = new int[childLineNumber[i].length];
-					System.arraycopy(childLineNumber[i], 0, increasedLineNumber[i], 0, childLineNumber[i].length);
+			int[][] increasedCII = new int[size][];
+			for(int i = 0; i < childRecordIndex; i++){
+				if(childInputRecordIndex[i] != null){
+					increasedCII[i] = new int[childInputRecordIndex[i].length];
+					System.arraycopy(childInputRecordIndex[i], 0, increasedCII[i], 0, childDetailsCurrentIndex[i]+1);
 				}
 			}
-			//System.arraycopy(childLineNumber, 0, increasedLineNumber, 0, lastCorrectChildIndexIndex);
-			childLineNumber = increasedLineNumber;
-						
-			int increasedColumnNumber[][] = new int[correctChildIndexesSize][];
-			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
-				if(childColumnNumber[i] != null){
-					increasedColumnNumber[i] = new int[childColumnNumber[i].length];
-					System.arraycopy(childColumnNumber[i], 0, increasedColumnNumber[i], 0, childColumnNumber[i].length);
-				}
-			}
-			//System.arraycopy(childColumnNumber, 0, increasedColumnNumber, 0, lastCorrectChildIndexIndex);
-			childColumnNumber = increasedColumnNumber;
+			//System.arraycopy(childInputRecordIndex, 0, increasedCII, 0, childRecordIndex);
+			childInputRecordIndex = increasedCII;
 			
-			APattern increasedSourceDefinition[][] = new APattern[correctChildIndexesSize][];
-			for(int i = 0; i < lastCorrectChildIndexIndex; i++){
+			APattern increasedSourceDefinition[][] = new APattern[size][];
+			for(int i = 0; i < childRecordIndex; i++){
 				if(childSourceDefinition[i] != null){
 					increasedSourceDefinition[i] = new APattern[childSourceDefinition[i].length];
-					System.arraycopy(childSourceDefinition[i], 0, increasedSourceDefinition[i], 0, childSourceDefinition[i].length);
+					System.arraycopy(childSourceDefinition[i], 0, increasedSourceDefinition[i], 0, childDetailsCurrentIndex[i]+1);
 				}
 			}
-			//System.arraycopy(childSourceDefinition, 0, increasedSourceDefinition, 0, lastCorrectChildIndexIndex);
+			//System.arraycopy(childSourceDefinition, 0, increasedSourceDefinition, 0, childRecordIndex);
 			childSourceDefinition = increasedSourceDefinition;
 		}
-		childIndex[lastCorrectChildIndexIndex] = newChildIndex;
-		childDefinition[lastCorrectChildIndexIndex] = definition;
+		childDefinition[childRecordIndex] = definition;
+		childDetailsCurrentIndex[childRecordIndex] = 0;
 		
-		childQName[lastCorrectChildIndexIndex] = new String[1];
-		childQName[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getItemIdentifier();
+		childInputRecordIndex[childRecordIndex] = new int[childDetailsInitialSize];
+		childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = inputStackDescriptor.getCurrentItemInputRecordIndex();
 		
-		childSystemId[lastCorrectChildIndexIndex] = new String[1];
-		childSystemId[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getSystemId();
 		
-		childLineNumber[lastCorrectChildIndexIndex] = new int[1];
-		childLineNumber[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getLineNumber();
-		
-		childColumnNumber[lastCorrectChildIndexIndex] = new int[1];
-		childColumnNumber[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getColumnNumber();
-		
-		childSourceDefinition[lastCorrectChildIndexIndex] = new APattern[1];
-		childSourceDefinition[lastCorrectChildIndexIndex][0] = sourceDefinition;
+		childSourceDefinition[childRecordIndex] = new ActiveTypeItem[childDetailsInitialSize];
+		childSourceDefinition[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = sourceDefinition;
+				
+		activeInputDescriptor.registerClientForRecord(childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]]);
 	}	
 	//-> adds to the end of the arrays from lastCorrectChildIndexIndex
 	private void addLastCorrectChildIndex(APattern sourceDefinition){
+		int oldLength = childInputRecordIndex[childRecordIndex].length;	
+		childDetailsCurrentIndex[childRecordIndex] += 1;
+		
+		if(childDetailsCurrentIndex[childRecordIndex] == oldLength){
+		    int newLength = oldLength+childDetailsIncreaseSizeAmount;
+		
+		
+            int increasedCII[] = new int[newLength];
+            System.arraycopy(childInputRecordIndex[childRecordIndex], 0, increasedCII, 0, oldLength);
+            childInputRecordIndex[childRecordIndex] = increasedCII;
 			
-		int oldLength = childQName[lastCorrectChildIndexIndex].length;
-		int newLength = (oldLength+1);
+            APattern increasedSourceDefinition[] = new APattern[newLength];
+            System.arraycopy(childSourceDefinition[childRecordIndex], 0, increasedSourceDefinition, 0, oldLength);
+            childSourceDefinition[childRecordIndex] = increasedSourceDefinition;
+        }
 				
+		childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = inputStackDescriptor.getCurrentItemInputRecordIndex();
+		childSourceDefinition[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = sourceDefinition;
 		
-		String increasedQName[] = new String[newLength];
-		System.arraycopy(childQName[lastCorrectChildIndexIndex], 0, increasedQName, 0, oldLength);
-		childQName[lastCorrectChildIndexIndex] = increasedQName;
-					
-		String increasedSystemId[] = new String[newLength];
-		System.arraycopy(childSystemId[lastCorrectChildIndexIndex], 0, increasedSystemId, 0, oldLength);
-		childSystemId[lastCorrectChildIndexIndex] = increasedSystemId;
-		
-		int increasedLineNumber[] = new int[newLength];
-		System.arraycopy(childLineNumber[lastCorrectChildIndexIndex], 0, increasedLineNumber, 0, oldLength);
-		childLineNumber[lastCorrectChildIndexIndex] = increasedLineNumber;
-					
-		int increasedColumnNumber[] = new int[newLength];
-		System.arraycopy(childColumnNumber[lastCorrectChildIndexIndex], 0, increasedColumnNumber, 0, oldLength);
-		childColumnNumber[lastCorrectChildIndexIndex] = increasedColumnNumber;
-		
-		APattern increasedSourceDefinition[] = new APattern[newLength];
-		System.arraycopy(childSourceDefinition[lastCorrectChildIndexIndex], 0, increasedSourceDefinition, 0, oldLength);
-		childSourceDefinition[lastCorrectChildIndexIndex] = increasedSourceDefinition;
-		
-		int newIndex = oldLength;
-		
-		childQName[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getItemIdentifier();
-		childSystemId[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getSystemId();
-		childLineNumber[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getLineNumber();
-		childColumnNumber[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getColumnNumber();
-		childSourceDefinition[lastCorrectChildIndexIndex][newIndex] = sourceDefinition;
+		activeInputDescriptor.registerClientForRecord(childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]]);
 	}	
 	private void removeLastCorrectChildIndex(){
-		childDefinition[lastCorrectChildIndexIndex] = null;
-		childQName[lastCorrectChildIndexIndex] = null;
-		childSystemId[lastCorrectChildIndexIndex] = null;
-		childLineNumber[lastCorrectChildIndexIndex] = null;
-		childColumnNumber[lastCorrectChildIndexIndex] = null;
-		childSourceDefinition[lastCorrectChildIndexIndex] = null;
-		lastCorrectChildIndexIndex--;
+		for(int i = 0; i <= childDetailsCurrentIndex[childRecordIndex]; i++){
+	        activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[childRecordIndex][i]);
+	        childSourceDefinition[childRecordIndex][i] = null;
+	    }
+	    
+		childDefinition[childRecordIndex] = null;	
+		childDetailsCurrentIndex[childRecordIndex] = -1;
+		
+		childRecordIndex--;
 	}	
 	
 	public void accept(RuleHandlerVisitor visitor){

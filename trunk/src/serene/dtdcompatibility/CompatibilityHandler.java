@@ -102,9 +102,12 @@ import serene.validation.handlers.error.AttributeDefaultValueErrorHandler;
 
 import serene.validation.handlers.content.DefaultValueAttributeHandler;
 import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
+
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import serene.SchemaModel;
+
 import serene.validation.schema.ValidationModel;
 
 import serene.util.AttributeInfo;
@@ -129,12 +132,12 @@ public class CompatibilityHandler implements RestrictingVisitor{
     
     ValidatorErrorHandlerPool errorHandlerPool;
     ValidatorEventHandlerPool eventHandlerPool;
+    ActiveInputDescriptor activeInputDescriptor;
     InputStackDescriptor inputStackDescriptor;
         
     ErrorDispatcher errorDispatcher;
 
     AttributeDefaultValueErrorHandler defaultValueErrorHandler;   
-
     
     //for competition simetry
     Stack<ArrayList<SAttribute>> attributeListsStack;   
@@ -188,6 +191,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
     public CompatibilityHandler(ControllerPool controllerPool,
                                 ValidatorErrorHandlerPool errorHandlerPool,
                                 ValidatorEventHandlerPool eventHandlerPool,
+                                ActiveInputDescriptor activeInputDescriptor,
                                 InputStackDescriptor inputStackDescriptor,
                                 ErrorDispatcher errorDispatcher, 
                                 MessageWriter debugWriter){
@@ -195,6 +199,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
         this.controllerPool = controllerPool;
         this.errorHandlerPool = errorHandlerPool;
         this.eventHandlerPool = eventHandlerPool;
+        this.activeInputDescriptor = activeInputDescriptor;
         this.inputStackDescriptor = inputStackDescriptor;        
         this.errorDispatcher = errorDispatcher; 
         defaultValueErrorHandler = new AttributeDefaultValueErrorHandler(errorDispatcher, debugWriter);
@@ -237,7 +242,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
     public SchemaModel handle(ValidationModel validationModel) throws SAXException{     
         SimplifiedModel simplifiedModel = validationModel.getSimplifiedModel();
         if(simplifiedModel == null)return new SchemaModel(validationModel, new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
-        activeModel = validationModel.getActiveModel(inputStackDescriptor, errorDispatcher);
+        activeModel = validationModel.getActiveModel(activeInputDescriptor, inputStackDescriptor, errorDispatcher);
         grammarModel = activeModel.getGrammarModel();       
                 
         startTopPattern = simplifiedModel.getStartTopPattern();

@@ -154,10 +154,10 @@ abstract class LimitReduceCountHandler extends MultipleChildrenPatternHandler im
 	// boolean handleChildShift(CharsActiveTypeItem pattern)
 	// boolean handleChildShift(CharsActiveTypeItem pattern, int expectedOrderHandlingCount)
 	// boolean handleChildShift(APattern pattern)
-	// boolean handleChildShift(APattern pattern, int expectedOrderHandlingCount)
-	// boolean handleChildShift(APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber)
-	// boolean handleChildShift(int count, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber)
-	// boolean handleChildShift(int MIN, int MAX, APattern pattern, String startQName, String startSystemId, int lineNumber, int columnNumber)
+	// boolean handleChildShiftAndOrder(APattern pattern, int expectedOrderHandlingCount)
+	// boolean handleChildShift(APattern pattern, int startInputRecordIndex)
+	// boolean handleChildShift(int count, APattern pattern, int startInputRecordIndex)
+	// boolean handleChildShift(int MIN, int MAX, APattern pattern, int startInputRecordIndex)
 	public void handleValidatingReduce(){
 		// This method might need to go to subclasses to support the handling 
 		// of content that is too incomplete to even support one child reduce

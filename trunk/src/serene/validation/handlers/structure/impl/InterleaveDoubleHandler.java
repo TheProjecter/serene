@@ -50,6 +50,13 @@ public class InterleaveDoubleHandler extends StructureDoubleHandler{
 		original = null;
 		minimalReduceStackHandler.recycle();
 		maximalReduceStackHandler.recycle();
+		
+		if(isStartSet){
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    isStartSet = false;
+		    startInputRecordIndex = -1;
+		}
+		
 		recycler.recycle(this);
 	}
 	
@@ -72,7 +79,7 @@ public class InterleaveDoubleHandler extends StructureDoubleHandler{
 		setStart();
 	}
 	
-	public boolean handleChildShift(APattern pattern, int expectedOrderHandlingCount){
+	public boolean handleChildShiftAndOrder(APattern pattern, int expectedOrderHandlingCount){
 		// System.out.println("*"+this);		
 		// System.out.println(expectedOrderHandlingCount+"*"+pattern);
 		if(expectedOrderHandlingCount > 0){
@@ -131,10 +138,8 @@ public class InterleaveDoubleHandler extends StructureDoubleHandler{
 						errorCatcher, 
 						minimalReduceStackHandlerCopy,
 						maximalReduceStackHandlerCopy,
-						starttSystemId,
-						starttLineNumber,
-						starttColumnNumber,
-						starttQName);
+						startInputRecordIndex,
+						isStartSet);
 		copy.setOriginal(this);
 		return copy;
 	}
@@ -148,18 +153,21 @@ public class InterleaveDoubleHandler extends StructureDoubleHandler{
 							ErrorCatcher errorCatcher,
 							MinimalReduceStackHandler minimalReduceStackHandler,
 							MaximalReduceStackHandler maximalReduceStackHandler,
-							String startSystemId,
-							int startLineNumber,
-							int startColumnNumber,
-							String startQName){
+							int startInputRecordIndex,
+							boolean isStartSet){
 		this.stackHandler = stackHandler;
 		this.errorCatcher = errorCatcher;
 		this.minimalReduceStackHandler = minimalReduceStackHandler;
 		this.maximalReduceStackHandler = maximalReduceStackHandler;
-		this.starttSystemId = startSystemId;
-		this.starttLineNumber = startLineNumber;
-		this.starttColumnNumber = startColumnNumber;
-		this.starttQName = startQName;
+		
+		if(this.isStartSet){
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+        }
+		this.startInputRecordIndex = startInputRecordIndex;
+		this.isStartSet = isStartSet;
+		if(isStartSet){		    
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		}
 	}
 	
 	public void accept(RuleHandlerVisitor visitor){
