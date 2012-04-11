@@ -141,12 +141,20 @@ class ListPatternValidationHandler implements DataEventHandler,
         stackHandler.shift(data);
     }
 	public void addData(List<DatatypedActiveTypeItem> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){	    
-	    if(!stackHandler.handlesConflict()) stackHandler = listPattern.getStackHandler(stackHandler, errorCatcher);
+	    if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = listPattern.getStackHandler(oldStackHandler, errorCatcher);
+		    oldStackHandler.recycle();
+		} 
 		stackHandler.shiftAllTokenDefinitions(candidateDefinitions, temporaryMessageStorage);
 	}
 	
 	public void addData(List<DatatypedActiveTypeItem> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){	    
-	    if(!stackHandler.handlesConflict()) stackHandler = listPattern.getStackHandler(stackHandler, errorCatcher);
+	    if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = listPattern.getStackHandler(oldStackHandler, errorCatcher);
+		    oldStackHandler.recycle();
+		}
 		stackHandler.shiftAllTokenDefinitions(candidateDefinitions, disqualified, temporaryMessageStorage);
 	}
 //==============================================================================

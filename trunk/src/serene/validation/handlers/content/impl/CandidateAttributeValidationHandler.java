@@ -126,12 +126,20 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	}
 	
 	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
-		if(!stackHandler.handlesConflict()) stackHandler = attribute.getStackHandler(stackHandler, this);
+		if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = attribute.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}
 		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, temporaryMessageStorage);
 	}
 	
 	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
-		if(!stackHandler.handlesConflict()) stackHandler = attribute.getStackHandler(stackHandler, this);
+		if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = attribute.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}
 		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, disqualified, temporaryMessageStorage);
 	}
 	//==========================================================================

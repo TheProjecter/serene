@@ -40,6 +40,8 @@ import serene.validation.handlers.content.BoundElementHandler;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 import serene.validation.handlers.error.ConflictMessageReporter; 
 
+import serene.validation.handlers.stack.StackHandler; 
+
 import serene.bind.BindingModel;
 import serene.bind.ValidatorQueuePool;
 import serene.bind.Queue;
@@ -265,19 +267,35 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	// in context validation would lead to the resolution of the conflict and 
 	// the binding can happen.
 	void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
-		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
+		if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}
 		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter, targetQueue, targetEntry, candidateQueues);
 	}
 	void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
-		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
+		if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}
 		stackHandler.shiftAllAttributes(candidateDefinitions, temporaryMessageStorage, value, queue, entry, attributeBinders);
 	}
 	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
-		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
+		if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}
 		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter, targetQueue, targetEntry, candidateQueues);
 	}
 	void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
-		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
+		if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}
 		stackHandler.shiftAllAttributes(candidateDefinitions, disqualified, temporaryMessageStorage, value, queue, entry, attributeBinders);
 	}
 	

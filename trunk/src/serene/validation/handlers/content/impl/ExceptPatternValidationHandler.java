@@ -145,11 +145,19 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
         stackHandler.shift(data);
     }	
 	public void addStructuredData(List<StructuredDataActiveTypeItem> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){	   
-	    if(!stackHandler.handlesConflict()) stackHandler = exceptPattern.getStackHandler(stackHandler, this);	    
+	    if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = exceptPattern.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		} 	    
 		stackHandler.shiftAllCharsDefinitions(candidateDefinitions, temporaryMessageStorage);
 	}
 	public void addStructuredData(List<StructuredDataActiveTypeItem> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
-	    if(!stackHandler.handlesConflict()) stackHandler = exceptPattern.getStackHandler(stackHandler, this);	    
+	    if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = exceptPattern.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}	    
 		stackHandler.shiftAllCharsDefinitions(candidateDefinitions, disqualified, temporaryMessageStorage);
 	}
 //==============================================================================
