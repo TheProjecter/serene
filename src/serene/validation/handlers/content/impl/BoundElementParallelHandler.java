@@ -194,9 +194,14 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
                 evhParent.setContextErrorHandlerIndex(COMMON);
                 uniqueSample.reportContextErrors(restrictToFileName, locator);
                 evhParent.restorePreviousHandler();
+                for(int i = 0; i < individualHandlers.size(); i++){
+                    if(individualHandlers.get(i) != uniqueSample){
+                        individualHandlers.get(i).discardContextErrors();
+                    }
+                }
             }
 		}
-		
+				
 		void validateInContext(){
             if(uniqueSample instanceof ErrorEEH){				
 				ElementEventHandler uniqueSampleParent = uniqueSample.getParentHandler();

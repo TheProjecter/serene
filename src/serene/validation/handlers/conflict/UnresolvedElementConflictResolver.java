@@ -43,13 +43,14 @@ public class UnresolvedElementConflictResolver extends ElementConflictResolver{
 	}
 	
     public void resolve(ErrorCatcher errorCatcher) throws SAXException{
+        isResolved = true;
         if(qualified.cardinality() == 0){            
             // report all external conflict errors + internal conflict error for all losers            
             conflictMessageReporter.setConflictInternalResolution(MessageReporter.UNRESOLVED);
             errorCatcher.internalConflict(conflictMessageReporter);
             
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
-            errorCatcher.unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedUnresolvedElementContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
         }else if(qualified.cardinality() > 1){
             // report the external conflict errors of the winners ?+ ambiguity warning?
             conflictMessageReporter.setConflictInternalResolution(MessageReporter.AMBIGUOUS, qualified);
@@ -63,7 +64,7 @@ public class UnresolvedElementConflictResolver extends ElementConflictResolver{
                 }
             }   
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
-            errorCatcher.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));            
+            errorCatcher.ambiguousUnresolvedElementContentWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));            
         }else if(qualified.cardinality() == 1){            
             //report the external conflict errors of the winner
             conflictMessageReporter.setConflictInternalResolution(MessageReporter.RESOLVED, qualified.nextSetBit(0), candidateDefinitions.get(qualified.nextSetBit(0)));

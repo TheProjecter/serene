@@ -43,14 +43,17 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     int winnerIndex;
     AElement winnerDefinition;
     
+    boolean isMessageRetrieved;
+    boolean isDiscarded;
+    
     public ConflictMessageReporter(MessageReporter parent,
-                                    int contextType,
-                                    String qName,
-                                    AElement definition,
-                                    String publicId,
-                                    String systemId,
-                                    int lineNumber,
-                                    int columnNumber,
+                                    int reportingContextType,
+                                    String reportingContextQName,
+                                    AElement reportingContextDefinition,
+                                    String reportingContextPublicId,
+                                    String reportingContextSystemId,
+                                    int reportingContextLineNumber,
+                                    int reportingContextColumnNumber,
                                     int conflictResolutionId,
                                     boolean restrictToFileName,
                                     MessageReporter commonMessages,
@@ -62,13 +65,13 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
         super(debugWriter);
         
         this.parent = parent;
-        this.contextType = contextType;
-        this.qName = qName;
-        this.definition = definition;
-        this.publicId = publicId;
-        this.systemId = systemId;
-        this.lineNumber = lineNumber;
-        this.columnNumber = columnNumber;
+        this.reportingContextType = reportingContextType;
+        this.reportingContextQName = reportingContextQName;
+        this.reportingContextDefinition = reportingContextDefinition;
+        this.reportingContextPublicId = reportingContextPublicId;
+        this.reportingContextSystemId = reportingContextSystemId;
+        this.reportingContextLineNumber = reportingContextLineNumber;
+        this.reportingContextColumnNumber = reportingContextColumnNumber;
         this.conflictResolutionId = conflictResolutionId;
         this.restrictToFileName = restrictToFileName;
         this.commonMessages = commonMessages;
@@ -82,17 +85,21 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
         this.candidateMessages = candidateMessages;
         
         this.errorDispatcher = errorDispatcher;
+        
+        isMessageRetrieved = false;
+        isDiscarded = false;
+        
     }
         
     public ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher){
         return new ConflictMessageReporter(parent,
-                                    contextType,
-                                    qName,
-                                    definition,
-                                    publicId, 
-                                    systemId,
-                                    lineNumber,
-                                    columnNumber,
+                                    reportingContextType,
+                                    reportingContextQName,
+                                    reportingContextDefinition,
+                                    reportingContextPublicId,
+                                    reportingContextSystemId,
+                                    reportingContextLineNumber,
+                                    reportingContextColumnNumber,
                                     conflictResolutionId,
                                     restrictToFileName,
                                     commonMessages,
@@ -101,6 +108,23 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
                                     candidateMessages,
                                     errorDispatcher,                                    
                                     debugWriter);
+    }
+    
+    public void setDiscarded(boolean isDiscarded){
+        this.isDiscarded = isDiscarded;    
+        
+        if(commonMessages != null)commonMessages.setDiscarded(isDiscarded);
+        
+        if(candidateMessages!= null){
+            for(int i = 0; i < candidateMessages.length; i++){
+                if(candidateMessages[i] != null){
+                    candidateMessages[i].setDiscarded(isDiscarded);
+                }
+            }
+        }
+        if(parent != null){
+            parent.setDiscarded(isDiscarded);
+        }
     }
     
     public boolean containsErrorMessage(){
@@ -152,12 +176,13 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     }
     
     void report() throws SAXException{
+        isMessageRetrieved = true;
         if(conflictInternalResolutionId == UNRESOLVED){
             if(parent != null){
                 parent.report(restrictToFileName, null, errorDispatcher, "");//parent should have been located, else illegal state
             }
             
-            handleConflict(contextType, qName, restrictToFileName, null, errorDispatcher, "");
+            handleConflict(reportingContextType, reportingContextQName, restrictToFileName, null, errorDispatcher, "");
             
             // report common as any other errors            
             if(commonMessages != null){
@@ -166,7 +191,11 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
         }else if(conflictInternalResolutionId == AMBIGUOUS){
             if(candidateMessages != null){
                 for(int i = 0; i < candidateMessages.length; i++){
-                    if(!qualified.get(i))candidateMessages[i] = null;
+                    if(!qualified.get(i) && candidateMessages[i] != null){
+                        candidateMessages[i].setDiscarded(true);
+                        candidateMessages[i].clear();
+                        candidateMessages[i] = null;
+                    }
                 }
             }
             
@@ -174,7 +203,7 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
                 parent.report(restrictToFileName, null, errorDispatcher, "");//parent should have been located, else illegal state
             }      
               
-            handleConflict(contextType, qName, restrictToFileName, null, errorDispatcher, "");
+            handleConflict(reportingContextType, reportingContextQName, restrictToFileName, null, errorDispatcher, "");
             
             // report common as any other errors            
             if(commonMessages != null){
@@ -182,78 +211,73 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
             }
         }else if(conflictInternalResolutionId == RESOLVED){
             if(candidateMessages[winnerIndex] != null){
-                candidateMessages[winnerIndex].report(contextType, qName, winnerDefinition, restrictToFileName, null, errorDispatcher);
+                candidateMessages[winnerIndex].report(reportingContextType, reportingContextQName, winnerDefinition, restrictToFileName, null, errorDispatcher);
             }
                                 
             if(commonMessages != null){
-                commonMessages.report(contextType, qName, winnerDefinition, restrictToFileName, null, errorDispatcher);
+                commonMessages.report(reportingContextType, reportingContextQName, winnerDefinition, restrictToFileName, null, errorDispatcher);
             }
         }
     }
     
     
-    public void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
-        this.contextType = contextType;
-        this.qName = qName;
-        this.definition = definition;
+    public void report(int reportingContextType, String reportingContextQName, AElement reportingContextDefinition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
+        isMessageRetrieved = true;
+        
+        this.reportingContextType = reportingContextType;
+        this.reportingContextQName = reportingContextQName;
+        this.reportingContextDefinition = reportingContextDefinition;
         
         if(parent != null){
-            // System.out.println("REPORT PARENT 1 "+qName);
             parent.report(restrictToFileName, locator, errorDispatcher, "");//parent should have been located, else illegal state
         }
                
           
-        handleConflict(contextType, qName, restrictToFileName, locator, errorDispatcher, "");
+        handleConflict(reportingContextType, reportingContextQName, restrictToFileName, locator, errorDispatcher, "");
         
         // report common as any other errors            
         if(commonMessages != null){
-            // System.out.println("REPORT COMMON 1 "+qName+" "+commonMessages.hashCode());
             commonMessages.report(restrictToFileName, locator, errorDispatcher, "");                
         }
     }
     
-    private void handleConflict(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    private void handleConflict(int reportingContextType, String reportingContextQName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         int qualified = candidatesCount - disqualified.cardinality();
-        //System.out.println(hashCode()+" HANDLE CONFLICT "+getClass());
         if(qualified == 0){
-            reportUnresolved(contextType, qName, restrictToFileName, locator, errorDispatcher, prefix);
+            reportUnresolved(reportingContextType, reportingContextQName, restrictToFileName, locator, errorDispatcher, prefix);
         }else if(qualified == 1){
-            reportResolved(contextType, qName, restrictToFileName, locator, errorDispatcher, prefix);
+            reportResolved(reportingContextType, reportingContextQName, restrictToFileName, locator, errorDispatcher, prefix);
         }else{
-            reportAmbiguous(contextType, qName, restrictToFileName, locator, errorDispatcher, prefix);
+            reportAmbiguous(reportingContextType, reportingContextQName, restrictToFileName, locator, errorDispatcher, prefix);
         }
     }
     
-    private void reportUnresolved(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    private void reportUnresolved(int reportingContextType, String reportingContextQName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         String message = ""; 
         for(int i = 0; i < candidatesCount; i++){
             if(candidateMessages[i] != null)message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
         }
         if(!message.equals("")){
-            //System.out.println(hashCode()+" 3 "+message);
-            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, locator));
-            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, publicId, systemId, lineNumber, columnNumber));
+            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Element <"+reportingContextQName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, locator));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Element <"+reportingContextQName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, reportingContextPublicId, reportingContextSystemId, reportingContextLineNumber, reportingContextColumnNumber));
         }else throw new IllegalStateException();
     }
     
-    private void reportResolved(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
-        //System.out.println(hashCode()+" REPORT RESOLVED 1 "+disqualified);      
+    private void reportResolved(int reportingContextType, String reportingContextQName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         int qualifiedIndex = disqualified.nextClearBit(0);
         if(candidateMessages != null && candidateMessages[qualifiedIndex] != null) candidateMessages[qualifiedIndex].report(restrictToFileName, locator, errorDispatcher, prefix);        
     }
     
-    private void reportAmbiguous(int contextType, String qName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+    private void reportAmbiguous(int reportingContextType, String reportingContextQName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         String message = ""; 
         for(int i = 0; i < candidatesCount; i++){
-            //System.out.println(disqualified+" "+candidateMessages);
             if(!disqualified.get(i) && candidateMessages != null && candidateMessages[i] != null){
                  message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);            
             }
         }
-        if(!message.equals("")){         
-            //System.out.println(hashCode()+" 4 "+message);
-            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
-            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, publicId, systemId, lineNumber, columnNumber));
+        if(!message.equals("")){
+            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+reportingContextQName+"> contain errors in their subtrees:"+message, locator));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+reportingContextQName+"> contain errors in their subtrees:"+message, reportingContextPublicId, reportingContextSystemId, reportingContextLineNumber, reportingContextColumnNumber));
         }        
     }
     
@@ -269,6 +293,38 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
         report();
     }
 
+    public void clear(){
+        if(commonMessages != null){
+            if(isMessageRetrieved || isDiscarded)commonMessages.clear(); // It can be only one because it is about this context.
+            commonMessages = null;
+        }
+        
+        candidatesCount = 0;
+        
+        disqualified = null;
+        
+        if(candidateMessages != null){
+            if(isMessageRetrieved || isDiscarded){
+                for(MessageReporter cm : candidateMessages){                    
+                    if(cm != null){
+                        cm.clear();
+                    }
+                }
+            }
+            candidateMessages = null;
+        }
+             
+        if(parent != null) {
+            parent.clear();
+            parent = null;
+        }
+        
+        qualified = null;
+        winnerIndex = -1;
+        winnerDefinition = null;
+    }
+    
+    
     public String toString(){
         return "ConflictMessageReporter ";
     }

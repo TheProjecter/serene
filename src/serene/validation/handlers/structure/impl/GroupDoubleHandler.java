@@ -64,7 +64,7 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 		maximalReduceStackHandler.recycle();
 		
 		if(isStartSet){
-		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex, this);
 		    isStartSet = false;
 		    startInputRecordIndex = -1;
 		}
@@ -168,15 +168,9 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 			if(minimalStartedCount.get(i) >= maxCount){	
 				APattern reper = ((AGroup)rule).getChild(i);
 				errorCatcher.misplacedContent(rule, 
-				                            activeInputDescriptor.getSystemId(startInputRecordIndex), 
-				                            activeInputDescriptor.getLineNumber(startInputRecordIndex), 
-				                            activeInputDescriptor.getColumnNumber(startInputRecordIndex), 
+				                            startInputRecordIndex, 
 				                            currentChild, 
-				                            inputStackDescriptor.getItemId(), 
-				                            inputStackDescriptor.getItemDescription(), 
-				                            inputStackDescriptor.getSystemId(), 
-				                            inputStackDescriptor.getLineNumber(), 
-				                            inputStackDescriptor.getColumnNumber(), 
+				                            inputStackDescriptor.getCurrentItemInputRecordIndex(),
 				                            sourceDefinition, 
 				                            reper);
 				//System.out.println("order error "+sourceDefinition
@@ -224,12 +218,12 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 		this.maximalReduceStackHandler = maximalReduceStackHandler;
 		
 		if(this.isStartSet){
-            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex, this);
         }
 		this.startInputRecordIndex = startInputRecordIndex;
 		this.isStartSet = isStartSet;
 		if(isStartSet){		    
-		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
 		}
 	}
 	

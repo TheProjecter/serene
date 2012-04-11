@@ -49,7 +49,7 @@ public abstract class BoundElementConflictResolver extends ElementConflictResolv
 	void init(ConflictMessageReporter conflictMessageReporter,
 	        Queue targetQueue,
 			int targetEntry,
-			Map<AElement, Queue> candidateQueues){		
+			Map<AElement, Queue> candidateQueues){    
 		super.init(conflictMessageReporter);
 		this.targetQueue = targetQueue;
 		this.targetEntry = targetEntry;
@@ -64,30 +64,6 @@ public abstract class BoundElementConflictResolver extends ElementConflictResolv
 		candidateDefinitions.clear();
 		candidateQueues = null;
 	}
-	
-		
-    /*public void resolve(ErrorCatcher errorCatcher){
-        if(qualified.cardinality() == 0){				
-            AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
-            errorCatcher.ambiguousElementContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
-            targetQueue.closeReservation(targetEntry);				
-        }else if(qualified.cardinality() == 1){
-            int qual = qualified.nextSetBit(0);				
-            Queue qq = candidateQueues.get(candidateDefinitions.get(qual));
-            targetQueue.closeReservation(targetEntry, qq);				
-        }else{		
-            int j = 0;
-            for(int i = 0; i < candidateDefinitions.size(); i++){			
-                if(!qualified.get(j++)){
-                    candidateDefinitions.remove(i);
-                    i--;
-                }
-            }
-            AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
-            errorCatcher.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
-            targetQueue.closeReservation(targetEntry);
-        }			
-    }*/
     
 	public String toString(){
 		return "BoundElementConflictResolver ";

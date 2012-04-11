@@ -21,6 +21,8 @@ import org.xml.sax.Locator;
 
 import serene.validation.schema.active.components.AElement;
 
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
+
 import serene.Reusable;
 
 import sereneWrite.MessageWriter;
@@ -32,6 +34,7 @@ public abstract class AbstractContextErrorHandler implements Reusable, ContextEr
 	ErrorDispatcher errorDispatcher;	
 	ValidatorErrorHandlerPool pool;
 	
+	ActiveInputDescriptor activeInputDescriptor;
 	int id;
 	MessageWriter debugWriter;
 	
@@ -39,9 +42,10 @@ public abstract class AbstractContextErrorHandler implements Reusable, ContextEr
 		this.debugWriter = debugWriter;				
 	}
 	
-	void init(ValidatorErrorHandlerPool pool, ErrorDispatcher errorDispatcher){
+	void init(ValidatorErrorHandlerPool pool, ErrorDispatcher errorDispatcher, ActiveInputDescriptor activeInputDescriptor){
 		this.errorDispatcher = errorDispatcher;//maybe it could be moved to DefaultErrorHandler only
 		this.pool = pool;
+		this.activeInputDescriptor = activeInputDescriptor;		
 	}
 	
 	public int getId(){

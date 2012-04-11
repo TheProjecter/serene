@@ -35,57 +35,57 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 public interface ErrorCatcher extends ErrorType{	
 	
-	void unknownElement(String qName, String systemId, int lineNumber, int columnNumber);
-	void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber);
-	void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] possibleDefinition, String systemId, int lineNumber, int columnNumber);
-		
-	void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber);
-	void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber);
-	void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] possibleDefinition, String systemId, int lineNumber, int columnNumber);
-		
-	void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int itemId, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper);	
-	void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper);
-		
+	void unknownElement(int inputRecordIndex);
+	void unexpectedElement(SimplifiedComponent definition, int inputRecordIndex);
+	void unexpectedAmbiguousElement(SimplifiedComponent[] possibleDefinition, int inputRecordIndex);
 	
-	void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber);
-	void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber);
+	void unknownAttribute(int inputRecordIndex);
+	void unexpectedAttribute(SimplifiedComponent definition, int inputRecordIndex);
+	void unexpectedAmbiguousAttribute(SimplifiedComponent[] possibleDefinition, int inputRecordIndex);
+		
+	void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper);		
+	void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper);
+		
+		
+	void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex);
+	void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex);
 
-	void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber);	
-	void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber);
+	void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex);	
+	void illegalContent(Rule context, int startInputRecordIndex);
 	
-	void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
-	void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
-	void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions);
+	void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions);
+	void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions);
+	void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions);
 	
-	void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
-	void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
-	void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions);
-	void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
-	void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
-	
-	void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);    
-	void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
+	void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions);
+	void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions);
+	void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions);
+	void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
+	void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
+		
+    void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);    
+	void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
     	
-	void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition);
-	void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition);
+	void characterContentValueError(int inputRecordIndex, AValue charsDefinition);
+	void attributeValueValueError(int inputRecordIndex, AValue charsDefinition);
 	
-	void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition);
-	void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition);
+	void characterContentExceptedError(int inputRecordIndex, AData charsDefinition);
+	void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition);
 	
-	void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition);
-	void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition);
+	void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition);
+	void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition);
 	
-	void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
-	void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
+	void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
+	void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
 	
-	void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
-	void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition);
-	void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition);
+	void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
+	void listTokenValueError(int inputRecordIndex, AValue charsDefinition);
+	void listTokenExceptedError(int inputRecordIndex, AData charsDefinition);
 
-    void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
-	void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
+    void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
+	void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
     
-	void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found);
+	void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found);
 	
 	void internalConflict(ConflictMessageReporter conflictMessageReporter) throws SAXException;
 } 

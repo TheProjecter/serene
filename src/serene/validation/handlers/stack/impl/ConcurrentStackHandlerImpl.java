@@ -111,9 +111,14 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		for(CandidateStackHandler candidate : candidates){
 			if(candidate != null) candidate.recycle();
 		}				
-		candidates.clear();
-		temporary.clear();		
-		resolvers.clear();
+		candidates.clear();			
+		temporary.clear();
+
+        for(InternalConflictResolver resolver: resolvers){          
+            resolver.recycle();
+        }
+        resolvers.clear();
+        
 		pool.recycle(this);		
 	}
 	
@@ -724,9 +729,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		candidates.clear();
 		
 		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundUnresolvedAttributeConflictResolver(temporaryMessageStorage,
-		                                                                             inputStackDescriptor.getNamespaceURI(),
+		                                                                             /*inputStackDescriptor.getNamespaceURI(),
                                                                                      inputStackDescriptor.getLocalName(),
-                                                                                     inputStackDescriptor.getItemDescription(),
+                                                                                     inputStackDescriptor.getItemDescription(),*/
                                                                                      value, 
                                                                                      targetQueue, 
                                                                                      targetEntry, 
@@ -907,9 +912,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		
 		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundAmbiguousAttributeConflictResolver(disqualified,
 		                                                                                    temporaryMessageStorage,
-		                                                                                    inputStackDescriptor.getNamespaceURI(),
+		                                                                                    /*inputStackDescriptor.getNamespaceURI(),
                                                                                             inputStackDescriptor.getLocalName(),
-                                                                                            inputStackDescriptor.getItemDescription(),
+                                                                                            inputStackDescriptor.getItemDescription(),*/
                                                                                             value, 
                                                                                             targetQueue, 
                                                                                             targetEntry, 

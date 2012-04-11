@@ -40,8 +40,8 @@ public abstract class BoundAttributeConflictResolver extends AttributeConflictRe
 	
 	Map<AAttribute, AttributeBinder> attributeBinders;
 	
-	String namespaceURI;
-    String localName;
+	/*String namespaceURI;
+    String localName;*/
     String value;
     
 	public BoundAttributeConflictResolver(MessageWriter debugWriter){
@@ -49,9 +49,9 @@ public abstract class BoundAttributeConflictResolver extends AttributeConflictRe
 	}
 	
 	void init(TemporaryMessageStorage[] temporaryMessageStorage,
-	        String namespaceURI, 
+	        /*String namespaceURI, 
             String localName,
-            String qName,
+            String qName,*/
             String value, 
 			Queue queue, 
 			int entry, 
@@ -60,9 +60,9 @@ public abstract class BoundAttributeConflictResolver extends AttributeConflictRe
 		this.targetQueue = queue;
 		this.targetEntry = entry;
 		this.attributeBinders = attributeBinders;
-		this.namespaceURI = namespaceURI;
+		/*this.namespaceURI = namespaceURI;
         this.localName = localName;
-        this.qName = qName;
+        this.qName = qName;*/
         this.value = value;
 	}
 
@@ -72,8 +72,8 @@ public abstract class BoundAttributeConflictResolver extends AttributeConflictRe
 		targetEntry = -1;
         
         attributeBinders = null;
-		namespaceURI = null;
-        localName = null;
+		/*namespaceURI = null;
+        localName = null;*/
         value = null;
 	}
 	

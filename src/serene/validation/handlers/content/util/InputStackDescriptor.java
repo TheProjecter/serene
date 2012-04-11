@@ -51,11 +51,11 @@ public class InputStackDescriptor implements Locator{
                                                         lineNumber,
                                                         columnNumber);
         //System.out.println("ELEMENT "+itemDescription);
-        activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex]);
+        activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
 	}
 	
 	public void popElement(){
-		activeInputDescriptor.unregisterClientForRecord(inputRecordIndexes[currentRecordIndexIndex]);
+		activeInputDescriptor.unregisterClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
 		currentRecordIndexIndex--;
 	}
 	
@@ -74,11 +74,11 @@ public class InputStackDescriptor implements Locator{
                                                         lineNumber,
                                                         columnNumber);
         //System.out.println("ATTIRBUTE "+itemDescription);
-        activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex]);
+        activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
 	}
 	
 	public void popAttribute(){
-		activeInputDescriptor.unregisterClientForRecord(inputRecordIndexes[currentRecordIndexIndex]);
+		activeInputDescriptor.unregisterClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
 		currentRecordIndexIndex--;
 	}
 	
@@ -100,12 +100,12 @@ public class InputStackDescriptor implements Locator{
                                                         lineNumber,
                                                         columnNumber);
         //System.out.println("CHARS CONTENT ");
-        activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex]);
+        activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
 	}
 		
 	public void popCharsContent(){	
 		if(!currentCharsContent)return;
-		activeInputDescriptor.unregisterClientForRecord(inputRecordIndexes[currentRecordIndexIndex]);
+		activeInputDescriptor.unregisterClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
 		currentRecordIndexIndex--;
 		currentCharsContent = false;
 	}
@@ -125,11 +125,11 @@ public class InputStackDescriptor implements Locator{
                                                         lineNumber,
                                                         columnNumber);
         //System.out.println("LIST TOKEN ");
-        activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex]);
+        activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
 	}
 
     public void popListToken(){	
-		activeInputDescriptor.unregisterClientForRecord(inputRecordIndexes[currentRecordIndexIndex]);
+		activeInputDescriptor.unregisterClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
 		currentRecordIndexIndex--;
 	}
 	

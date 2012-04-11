@@ -50,22 +50,23 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 	void init(List<AElement> candidateDefinitions,  BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){		
 		this.parent = parent;
 		this.candidateDefinitions = candidateDefinitions;
-        localCandidatesConflictErrorHandler.init(); 
+        localCandidatesConflictErrorHandler.init(activeInputDescriptor); 
 		init((ContextErrorHandlerManager)parent);
 		this.bindingModel = bindingModel;
 		this.queue = queue;
 		this.queuePool = queuePool;
 		queueStartEntry = queue.newRecord();
 		
-		for(int i = 0; i < candidateDefinitions.size(); i++){			
-			BoundElementValidationHandler candidate = pool.getElementValidationHandler(candidateDefinitions.get(i), parent, bindingModel, queuePool.getQueue(), queuePool);			
+		for(int i = 0; i < candidateDefinitions.size(); i++){			    
+			BoundElementValidationHandler candidate = pool.getElementValidationHandler(candidateDefinitions.get(i), parent, bindingModel, queuePool.getQueue(), queuePool);
 			candidate.setCandidateIndex(i);
             candidate.setCandidate(true);
             candidate.setCandidatesConflictErrorHandler(localCandidatesConflictErrorHandler);
 			candidate.setContextErrorHandlerIndex(CONFLICT);
 			candidates.add(candidate);	
 		}
-        localCandidatesConflictErrorHandler.setCandidates(candidateDefinitions);		
+        localCandidatesConflictErrorHandler.setCandidates(candidateDefinitions);
+        candidatesConflictHandler.init(candidateDefinitions.size());		
 	}
 	
 	public void recycle(){
@@ -75,7 +76,7 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		candidates.clear();	
 		candidateDefinitions.clear();		
 		candidatesConflictHandler.reset();
-        localCandidatesConflictErrorHandler.clear();
+        localCandidatesConflictErrorHandler.clear(false);
 		resetContextErrorHandlerManager();
 		
 		parent = null;

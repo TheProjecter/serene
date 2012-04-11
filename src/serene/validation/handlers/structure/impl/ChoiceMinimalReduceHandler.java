@@ -163,12 +163,12 @@ public class ChoiceMinimalReduceHandler extends UCMinimalReduceHandler{
 		}	
 		
 		if(this.isStartSet){
-            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex, this);
         }
 		this.startInputRecordIndex = startInputRecordIndex;
 		this.isStartSet = isStartSet;
 		if(isStartSet){		    
-		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
 		}
 		
 		this.currentChild = currentChild;	

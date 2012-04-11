@@ -175,7 +175,7 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 					// found maximalReduceCount.get(i)
 					// expected at least MIN
 					// void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber);
-					errorCatcher.missingCompositorContent(rule, activeInputDescriptor.getSystemId(startInputRecordIndex), activeInputDescriptor.getLineNumber(startInputRecordIndex), activeInputDescriptor.getColumnNumber(startInputRecordIndex), rule.getChild(i), MIN, maximalReduceCount.get(i));
+					errorCatcher.missingCompositorContent(rule, startInputRecordIndex, rule.getChild(i), MIN, maximalReduceCount.get(i));
 				}
 			}
 		}
@@ -254,7 +254,7 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 		starttQName = inputStackDescriptor.getItemDescription();*/
         startInputRecordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();
         isStartSet = true;
-        activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+        activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
 	}	
 	
 	public int getStartInputRecordIndex(){

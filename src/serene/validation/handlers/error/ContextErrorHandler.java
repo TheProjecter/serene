@@ -35,6 +35,7 @@ public interface ContextErrorHandler extends Reusable, ExternalConflictErrorCatc
 	
 	void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator) throws SAXException;
 	void handle(int contextType, String qName, boolean restrictToFileName, Locator locator) throws SAXException;
+	void discard();
 	void record(int contextType, String qName, boolean restrictToFileName, Locator locator);
 		
     int getConflictResolutionId();	

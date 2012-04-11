@@ -62,8 +62,10 @@ import serene.validation.handlers.conflict.ExternalConflictHandler;
 import serene.validation.handlers.stack.StackHandler;
 
 import serene.validation.handlers.content.AttributeEventHandler;
-import serene.validation.handlers.content.util.InputStackDescriptor;
 
+import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
+ 
 import sereneWrite.MessageWriter;
 
 class ElementValidationHandler extends ValidatingEEH
@@ -116,8 +118,8 @@ class ElementValidationHandler extends ValidatingEEH
 		pool.recycle(this);
 	}
 	
-	void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor, SpaceCharsHandler spaceHandler, MatchHandler matchHandler, ValidatorErrorHandlerPool errorHandlerPool){
-		super.init(pool, inputStackDescriptor, errorHandlerPool);
+	void init(ValidatorEventHandlerPool pool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, SpaceCharsHandler spaceHandler, MatchHandler matchHandler, ValidatorErrorHandlerPool errorHandlerPool){
+		super.init(pool, activeInputDescriptor, inputStackDescriptor, errorHandlerPool);
 		this.matchHandler = matchHandler;
 		this.spaceHandler = spaceHandler;		
 	}
@@ -221,7 +223,7 @@ class ElementValidationHandler extends ValidatingEEH
 		}		
 	}	
 
-	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{		
+	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{
 		validateContext();		
 		reportContextErrors(restrictToFileName, locator);
 		validateInContext();
@@ -240,6 +242,15 @@ class ElementValidationHandler extends ValidatingEEH
             }
         }
 	}
+	
+	void discardContextErrors(){
+        for(int i = 0; i < HANDLER_COUNT; i++){
+            if(contextErrorHandler[i] != null){            
+                contextErrorHandler[i].discard();
+            }
+        }
+	}
+	
 	void validateInContext(){
 		parent.addChildElement(element);
 	}
@@ -252,7 +263,7 @@ class ElementValidationHandler extends ValidatingEEH
             cvh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
             cvh.recycle();
         }else if(!isIgnorable && !element.allowsChars()){
-            unexpectedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), element);
+            unexpectedCharacterContent(inputStackDescriptor.getCurrentItemInputRecordIndex(), element);
         }else{
             // element.allowsDataContent()
             //  || element.allowsValueContent()
@@ -299,7 +310,7 @@ class ElementValidationHandler extends ValidatingEEH
         }else{
             if(!element.allowsChars()){
                 if(!isIgnorable || !isBufferIgnorable){
-                    unexpectedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), element);
+                    unexpectedCharacterContent(inputStackDescriptor.getCurrentItemInputRecordIndex(), element);
                 }
                 return;
             }
@@ -441,177 +452,177 @@ class ElementValidationHandler extends ValidatingEEH
 	
 	//errorCatcher
 	//--------------------------------------------------------------------------
-	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownElement(int inputRecordIndex){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unknownElement( qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler[contextErrorHandlerIndex].unknownElement(inputRecordIndex);
 	}	
-	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(SimplifiedComponent definition, int inputRecordIndex){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unexpectedElement( qName, definition, systemId, lineNumber, columnNumber);
+		contextErrorHandler[contextErrorHandlerIndex].unexpectedElement(definition, inputRecordIndex);
 	}	
-	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(SimplifiedComponent[] definition, int inputRecordIndex){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unexpectedAmbiguousElement( qName, definition, systemId, lineNumber, columnNumber);
+		contextErrorHandler[contextErrorHandlerIndex].unexpectedAmbiguousElement( definition, inputRecordIndex);
 	}
 	
 	
-	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownAttribute(int inputRecordIndex){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unknownAttribute( qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler[contextErrorHandlerIndex].unknownAttribute( inputRecordIndex);
 	}	
-	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){	    
+	public void unexpectedAttribute(SimplifiedComponent definition, int inputRecordIndex){	    
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);
+		contextErrorHandler[contextErrorHandlerIndex].unexpectedAttribute( definition, inputRecordIndex);
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(SimplifiedComponent[] possibleDefinition, int inputRecordIndex){
 	    if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unexpectedAmbiguousAttribute( qName, definition, systemId, lineNumber, columnNumber);
+		contextErrorHandler[contextErrorHandlerIndex].unexpectedAmbiguousAttribute( possibleDefinition, inputRecordIndex);
 	}
 	
 		
-	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int itemId, String qName, String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].misplacedContent(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+		contextErrorHandler[contextErrorHandlerIndex].misplacedContent(contextDefinition, startInputRecordIndex, definition, inputRecordIndex, sourceDefinition, reper);
 	}
 	
-	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].misplacedContent(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+		contextErrorHandler[contextErrorHandlerIndex].misplacedContent(contextDefinition, startInputRecordIndex, definition, inputRecordIndex, sourceDefinition, reper);
 	}
 		
 	
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler[contextErrorHandlerIndex].excessiveContent(context, startInputRecordIndex, excessiveDefinition, inputRecordIndex);
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].excessiveContent(context, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler[contextErrorHandlerIndex].excessiveContent(context, excessiveDefinition, inputRecordIndex);
 	}
 	
-	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].missingContent(context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler[contextErrorHandlerIndex].missingContent(context, startInputRecordIndex, definition, expected, found, inputRecordIndex);
 	}
 
-	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+	public void illegalContent(Rule context, int startInputRecordIndex){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].illegalContent(context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
+		contextErrorHandler[contextErrorHandlerIndex].illegalContent(context, startInputRecordIndex);
 	}
 	
-	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
-		contextErrorHandler[contextErrorHandlerIndex].unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].unresolvedAmbiguousElementContentError(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
-		contextErrorHandler[contextErrorHandlerIndex].unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].unresolvedUnresolvedElementContentError(inputRecordIndex, possibleDefinitions);
 	}
 
-	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].unresolvedAttributeContentError(inputRecordIndex, possibleDefinitions);
 	}
 
 	
-	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].ambiguousUnresolvedElementContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].ambiguousAmbiguousElementContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 
-	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].ambiguousAttributeContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 
-	public void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].ambiguousCharacterContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 
-	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousAttributeValueWarning(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].ambiguousAttributeValueWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].characterContentDatatypeError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		contextErrorHandler[contextErrorHandlerIndex].characterContentDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}    
-	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].attributeValueDatatypeError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		contextErrorHandler[contextErrorHandlerIndex].attributeValueDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}    
 	
-	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].characterContentValueError(charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler[contextErrorHandlerIndex].characterContentValueError(inputRecordIndex, charsDefinition);
 	}
-	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].attributeValueValueError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler[contextErrorHandlerIndex].attributeValueValueError(inputRecordIndex, charsDefinition);
 	}
 	
-	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].characterContentExceptedError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler[contextErrorHandlerIndex].characterContentExceptedError(inputRecordIndex, charsDefinition);
 	}	
-	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].attributeValueExceptedError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler[contextErrorHandlerIndex].attributeValueExceptedError(inputRecordIndex, charsDefinition);
 	}
 	
-	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unexpectedCharacterContent(charsSystemId, charsLineNumber, columnNumber, elementDefinition);		
+		contextErrorHandler[contextErrorHandlerIndex].unexpectedCharacterContent(inputRecordIndex, elementDefinition);		
 	}	
-	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unexpectedAttributeValue(charsSystemId, charsLineNumber, columnNumber, attributeDefinition);
+		contextErrorHandler[contextErrorHandlerIndex].unexpectedAttributeValue(inputRecordIndex, attributeDefinition);
 	}
 	
-	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unresolvedCharacterContent(systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].unresolvedCharacterContent(inputRecordIndex, possibleDefinitions);
 	}
-	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unresolvedAttributeValue(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].unresolvedAttributeValue(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].listTokenDatatypeError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		contextErrorHandler[contextErrorHandlerIndex].listTokenDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}
-	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].listTokenValueError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler[contextErrorHandlerIndex].listTokenValueError(inputRecordIndex, charsDefinition);
 	}
-	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].listTokenExceptedError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler[contextErrorHandlerIndex].listTokenExceptedError(inputRecordIndex, charsDefinition);
 	}
 	    
-    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].unresolvedListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].unresolvedListTokenInContextError(inputRecordIndex, possibleDefinitions);
     }
     
-	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler[contextErrorHandlerIndex].ambiguousListTokenInContextWarning(inputRecordIndex, possibleDefinitions);
     }
 	
-	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
+	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-		contextErrorHandler[contextErrorHandlerIndex].missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
+		contextErrorHandler[contextErrorHandlerIndex].missingCompositorContent(context, startInputRecordIndex, definition, expected, found);
 	}
 	
 	public void internalConflict(ConflictMessageReporter conflictMessageReporter) throws SAXException{

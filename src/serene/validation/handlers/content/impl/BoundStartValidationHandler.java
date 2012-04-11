@@ -81,11 +81,11 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 		List<SimplifiedComponent> elementMatches = matchHandler.matchElement(namespace, name);        
 		int matchCount = elementMatches.size();
 		if(matchCount == 0){            
-			unknownElement(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
+			unknownElement(inputStackDescriptor.getCurrentItemInputRecordIndex());
 		}else if(matchCount == 1){
-            unexpectedElement(inputStackDescriptor.getItemDescription(), elementMatches.get(0), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
+            unexpectedElement(elementMatches.get(0), inputStackDescriptor.getCurrentItemInputRecordIndex());
 		}else{
-            unexpectedAmbiguousElement(inputStackDescriptor.getItemDescription(), elementMatches.toArray(new SimplifiedComponent[elementMatches.size()]), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
+            unexpectedAmbiguousElement(elementMatches.toArray(new SimplifiedComponent[elementMatches.size()]), inputStackDescriptor.getCurrentItemInputRecordIndex());
 		}        
 	}
     

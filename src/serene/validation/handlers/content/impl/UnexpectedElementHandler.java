@@ -43,7 +43,7 @@ class UnexpectedElementHandler extends ErrorEEH{
 	}
 	
 	void validateInContext(){		
-		parent.unexpectedElement(inputStackDescriptor.getItemDescription(), element, inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
+		parent.unexpectedElement(element, inputStackDescriptor.getCurrentItemInputRecordIndex());
 	}
 	
 	boolean functionalEquivalent(ComparableEEH other){

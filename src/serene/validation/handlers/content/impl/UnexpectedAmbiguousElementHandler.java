@@ -45,7 +45,7 @@ class UnexpectedAmbiguousElementHandler extends ErrorEEH{
 	}
 	
 	void validateInContext(){
-		parent.unexpectedAmbiguousElement(inputStackDescriptor.getItemDescription(), Arrays.copyOf(elements, elements.length), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
+		parent.unexpectedAmbiguousElement(Arrays.copyOf(elements, elements.length), inputStackDescriptor.getCurrentItemInputRecordIndex());
 	}
 	
 	boolean functionalEquivalent(ComparableEEH other){

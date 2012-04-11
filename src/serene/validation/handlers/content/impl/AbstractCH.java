@@ -17,7 +17,9 @@ limitations under the License.
 package serene.validation.handlers.content.impl;
 
 import serene.validation.handlers.content.EventHandler;
+
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
@@ -35,6 +37,8 @@ abstract class AbstractCH implements EventHandler{
     ExternalConflictHandler externalConflictHandler;
     
     ValidatorEventHandlerPool pool;	    
+    
+    ActiveInputDescriptor activeInputDescriptor;
     InputStackDescriptor inputStackDescriptor;
     
     MessageWriter debugWriter;
@@ -45,14 +49,15 @@ abstract class AbstractCH implements EventHandler{
 		externalConflictHandler = new ExternalConflictHandler(debugWriter);
 	}
 	
-	void init(MatchHandler matchHandler, InputStackDescriptor inputStackDescriptor, ValidatorEventHandlerPool pool){
+	void init(MatchHandler matchHandler, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ValidatorEventHandlerPool pool){
 	    this.matchHandler = matchHandler;		
 		this.inputStackDescriptor = inputStackDescriptor;		
-		this.pool = pool;		
+		this.pool = pool;	
+		this.activeInputDescriptor = activeInputDescriptor;
 	}
 	
 	void reset(){
-	    externalConflictHandler.clear();	    
+	    externalConflictHandler.clear();
 	    temporaryMessageStorage = null;
 	}	
 }

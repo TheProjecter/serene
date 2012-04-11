@@ -38,9 +38,11 @@ public class UnresolvedCharsConflictResolver extends CharsConflictResolver{
 		pool.recycle(this);
 	}
    
-    public void resolve(ErrorCatcher errorCatcher){        
+    public void resolve(ErrorCatcher errorCatcher){
         if(qualified.cardinality()== 1){
-            temporaryMessageStorage[qualified.nextSetBit(0)].transferMessages(errorCatcher);
+            int q = qualified.nextSetBit(0);
+            temporaryMessageStorage[q].transferMessages(errorCatcher);
+            temporaryMessageStorage[q] = null;
         }else{
             reportUnresolvedError(errorCatcher);
         }

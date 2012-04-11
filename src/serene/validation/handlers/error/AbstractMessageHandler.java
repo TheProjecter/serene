@@ -41,6 +41,7 @@ import serene.validation.schema.active.components.AListPattern;
 import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import serene.util.IntList;
 
@@ -48,65 +49,86 @@ import sereneWrite.MessageWriter;
 
 public abstract class AbstractMessageHandler  extends AbstractMessageReporter{	
     
+    ActiveInputDescriptor activeInputDescriptor;
+    
 	// {1}
 	String undeterminedQName;
 	String undeterminedCandidateMessages;
-		
+	
+    int initialSize = 5;
+    int increaseSizeAmount = 5;
+	
 	// {2}
-	String[] unknownElementQName;
+	/*String[] unknownElementQName;
 	String[] unknownElementSystemId;
 	int[] unknownElementLineNumber;
 	int[] unknownElementColumnNumber;
 	int unknownElementIndex;
-	int unknownElementSize;	
+	int unknownElementSize;*/
+    int[] unknownElementInputRecordIndex;
+    int unknownElementIndex;	
 	
 	// {3}
-	String[] unexpectedElementQName;
+	/*String[] unexpectedElementQName;
 	SimplifiedComponent[] unexpectedElementDefinition;
 	String[] unexpectedElementSystemId;
 	int[] unexpectedElementLineNumber;
 	int[] unexpectedElementColumnNumber;
 	int unexpectedElementIndex;
-	int unexpectedElementSize;
-	
+	int unexpectedElementSize;*/
+	SimplifiedComponent[] unexpectedElementDefinition;
+	int[] unexpectedElementInputRecordIndex;
+	int unexpectedElementIndex;
+		
 	// {4}
-	String[] unexpectedAmbiguousElementQName;
+	/*String[] unexpectedAmbiguousElementQName;
 	SimplifiedComponent[][] unexpectedAmbiguousElementDefinition;
 	String[] unexpectedAmbiguousElementSystemId;
 	int[] unexpectedAmbiguousElementLineNumber;
 	int[] unexpectedAmbiguousElementColumnNumber;
 	int unexpectedAmbiguousElementIndex;
-	int unexpectedAmbiguousElementSize;
+	int unexpectedAmbiguousElementSize;*/
+	SimplifiedComponent[][] unexpectedAmbiguousElementDefinition;
+	int[] unexpectedAmbiguousElementInputRecordIndex;
+	int unexpectedAmbiguousElementIndex;
 	
 	// {5}
-	String[] unknownAttributeQName;
+	/*String[] unknownAttributeQName;
 	String[] unknownAttributeSystemId;
 	int[] unknownAttributeLineNumber;
 	int[] unknownAttributeColumnNumber;
 	int unknownAttributeIndex;
-	int unknownAttributeSize;	
+	int unknownAttributeSize;*/
+    int[] unknownAttributeInputRecordIndex;
+    int unknownAttributeIndex;	
 	
 	// {6}
-	String[] unexpectedAttributeQName;
+	/*String[] unexpectedAttributeQName;
 	SimplifiedComponent[] unexpectedAttributeDefinition;
 	String[] unexpectedAttributeSystemId;
 	int[] unexpectedAttributeLineNumber;
 	int[] unexpectedAttributeColumnNumber;
 	int unexpectedAttributeIndex;
-	int unexpectedAttributeSize;
-	
+	int unexpectedAttributeSize;*/
+	SimplifiedComponent[] unexpectedAttributeDefinition;
+	int[] unexpectedAttributeInputRecordIndex;
+	int unexpectedAttributeIndex;
+		
 	// {7}
-	String[] unexpectedAmbiguousAttributeQName;
+	/*String[] unexpectedAmbiguousAttributeQName;
 	SimplifiedComponent[][] unexpectedAmbiguousAttributeDefinition;
 	String[] unexpectedAmbiguousAttributeSystemId;
 	int[] unexpectedAmbiguousAttributeLineNumber;
 	int[] unexpectedAmbiguousAttributeColumnNumber;
 	int unexpectedAmbiguousAttributeIndex;
-	int unexpectedAmbiguousAttributeSize;
+	int unexpectedAmbiguousAttributeSize;*/
+	SimplifiedComponent[][] unexpectedAmbiguousAttributeDefinition;
+	int[] unexpectedAmbiguousAttributeInputRecordIndex;
+	int unexpectedAmbiguousAttributeIndex;
 	
 	
 	// {8}
-	APattern[] misplacedContext;
+	/*APattern[] misplacedContext;
 	String[] misplacedStartSystemId;
 	int[] misplacedStartLineNumber;
 	int[] misplacedStartColumnNumber;
@@ -117,10 +139,16 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	int[][][] misplacedLineNumber;
 	int[][][] misplacedColumnNumber;
 	int misplacedIndex;
-	int misplacedSize;
+	int misplacedSize;*/
+	APattern[] misplacedContext;
+	int[] misplacedStartInputRecordIndex;
+	APattern[][] misplacedDefinition;
+	int[][][] misplacedInputRecordIndex;
+	int misplacedIndex;
+	
 
 	// {9}
-	Rule[] excessiveContext;
+	/*Rule[] excessiveContext;
 	String[] excessiveStartSystemId;
 	int[] excessiveStartLineNumber;
 	int[] excessiveStartColumnNumber;
@@ -131,10 +159,16 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	int[][] excessiveLineNumber;
 	int[][] excessiveColumnNumber;
 	int excessiveIndex;
-	int excessiveSize;
+	int excessiveSize;*/
+	Rule[] excessiveContext;
+	int[] excessiveStartInputRecordIndex;
+	APattern[] excessiveDefinition;
+	int[][] excessiveInputRecordIndex;
+	int excessiveIndex;
+	
 	
 	// {10}
-	Rule[] missingContext;
+	/*Rule[] missingContext;
 	String[] missingStartSystemId;
 	int[] missingStartLineNumber;
 	int[] missingStartColumnNumber;
@@ -146,239 +180,328 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	int[][] missingLineNumber;
 	int[][] missingColumnNumber;
 	int missingIndex;
-	int missingSize;
+	int missingSize;*/
+	Rule[] missingContext;
+	int[] missingStartInputRecordIndex;
+	APattern[] missingDefinition;
+	int[] missingExpected;
+	int[] missingFound;
+	int[][] missingInputRecordIndex;
+	int missingIndex;
 	
 	
 	// {11}
-	Rule[] illegalContext;
+	/*Rule[] illegalContext;
 	int[] illegalItemId;
 	String[] illegalQName;
 	String[] illegalStartSystemId;
 	int[] illegalStartLineNumber;
 	int[] illegalStartColumnNumber;	
 	int illegalIndex;
-	int illegalSize;
+	int illegalSize;*/
+	Rule[] illegalContext;
+	int[] illegalStartInputRecordIndex;
+	int illegalIndex;
 	
 	// {12 A}
-	String[] unresolvedAmbiguousElementQNameEE;
+	/*String[] unresolvedAmbiguousElementQNameEE;
 	String[] unresolvedAmbiguousElementSystemIdEE;
 	int[] unresolvedAmbiguousElementLineNumberEE;
 	int[] unresolvedAmbiguousElementColumnNumberEE;
 	AElement[][] unresolvedAmbiguousElementDefinitionEE;
 	int unresolvedAmbiguousElementIndexEE;
-	int unresolvedAmbiguousElementSizeEE;
+	int unresolvedAmbiguousElementSizeEE;*/
+	int[] unresolvedAmbiguousElementInputRecordIndexEE;
+	AElement[][] unresolvedAmbiguousElementDefinitionEE;
+	int unresolvedAmbiguousElementIndexEE;
+	
 	
 	// {12 U}
-	String[] unresolvedUnresolvedElementQNameEE;
+	/*String[] unresolvedUnresolvedElementQNameEE;
 	String[] unresolvedUnresolvedElementSystemIdEE;
 	int[] unresolvedUnresolvedElementLineNumberEE;
 	int[] unresolvedUnresolvedElementColumnNumberEE;
 	AElement[][] unresolvedUnresolvedElementDefinitionEE;
 	int unresolvedUnresolvedElementIndexEE;
-	int unresolvedUnresolvedElementSizeEE;
+	int unresolvedUnresolvedElementSizeEE;*/
+	int[] unresolvedUnresolvedElementInputRecordIndexEE;
+	AElement[][] unresolvedUnresolvedElementDefinitionEE;
+	int unresolvedUnresolvedElementIndexEE;
 
 	// {13}
-	String[] unresolvedAttributeQNameEE;
+	/*String[] unresolvedAttributeQNameEE;
 	String[] unresolvedAttributeSystemIdEE;
 	int[] unresolvedAttributeLineNumberEE;
 	int[] unresolvedAttributeColumnNumberEE;
 	AAttribute[][] unresolvedAttributeDefinitionEE;
 	int unresolvedAttributeIndexEE;
-	int unresolvedAttributeSizeEE;
+	int unresolvedAttributeSizeEE;*/
+	int[] unresolvedAttributeInputRecordIndexEE;
+	AAttribute[][] unresolvedAttributeDefinitionEE;
+	int unresolvedAttributeIndexEE;
 
 	// {14}
-	
-	
+		
 	// {w1 U}
-	String[] ambiguousUnresolvedElementQNameWW;
+	/*String[] ambiguousUnresolvedElementQNameWW;
 	String[] ambiguousUnresolvedElementSystemIdWW;
 	int[] ambiguousUnresolvedElementLineNumberWW;
 	int[] ambiguousUnresolvedElementColumnNumberWW;
 	AElement[][] ambiguousUnresolvedElementDefinitionWW;
 	int ambiguousUnresolvedElementIndexWW;
-	int ambiguousUnresolvedElementSizeWW;
+	int ambiguousUnresolvedElementSizeWW;*/
+	int[] ambiguousUnresolvedElementInputRecordIndexWW;
+	AElement[][] ambiguousUnresolvedElementDefinitionWW;
+	int ambiguousUnresolvedElementIndexWW;
+	
 	
 	// {w1 A}
-	String[] ambiguousAmbiguousElementQNameWW;
+	/*String[] ambiguousAmbiguousElementQNameWW;
 	String[] ambiguousAmbiguousElementSystemIdWW;
 	int[] ambiguousAmbiguousElementLineNumberWW;
 	int[] ambiguousAmbiguousElementColumnNumberWW;
 	AElement[][] ambiguousAmbiguousElementDefinitionWW;
 	int ambiguousAmbiguousElementIndexWW;
-	int ambiguousAmbiguousElementSizeWW;
-	
+	int ambiguousAmbiguousElementSizeWW;*/
+	int[] ambiguousAmbiguousElementInputRecordIndexWW;
+	AElement[][] ambiguousAmbiguousElementDefinitionWW;
+	int ambiguousAmbiguousElementIndexWW;
 	
 	
 	// {w2}
-	String[] ambiguousAttributeQNameWW;
+	/*String[] ambiguousAttributeQNameWW;
 	String[] ambiguousAttributeSystemIdWW;
 	int[] ambiguousAttributeLineNumberWW;
 	int[] ambiguousAttributeColumnNumberWW;
 	AAttribute[][] ambiguousAttributeDefinitionWW;
 	int ambiguousAttributeIndexWW;
-	int ambiguousAttributeSizeWW;
+	int ambiguousAttributeSizeWW;*/
+	int[] ambiguousAttributeInputRecordIndexWW;
+	AAttribute[][] ambiguousAttributeDefinitionWW;
+	int ambiguousAttributeIndexWW;
+	
 
 	// {w3}
-	String[] ambiguousCharsSystemIdWW;
+	/*String[] ambiguousCharsSystemIdWW;
 	int[] ambiguousCharsLineNumberWW;
 	int[] ambiguousCharsColumnNumberWW;
 	CharsActiveTypeItem[][] ambiguousCharsDefinitionWW;
 	int ambiguousCharsIndexWW;
-	int ambiguousCharsSizeWW;
+	int ambiguousCharsSizeWW;*/
+	int[] ambiguousCharsInputRecordIndexWW;
+	CharsActiveTypeItem[][] ambiguousCharsDefinitionWW;
+	int ambiguousCharsIndexWW;
+	
 	
 	// {w4}
-	String[] ambiguousAVAttributeQNameWW;
+	/*String[] ambiguousAVAttributeQNameWW;
 	String[] ambiguousAVSystemIdWW;
 	int[] ambiguousAVLineNumberWW;
 	int[] ambiguousAVColumnNumberWW;
 	CharsActiveTypeItem[][] ambiguousAVDefinitionWW;
 	int ambiguousAVIndexWW;
-	int ambiguousAVSizeWW;
+	int ambiguousAVSizeWW;*/
+	int[] ambiguousAVInputRecordIndexWW;
+	CharsActiveTypeItem[][] ambiguousAVDefinitionWW;
+	int ambiguousAVIndexWW;
 	
 	
 	// {15}
-	String datatypeElementQNameCC[];
+	/*String datatypeElementQNameCC[];
 	String datatypeCharsSystemIdCC[];//CC character content
 	int datatypeCharsLineNumberCC[];
 	int datatypeCharsColumnNumberCC[];
 	DatatypedActiveTypeItem datatypeCharsDefinitionCC[];
 	String datatypeErrorMessageCC[];
 	int datatypeIndexCC;
-	int datatypeSizeCC;
+	int datatypeSizeCC;*/
+	int[] datatypeCharsInputRecordIndex;
+	DatatypedActiveTypeItem[] datatypeCharsDefinition;
+	String datatypeCharsErrorMessage[];
+	int datatypeCharsIndex;
+	
 	
 	// {16}
-	String datatypeAttributeQNameAV[];
+	/*String datatypeAttributeQNameAV[];
 	String datatypeCharsSystemIdAV[];//AV attribute value
 	int datatypeCharsLineNumberAV[];
 	int datatypeCharsColumnNumberAV[];
 	DatatypedActiveTypeItem datatypeCharsDefinitionAV[];
 	String datatypeErrorMessageAV[];
 	int datatypeIndexAV;
-	int datatypeSizeAV;
+	int datatypeSizeAV;*/
+	int[] datatypeAVInputRecordIndex;
+	DatatypedActiveTypeItem[] datatypeAVDefinition;
+	String datatypeAVErrorMessage[];
+	int datatypeAVIndex;
    
 	
 	// {17}
-	String valueCharsSystemIdCC[];//CC character content
+	/*String valueCharsSystemIdCC[];//CC character content
 	int valueCharsLineNumberCC[];
 	int valueCharsColumnNumberCC[];
 	AValue valueCharsDefinitionCC[];
 	int valueIndexCC;
-	int valueSizeCC;
+	int valueSizeCC;*/
+	int[] valueCharsInputRecordIndex;
+	AValue[] valueCharsDefinition;
+	int valueCharsIndex;
 	
 	// {18}
-	String valueAttributeQNameAV[];
+	/*String valueAttributeQNameAV[];
 	String valueCharsSystemIdAV[];//AV attribute value
 	int valueCharsLineNumberAV[];
 	int valueCharsColumnNumberAV[];
 	AValue valueCharsDefinitionAV[];
 	int valueIndexAV;
-	int valueSizeAV;
+	int valueSizeAV;*/
+	int[] valueAVInputRecordIndex;
+	AValue[] valueAVDefinition;
+	int valueAVIndex;
+	
 	
 	// {19}
-	String exceptElementQNameCC[];
+	/*String exceptElementQNameCC[];
 	String exceptCharsSystemIdCC[];//CC character content
 	int exceptCharsLineNumberCC[];
 	int exceptCharsColumnNumberCC[];
 	AData exceptCharsDefinitionCC[];
 	int exceptIndexCC;
-	int exceptSizeCC;
+	int exceptSizeCC;*/
+	int[] exceptCharsInputRecordIndex;
+	AData[] exceptCharsDefinition;
+	int exceptCharsIndex;
 	
 	// {20}
-	String exceptAttributeQNameAV[];
+	/*String exceptAttributeQNameAV[];
 	String exceptCharsSystemIdAV[];//AV attribute except
 	int exceptCharsLineNumberAV[];
 	int exceptCharsColumnNumberAV[];
 	AData exceptCharsDefinitionAV[];
 	int exceptIndexAV;
-	int exceptSizeAV;
+	int exceptSizeAV;*/
+	int[] exceptAVInputRecordIndex;
+	AData[] exceptAVDefinition;
+	int exceptAVIndex;
+	
 	
 	// {21}
-	String unexpectedCharsSystemIdCC[];//CC character content
+	/*String unexpectedCharsSystemIdCC[];//CC character content
 	int unexpectedCharsLineNumberCC[];
 	int unexpectedCharsColumnNumberCC[];
 	AElement unexpectedContextDefinitionCC[];
 	int unexpectedIndexCC;
-	int unexpectedSizeCC;
+	int unexpectedSizeCC;*/
+	int[] unexpectedCharsInputRecordIndex;
+	AElement[] unexpectedCharsDefinition;
+	int unexpectedCharsIndex;
+	
 	
 	// {22}
-	String unexpectedCharsSystemIdAV[];//AV attribute unexpected
+	/*String unexpectedCharsSystemIdAV[];//AV attribute unexpected
 	int unexpectedCharsLineNumberAV[];
 	int unexpectedCharsColumnNumberAV[];
 	AAttribute unexpectedContextDefinitionAV[];
 	int unexpectedIndexAV;
-	int unexpectedSizeAV;
+	int unexpectedSizeAV;*/
+	int[] unexpectedAVInputRecordIndex;
+	AAttribute[] unexpectedAVDefinition;
+	int unexpectedAVIndex;
 	
 	
 	// {23}
-	String unresolvedCharsSystemIdEECC[];//CC character content
+	/*String unresolvedCharsSystemIdEECC[];//CC character content
 	int unresolvedCharsLineNumberEECC[];
 	int unresolvedCharsColumnNumberEECC[];
 	CharsActiveTypeItem unresolvedPossibleDefinitionsCC[][];
 	int unresolvedIndexCC;
-	int unresolvedSizeCC;
+	int unresolvedSizeCC;*/
+	int[] unresolvedCharsInputRecordIndexEE;
+	CharsActiveTypeItem[][] unresolvedCharsDefinitionEE;
+	int unresolvedCharsIndexEE;
+	
 	
 	// {24}
-	String unresolvedAttributeQNameEEAV[];
+	/*String unresolvedAttributeQNameEEAV[];
 	String unresolvedCharsSystemIdEEAV[];//AV attribute unresolved
 	int unresolvedCharsLineNumberEEAV[];
 	int unresolvedCharsColumnNumberEEAV[];
 	CharsActiveTypeItem unresolvedPossibleDefinitionsAV[][];
 	int unresolvedIndexAV;
-	int unresolvedSizeAV;
+	int unresolvedSizeAV;*/
+	int[] unresolvedAVInputRecordIndexEE;
+	CharsActiveTypeItem[][] unresolvedAVDefinitionEE;
+	int unresolvedAVIndexEE;
 	
 	
 	// {25}
-	String datatypeTokenLP[];//LP list pattern
+	/*String datatypeTokenLP[];//LP list pattern
 	String datatypeCharsSystemIdLP[];
 	int datatypeCharsLineNumberLP[];
 	int datatypeCharsColumnNumberLP[];
 	DatatypedActiveTypeItem datatypeCharsDefinitionLP[];
 	String datatypeErrorMessageLP[];
 	int datatypeIndexLP;
-	int datatypeSizeLP;
+	int datatypeSizeLP;*/
+	int[] datatypeTokenInputRecordIndex;
+	DatatypedActiveTypeItem[] datatypeTokenDefinition;
+	String datatypeTokenErrorMessage[];
+	int datatypeTokenIndex;
+	
     	
 	// {26}
-	String valueTokenLP[];//LP list pattern
+	/*String valueTokenLP[];//LP list pattern
 	String valueCharsSystemIdLP[];
 	int valueCharsLineNumberLP[];
 	int valueCharsColumnNumberLP[];
 	AValue valueCharsDefinitionLP[];
 	int valueIndexLP;
-	int valueSizeLP;
+	int valueSizeLP;*/
+	int[] valueTokenInputRecordIndex;
+	AValue[] valueTokenDefinition;
+	int valueTokenIndex;
 	
 	// {27}
-	String exceptTokenLP[];//LP list pattern
+	/*String exceptTokenLP[];//LP list pattern
 	String exceptCharsSystemIdLP[];
 	int exceptCharsLineNumberLP[];
 	int exceptCharsColumnNumberLP[];
 	AData exceptCharsDefinitionLP[];
 	int exceptIndexLP;
-	int exceptSizeLP;
+	int exceptSizeLP;*/
+	int[] exceptTokenInputRecordIndex;
+	AData[] exceptTokenDefinition;
+	int exceptTokenIndex;
 	
 	// {28}
 	    
     // {28_1}
-	String unresolvedTokenLPICE[];//LPICE list pattern in context validation error
+	/*String unresolvedTokenLPICE[];//LPICE list pattern in context validation error
 	String unresolvedCharsSystemIdEELPICE[];
 	int unresolvedCharsLineNumberEELPICE[];
 	int unresolvedCharsColumnNumberEELPICE[];
 	CharsActiveTypeItem unresolvedPossibleDefinitionsLPICE[][];
 	int unresolvedIndexLPICE;
-	int unresolvedSizeLPICE;
-    
+	int unresolvedSizeLPICE;*/
+	int[] unresolvedTokenInputRecordIndexLPICE;
+    CharsActiveTypeItem unresolvedTokenDefinitionLPICE[][];
+	int unresolvedTokenIndexLPICE;
     
     // {28_2}
-	String ambiguousTokenLPICW[];//LPICW list pattern in context validation warning
+	/*String ambiguousTokenLPICW[];//LPICW list pattern in context validation warning
 	String ambiguousCharsSystemIdEELPICW[];
 	int ambiguousCharsLineNumberEELPICW[];
 	int ambiguousCharsColumnNumberEELPICW[];
 	CharsActiveTypeItem ambiguousPossibleDefinitionsLPICW[][];
 	int ambiguousIndexLPICW;
-	int ambiguousSizeLPICW;
+	int ambiguousSizeLPICW;*/
+	int[] ambiguousTokenInputRecordIndexLPICW;
+    CharsActiveTypeItem ambiguousTokenDefinitionLPICW[][];
+	int ambiguousTokenIndexLPICW;
     
 	
 	// {29}
-	Rule[] missingCompositorContentContext;
+	/*Rule[] missingCompositorContentContext;
 	String[] missingCompositorContentStartSystemId;
 	int[] missingCompositorContentStartLineNumber;
 	int[] missingCompositorContentStartColumnNumber;
@@ -386,7 +509,14 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	int[] missingCompositorContentExpected;
 	int[] missingCompositorContentFound;
 	int missingCompositorContentIndex;
-	int missingCompositorContentSize;
+	int missingCompositorContentSize;*/
+	Rule[] missingCompositorContentContext;
+	int[] missingCompositorContentStartInputRecordIndex;
+	APattern[] missingCompositorContentDefinition;
+	int[] missingCompositorContentExpected;
+	int[] missingCompositorContentFound;
+	int missingCompositorContentIndex;
+	
     
     // {30}
     
@@ -398,6 +528,9 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     
     int messageTotalCount;
 		
+    boolean isMessageRetrieved;
+    boolean isDiscarded;
+   
 	public AbstractMessageHandler(MessageWriter debugWriter){
 		super(debugWriter);
 			
@@ -405,158 +538,156 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         
         // {2}
         unknownElementIndex = -1;
-        unknownElementSize = 0;	
         
         // {3}
         unexpectedElementIndex = -1;
-        unexpectedElementSize = 0;
         
         // {4}
         unexpectedAmbiguousElementIndex = -1;
-        unexpectedAmbiguousElementSize = 0;
         
         // {5}
         unknownAttributeIndex = -1;
-        unknownAttributeSize = 0;	
         
         // {6}
         unexpectedAttributeIndex = -1;
-        unexpectedAttributeSize = 0;
         
         // {7}
         unexpectedAmbiguousAttributeIndex = -1;
-        unexpectedAmbiguousAttributeSize = 0;
         
         
         // {8}
         misplacedIndex = -1;
-        misplacedSize = 0;
     
         // {9}
         excessiveIndex = -1;
-        excessiveSize = 0;
+        
         
         // {10}
         missingIndex = -1;
-        missingSize = 0;
         
         
         // {11}	
         illegalIndex = -1;
-        illegalSize = 0;
         
         // {12 A}
         unresolvedAmbiguousElementIndexEE = -1;
-        unresolvedAmbiguousElementSizeEE = 0;
         
         // {12 U}
         unresolvedUnresolvedElementIndexEE = -1;
-        unresolvedUnresolvedElementSizeEE = 0;
     
         // {13}
         unresolvedAttributeIndexEE = -1;
-        unresolvedAttributeSizeEE = 0;
     
         // {14}
 
         
         // {w1 U}
         ambiguousUnresolvedElementIndexWW = -1;
-        ambiguousUnresolvedElementSizeWW = 0;
         
         // {w1 A}
         ambiguousAmbiguousElementIndexWW = -1;
-        ambiguousAmbiguousElementSizeWW = 0;
         
         
         
         // {w2}
         ambiguousAttributeIndexWW = -1;
-        ambiguousAttributeSizeWW = 0;
     
         // {w3}
         ambiguousCharsIndexWW = -1;
-        ambiguousCharsSizeWW = 0;
         
         // {w4}
         ambiguousAVIndexWW = -1;
-        ambiguousAVSizeWW = 0;
         
         
         // {15}
-        datatypeIndexCC = -1;
-        datatypeSizeCC = 0;
+        datatypeCharsIndex = -1;
+        
         
         // {16}
-        datatypeIndexAV = -1;
-        datatypeSizeAV = 0;
+        datatypeAVIndex = -1;
        
         
         // {17}
-        valueIndexCC = -1;
-        valueSizeCC = 0;
+        valueCharsIndex = -1;
+        
         
         // {18}
-        valueIndexAV = -1;
-        valueSizeAV = 0;
+        valueAVIndex = -1;
         
         // {19}
-        exceptIndexCC = -1;
-        exceptSizeCC = 0;
+        exceptCharsIndex = -1;
         
         // {20}
-        exceptIndexAV = -1;
-        exceptSizeAV = 0;
+        exceptAVIndex = -1;
         
         // {21}
-        unexpectedIndexCC = -1;
-        unexpectedSizeCC = 0;
+        unexpectedCharsIndex = -1;
+        
         
         // {22}
-        unexpectedIndexAV = -1;
-        unexpectedSizeAV = 0;
+        unexpectedAVIndex = -1;
         
         
         // {23}
-        unresolvedIndexCC = -1;
-        unresolvedSizeCC = 0;
+        unresolvedCharsIndexEE = -1;
         
         // {24}
-        unresolvedIndexAV = -1;
-        unresolvedSizeAV = 0;
+        unresolvedAVIndexEE = -1;
         
         
         // {25}
-        datatypeIndexLP = -1;
-        datatypeSizeLP = 0;
+        datatypeTokenIndex = -1;
             
         // {26}
-        valueIndexLP = -1;
-        valueSizeLP = 0;
+        valueTokenIndex = -1;
         
         // {27}
-        exceptIndexLP = -1;
-        exceptSizeLP = 0;
+        exceptTokenIndex = -1;
         
         // {28}
 
         // {28_1}
-        unresolvedIndexLPICE = -1;
-        unresolvedSizeLPICE = 0;
+        unresolvedTokenIndexLPICE = -1;
         
         
         // {28_2}
-        ambiguousIndexLPICW = -1;
-        ambiguousSizeLPICW = 0;
+        ambiguousTokenIndexLPICW = -1;
         
         
         // {29}
         missingCompositorContentIndex = -1;
-        missingCompositorContentSize = 0;
         
-        // {30}
+        // {30}     
+        
+        isMessageRetrieved = false;
+        isDiscarded = false;
+
 	}  
     
+	void init(ActiveInputDescriptor activeInputDescriptor){
+	    isMessageRetrieved = false;
+        isDiscarded = false;
+	    this.activeInputDescriptor = activeInputDescriptor;
+	}
+	
+	public void setDiscarded(boolean isDiscarded){
+        this.isDiscarded = isDiscarded;
+        
+        if(commonMessages != null)commonMessages.setDiscarded(isDiscarded);
+        
+        if(candidateMessages!= null){
+            for(int i = 0; i < candidateMessages.length; i++){
+                if(candidateMessages[i] != null)candidateMessages[i].setDiscarded(isDiscarded);;
+            }
+        }
+        if(parent != null)parent.setDiscarded(isDiscarded);
+    }
+    
+	protected void finalize(){
+	   clear();
+	}
+	
+	
 	public boolean containsErrorMessage(){
 	    if(unknownElementIndex >= 0
 	        || unexpectedElementIndex >= 0
@@ -571,20 +702,20 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	        || unresolvedAmbiguousElementIndexEE >= 0
 	        || unresolvedUnresolvedElementIndexEE >= 0
 	        || unresolvedAttributeIndexEE >= 0
-	        || datatypeIndexCC >= 0
-	        || datatypeIndexAV >= 0
-	        || valueIndexCC >= 0
-	        || valueIndexAV >= 0
-	        || exceptIndexCC >= 0
-	        || exceptIndexAV >= 0
-	        || unexpectedIndexCC >= 0
-	        || unexpectedIndexAV >= 0
-	        || unresolvedIndexCC >= 0
-	        || unresolvedIndexAV >= 0
-	        || datatypeIndexLP >= 0
-	        || valueIndexLP >= 0
-	        || exceptIndexLP >= 0
-	        || unresolvedIndexLPICE >= 0
+	        || datatypeCharsIndex >= 0
+	        || datatypeAVIndex >= 0
+	        || valueCharsIndex >= 0
+	        || valueAVIndex >= 0
+	        || exceptCharsIndex >= 0
+	        || exceptAVIndex >= 0
+	        || unexpectedCharsIndex >= 0
+	        || unexpectedAVIndex >= 0
+	        || unresolvedCharsIndexEE >= 0
+	        || unresolvedAVIndexEE >= 0
+	        || datatypeTokenIndex >= 0
+	        || valueTokenIndex >= 0
+	        || exceptTokenIndex >= 0
+	        || unresolvedTokenIndexLPICE >= 0
 	        || missingCompositorContentIndex >= 0) return true;
 	    
 	    if(commonMessages != null && commonMessages.containsErrorMessage())return true;	    
@@ -606,10 +737,12 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	    throw new IllegalStateException();
     }
     
-    public void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
-        this.contextType = contextType;
-        this.qName = qName;
-        this.definition = definition;
+    public void report(int reportingContextType, String reportingContextQName, AElement reportingContextDefinition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
+        isMessageRetrieved = true;
+        
+        this.reportingContextType = reportingContextType;
+        this.reportingContextQName = reportingContextQName;
+        this.reportingContextDefinition = reportingContextDefinition;
         
         if(parent != null){
             parent.report(restrictToFileName, locator, errorDispatcher, "");//parent should have been located, else illegal state
@@ -617,12 +750,11 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
                 
         //do the conflict
         if(disqualified != null){
-            handleConflict(contextType, qName, restrictToFileName, locator, errorDispatcher, "");            
+            handleConflict(reportingContextType, reportingContextQName, restrictToFileName, locator, errorDispatcher, "");            
             // report common as any other errors            
             if(commonMessages != null){
                 commonMessages.report(restrictToFileName, locator, errorDispatcher, "");
-            }
-            
+            }            
             return;
         }
         
@@ -631,7 +763,8 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
             errorMessage = errorMessage.trim();
             if(!errorMessage.equals("")){
                 if(locator != null) errorDispatcher.error(new SAXParseException(errorMessage, locator));
-                else errorDispatcher.error(new SAXParseException(errorMessage, publicId, systemId, lineNumber, columnNumber));
+                else errorDispatcher.error(new SAXParseException(errorMessage, reportingContextPublicId, reportingContextSystemId, reportingContextLineNumber, reportingContextColumnNumber));
+                                          
             }
         }
         
@@ -640,7 +773,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
             warningMessage = warningMessage.trim();
             if(!warningMessage.equals("")){
                 if(locator != null) errorDispatcher.warning(new SAXParseException(warningMessage, locator));
-                else errorDispatcher.warning(new SAXParseException(warningMessage, publicId, systemId, lineNumber, columnNumber));
+                else errorDispatcher.warning(new SAXParseException(warningMessage, reportingContextPublicId, reportingContextSystemId, reportingContextLineNumber, reportingContextColumnNumber));
             }
         }
     }
@@ -663,7 +796,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         }
         if(!message.equals("")){
             if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, locator));
-            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, publicId, systemId, lineNumber, columnNumber));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, reportingContextPublicId, reportingContextSystemId, reportingContextLineNumber, reportingContextColumnNumber));
         }else throw new IllegalStateException();
     }
     
@@ -681,11 +814,13 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         }
         if(!message.equals("")){            
             if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
-            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, publicId, systemId, lineNumber, columnNumber));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, reportingContextPublicId, reportingContextSystemId, reportingContextLineNumber, reportingContextColumnNumber));
         }        
     }
         
     public void report(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
+        isMessageRetrieved = true;
+        
         if(parent != null){
             parent.report(restrictToFileName, locator, errorDispatcher, prefix);//parent should have been located, else illegal state            
         }
@@ -697,7 +832,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
             // report common as any other errors            
             if(commonMessages != null){
                 commonMessages.report(restrictToFileName, locator, errorDispatcher, prefix);                
-            }
+            }            
             return;
         }
                 
@@ -706,7 +841,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
             errorMessage = errorMessage.trim();
             if(!errorMessage.equals("")){
                 if(locator != null) errorDispatcher.error(new SAXParseException(errorMessage, locator));
-                else errorDispatcher.error(new SAXParseException(errorMessage, publicId, systemId, lineNumber, columnNumber));
+                else errorDispatcher.error(new SAXParseException(errorMessage, reportingContextPublicId, reportingContextSystemId, reportingContextLineNumber, reportingContextColumnNumber));
             }
         }
         
@@ -715,7 +850,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
             warningMessage = warningMessage.trim();
             if(!warningMessage.equals("")){
                 if(locator != null) errorDispatcher.warning(new SAXParseException(warningMessage, locator));
-                else errorDispatcher.warning(new SAXParseException(warningMessage, publicId, systemId, lineNumber, columnNumber));
+                else errorDispatcher.warning(new SAXParseException(warningMessage, reportingContextPublicId, reportingContextSystemId, reportingContextLineNumber, reportingContextColumnNumber));
             }
         }
     }
@@ -738,8 +873,8 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
             message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
         }
         if(!message.equals("")){
-            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error.Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, locator));
-            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error.Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, publicId, systemId, lineNumber, columnNumber));
+            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error.Element <"+reportingContextQName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, locator));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error.Element <"+reportingContextQName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, reportingContextPublicId, reportingContextSystemId, reportingContextLineNumber, reportingContextColumnNumber));
         }
     }
     
@@ -755,8 +890,8 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         }
         message = message.trim();
         if(!message.equals("")){
-            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, locator));
-            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message, publicId, systemId, lineNumber, columnNumber));
+            if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+reportingContextQName+"> contain errors in their subtrees:"+message, locator));
+            else errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Candidate definitions of ambiguous element <"+reportingContextQName+"> contain errors in their subtrees:"+message, reportingContextPublicId, reportingContextSystemId, reportingContextLineNumber, reportingContextColumnNumber));
         }
     }
     
@@ -767,7 +902,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     
 	
     public String getCandidateErrorMessage(String prefix, boolean restrictToFileName){
-		if(definition == null){
+		if(reportingContextDefinition == null){
 			throw new IllegalStateException();
 		}
         String message = "";
@@ -779,20 +914,21 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
             if(parent != null){
                 String parentMessage = parent.getErrorMessage(localPrefix, restrictToFileName); 
                 if(!parentMessage.equals(""))
-                    message = "\n"+prefix+"Candidate definition <"+definition.getQName() +"> at "+definition.getLocation(restrictToFileName)+" contains errors: "
+                    message = "\n"+prefix+"Candidate definition <"+reportingContextDefinition.getQName() +"> at "+reportingContextDefinition.getLocation(restrictToFileName)+" contains errors: "
                             + parentMessage;
             }else{                
-                message = "\n"+prefix+"Candidate definition <"+definition.getQName() +"> at "+definition.getLocation(restrictToFileName)+" contains errors: ";                
+                message = "\n"+prefix+"Candidate definition <"+reportingContextDefinition.getQName() +"> at "+reportingContextDefinition.getLocation(restrictToFileName)+" contains errors: ";                
             }
             message += localMessage; 
         }else{
             if(parent != null){
                 String parentMessage = parent.getErrorMessage(prefix, restrictToFileName); 
                 if(!parentMessage.equals(""))
-                    message = "\n"+prefix+"Candidate definition <"+definition.getQName() +"> at "+definition.getLocation(restrictToFileName)+" contains errors: "
+                    message = "\n"+prefix+"Candidate definition <"+reportingContextDefinition.getQName() +"> at "+reportingContextDefinition.getLocation(restrictToFileName)+" contains errors: "
                             + parentMessage;
             }
         }
+        
         return message;
 	}
        	
@@ -825,7 +961,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
             message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
         }
         message = message.trim();
-        if(!message.equals(""))return "\n"+prefix+"Syntax error.Element <"+qName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message;
+        if(!message.equals(""))return "\n"+prefix+"Syntax error.Element <"+reportingContextQName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message;
         return message;
     }
     
@@ -844,7 +980,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         }
         message = message.trim();
         if(!message.equals("")){
-            return "\n"+prefix+"Syntax error. Candidate definitions of ambiguous element <"+qName+"> contain errors in their subtrees:"+message;
+            return "\n"+prefix+"Syntax error. Candidate definitions of ambiguous element <"+reportingContextQName+"> contain errors in their subtrees:"+message;
         }
         return message;
     }
@@ -856,15 +992,17 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(unknownElementIndex >= 0){
 			for(int i = 0; i <= unknownElementIndex; i++){
 				message += "\n"+prefix+"Unknown element."
-				+"\n"+prefix+"Element <"+unknownElementQName[i]+"> at "+getLocation(restrictToFileName, unknownElementSystemId[i])+":"+unknownElementLineNumber[i]+":"+unknownElementColumnNumber[i]
+				+"\n"+prefix+"Element <"+activeInputDescriptor.getItemDescription(unknownElementInputRecordIndex[i])+"> at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unknownElementInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(unknownElementInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(unknownElementInputRecordIndex[i])
 				+" is not known in the vocabulary described by the schema.";
+				
+				//activeInputDescriptor.unregisterClientForRecord(unknownElementInputRecordIndex[i]);
 			}
 		}	
 		// {3}
 		if(unexpectedElementIndex >= 0){
 			for(int i = 0; i <= unexpectedElementIndex; i++){
 				message += "\n"+prefix+"Unexpected element."
-                +"\n"+prefix+"Element <"+unexpectedElementQName[i]+"> at "+getLocation(restrictToFileName, unexpectedElementSystemId[i])+":"+unexpectedElementLineNumber[i]+":"+unexpectedElementColumnNumber[i]+" corresponding to definition: <"+unexpectedElementDefinition[i].getQName()+"> at "+unexpectedElementDefinition[i].getLocation(restrictToFileName)+" is not part of the parent's content model." ;
+                +"\n"+prefix+"Element <"+activeInputDescriptor.getItemDescription(unexpectedElementInputRecordIndex[i])+"> at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unexpectedElementInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(unexpectedElementInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(unexpectedElementInputRecordIndex[i])+" corresponding to definition: <"+unexpectedElementDefinition[i].getQName()+"> at "+unexpectedElementDefinition[i].getLocation(restrictToFileName)+" is not part of the parent's content model." ;
 			}
 		}
 		// {4}
@@ -875,7 +1013,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 					definitions += "\n"+prefix+"<"+unexpectedAmbiguousElementDefinition[i][j].getQName()+"> at "+unexpectedAmbiguousElementDefinition[i][j].getLocation(restrictToFileName);
 				}
 				message += "\n"+prefix+"Unexpected element."
-						+"\n"+prefix+"Element <"+unexpectedAmbiguousElementQName[i]+"> at "+getLocation(restrictToFileName, unexpectedAmbiguousElementSystemId[i])+":"+unexpectedAmbiguousElementLineNumber[i]+":"+unexpectedAmbiguousElementColumnNumber[i]
+						+"\n"+prefix+"Element <"+activeInputDescriptor.getItemDescription(unexpectedAmbiguousElementInputRecordIndex[i])+"> at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unexpectedAmbiguousElementInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(unexpectedAmbiguousElementInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(unexpectedAmbiguousElementInputRecordIndex[i])
 						+", corresponding to one of the schema definitions: "
                         +definitions						
 						+"\n"+prefix+"is not part of the parent's content model." ;
@@ -885,7 +1023,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(unknownAttributeIndex  >= 0){
 			for(int i = 0; i <= unknownAttributeIndex; i++){
 				message += "\n"+prefix+"Unknown attribute."
-				+"\n"+prefix+"Attribute \""+unknownAttributeQName[i]+"\" at "+getLocation(restrictToFileName, unknownAttributeSystemId[i])+":"+unknownAttributeLineNumber[i]+":"+unknownAttributeColumnNumber[i]
+				+"\n"+prefix+"Attribute \""+activeInputDescriptor.getItemDescription(unknownAttributeInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unknownAttributeInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(unknownAttributeInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(unknownAttributeInputRecordIndex[i])
 				+" is not known in the vocabulary described by the schema.";
 			}
 		}	
@@ -893,7 +1031,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(unexpectedAttributeIndex  >= 0){
 			for(int i = 0; i <= unexpectedAttributeIndex; i++){
 				message += "\n"+prefix+"Unexpected attribute."
-						+"\n"+prefix+"Attribute \""+unexpectedAttributeQName[i]+"\" at "+getLocation(restrictToFileName, unexpectedAttributeSystemId[i])+":"+unexpectedAttributeLineNumber[i]+":"+unexpectedAttributeColumnNumber[i]+" corresponding to definition <"+unexpectedAttributeDefinition[i].getQName()+"> at "+unexpectedAttributeDefinition[i].getLocation(restrictToFileName)+" is not part of the parent's content model." ;
+						+"\n"+prefix+"Attribute \""+activeInputDescriptor.getItemDescription(unexpectedAttributeInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unexpectedAttributeInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(unexpectedAttributeInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(unexpectedAttributeInputRecordIndex[i])+" corresponding to definition <"+unexpectedAttributeDefinition[i].getQName()+"> at "+unexpectedAttributeDefinition[i].getLocation(restrictToFileName)+" is not part of the parent's content model." ;
 			}
 		}
 		// {7}
@@ -904,7 +1042,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 					definitions += "\n"+prefix+"<"+unexpectedAmbiguousAttributeDefinition[i][j].getQName()+"> at "+unexpectedAmbiguousAttributeDefinition[i][j].getLocation(restrictToFileName);
 				}
 				message += "\n"+prefix+"Unexpected attribute."
-						+"\n"+prefix+"Attribute \""+unexpectedAmbiguousAttributeQName[i]+"\" at "+getLocation(restrictToFileName, unexpectedAmbiguousAttributeSystemId[i])+":"+unexpectedAmbiguousAttributeLineNumber[i]+":"+unexpectedAmbiguousAttributeColumnNumber[i]
+						+"\n"+prefix+"Attribute \""+activeInputDescriptor.getItemDescription(unexpectedAmbiguousAttributeInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unexpectedAmbiguousAttributeInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(unexpectedAmbiguousAttributeInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(unexpectedAmbiguousAttributeInputRecordIndex[i])
 						+", corresponding to one of the definitions: "
                         +definitions						
 						+"\n"+prefix+"is not part of the parent's content model." ;
@@ -916,10 +1054,10 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(misplacedIndex  >= 0){
 			for(int i = 0; i <= misplacedIndex; i++){
 				message += "\n"+prefix+"Order error."
-				+"\n"+prefix+"Misplaced content in the document structure starting at "+getLocation(restrictToFileName, misplacedStartSystemId[i])+":"+misplacedStartLineNumber[i]+":"+misplacedStartColumnNumber[i]+", corresponding to definition <"+misplacedContext[i].getQName()+"> at "+misplacedContext[i].getLocation(restrictToFileName)+ ":";
+				+"\n"+prefix+"Misplaced content in the document structure starting at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(misplacedStartInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(misplacedStartInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(misplacedStartInputRecordIndex[i])+", corresponding to definition <"+misplacedContext[i].getQName()+"> at "+misplacedContext[i].getLocation(restrictToFileName)+ ":";
 				for(int j = 0; j < misplacedDefinition[i].length; j++){
-					for(int k = 0; k < misplacedQName[i][j].length; k++){
-						message += "\n"+prefix+getItemDescription(misplacedItemId[i][j][k], misplacedQName[i][j][k])+" at "+getLocation(restrictToFileName, misplacedSystemId[i][j][k])+":"+misplacedLineNumber[i][j][k]+":"+misplacedColumnNumber[i][j][k];
+					for(int k = 0; k < misplacedInputRecordIndex[i][j].length; k++){
+						message += "\n"+prefix+getItemDescription( activeInputDescriptor.getItemId(misplacedInputRecordIndex[i][j][k]),  activeInputDescriptor.getItemDescription(misplacedInputRecordIndex[i][j][k]))+" at "+getLocation(restrictToFileName,  activeInputDescriptor.getSystemId(misplacedInputRecordIndex[i][j][k]))+":"+ activeInputDescriptor.getLineNumber(misplacedInputRecordIndex[i][j][k])+":"+ activeInputDescriptor.getColumnNumber(misplacedInputRecordIndex[i][j][k]);
 					}
 					message += ", corresponding to definition <"+misplacedDefinition[i][j].getQName()+"> at "+misplacedDefinition[i][j].getLocation(restrictToFileName);
 				}
@@ -930,10 +1068,10 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(excessiveIndex  >= 0){
 			for(int i = 0; i <= excessiveIndex; i++){
 				message += "\n"+prefix+"Excessive content."
-						+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, excessiveStartSystemId[i])+":"+excessiveStartLineNumber[i]+":"+excessiveStartColumnNumber[i]+", corresponding to definition <"+excessiveContext[i].getQName()+"> at "+excessiveContext[i].getLocation(restrictToFileName)+", "
-						+" expected "+getExpectedCardinality(excessiveDefinition[i].getMinOccurs(), excessiveDefinition[i].getMaxOccurs())+" corresponding to definition <"+excessiveDefinition[i].getQName()+"> at "+excessiveDefinition[i].getLocation(restrictToFileName)+", found "+excessiveQName[i].length+" starting at: ";
-				for(int j = 0; j < excessiveQName[i].length; j++){
-					message += "\n"+prefix+getItemDescription(excessiveItemId[i][j], excessiveQName[i][j])+" at "+getLocation(restrictToFileName, excessiveSystemId[i][j])+":"+excessiveLineNumber[i][j]+":"+excessiveColumnNumber[i][j];
+						+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName,  activeInputDescriptor.getSystemId(excessiveStartInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(excessiveStartInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(excessiveStartInputRecordIndex[i])+", corresponding to definition <"+excessiveContext[i].getQName()+"> at "+excessiveContext[i].getLocation(restrictToFileName)+", "
+						+" expected "+getExpectedCardinality(excessiveDefinition[i].getMinOccurs(), excessiveDefinition[i].getMaxOccurs())+" corresponding to definition <"+excessiveDefinition[i].getQName()+"> at "+excessiveDefinition[i].getLocation(restrictToFileName)+", found "+excessiveInputRecordIndex[i].length+" starting at: ";
+				for(int j = 0; j < excessiveInputRecordIndex[i].length; j++){
+					message += "\n"+prefix+getItemDescription(activeInputDescriptor.getItemId(excessiveInputRecordIndex[i][j]), activeInputDescriptor.getItemDescription(excessiveInputRecordIndex[i][j]))+" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(excessiveInputRecordIndex[i][j]))+":"+activeInputDescriptor.getLineNumber(excessiveInputRecordIndex[i][j])+":"+activeInputDescriptor.getColumnNumber(excessiveInputRecordIndex[i][j]);
 				}
 				message += ".";
 			}
@@ -944,14 +1082,14 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 				int found = missingFound[i];				
 				if(found > 0){
 					message += "\n"+prefix+"Missing content."
-							+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, missingStartSystemId[i])+":"+missingStartLineNumber[i]+":"+missingStartColumnNumber[i]+", corresponding to definition <"+missingContext[i].getQName()+"> at "+missingContext[i].getLocation(restrictToFileName)+", "
+							+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(missingStartInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(missingStartInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(missingStartInputRecordIndex[i])+", corresponding to definition <"+missingContext[i].getQName()+"> at "+missingContext[i].getLocation(restrictToFileName)+", "
 							+"expected "+getExpectedCardinality(missingDefinition[i].getMinOccurs(), missingDefinition[i].getMaxOccurs())+" corresponding to definition <"+missingDefinition[i].getQName()+"> at "+missingDefinition[i].getLocation(restrictToFileName)+", found "+found+": ";
-					for(int j = 0; j < missingQName[i].length; i++){
-						message += "\n"+prefix+"<"+missingQName[i][j]+"> at "+getLocation(restrictToFileName, missingSystemId[i][j])+":"+missingLineNumber[i][j]+":"+missingColumnNumber[i][j];
+					for(int j = 0; j < missingInputRecordIndex[i].length; i++){
+						message += "\n"+prefix+"<"+activeInputDescriptor.getItemDescription(missingInputRecordIndex[i][j])+"> at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(missingInputRecordIndex[i][j]))+":"+activeInputDescriptor.getLineNumber(missingInputRecordIndex[i][j])+":"+activeInputDescriptor.getColumnNumber(missingInputRecordIndex[i][j]);
 					}
 				}else{
 					message += "\n"+prefix+"Missing content."
-							+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, missingStartSystemId[i])+":"+missingStartLineNumber[i]+":"+missingStartColumnNumber[i]+", corresponding to definition <"+missingContext[i].getQName()+"> at "+missingContext[i].getLocation(restrictToFileName)+", "
+							+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(missingStartInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(missingStartInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(missingStartInputRecordIndex[i])+", corresponding to definition <"+missingContext[i].getQName()+"> at "+missingContext[i].getLocation(restrictToFileName)+", "
 							+"expected "+getExpectedCardinality(missingDefinition[i].getMinOccurs(), missingDefinition[i].getMaxOccurs())+" corresponding to definition <"+missingDefinition[i].getQName()+"> at "+missingDefinition[i].getLocation(restrictToFileName)+", found "+found;
 				}
 				message += ".";
@@ -961,14 +1099,14 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(illegalIndex >= 0){
 			for(int i = 0; i <= illegalIndex; i++){
 				message += "\n"+prefix+"Illegal content."
-							+"\n"+prefix+"The document structure starting with "+getItemDescription(illegalItemId[i], illegalQName[i])+" at "+getLocation(restrictToFileName, illegalStartSystemId[i])+":"+illegalStartLineNumber[i]+":"+illegalStartColumnNumber[i]+" does not match schema definition <"+illegalContext[i].getQName()+"> at "+illegalContext[i].getLocation(restrictToFileName)+".";
+							+"\n"+prefix+"The document structure starting with "+getItemDescription(activeInputDescriptor.getItemId(illegalStartInputRecordIndex[i]), activeInputDescriptor.getItemDescription(illegalStartInputRecordIndex[i]))+" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(illegalStartInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(illegalStartInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(illegalStartInputRecordIndex[i])+" does not match schema definition <"+illegalContext[i].getQName()+"> at "+illegalContext[i].getLocation(restrictToFileName)+".";
 			}			
 		}
 		// {12 A}
 		if(unresolvedAmbiguousElementIndexEE >= 0){
 			for(int i = 0; i <= unresolvedAmbiguousElementIndexEE; i++){
 				message += "\n"+prefix+"Unresolved element."
-						+"\n"+prefix+"Element <"+unresolvedAmbiguousElementQNameEE[i] + "> at "+getLocation(restrictToFileName, unresolvedAmbiguousElementSystemIdEE[i])+":"+unresolvedAmbiguousElementLineNumberEE[i]+":"+unresolvedAmbiguousElementColumnNumberEE[i]
+						+"\n"+prefix+"Element <"+activeInputDescriptor.getItemDescription(unresolvedAmbiguousElementInputRecordIndexEE[i]) + "> at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unresolvedAmbiguousElementInputRecordIndexEE[i]))+":"+activeInputDescriptor.getLineNumber(unresolvedAmbiguousElementInputRecordIndexEE[i])+":"+activeInputDescriptor.getColumnNumber(unresolvedAmbiguousElementInputRecordIndexEE[i])
 						+", ambiguous after content validation, cannot be resolved by in context validation either, all candidates resulted in errors. Possible definitions: ";
 				for(int j = 0; j < unresolvedAmbiguousElementDefinitionEE[i].length; j++){
 					message += "\n"+prefix+"<"+unresolvedAmbiguousElementDefinitionEE[i][j].getQName()+"> at "+unresolvedAmbiguousElementDefinitionEE[i][j].getLocation(restrictToFileName);
@@ -980,7 +1118,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(unresolvedUnresolvedElementIndexEE >= 0){
 			for(int i = 0; i <= unresolvedUnresolvedElementIndexEE; i++){
 				message += "\n"+prefix+"Unresolved element."
-						+"\n"+prefix+"Element <"+unresolvedUnresolvedElementQNameEE[i] + "> at "+getLocation(restrictToFileName, unresolvedUnresolvedElementSystemIdEE[i])+":"+unresolvedUnresolvedElementLineNumberEE[i]+":"+unresolvedUnresolvedElementColumnNumberEE[i]
+						+"\n"+prefix+"Element <"+activeInputDescriptor.getItemDescription(unresolvedUnresolvedElementInputRecordIndexEE[i]) + "> at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unresolvedUnresolvedElementInputRecordIndexEE[i]))+":"+activeInputDescriptor.getLineNumber(unresolvedUnresolvedElementInputRecordIndexEE[i])+":"+activeInputDescriptor.getColumnNumber(unresolvedUnresolvedElementInputRecordIndexEE[i])
 						+", unresolved by content validation, cannot be resolved by in context validation either, all candidates resulted in errors.";
 				
 			}
@@ -989,7 +1127,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(unresolvedAttributeIndexEE >= 0){
 			for(int i = 0; i <= unresolvedAttributeIndexEE; i++){
 				message += "\n"+prefix+"Unresolved attribute."
-						+"\n"+prefix+"Attribute \""+unresolvedAttributeQNameEE[i] + "\" at "+getLocation(restrictToFileName, unresolvedAttributeSystemIdEE[i])+":"+unresolvedAttributeLineNumberEE[i]+":"+unresolvedAttributeColumnNumberEE[i]
+						+"\n"+prefix+"Attribute \""+activeInputDescriptor.getItemDescription(unresolvedAttributeInputRecordIndexEE[i]) + "\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unresolvedAttributeInputRecordIndexEE[i]))+":"+activeInputDescriptor.getLineNumber(unresolvedAttributeInputRecordIndexEE[i])+":"+activeInputDescriptor.getColumnNumber(unresolvedAttributeInputRecordIndexEE[i])
 						+" cannot be resolved, all candidates resulted in errors. Available definitions: ";
 				for(int j = 0; j < unresolvedAttributeDefinitionEE[i].length; j++){
 					message += "\n"+prefix+"<"+unresolvedAttributeDefinitionEE[i][j].getQName()+"> at "+unresolvedAttributeDefinitionEE[i][j].getLocation(restrictToFileName);
@@ -1000,133 +1138,133 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		// {14}
 
 		// {15}
-		if(datatypeIndexCC >= 0){
-			for(int i = 0; i <= datatypeIndexCC; i++){
+		if(datatypeCharsIndex >= 0){
+			for(int i = 0; i <= datatypeCharsIndex; i++){
 				message += "\n"+prefix+"Illegal datatype."
-				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, datatypeCharsSystemIdCC[i])+":"+datatypeCharsLineNumberCC[i]+":"+datatypeCharsColumnNumberCC[i]
-				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionCC[i].getQName()+"> at "+datatypeCharsDefinitionCC[i].getLocation(restrictToFileName)+". "
-				+ datatypeErrorMessageCC[i];
+				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(datatypeCharsInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(datatypeCharsInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(datatypeCharsInputRecordIndex[i])
+				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinition[i].getQName()+"> at "+datatypeCharsDefinition[i].getLocation(restrictToFileName)+". "
+				+ datatypeCharsErrorMessage[i];
 			}
 		}
 		// {16}
-		if(datatypeIndexAV >= 0){
-			for(int i = 0; i <= datatypeIndexAV; i++){
+		if(datatypeAVIndex >= 0){
+			for(int i = 0; i <= datatypeAVIndex; i++){
 				message += "\n"+prefix+"Illegal datatype."
-				+"\n"+prefix+ "Value of attribute \""+datatypeAttributeQNameAV[i]+"\" at "+getLocation(restrictToFileName, datatypeCharsSystemIdAV[i])+":"+datatypeCharsLineNumberAV[i]+":"+datatypeCharsColumnNumberAV[i]
-				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionAV[i].getQName()+"> at "+datatypeCharsDefinitionAV[i].getLocation(restrictToFileName)+". "
-				+ datatypeErrorMessageAV[i];
+				+"\n"+prefix+ "Value of attribute \""+ activeInputDescriptor.getItemDescription(datatypeAVInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(datatypeAVInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(datatypeAVInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(datatypeAVInputRecordIndex[i])
+				+ " does not match the datatype required by schema definition <" +datatypeAVDefinition[i].getQName()+"> at "+datatypeAVDefinition[i].getLocation(restrictToFileName)+". "
+				+ datatypeAVErrorMessage[i];
 			}
 		}
 		// {17}
-		if(valueIndexCC >= 0){
-			for(int i = 0; i <= valueIndexCC; i++){
+		if(valueCharsIndex >= 0){
+			for(int i = 0; i <= valueCharsIndex; i++){
 				message += "\n"+prefix+"Illegal value."
-				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, valueCharsSystemIdCC[i])+":"+valueCharsLineNumberCC[i]+":"+valueCharsColumnNumberCC[i]
-				+ " does not match the value required by schema definition <" +valueCharsDefinitionCC[i].getQName()+"> at "+valueCharsDefinitionCC[i].getLocation(restrictToFileName)+".";
+				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(valueCharsInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(valueCharsInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(valueCharsInputRecordIndex[i])
+				+ " does not match the value required by schema definition <" +valueCharsDefinition[i].getQName()+"> at "+valueCharsDefinition[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {18}
-		if(valueIndexAV >= 0){
-			for(int i = 0; i <= valueIndexAV; i++){
+		if(valueAVIndex >= 0){
+			for(int i = 0; i <= valueAVIndex; i++){
 				message += "\n"+prefix+"Illegal value."
-				+"\n"+prefix+ "Value of attribute \""+valueAttributeQNameAV[i]+"\" at "+getLocation(restrictToFileName, valueCharsSystemIdAV[i])+":"+valueCharsLineNumberAV[i]+":"+valueCharsColumnNumberAV[i]
-				+ " does not match the value required by schema definition <" +valueCharsDefinitionAV[i].getQName()+"> at "+valueCharsDefinitionAV[i].getLocation(restrictToFileName)+".";
+				+"\n"+prefix+ "Value of attribute \""+activeInputDescriptor.getItemDescription(valueAVInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(valueAVInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(valueAVInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(valueAVInputRecordIndex[i])
+				+ " does not match the value required by schema definition <" +valueAVDefinition[i].getQName()+"> at "+valueAVDefinition[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {19}
-		if(exceptIndexCC >= 0){
-			for(int i = 0; i <= exceptIndexCC; i++){
+		if(exceptCharsIndex >= 0){
+			for(int i = 0; i <= exceptCharsIndex; i++){
 				message += "\n"+prefix+"Excepted character content."
-				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, exceptCharsSystemIdCC[i])+":"+exceptCharsLineNumberCC[i]+":"+exceptCharsColumnNumberCC[i]
-				+ " matches a value excepted by schema definition <" +exceptCharsDefinitionCC[i].getQName()+"> at "+exceptCharsDefinitionCC[i].getLocation(restrictToFileName)+".";
+				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(exceptCharsInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(exceptCharsInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(exceptCharsInputRecordIndex[i])
+				+ " matches a value excepted by schema definition <" +exceptCharsDefinition[i].getQName()+"> at "+exceptCharsDefinition[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {20}
-		if(exceptIndexAV >= 0){
-			for(int i = 0; i <= exceptIndexAV; i++){
+		if(exceptAVIndex >= 0){
+			for(int i = 0; i <= exceptAVIndex; i++){
 				message += "\n"+prefix+"Excepted attribute value"
-				+"\n"+prefix+ "Value of attribute \""+exceptAttributeQNameAV[i]+"\" at "+getLocation(restrictToFileName, exceptCharsSystemIdAV[i])+":"+exceptCharsLineNumberAV[i]+":"+exceptCharsColumnNumberAV[i]
-				+ " matches a value excepted by schema definition <" +exceptCharsDefinitionAV[i].getQName()+"> at "+exceptCharsDefinitionAV[i].getLocation(restrictToFileName)+".";
+				+"\n"+prefix+ "Value of attribute \""+activeInputDescriptor.getItemDescription(exceptAVInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(exceptAVInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(exceptAVInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(exceptAVInputRecordIndex[i])
+				+ " matches a value excepted by schema definition <" +exceptAVDefinition[i].getQName()+"> at "+exceptAVDefinition[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {21}
-		if(unexpectedIndexCC >= 0){
-			for(int i = 0; i <= unexpectedIndexCC; i++){
+		if(unexpectedCharsIndex >= 0){
+			for(int i = 0; i <= unexpectedCharsIndex; i++){
 				message += "\n"+prefix+"Unexpected character content."
-				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, unexpectedCharsSystemIdCC[i])+":"+unexpectedCharsLineNumberCC[i]+":"+unexpectedCharsColumnNumberCC[i]
-				+ " is not allowed by the element's schema definition <" +unexpectedContextDefinitionCC[i].getQName()+"> at "+unexpectedContextDefinitionCC[i].getLocation(restrictToFileName)+".";
+				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unexpectedCharsInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(unexpectedCharsInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(unexpectedCharsInputRecordIndex[i])
+				+ " is not allowed by the element's schema definition <" +unexpectedCharsDefinition[i].getQName()+"> at "+unexpectedCharsDefinition[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {22}
-		if(unexpectedIndexAV >= 0){
-			for(int i = 0; i <= unexpectedIndexAV; i++){
+		if(unexpectedAVIndex >= 0){
+			for(int i = 0; i <= unexpectedAVIndex; i++){
 				message += "\n"+prefix+"Unexpected attribute value."
-				+"\n"+prefix+ "Value of attribute \""+unexpectedAttributeQName[i]+"\" at "+getLocation(restrictToFileName, unexpectedCharsSystemIdAV[i])+":"+unexpectedCharsLineNumberAV[i]+":"+unexpectedCharsColumnNumberAV[i]
-				+ " is not allowed by the attributes's schema definition <" +unexpectedContextDefinitionAV[i].getQName()+"> at "+unexpectedContextDefinitionAV[i].getLocation(restrictToFileName)+".";
+				+"\n"+prefix+ "Value of attribute \""+activeInputDescriptor.getItemDescription(unexpectedAVInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unexpectedAVInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(unexpectedAVInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(unexpectedAVInputRecordIndex[i])
+				+ " is not allowed by the attributes's schema definition <" +unexpectedAVDefinition[i].getQName()+"> at "+unexpectedAVDefinition[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {23}
-		if(unresolvedIndexCC >= 0){
-			for(int i = 0; i <= unresolvedIndexCC; i++){
+		if(unresolvedCharsIndexEE >= 0){
+			for(int i = 0; i <= unresolvedCharsIndexEE; i++){
 				message += "\n"+prefix+"Unresolved character content."
-				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, unresolvedCharsSystemIdEECC[i])+":"+unresolvedCharsLineNumberEECC[i]+":"+unresolvedCharsColumnNumberEECC[i]
+				+"\n"+prefix+ "Character content at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unresolvedCharsInputRecordIndexEE[i]) )+":"+activeInputDescriptor.getLineNumber(unresolvedCharsInputRecordIndexEE[i])+":"+activeInputDescriptor.getColumnNumber(unresolvedCharsInputRecordIndexEE[i])
 				+ " cannot be resolved to one schema definition, all candidates resulted in errors."
 				+" Available definitions:";
-				for(int j = 0; j < unresolvedPossibleDefinitionsCC[i].length; j++){
-					message += "\n"+prefix+"<"+unresolvedPossibleDefinitionsCC[i][j].getQName()+"> at "+unresolvedPossibleDefinitionsCC[i][j].getLocation(restrictToFileName);
+				for(int j = 0; j < unresolvedCharsDefinitionEE[i].length; j++){
+					message += "\n"+prefix+"<"+unresolvedCharsDefinitionEE[i][j].getQName()+"> at "+unresolvedCharsDefinitionEE[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
 		}
 		// {24}
-		if(unresolvedIndexAV >= 0){			
-			for(int i = 0; i <= unresolvedIndexAV; i++){				
+		if(unresolvedAVIndexEE >= 0){			
+			for(int i = 0; i <= unresolvedAVIndexEE; i++){				
 				message += "\n"+prefix+"Unresolved attribute value."
-				+"\n"+prefix+ "Value of attribute \""+unresolvedAttributeQNameEEAV[i]+"\" at "+getLocation(restrictToFileName, unresolvedCharsSystemIdEEAV[i])+":"+unresolvedCharsLineNumberEEAV[i]+":"+unresolvedCharsColumnNumberEEAV[i]
+				+"\n"+prefix+ "Value of attribute \""+activeInputDescriptor.getItemDescription(unresolvedAVInputRecordIndexEE[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unresolvedAVInputRecordIndexEE[i]))+":"+activeInputDescriptor.getLineNumber(unresolvedAVInputRecordIndexEE[i])+":"+activeInputDescriptor.getColumnNumber(unresolvedAVInputRecordIndexEE[i])
 				+ " cannot be resolved to one schema definition, all candidates resulted in errors."
 				+" Available definitions:";
-				for(int j = 0; j < unresolvedPossibleDefinitionsAV[i].length; j++){
-					message += "\n"+prefix+"<"+unresolvedPossibleDefinitionsAV[i][j].getQName()+"> at "+unresolvedPossibleDefinitionsAV[i][j].getLocation(restrictToFileName);
+				for(int j = 0; j < unresolvedAVDefinitionEE[i].length; j++){
+					message += "\n"+prefix+"<"+unresolvedAVDefinitionEE[i][j].getQName()+"> at "+unresolvedAVDefinitionEE[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
 		}
 		// {25}
-		if(datatypeIndexLP >= 0){
-			for(int i = 0; i <= datatypeIndexLP; i++){
+		if(datatypeTokenIndex >= 0){
+			for(int i = 0; i <= datatypeTokenIndex; i++){
 				message += "\n"+prefix+"Illegal datatype."
-				+"\n"+prefix+ "List token \""+datatypeTokenLP[i]+"\" at "+getLocation(restrictToFileName, datatypeCharsSystemIdLP[i])+":"+datatypeCharsLineNumberLP[i]+":"+datatypeCharsColumnNumberLP[i]
-				+ " does not match the datatype required by schema definition <" +datatypeCharsDefinitionLP[i].getQName()+"> at "+datatypeCharsDefinitionLP[i].getLocation(restrictToFileName)+". "
-				+ datatypeErrorMessageLP[i];
+				+"\n"+prefix+ "List token \""+activeInputDescriptor.getItemDescription(datatypeTokenInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(datatypeTokenInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(datatypeTokenInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(datatypeTokenInputRecordIndex[i])
+				+ " does not match the datatype required by schema definition <" +datatypeTokenDefinition[i].getQName()+"> at "+datatypeTokenDefinition[i].getLocation(restrictToFileName)+". "
+				+ datatypeTokenErrorMessage[i];
 			}
 		}
 		// {26}
-		if(valueIndexLP >= 0){
-			for(int i = 0; i <= valueIndexLP; i++){
+		if(valueTokenIndex >= 0){
+			for(int i = 0; i <= valueTokenIndex; i++){
 				message += "\n"+prefix+"Illegal value."
-				+"\n"+prefix+ "List token \""+valueTokenLP[i]+"\" at "+getLocation(restrictToFileName, valueCharsSystemIdLP[i])+":"+valueCharsLineNumberLP[i]+":"+valueCharsColumnNumberLP[i]
-				+ " does not match the value required by schema definition <"+valueCharsDefinitionLP[i].getQName()+"> at "+valueCharsDefinitionLP[i].getLocation(restrictToFileName)+".";
+				+"\n"+prefix+ "List token \""+activeInputDescriptor.getItemDescription(valueTokenInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(valueTokenInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(valueTokenInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(valueTokenInputRecordIndex[i])
+				+ " does not match the value required by schema definition <"+valueTokenDefinition[i].getQName()+"> at "+valueTokenDefinition[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {27}
-		if(exceptIndexLP >= 0){
-			for(int i = 0; i <= exceptIndexLP; i++){
+		if(exceptTokenIndex >= 0){
+			for(int i = 0; i <= exceptTokenIndex; i++){
 				message += "\n"+prefix+"Excepted token."
-				+"\n"+prefix+ "List token \""+exceptTokenLP[i]+"\" at "+getLocation(restrictToFileName, exceptCharsSystemIdLP[i])+":"+exceptCharsLineNumberLP[i]+":"+exceptCharsColumnNumberLP[i]
-				+ " matches a value excepted by schema definition <"+exceptCharsDefinitionLP[i].getQName()+"> at "+exceptCharsDefinitionLP[i].getLocation(restrictToFileName)+".";
+				+"\n"+prefix+ "List token \""+activeInputDescriptor.getItemDescription(exceptTokenInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(exceptTokenInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(exceptTokenInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(exceptTokenInputRecordIndex[i])
+				+ " matches a value excepted by schema definition <"+exceptTokenDefinition[i].getQName()+"> at "+exceptTokenDefinition[i].getLocation(restrictToFileName)+".";
 			}
 		}
 		// {28}
         
         // {28_1}
-        if(unresolvedIndexLPICE >= 0){
-			for(int i = 0; i <= unresolvedIndexLPICE; i++){
+        if(unresolvedTokenIndexLPICE >= 0){
+			for(int i = 0; i <= unresolvedTokenIndexLPICE; i++){
 				message += "\n"+prefix+"Unresolved list token."
-				+"\n"+prefix+ "List token \""+unresolvedTokenLPICE[i]+"\" at "+getLocation(restrictToFileName, unresolvedCharsSystemIdEELPICE[i])+":"+unresolvedCharsLineNumberEELPICE[i]+":"+unresolvedCharsColumnNumberEELPICE[i]
+				+"\n"+prefix+ "List token \""+ activeInputDescriptor.getItemDescription(unresolvedTokenInputRecordIndexLPICE[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unresolvedTokenInputRecordIndexLPICE[i]))+":"+activeInputDescriptor.getLineNumber(unresolvedTokenInputRecordIndexLPICE[i])+":"+activeInputDescriptor.getColumnNumber(unresolvedTokenInputRecordIndexLPICE[i])
 				+ " cannot be resolved to a single schema definition, all candidates resulted in errors."
 				+ " Available definitions: ";
-				for(int j = 0; j < unresolvedPossibleDefinitionsLPICE[i].length; j++){
-					message += "\n"+prefix+"<"+unresolvedPossibleDefinitionsLPICE[i][j].getQName()+"> at "+unresolvedPossibleDefinitionsLPICE[i][j].getLocation(restrictToFileName);
+				for(int j = 0; j < unresolvedTokenDefinitionLPICE[i].length; j++){
+					message += "\n"+prefix+"<"+unresolvedTokenDefinitionLPICE[i][j].getQName()+"> at "+unresolvedTokenDefinitionLPICE[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}
@@ -1136,7 +1274,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(missingCompositorContentIndex >= 0){
 			for(int i = 0; i <= missingCompositorContentIndex; i++){
 				message += "\n"+prefix+"Missing compositor content."
-						+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, missingCompositorContentStartSystemId[i])+":"+missingCompositorContentStartLineNumber[i]+":"+missingCompositorContentStartColumnNumber[i]+", corresponding to definition <"+missingCompositorContentContext[i].getQName()+"> at "+missingCompositorContentContext[i].getLocation(restrictToFileName)+", "
+						+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(missingCompositorContentStartInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(missingCompositorContentStartInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(missingCompositorContentStartInputRecordIndex[i])+", corresponding to definition <"+missingCompositorContentContext[i].getQName()+"> at "+missingCompositorContentContext[i].getLocation(restrictToFileName)+", "
 						+"expected "+getExpectedCardinality(missingCompositorContentDefinition[i].getMinOccurs(), missingCompositorContentDefinition[i].getMaxOccurs())+" corresponding to definition <"+missingCompositorContentDefinition[i].getQName()+"> at "+missingCompositorContentDefinition[i].getLocation(restrictToFileName)+", found "+missingCompositorContentFound[i]+". ";
 			}			
 		}
@@ -1145,32 +1283,32 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         if(!message.equals("")){            
             message = getErrorIntro(prefix, restrictToFileName) + message;
         }
-		
+		isMessageRetrieved = true;
 		return message;
 	} 
     
     String getErrorIntro(String prefix, boolean restrictToFileName){
         String intro = "";        
         // TODO is context type still used?
-        if(contextType == ContextErrorHandler.ELEMENT){
+        if(reportingContextType == ContextErrorHandler.ELEMENT){
             if(conflictResolutionId == RESOLVED){
-                if(definition == null){
-                    intro = "\n"+prefix+"Syntax error. Element <"+qName+"> contains errors: ";
+                if(reportingContextDefinition == null){
+                    intro = "\n"+prefix+"Syntax error. Element <"+reportingContextQName+"> contains errors: ";
                 }else{
-                    intro = "\n"+prefix+"Syntax error. Element <"+qName+"> corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation(restrictToFileName)+" contains errors: ";
+                    intro = "\n"+prefix+"Syntax error. Element <"+reportingContextQName+"> corresponding to definition <"+reportingContextDefinition.getQName()+"> at "+reportingContextDefinition.getLocation(restrictToFileName)+" contains errors: ";
                 }
             }else if(conflictResolutionId == AMBIGUOUS){
-                intro = "\n"+prefix+"Syntax error. Ambiguous element <"+qName+"> contains errors common to all possible definitions: ";
+                intro = "\n"+prefix+"Syntax error. Ambiguous element <"+reportingContextQName+"> contains errors common to all possible definitions: ";
             }else if(conflictResolutionId == UNRESOLVED){
-                intro = "\n"+prefix+"Syntax error. Unresolved element <"+qName+"> contains errors common to all possible definitions: ";
+                intro = "\n"+prefix+"Syntax error. Unresolved element <"+reportingContextQName+"> contains errors common to all possible definitions: ";
             }
-        }else if(contextType == ContextErrorHandler.ROOT){
-            if(qName == null) qName = "root of the document";
+        }else if(reportingContextType == ContextErrorHandler.ROOT){
+            if(reportingContextQName == null) reportingContextQName = "root of the document";
             if(conflictResolutionId == RESOLVED){
-                if(definition == null){
+                if(reportingContextDefinition == null){
                     intro = "\n"+prefix+"Syntax error. Error at the root of the document: ";
                 }else{
-                    intro = "\n"+prefix+"Syntax error. Error at the root of the document corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation(restrictToFileName)+": ";
+                    intro = "\n"+prefix+"Syntax error. Error at the root of the document corresponding to definition <"+reportingContextDefinition.getQName()+"> at "+reportingContextDefinition.getLocation(restrictToFileName)+": ";
                 }
             }else if(conflictResolutionId == AMBIGUOUS){
                 intro = "\n"+prefix+"Syntax error. Error at the ambiguous root of the document common to all possible definitions: ";
@@ -1186,26 +1324,26 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     String getWarningIntro(String prefix, boolean restrictToFileName){        
         String intro = "";      
          // TODO is context type still used?
-        if(contextType == ContextErrorHandler.ELEMENT){
+        if(reportingContextType == ContextErrorHandler.ELEMENT){
             if(conflictResolutionId == RESOLVED){
-                if(definition == null){
-                    intro = "\n"+prefix+"Syntax warning. Element <"+qName+"> generates warning: ";
+                if(reportingContextDefinition == null){
+                    intro = "\n"+prefix+"Syntax warning. Element <"+reportingContextQName+"> generates warning: ";
                 }else{
-                    intro = "\n"+prefix+"Syntax warning. Element <"+qName+"> corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation(restrictToFileName)+" generates warning: ";
+                    intro = "\n"+prefix+"Syntax warning. Element <"+reportingContextQName+"> corresponding to definition <"+reportingContextDefinition.getQName()+"> at "+reportingContextDefinition.getLocation(restrictToFileName)+" generates warning: ";
                 }
             }else if(conflictResolutionId == AMBIGUOUS){
-                intro = "\n"+prefix+"Syntax warning. Ambiguous element <"+qName+"> generates warnings common to all possible definitions: ";
+                intro = "\n"+prefix+"Syntax warning. Ambiguous element <"+reportingContextQName+"> generates warnings common to all possible definitions: ";
             }else if(conflictResolutionId == UNRESOLVED){
                 
-                intro = "\n"+prefix+"Syntax warning. Unresolved element <"+qName+"> generates warnings common to all possible definitions: ";
+                intro = "\n"+prefix+"Syntax warning. Unresolved element <"+reportingContextQName+"> generates warnings common to all possible definitions: ";
             }
-        }else if(contextType == ContextErrorHandler.ROOT){
-            if(qName == null) qName = "root of the document";
+        }else if(reportingContextType == ContextErrorHandler.ROOT){
+            if(reportingContextQName == null) reportingContextQName = "root of the document";
             if(conflictResolutionId == RESOLVED){
-                if(definition == null){
+                if(reportingContextDefinition == null){
                     intro = "\n"+prefix+"Syntax warning. Warning at the root of the document: ";
                 }else{
-                    intro = "\n"+prefix+"Syntax warning. Warning at the root of the document corresponding to definition <"+definition.getQName()+"> at "+definition.getLocation(restrictToFileName)+": ";
+                    intro = "\n"+prefix+"Syntax warning. Warning at the root of the document corresponding to definition <"+reportingContextDefinition.getQName()+"> at "+reportingContextDefinition.getLocation(restrictToFileName)+": ";
                 }
             }else if(conflictResolutionId == AMBIGUOUS){
                 intro = "\n"+prefix+"Syntax warning. Warning at the ambiguous root of the document common to all possible definitions: ";
@@ -1238,7 +1376,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(ambiguousUnresolvedElementIndexWW >= 0){
 			for(int i = 0; i <= ambiguousUnresolvedElementIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous element."
-						+"\n"+prefix+"Element <"+ambiguousUnresolvedElementQNameWW[i] + "> at "+getLocation(restrictToFileName, ambiguousUnresolvedElementSystemIdWW[i])+":"+ambiguousUnresolvedElementLineNumberWW[i]+":"+ambiguousUnresolvedElementColumnNumberWW[i]
+						+"\n"+prefix+"Element <"+activeInputDescriptor.getItemDescription(ambiguousUnresolvedElementInputRecordIndexWW[i]) + "> at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(ambiguousUnresolvedElementInputRecordIndexWW[i]))+":"+activeInputDescriptor.getLineNumber(ambiguousUnresolvedElementInputRecordIndexWW[i])+":"+activeInputDescriptor.getColumnNumber(ambiguousUnresolvedElementInputRecordIndexWW[i])
 						+", unresolved by content validation, cannot be resolved by in context validation, all candidates could be correct.";				
 			}
 		}
@@ -1246,7 +1384,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(ambiguousAmbiguousElementIndexWW >= 0){
 			for(int i = 0; i <= ambiguousAmbiguousElementIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous element."
-						+"\n"+prefix+"Element <"+ambiguousAmbiguousElementQNameWW[i] + "> at "+getLocation(restrictToFileName, ambiguousAmbiguousElementSystemIdWW[i])+":"+ambiguousAmbiguousElementLineNumberWW[i]+":"+ambiguousAmbiguousElementColumnNumberWW[i]
+						+"\n"+prefix+"Element <"+activeInputDescriptor.getItemDescription(ambiguousAmbiguousElementInputRecordIndexWW[i]) + "> at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(ambiguousAmbiguousElementInputRecordIndexWW[i]))+":"+activeInputDescriptor.getLineNumber(ambiguousAmbiguousElementInputRecordIndexWW[i])+":"+activeInputDescriptor.getColumnNumber(ambiguousAmbiguousElementInputRecordIndexWW[i])
 						+", ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:";
 				for(int j = 0; j < ambiguousAmbiguousElementDefinitionWW[i].length; j++){
 					message += "\n"+prefix+"<"+ambiguousAmbiguousElementDefinitionWW[i][j].getQName()+"> at "+ambiguousAmbiguousElementDefinitionWW[i][j].getLocation(restrictToFileName);
@@ -1259,7 +1397,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(ambiguousAttributeIndexWW >= 0){
 			for(int i = 0; i <= ambiguousAttributeIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous attribute."
-						+"\n"+prefix+"Attribute \""+ambiguousAttributeQNameWW[i] + "\" at "+getLocation(restrictToFileName, ambiguousAttributeSystemIdWW[i])+":"+ambiguousAttributeLineNumberWW[i]+":"+ambiguousAttributeColumnNumberWW[i]
+						+"\n"+prefix+"Attribute \""+activeInputDescriptor.getItemDescription(ambiguousAttributeInputRecordIndexWW[i]) + "\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(ambiguousAttributeInputRecordIndexWW[i]))+":"+activeInputDescriptor.getLineNumber(ambiguousAttributeInputRecordIndexWW[i])+":"+activeInputDescriptor.getColumnNumber(ambiguousAttributeInputRecordIndexWW[i])
 						+" cannot be resolved to a single definition, several candidates could be correct. Possible definitions: ";
 				for(int j = 0; j < ambiguousAttributeDefinitionWW[i].length; j++){
 					message += "\n"+prefix+"<"+ambiguousAttributeDefinitionWW[i][j].getQName()+"> at "+ambiguousAttributeDefinitionWW[i][j].getLocation(restrictToFileName);
@@ -1271,7 +1409,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(ambiguousCharsIndexWW >= 0){
 			for(int i = 0; i <= ambiguousCharsIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous character content."
-						+"\n"+prefix+"Character content at "+getLocation(restrictToFileName, ambiguousCharsSystemIdWW[i])+":"+ambiguousCharsLineNumberWW[i]+":"+ambiguousCharsColumnNumberWW[i]
+						+"\n"+prefix+"Character content at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(ambiguousCharsInputRecordIndexWW[i]))+":"+activeInputDescriptor.getLineNumber(ambiguousCharsInputRecordIndexWW[i])+":"+activeInputDescriptor.getColumnNumber(ambiguousCharsInputRecordIndexWW[i])
 						+" cannot be resolved to a single definition, several candidates could be correct. Possible definitions: ";
 				for(int j = 0; j < ambiguousCharsDefinitionWW[i].length; j++){
 					message += "\n"+prefix+"<"+ambiguousCharsDefinitionWW[i][j].getQName()+"> at "+ambiguousCharsDefinitionWW[i][j].getLocation(restrictToFileName);
@@ -1284,7 +1422,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(ambiguousAVIndexWW >= 0){
 			for(int i = 0; i <= ambiguousAVIndexWW; i++){
 				message += "\n"+prefix+"Ambiguous attribute value."
-						+"\n"+prefix+"Value of attribute \""+ambiguousAVAttributeQNameWW[i]+"\" at "+getLocation(restrictToFileName, ambiguousAVSystemIdWW[i])+":"+ambiguousAVLineNumberWW[i]+":"+ambiguousAVColumnNumberWW[i]
+						+"\n"+prefix+"Value of attribute \""+activeInputDescriptor.getItemDescription(ambiguousAVInputRecordIndexWW[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(ambiguousAVInputRecordIndexWW[i]))+":"+activeInputDescriptor.getLineNumber(ambiguousAVInputRecordIndexWW[i])+":"+activeInputDescriptor.getColumnNumber(ambiguousAVInputRecordIndexWW[i])
 						+" cannot be resolved to a single definition, several candidates could be correct. Possible definitions: ";
 				for(int j = 0; j < ambiguousAVDefinitionWW[i].length; j++){
 					message += "\n"+prefix+"<"+ambiguousAVDefinitionWW[i][j].getQName()+"> at "+ambiguousAVDefinitionWW[i][j].getLocation(restrictToFileName);
@@ -1294,14 +1432,14 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		}
         
         // {28_2}
-        if(ambiguousIndexLPICW >= 0){
-			for(int i = 0; i <= ambiguousIndexLPICW; i++){
+        if(ambiguousTokenIndexLPICW >= 0){
+			for(int i = 0; i <= ambiguousTokenIndexLPICW; i++){
 				message += "\n"+prefix+"Ambiguous list token."
-				+"\n"+prefix+ "List token \""+ambiguousTokenLPICW[i]+"\" at "+getLocation(restrictToFileName, ambiguousCharsSystemIdEELPICW[i])+":"+ambiguousCharsLineNumberEELPICW[i]+":"+ambiguousCharsColumnNumberEELPICW[i]
+				+"\n"+prefix+ "List token \""+ activeInputDescriptor.getItemDescription(ambiguousTokenInputRecordIndexLPICW[i]) +"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(ambiguousTokenInputRecordIndexLPICW[i]))+":"+activeInputDescriptor.getLineNumber(ambiguousTokenInputRecordIndexLPICW[i])+":"+activeInputDescriptor.getColumnNumber(ambiguousTokenInputRecordIndexLPICW[i])
 				+ " cannot be resolved to a single schema definition, several candidates could be correct."
 				+ " Possible definitions: ";
-				for(int j = 0; j < ambiguousPossibleDefinitionsLPICW[i].length; j++){
-					message += "\n"+prefix+"<"+ambiguousPossibleDefinitionsLPICW[i][j].getQName()+"> at "+ambiguousPossibleDefinitionsLPICW[i][j].getLocation(restrictToFileName);
+				for(int j = 0; j < ambiguousTokenDefinitionLPICW[i].length; j++){
+					message += "\n"+prefix+"<"+ambiguousTokenDefinitionLPICW[i][j].getQName()+"> at "+ambiguousTokenDefinitionLPICW[i][j].getLocation(restrictToFileName);
 				}
 				message += ".";
 			}

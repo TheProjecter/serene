@@ -129,8 +129,8 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		spaceHandler = new SpaceCharsHandler(debugWriter);					
         documentContext = new DocumentContext(debugWriter);
         
-        errorHandlerPool.init(errorDispatcher);        
-        eventHandlerPool.init(spaceHandler, matchHandler, inputStackDescriptor, documentContext, errorHandlerPool);
+        errorHandlerPool.init(errorDispatcher, activeInputDescriptor);        
+        eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, errorHandlerPool);
         
         errorHandlerPool.fill();
         eventHandlerPool.fill();

@@ -81,7 +81,11 @@ class StartMessageHandler implements MessageReporter{
 		this.debugWriter = debugWriter;        
 	}
     
-    void clear(){
+	public void setDiscarded(boolean isDiscarded){
+        throw new IllegalStateException();        
+    }
+    
+    public void clear(){
         clearUnknownElement();
         clearUnexpectedElement();
         clearUnexpectedAmbiguousElement();
@@ -171,11 +175,10 @@ class StartMessageHandler implements MessageReporter{
     }
     
     
-    void unresolvedUnresolvedElementContentError(
-                                    String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
+    void unresolvedUnresolvedElementContentError(String qName,
+                                    String systemId,
+                                    int lineNumber,
+                                    int columnNumber, 
 									AElement[] possibleDefinitions){
 		if(unresolvedUnresolvedElementSizeEE == 0){
 			unresolvedUnresolvedElementSizeEE = 1;
@@ -225,10 +228,10 @@ class StartMessageHandler implements MessageReporter{
     }
     
     
-    void ambiguousUnresolvedElementContentWarning(String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
+    void ambiguousUnresolvedElementContentWarning(String qName,
+                                    String systemId,
+                                    int lineNumber,
+                                    int columnNumber, 
 									AElement[] possibleDefinitions){
 		if(ambiguousUnresolvedElementSizeWW == 0){
 			ambiguousUnresolvedElementSizeWW = 1;
@@ -276,10 +279,10 @@ class StartMessageHandler implements MessageReporter{
     }
     
     
-    void ambiguousAmbiguousElementContentWarning(String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
+    void ambiguousAmbiguousElementContentWarning(String qName,
+                                    String systemId,
+                                    int lineNumber,
+                                    int columnNumber,
 									AElement[] possibleDefinitions){
 		if(ambiguousAmbiguousElementSizeWW == 0){
 			ambiguousAmbiguousElementSizeWW = 1;
@@ -350,17 +353,17 @@ class StartMessageHandler implements MessageReporter{
         throw new IllegalStateException();
     }
     
-    public void setContextType(int contextType){
+    public void setReportingContextType(int contextType){
         throw new IllegalStateException();
     }    
     
-	public void setContextQName(String qName){
+	public void setReportingContextQName(String qName){
 		throw new IllegalStateException();
 	}	
-	public void setContextLocation(String publicId, String systemId, int lineNumber, int columnNumber){
+	public void setReportingContextLocation(String publicId, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();		
 	}
-	public void setContextDefinition(AElement definition){
+	public void setReportingContextDefinition(AElement definition){
 		throw new IllegalStateException();
 	}
     public void setRestrictToFileName(boolean restrictToFileName){
@@ -400,6 +403,7 @@ class StartMessageHandler implements MessageReporter{
     
     
     String getValidationErrorMessage(String prefix, boolean restrictToFileName){
+        //isMessageRetrieved = true;
         String message = "";
         if(unknownFoundQName != null){
             message += "\n"+prefix+"Unknown element."

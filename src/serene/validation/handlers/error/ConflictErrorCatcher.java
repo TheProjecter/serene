@@ -38,154 +38,109 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 interface ConflictErrorCatcher extends ErrorType{	
-    void unknownElement(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber);	
-	void unexpectedElement(int functionalEquivalenceCode, String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber);
-    
-    
-	void unexpectedAmbiguousElement(int functionalEquivalenceCode, String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber);
-	
-	void unknownAttribute(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber);
-	
-	void unexpectedAttribute(int functionalEquivalenceCode, String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber);
+    void unknownElement(int functionalEquivalenceCode, int inputRecordIndex);	
+	void unexpectedElement(int functionalEquivalenceCode, SimplifiedComponent definition, int inputRecordIndex);    
+	void unexpectedAmbiguousElement(int functionalEquivalenceCode, SimplifiedComponent[] possibleDefinitions, int inputRecordIndex);
 	
 	
-	void unexpectedAmbiguousAttribute(int functionalEquivalenceCode, String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber);
+	void unknownAttribute(int functionalEquivalenceCode, int inputRecordIndex);	
+	void unexpectedAttribute(int functionalEquivalenceCode, SimplifiedComponent definition, int inputRecordIndex);	
+	void unexpectedAmbiguousAttribute(int functionalEquivalenceCode, SimplifiedComponent[] possibleDefinitions, int inputRecordIndex);
+	
     
 	void misplacedContent(int functionalEquivalenceCode, 
                                             APattern contextDefinition, 
-											String startSystemId, 
-											int startLineNumber, 
-											int startColumnNumber, 
+											int startInputRecordIndex,
 											APattern definition,
-											int itemId, 
-											String qName, 
-											String systemId, 
-											int lineNumber, 
-											int columnNumber,
+											int inputRecordIndex,
 											APattern sourceDefinition, 
 											APattern reper);
     void misplacedContent(int functionalEquivalenceCode, 
-                                            APattern contextDefinition, 
-											String startSystemId, 
-											int startLineNumber, 
-											int startColumnNumber, 
+                                            APattern contextDefinition,
+											int startInputRecordIndex,
 											APattern definition,
-											int[] itemId, 
-											String[] qName, 
-											String[] systemId, 
-											int[] lineNumber, 
-											int[] columnNumber,
+											int[] inputRecordIndex,
 											APattern[] sourceDefinition, 
 											APattern reper);
 			
 	
 	void excessiveContent(int functionalEquivalenceCode, 
                                     Rule context,
-									String startSystemId,
-									int startLineNumber,
-									int startColumnNumber,
+									int startInputRecordIndex,
 									APattern definition, 
-									int[] itemId, 
-									String[] qName, 
-									String[] systemId, 
-									int[] lineNumber, 
-									int[] columnNumber);
+									int[] inputRecordIndex);
     
 	void excessiveContent(int functionalEquivalenceCode, 
                                 Rule context, 
 								APattern definition, 
-								int itemId, 
-								String qName, 
-								String systemId, 
-								int lineNumber,		
-								int columnNumber);    
+								int inputRecordIndex);    
     
 	void unresolvedAmbiguousElementContentError(int functionalEquivalenceCode, 
-                                    String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
+                                    int inputRecordIndex, 
 									AElement[] possibleDefinitions);
 	
 	void unresolvedUnresolvedElementContentError(int functionalEquivalenceCode, 
-                                    String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
+                                    int inputRecordIndex, 
 									AElement[] possibleDefinitions);
     
 	void unresolvedAttributeContentError(int functionalEquivalenceCode, 
-                                    String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
+                                    int inputRecordIndex, 
 									AAttribute[] possibleDefinitions);
 	
 
 
-    void ambiguousUnresolvedElementContentWarning(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
-    void ambiguousAmbiguousElementContentWarning(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions);
-	void ambiguousAttributeContentWarning(int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions);
-	void ambiguousCharacterContentWarning(int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
-	void ambiguousAttributeValueWarning(int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
+    void ambiguousUnresolvedElementContentWarning(int functionalEquivalenceCode, int inputRecordIndex, AElement[] possibleDefinitions);
+    void ambiguousAmbiguousElementContentWarning(int functionalEquivalenceCode, int inputRecordIndex, AElement[] possibleDefinitions);
+	void ambiguousAttributeContentWarning(int functionalEquivalenceCode, int inputRecordIndex, AAttribute[] possibleDefinitions);
+	void ambiguousCharacterContentWarning(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
+	void ambiguousAttributeValueWarning(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
 
 	
 	void missingContent(int functionalEquivalenceCode, 
                                 Rule context, 
-								String startSystemId, 
-								int startLineNumber, 
-								int startColumnNumber,								 
+								int startInputRecordIndex,						 
 								APattern definition, 
 								int expected, 
 								int found,
-								String[] qName, 
-								String[] systemId, 
-								int[] lineNumber, 
-								int[] columnNumber);
+								int[] inputRecordIndex);
     
 	void illegalContent(int functionalEquivalenceCode, 
                             Rule context, 
-                            int startItemId, 
-							String startQName, 
-							String startSystemId, 
-							int startLineNumber, 
-							int startColumnNumber);
+                            int startInputRecordIndex);
         
-	void characterContentDatatypeError(int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
+	void characterContentDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
         
-	void attributeValueDatatypeError(int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
+	void attributeValueDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
         
         
-	void characterContentValueError(int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition);
+	void characterContentValueError(int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition);
     
-	void attributeValueValueError(int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition);
+	void attributeValueValueError(int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition);
         
-	void characterContentExceptedError(int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition);
+	void characterContentExceptedError(int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition);
     
-	void attributeValueExceptedError(int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition);
+	void attributeValueExceptedError(int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition);
     
-	void unexpectedCharacterContent(int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition);
+	void unexpectedCharacterContent(int functionalEquivalenceCode, int inputRecordIndex, AElement elementDefinition);
     
-	void unexpectedAttributeValue(int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition);
+	void unexpectedAttributeValue(int functionalEquivalenceCode, int inputRecordIndex, AAttribute attributeDefinition);
     
-	void unresolvedCharacterContent(int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
+	void unresolvedCharacterContent(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
         
-	void unresolvedAttributeValue(int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
+	void unresolvedAttributeValue(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
         
-	void listTokenDatatypeError(int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
+	void listTokenDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
         
-	void listTokenValueError(int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition);
+	void listTokenValueError(int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition);
     
-	void listTokenExceptedError(int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition);
+	void listTokenExceptedError(int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition);
         
-    void unresolvedListTokenInContextError(int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);
-    void ambiguousListTokenInContextWarning(int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions);    
+    void unresolvedListTokenInContextError(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
+    void ambiguousListTokenInContextWarning(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);    
     
 	void missingCompositorContent(int functionalEquivalenceCode, 
                                 Rule context, 
-								String startSystemId, 
-								int startLineNumber, 
-								int startColumnNumber,								 
+								int startInputRecordIndex,								 
 								APattern definition, 
 								int expected, 
 								int found);

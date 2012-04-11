@@ -229,7 +229,7 @@ public class GroupMinimalReduceCountHandler extends MinimalReduceCountHandler{
 		
 		for(int j = 0; j <= childRecordIndex; j++){
 		    for(int i = 0; i <= childDetailsCurrentIndex[j]; i++){
-		        activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[j][i]);
+		        activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[j][i], this);
 		        childSourceDefinition[j][i] = null;
 		    }
 		    childDetailsCurrentIndex[j] = -1;
@@ -282,7 +282,7 @@ public class GroupMinimalReduceCountHandler extends MinimalReduceCountHandler{
             for(int j = 0; j <= childDetailsCurrentIndex[i]; j++){
                 this.childInputRecordIndex[i][j] = childInputRecordIndex[i][j];                
                 this.childSourceDefinition[i][j] = childSourceDefinition[i][j];
-                activeInputDescriptor.registerClientForRecord(childInputRecordIndex[i][j]);
+                activeInputDescriptor.registerClientForRecord(childInputRecordIndex[i][j], this);
 			}
 		}
 		this.childRecordIndex = childRecordIndex;
@@ -318,12 +318,12 @@ public class GroupMinimalReduceCountHandler extends MinimalReduceCountHandler{
 		this.saturationLevel = saturationLevel;
 		
 		if(this.isStartSet){
-            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex, this);
         }
 		this.startInputRecordIndex = startInputRecordIndex;
 		this.isStartSet = isStartSet;
 		if(isStartSet){		    
-		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
 		}		
 	}	
 		
@@ -375,7 +375,7 @@ public class GroupMinimalReduceCountHandler extends MinimalReduceCountHandler{
 		childSourceDefinition[childRecordIndex] = new ActiveTypeItem[childDetailsInitialSize];
 		childSourceDefinition[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = sourceDefinition;
 				
-		activeInputDescriptor.registerClientForRecord(childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]]);
+		activeInputDescriptor.registerClientForRecord(childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]], this);
 	}	
 	//-> adds to the end of the arrays from lastCorrectChildIndexIndex
 	private void addLastCorrectChildIndex(APattern sourceDefinition){
@@ -398,12 +398,12 @@ public class GroupMinimalReduceCountHandler extends MinimalReduceCountHandler{
 		childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = inputStackDescriptor.getCurrentItemInputRecordIndex();
 		childSourceDefinition[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = sourceDefinition;
 		
-		activeInputDescriptor.registerClientForRecord(childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]]);
+		activeInputDescriptor.registerClientForRecord(childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]], this);
 	}	
 	
 	private void removeLastCorrectChildIndex(){
 		for(int i = 0; i <= childDetailsCurrentIndex[childRecordIndex]; i++){
-	        activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[childRecordIndex][i]);
+	        activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[childRecordIndex][i], this);
 	        childSourceDefinition[childRecordIndex][i] = null;
 	    }
 	    

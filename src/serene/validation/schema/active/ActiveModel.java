@@ -91,7 +91,7 @@ public class ActiveModel  implements Reusable{
 	public void init(ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
 		ruleHandlerPool.fill(activeInputDescriptor, inputStackDescriptor);
 		stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool);		
-		conflictHandlerPool.fill(inputStackDescriptor);
+		conflictHandlerPool.fill(activeInputDescriptor, inputStackDescriptor);
 	}
 	
 	public AElement getStartElement(){		

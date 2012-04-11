@@ -85,7 +85,7 @@ class ElementParallelHandler extends CandidatesEEH{
 		pool.recycle(this);
 	}		
 	
-	void add(ComparableEEH individualHandler){		
+	void add(ComparableEEH individualHandler){	    
 		state.add(individualHandler);			
 	}
 	
@@ -123,6 +123,13 @@ class ElementParallelHandler extends CandidatesEEH{
 	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
 		state.reportContextErrors(restrictToFileName, locator);
 	}
+	
+	void discardContextErrors(){	    
+		for(int i = 0; i < individualHandlers.size(); i++){
+		    individualHandlers.get(i).discardContextErrors();
+		}
+	}
+	
 	// called from a larger conflict( another ElementParallelHandler/ElementCommonHandler)
 	void validateInContext(){
 		state.validateInContext();
@@ -266,6 +273,11 @@ class ElementParallelHandler extends CandidatesEEH{
                 evhParent.setContextErrorHandlerIndex(COMMON);
                 uniqueSample.reportContextErrors(restrictToFileName, locator);
                 evhParent.restorePreviousHandler();
+                for(int i = 0; i < individualHandlers.size(); i++){
+                    if(individualHandlers.get(i) != uniqueSample){
+                        individualHandlers.get(i).discardContextErrors();
+                    }
+                }
             }            
 		}
 		

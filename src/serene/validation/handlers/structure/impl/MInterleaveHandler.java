@@ -267,7 +267,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 		
 		childInputRecordIndex[currentChildIndex] = inputRecordIndex;
 		definition[currentChildIndex] = cd;
-		activeInputDescriptor.registerClientForRecord(inputRecordIndex);
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
 		
 	}	
 	void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver){
@@ -301,7 +301,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 		//***		isReduceLocked = false;
 		
 		for(int i =0; i <= currentChildIndex; i++){		    
-		    activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[i]);
+		    activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[i], this);
 		    definition[i] = null;
 		}
 		if(definition.length > childMaxSize){
@@ -323,7 +323,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 		mValidationLoopCounter = -1;
 		
 		if(isStartSet){
-		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex, this);
 		    isStartSet = false;
 		    startInputRecordIndex = -1;
 		}	
@@ -381,12 +381,12 @@ public class MInterleaveHandler extends InterleaveHandler{
 		this.saturationLevel = saturationLevel;
 		
 		if(this.isStartSet){
-            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex, this);
         }
 		this.startInputRecordIndex = startInputRecordIndex;
 		this.isStartSet = isStartSet;
 		if(isStartSet){		    
-		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
 		}
 		
 		
@@ -396,7 +396,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 		for(int i = 0; i <= currentChildIndex; i++){
 		    this.definition[i] = definition[i];
 		    this.childInputRecordIndex[i] = childInputRecordIndex[i];
-		    activeInputDescriptor.registerClientForRecord(childInputRecordIndex[i]);
+		    activeInputDescriptor.registerClientForRecord(childInputRecordIndex[i], this);
 		}
 	}	
 	
@@ -466,7 +466,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 			return;
 		}*/
 		if(secondaryHandlers.isEmpty()){
-			errorCatcher.illegalContent(rule, activeInputDescriptor.getItemId(childInputRecordIndex[0]), activeInputDescriptor.getItemDescription(childInputRecordIndex[0]), activeInputDescriptor.getSystemId(childInputRecordIndex[0]), activeInputDescriptor.getLineNumber(childInputRecordIndex[0]), activeInputDescriptor.getColumnNumber(childInputRecordIndex[0]));			
+			errorCatcher.illegalContent(rule, childInputRecordIndex[0]);			
 			mValidationLoopCounter = currentChildIndex+1;//stop the loop
 			return;
 		}

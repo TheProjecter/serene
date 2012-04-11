@@ -40,69 +40,92 @@ import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
+
 import sereneWrite.MessageWriter;
 
 public class TemporaryMessageStorage  implements ErrorCatcher{	
+    
+    ActiveInputDescriptor activeInputDescriptor;
+        
+    int initialSize = 5;
+    int increaseSizeAmount = 5;
     
 	// {1}
 	String undeterminedQName;
 	String undeterminedCandidateMessages;
 		
 	// {2}
-	String[] unknownElementQName;
+	/*String[] unknownElementQName;
 	String[] unknownElementSystemId;
 	int[] unknownElementLineNumber;
 	int[] unknownElementColumnNumber;
 	int unknownElementIndex;
-	int unknownElementSize;	
+	int unknownElementSize;	*/
+	int[] unknownElementInputRecordIndex;
+	int unknownElementIndex;
 	
 	// {3}
-	String[] unexpectedElementQName;
+	/*String[] unexpectedElementQName;
 	SimplifiedComponent[] unexpectedElementDefinition;
 	String[] unexpectedElementSystemId;
 	int[] unexpectedElementLineNumber;
 	int[] unexpectedElementColumnNumber;
 	int unexpectedElementIndex;
-	int unexpectedElementSize;
+	int unexpectedElementSize;*/
+	SimplifiedComponent[] unexpectedElementDefinition;
+	int[] unexpectedElementInputRecordIndex;
+	int unexpectedElementIndex;
 	
 	// {4}
-	String[] unexpectedAmbiguousElementQName;
+	/*String[] unexpectedAmbiguousElementQName;
 	SimplifiedComponent[][] unexpectedAmbiguousElementDefinition;
 	String[] unexpectedAmbiguousElementSystemId;
 	int[] unexpectedAmbiguousElementLineNumber;
 	int[] unexpectedAmbiguousElementColumnNumber;
 	int unexpectedAmbiguousElementIndex;
-	int unexpectedAmbiguousElementSize;
+	int unexpectedAmbiguousElementSize;*/
+	SimplifiedComponent[][] unexpectedAmbiguousElementDefinition;
+	int[] unexpectedAmbiguousElementInputRecordIndex;
+	int unexpectedAmbiguousElementIndex;
 	
 	// {5}
-	String[] unknownAttributeQName;
+	/*String[] unknownAttributeQName;
 	String[] unknownAttributeSystemId;
 	int[] unknownAttributeLineNumber;
 	int[] unknownAttributeColumnNumber;
 	int unknownAttributeIndex;
-	int unknownAttributeSize;	
+	int unknownAttributeSize;	*/
+	int[] unknownAttributeInputRecordIndex;
+	int unknownAttributeIndex;
 	
 	// {6}
-	String[] unexpectedAttributeQName;
+	/*String[] unexpectedAttributeQName;
 	SimplifiedComponent[] unexpectedAttributeDefinition;
 	String[] unexpectedAttributeSystemId;
 	int[] unexpectedAttributeLineNumber;
 	int[] unexpectedAttributeColumnNumber;
 	int unexpectedAttributeIndex;
-	int unexpectedAttributeSize;
+	int unexpectedAttributeSize;*/
+	SimplifiedComponent[] unexpectedAttributeDefinition;
+	int[] unexpectedAttributeInputRecordIndex;
+	int unexpectedAttributeIndex;
 	
 	// {7}
-	String[] unexpectedAmbiguousAttributeQName;
+	/*String[] unexpectedAmbiguousAttributeQName;
 	SimplifiedComponent[][] unexpectedAmbiguousAttributeDefinition;
 	String[] unexpectedAmbiguousAttributeSystemId;
 	int[] unexpectedAmbiguousAttributeLineNumber;
 	int[] unexpectedAmbiguousAttributeColumnNumber;
 	int unexpectedAmbiguousAttributeIndex;
-	int unexpectedAmbiguousAttributeSize;
+	int unexpectedAmbiguousAttributeSize;*/
+	SimplifiedComponent[][] unexpectedAmbiguousAttributeDefinition;
+	int[] unexpectedAmbiguousAttributeInputRecordIndex;
+	int unexpectedAmbiguousAttributeIndex;
 	
 	
 	// {8}
-	APattern[] misplacedContext;
+	/*APattern[] misplacedContext;
 	String[] misplacedStartSystemId;
 	int[] misplacedStartLineNumber;
 	int[] misplacedStartColumnNumber;
@@ -113,10 +136,15 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 	int[][][] misplacedLineNumber;
 	int[][][] misplacedColumnNumber;
 	int misplacedIndex;
-	int misplacedSize;
+	int misplacedSize;*/
+	APattern[] misplacedContext;
+	int[] misplacedStartInputRecordIndex;
+	APattern[][] misplacedDefinition;
+	int[][][] misplacedInputRecordIndex;
+	int misplacedIndex;
 
 	// {9}
-	Rule[] excessiveContext;
+	/*Rule[] excessiveContext;
 	String[] excessiveStartSystemId;
 	int[] excessiveStartLineNumber;
 	int[] excessiveStartColumnNumber;
@@ -127,10 +155,16 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 	int[][] excessiveLineNumber;
 	int[][] excessiveColumnNumber;
 	int excessiveIndex;
-	int excessiveSize;
+	int excessiveSize;*/
+	Rule[] excessiveContext;
+	int[] excessiveStartInputRecordIndex;
+	APattern[] excessiveDefinition;
+	int[][] excessiveInputRecordIndex;
+	int excessiveIndex;
+	
 	
 	// {10}
-	Rule[] missingContext;
+	/*Rule[] missingContext;
 	String[] missingStartSystemId;
 	int[] missingStartLineNumber;
 	int[] missingStartColumnNumber;
@@ -142,239 +176,332 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 	int[][] missingLineNumber;
 	int[][] missingColumnNumber;
 	int missingIndex;
-	int missingSize;
+	int missingSize;*/
+	Rule[] missingContext;
+	int[] missingStartInputRecordIndex;
+	APattern[] missingDefinition;
+	int[] missingExpected;
+	int[] missingFound;
+	int[][] missingInputRecordIndex;
+	int missingIndex;
 	
 	
 	// {11}
-	Rule[] illegalContext;
+	/*Rule[] illegalContext;
 	int[] illegalItemId;
 	String[] illegalQName;
 	String[] illegalStartSystemId;
 	int[] illegalStartLineNumber;
 	int[] illegalStartColumnNumber;	
 	int illegalIndex;
-	int illegalSize;
+	int illegalSize;*/
+	Rule[] illegalContext;
+	int[] illegalStartInputRecordIndex;
+	int illegalIndex;
+	
 	
 	// {12 A}
-	String[] unresolvedAmbiguousElementQNameEE;
+	/*String[] unresolvedAmbiguousElementQNameEE;
 	String[] unresolvedAmbiguousElementSystemIdEE;
 	int[] unresolvedAmbiguousElementLineNumberEE;
 	int[] unresolvedAmbiguousElementColumnNumberEE;
 	AElement[][] unresolvedAmbiguousElementDefinitionEE;
 	int unresolvedAmbiguousElementIndexEE;
-	int unresolvedAmbiguousElementSizeEE;
+	int unresolvedAmbiguousElementSizeEE;*/
+	int[] unresolvedAmbiguousElementInputRecordIndexEE;
+	AElement[][] unresolvedAmbiguousElementDefinitionEE;
+	int unresolvedAmbiguousElementIndexEE;
+	
 	
 	// {12 U}
-	String[] unresolvedUnresolvedElementQNameEE;
+	/*String[] unresolvedUnresolvedElementQNameEE;
 	String[] unresolvedUnresolvedElementSystemIdEE;
 	int[] unresolvedUnresolvedElementLineNumberEE;
 	int[] unresolvedUnresolvedElementColumnNumberEE;
 	AElement[][] unresolvedUnresolvedElementDefinitionEE;
 	int unresolvedUnresolvedElementIndexEE;
-	int unresolvedUnresolvedElementSizeEE;
+	int unresolvedUnresolvedElementSizeEE;*/
+	int[] unresolvedUnresolvedElementInputRecordIndexEE;
+	AElement[][] unresolvedUnresolvedElementDefinitionEE;
+	int unresolvedUnresolvedElementIndexEE;
 
 	// {13}
-	String[] unresolvedAttributeQNameEE;
+	/*String[] unresolvedAttributeQNameEE;
 	String[] unresolvedAttributeSystemIdEE;
 	int[] unresolvedAttributeLineNumberEE;
 	int[] unresolvedAttributeColumnNumberEE;
 	AAttribute[][] unresolvedAttributeDefinitionEE;
 	int unresolvedAttributeIndexEE;
-	int unresolvedAttributeSizeEE;
+	int unresolvedAttributeSizeEE;*/
+	int[] unresolvedAttributeInputRecordIndexEE;
+	AAttribute[][] unresolvedAttributeDefinitionEE;
+	int unresolvedAttributeIndexEE;
+	
 
 	// {14}
 	
 	
 	// {w1 U}
-	String[] ambiguousUnresolvedElementQNameWW;
+	/*String[] ambiguousUnresolvedElementQNameWW;
 	String[] ambiguousUnresolvedElementSystemIdWW;
 	int[] ambiguousUnresolvedElementLineNumberWW;
 	int[] ambiguousUnresolvedElementColumnNumberWW;
 	AElement[][] ambiguousUnresolvedElementDefinitionWW;
 	int ambiguousUnresolvedElementIndexWW;
-	int ambiguousUnresolvedElementSizeWW;
+	int ambiguousUnresolvedElementSizeWW;*/
+	int[] ambiguousUnresolvedElementInputRecordIndexWW;
+	AElement[][] ambiguousUnresolvedElementDefinitionWW;
+	int ambiguousUnresolvedElementIndexWW;
+	
 	
 	// {w1 A}
-	String[] ambiguousAmbiguousElementQNameWW;
+	/*String[] ambiguousAmbiguousElementQNameWW;
 	String[] ambiguousAmbiguousElementSystemIdWW;
 	int[] ambiguousAmbiguousElementLineNumberWW;
 	int[] ambiguousAmbiguousElementColumnNumberWW;
 	AElement[][] ambiguousAmbiguousElementDefinitionWW;
 	int ambiguousAmbiguousElementIndexWW;
-	int ambiguousAmbiguousElementSizeWW;
+	int ambiguousAmbiguousElementSizeWW;*/
+	int[] ambiguousAmbiguousElementInputRecordIndexWW;
+	AElement[][] ambiguousAmbiguousElementDefinitionWW;
+	int ambiguousAmbiguousElementIndexWW;
 	
 	
 	
 	// {w2}
-	String[] ambiguousAttributeQNameWW;
+	/*String[] ambiguousAttributeQNameWW;
 	String[] ambiguousAttributeSystemIdWW;
 	int[] ambiguousAttributeLineNumberWW;
 	int[] ambiguousAttributeColumnNumberWW;
 	AAttribute[][] ambiguousAttributeDefinitionWW;
 	int ambiguousAttributeIndexWW;
-	int ambiguousAttributeSizeWW;
+	int ambiguousAttributeSizeWW;*/
+	int[] ambiguousAttributeInputRecordIndexWW;
+	AAttribute[][] ambiguousAttributeDefinitionWW;
+	int ambiguousAttributeIndexWW;
+	
 
 	// {w3}
-	String[] ambiguousCharsSystemIdWW;
+	/*String[] ambiguousCharsSystemIdWW;
 	int[] ambiguousCharsLineNumberWW;
 	int[] ambiguousCharsColumnNumberWW;
 	CharsActiveTypeItem[][] ambiguousCharsDefinitionWW;
 	int ambiguousCharsIndexWW;
-	int ambiguousCharsSizeWW;
+	int ambiguousCharsSizeWW;*/
+	int[] ambiguousCharsInputRecordIndexWW;
+	CharsActiveTypeItem[][] ambiguousCharsDefinitionWW;
+	int ambiguousCharsIndexWW;
+	
 	
 	// {w4}
-	String[] ambiguousAVAttributeQNameWW;
+	/*String[] ambiguousAVAttributeQNameWW;
 	String[] ambiguousAVSystemIdWW;
 	int[] ambiguousAVLineNumberWW;
 	int[] ambiguousAVColumnNumberWW;
 	CharsActiveTypeItem[][] ambiguousAVDefinitionWW;
 	int ambiguousAVIndexWW;
-	int ambiguousAVSizeWW;
+	int ambiguousAVSizeWW;*/
+	int[] ambiguousAVInputRecordIndexWW;
+	CharsActiveTypeItem[][] ambiguousAVDefinitionWW;
+	int ambiguousAVIndexWW;
 		
 	
 	// {15}
-	String datatypeElementQNameCC[];
+	/*String datatypeElementQNameCC[];
 	String datatypeCharsSystemIdCC[];//CC character content
 	int datatypeCharsLineNumberCC[];
 	int datatypeCharsColumnNumberCC[];
 	DatatypedActiveTypeItem datatypeCharsDefinitionCC[];
 	String datatypeErrorMessageCC[];
 	int datatypeIndexCC;
-	int datatypeSizeCC;
+	int datatypeSizeCC;*/
+	int[] datatypeCharsInputRecordIndex;
+	DatatypedActiveTypeItem[] datatypeCharsDefinition;
+	String datatypeCharsErrorMessage[];
+	int datatypeCharsIndex;
+	
 	
 	// {16}
-	String datatypeAttributeQNameAV[];
+	/*String datatypeAttributeQNameAV[];
 	String datatypeCharsSystemIdAV[];//AV attribute value
 	int datatypeCharsLineNumberAV[];
 	int datatypeCharsColumnNumberAV[];
 	DatatypedActiveTypeItem datatypeCharsDefinitionAV[];
 	String datatypeErrorMessageAV[];
 	int datatypeIndexAV;
-	int datatypeSizeAV;
+	int datatypeSizeAV;*/
+	int[] datatypeAVInputRecordIndex;
+	DatatypedActiveTypeItem[] datatypeAVDefinition;
+	String datatypeAVErrorMessage[];
+	int datatypeAVIndex;
    
 	
 	// {17}
-	String valueCharsSystemIdCC[];//CC character content
+	/*String valueCharsSystemIdCC[];//CC character content
 	int valueCharsLineNumberCC[];
 	int valueCharsColumnNumberCC[];
 	AValue valueCharsDefinitionCC[];
 	int valueIndexCC;
-	int valueSizeCC;
+	int valueSizeCC;*/
+	int[] valueCharsInputRecordIndex;
+	AValue[] valueCharsDefinition;
+	int valueCharsIndex;
 	
 	// {18}
-	String valueAttributeQNameAV[];
+	/*String valueAttributeQNameAV[];
 	String valueCharsSystemIdAV[];//AV attribute value
 	int valueCharsLineNumberAV[];
 	int valueCharsColumnNumberAV[];
 	AValue valueCharsDefinitionAV[];
 	int valueIndexAV;
-	int valueSizeAV;
+	int valueSizeAV;*/
+	int[] valueAVInputRecordIndex;
+	AValue[] valueAVDefinition;
+	int valueAVIndex;
 	
 	// {19}
-	String exceptElementQNameCC[];
+	/*String exceptElementQNameCC[];
 	String exceptCharsSystemIdCC[];//CC character content
 	int exceptCharsLineNumberCC[];
 	int exceptCharsColumnNumberCC[];
 	AData exceptCharsDefinitionCC[];
 	int exceptIndexCC;
-	int exceptSizeCC;
+	int exceptSizeCC;*/
+	int[] exceptCharsInputRecordIndex;
+	AData[] exceptCharsDefinition;
+	int exceptCharsIndex;
 	
 	// {20}
-	String exceptAttributeQNameAV[];
+	/*String exceptAttributeQNameAV[];
 	String exceptCharsSystemIdAV[];//AV attribute except
 	int exceptCharsLineNumberAV[];
 	int exceptCharsColumnNumberAV[];
 	AData exceptCharsDefinitionAV[];
 	int exceptIndexAV;
-	int exceptSizeAV;
+	int exceptSizeAV;*/
+	int[] exceptAVInputRecordIndex;
+	AData[] exceptAVDefinition;
+	int exceptAVIndex;
 	
 	// {21}
-	String unexpectedCharsSystemIdCC[];//CC character content
+	/*String unexpectedCharsSystemIdCC[];//CC character content
 	int unexpectedCharsLineNumberCC[];
 	int unexpectedCharsColumnNumberCC[];
 	AElement unexpectedContextDefinitionCC[];
 	int unexpectedIndexCC;
-	int unexpectedSizeCC;
+	int unexpectedSizeCC;*/
+	int[] unexpectedCharsInputRecordIndex;
+	AElement[] unexpectedCharsDefinition;
+	int unexpectedCharsIndex;
 	
 	// {22}
-	String unexpectedCharsSystemIdAV[];//AV attribute unexpected
+	/*String unexpectedCharsSystemIdAV[];//AV attribute unexpected
 	int unexpectedCharsLineNumberAV[];
 	int unexpectedCharsColumnNumberAV[];
 	AAttribute unexpectedContextDefinitionAV[];
 	int unexpectedIndexAV;
-	int unexpectedSizeAV;
+	int unexpectedSizeAV;*/
+	int[] unexpectedAVInputRecordIndex;
+	AAttribute[] unexpectedAVDefinition;
+	int unexpectedAVIndex;
 	
 	
 	// {23}
-	String unresolvedCharsSystemIdEECC[];//CC character content
+	/*String unresolvedCharsSystemIdEECC[];//CC character content
 	int unresolvedCharsLineNumberEECC[];
 	int unresolvedCharsColumnNumberEECC[];
 	CharsActiveTypeItem unresolvedPossibleDefinitionsCC[][];
 	int unresolvedIndexCC;
-	int unresolvedSizeCC;
+	int unresolvedSizeCC;*/
+	int[] unresolvedCharsInputRecordIndexEE;
+	CharsActiveTypeItem[][] unresolvedCharsDefinitionEE;
+	int unresolvedCharsIndexEE;
+	
 	
 	// {24}
-	String unresolvedAttributeQNameEEAV[];
+	/*String unresolvedAttributeQNameEEAV[];
 	String unresolvedCharsSystemIdEEAV[];//AV attribute unresolved
 	int unresolvedCharsLineNumberEEAV[];
 	int unresolvedCharsColumnNumberEEAV[];
 	CharsActiveTypeItem unresolvedPossibleDefinitionsAV[][];
 	int unresolvedIndexAV;
-	int unresolvedSizeAV;
+	int unresolvedSizeAV;*/
+	int[] unresolvedAVInputRecordIndexEE;
+	CharsActiveTypeItem[][] unresolvedAVDefinitionEE;
+	int unresolvedAVIndexEE;
 	
 	
 	// {25}
-	String datatypeTokenLP[];//LP list pattern
+	/*String datatypeTokenLP[];//LP list pattern
 	String datatypeCharsSystemIdLP[];
 	int datatypeCharsLineNumberLP[];
 	int datatypeCharsColumnNumberLP[];
 	DatatypedActiveTypeItem datatypeCharsDefinitionLP[];
 	String datatypeErrorMessageLP[];
 	int datatypeIndexLP;
-	int datatypeSizeLP;
+	int datatypeSizeLP;*/
+	int[] datatypeTokenInputRecordIndex;
+	DatatypedActiveTypeItem[] datatypeTokenDefinition;
+	String datatypeTokenErrorMessage[];
+	int datatypeTokenIndex;
+	
     	
 	// {26}
-	String valueTokenLP[];//LP list pattern
+	/*String valueTokenLP[];//LP list pattern
 	String valueCharsSystemIdLP[];
 	int valueCharsLineNumberLP[];
 	int valueCharsColumnNumberLP[];
 	AValue valueCharsDefinitionLP[];
 	int valueIndexLP;
-	int valueSizeLP;
+	int valueSizeLP;*/
+	int[] valueTokenInputRecordIndex;
+	AValue[] valueTokenDefinition;
+	int valueTokenIndex;
+	
 	
 	// {27}
-	String exceptTokenLP[];//LP list pattern
+	/*String exceptTokenLP[];//LP list pattern
 	String exceptCharsSystemIdLP[];
 	int exceptCharsLineNumberLP[];
 	int exceptCharsColumnNumberLP[];
 	AData exceptCharsDefinitionLP[];
 	int exceptIndexLP;
-	int exceptSizeLP;
+	int exceptSizeLP;*/
+	int[] exceptTokenInputRecordIndex;
+	AData[] exceptTokenDefinition;
+	int exceptTokenIndex;
+	
 	
 	// {28}
 	
     // {28_1}
-	String unresolvedTokenLPICE[];//LPICE list pattern in context validation error
+	/*String unresolvedTokenLPICE[];//LPICE list pattern in context validation error
 	String unresolvedCharsSystemIdEELPICE[];
 	int unresolvedCharsLineNumberEELPICE[];
 	int unresolvedCharsColumnNumberEELPICE[];
 	CharsActiveTypeItem unresolvedPossibleDefinitionsLPICE[][];
 	int unresolvedIndexLPICE;
-	int unresolvedSizeLPICE;
+	int unresolvedSizeLPICE;*/
+	int[] unresolvedTokenInputRecordIndexLPICE;
+    CharsActiveTypeItem unresolvedTokenDefinitionLPICE[][];
+	int unresolvedTokenIndexLPICE;
     
     
     // {28_2}
-	String ambiguousTokenLPICW[];//LPICW list pattern in context validation warning
+	/*String ambiguousTokenLPICW[];//LPICW list pattern in context validation warning
 	String ambiguousCharsSystemIdEELPICW[];
 	int ambiguousCharsLineNumberEELPICW[];
 	int ambiguousCharsColumnNumberEELPICW[];
 	CharsActiveTypeItem ambiguousPossibleDefinitionsLPICW[][];
 	int ambiguousIndexLPICW;
-	int ambiguousSizeLPICW;
+	int ambiguousSizeLPICW;*/
+	int[] ambiguousTokenInputRecordIndexLPICW;
+    CharsActiveTypeItem ambiguousTokenDefinitionLPICW[][];
+	int ambiguousTokenIndexLPICW;
     
 	
 	// {29}
-	Rule[] missingCompositorContentContext;
+	/*Rule[] missingCompositorContentContext;
 	String[] missingCompositorContentStartSystemId;
 	int[] missingCompositorContentStartLineNumber;
 	int[] missingCompositorContentStartColumnNumber;
@@ -382,7 +509,14 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 	int[] missingCompositorContentExpected;
 	int[] missingCompositorContentFound;
 	int missingCompositorContentIndex;
-	int missingCompositorContentSize;
+	int missingCompositorContentSize;*/
+	Rule[] missingCompositorContentContext;
+	int[] missingCompositorContentStartInputRecordIndex;
+	APattern[] missingCompositorContentDefinition;
+	int[] missingCompositorContentExpected;
+	int[] missingCompositorContentFound;
+	int missingCompositorContentIndex;
+	
     
     // {30}
     boolean conflict;
@@ -397,168 +531,147 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
     
     MessageWriter debugWriter;
     
+    boolean isDiscarded;
+    boolean isClear;
+    
 	public TemporaryMessageStorage(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 				
 		// {2}
         unknownElementIndex = -1;
-        unknownElementSize = 0;	
         
         // {3}
         unexpectedElementIndex = -1;
-        unexpectedElementSize = 0;
         
         // {4}
         unexpectedAmbiguousElementIndex = -1;
-        unexpectedAmbiguousElementSize = 0;
         
         // {5}
         unknownAttributeIndex = -1;
-        unknownAttributeSize = 0;	
         
         // {6}
         unexpectedAttributeIndex = -1;
-        unexpectedAttributeSize = 0;
         
         // {7}
         unexpectedAmbiguousAttributeIndex = -1;
-        unexpectedAmbiguousAttributeSize = 0;
         
         
         // {8}
         misplacedIndex = -1;
-        misplacedSize = 0;
     
         // {9}
         excessiveIndex = -1;
-        excessiveSize = 0;
-        
+                
         // {10}
         missingIndex = -1;
-        missingSize = 0;
         
         
         // {11}	
         illegalIndex = -1;
-        illegalSize = 0;
         
         // {12 A}
         unresolvedAmbiguousElementIndexEE = -1;
-        unresolvedAmbiguousElementSizeEE = 0;
         
         // {12 U}
         unresolvedUnresolvedElementIndexEE = -1;
-        unresolvedUnresolvedElementSizeEE = 0;
     
         // {13}
         unresolvedAttributeIndexEE = -1;
-        unresolvedAttributeSizeEE = 0;
     
         // {14}
         
         // {w1 U}
         ambiguousUnresolvedElementIndexWW = -1;
-        ambiguousUnresolvedElementSizeWW = 0;
         
         // {w1 A}
         ambiguousAmbiguousElementIndexWW = -1;
-        ambiguousAmbiguousElementSizeWW = 0;
         
         
         
         // {w2}
         ambiguousAttributeIndexWW = -1;
-        ambiguousAttributeSizeWW = 0;
     
         // {w3}
         ambiguousCharsIndexWW = -1;
-        ambiguousCharsSizeWW = 0;
         
          // {w4}
         ambiguousAVIndexWW = -1;
-        ambiguousAVSizeWW = 0;
         
         // {15}
-        datatypeIndexCC = -1;
-        datatypeSizeCC = 0;
+        datatypeCharsIndex = -1;
         
         // {16}
-        datatypeIndexAV = -1;
-        datatypeSizeAV = 0;
+        datatypeAVIndex = -1;
        
         
         // {17}
-        valueIndexCC = -1;
-        valueSizeCC = 0;
+        valueCharsIndex = -1;
         
         // {18}
-        valueIndexAV = -1;
-        valueSizeAV = 0;
+        valueAVIndex = -1;
         
         // {19}
-        exceptIndexCC = -1;
-        exceptSizeCC = 0;
+        exceptCharsIndex = -1;
         
         // {20}
-        exceptIndexAV = -1;
-        exceptSizeAV = 0;
+        exceptAVIndex = -1;
         
         // {21}
-        unexpectedIndexCC = -1;
-        unexpectedSizeCC = 0;
+        unexpectedCharsIndex = -1;
         
         // {22}
-        unexpectedIndexAV = -1;
-        unexpectedSizeAV = 0;
+        unexpectedAVIndex = -1;
         
         
         // {23}
-        unresolvedIndexCC = -1;
-        unresolvedSizeCC = 0;
+        unresolvedCharsIndexEE = -1;
         
         // {24}
-        unresolvedIndexAV = -1;
-        unresolvedSizeAV = 0;
+        unresolvedAVIndexEE = -1;
         
         
         // {25}
-        datatypeIndexLP = -1;
-        datatypeSizeLP = 0;
+        datatypeTokenIndex = -1;
             
         // {26}
-        valueIndexLP = -1;
-        valueSizeLP = 0;
+        valueTokenIndex = -1;
         
         // {27}
-        exceptIndexLP = -1;
-        exceptSizeLP = 0;
+        exceptTokenIndex = -1;
         
         // {28}
 
         // {28_1}
-        unresolvedIndexLPICE = -1;
-        unresolvedSizeLPICE = 0;
+        unresolvedTokenIndexLPICE = -1;
         
         
         // {28_2}
-        ambiguousIndexLPICW = -1;
-        ambiguousSizeLPICW = 0;
+        ambiguousTokenIndexLPICW = -1;
         
         
         // {29}
         missingCompositorContentIndex = -1;
-        missingCompositorContentSize = 0;
         
         // {30}
         
 		conflict = false;
 		
 		internalConflict = false;
+		
+		isDiscarded = false;
+		
+		isClear = false;
+		// set like this because if it's created it meance it will be used and 
+		// it won't have to be set everytime an error is recorded
 	}  
     
-	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
+	public void init(ActiveInputDescriptor activeInputDescriptor){
+	    this.activeInputDescriptor = activeInputDescriptor;
+	}
+	
+	public void unknownElement(int inputRecordIndex){
         
-		if(unknownElementSize == 0){
+		/*if(unknownElementSize == 0){
 			unknownElementSize = 1;
 			unknownElementIndex = 0;	
 			unknownElementQName = new String[unknownElementSize];			
@@ -585,12 +698,28 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		unknownElementQName[unknownElementIndex] = qName;
 		unknownElementSystemId[unknownElementIndex] = systemId;
 		unknownElementLineNumber[unknownElementIndex] = lineNumber;
-		unknownElementColumnNumber[unknownElementIndex] = columnNumber;
+		unknownElementColumnNumber[unknownElementIndex] = columnNumber;*/
+		
+		if(unknownElementInputRecordIndex == null){
+		    unknownElementInputRecordIndex = new int[initialSize];
+		}else if(++unknownElementIndex == unknownElementInputRecordIndex.length){
+		    int[] increasedEIRI = new int[unknownElementInputRecordIndex.length+increaseSizeAmount];
+			System.arraycopy(unknownElementInputRecordIndex, 0, increasedEIRI, 0, unknownElementIndex);
+			unknownElementInputRecordIndex = increasedEIRI;		    
+		}
+		unknownElementInputRecordIndex[unknownElementIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
 	}
+	public void clearUnknownElement(){
+        activeInputDescriptor.unregisterClientForRecord(unknownElementInputRecordIndex, 0, unknownElementIndex+1, this);
+        unknownElementIndex = -1;
+        unknownElementInputRecordIndex = null;
+    }
 	
-	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	
+	public void unexpectedElement(SimplifiedComponent definition, int inputRecordIndex){
         
-		if(unexpectedElementSize == 0){
+		/*if(unexpectedElementSize == 0){
 			unexpectedElementSize = 1;
 			unexpectedElementIndex = 0;	
 			unexpectedElementQName = new String[unexpectedElementSize];
@@ -623,13 +752,36 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		unexpectedElementDefinition[unexpectedElementIndex] = definition;
 		unexpectedElementSystemId[unexpectedElementIndex] = systemId;
 		unexpectedElementLineNumber[unexpectedElementIndex] = lineNumber;
-		unexpectedElementColumnNumber[unexpectedElementIndex] = columnNumber;
+		unexpectedElementColumnNumber[unexpectedElementIndex] = columnNumber;*/
+		
+		if(unexpectedElementInputRecordIndex == null){
+		    unexpectedElementIndex = 0;
+		    unexpectedElementInputRecordIndex = new int[initialSize];
+		    unexpectedElementDefinition = new SimplifiedComponent[initialSize];
+		}else if(++unexpectedElementIndex == unexpectedElementInputRecordIndex.length){
+		    int[] increasedEIRI = new int[unexpectedElementInputRecordIndex.length+increaseSizeAmount];
+			System.arraycopy(unexpectedElementInputRecordIndex, 0, increasedEIRI, 0, unexpectedElementIndex);
+			unexpectedElementInputRecordIndex = increasedEIRI;		
+			
+			SimplifiedComponent[] increasedDef = new SimplifiedComponent[unexpectedElementDefinition.length+increaseSizeAmount];
+			System.arraycopy(unexpectedElementDefinition, 0, increasedDef, 0, unexpectedElementIndex);
+			unexpectedElementDefinition = increasedDef;
+		}	
+		unexpectedElementDefinition[unexpectedElementIndex] = definition;
+		unexpectedElementInputRecordIndex[unexpectedElementIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
 	}
-    
-    
-	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
+    public void clearUnexpectedElement(){
+        activeInputDescriptor.unregisterClientForRecord(unexpectedElementInputRecordIndex, 0, unexpectedElementIndex+1, this);
+        unexpectedElementIndex = -1;
+        unexpectedElementInputRecordIndex = null;
+        unexpectedElementDefinition = null;
+    }
         
-		if(unexpectedAmbiguousElementSize == 0){
+    
+	public void unexpectedAmbiguousElement(SimplifiedComponent[] possibleDefinitions, int inputRecordIndex){
+        
+		/*if(unexpectedAmbiguousElementSize == 0){
 			unexpectedAmbiguousElementSize = 1;
 			unexpectedAmbiguousElementIndex = 0;	
 			unexpectedAmbiguousElementQName = new String[unexpectedAmbiguousElementSize];
@@ -662,13 +814,36 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		unexpectedAmbiguousElementDefinition[unexpectedAmbiguousElementIndex] = possibleDefinitions;
 		unexpectedAmbiguousElementSystemId[unexpectedAmbiguousElementIndex] = systemId;
 		unexpectedAmbiguousElementLineNumber[unexpectedAmbiguousElementIndex] = lineNumber;
-		unexpectedAmbiguousElementColumnNumber[unexpectedAmbiguousElementIndex] = columnNumber;
-	}
+		unexpectedAmbiguousElementColumnNumber[unexpectedAmbiguousElementIndex] = columnNumber;*/
 		
+		if(unexpectedAmbiguousElementInputRecordIndex == null){
+		    unexpectedAmbiguousElementIndex = 0;
+		    unexpectedAmbiguousElementInputRecordIndex = new int[initialSize];
+		    unexpectedAmbiguousElementDefinition = new SimplifiedComponent[initialSize][];
+		}else if(++unexpectedAmbiguousElementIndex == unexpectedAmbiguousElementInputRecordIndex.length){
+		    int[] increasedEIRI = new int[unexpectedAmbiguousElementInputRecordIndex.length+increaseSizeAmount];
+			System.arraycopy(unexpectedAmbiguousElementInputRecordIndex, 0, increasedEIRI, 0, unexpectedAmbiguousElementIndex);
+			unexpectedAmbiguousElementInputRecordIndex = increasedEIRI;		
+			
+			SimplifiedComponent[][] increasedDef = new SimplifiedComponent[unexpectedAmbiguousElementDefinition.length+increaseSizeAmount][];
+			System.arraycopy(unexpectedAmbiguousElementDefinition, 0, increasedDef, 0, unexpectedAmbiguousElementIndex);
+			unexpectedAmbiguousElementDefinition = increasedDef;
+		}	
+		unexpectedAmbiguousElementDefinition[unexpectedAmbiguousElementIndex] = possibleDefinitions;
+		unexpectedAmbiguousElementInputRecordIndex[unexpectedAmbiguousElementIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+	}
+	public void clearUnexpectedAmbiguousElement(){
+        activeInputDescriptor.unregisterClientForRecord(unexpectedAmbiguousElementInputRecordIndex, 0, unexpectedAmbiguousElementIndex+1, this);
+        unexpectedAmbiguousElementIndex = -1;
+        unexpectedAmbiguousElementInputRecordIndex = null;
+        unexpectedAmbiguousElementDefinition = null;
+    }
+    
 	
-	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownAttribute(int inputRecordIndex){
         
-		if(unknownAttributeSize == 0){
+		/*if(unknownAttributeSize == 0){
 			unknownAttributeSize = 1;
 			unknownAttributeIndex = 0;	
 			unknownAttributeQName = new String[unknownAttributeSize];			
@@ -695,13 +870,28 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		unknownAttributeQName[unknownAttributeIndex] = qName;
 		unknownAttributeSystemId[unknownAttributeIndex] = systemId;
 		unknownAttributeLineNumber[unknownAttributeIndex] = lineNumber;
-		unknownAttributeColumnNumber[unknownAttributeIndex] = columnNumber;
+		unknownAttributeColumnNumber[unknownAttributeIndex] = columnNumber;*/
+		
+		if(unknownAttributeInputRecordIndex == null){
+		    unknownAttributeInputRecordIndex = new int[initialSize];
+		}else if(++unknownAttributeIndex == unknownAttributeInputRecordIndex.length){
+		    int[] increasedEIRI = new int[unknownAttributeInputRecordIndex.length+increaseSizeAmount];
+			System.arraycopy(unknownAttributeInputRecordIndex, 0, increasedEIRI, 0, unknownAttributeIndex);
+			unknownAttributeInputRecordIndex = increasedEIRI;		    
+		}
+		unknownAttributeInputRecordIndex[unknownAttributeIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
 	}
+	public void clearUnknownAttribute(){
+        activeInputDescriptor.unregisterClientForRecord(unknownAttributeInputRecordIndex, 0, unknownAttributeIndex+1, this);
+        unknownAttributeIndex = -1;
+        unknownAttributeInputRecordIndex = null;
+    }
+    
 	
-	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(SimplifiedComponent definition, int inputRecordIndex){
         
-        
-		if(unexpectedAttributeSize == 0){
+		/*if(unexpectedAttributeSize == 0){
 			unexpectedAttributeSize = 1;
 			unexpectedAttributeIndex = 0;	
 			unexpectedAttributeQName = new String[unexpectedAttributeSize];
@@ -734,12 +924,36 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		unexpectedAttributeDefinition[unexpectedAttributeIndex] = definition;
 		unexpectedAttributeSystemId[unexpectedAttributeIndex] = systemId;
 		unexpectedAttributeLineNumber[unexpectedAttributeIndex] = lineNumber;
-		unexpectedAttributeColumnNumber[unexpectedAttributeIndex] = columnNumber;
-	}	
-	
-	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
+		unexpectedAttributeColumnNumber[unexpectedAttributeIndex] = columnNumber;*/
+		
+		if(unexpectedAttributeInputRecordIndex == null){
+		    unexpectedAttributeIndex = 0;
+		    unexpectedAttributeInputRecordIndex = new int[initialSize];
+		    unexpectedAttributeDefinition = new SimplifiedComponent[initialSize];
+		}else if(++unexpectedAttributeIndex == unexpectedAttributeInputRecordIndex.length){
+		    int[] increasedEIRI = new int[unexpectedAttributeInputRecordIndex.length+increaseSizeAmount];
+			System.arraycopy(unexpectedAttributeInputRecordIndex, 0, increasedEIRI, 0, unexpectedAttributeIndex);
+			unexpectedAttributeInputRecordIndex = increasedEIRI;		
+			
+			SimplifiedComponent[] increasedDef = new SimplifiedComponent[unexpectedAttributeDefinition.length+increaseSizeAmount];
+			System.arraycopy(unexpectedAttributeDefinition, 0, increasedDef, 0, unexpectedAttributeIndex);
+			unexpectedAttributeDefinition = increasedDef;
+		}	
+		unexpectedAttributeDefinition[unexpectedAttributeIndex] = definition;
+		unexpectedAttributeInputRecordIndex[unexpectedAttributeIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+	}
+	public void clearUnexpectedAttribute(){
+        activeInputDescriptor.unregisterClientForRecord(unexpectedAttributeInputRecordIndex, 0, unexpectedAttributeIndex+1, this);
+        unexpectedAttributeIndex = -1;
+        unexpectedAttributeInputRecordIndex = null;
+        unexpectedAttributeDefinition = null;
+    }
+    
+    
+	public void unexpectedAmbiguousAttribute(SimplifiedComponent[] possibleDefinitions, int inputRecordIndex){
         
-		if(unexpectedAmbiguousAttributeSize == 0){
+		/*if(unexpectedAmbiguousAttributeSize == 0){
 			unexpectedAmbiguousAttributeSize = 1;
 			unexpectedAmbiguousAttributeIndex = 0;	
 			unexpectedAmbiguousAttributeQName = new String[unexpectedAmbiguousAttributeSize];
@@ -772,23 +986,41 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		unexpectedAmbiguousAttributeDefinition[unexpectedAmbiguousAttributeIndex] = possibleDefinitions;
 		unexpectedAmbiguousAttributeSystemId[unexpectedAmbiguousAttributeIndex] = systemId;
 		unexpectedAmbiguousAttributeLineNumber[unexpectedAmbiguousAttributeIndex] = lineNumber;
-		unexpectedAmbiguousAttributeColumnNumber[unexpectedAmbiguousAttributeIndex] = columnNumber;
+		unexpectedAmbiguousAttributeColumnNumber[unexpectedAmbiguousAttributeIndex] = columnNumber;*/
+		
+		if(unexpectedAmbiguousAttributeInputRecordIndex == null){
+		    unexpectedAmbiguousAttributeIndex = 0;
+		    unexpectedAmbiguousAttributeInputRecordIndex = new int[initialSize];
+		    unexpectedAmbiguousAttributeDefinition = new SimplifiedComponent[initialSize][];
+		}else if(++unexpectedAmbiguousAttributeIndex == unexpectedAmbiguousAttributeInputRecordIndex.length){
+		    int[] increasedEIRI = new int[unexpectedAmbiguousAttributeInputRecordIndex.length+increaseSizeAmount];
+			System.arraycopy(unexpectedAmbiguousAttributeInputRecordIndex, 0, increasedEIRI, 0, unexpectedAmbiguousAttributeIndex);
+			unexpectedAmbiguousAttributeInputRecordIndex = increasedEIRI;		
+			
+			SimplifiedComponent[][] increasedDef = new SimplifiedComponent[unexpectedAmbiguousAttributeDefinition.length+increaseSizeAmount][];
+			System.arraycopy(unexpectedAmbiguousAttributeDefinition, 0, increasedDef, 0, unexpectedAmbiguousAttributeIndex);
+			unexpectedAmbiguousAttributeDefinition = increasedDef;
+		}	
+		unexpectedAmbiguousAttributeDefinition[unexpectedAmbiguousAttributeIndex] = possibleDefinitions;
+		unexpectedAmbiguousAttributeInputRecordIndex[unexpectedAmbiguousAttributeIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
 	}
+	public void clearUnexpectedAmbiguousAttribute(){
+        activeInputDescriptor.unregisterClientForRecord(unexpectedAmbiguousAttributeInputRecordIndex, 0, unexpectedAmbiguousAttributeIndex+1, this);
+        unexpectedAmbiguousAttributeIndex = -1;
+        unexpectedAmbiguousAttributeInputRecordIndex = null;
+        unexpectedAmbiguousAttributeDefinition = null;
+    }
+	
 	
 	public void misplacedContent(APattern contextDefinition, 
-											String startSystemId, 
-											int startLineNumber, 
-											int startColumnNumber, 
+											int startInputRecordIndex, 
 											APattern definition, 
-											int itemId, 
-											String qName, 
-											String systemId, 
-											int lineNumber, 
-											int columnNumber,
+											int inputRecordIndex,
 											APattern sourceDefinition, 
 											APattern reper){//not stored, only used for internal conflict handling
         
-		all: {	           
+		/*all: {	           
 			if(misplacedSize == 0){
 				misplacedSize = 1;
 				misplacedIndex = 0;	
@@ -955,22 +1187,116 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 			misplacedColumnNumber = increasedCN;
 			misplacedColumnNumber[misplacedIndex] = new int[1][1];
 			misplacedColumnNumber[misplacedIndex][0][0] = columnNumber;
+		}*/
+		
+		if(misplacedIndex < 0){
+		    misplacedIndex = 0;
+		    
+		    //create arrays for everything
+		    //record everything
+		    
+		    misplacedContext = new APattern[initialSize];
+            misplacedStartInputRecordIndex = new int[initialSize];
+            misplacedDefinition = new APattern[initialSize][];
+            misplacedInputRecordIndex = new int[initialSize][][];
+                        
+            misplacedContext[misplacedIndex] = contextDefinition;
+            misplacedStartInputRecordIndex[misplacedIndex] = startInputRecordIndex;
+            activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
+            
+            misplacedDefinition[misplacedIndex] = new APattern[1];
+            misplacedDefinition[misplacedIndex][0] = definition;
+            
+            misplacedInputRecordIndex[misplacedIndex] = new int[1][];
+            misplacedInputRecordIndex[misplacedIndex][0] = new int[1];
+            misplacedInputRecordIndex[misplacedIndex][0][0] = inputRecordIndex;
+            activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+            return;
+		}else{		    
+            for(int i = 0; i <= misplacedIndex; i++){
+				if(misplacedContext[i].equals(contextDefinition)
+                    && misplacedStartInputRecordIndex[i] == startInputRecordIndex){
+                    for(int j = 0; j < misplacedDefinition[i].length; j++){
+						if(misplacedDefinition[i][j].equals(definition)){						    
+						    //increase size for inputRecordIndex
+						    //record inputRecordIndex
+						    int oldLength = misplacedInputRecordIndex[i][j].length;
+						    int[] increasedIRI = new int[oldLength+1];
+						    System.arraycopy(misplacedInputRecordIndex[i][j], 0, increasedIRI, 0, oldLength);
+						    misplacedInputRecordIndex[i][j] = increasedIRI;
+						    
+						    misplacedInputRecordIndex[i][j][oldLength] = inputRecordIndex;
+						    activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+						    return;
+						}
+					}
+					//increase size for definition
+					//create array for inputRecordIndex
+					//record inputRecordIndex
+					
+					int oldLength = misplacedDefinition[i].length;	
+					
+					APattern[] increasedDef = new APattern[oldLength+1];					
+					System.arraycopy(misplacedDefinition[i], 0, increasedDef, 0, oldLength);
+					misplacedDefinition[i] = increasedDef;
+					
+					int[][] increasedIRI = new int[(oldLength+1)][];
+					System.arraycopy(misplacedInputRecordIndex[i], 0, increasedIRI, 0, oldLength);
+					misplacedInputRecordIndex[i] = increasedIRI;			
+					misplacedInputRecordIndex[i][oldLength] = new int[1];
+					
+					
+					misplacedDefinition[i][oldLength] = definition;                    
+                    misplacedInputRecordIndex[i][oldLength][0] = inputRecordIndex;
+                    activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+                    return;  					
+                }
+            }
+            //increase size for context and startInputRecordIndex
+            //create array for definition
+			//create array for inputRecordIndex
+			//record inputRecordIndex			
+
+			if(++misplacedIndex == misplacedContext.length){			    
+                APattern[] increasedCDef = new APattern[misplacedIndex+increaseSizeAmount];
+                System.arraycopy(misplacedContext, 0, increasedCDef, 0, misplacedIndex);
+                misplacedContext = increasedCDef;               
+                
+                int[] increasedSIRI  = new int[misplacedIndex+increaseSizeAmount];
+                System.arraycopy(misplacedStartInputRecordIndex, 0, increasedSIRI, 0, misplacedIndex);
+                misplacedStartInputRecordIndex = increasedSIRI;
+                
+                APattern[][] increasedDef = new APattern[misplacedIndex+increaseSizeAmount][];
+                System.arraycopy(misplacedDefinition, 0, increasedDef, 0, misplacedIndex);
+                misplacedDefinition = increasedDef;
+                 
+                int[][][] increasedIRI = new int[misplacedIndex+increaseSizeAmount][][];
+                System.arraycopy(misplacedInputRecordIndex, 0, increasedIRI, 0, misplacedIndex);
+                misplacedInputRecordIndex = increasedIRI;
+            }
+            
+            misplacedContext[misplacedIndex] = contextDefinition;
+            
+            misplacedStartInputRecordIndex[misplacedIndex] = startInputRecordIndex;
+            activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
+            
+            misplacedDefinition[misplacedIndex] = new APattern[1];
+            misplacedDefinition[misplacedIndex][0] = definition;
+            
+            misplacedInputRecordIndex[misplacedIndex] = new int[1][];
+            misplacedInputRecordIndex[misplacedIndex][0] = new int[1];
+            misplacedInputRecordIndex[misplacedIndex][0][0] = inputRecordIndex;
+            activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
 		}
 	}
 	public void misplacedContent(APattern contextDefinition, 
-											String startSystemId, 
-											int startLineNumber, 
-											int startColumnNumber, 
+											int startInputRecordIndex, 
 											APattern definition,
-											int[] itemId, 
-											String[] qName, 
-											String[] systemId, 
-											int[] lineNumber, 
-											int[] columnNumber,
+											int[] inputRecordIndex,
 											APattern[] sourceDefinition, 
 											APattern reper){//not stored, only used for internal conflict handling
 		
-		all: {	           
+		/*all: {	           
 			if(misplacedSize == 0){
 				misplacedSize = 1;
 				misplacedIndex = 0;	
@@ -1134,21 +1460,126 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 			misplacedColumnNumber = increasedCN;
 			misplacedColumnNumber[misplacedIndex] = new int[1][];
 			misplacedColumnNumber[misplacedIndex][0] = columnNumber;            
+		}*/
+		
+		if(misplacedIndex < 0){
+		    misplacedIndex = 0;
+		    
+		    //create arrays for everything
+		    //record everything
+		    
+		    misplacedContext = new APattern[initialSize];
+            misplacedStartInputRecordIndex = new int[initialSize];
+            misplacedDefinition = new APattern[initialSize][];
+            misplacedInputRecordIndex = new int[initialSize][][];
+                        
+            misplacedContext[misplacedIndex] = contextDefinition;
+            misplacedStartInputRecordIndex[misplacedIndex] = startInputRecordIndex;
+            activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
+            
+            misplacedDefinition[misplacedIndex] = new APattern[1];
+            misplacedDefinition[misplacedIndex][0] = definition;
+            
+            misplacedInputRecordIndex[misplacedIndex] = new int[1][];
+            misplacedInputRecordIndex[misplacedIndex][0] = inputRecordIndex;
+            activeInputDescriptor.registerClientForRecord(inputRecordIndex, 0, inputRecordIndex.length, this);
+            return;
+		}else{		    
+            for(int i = 0; i <= misplacedIndex; i++){
+				if(misplacedContext[i].equals(contextDefinition)
+                    && misplacedStartInputRecordIndex[i] == startInputRecordIndex){
+                    for(int j = 0; j < misplacedDefinition[i].length; j++){
+						if(misplacedDefinition[i][j].equals(definition)){						    
+						    //increase size for inputRecordIndex
+						    //record inputRecordIndex
+						    int oldLength = misplacedInputRecordIndex[i][j].length;
+						    int increase = inputRecordIndex.length;
+						    int[] increasedIRI = new int[oldLength+increase];						    
+						    System.arraycopy(misplacedInputRecordIndex[i][j], 0, increasedIRI, 0, oldLength);
+						    System.arraycopy(inputRecordIndex, 0, increasedIRI, oldLength, increase);
+						    misplacedInputRecordIndex[i][j] = increasedIRI;
+						    activeInputDescriptor.registerClientForRecord(inputRecordIndex, 0, inputRecordIndex.length, this);
+						    return;
+						}
+					}
+					//increase size for definition
+					//create array for inputRecordIndex
+					//record inputRecordIndex
+					
+					int oldLength = misplacedDefinition[i].length;	
+					
+					APattern[] increasedDef = new APattern[oldLength+1];					
+					System.arraycopy(misplacedDefinition[i], 0, increasedDef, 0, oldLength);
+					misplacedDefinition[i] = increasedDef;
+					
+					int[][] increasedIRI = new int[(oldLength+1)][];
+					System.arraycopy(misplacedInputRecordIndex[i], 0, increasedIRI, 0, oldLength);
+					misplacedInputRecordIndex[i] = increasedIRI;
+					
+					
+					misplacedDefinition[i][oldLength] = definition;                    
+                    misplacedInputRecordIndex[i][oldLength] = inputRecordIndex;
+                    activeInputDescriptor.registerClientForRecord(inputRecordIndex, 0, inputRecordIndex.length, this);
+                    return;  					
+                }
+            }
+            //increase size for context and startInputRecordIndex
+            //create array for definition
+			//create array for inputRecordIndex
+			//record inputRecordIndex
+
+			if(++misplacedIndex == misplacedContext.length){			    
+                APattern[] increasedCDef = new APattern[misplacedIndex+increaseSizeAmount];
+                System.arraycopy(misplacedContext, 0, increasedCDef, 0, misplacedIndex);
+                misplacedContext = increasedCDef;               
+                
+                int[] increasedSIRI  = new int[misplacedIndex+increaseSizeAmount];
+                System.arraycopy(misplacedStartInputRecordIndex, 0, increasedSIRI, 0, misplacedIndex);
+                misplacedStartInputRecordIndex = increasedSIRI;
+                
+                APattern[][] increasedDef = new APattern[misplacedIndex+increaseSizeAmount][];
+                System.arraycopy(misplacedDefinition, 0, increasedDef, 0, misplacedIndex);
+                misplacedDefinition = increasedDef;
+                 
+                int[][][] increasedIRI = new int[misplacedIndex+increaseSizeAmount][][];
+                System.arraycopy(misplacedInputRecordIndex, 0, increasedIRI, 0, misplacedIndex);
+                misplacedInputRecordIndex = increasedIRI;
+            }
+            
+            misplacedContext[misplacedIndex] = contextDefinition;
+            
+            misplacedStartInputRecordIndex[misplacedIndex] = startInputRecordIndex;
+            activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
+            
+            misplacedDefinition[misplacedIndex] = new APattern[1];
+            misplacedDefinition[misplacedIndex][0] = definition;
+            
+            misplacedInputRecordIndex[misplacedIndex] = new int[1][];
+            misplacedInputRecordIndex[misplacedIndex][0] = inputRecordIndex;
+            activeInputDescriptor.registerClientForRecord(inputRecordIndex, 0, inputRecordIndex.length, this);
 		}
 	}
-    
+    public void clearMisplacedElement(){
+        for(int i = 0; i <= misplacedIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(misplacedStartInputRecordIndex[i], this);
+            for(int j = 0; j < misplacedInputRecordIndex[i].length; j++){
+                activeInputDescriptor.unregisterClientForRecord(misplacedInputRecordIndex[i][j], 0, misplacedInputRecordIndex[i][j].length, this);
+            }
+        }
+        
+        misplacedContext = null;	
+        misplacedStartInputRecordIndex = null;
+        misplacedDefinition = null; 
+        misplacedInputRecordIndex = null;
+        misplacedIndex = -1;	
+    }	
+	    
 	
 	public void excessiveContent(Rule context,
-									String startSystemId,
-									int startLineNumber,
-									int startColumnNumber,
+									int startInputRecordIndex,
 									APattern definition, 
-									int[] itemId, 
-									String[] qName, 
-									String[] systemId, 
-									int[] lineNumber, 
-									int[] columnNumber){
-		if(excessiveSize == 0){            
+									int[] inputRecordIndex){
+		/*if(excessiveSize == 0){            
 			excessiveSize = 1;
 			excessiveIndex = 0;
 			excessiveContext = new APattern[excessiveSize];
@@ -1212,16 +1643,45 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		excessiveQName[excessiveIndex] = qName;
 		excessiveSystemId[excessiveIndex] = systemId;
 		excessiveLineNumber[excessiveIndex] = lineNumber;
-		excessiveColumnNumber[excessiveIndex] = columnNumber;
+		excessiveColumnNumber[excessiveIndex] = columnNumber;*/
+		
+		if(excessiveIndex < 0){
+			excessiveIndex = 0;
+			excessiveContext = new APattern[initialSize];		
+			excessiveStartInputRecordIndex = new int[initialSize];
+			excessiveDefinition = new APattern[initialSize];
+			excessiveInputRecordIndex = new int[initialSize][];		
+		}else if(++excessiveIndex == excessiveContext.length){
+		    int newSize = excessiveIndex+increaseSizeAmount;
+		    
+		    APattern[] increasedEC = new APattern[newSize];
+			System.arraycopy(excessiveContext, 0, increasedEC, 0, excessiveIndex);
+			excessiveContext = increasedEC;
+			
+			int[] increasedSLN = new int[newSize];
+			System.arraycopy(excessiveStartInputRecordIndex, 0, increasedSLN, 0, excessiveIndex);
+			excessiveStartInputRecordIndex = increasedSLN;
+			
+			APattern[] increasedED = new APattern[newSize];
+			System.arraycopy(excessiveDefinition, 0, increasedED, 0, excessiveIndex);
+			excessiveDefinition = increasedED;
+			
+			int[][] increasedIRI = new int[newSize][];
+			System.arraycopy(excessiveInputRecordIndex, 0, increasedIRI, 0, excessiveIndex);
+			excessiveInputRecordIndex = increasedIRI;
+		}
+		excessiveContext[excessiveIndex] = context;
+		excessiveStartInputRecordIndex[excessiveIndex] = startInputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
+		excessiveDefinition[excessiveIndex] = definition;
+		excessiveInputRecordIndex[excessiveIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, 0, inputRecordIndex.length, this);
 	}   
+	
 	public void excessiveContent(Rule context, 
 								APattern definition, 
-								int itemId, 
-								String qName, 
-								String systemId, 
-								int lineNumber,		
-								int columnNumber){
-        boolean recorded = false;
+								int inputRecordIndex){
+        /*boolean recorded = false;
 		for(int i = 0; i < excessiveSize; i++){
 			if(excessiveContext[i].equals(context) &&
 				excessiveDefinition[i].equals(definition)){
@@ -1261,352 +1721,47 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 				break;
 			}
 		}		
+        if(!recorded) throw new IllegalArgumentException();*/
+        boolean recorded = false;
+		for(int i = 0; i <= excessiveIndex; i++){
+			if(excessiveContext[i].equals(context) &&
+				excessiveDefinition[i].equals(definition)){
+			    
+                recorded =  true;
+                
+                int length = excessiveInputRecordIndex[i].length;
+                int[] increasedII = new int[length+1];
+                System.arraycopy(excessiveInputRecordIndex[i], 0, increasedII, 0, length);
+                excessiveInputRecordIndex[i] = increasedII;
+                excessiveInputRecordIndex[i][length] = inputRecordIndex;
+                activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+				break;
+			}
+		}		
         if(!recorded) throw new IllegalArgumentException();
 	}
-	    
-	public void unresolvedAmbiguousElementContentError(String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
-									AElement[] possibleDefinitions){
+	public void clearExcessiveContent(){        
+        for(int i = 0; i <= excessiveIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(excessiveStartInputRecordIndex[i], this);
+            activeInputDescriptor.unregisterClientForRecord(excessiveInputRecordIndex[i], 0, excessiveInputRecordIndex[i].length, this);
+        }
         
-		if(unresolvedAmbiguousElementSizeEE == 0){
-			unresolvedAmbiguousElementSizeEE = 1;
-			unresolvedAmbiguousElementIndexEE = 0;	
-			unresolvedAmbiguousElementQNameEE = new String[unresolvedAmbiguousElementSizeEE];			
-			unresolvedAmbiguousElementSystemIdEE = new String[unresolvedAmbiguousElementSizeEE];			
-			unresolvedAmbiguousElementLineNumberEE = new int[unresolvedAmbiguousElementSizeEE];
-			unresolvedAmbiguousElementColumnNumberEE = new int[unresolvedAmbiguousElementSizeEE];
-			unresolvedAmbiguousElementDefinitionEE = new AElement[unresolvedAmbiguousElementSizeEE][];
-		}else if(++unresolvedAmbiguousElementIndexEE == unresolvedAmbiguousElementSizeEE){			
-			String[] increasedQN = new String[++unresolvedAmbiguousElementSizeEE];
-			System.arraycopy(unresolvedAmbiguousElementQNameEE, 0, increasedQN, 0, unresolvedAmbiguousElementIndexEE);
-			unresolvedAmbiguousElementQNameEE = increasedQN;
-			
-			AElement[][] increasedDef = new AElement[unresolvedAmbiguousElementSizeEE][];
-			System.arraycopy(unresolvedAmbiguousElementDefinitionEE, 0, increasedDef, 0, unresolvedAmbiguousElementIndexEE);
-			unresolvedAmbiguousElementDefinitionEE = increasedDef;
-			
-			String[] increasedSI = new String[unresolvedAmbiguousElementSizeEE];
-			System.arraycopy(unresolvedAmbiguousElementSystemIdEE, 0, increasedSI, 0, unresolvedAmbiguousElementIndexEE);
-			unresolvedAmbiguousElementSystemIdEE = increasedSI;
-						
-			int[] increasedLN = new int[unresolvedAmbiguousElementSizeEE];
-			System.arraycopy(unresolvedAmbiguousElementLineNumberEE, 0, increasedLN, 0, unresolvedAmbiguousElementIndexEE);
-			unresolvedAmbiguousElementLineNumberEE = increasedLN;
-			
-			int[] increasedCN = new int[unresolvedAmbiguousElementSizeEE];
-			System.arraycopy(unresolvedAmbiguousElementColumnNumberEE, 0, increasedCN, 0, unresolvedAmbiguousElementIndexEE);
-			unresolvedAmbiguousElementColumnNumberEE = increasedCN;
-		}
-		unresolvedAmbiguousElementQNameEE[unresolvedAmbiguousElementIndexEE] = qName;		
-		unresolvedAmbiguousElementSystemIdEE[unresolvedAmbiguousElementIndexEE] = systemId;
-		unresolvedAmbiguousElementLineNumberEE[unresolvedAmbiguousElementIndexEE] = lineNumber;
-		unresolvedAmbiguousElementColumnNumberEE[unresolvedAmbiguousElementIndexEE] = columnNumber;
-		unresolvedAmbiguousElementDefinitionEE[unresolvedAmbiguousElementIndexEE] = possibleDefinitions;
-	}
-	    
-    public void unresolvedUnresolvedElementContentError(String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
-									AElement[] possibleDefinitions){
-        
-		if(unresolvedUnresolvedElementSizeEE == 0){
-			unresolvedUnresolvedElementSizeEE = 1;
-			unresolvedUnresolvedElementIndexEE = 0;	
-			unresolvedUnresolvedElementQNameEE = new String[unresolvedUnresolvedElementSizeEE];			
-			unresolvedUnresolvedElementSystemIdEE = new String[unresolvedUnresolvedElementSizeEE];			
-			unresolvedUnresolvedElementLineNumberEE = new int[unresolvedUnresolvedElementSizeEE];
-			unresolvedUnresolvedElementColumnNumberEE = new int[unresolvedUnresolvedElementSizeEE];
-			unresolvedUnresolvedElementDefinitionEE = new AElement[unresolvedUnresolvedElementSizeEE][];
-		}else if(++unresolvedUnresolvedElementIndexEE == unresolvedUnresolvedElementSizeEE){			
-			String[] increasedQN = new String[++unresolvedUnresolvedElementSizeEE];
-			System.arraycopy(unresolvedUnresolvedElementQNameEE, 0, increasedQN, 0, unresolvedUnresolvedElementIndexEE);
-			unresolvedUnresolvedElementQNameEE = increasedQN;
-			
-			AElement[][] increasedDef = new AElement[unresolvedUnresolvedElementSizeEE][];
-			System.arraycopy(unresolvedUnresolvedElementDefinitionEE, 0, increasedDef, 0, unresolvedUnresolvedElementIndexEE);
-			unresolvedUnresolvedElementDefinitionEE = increasedDef;
-			
-			String[] increasedSI = new String[unresolvedUnresolvedElementSizeEE];
-			System.arraycopy(unresolvedUnresolvedElementSystemIdEE, 0, increasedSI, 0, unresolvedUnresolvedElementIndexEE);
-			unresolvedUnresolvedElementSystemIdEE = increasedSI;
-						
-			int[] increasedLN = new int[unresolvedUnresolvedElementSizeEE];
-			System.arraycopy(unresolvedUnresolvedElementLineNumberEE, 0, increasedLN, 0, unresolvedUnresolvedElementIndexEE);
-			unresolvedUnresolvedElementLineNumberEE = increasedLN;
-			
-			int[] increasedCN = new int[unresolvedUnresolvedElementSizeEE];
-			System.arraycopy(unresolvedUnresolvedElementColumnNumberEE, 0, increasedCN, 0, unresolvedUnresolvedElementIndexEE);
-			unresolvedUnresolvedElementColumnNumberEE = increasedCN;
-		}
-		unresolvedUnresolvedElementQNameEE[unresolvedUnresolvedElementIndexEE] = qName;		
-		unresolvedUnresolvedElementSystemIdEE[unresolvedUnresolvedElementIndexEE] = systemId;
-		unresolvedUnresolvedElementLineNumberEE[unresolvedUnresolvedElementIndexEE] = lineNumber;
-		unresolvedUnresolvedElementColumnNumberEE[unresolvedUnresolvedElementIndexEE] = columnNumber;
-		unresolvedUnresolvedElementDefinitionEE[unresolvedUnresolvedElementIndexEE] = possibleDefinitions;
-	}
-	    
-	public void unresolvedAttributeContentError(String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
-									AAttribute[] possibleDefinitions){
-        
-		if(unresolvedAttributeSizeEE == 0){
-			unresolvedAttributeSizeEE = 1;
-			unresolvedAttributeIndexEE = 0;	
-			unresolvedAttributeQNameEE = new String[unresolvedAttributeSizeEE];			
-			unresolvedAttributeSystemIdEE = new String[unresolvedAttributeSizeEE];			
-			unresolvedAttributeLineNumberEE = new int[unresolvedAttributeSizeEE];
-			unresolvedAttributeColumnNumberEE = new int[unresolvedAttributeSizeEE];
-			unresolvedAttributeDefinitionEE = new AAttribute[unresolvedAttributeSizeEE][];
-		}else if(++unresolvedAttributeIndexEE == unresolvedAttributeSizeEE){			
-			String[] increasedQN = new String[++unresolvedAttributeSizeEE];
-			System.arraycopy(unresolvedAttributeQNameEE, 0, increasedQN, 0, unresolvedAttributeIndexEE);
-			unresolvedAttributeQNameEE = increasedQN;
-			
-			AAttribute[][] increasedDef = new AAttribute[unresolvedAttributeSizeEE][];
-			System.arraycopy(unresolvedAttributeDefinitionEE, 0, increasedDef, 0, unresolvedAttributeIndexEE);
-			unresolvedAttributeDefinitionEE = increasedDef;
-			
-			String[] increasedSI = new String[unresolvedAttributeSizeEE];
-			System.arraycopy(unresolvedAttributeSystemIdEE, 0, increasedSI, 0, unresolvedAttributeIndexEE);
-			unresolvedAttributeSystemIdEE = increasedSI;
-						
-			int[] increasedLN = new int[unresolvedAttributeSizeEE];
-			System.arraycopy(unresolvedAttributeLineNumberEE, 0, increasedLN, 0, unresolvedAttributeIndexEE);
-			unresolvedAttributeLineNumberEE = increasedLN;
-			
-			int[] increasedCN = new int[unresolvedAttributeSizeEE];
-			System.arraycopy(unresolvedAttributeColumnNumberEE, 0, increasedCN, 0, unresolvedAttributeIndexEE);
-			unresolvedAttributeColumnNumberEE = increasedCN;
-		}
-		unresolvedAttributeQNameEE[unresolvedAttributeIndexEE] = qName;		
-		unresolvedAttributeSystemIdEE[unresolvedAttributeIndexEE] = systemId;
-		unresolvedAttributeLineNumberEE[unresolvedAttributeIndexEE] = lineNumber;
-		unresolvedAttributeColumnNumberEE[unresolvedAttributeIndexEE] = columnNumber;
-		unresolvedAttributeDefinitionEE[unresolvedAttributeIndexEE] = possibleDefinitions;
-	}
+        excessiveContext = null;
+        excessiveStartInputRecordIndex = null;
+        excessiveDefinition = null;
+        excessiveInputRecordIndex = null;
+        excessiveIndex = -1;
+    }
+    
 	
-
-	public void ambiguousUnresolvedElementContentWarning(String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
-									AElement[] possibleDefinitions){
-        
-		if(ambiguousUnresolvedElementSizeWW == 0){
-			ambiguousUnresolvedElementSizeWW = 1;
-			ambiguousUnresolvedElementIndexWW = 0;	
-			ambiguousUnresolvedElementQNameWW = new String[ambiguousUnresolvedElementSizeWW];			
-			ambiguousUnresolvedElementSystemIdWW = new String[ambiguousUnresolvedElementSizeWW];			
-			ambiguousUnresolvedElementLineNumberWW = new int[ambiguousUnresolvedElementSizeWW];
-			ambiguousUnresolvedElementColumnNumberWW = new int[ambiguousUnresolvedElementSizeWW];
-			ambiguousUnresolvedElementDefinitionWW = new AElement[ambiguousUnresolvedElementSizeWW][];
-		}else if(++ambiguousUnresolvedElementIndexWW == ambiguousUnresolvedElementSizeWW){			
-			String[] increasedQN = new String[++ambiguousUnresolvedElementSizeWW];
-			System.arraycopy(ambiguousUnresolvedElementQNameWW, 0, increasedQN, 0, ambiguousUnresolvedElementIndexWW);
-			ambiguousUnresolvedElementQNameWW = increasedQN;
-			
-			AElement[][] increasedDef = new AElement[ambiguousUnresolvedElementSizeWW][];
-			System.arraycopy(ambiguousUnresolvedElementDefinitionWW, 0, increasedDef, 0, ambiguousUnresolvedElementIndexWW);
-			ambiguousUnresolvedElementDefinitionWW = increasedDef;
-			
-			String[] increasedSI = new String[ambiguousUnresolvedElementSizeWW];
-			System.arraycopy(ambiguousUnresolvedElementSystemIdWW, 0, increasedSI, 0, ambiguousUnresolvedElementIndexWW);
-			ambiguousUnresolvedElementSystemIdWW = increasedSI;
-						
-			int[] increasedLN = new int[ambiguousUnresolvedElementSizeWW];
-			System.arraycopy(ambiguousUnresolvedElementLineNumberWW, 0, increasedLN, 0, ambiguousUnresolvedElementIndexWW);
-			ambiguousUnresolvedElementLineNumberWW = increasedLN;
-			
-			int[] increasedCN = new int[ambiguousUnresolvedElementSizeWW];
-			System.arraycopy(ambiguousUnresolvedElementColumnNumberWW, 0, increasedCN, 0, ambiguousUnresolvedElementIndexWW);
-			ambiguousUnresolvedElementColumnNumberWW = increasedCN;
-		}
-		ambiguousUnresolvedElementQNameWW[ambiguousUnresolvedElementIndexWW] = qName;		
-		ambiguousUnresolvedElementSystemIdWW[ambiguousUnresolvedElementIndexWW] = systemId;
-		ambiguousUnresolvedElementLineNumberWW[ambiguousUnresolvedElementIndexWW] = lineNumber;
-		ambiguousUnresolvedElementColumnNumberWW[ambiguousUnresolvedElementIndexWW] = columnNumber;
-		ambiguousUnresolvedElementDefinitionWW[ambiguousUnresolvedElementIndexWW] = possibleDefinitions;        
-	}
-	    
-    public void ambiguousAmbiguousElementContentWarning(String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
-									AElement[] possibleDefinitions){
-        
-		if(ambiguousAmbiguousElementSizeWW == 0){
-			ambiguousAmbiguousElementSizeWW = 1;
-			ambiguousAmbiguousElementIndexWW = 0;	
-			ambiguousAmbiguousElementQNameWW = new String[ambiguousAmbiguousElementSizeWW];			
-			ambiguousAmbiguousElementSystemIdWW = new String[ambiguousAmbiguousElementSizeWW];			
-			ambiguousAmbiguousElementLineNumberWW = new int[ambiguousAmbiguousElementSizeWW];
-			ambiguousAmbiguousElementColumnNumberWW = new int[ambiguousAmbiguousElementSizeWW];
-			ambiguousAmbiguousElementDefinitionWW = new AElement[ambiguousAmbiguousElementSizeWW][];
-		}else if(++ambiguousAmbiguousElementIndexWW == ambiguousAmbiguousElementSizeWW){			
-			String[] increasedQN = new String[++ambiguousAmbiguousElementSizeWW];
-			System.arraycopy(ambiguousAmbiguousElementQNameWW, 0, increasedQN, 0, ambiguousAmbiguousElementIndexWW);
-			ambiguousAmbiguousElementQNameWW = increasedQN;
-			
-			AElement[][] increasedDef = new AElement[ambiguousAmbiguousElementSizeWW][];
-			System.arraycopy(ambiguousAmbiguousElementDefinitionWW, 0, increasedDef, 0, ambiguousAmbiguousElementIndexWW);
-			ambiguousAmbiguousElementDefinitionWW = increasedDef;
-			
-			String[] increasedSI = new String[ambiguousAmbiguousElementSizeWW];
-			System.arraycopy(ambiguousAmbiguousElementSystemIdWW, 0, increasedSI, 0, ambiguousAmbiguousElementIndexWW);
-			ambiguousAmbiguousElementSystemIdWW = increasedSI;
-						
-			int[] increasedLN = new int[ambiguousAmbiguousElementSizeWW];
-			System.arraycopy(ambiguousAmbiguousElementLineNumberWW, 0, increasedLN, 0, ambiguousAmbiguousElementIndexWW);
-			ambiguousAmbiguousElementLineNumberWW = increasedLN;
-			
-			int[] increasedCN = new int[ambiguousAmbiguousElementSizeWW];
-			System.arraycopy(ambiguousAmbiguousElementColumnNumberWW, 0, increasedCN, 0, ambiguousAmbiguousElementIndexWW);
-			ambiguousAmbiguousElementColumnNumberWW = increasedCN;
-		}
-		ambiguousAmbiguousElementQNameWW[ambiguousAmbiguousElementIndexWW] = qName;		
-		ambiguousAmbiguousElementSystemIdWW[ambiguousAmbiguousElementIndexWW] = systemId;
-		ambiguousAmbiguousElementLineNumberWW[ambiguousAmbiguousElementIndexWW] = lineNumber;
-		ambiguousAmbiguousElementColumnNumberWW[ambiguousAmbiguousElementIndexWW] = columnNumber;
-		ambiguousAmbiguousElementDefinitionWW[ambiguousAmbiguousElementIndexWW] = possibleDefinitions;        
-	}
-	        
-	public void ambiguousAttributeContentWarning(String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
-									AAttribute[] possibleDefinitions){
-        
-		if(ambiguousAttributeSizeWW == 0){
-			ambiguousAttributeSizeWW = 1;
-			ambiguousAttributeIndexWW = 0;	
-			ambiguousAttributeQNameWW = new String[ambiguousAttributeSizeWW];			
-			ambiguousAttributeSystemIdWW = new String[ambiguousAttributeSizeWW];			
-			ambiguousAttributeLineNumberWW = new int[ambiguousAttributeSizeWW];
-			ambiguousAttributeColumnNumberWW = new int[ambiguousAttributeSizeWW];
-			ambiguousAttributeDefinitionWW = new AAttribute[ambiguousAttributeSizeWW][];
-		}else if(++ambiguousAttributeIndexWW == ambiguousAttributeSizeWW){			
-			String[] increasedQN = new String[++ambiguousAttributeSizeWW];
-			System.arraycopy(ambiguousAttributeQNameWW, 0, increasedQN, 0, ambiguousAttributeIndexWW);
-			ambiguousAttributeQNameWW = increasedQN;
-			
-			AAttribute[][] increasedDef = new AAttribute[ambiguousAttributeSizeWW][];
-			System.arraycopy(ambiguousAttributeDefinitionWW, 0, increasedDef, 0, ambiguousAttributeIndexWW);
-			ambiguousAttributeDefinitionWW = increasedDef;
-			
-			String[] increasedSI = new String[ambiguousAttributeSizeWW];
-			System.arraycopy(ambiguousAttributeSystemIdWW, 0, increasedSI, 0, ambiguousAttributeIndexWW);
-			ambiguousAttributeSystemIdWW = increasedSI;
-						
-			int[] increasedLN = new int[ambiguousAttributeSizeWW];
-			System.arraycopy(ambiguousAttributeLineNumberWW, 0, increasedLN, 0, ambiguousAttributeIndexWW);
-			ambiguousAttributeLineNumberWW = increasedLN;
-			
-			int[] increasedCN = new int[ambiguousAttributeSizeWW];
-			System.arraycopy(ambiguousAttributeColumnNumberWW, 0, increasedCN, 0, ambiguousAttributeIndexWW);
-			ambiguousAttributeColumnNumberWW = increasedCN;
-		}
-		ambiguousAttributeQNameWW[ambiguousAttributeIndexWW] = qName;		
-		ambiguousAttributeSystemIdWW[ambiguousAttributeIndexWW] = systemId;
-		ambiguousAttributeLineNumberWW[ambiguousAttributeIndexWW] = lineNumber;
-		ambiguousAttributeColumnNumberWW[ambiguousAttributeIndexWW] = columnNumber;
-		ambiguousAttributeDefinitionWW[ambiguousAttributeIndexWW] = possibleDefinitions;
-	}
-	
-	public void ambiguousCharacterContentWarning(String systemId, 
-									int lineNumber, 
-									int columnNumber, 
-									CharsActiveTypeItem[] possibleDefinitions){
-        
-		if(ambiguousCharsSizeWW == 0){
-			ambiguousCharsSizeWW = 1;
-			ambiguousCharsIndexWW = 0;
-			ambiguousCharsSystemIdWW = new String[ambiguousCharsSizeWW];			
-			ambiguousCharsLineNumberWW = new int[ambiguousCharsSizeWW];
-			ambiguousCharsColumnNumberWW = new int[ambiguousCharsSizeWW];
-			ambiguousCharsDefinitionWW = new CharsActiveTypeItem[ambiguousCharsSizeWW][];
-		}else if(++ambiguousCharsIndexWW == ambiguousCharsSizeWW){			
-			CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[++ambiguousCharsSizeWW][];
-			System.arraycopy(ambiguousCharsDefinitionWW, 0, increasedDef, 0, ambiguousCharsIndexWW);
-			ambiguousCharsDefinitionWW = increasedDef;
-			
-			String[] increasedSI = new String[ambiguousCharsSizeWW];
-			System.arraycopy(ambiguousCharsSystemIdWW, 0, increasedSI, 0, ambiguousCharsIndexWW);
-			ambiguousCharsSystemIdWW = increasedSI;
-						
-			int[] increasedLN = new int[ambiguousCharsSizeWW];
-			System.arraycopy(ambiguousCharsLineNumberWW, 0, increasedLN, 0, ambiguousCharsIndexWW);
-			ambiguousCharsLineNumberWW = increasedLN;
-			
-			int[] increasedCN = new int[ambiguousCharsSizeWW];
-			System.arraycopy(ambiguousCharsColumnNumberWW, 0, increasedCN, 0, ambiguousCharsIndexWW);
-			ambiguousCharsColumnNumberWW = increasedCN;
-		}		
-		ambiguousCharsSystemIdWW[ambiguousCharsIndexWW] = systemId;
-		ambiguousCharsLineNumberWW[ambiguousCharsIndexWW] = lineNumber;
-		ambiguousCharsColumnNumberWW[ambiguousCharsIndexWW] = columnNumber;
-		ambiguousCharsDefinitionWW[ambiguousCharsIndexWW] = possibleDefinitions;
-	}
-	
-	public void ambiguousAttributeValueWarning(String attributeQName,
-	                                String systemId, 
-									int lineNumber, 
-									int columnNumber, 
-									CharsActiveTypeItem[] possibleDefinitions){
-        
-		if(ambiguousAVSizeWW == 0){
-			ambiguousAVSizeWW = 1;
-			ambiguousAVIndexWW = 0;
-			ambiguousAVAttributeQNameWW = new String[ambiguousAVSizeWW];
-			ambiguousAVSystemIdWW = new String[ambiguousAVSizeWW];			
-			ambiguousAVLineNumberWW = new int[ambiguousAVSizeWW];
-			ambiguousAVColumnNumberWW = new int[ambiguousAVSizeWW];
-			ambiguousAVDefinitionWW = new CharsActiveTypeItem[ambiguousAVSizeWW][];
-		}else if(++ambiguousAVIndexWW == ambiguousAVSizeWW){			
-			CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[++ambiguousAVSizeWW][];
-			System.arraycopy(ambiguousAVDefinitionWW, 0, increasedDef, 0, ambiguousAVIndexWW);
-			ambiguousAVDefinitionWW = increasedDef;
-			
-			String[] increasedAQ = new String[ambiguousAVSizeWW];
-			System.arraycopy(ambiguousAVAttributeQNameWW, 0, increasedAQ, 0, ambiguousAVIndexWW);
-			ambiguousAVAttributeQNameWW = increasedAQ;
-						
-			String[] increasedSI = new String[ambiguousAVSizeWW];
-			System.arraycopy(ambiguousAVSystemIdWW, 0, increasedSI, 0, ambiguousAVIndexWW);
-			ambiguousAVSystemIdWW = increasedSI;
-						
-			int[] increasedLN = new int[ambiguousAVSizeWW];
-			System.arraycopy(ambiguousAVLineNumberWW, 0, increasedLN, 0, ambiguousAVIndexWW);
-			ambiguousAVLineNumberWW = increasedLN;
-			
-			int[] increasedCN = new int[ambiguousAVSizeWW];
-			System.arraycopy(ambiguousAVColumnNumberWW, 0, increasedCN, 0, ambiguousAVIndexWW);
-			ambiguousAVColumnNumberWW = increasedCN;
-		}		
-		ambiguousAVAttributeQNameWW[ambiguousAVIndexWW] = attributeQName;
-		ambiguousAVSystemIdWW[ambiguousAVIndexWW] = systemId;
-		ambiguousAVLineNumberWW[ambiguousAVIndexWW] = lineNumber;
-		ambiguousAVColumnNumberWW[ambiguousAVIndexWW] = columnNumber;
-		ambiguousAVDefinitionWW[ambiguousAVIndexWW] = possibleDefinitions;
-	}
-		
-	public void missingContent(Rule context, 
-								String startSystemId, 
-								int startLineNumber, 
-								int startColumnNumber,								 
+	public void missingContent(Rule context,  
+								int startInputRecordIndex,						 
 								APattern definition, 
 								int expected, 
-								int found,
-								String[] qName, 
-								String[] systemId, 
-								int[] lineNumber, 
-								int[] columnNumber){	    
+								int found, 
+								int[] inputRecordIndex){	    
         
-		if(missingSize == 0){
+		/*if(missingSize == 0){
 			missingSize = 1;
 			missingIndex = 0;
 			missingContext = new APattern[missingSize];
@@ -1676,17 +1831,74 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		if(systemId != null)missingSystemId[missingIndex] = systemId;
 		missingLineNumber[missingIndex] = lineNumber;
 		missingColumnNumber[missingIndex] = columnNumber;
-		//throw new IllegalStateException();
+		//throw new IllegalStateException();*/
+		
+		if(missingIndex < 0){
+			missingIndex = 0;
+			missingContext = new APattern[initialSize];			
+			missingStartInputRecordIndex = new int[initialSize];
+			missingDefinition = new APattern[initialSize];
+			missingExpected = new int[initialSize];
+			missingFound = new int[initialSize];		
+			missingInputRecordIndex = new int[initialSize][];		
+		}else if(++missingIndex == missingContext.length){
+		    int newSize = missingIndex+increaseSizeAmount;
+		    
+		    APattern[] increasedEC = new APattern[newSize];
+			System.arraycopy(missingContext, 0, increasedEC, 0, missingIndex);
+			missingContext = increasedEC;
+			
+			int[] increasedSIRI = new int[newSize];
+			System.arraycopy(missingStartInputRecordIndex, 0, increasedSIRI, 0, missingIndex);
+			missingStartInputRecordIndex = increasedSIRI;
+			
+			APattern[] increasedED = new APattern[newSize];
+			System.arraycopy(missingDefinition, 0, increasedED, 0, missingIndex);
+			missingDefinition = increasedED;
+			
+			int[] increasedE = new int[newSize];
+			System.arraycopy(missingExpected, 0, increasedE, 0, missingIndex);
+			missingExpected = increasedE;
+			
+			int[] increasedF = new int[newSize];
+			System.arraycopy(missingFound, 0, increasedF, 0, missingIndex);
+			missingFound = increasedF;
+			
+			int[][] increasedIRI = new int[newSize][];
+			System.arraycopy(missingInputRecordIndex, 0, increasedIRI, 0, missingIndex);
+			missingInputRecordIndex = increasedIRI;
+		}	
+		
+		missingContext[missingIndex] = context;
+		missingStartInputRecordIndex[missingIndex] = startInputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);            
+		missingDefinition[missingIndex] = definition;
+		missingExpected[missingIndex] = expected;
+		missingFound[missingIndex] = found;		
+		missingInputRecordIndex[missingIndex] = inputRecordIndex;
+		if(inputRecordIndex != null)activeInputDescriptor.registerClientForRecord(inputRecordIndex, 0, inputRecordIndex.length, this);
+    }
+    public void clearMissingContent(){
+        for(int i = 0; i <= missingIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(missingStartInputRecordIndex[i], this);
+            if(missingInputRecordIndex[i] != null) activeInputDescriptor.unregisterClientForRecord(missingInputRecordIndex[i], 0, missingInputRecordIndex[i].length, this);
+        }
+        
+        missingContext = null;
+		missingStartInputRecordIndex = null;
+		missingDefinition = null;
+		missingExpected = null;
+		missingFound = null;		
+		missingInputRecordIndex = null;
+        missingIndex = -1;
     }
 	
-	public void illegalContent(Rule context, 
-	                        int startItemId, 
-							String startQName, 
-							String startSystemId, 
-							int startLineNumber, 
-							int startColumnNumber){
+
+
+    public void illegalContent(Rule context, 
+	                        int startInputRecordIndex){
         
-		if(illegalSize == 0){
+		/*if(illegalSize == 0){
 			illegalSize = 1;
 			illegalIndex = 0;
 			illegalContext = new APattern[illegalSize];
@@ -1725,12 +1937,656 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		illegalQName[illegalIndex] = startQName;
 		illegalStartSystemId[illegalIndex] = startSystemId;
 		illegalStartLineNumber[illegalIndex] = startLineNumber;
-		illegalStartColumnNumber[illegalIndex] = startColumnNumber;
+		illegalStartColumnNumber[illegalIndex] = startColumnNumber;*/
+		
+		if(illegalIndex < 0){
+			illegalIndex = 0;
+			illegalContext = new APattern[initialSize];
+			illegalStartInputRecordIndex = new int[initialSize];					
+		}else if(++illegalIndex == illegalContext.length){
+		    int size = illegalIndex + increaseSizeAmount;
+			APattern[] increasedEC = new APattern[size];
+			System.arraycopy(illegalContext, 0, increasedEC, 0, illegalIndex);
+			illegalContext = increasedEC;
+			
+			int[] increasedII = new int[size];
+			System.arraycopy(illegalStartInputRecordIndex, 0, increasedII, 0, illegalIndex);
+			illegalStartInputRecordIndex = increasedII;		
+		}
+		illegalContext[illegalIndex] = context;
+		illegalStartInputRecordIndex[illegalIndex] = startInputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
 	}
+	public void clearIllegalContent(){
+        /*illegalSize = 0;
+        illegalIndex = -1;
+        illegalContext = null;
+        illegalItemId = null;
+        illegalQName = null;
+        illegalStartSystemId = null;			
+        illegalStartLineNumber = null;
+        illegalStartColumnNumber = null;*/
+        
+        for(int i = 0; i <= illegalIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(illegalStartInputRecordIndex[i], this);
+        }
+        
+        illegalIndex = -1;
+        illegalContext = null;
+        illegalStartInputRecordIndex = null;
+    }
+
+	
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, 
+									AElement[] possibleDefinitions){
+        
+		/*if(unresolvedAmbiguousElementSizeEE == 0){
+			unresolvedAmbiguousElementSizeEE = 1;
+			unresolvedAmbiguousElementIndexEE = 0;	
+			unresolvedAmbiguousElementQNameEE = new String[unresolvedAmbiguousElementSizeEE];			
+			unresolvedAmbiguousElementSystemIdEE = new String[unresolvedAmbiguousElementSizeEE];			
+			unresolvedAmbiguousElementLineNumberEE = new int[unresolvedAmbiguousElementSizeEE];
+			unresolvedAmbiguousElementColumnNumberEE = new int[unresolvedAmbiguousElementSizeEE];
+			unresolvedAmbiguousElementDefinitionEE = new AElement[unresolvedAmbiguousElementSizeEE][];
+		}else if(++unresolvedAmbiguousElementIndexEE == unresolvedAmbiguousElementSizeEE){			
+			String[] increasedQN = new String[++unresolvedAmbiguousElementSizeEE];
+			System.arraycopy(unresolvedAmbiguousElementQNameEE, 0, increasedQN, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementQNameEE = increasedQN;
+			
+			AElement[][] increasedDef = new AElement[unresolvedAmbiguousElementSizeEE][];
+			System.arraycopy(unresolvedAmbiguousElementDefinitionEE, 0, increasedDef, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementDefinitionEE = increasedDef;
+			
+			String[] increasedSI = new String[unresolvedAmbiguousElementSizeEE];
+			System.arraycopy(unresolvedAmbiguousElementSystemIdEE, 0, increasedSI, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementSystemIdEE = increasedSI;
+						
+			int[] increasedLN = new int[unresolvedAmbiguousElementSizeEE];
+			System.arraycopy(unresolvedAmbiguousElementLineNumberEE, 0, increasedLN, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementLineNumberEE = increasedLN;
+			
+			int[] increasedCN = new int[unresolvedAmbiguousElementSizeEE];
+			System.arraycopy(unresolvedAmbiguousElementColumnNumberEE, 0, increasedCN, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementColumnNumberEE = increasedCN;
+		}
+		unresolvedAmbiguousElementQNameEE[unresolvedAmbiguousElementIndexEE] = qName;		
+		unresolvedAmbiguousElementSystemIdEE[unresolvedAmbiguousElementIndexEE] = systemId;
+		unresolvedAmbiguousElementLineNumberEE[unresolvedAmbiguousElementIndexEE] = lineNumber;
+		unresolvedAmbiguousElementColumnNumberEE[unresolvedAmbiguousElementIndexEE] = columnNumber;
+		unresolvedAmbiguousElementDefinitionEE[unresolvedAmbiguousElementIndexEE] = possibleDefinitions;*/
+		
+		if(unresolvedAmbiguousElementIndexEE < 0){
+			unresolvedAmbiguousElementIndexEE = 0;	
+			unresolvedAmbiguousElementInputRecordIndexEE =new int[initialSize];
+			unresolvedAmbiguousElementDefinitionEE = new AElement[initialSize][];
+		}else if(++unresolvedAmbiguousElementIndexEE == unresolvedAmbiguousElementInputRecordIndexEE.length){
+		    int size = unresolvedAmbiguousElementInputRecordIndexEE.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(unresolvedAmbiguousElementInputRecordIndexEE, 0, increasedCN, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementInputRecordIndexEE = increasedCN;
+		    
+		    AElement[][] increasedDef = new AElement[size][];
+			System.arraycopy(unresolvedAmbiguousElementDefinitionEE, 0, increasedDef, 0, unresolvedAmbiguousElementIndexEE);
+			unresolvedAmbiguousElementDefinitionEE = increasedDef;
+		}
+		
+		unresolvedAmbiguousElementInputRecordIndexEE[unresolvedAmbiguousElementIndexEE] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		unresolvedAmbiguousElementDefinitionEE[unresolvedAmbiguousElementIndexEE] = possibleDefinitions;
+	}
+	public void clearUnresolvedAmbiguousElementContentError(){
+        /*unresolvedAmbiguousElementSizeEE = 0;
+        unresolvedAmbiguousElementIndexEE = -1;	
+        unresolvedAmbiguousElementQNameEE = null;			
+        unresolvedAmbiguousElementSystemIdEE = null;			
+        unresolvedAmbiguousElementLineNumberEE = null;
+        unresolvedAmbiguousElementColumnNumberEE = null;
+        unresolvedAmbiguousElementDefinitionEE = null;*/
+                
+        for(int i = 0; i <= unresolvedAmbiguousElementIndexEE; i++){
+            activeInputDescriptor.unregisterClientForRecord(unresolvedAmbiguousElementInputRecordIndexEE[i], this);
+        }
+        
+        unresolvedAmbiguousElementInputRecordIndexEE = null;
+        unresolvedAmbiguousElementDefinitionEE = null;
+        unresolvedAmbiguousElementIndexEE = -1;
+    }
+	    
+    public void unresolvedUnresolvedElementContentError(int inputRecordIndex, 
+									AElement[] possibleDefinitions){
+        
+		/*if(unresolvedUnresolvedElementSizeEE == 0){
+			unresolvedUnresolvedElementSizeEE = 1;
+			unresolvedUnresolvedElementIndexEE = 0;	
+			unresolvedUnresolvedElementQNameEE = new String[unresolvedUnresolvedElementSizeEE];			
+			unresolvedUnresolvedElementSystemIdEE = new String[unresolvedUnresolvedElementSizeEE];			
+			unresolvedUnresolvedElementLineNumberEE = new int[unresolvedUnresolvedElementSizeEE];
+			unresolvedUnresolvedElementColumnNumberEE = new int[unresolvedUnresolvedElementSizeEE];
+			unresolvedUnresolvedElementDefinitionEE = new AElement[unresolvedUnresolvedElementSizeEE][];
+		}else if(++unresolvedUnresolvedElementIndexEE == unresolvedUnresolvedElementSizeEE){			
+			String[] increasedQN = new String[++unresolvedUnresolvedElementSizeEE];
+			System.arraycopy(unresolvedUnresolvedElementQNameEE, 0, increasedQN, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementQNameEE = increasedQN;
+			
+			AElement[][] increasedDef = new AElement[unresolvedUnresolvedElementSizeEE][];
+			System.arraycopy(unresolvedUnresolvedElementDefinitionEE, 0, increasedDef, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementDefinitionEE = increasedDef;
+			
+			String[] increasedSI = new String[unresolvedUnresolvedElementSizeEE];
+			System.arraycopy(unresolvedUnresolvedElementSystemIdEE, 0, increasedSI, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementSystemIdEE = increasedSI;
+						
+			int[] increasedLN = new int[unresolvedUnresolvedElementSizeEE];
+			System.arraycopy(unresolvedUnresolvedElementLineNumberEE, 0, increasedLN, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementLineNumberEE = increasedLN;
+			
+			int[] increasedCN = new int[unresolvedUnresolvedElementSizeEE];
+			System.arraycopy(unresolvedUnresolvedElementColumnNumberEE, 0, increasedCN, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementColumnNumberEE = increasedCN;
+		}
+		unresolvedUnresolvedElementQNameEE[unresolvedUnresolvedElementIndexEE] = qName;		
+		unresolvedUnresolvedElementSystemIdEE[unresolvedUnresolvedElementIndexEE] = systemId;
+		unresolvedUnresolvedElementLineNumberEE[unresolvedUnresolvedElementIndexEE] = lineNumber;
+		unresolvedUnresolvedElementColumnNumberEE[unresolvedUnresolvedElementIndexEE] = columnNumber;
+		unresolvedUnresolvedElementDefinitionEE[unresolvedUnresolvedElementIndexEE] = possibleDefinitions;*/
+		
+		if(unresolvedUnresolvedElementIndexEE < 0){
+			unresolvedUnresolvedElementIndexEE = 0;	
+			unresolvedUnresolvedElementInputRecordIndexEE =new int[initialSize];
+			unresolvedUnresolvedElementDefinitionEE = new AElement[initialSize][];
+		}else if(++unresolvedUnresolvedElementIndexEE == unresolvedUnresolvedElementInputRecordIndexEE.length){
+		    int size = unresolvedUnresolvedElementInputRecordIndexEE.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(unresolvedUnresolvedElementInputRecordIndexEE, 0, increasedCN, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementInputRecordIndexEE = increasedCN;
+		    
+		    AElement[][] increasedDef = new AElement[size][];
+			System.arraycopy(unresolvedUnresolvedElementDefinitionEE, 0, increasedDef, 0, unresolvedUnresolvedElementIndexEE);
+			unresolvedUnresolvedElementDefinitionEE = increasedDef;
+		}
+		
+		unresolvedUnresolvedElementInputRecordIndexEE[unresolvedUnresolvedElementIndexEE] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		unresolvedUnresolvedElementDefinitionEE[unresolvedUnresolvedElementIndexEE] = possibleDefinitions;
+	}
+	public void clearUnresolvedUnresolvedElementContentError(){
+        /*unresolvedUnresolvedElementSizeEE = 0;
+        unresolvedUnresolvedElementIndexEE = -1;	
+        unresolvedUnresolvedElementQNameEE = null;			
+        unresolvedUnresolvedElementSystemIdEE = null;			
+        unresolvedUnresolvedElementLineNumberEE = null;
+        unresolvedUnresolvedElementColumnNumberEE = null;
+        unresolvedUnresolvedElementDefinitionEE = null;*/
+        
+        for(int i = 0; i <= unresolvedUnresolvedElementIndexEE; i++){
+            activeInputDescriptor.unregisterClientForRecord(unresolvedUnresolvedElementInputRecordIndexEE[i], this);
+        }
+        
+        unresolvedUnresolvedElementInputRecordIndexEE = null;
+        unresolvedUnresolvedElementDefinitionEE = null;
+        unresolvedUnresolvedElementIndexEE = -1;    
+    }
+    
+	    
+	public void unresolvedAttributeContentError(int inputRecordIndex, 
+									AAttribute[] possibleDefinitions){
+        
+		/*if(unresolvedAttributeSizeEE == 0){
+			unresolvedAttributeSizeEE = 1;
+			unresolvedAttributeIndexEE = 0;	
+			unresolvedAttributeQNameEE = new String[unresolvedAttributeSizeEE];			
+			unresolvedAttributeSystemIdEE = new String[unresolvedAttributeSizeEE];			
+			unresolvedAttributeLineNumberEE = new int[unresolvedAttributeSizeEE];
+			unresolvedAttributeColumnNumberEE = new int[unresolvedAttributeSizeEE];
+			unresolvedAttributeDefinitionEE = new AAttribute[unresolvedAttributeSizeEE][];
+		}else if(++unresolvedAttributeIndexEE == unresolvedAttributeSizeEE){			
+			String[] increasedQN = new String[++unresolvedAttributeSizeEE];
+			System.arraycopy(unresolvedAttributeQNameEE, 0, increasedQN, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeQNameEE = increasedQN;
+			
+			AAttribute[][] increasedDef = new AAttribute[unresolvedAttributeSizeEE][];
+			System.arraycopy(unresolvedAttributeDefinitionEE, 0, increasedDef, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeDefinitionEE = increasedDef;
+			
+			String[] increasedSI = new String[unresolvedAttributeSizeEE];
+			System.arraycopy(unresolvedAttributeSystemIdEE, 0, increasedSI, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeSystemIdEE = increasedSI;
+						
+			int[] increasedLN = new int[unresolvedAttributeSizeEE];
+			System.arraycopy(unresolvedAttributeLineNumberEE, 0, increasedLN, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeLineNumberEE = increasedLN;
+			
+			int[] increasedCN = new int[unresolvedAttributeSizeEE];
+			System.arraycopy(unresolvedAttributeColumnNumberEE, 0, increasedCN, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeColumnNumberEE = increasedCN;
+		}
+		unresolvedAttributeQNameEE[unresolvedAttributeIndexEE] = qName;		
+		unresolvedAttributeSystemIdEE[unresolvedAttributeIndexEE] = systemId;
+		unresolvedAttributeLineNumberEE[unresolvedAttributeIndexEE] = lineNumber;
+		unresolvedAttributeColumnNumberEE[unresolvedAttributeIndexEE] = columnNumber;
+		unresolvedAttributeDefinitionEE[unresolvedAttributeIndexEE] = possibleDefinitions;*/
+		
+		if(unresolvedAttributeIndexEE < 0){
+			unresolvedAttributeIndexEE = 0;	
+			unresolvedAttributeInputRecordIndexEE =new int[initialSize];
+			unresolvedAttributeDefinitionEE = new AAttribute[initialSize][];
+		}else if(++unresolvedAttributeIndexEE == unresolvedAttributeInputRecordIndexEE.length){
+		    int size = unresolvedAttributeInputRecordIndexEE.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(unresolvedAttributeInputRecordIndexEE, 0, increasedCN, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeInputRecordIndexEE = increasedCN;
+		    
+		    AAttribute[][] increasedDef = new AAttribute[size][];
+			System.arraycopy(unresolvedAttributeDefinitionEE, 0, increasedDef, 0, unresolvedAttributeIndexEE);
+			unresolvedAttributeDefinitionEE = increasedDef;
+		}
+		
+		unresolvedAttributeInputRecordIndexEE[unresolvedAttributeIndexEE] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		unresolvedAttributeDefinitionEE[unresolvedAttributeIndexEE] = possibleDefinitions;
+	}
+	public void clearUnresolvedAttributeContentError(){
+        /*unresolvedAttributeSizeEE = 0;
+        unresolvedAttributeIndexEE = -1;	
+        unresolvedAttributeQNameEE = null;			
+        unresolvedAttributeSystemIdEE = null;			
+        unresolvedAttributeLineNumberEE = null;
+        unresolvedAttributeColumnNumberEE = null;
+        unresolvedAttributeDefinitionEE = null;*/
+        
+        for(int i = 0; i <= unresolvedAttributeIndexEE; i++){
+            activeInputDescriptor.unregisterClientForRecord(unresolvedAttributeInputRecordIndexEE[i], this);
+        }
+        
+        unresolvedAttributeInputRecordIndexEE = null;
+        unresolvedAttributeDefinitionEE = null;
+        unresolvedAttributeIndexEE = -1;
+    }
+	
+
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, 
+									AElement[] possibleDefinitions){
+        
+		/*if(ambiguousUnresolvedElementSizeWW == 0){
+			ambiguousUnresolvedElementSizeWW = 1;
+			ambiguousUnresolvedElementIndexWW = 0;	
+			ambiguousUnresolvedElementQNameWW = new String[ambiguousUnresolvedElementSizeWW];			
+			ambiguousUnresolvedElementSystemIdWW = new String[ambiguousUnresolvedElementSizeWW];			
+			ambiguousUnresolvedElementLineNumberWW = new int[ambiguousUnresolvedElementSizeWW];
+			ambiguousUnresolvedElementColumnNumberWW = new int[ambiguousUnresolvedElementSizeWW];
+			ambiguousUnresolvedElementDefinitionWW = new AElement[ambiguousUnresolvedElementSizeWW][];
+		}else if(++ambiguousUnresolvedElementIndexWW == ambiguousUnresolvedElementSizeWW){			
+			String[] increasedQN = new String[++ambiguousUnresolvedElementSizeWW];
+			System.arraycopy(ambiguousUnresolvedElementQNameWW, 0, increasedQN, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementQNameWW = increasedQN;
+			
+			AElement[][] increasedDef = new AElement[ambiguousUnresolvedElementSizeWW][];
+			System.arraycopy(ambiguousUnresolvedElementDefinitionWW, 0, increasedDef, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementDefinitionWW = increasedDef;
+			
+			String[] increasedSI = new String[ambiguousUnresolvedElementSizeWW];
+			System.arraycopy(ambiguousUnresolvedElementSystemIdWW, 0, increasedSI, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementSystemIdWW = increasedSI;
+						
+			int[] increasedLN = new int[ambiguousUnresolvedElementSizeWW];
+			System.arraycopy(ambiguousUnresolvedElementLineNumberWW, 0, increasedLN, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementLineNumberWW = increasedLN;
+			
+			int[] increasedCN = new int[ambiguousUnresolvedElementSizeWW];
+			System.arraycopy(ambiguousUnresolvedElementColumnNumberWW, 0, increasedCN, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementColumnNumberWW = increasedCN;
+		}
+		ambiguousUnresolvedElementQNameWW[ambiguousUnresolvedElementIndexWW] = qName;		
+		ambiguousUnresolvedElementSystemIdWW[ambiguousUnresolvedElementIndexWW] = systemId;
+		ambiguousUnresolvedElementLineNumberWW[ambiguousUnresolvedElementIndexWW] = lineNumber;
+		ambiguousUnresolvedElementColumnNumberWW[ambiguousUnresolvedElementIndexWW] = columnNumber;
+		ambiguousUnresolvedElementDefinitionWW[ambiguousUnresolvedElementIndexWW] = possibleDefinitions;*/
+
+        if(ambiguousUnresolvedElementIndexWW < 0){
+			ambiguousUnresolvedElementIndexWW = 0;	
+			ambiguousUnresolvedElementInputRecordIndexWW =new int[initialSize];
+			ambiguousUnresolvedElementDefinitionWW = new AElement[initialSize][];
+		}else if(++ambiguousUnresolvedElementIndexWW == ambiguousUnresolvedElementInputRecordIndexWW.length){
+		    int size = ambiguousUnresolvedElementInputRecordIndexWW.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(ambiguousUnresolvedElementInputRecordIndexWW, 0, increasedCN, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementInputRecordIndexWW = increasedCN;
+		    
+		    AElement[][] increasedDef = new AElement[size][];
+			System.arraycopy(ambiguousUnresolvedElementDefinitionWW, 0, increasedDef, 0, ambiguousUnresolvedElementIndexWW);
+			ambiguousUnresolvedElementDefinitionWW = increasedDef;
+		}
+		
+		ambiguousUnresolvedElementInputRecordIndexWW[ambiguousUnresolvedElementIndexWW] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		ambiguousUnresolvedElementDefinitionWW[ambiguousUnresolvedElementIndexWW] = possibleDefinitions;        
+	}
+	public void clearAmbiguousUnresolvedElementContentWarning(){
+        /*ambiguousUnresolvedElementSizeWW = 0;
+        ambiguousUnresolvedElementIndexWW = -1;	
+        ambiguousUnresolvedElementQNameWW = null;			
+        ambiguousUnresolvedElementSystemIdWW = null;			
+        ambiguousUnresolvedElementLineNumberWW = null;
+        ambiguousUnresolvedElementColumnNumberWW = null;
+        ambiguousUnresolvedElementDefinitionWW = null;*/
+        
+        for(int i = 0; i <= ambiguousUnresolvedElementIndexWW; i++){
+            activeInputDescriptor.unregisterClientForRecord(ambiguousUnresolvedElementInputRecordIndexWW[i], this);
+        }
+        
+        ambiguousUnresolvedElementInputRecordIndexWW = null;
+        ambiguousUnresolvedElementDefinitionWW = null;
+        ambiguousUnresolvedElementIndexWW = -1;
+    }
+	    
+    public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, 
+									AElement[] possibleDefinitions){
+        /*
+		if(ambiguousAmbiguousElementSizeWW == 0){
+			ambiguousAmbiguousElementSizeWW = 1;
+			ambiguousAmbiguousElementIndexWW = 0;	
+			ambiguousAmbiguousElementQNameWW = new String[ambiguousAmbiguousElementSizeWW];			
+			ambiguousAmbiguousElementSystemIdWW = new String[ambiguousAmbiguousElementSizeWW];			
+			ambiguousAmbiguousElementLineNumberWW = new int[ambiguousAmbiguousElementSizeWW];
+			ambiguousAmbiguousElementColumnNumberWW = new int[ambiguousAmbiguousElementSizeWW];
+			ambiguousAmbiguousElementDefinitionWW = new AElement[ambiguousAmbiguousElementSizeWW][];
+		}else if(++ambiguousAmbiguousElementIndexWW == ambiguousAmbiguousElementSizeWW){			
+			String[] increasedQN = new String[++ambiguousAmbiguousElementSizeWW];
+			System.arraycopy(ambiguousAmbiguousElementQNameWW, 0, increasedQN, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementQNameWW = increasedQN;
+			
+			AElement[][] increasedDef = new AElement[ambiguousAmbiguousElementSizeWW][];
+			System.arraycopy(ambiguousAmbiguousElementDefinitionWW, 0, increasedDef, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementDefinitionWW = increasedDef;
+			
+			String[] increasedSI = new String[ambiguousAmbiguousElementSizeWW];
+			System.arraycopy(ambiguousAmbiguousElementSystemIdWW, 0, increasedSI, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementSystemIdWW = increasedSI;
+						
+			int[] increasedLN = new int[ambiguousAmbiguousElementSizeWW];
+			System.arraycopy(ambiguousAmbiguousElementLineNumberWW, 0, increasedLN, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementLineNumberWW = increasedLN;
+			
+			int[] increasedCN = new int[ambiguousAmbiguousElementSizeWW];
+			System.arraycopy(ambiguousAmbiguousElementColumnNumberWW, 0, increasedCN, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementColumnNumberWW = increasedCN;
+		}
+		ambiguousAmbiguousElementQNameWW[ambiguousAmbiguousElementIndexWW] = qName;		
+		ambiguousAmbiguousElementSystemIdWW[ambiguousAmbiguousElementIndexWW] = systemId;
+		ambiguousAmbiguousElementLineNumberWW[ambiguousAmbiguousElementIndexWW] = lineNumber;
+		ambiguousAmbiguousElementColumnNumberWW[ambiguousAmbiguousElementIndexWW] = columnNumber;
+		ambiguousAmbiguousElementDefinitionWW[ambiguousAmbiguousElementIndexWW] = possibleDefinitions;*/
+
+        if(ambiguousAmbiguousElementIndexWW < 0){
+			ambiguousAmbiguousElementIndexWW = 0;	
+			ambiguousAmbiguousElementInputRecordIndexWW =new int[initialSize];
+			ambiguousAmbiguousElementDefinitionWW = new AElement[initialSize][];
+		}else if(++ambiguousAmbiguousElementIndexWW == ambiguousAmbiguousElementInputRecordIndexWW.length){
+		    int size = ambiguousAmbiguousElementInputRecordIndexWW.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(ambiguousAmbiguousElementInputRecordIndexWW, 0, increasedCN, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementInputRecordIndexWW = increasedCN;
+		    
+		    AElement[][] increasedDef = new AElement[size][];
+			System.arraycopy(ambiguousAmbiguousElementDefinitionWW, 0, increasedDef, 0, ambiguousAmbiguousElementIndexWW);
+			ambiguousAmbiguousElementDefinitionWW = increasedDef;
+		}
+		
+		ambiguousAmbiguousElementInputRecordIndexWW[ambiguousAmbiguousElementIndexWW] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		ambiguousAmbiguousElementDefinitionWW[ambiguousAmbiguousElementIndexWW] = possibleDefinitions;        
+	}
+	public void clearAmbiguousAmbiguousElementContentWarning(){
+        /*ambiguousAmbiguousElementSizeWW = 0;
+        ambiguousAmbiguousElementIndexWW = -1;	
+        ambiguousAmbiguousElementQNameWW = null;			
+        ambiguousAmbiguousElementSystemIdWW = null;			
+        ambiguousAmbiguousElementLineNumberWW = null;
+        ambiguousAmbiguousElementColumnNumberWW = null;
+        ambiguousAmbiguousElementDefinitionWW = null;*/
+     
+        for(int i = 0; i <= ambiguousAmbiguousElementIndexWW; i++){
+            activeInputDescriptor.unregisterClientForRecord(ambiguousAmbiguousElementInputRecordIndexWW[i], this);
+        }
+        
+        ambiguousAmbiguousElementInputRecordIndexWW = null;
+        ambiguousAmbiguousElementDefinitionWW = null;
+        ambiguousAmbiguousElementIndexWW = -1;
+    }
+    
+	        
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, 
+									AAttribute[] possibleDefinitions){
+        
+		/*if(ambiguousAttributeSizeWW == 0){
+			ambiguousAttributeSizeWW = 1;
+			ambiguousAttributeIndexWW = 0;	
+			ambiguousAttributeQNameWW = new String[ambiguousAttributeSizeWW];			
+			ambiguousAttributeSystemIdWW = new String[ambiguousAttributeSizeWW];			
+			ambiguousAttributeLineNumberWW = new int[ambiguousAttributeSizeWW];
+			ambiguousAttributeColumnNumberWW = new int[ambiguousAttributeSizeWW];
+			ambiguousAttributeDefinitionWW = new AAttribute[ambiguousAttributeSizeWW][];
+		}else if(++ambiguousAttributeIndexWW == ambiguousAttributeSizeWW){			
+			String[] increasedQN = new String[++ambiguousAttributeSizeWW];
+			System.arraycopy(ambiguousAttributeQNameWW, 0, increasedQN, 0, ambiguousAttributeIndexWW);
+			ambiguousAttributeQNameWW = increasedQN;
+			
+			AAttribute[][] increasedDef = new AAttribute[ambiguousAttributeSizeWW][];
+			System.arraycopy(ambiguousAttributeDefinitionWW, 0, increasedDef, 0, ambiguousAttributeIndexWW);
+			ambiguousAttributeDefinitionWW = increasedDef;
+			
+			String[] increasedSI = new String[ambiguousAttributeSizeWW];
+			System.arraycopy(ambiguousAttributeSystemIdWW, 0, increasedSI, 0, ambiguousAttributeIndexWW);
+			ambiguousAttributeSystemIdWW = increasedSI;
+						
+			int[] increasedLN = new int[ambiguousAttributeSizeWW];
+			System.arraycopy(ambiguousAttributeLineNumberWW, 0, increasedLN, 0, ambiguousAttributeIndexWW);
+			ambiguousAttributeLineNumberWW = increasedLN;
+			
+			int[] increasedCN = new int[ambiguousAttributeSizeWW];
+			System.arraycopy(ambiguousAttributeColumnNumberWW, 0, increasedCN, 0, ambiguousAttributeIndexWW);
+			ambiguousAttributeColumnNumberWW = increasedCN;
+		}
+		ambiguousAttributeQNameWW[ambiguousAttributeIndexWW] = qName;		
+		ambiguousAttributeSystemIdWW[ambiguousAttributeIndexWW] = systemId;
+		ambiguousAttributeLineNumberWW[ambiguousAttributeIndexWW] = lineNumber;
+		ambiguousAttributeColumnNumberWW[ambiguousAttributeIndexWW] = columnNumber;
+		ambiguousAttributeDefinitionWW[ambiguousAttributeIndexWW] = possibleDefinitions;*/
+		
+		if(ambiguousAttributeIndexWW < 0){
+			ambiguousAttributeIndexWW = 0;	
+			ambiguousAttributeInputRecordIndexWW =new int[initialSize];
+			ambiguousAttributeDefinitionWW = new AAttribute[initialSize][];
+		}else if(++ambiguousAttributeIndexWW == ambiguousAttributeInputRecordIndexWW.length){
+		    int size = ambiguousAttributeInputRecordIndexWW.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(ambiguousAttributeInputRecordIndexWW, 0, increasedCN, 0, ambiguousAttributeIndexWW);
+			ambiguousAttributeInputRecordIndexWW = increasedCN;
+		    
+		    AAttribute[][] increasedDef = new AAttribute[size][];
+			System.arraycopy(ambiguousAttributeDefinitionWW, 0, increasedDef, 0, ambiguousAttributeIndexWW);
+			ambiguousAttributeDefinitionWW = increasedDef;
+		}
+		
+		ambiguousAttributeInputRecordIndexWW[ambiguousAttributeIndexWW] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		ambiguousAttributeDefinitionWW[ambiguousAttributeIndexWW] = possibleDefinitions;
+	}	
+	public void clearAmbiguousAttributeContentWarning(){
+        /*ambiguousAttributeSizeWW = 0;
+        ambiguousAttributeIndexWW = -1;	
+        ambiguousAttributeQNameWW = null;			
+        ambiguousAttributeSystemIdWW = null;			
+        ambiguousAttributeLineNumberWW = null;
+        ambiguousAttributeColumnNumberWW = null;
+        ambiguousAttributeDefinitionWW = null;*/
+        
+        for(int i = 0; i <= ambiguousAttributeIndexWW; i++){
+            activeInputDescriptor.unregisterClientForRecord(ambiguousAttributeInputRecordIndexWW[i], this);
+        }
+        
+        ambiguousAttributeInputRecordIndexWW = null;
+        ambiguousAttributeDefinitionWW = null;
+        ambiguousAttributeIndexWW = -1;
+    }
+    
+	
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, 
+									CharsActiveTypeItem[] possibleDefinitions){
+        
+		/*if(ambiguousCharsSizeWW == 0){
+			ambiguousCharsSizeWW = 1;
+			ambiguousCharsIndexWW = 0;
+			ambiguousCharsSystemIdWW = new String[ambiguousCharsSizeWW];			
+			ambiguousCharsLineNumberWW = new int[ambiguousCharsSizeWW];
+			ambiguousCharsColumnNumberWW = new int[ambiguousCharsSizeWW];
+			ambiguousCharsDefinitionWW = new CharsActiveTypeItem[ambiguousCharsSizeWW][];
+		}else if(++ambiguousCharsIndexWW == ambiguousCharsSizeWW){			
+			CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[++ambiguousCharsSizeWW][];
+			System.arraycopy(ambiguousCharsDefinitionWW, 0, increasedDef, 0, ambiguousCharsIndexWW);
+			ambiguousCharsDefinitionWW = increasedDef;
+			
+			String[] increasedSI = new String[ambiguousCharsSizeWW];
+			System.arraycopy(ambiguousCharsSystemIdWW, 0, increasedSI, 0, ambiguousCharsIndexWW);
+			ambiguousCharsSystemIdWW = increasedSI;
+						
+			int[] increasedLN = new int[ambiguousCharsSizeWW];
+			System.arraycopy(ambiguousCharsLineNumberWW, 0, increasedLN, 0, ambiguousCharsIndexWW);
+			ambiguousCharsLineNumberWW = increasedLN;
+			
+			int[] increasedCN = new int[ambiguousCharsSizeWW];
+			System.arraycopy(ambiguousCharsColumnNumberWW, 0, increasedCN, 0, ambiguousCharsIndexWW);
+			ambiguousCharsColumnNumberWW = increasedCN;
+		}		
+		ambiguousCharsSystemIdWW[ambiguousCharsIndexWW] = systemId;
+		ambiguousCharsLineNumberWW[ambiguousCharsIndexWW] = lineNumber;
+		ambiguousCharsColumnNumberWW[ambiguousCharsIndexWW] = columnNumber;
+		ambiguousCharsDefinitionWW[ambiguousCharsIndexWW] = possibleDefinitions;*/
+		
+		if(ambiguousCharsIndexWW < 0){
+			ambiguousCharsIndexWW = 0;	
+			ambiguousCharsInputRecordIndexWW =new int[initialSize];
+			ambiguousCharsDefinitionWW = new CharsActiveTypeItem[initialSize][];
+		}else if(++ambiguousCharsIndexWW == ambiguousCharsInputRecordIndexWW.length){
+		    int size = ambiguousCharsInputRecordIndexWW.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(ambiguousCharsInputRecordIndexWW, 0, increasedCN, 0, ambiguousCharsIndexWW);
+			ambiguousCharsInputRecordIndexWW = increasedCN;
+		    
+		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+			System.arraycopy(ambiguousCharsDefinitionWW, 0, increasedDef, 0, ambiguousCharsIndexWW);
+			ambiguousCharsDefinitionWW = increasedDef;
+		}
+		
+		ambiguousCharsInputRecordIndexWW[ambiguousCharsIndexWW] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		ambiguousCharsDefinitionWW[ambiguousCharsIndexWW] = possibleDefinitions;
+	}
+	public void clearAmbiguousCharacterContentWarning(){
+        /*ambiguousCharsSizeWW = 0;
+        ambiguousCharsIndexWW = -1;
+        ambiguousCharsSystemIdWW = null;			
+        ambiguousCharsLineNumberWW = null;
+        ambiguousCharsColumnNumberWW = null;
+        ambiguousCharsDefinitionWW = null;*/
+        
+        for(int i = 0; i <= ambiguousCharsIndexWW; i++){
+            activeInputDescriptor.unregisterClientForRecord(ambiguousCharsInputRecordIndexWW[i], this);
+        }
+        
+        ambiguousCharsInputRecordIndexWW = null;
+        ambiguousCharsDefinitionWW = null;
+        ambiguousCharsIndexWW = -1;
+    }
+    
+    
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, 
+									CharsActiveTypeItem[] possibleDefinitions){
+        
+		/*if(ambiguousAVSizeWW == 0){
+			ambiguousAVSizeWW = 1;
+			ambiguousAVIndexWW = 0;
+			ambiguousAVAttributeQNameWW = new String[ambiguousAVSizeWW];
+			ambiguousAVSystemIdWW = new String[ambiguousAVSizeWW];			
+			ambiguousAVLineNumberWW = new int[ambiguousAVSizeWW];
+			ambiguousAVColumnNumberWW = new int[ambiguousAVSizeWW];
+			ambiguousAVDefinitionWW = new CharsActiveTypeItem[ambiguousAVSizeWW][];
+		}else if(++ambiguousAVIndexWW == ambiguousAVSizeWW){			
+			CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[++ambiguousAVSizeWW][];
+			System.arraycopy(ambiguousAVDefinitionWW, 0, increasedDef, 0, ambiguousAVIndexWW);
+			ambiguousAVDefinitionWW = increasedDef;
+			
+			String[] increasedAQ = new String[ambiguousAVSizeWW];
+			System.arraycopy(ambiguousAVAttributeQNameWW, 0, increasedAQ, 0, ambiguousAVIndexWW);
+			ambiguousAVAttributeQNameWW = increasedAQ;
+						
+			String[] increasedSI = new String[ambiguousAVSizeWW];
+			System.arraycopy(ambiguousAVSystemIdWW, 0, increasedSI, 0, ambiguousAVIndexWW);
+			ambiguousAVSystemIdWW = increasedSI;
+						
+			int[] increasedLN = new int[ambiguousAVSizeWW];
+			System.arraycopy(ambiguousAVLineNumberWW, 0, increasedLN, 0, ambiguousAVIndexWW);
+			ambiguousAVLineNumberWW = increasedLN;
+			
+			int[] increasedCN = new int[ambiguousAVSizeWW];
+			System.arraycopy(ambiguousAVColumnNumberWW, 0, increasedCN, 0, ambiguousAVIndexWW);
+			ambiguousAVColumnNumberWW = increasedCN;
+		}		
+		ambiguousAVAttributeQNameWW[ambiguousAVIndexWW] = attributeQName;
+		ambiguousAVSystemIdWW[ambiguousAVIndexWW] = systemId;
+		ambiguousAVLineNumberWW[ambiguousAVIndexWW] = lineNumber;
+		ambiguousAVColumnNumberWW[ambiguousAVIndexWW] = columnNumber;
+		ambiguousAVDefinitionWW[ambiguousAVIndexWW] = possibleDefinitions;*/
+		
+		if(ambiguousAVIndexWW < 0){
+			ambiguousAVIndexWW = 0;	
+			ambiguousAVInputRecordIndexWW =new int[initialSize];
+			ambiguousAVDefinitionWW = new CharsActiveTypeItem[initialSize][];
+		}else if(++ambiguousAVIndexWW == ambiguousAVInputRecordIndexWW.length){
+		    int size = ambiguousAVInputRecordIndexWW.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(ambiguousAVInputRecordIndexWW, 0, increasedCN, 0, ambiguousAVIndexWW);
+			ambiguousAVInputRecordIndexWW = increasedCN;
+		    
+		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+			System.arraycopy(ambiguousAVDefinitionWW, 0, increasedDef, 0, ambiguousAVIndexWW);
+			ambiguousAVDefinitionWW = increasedDef;
+		}
+		
+		ambiguousAVInputRecordIndexWW[ambiguousAVIndexWW] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		ambiguousAVDefinitionWW[ambiguousAVIndexWW] = possibleDefinitions;
+	}
+	public void clearAmbiguousAttributeValueWarning(){
+        /*ambiguousAVSizeWW = 0;
+        ambiguousAVIndexWW = -1;
+        ambiguousAVAttributeQNameWW = null;
+        ambiguousAVSystemIdWW = null;			
+        ambiguousAVLineNumberWW = null;
+        ambiguousAVColumnNumberWW = null;
+        ambiguousAVDefinitionWW = null;*/
+        
+        for(int i = 0; i <= ambiguousAVIndexWW; i++){
+            activeInputDescriptor.unregisterClientForRecord(ambiguousAVInputRecordIndexWW[i], this);
+        }
+        
+        ambiguousAVInputRecordIndexWW = null;
+        ambiguousAVDefinitionWW = null;
+        ambiguousAVIndexWW = -1;
+    }
+	 
 	    
     // {15}
-	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        
+	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+        /*
 		if(datatypeSizeCC == 0){
 			datatypeSizeCC = 1;
 			datatypeIndexCC = 0;
@@ -1770,12 +2626,58 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		datatypeCharsLineNumberCC[datatypeIndexCC] = charsLineNumber;
 		datatypeCharsColumnNumberCC[datatypeIndexCC] = columnNumber;
 		datatypeCharsDefinitionCC[datatypeIndexCC] = charsDefinition;
-		datatypeErrorMessageCC[datatypeIndexCC] = datatypeErrorMessage;        
+		datatypeErrorMessageCC[datatypeIndexCC] = datatypeErrorMessage; */
+		
+		if(datatypeCharsIndex < 0){
+			datatypeCharsIndex = 0;	
+			datatypeCharsInputRecordIndex =new int[initialSize];
+			datatypeCharsDefinition = new DatatypedActiveTypeItem[initialSize];
+			datatypeCharsErrorMessage = new String[initialSize];
+		}else if(++datatypeCharsIndex == datatypeCharsInputRecordIndex.length){
+		    int size = datatypeCharsInputRecordIndex.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(datatypeCharsInputRecordIndex, 0, increasedCN, 0, datatypeCharsIndex);
+			datatypeCharsInputRecordIndex = increasedCN;
+		    
+		    DatatypedActiveTypeItem[] increasedDef = new DatatypedActiveTypeItem[size];
+			System.arraycopy(datatypeCharsDefinition, 0, increasedDef, 0, datatypeCharsIndex);
+			datatypeCharsDefinition = increasedDef;
+			
+			String[] increasedEM = new String[size];
+			System.arraycopy(datatypeCharsErrorMessage, 0, increasedEM, 0, datatypeCharsIndex);
+			datatypeCharsErrorMessage = increasedEM;
+		}
+		
+		datatypeCharsInputRecordIndex[datatypeCharsIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		datatypeCharsDefinition[datatypeCharsIndex] = charsDefinition;
+		datatypeCharsErrorMessage[datatypeCharsIndex] = datatypeErrorMessage;
 	}
+	public void clearCharacterContentDatatypeError(){
+        /*datatypeSizeCC = 0;
+        datatypeIndexCC = -1;
+        datatypeElementQNameCC = null;
+        datatypeCharsSystemIdCC = null;
+        datatypeCharsLineNumberCC = null;
+        datatypeCharsColumnNumberCC = null;
+        datatypeCharsDefinitionCC = null;
+        datatypeErrorMessageCC = null;*/
+        
+        for(int i = 0; i <= datatypeCharsIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(datatypeCharsInputRecordIndex[i], this);
+        }
+        
+        datatypeCharsInputRecordIndex = null;
+        datatypeCharsDefinition = null;
+        datatypeCharsErrorMessage = null;
+        datatypeCharsIndex = -1;
+    }
+    
 	    
     //{16}
-	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        
+	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+        /*
 		if(datatypeSizeAV == 0){
 			datatypeSizeAV = 1;
 			datatypeIndexAV = 0;
@@ -1815,11 +2717,57 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		datatypeCharsLineNumberAV[datatypeIndexAV] = charsLineNumber;
 		datatypeCharsColumnNumberAV[datatypeIndexAV] = columnNumber;
 		datatypeCharsDefinitionAV[datatypeIndexAV] = charsDefinition;
-		datatypeErrorMessageAV[datatypeIndexAV] = datatypeErrorMessage;
+		datatypeErrorMessageAV[datatypeIndexAV] = datatypeErrorMessage;*/
+		
+		if(datatypeAVIndex < 0){
+			datatypeAVIndex = 0;	
+			datatypeAVInputRecordIndex =new int[initialSize];
+			datatypeAVDefinition = new DatatypedActiveTypeItem[initialSize];
+			datatypeAVErrorMessage = new String[initialSize];
+		}else if(++datatypeAVIndex == datatypeAVInputRecordIndex.length){
+		    int size = datatypeAVInputRecordIndex.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(datatypeAVInputRecordIndex, 0, increasedCN, 0, datatypeAVIndex);
+			datatypeAVInputRecordIndex = increasedCN;
+		    
+		    DatatypedActiveTypeItem[] increasedDef = new DatatypedActiveTypeItem[size];
+			System.arraycopy(datatypeAVDefinition, 0, increasedDef, 0, datatypeAVIndex);
+			datatypeAVDefinition = increasedDef;
+			
+			String[] increasedEM = new String[size];
+			System.arraycopy(datatypeAVErrorMessage, 0, increasedEM, 0, datatypeAVIndex);
+			datatypeAVErrorMessage = increasedEM;
+		}
+		
+		datatypeAVInputRecordIndex[datatypeAVIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		datatypeAVDefinition[datatypeAVIndex] = charsDefinition;
+		datatypeAVErrorMessage[datatypeAVIndex] = datatypeErrorMessage;
 	}
-	    
-	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void clearAttributeValueDatatypeError(){
+        /*datatypeSizeAV = 0;
+        datatypeIndexAV = -1;
+        datatypeAttributeQNameAV = null;
+        datatypeCharsSystemIdAV = null;
+        datatypeCharsLineNumberAV = null;
+        datatypeCharsColumnNumberAV = null;
+        datatypeCharsDefinitionAV = null;
+        datatypeErrorMessageAV = null;*/
         
+        for(int i = 0; i <= datatypeAVIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(datatypeAVInputRecordIndex[i], this);
+        }
+        
+        datatypeAVInputRecordIndex = null;
+        datatypeAVDefinition = null;
+        datatypeAVErrorMessage = null;
+        datatypeAVIndex = -1;
+    }
+    
+	    
+	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
+        /*
 		if(valueSizeCC == 0){
 			valueSizeCC = 1;
 			valueIndexCC = 0;
@@ -1847,11 +2795,48 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		valueCharsSystemIdCC[valueIndexCC] = charsSystemId;
 		valueCharsLineNumberCC[valueIndexCC] = charsLineNumber;
 		valueCharsColumnNumberCC[valueIndexCC] = columnNumber;
-		valueCharsDefinitionCC[valueIndexCC] = charsDefinition;
+		valueCharsDefinitionCC[valueIndexCC] = charsDefinition;*/
+
+		if(valueCharsIndex < 0){
+			valueCharsIndex = 0;	
+			valueCharsInputRecordIndex =new int[initialSize];
+			valueCharsDefinition = new AValue[initialSize];
+		}else if(++valueCharsIndex == valueCharsInputRecordIndex.length){
+		    int size = valueCharsInputRecordIndex.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(valueCharsInputRecordIndex, 0, increasedCN, 0, valueCharsIndex);
+			valueCharsInputRecordIndex = increasedCN;
+		    
+		    AValue[] increasedDef = new AValue[size];
+			System.arraycopy(valueCharsDefinition, 0, increasedDef, 0, valueCharsIndex);
+			valueCharsDefinition = increasedDef;
+		}
+		
+		valueCharsInputRecordIndex[valueCharsIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		valueCharsDefinition[valueCharsIndex] = charsDefinition;
 	}
-    
-	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void clearCharacterContentValueError(){
+        /*valueSizeCC = 0;
+        valueIndexCC = -1;
+        valueCharsSystemIdCC = null;
+        valueCharsLineNumberCC = null;
+        valueCharsColumnNumberCC = null;
+        valueCharsDefinitionCC = null;*/
         
+        for(int i = 0; i <= valueCharsIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(valueCharsInputRecordIndex[i], this);
+        }
+        
+        valueCharsInputRecordIndex = null;
+        valueCharsDefinition = null;
+        valueCharsIndex = -1;
+    }
+        
+    
+	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
+        /*
 		if(valueSizeAV == 0){
 			valueSizeAV = 1;
 			valueIndexAV = 0;
@@ -1885,11 +2870,49 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		valueCharsSystemIdAV[valueIndexAV] = charsSystemId;
 		valueCharsLineNumberAV[valueIndexAV] = charsLineNumber;
 		valueCharsColumnNumberAV[valueIndexAV] = columnNumber;
-		valueCharsDefinitionAV[valueIndexAV] = charsDefinition;
+		valueCharsDefinitionAV[valueIndexAV] = charsDefinition;*/
+		
+		if(valueAVIndex < 0){
+			valueAVIndex = 0;	
+			valueAVInputRecordIndex =new int[initialSize];
+			valueAVDefinition = new AValue[initialSize];
+		}else if(++valueAVIndex == valueAVInputRecordIndex.length){
+		    int size = valueAVInputRecordIndex.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(valueAVInputRecordIndex, 0, increasedCN, 0, valueAVIndex);
+			valueAVInputRecordIndex = increasedCN;
+		    
+		    AValue[] increasedDef = new AValue[size];
+			System.arraycopy(valueAVDefinition, 0, increasedDef, 0, valueAVIndex);
+			valueAVDefinition = increasedDef;
+		}
+		
+		valueAVInputRecordIndex[valueAVIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		valueAVDefinition[valueAVIndex] = charsDefinition;
 	}
-	    
-	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void clearAttributeValueValueError(){
+        /*valueSizeAV = 0;
+        valueIndexAV = -1;
+        valueAttributeQNameAV = null;
+        valueCharsSystemIdAV = null;
+        valueCharsLineNumberAV = null;
+        valueCharsColumnNumberAV = null;
+        valueCharsDefinitionAV = null;*/
         
+        for(int i = 0; i <= valueAVIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(valueAVInputRecordIndex[i], this);
+        }
+        
+        valueAVInputRecordIndex = null;
+        valueAVDefinition = null;
+        valueAVIndex = -1;
+    }
+
+    
+	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
+        /*
 		if(exceptSizeCC == 0){
 			exceptSizeCC = 1;
 			exceptIndexCC = 0;
@@ -1923,11 +2946,49 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		exceptCharsSystemIdCC[exceptIndexCC] = charsSystemId;
 		exceptCharsLineNumberCC[exceptIndexCC] = charsLineNumber;
 		exceptCharsColumnNumberCC[exceptIndexCC] = columnNumber;
-		exceptCharsDefinitionCC[exceptIndexCC] = charsDefinition;
+		exceptCharsDefinitionCC[exceptIndexCC] = charsDefinition;*/
+		
+		if(exceptCharsIndex < 0){
+			exceptCharsIndex = 0;	
+			exceptCharsInputRecordIndex =new int[initialSize];
+			exceptCharsDefinition = new AData[initialSize];
+		}else if(++exceptCharsIndex == exceptCharsInputRecordIndex.length){
+		    int size = exceptCharsInputRecordIndex.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(exceptCharsInputRecordIndex, 0, increasedCN, 0, exceptCharsIndex);
+			exceptCharsInputRecordIndex = increasedCN;
+		    
+		    AData[] increasedDef = new AData[size];
+			System.arraycopy(exceptCharsDefinition, 0, increasedDef, 0, exceptCharsIndex);
+			exceptCharsDefinition = increasedDef;
+		}
+		
+		exceptCharsInputRecordIndex[exceptCharsIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		exceptCharsDefinition[exceptCharsIndex] = charsDefinition;
 	}
-    
-	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+    public void clearCharacterContentExceptedError(){
+        /*exceptSizeCC = 0;
+        exceptIndexCC = -1;
+        exceptElementQNameCC = null;
+        exceptCharsSystemIdCC = null;
+        exceptCharsLineNumberCC = null;
+        exceptCharsColumnNumberCC = null;
+        exceptCharsDefinitionCC = null;*/
         
+        for(int i = 0; i <= exceptCharsIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(exceptCharsInputRecordIndex[i], this);
+        }
+        
+        exceptCharsInputRecordIndex = null;
+        exceptCharsDefinition = null;
+        exceptCharsIndex = -1;
+    }
+    
+    
+	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
+        /*
 		if(exceptSizeAV == 0){
 			exceptSizeAV = 1;
 			exceptIndexAV = 0;
@@ -1961,11 +3022,49 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		exceptCharsSystemIdAV[exceptIndexAV] = charsSystemId;
 		exceptCharsLineNumberAV[exceptIndexAV] = charsLineNumber;
 		exceptCharsColumnNumberAV[exceptIndexAV] = columnNumber;
-		exceptCharsDefinitionAV[exceptIndexAV] = charsDefinition;
+		exceptCharsDefinitionAV[exceptIndexAV] = charsDefinition;*/
+		
+		if(exceptAVIndex < 0){
+			exceptAVIndex = 0;	
+			exceptAVInputRecordIndex =new int[initialSize];
+			exceptAVDefinition = new AData[initialSize];
+		}else if(++exceptAVIndex == exceptAVInputRecordIndex.length){
+		    int size = exceptAVInputRecordIndex.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(exceptAVInputRecordIndex, 0, increasedCN, 0, exceptAVIndex);
+			exceptAVInputRecordIndex = increasedCN;
+		    
+		    AData[] increasedDef = new AData[size];
+			System.arraycopy(exceptAVDefinition, 0, increasedDef, 0, exceptAVIndex);
+			exceptAVDefinition = increasedDef;
+		}
+		
+		exceptAVInputRecordIndex[exceptAVIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		exceptAVDefinition[exceptAVIndex] = charsDefinition;
 	}
-
-	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
+	public void clearAttributeValueExceptedError(){
+        /*exceptSizeAV = 0;
+        exceptIndexAV = -1;
+        exceptAttributeQNameAV = null;
+        exceptCharsSystemIdAV = null;
+        exceptCharsLineNumberAV = null;
+        exceptCharsColumnNumberAV = null;
+        exceptCharsDefinitionAV = null;*/
         
+        for(int i = 0; i <= exceptAVIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(exceptAVInputRecordIndex[i], this);
+        }
+        
+        exceptAVInputRecordIndex = null;
+        exceptAVDefinition = null;
+        exceptAVIndex = -1;
+    }
+    
+    
+	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
+        /*
 		if(unexpectedSizeCC == 0){
 			unexpectedSizeCC = 1;
 			unexpectedIndexCC = 0;		
@@ -1993,11 +3092,48 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		unexpectedCharsSystemIdCC[unexpectedIndexCC] = charsSystemId;
 		unexpectedCharsLineNumberCC[unexpectedIndexCC] = charsLineNumber;
 		unexpectedCharsColumnNumberCC[unexpectedIndexCC] = columnNumber;
-		unexpectedContextDefinitionCC[unexpectedIndexCC] = elementDefinition;
-	}
-
-	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
+		unexpectedContextDefinitionCC[unexpectedIndexCC] = elementDefinition;*/
+		
+		if(unexpectedCharsIndex < 0){
+			unexpectedCharsIndex = 0;	
+			unexpectedCharsInputRecordIndex =new int[initialSize];
+			unexpectedCharsDefinition = new AElement[initialSize];
+		}else if(++unexpectedCharsIndex == unexpectedCharsInputRecordIndex.length){
+		    int size = unexpectedCharsInputRecordIndex.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(unexpectedCharsInputRecordIndex, 0, increasedCN, 0, unexpectedCharsIndex);
+			unexpectedCharsInputRecordIndex = increasedCN;
+		    
+		    AElement[] increasedDef = new AElement[size];
+			System.arraycopy(unexpectedCharsDefinition, 0, increasedDef, 0, unexpectedCharsIndex);
+			unexpectedCharsDefinition = increasedDef;
+		}
+		
+		unexpectedCharsInputRecordIndex[unexpectedCharsIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		unexpectedCharsDefinition[unexpectedCharsIndex] = elementDefinition;
+	}	
+	public void clearUnexpectedCharacterContent(){
+        /*unexpectedSizeCC = 0;
+        unexpectedIndexCC = -1;		
+        unexpectedCharsSystemIdCC = null;
+        unexpectedCharsLineNumberCC = null;
+        unexpectedCharsColumnNumberCC = null;
+        unexpectedContextDefinitionCC = null;*/
         
+        for(int i = 0; i <= unexpectedCharsIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(unexpectedCharsInputRecordIndex[i], this);
+        }
+        
+        unexpectedCharsInputRecordIndex = null;
+        unexpectedCharsDefinition = null;
+        unexpectedCharsIndex = -1;
+    }
+    
+
+	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
+        /*
 		if(unexpectedSizeAV == 0){
 			unexpectedSizeAV = 1;
 			unexpectedIndexAV = 0;		
@@ -2025,12 +3161,49 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		unexpectedCharsSystemIdAV[unexpectedIndexAV] = charsSystemId;
 		unexpectedCharsLineNumberAV[unexpectedIndexAV] = charsLineNumber;
 		unexpectedCharsColumnNumberAV[unexpectedIndexAV] = columnNumber;
-		unexpectedContextDefinitionAV[unexpectedIndexAV] = attributeDefinition;
+		unexpectedContextDefinitionAV[unexpectedIndexAV] = attributeDefinition;*/
+		
+		if(unexpectedAVIndex < 0){
+			unexpectedAVIndex = 0;	
+			unexpectedAVInputRecordIndex =new int[initialSize];
+			unexpectedAVDefinition = new AAttribute[initialSize];
+		}else if(++unexpectedAVIndex == unexpectedAVInputRecordIndex.length){
+		    int size = unexpectedAVInputRecordIndex.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(unexpectedAVInputRecordIndex, 0, increasedCN, 0, unexpectedAVIndex);
+			unexpectedAVInputRecordIndex = increasedCN;
+		    
+		    AAttribute[] increasedDef = new AAttribute[size];
+			System.arraycopy(unexpectedAVDefinition, 0, increasedDef, 0, unexpectedAVIndex);
+			unexpectedAVDefinition = increasedDef;
+		}
+		
+		unexpectedAVInputRecordIndex[unexpectedAVIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		unexpectedAVDefinition[unexpectedAVIndex] = attributeDefinition;
 	}
-
-	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void clearUnexpectedAttributeValue(){
+        /*unexpectedSizeAV = 0;
+        unexpectedIndexAV = -1;		
+        unexpectedCharsSystemIdAV = null;
+        unexpectedCharsLineNumberAV = null;
+        unexpectedCharsColumnNumberAV = null;
+        unexpectedContextDefinitionAV = null;*/
         
-		if(unresolvedSizeCC == 0){
+        for(int i = 0; i <= unexpectedAVIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(unexpectedAVInputRecordIndex[i], this);
+        }
+        
+        unexpectedAVInputRecordIndex = null;
+        unexpectedAVDefinition = null;
+        unexpectedAVIndex = -1;
+    }
+    
+
+	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+        
+		/*if(unresolvedSizeCC == 0){
 			unresolvedSizeCC = 1;
 			unresolvedIndexCC = 0;		
 			unresolvedCharsSystemIdEECC = new String[unresolvedSizeCC];
@@ -2057,14 +3230,50 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		unresolvedCharsSystemIdEECC[unresolvedIndexCC] = systemId;
 		unresolvedCharsLineNumberEECC[unresolvedIndexCC] = lineNumber;
 		unresolvedCharsColumnNumberEECC[unresolvedIndexCC] = columnNumber;
-		unresolvedPossibleDefinitionsCC[unresolvedIndexCC] = possibleDefinitions;
+		unresolvedPossibleDefinitionsCC[unresolvedIndexCC] = possibleDefinitions;*/
+		
+		if(unresolvedCharsIndexEE < 0){
+			unresolvedCharsIndexEE = 0;	
+			unresolvedCharsInputRecordIndexEE =new int[initialSize];
+			unresolvedCharsDefinitionEE = new CharsActiveTypeItem[initialSize][];
+		}else if(++unresolvedCharsIndexEE == unresolvedCharsInputRecordIndexEE.length){
+		    int size = unresolvedCharsInputRecordIndexEE.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(unresolvedCharsInputRecordIndexEE, 0, increasedCN, 0, unresolvedCharsIndexEE);
+			unresolvedCharsInputRecordIndexEE = increasedCN;
+		    
+		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+			System.arraycopy(unresolvedCharsDefinitionEE, 0, increasedDef, 0, unresolvedCharsIndexEE);
+			unresolvedCharsDefinitionEE = increasedDef;
+		}
+		
+		unresolvedCharsInputRecordIndexEE[unresolvedCharsIndexEE] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		unresolvedCharsDefinitionEE[unresolvedCharsIndexEE] = possibleDefinitions;
 	}
-
+	public void clearUnresolvedCharacterContent(){
+        /*unresolvedSizeCC = 0;
+        unresolvedIndexCC = -1;		
+        unresolvedCharsSystemIdEECC = null;
+        unresolvedCharsLineNumberEECC = null;
+        unresolvedCharsColumnNumberEECC = null;
+        unresolvedPossibleDefinitionsCC = null;*/
+        
+        for(int i = 0; i <= unresolvedCharsIndexEE; i++){
+            activeInputDescriptor.unregisterClientForRecord(unresolvedCharsInputRecordIndexEE[i], this);
+        }
+        
+        unresolvedCharsInputRecordIndexEE = null;
+        unresolvedCharsDefinitionEE = null;
+        unresolvedCharsIndexEE = -1;
+    }
+    
     
 	// {24}
-	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         
-		if(unresolvedSizeAV == 0){
+		/*if(unresolvedSizeAV == 0){
 			unresolvedSizeAV = 1;
 			unresolvedIndexAV = 0;
 			unresolvedAttributeQNameEEAV = new String[unresolvedSizeAV];
@@ -2097,13 +3306,50 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		unresolvedCharsSystemIdEEAV[unresolvedIndexAV] = systemId;
 		unresolvedCharsLineNumberEEAV[unresolvedIndexAV] = lineNumber;
 		unresolvedCharsColumnNumberEEAV[unresolvedIndexAV] = columnNumber;
-		unresolvedPossibleDefinitionsAV[unresolvedIndexAV] = possibleDefinitions;
+		unresolvedPossibleDefinitionsAV[unresolvedIndexAV] = possibleDefinitions;*/
+		
+		if(unresolvedAVIndexEE < 0){
+			unresolvedAVIndexEE = 0;	
+			unresolvedAVInputRecordIndexEE =new int[initialSize];
+			unresolvedAVDefinitionEE = new CharsActiveTypeItem[initialSize][];
+		}else if(++unresolvedAVIndexEE == unresolvedAVInputRecordIndexEE.length){
+		    int size = unresolvedAVInputRecordIndexEE.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(unresolvedAVInputRecordIndexEE, 0, increasedCN, 0, unresolvedAVIndexEE);
+			unresolvedAVInputRecordIndexEE = increasedCN;
+		    
+		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+			System.arraycopy(unresolvedAVDefinitionEE, 0, increasedDef, 0, unresolvedAVIndexEE);
+			unresolvedAVDefinitionEE = increasedDef;
+		}
+		
+		unresolvedAVInputRecordIndexEE[unresolvedAVIndexEE] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		unresolvedAVDefinitionEE[unresolvedAVIndexEE] = possibleDefinitions;
 	}
+	public void clearUnresolvedAttributeValue(){
+        /*unresolvedSizeAV = 0;
+        unresolvedIndexAV = -1;
+        unresolvedAttributeQNameEEAV = null;
+        unresolvedCharsSystemIdEEAV = null;
+        unresolvedCharsLineNumberEEAV = null;
+        unresolvedCharsColumnNumberEEAV = null;
+        unresolvedPossibleDefinitionsAV = null;*/
+        
+        for(int i = 0; i <= unresolvedAVIndexEE; i++){
+            activeInputDescriptor.unregisterClientForRecord(unresolvedAVInputRecordIndexEE[i], this);
+        }
+        
+        unresolvedAVInputRecordIndexEE = null;
+        unresolvedAVDefinitionEE = null;
+        unresolvedAVIndexEE = -1;
+    }
 
     
     // {25}
-	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        
+	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+        /*
 		if(datatypeSizeLP == 0){
 			datatypeSizeLP = 1;
 			datatypeIndexLP = 0;
@@ -2143,12 +3389,57 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		datatypeCharsLineNumberLP[datatypeIndexLP] = charsLineNumber;
 		datatypeCharsColumnNumberLP[datatypeIndexLP] = columnNumber;
 		datatypeCharsDefinitionLP[datatypeIndexLP] = charsDefinition;
-		datatypeErrorMessageLP[datatypeIndexLP] = datatypeErrorMessage;
+		datatypeErrorMessageLP[datatypeIndexLP] = datatypeErrorMessage;*/
+		
+		if(datatypeTokenIndex < 0){
+			datatypeTokenIndex = 0;	
+			datatypeTokenInputRecordIndex =new int[initialSize];
+			datatypeTokenDefinition = new DatatypedActiveTypeItem[initialSize];
+			datatypeTokenErrorMessage = new String[initialSize];
+		}else if(++datatypeTokenIndex == datatypeTokenInputRecordIndex.length){
+		    int size = datatypeTokenInputRecordIndex.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(datatypeTokenInputRecordIndex, 0, increasedCN, 0, datatypeTokenIndex);
+			datatypeTokenInputRecordIndex = increasedCN;
+		    
+		    DatatypedActiveTypeItem[] increasedDef = new DatatypedActiveTypeItem[size];
+			System.arraycopy(datatypeTokenDefinition, 0, increasedDef, 0, datatypeTokenIndex);
+			datatypeTokenDefinition = increasedDef;
+			
+			String[] increasedEM = new String[size];
+			System.arraycopy(datatypeTokenErrorMessage, 0, increasedEM, 0, datatypeTokenIndex);
+			datatypeTokenErrorMessage = increasedEM;
+		}
+		
+		datatypeTokenInputRecordIndex[datatypeTokenIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		datatypeTokenDefinition[datatypeTokenIndex] = charsDefinition;
+		datatypeTokenErrorMessage[datatypeTokenIndex] = datatypeErrorMessage;
 	}
+	public void clearListTokenDatatypeError(){
+        /*datatypeSizeLP = 0;
+        datatypeIndexLP = -1;
+        datatypeTokenLP = null;
+        datatypeCharsSystemIdLP = null;
+        datatypeCharsLineNumberLP = null;
+        datatypeCharsColumnNumberLP = null;
+        datatypeCharsDefinitionLP = null;
+        datatypeErrorMessageLP = null;*/
+        
+        for(int i = 0; i <= datatypeTokenIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(datatypeTokenInputRecordIndex[i], this);
+        }
+        
+        datatypeTokenInputRecordIndex = null;
+        datatypeTokenDefinition = null;
+        datatypeTokenErrorMessage = null;
+        datatypeTokenIndex = -1;
+    }
 
         
-	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        
+	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
+        /*
 		if(valueSizeLP == 0){
 			valueSizeLP = 1;
 			valueIndexLP = 0;
@@ -2182,12 +3473,49 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		valueCharsSystemIdLP[valueIndexLP] = charsSystemId;
 		valueCharsLineNumberLP[valueIndexLP] = charsLineNumber;
 		valueCharsColumnNumberLP[valueIndexLP] = columnNumber;
-		valueCharsDefinitionLP[valueIndexLP] = charsDefinition;
+		valueCharsDefinitionLP[valueIndexLP] = charsDefinition;*/
+		
+		if(valueTokenIndex < 0){
+			valueTokenIndex = 0;	
+			valueTokenInputRecordIndex =new int[initialSize];
+			valueTokenDefinition = new AValue[initialSize];
+		}else if(++valueTokenIndex == valueTokenInputRecordIndex.length){
+		    int size = valueTokenInputRecordIndex.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(valueTokenInputRecordIndex, 0, increasedCN, 0, valueTokenIndex);
+			valueTokenInputRecordIndex = increasedCN;
+		    
+		    AValue[] increasedDef = new AValue[size];
+			System.arraycopy(valueTokenDefinition, 0, increasedDef, 0, valueTokenIndex);
+			valueTokenDefinition = increasedDef;
+		}
+		
+		valueTokenInputRecordIndex[valueTokenIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		valueTokenDefinition[valueTokenIndex] = charsDefinition;
 	}
+	public void clearListTokenValueError(){
+        /*valueSizeLP = 0;
+        valueIndexLP = -1;
+        valueTokenLP = null;
+        valueCharsSystemIdLP = null;
+        valueCharsLineNumberLP = null;
+        valueCharsColumnNumberLP = null;
+        valueCharsDefinitionLP = null;*/
+        
+        for(int i = 0; i <= valueTokenIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(valueTokenInputRecordIndex[i], this);
+        }
+        
+        valueTokenInputRecordIndex = null;
+        valueTokenDefinition = null;
+        valueTokenIndex = -1;
+    }
 
     
-	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        
+	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
+        /*
 		if(exceptSizeLP == 0){
 			exceptSizeLP = 1;
 			exceptIndexLP = 0;
@@ -2221,12 +3549,50 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		exceptCharsSystemIdLP[exceptIndexLP] = charsSystemId;
 		exceptCharsLineNumberLP[exceptIndexLP] = charsLineNumber;
 		exceptCharsColumnNumberLP[exceptIndexLP] = columnNumber;
-		exceptCharsDefinitionLP[exceptIndexLP] = charsDefinition;
+		exceptCharsDefinitionLP[exceptIndexLP] = charsDefinition;*/
+		
+		if(exceptTokenIndex < 0){
+			exceptTokenIndex = 0;	
+			exceptTokenInputRecordIndex =new int[initialSize];
+			exceptTokenDefinition = new AData[initialSize];
+		}else if(++exceptTokenIndex == exceptTokenInputRecordIndex.length){
+		    int size = exceptTokenInputRecordIndex.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(exceptTokenInputRecordIndex, 0, increasedCN, 0, exceptTokenIndex);
+			exceptTokenInputRecordIndex = increasedCN;
+		    
+		    AData[] increasedDef = new AData[size];
+			System.arraycopy(exceptTokenDefinition, 0, increasedDef, 0, exceptTokenIndex);
+			exceptTokenDefinition = increasedDef;
+		}
+		
+		exceptTokenInputRecordIndex[exceptTokenIndex] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		exceptTokenDefinition[exceptTokenIndex] = charsDefinition;
 	}
-	
-    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void clearListTokenExceptedError(){
+        /*exceptSizeLP = 0;
+        exceptIndexLP = -1;
+        exceptTokenLP = null;
+        exceptCharsSystemIdLP = null;
+        exceptCharsLineNumberLP = null;
+        exceptCharsColumnNumberLP = null;
+        exceptCharsDefinitionLP = null;*/
         
-        if(unresolvedSizeLPICE == 0){
+        for(int i = 0; i <= exceptTokenIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(exceptTokenInputRecordIndex[i], this);
+        }
+        
+        exceptTokenInputRecordIndex = null;
+        exceptTokenDefinition = null;
+        exceptTokenIndex = -1;
+    }
+    
+	
+    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+        
+        /*if(unresolvedSizeLPICE == 0){
 			unresolvedSizeLPICE = 1;
 			unresolvedIndexLPICE = 0;
 			unresolvedTokenLPICE = new String[unresolvedSizeLPICE];
@@ -2259,13 +3625,50 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		unresolvedCharsSystemIdEELPICE[unresolvedIndexLPICE] = systemId;
 		unresolvedCharsLineNumberEELPICE[unresolvedIndexLPICE] = lineNumber;
 		unresolvedCharsColumnNumberEELPICE[unresolvedIndexLPICE] = columnNumber;
-		unresolvedPossibleDefinitionsLPICE[unresolvedIndexLPICE] = possibleDefinitions;
+		unresolvedPossibleDefinitionsLPICE[unresolvedIndexLPICE] = possibleDefinitions;*/
+		
+		if(unresolvedTokenIndexLPICE < 0){
+			unresolvedTokenIndexLPICE = 0;	
+			unresolvedTokenInputRecordIndexLPICE =new int[initialSize];
+			unresolvedTokenDefinitionLPICE = new CharsActiveTypeItem[initialSize][];
+		}else if(++unresolvedTokenIndexLPICE == unresolvedTokenInputRecordIndexLPICE.length){
+		    int size = unresolvedTokenInputRecordIndexLPICE.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(unresolvedTokenInputRecordIndexLPICE, 0, increasedCN, 0, unresolvedTokenIndexLPICE);
+			unresolvedTokenInputRecordIndexLPICE = increasedCN;
+		    
+		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+			System.arraycopy(unresolvedTokenDefinitionLPICE, 0, increasedDef, 0, unresolvedTokenIndexLPICE);
+			unresolvedTokenDefinitionLPICE = increasedDef;
+		}
+		
+		unresolvedTokenInputRecordIndexLPICE[unresolvedTokenIndexLPICE] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		unresolvedTokenDefinitionLPICE[unresolvedTokenIndexLPICE] = possibleDefinitions;
+    }
+    public void clearUnresolvedListTokenInContextError(){
+        /*unresolvedSizeLPICE = 0;
+        unresolvedIndexLPICE = -1;
+        unresolvedTokenLPICE = null;
+        unresolvedCharsSystemIdEELPICE = null;
+        unresolvedCharsLineNumberEELPICE = null;
+        unresolvedCharsColumnNumberEELPICE = null;
+        unresolvedPossibleDefinitionsLPICE = null;*/
+        
+        for(int i = 0; i <= unresolvedTokenIndexLPICE; i++){
+            activeInputDescriptor.unregisterClientForRecord(unresolvedTokenInputRecordIndexLPICE[i], this);
+        }
+        
+        unresolvedTokenInputRecordIndexLPICE = null;
+        unresolvedTokenDefinitionLPICE = null;
+        unresolvedTokenIndexLPICE = -1;
     }
     
     
-    public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+    public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         
-        if(ambiguousSizeLPICW == 0){
+        /*if(ambiguousSizeLPICW == 0){
 			ambiguousSizeLPICW = 1;
 			ambiguousIndexLPICW = 0;
 			ambiguousTokenLPICW = new String[ambiguousSizeLPICW];
@@ -2298,19 +3701,54 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		ambiguousCharsSystemIdEELPICW[ambiguousIndexLPICW] = systemId;
 		ambiguousCharsLineNumberEELPICW[ambiguousIndexLPICW] = lineNumber;
 		ambiguousCharsColumnNumberEELPICW[ambiguousIndexLPICW] = columnNumber;
-		ambiguousPossibleDefinitionsLPICW[ambiguousIndexLPICW] = possibleDefinitions;
+		ambiguousPossibleDefinitionsLPICW[ambiguousIndexLPICW] = possibleDefinitions;*/
+		
+		if(ambiguousTokenIndexLPICW < 0){
+			ambiguousTokenIndexLPICW = 0;	
+			ambiguousTokenInputRecordIndexLPICW =new int[initialSize];
+			ambiguousTokenDefinitionLPICW = new CharsActiveTypeItem[initialSize][];
+		}else if(++ambiguousTokenIndexLPICW == ambiguousTokenInputRecordIndexLPICW.length){
+		    int size = ambiguousTokenInputRecordIndexLPICW.length + increaseSizeAmount;
+		    
+		    int[] increasedCN = new int[size];
+			System.arraycopy(ambiguousTokenInputRecordIndexLPICW, 0, increasedCN, 0, ambiguousTokenIndexLPICW);
+			ambiguousTokenInputRecordIndexLPICW = increasedCN;
+		    
+		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+			System.arraycopy(ambiguousTokenDefinitionLPICW, 0, increasedDef, 0, ambiguousTokenIndexLPICW);
+			ambiguousTokenDefinitionLPICW = increasedDef;
+		}
+		
+		ambiguousTokenInputRecordIndexLPICW[ambiguousTokenIndexLPICW] = inputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
+		ambiguousTokenDefinitionLPICW[ambiguousTokenIndexLPICW] = possibleDefinitions;
+    }
+    public void clearAmbiguousListTokenInContextWarning(){
+        /*ambiguousSizeLPICW = 0;
+        ambiguousIndexLPICW = -1;
+        ambiguousTokenLPICW = null;
+        ambiguousCharsSystemIdEELPICW = null;
+        ambiguousCharsLineNumberEELPICW = null;
+        ambiguousCharsColumnNumberEELPICW = null;
+        ambiguousPossibleDefinitionsLPICW = null;*/
+        
+        for(int i = 0; i <= ambiguousTokenIndexLPICW; i++){
+            activeInputDescriptor.unregisterClientForRecord(ambiguousTokenInputRecordIndexLPICW[i], this);
+        }
+        
+        ambiguousTokenInputRecordIndexLPICW = null;
+        ambiguousTokenDefinitionLPICW = null;
+        ambiguousTokenIndexLPICW = -1;
     }    
     
     
 	public void missingCompositorContent(Rule context, 
-								String startSystemId, 
-								int startLineNumber, 
-								int startColumnNumber,								 
+								int startInputRecordIndex,								 
 								APattern definition, 
 								int expected, 
 								int found){
         
-		if(missingCompositorContentSize == 0){
+		/*if(missingCompositorContentSize == 0){
 			missingCompositorContentSize = 1;
 			missingCompositorContentIndex = 0;
 			missingCompositorContentContext = new APattern[missingCompositorContentSize];
@@ -2357,8 +3795,69 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		missingCompositorContentDefinition[missingCompositorContentIndex] = definition;
 		missingCompositorContentExpected[missingCompositorContentIndex] = expected;
 		missingCompositorContentFound[missingCompositorContentIndex] = found;
-				
+			*/
+			
+		if(missingCompositorContentIndex < 0){
+			missingCompositorContentIndex = 0;
+			missingCompositorContentContext = new APattern[initialSize];
+			missingCompositorContentStartInputRecordIndex = new int[initialSize];
+			missingCompositorContentDefinition = new APattern[initialSize];
+			missingCompositorContentExpected = new int[initialSize];
+			missingCompositorContentFound = new int[initialSize];			
+		}else if(++missingCompositorContentIndex == missingCompositorContentContext.length){
+		    int size = missingCompositorContentIndex+ increaseSizeAmount;
+		    
+			APattern[] increasedEC = new APattern[size];
+			System.arraycopy(missingCompositorContentContext, 0, increasedEC, 0, missingCompositorContentIndex);
+			missingCompositorContentContext = increasedEC;
+			
+			int[] increasedSCN = new int[size];
+			System.arraycopy(missingCompositorContentStartInputRecordIndex, 0, increasedSCN, 0, missingCompositorContentIndex);
+			missingCompositorContentStartInputRecordIndex = increasedSCN;
+			
+			APattern[] increasedED = new APattern[size];
+			System.arraycopy(missingCompositorContentDefinition, 0, increasedED, 0, missingCompositorContentIndex);
+			missingCompositorContentDefinition = increasedED;
+			
+			int[] increasedE = new int[size];
+			System.arraycopy(missingCompositorContentExpected, 0, increasedE, 0, missingCompositorContentIndex);
+			missingCompositorContentExpected = increasedE;
+			
+			int[] increasedF = new int[size];
+			System.arraycopy(missingCompositorContentFound, 0, increasedF, 0, missingCompositorContentIndex);
+			missingCompositorContentFound = increasedF;			
+		}
+		missingCompositorContentContext[missingCompositorContentIndex] = context;
+		missingCompositorContentStartInputRecordIndex[missingCompositorContentIndex] = startInputRecordIndex;
+		activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
+		missingCompositorContentDefinition[missingCompositorContentIndex] = definition;
+		missingCompositorContentExpected[missingCompositorContentIndex] = expected;
+		missingCompositorContentFound[missingCompositorContentIndex] = found;
+			
 	}	
+	public void clearMissingCompositorContent(){
+        /*missingCompositorContentSize = 0;
+        missingCompositorContentIndex = -1;
+        missingCompositorContentContext = null;
+        missingCompositorContentStartSystemId = null;			
+        missingCompositorContentStartLineNumber = null;
+        missingCompositorContentStartColumnNumber = null;
+        missingCompositorContentDefinition = null;
+        missingCompositorContentExpected = null;
+        missingCompositorContentFound = null;*/
+        
+        for(int i = 0; i <= missingCompositorContentIndex; i++){
+            activeInputDescriptor.unregisterClientForRecord(missingCompositorContentStartInputRecordIndex[i], this);
+        }
+        
+        missingCompositorContentContext = null;
+        missingCompositorContentStartInputRecordIndex = null;
+        missingCompositorContentDefinition = null;
+        missingCompositorContentExpected = null;
+        missingCompositorContentFound = null;
+        
+        missingCompositorContentIndex = -1;
+    }
         
     
     public  void conflict(int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter[] candidateMessages){
@@ -2369,70 +3868,91 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
         this.disqualified = disqualified;
         this.candidateMessages = candidateMessages;
     }
+    public void clearConflict(){
+        candidatesCount = -1;
+        if(commonMessages != null){
+            if(isDiscarded)commonMessages.clear(); // It can be only one because it is about this context.
+            commonMessages = null;
+        }
+        
+        disqualified = null;
+        
+        if(candidateMessages != null){
+            if(isDiscarded){
+                for(MessageReporter cm : candidateMessages){                    
+                    if(cm != null){
+                        cm.clear();
+                    }
+                }
+            }
+            candidateMessages = null;
+        }
+    }
+    
     
 	public void internalConflict(ConflictMessageReporter conflictMessageReporter){
 	    internalConflict = true;
 	    this.conflictMessageReporter = conflictMessageReporter;
 	}
+	void clearInternalConflict(){	    
+	    if(conflictMessageReporter != null) {
+	        conflictMessageReporter.clear();
+	        conflictMessageReporter = null;
+	    }
+	    internalConflict = false;
+	}
 	
     public void transferErrorMessages(ErrorCatcher errorCatcher){
 		// {2}
-        String message = "";
+        //String message = "";
 		if(unknownElementIndex >= 0){
 			for(int i = 0; i <= unknownElementIndex; i++){
-				errorCatcher.unknownElement(unknownElementQName[i],
+				/*errorCatcher.unknownElement(unknownElementQName[i],
 				                        unknownElementSystemId[i],
 				                        unknownElementLineNumber[i],
-				                        unknownElementColumnNumber[i]);
+				                        unknownElementColumnNumber[i]);*/
+				
+				errorCatcher.unknownElement(unknownElementInputRecordIndex[i]);
+				activeInputDescriptor.unregisterClientForRecord(unknownElementInputRecordIndex[i], this);
 			}
 		}	
 		// {3}
 		if(unexpectedElementIndex >= 0){
 			for(int i = 0; i <= unexpectedElementIndex; i++){
-				errorCatcher.unexpectedElement(unexpectedElementQName[i],
-                                        unexpectedElementDefinition[i],
-                                        unexpectedElementSystemId[i],
-                                        unexpectedElementLineNumber[i],
-                                        unexpectedElementColumnNumber[i]);
+				errorCatcher.unexpectedElement(unexpectedElementDefinition[i],
+                                        unexpectedElementInputRecordIndex[i]);
+                activeInputDescriptor.unregisterClientForRecord(unexpectedElementInputRecordIndex[i], this);
 			}
 		}
 		// {4}
 		if(unexpectedAmbiguousElementIndex  >= 0){
 			for(int i = 0; i <= unexpectedAmbiguousElementIndex; i++){
-				errorCatcher.unexpectedAmbiguousElement(unexpectedAmbiguousElementQName[i],
-                                            unexpectedAmbiguousElementDefinition[i],
-                                            unexpectedAmbiguousElementSystemId[i],
-                                            unexpectedAmbiguousElementLineNumber[i],
-                                            unexpectedAmbiguousElementColumnNumber[i]);
+				errorCatcher.unexpectedAmbiguousElement(unexpectedAmbiguousElementDefinition[i],
+                                            unexpectedAmbiguousElementInputRecordIndex[i]);
+                activeInputDescriptor.unregisterClientForRecord(unexpectedAmbiguousElementInputRecordIndex[i], this);
 			}
 		}
 		// {5}
 		if(unknownAttributeIndex  >= 0){
 			for(int i = 0; i <= unknownAttributeIndex; i++){
-				errorCatcher.unknownAttribute(unknownAttributeQName[i],
-                                        unknownAttributeSystemId[i],
-                                        unknownAttributeLineNumber[i],
-                                        unknownAttributeColumnNumber[i]);
+				errorCatcher.unknownAttribute(unknownAttributeInputRecordIndex[i]);
+				activeInputDescriptor.unregisterClientForRecord(unknownAttributeInputRecordIndex[i], this);
 			}
 		}	
 		// {6}
 		if(unexpectedAttributeIndex  >= 0){
 			for(int i = 0; i <= unexpectedAttributeIndex; i++){
-				errorCatcher.unexpectedAttribute(unexpectedAttributeQName[i],
-                                        unexpectedAttributeDefinition[i],
-                                        unexpectedAttributeSystemId[i],
-                                        unexpectedAttributeLineNumber[i],
-                                        unexpectedAttributeColumnNumber[i]);
+				errorCatcher.unexpectedAttribute(unexpectedAttributeDefinition[i],
+                                        unknownAttributeInputRecordIndex[i]);
+                activeInputDescriptor.unregisterClientForRecord(unknownAttributeInputRecordIndex[i], this);
 			}
 		}
 		// {7}
 		if(unexpectedAmbiguousAttributeIndex >= 0){
 			for(int i = 0; i <= unexpectedAmbiguousAttributeIndex; i++){
-				errorCatcher.unexpectedAmbiguousAttribute(unexpectedAmbiguousAttributeQName[i],
-                                                    unexpectedAmbiguousAttributeDefinition[i],
-                                                    unexpectedAmbiguousAttributeSystemId[i],
-                                                    unexpectedAmbiguousAttributeLineNumber[i],
-                                                    unexpectedAmbiguousAttributeColumnNumber[i]);
+				errorCatcher.unexpectedAmbiguousAttribute(unexpectedAmbiguousAttributeDefinition[i],
+                                                    unknownAttributeInputRecordIndex[i]);
+                activeInputDescriptor.unregisterClientForRecord(unknownAttributeInputRecordIndex[i], this);
 			}
 		}
 		
@@ -2441,237 +3961,207 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		    APattern[] sourceDefinition = null;
 		    APattern reper = null;
 			for(int i = 0; i <= misplacedIndex; i++){
-			    for(int j = 0; j < misplacedQName[i].length; j++){
+			    for(int j = 0; j < misplacedDefinition[i].length; j++){
                     errorCatcher.misplacedContent(misplacedContext[i],
-                                            misplacedStartSystemId[i],
-                                            misplacedStartLineNumber[i],
-                                            misplacedStartColumnNumber[i],
+                                            misplacedStartInputRecordIndex[i],
                                             misplacedDefinition[i][j],
-                                            misplacedItemId[i][j],
-                                            misplacedQName[i][j],
-                                            misplacedSystemId[i][j],
-                                            misplacedLineNumber[i][j],
-                                            misplacedColumnNumber[i][j],
+                                            misplacedInputRecordIndex[i][j],
                                             sourceDefinition,
-                                            reper);
+                                            reper);                    
+                    activeInputDescriptor.unregisterClientForRecord(misplacedInputRecordIndex[i][j], 0, misplacedInputRecordIndex[i][j].length, this);
                 }
-			}
+                activeInputDescriptor.unregisterClientForRecord(misplacedStartInputRecordIndex[i], this);
+			}			
 		}
 		
 		// {9}
 		if(excessiveIndex  >= 0){
 			for(int i = 0; i <= excessiveIndex; i++){
 				errorCatcher.excessiveContent(excessiveContext[i],
-                                        excessiveStartSystemId[i],
-                                        excessiveStartLineNumber[i],
-                                        excessiveStartColumnNumber[i],
+                                        excessiveStartInputRecordIndex[i],
                                         excessiveDefinition[i],
-                                        excessiveItemId[i],
-                                        excessiveQName[i],
-                                        excessiveSystemId[i],
-                                        excessiveLineNumber[i],
-                                        excessiveColumnNumber[i]);
+                                        excessiveInputRecordIndex[i]);
+                activeInputDescriptor.unregisterClientForRecord(excessiveStartInputRecordIndex[i], this);
+                activeInputDescriptor.unregisterClientForRecord(excessiveInputRecordIndex[i], 0, excessiveInputRecordIndex[i].length, this);
 			}
 		}
 		// {10}
 		if(missingIndex >= 0){
 			for(int i = 0; i <= missingIndex; i++){
 				errorCatcher.missingContent(missingContext[i],
-                                        missingStartSystemId[i],
-                                        missingStartLineNumber[i],
-                                        missingStartColumnNumber[i],
+                                        missingStartInputRecordIndex[i],
                                         missingDefinition[i],
                                         missingExpected[i],
                                         missingFound[i],
-                                        missingQName[i],
-                                        missingSystemId[i],
-                                        missingLineNumber[i],
-                                        missingColumnNumber[i]);
+                                        missingInputRecordIndex[i]);
+                activeInputDescriptor.unregisterClientForRecord(missingStartInputRecordIndex[i], this);
+                if(missingInputRecordIndex[i] != null) activeInputDescriptor.unregisterClientForRecord(missingInputRecordIndex[i], 0, missingInputRecordIndex[i].length, this);
 			}			
 		}		
 		// {11}
 		if(illegalIndex >= 0){
 			for(int i = 0; i <= illegalIndex; i++){
 				errorCatcher.illegalContent(illegalContext[i],
-				                        illegalItemId[i],
-                                        illegalQName[i],
-                                        illegalStartSystemId[i],
-                                        illegalStartLineNumber[i],
-                                        illegalStartColumnNumber[i]);
+				                        illegalStartInputRecordIndex[i]);
+				activeInputDescriptor.unregisterClientForRecord(illegalStartInputRecordIndex[i], this);
 			}			
 		}
 		// {12 A}
 		if(unresolvedAmbiguousElementIndexEE >= 0){
 			for(int i = 0; i <= unresolvedAmbiguousElementIndexEE; i++){
-				errorCatcher.unresolvedAmbiguousElementContentError(unresolvedAmbiguousElementQNameEE[i],
-                                                    unresolvedAmbiguousElementSystemIdEE[i],
-                                                    unresolvedAmbiguousElementLineNumberEE[i],
-                                                    unresolvedAmbiguousElementColumnNumberEE[i],
+				errorCatcher.unresolvedAmbiguousElementContentError(unresolvedAmbiguousElementInputRecordIndexEE[i],
                                                     unresolvedAmbiguousElementDefinitionEE[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(unresolvedAmbiguousElementInputRecordIndexEE[i], this);
 			}
 		}
 		// {12 U}
 		if(unresolvedUnresolvedElementIndexEE >= 0){
 			for(int i = 0; i <= unresolvedUnresolvedElementIndexEE; i++){
-				errorCatcher.unresolvedUnresolvedElementContentError(unresolvedUnresolvedElementQNameEE[i],
-                                                                unresolvedUnresolvedElementSystemIdEE[i],
-                                                                unresolvedUnresolvedElementLineNumberEE[i],
-                                                                unresolvedUnresolvedElementColumnNumberEE[i],
+				errorCatcher.unresolvedUnresolvedElementContentError(unresolvedUnresolvedElementInputRecordIndexEE[i],
                                                                 unresolvedUnresolvedElementDefinitionEE[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(unresolvedUnresolvedElementInputRecordIndexEE[i], this);
 			}
 		}
 		// {13}
 		if(unresolvedAttributeIndexEE >= 0){
 			for(int i = 0; i <= unresolvedAttributeIndexEE; i++){
-				errorCatcher.unresolvedAttributeContentError(unresolvedAttributeQNameEE[i],
-                                                        unresolvedAttributeSystemIdEE[i],
-                                                        unresolvedAttributeLineNumberEE[i],
-                                                        unresolvedAttributeColumnNumberEE[i],
+				errorCatcher.unresolvedAttributeContentError(unresolvedAttributeInputRecordIndexEE[i],
                                                         unresolvedAttributeDefinitionEE[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(unresolvedAttributeInputRecordIndexEE[i], this);
 			}
 		}
 		// {14}
 		
 		// {15}
-		if(datatypeIndexCC >= 0){
-			for(int i = 0; i <= datatypeIndexCC; i++){
-				errorCatcher.characterContentDatatypeError(datatypeElementQNameCC[i],
-                                                        datatypeCharsSystemIdCC[i],
-                                                        datatypeCharsLineNumberCC[i],
-                                                        datatypeCharsColumnNumberCC[i],
-                                                        datatypeCharsDefinitionCC[i],
-                                                        datatypeErrorMessageCC[i]);
+		if(datatypeCharsIndex >= 0){
+			for(int i = 0; i <= datatypeCharsIndex; i++){
+				errorCatcher.characterContentDatatypeError(datatypeCharsInputRecordIndex[i],
+                                                        datatypeCharsDefinition[i],
+                                                        datatypeCharsErrorMessage[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(datatypeCharsInputRecordIndex[i], this);
 			}
+			/*datatypeCharsInputRecordIndex = null;
+			datatypeCharsDefinition = null;
+			datatypeCharsErrorMessage = null;
+			datatypeCharsIndex = -1;*/
 		}
 		// {16}
-		if(datatypeIndexAV >= 0){
-		    for(int i = 0; i <= datatypeIndexAV; i++){
-		        errorCatcher.attributeValueDatatypeError(datatypeAttributeQNameAV[i],
-                                                    datatypeCharsSystemIdAV[i],
-                                                    datatypeCharsLineNumberAV[i],
-                                                    datatypeCharsColumnNumberAV[i],
-                                                    datatypeCharsDefinitionAV[i],
-                                                    datatypeErrorMessageAV[i]);
+		if(datatypeAVIndex >= 0){
+		    for(int i = 0; i <= datatypeAVIndex; i++){
+		        errorCatcher.attributeValueDatatypeError(datatypeAVInputRecordIndex[i],
+                                                    datatypeAVDefinition[i],
+                                                    datatypeAVErrorMessage[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(datatypeAVInputRecordIndex[i], this);
             }
 		}
 		// {17}
-		if(valueIndexCC >= 0){
-			for(int i = 0; i <= valueIndexCC; i++){
-			    errorCatcher.characterContentValueError(valueCharsSystemIdCC[i],
-                                                    valueCharsLineNumberCC[i],
-                                                    valueCharsColumnNumberCC[i],
-                                                    valueCharsDefinitionCC[i]);	
+		if(valueCharsIndex >= 0){
+			for(int i = 0; i <= valueCharsIndex; i++){
+			    errorCatcher.characterContentValueError(valueCharsInputRecordIndex[i],
+                                                    valueCharsDefinition[i]);	
+                activeInputDescriptor.unregisterClientForRecord(valueCharsInputRecordIndex[i], this);
 			}
 		}
 		// {18}
-		if(valueIndexAV >= 0){
-			for(int i = 0; i <= valueIndexAV; i++){
-				errorCatcher.attributeValueValueError(valueAttributeQNameAV[i],
-                                                    valueCharsSystemIdAV[i],
-                                                    valueCharsLineNumberAV[i],
-                                                    valueCharsColumnNumberAV[i],
-                                                    valueCharsDefinitionAV[i]);
+		if(valueAVIndex >= 0){
+			for(int i = 0; i <= valueAVIndex; i++){
+				errorCatcher.attributeValueValueError(valueAVInputRecordIndex[i],
+                                                    valueAVDefinition[i]);
+                activeInputDescriptor.unregisterClientForRecord(valueAVInputRecordIndex[i], this);
 			}
 		}
 		// {19}
-		if(exceptIndexCC >= 0){
-			for(int i = 0; i <= exceptIndexCC; i++){
-				errorCatcher.characterContentExceptedError(exceptElementQNameCC[i],
-                                                        exceptCharsSystemIdCC[i],
-                                                        exceptCharsLineNumberCC[i],
-                                                        exceptCharsColumnNumberCC[i],
-                                                        exceptCharsDefinitionCC[i]);
+		if(exceptCharsIndex >= 0){
+			for(int i = 0; i <= exceptCharsIndex; i++){
+				errorCatcher.characterContentExceptedError(exceptCharsInputRecordIndex[i],
+                                                        exceptCharsDefinition[i]);
+                activeInputDescriptor.unregisterClientForRecord(exceptCharsInputRecordIndex[i], this);
 			}
 		}
 		// {20}
-		if(exceptIndexAV >= 0){
-			for(int i = 0; i <= exceptIndexAV; i++){
-				errorCatcher.attributeValueExceptedError(exceptAttributeQNameAV[i],
-                                                        exceptCharsSystemIdAV[i],
-                                                        exceptCharsLineNumberAV[i],
-                                                        exceptCharsColumnNumberAV[i],
-                                                        exceptCharsDefinitionAV[i]);
+		if(exceptAVIndex >= 0){
+			for(int i = 0; i <= exceptAVIndex; i++){
+				errorCatcher.attributeValueExceptedError(exceptAVInputRecordIndex[i],
+                                                        exceptAVDefinition[i]);
+                activeInputDescriptor.unregisterClientForRecord(exceptAVInputRecordIndex[i], this);
 			}
 		}
 		// {21}
-		if(unexpectedIndexCC >= 0){
-			for(int i = 0; i <= unexpectedIndexCC; i++){
-				errorCatcher.unexpectedCharacterContent(unexpectedCharsSystemIdCC[i],
-                                                    unexpectedCharsLineNumberCC[i],
-                                                    unexpectedCharsColumnNumberCC[i],
-                                                    unexpectedContextDefinitionCC[i]);
+		if(unexpectedCharsIndex >= 0){
+			for(int i = 0; i <= unexpectedCharsIndex; i++){
+				errorCatcher.unexpectedCharacterContent(unexpectedCharsInputRecordIndex[i],
+                                                    unexpectedCharsDefinition[i]);
+                activeInputDescriptor.unregisterClientForRecord(unexpectedCharsInputRecordIndex[i], this);
 			}
 		}
 		// {22}
-		if(unexpectedIndexAV >= 0){
-			for(int i = 0; i <= unexpectedIndexAV; i++){
-				errorCatcher.unexpectedAttributeValue(unexpectedCharsSystemIdAV[i],
-                                                    unexpectedCharsLineNumberAV[i],
-                                                    unexpectedCharsColumnNumberAV[i],
-                                                    unexpectedContextDefinitionAV[i]);
+		if(unexpectedAVIndex >= 0){
+			for(int i = 0; i <= unexpectedAVIndex; i++){
+				errorCatcher.unexpectedAttributeValue(unexpectedAVInputRecordIndex[i],
+                                                    unexpectedAVDefinition[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(unexpectedAVInputRecordIndex[i], this);
 			}
 		}
 		// {23}
-		if(unresolvedIndexCC >= 0){
-			for(int i = 0; i <= unresolvedIndexCC; i++){
-				errorCatcher.unresolvedCharacterContent(unresolvedCharsSystemIdEECC[i],
-                                                    unresolvedCharsLineNumberEECC[i],
-                                                    unresolvedCharsColumnNumberEECC[i],
-                                                    unresolvedPossibleDefinitionsCC[i]);
+		if(unresolvedCharsIndexEE >= 0){
+			for(int i = 0; i <= unresolvedCharsIndexEE; i++){
+				errorCatcher.unresolvedCharacterContent(unresolvedCharsInputRecordIndexEE[i],
+                                                    unresolvedCharsDefinitionEE[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(unresolvedCharsInputRecordIndexEE[i], this);
 			}
 		}
 		// {24}
-		if(unresolvedIndexAV >= 0){			
-			for(int i = 0; i <= unresolvedIndexAV; i++){				
-				errorCatcher.unresolvedAttributeValue(unresolvedAttributeQNameEEAV[i],
-				                                    unresolvedCharsSystemIdEEAV[i],
-                                                    unresolvedCharsLineNumberEEAV[i],
-                                                    unresolvedCharsColumnNumberEEAV[i],
-                                                    unresolvedPossibleDefinitionsAV[i]);
+		if(unresolvedAVIndexEE >= 0){			
+			for(int i = 0; i <= unresolvedAVIndexEE; i++){				
+				errorCatcher.unresolvedAttributeValue(unresolvedAVInputRecordIndexEE[i],
+				                                    unresolvedAVDefinitionEE[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(unresolvedAVInputRecordIndexEE[i], this);
 			}
 		}
 		// {25}
-		if(datatypeIndexLP >= 0){
-			for(int i = 0; i <= datatypeIndexLP; i++){
-				errorCatcher.listTokenDatatypeError(datatypeTokenLP[i],
-                                                    datatypeCharsSystemIdLP[i],
-                                                    datatypeCharsLineNumberLP[i],
-                                                    datatypeCharsColumnNumberLP[i],
-                                                    datatypeCharsDefinitionLP[i],
-                                                    datatypeErrorMessageLP[i]);
+		if(datatypeTokenIndex >= 0){
+			for(int i = 0; i <= datatypeTokenIndex; i++){
+				errorCatcher.listTokenDatatypeError(datatypeTokenInputRecordIndex[i],
+                                                    datatypeTokenDefinition[i],
+                                                    datatypeTokenErrorMessage[i]);
+                activeInputDescriptor.unregisterClientForRecord(datatypeTokenInputRecordIndex[i], this);
 			}
 		}
 		// {26}
-		if(valueIndexLP >= 0){
-			for(int i = 0; i <= valueIndexLP; i++){
-				errorCatcher.listTokenValueError(valueTokenLP[i],
-                                                valueCharsSystemIdLP[i],
-                                                valueCharsLineNumberLP[i],
-                                                valueCharsColumnNumberLP[i],
-                                                valueCharsDefinitionLP[i]);
+		if(valueTokenIndex >= 0){
+			for(int i = 0; i <= valueTokenIndex; i++){
+				errorCatcher.listTokenValueError(valueTokenInputRecordIndex[i],
+                                                valueTokenDefinition[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(valueTokenInputRecordIndex[i], this);
 			}
 		}
 		// {27}
-		if(exceptIndexLP >= 0){
-			for(int i = 0; i <= exceptIndexLP; i++){
-				errorCatcher.listTokenExceptedError(exceptTokenLP[i],
-                                                exceptCharsSystemIdLP[i],
-                                                exceptCharsLineNumberLP[i],
-                                                exceptCharsColumnNumberLP[i],
-                                                exceptCharsDefinitionLP[i]);
+		if(exceptTokenIndex >= 0){
+			for(int i = 0; i <= exceptTokenIndex; i++){
+				errorCatcher.listTokenExceptedError(exceptTokenInputRecordIndex[i],
+                                                exceptTokenDefinition[i]);
+                activeInputDescriptor.unregisterClientForRecord(exceptTokenInputRecordIndex[i], this);
 			}
 		}
 		// {28}
 		
         
         // {28_1}
-        if(unresolvedIndexLPICE >= 0){
-			for(int i = 0; i <= unresolvedIndexLPICE; i++){
-				errorCatcher.unresolvedListTokenInContextError(unresolvedTokenLPICE[i],
-                                                        unresolvedCharsSystemIdEELPICE[i],
-                                                        unresolvedCharsLineNumberEELPICE[i],
-                                                        unresolvedCharsColumnNumberEELPICE[i],
-                                                        unresolvedPossibleDefinitionsLPICE[i]);
+        if(unresolvedTokenIndexLPICE >= 0){
+			for(int i = 0; i <= unresolvedTokenIndexLPICE; i++){
+				errorCatcher.unresolvedListTokenInContextError(unresolvedTokenInputRecordIndexLPICE[i],
+                                                        unresolvedTokenDefinitionLPICE[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(unresolvedTokenInputRecordIndexLPICE[i], this);
 			}
 		}
 		
@@ -2679,12 +4169,11 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		if(missingCompositorContentIndex >= 0){
 			for(int i = 0; i <= missingCompositorContentIndex; i++){
 				errorCatcher.missingCompositorContent(missingCompositorContentContext[i],
-                                                missingCompositorContentStartSystemId[i],
-                                                missingCompositorContentStartLineNumber[i],
-                                                missingCompositorContentStartColumnNumber[i],
+                                                missingCompositorContentStartInputRecordIndex[i],
                                                 missingCompositorContentDefinition[i],
                                                 missingCompositorContentExpected[i],
                                                 missingCompositorContentFound[i]);
+                activeInputDescriptor.unregisterClientForRecord(missingCompositorContentStartInputRecordIndex[i], this);
 			}			
 		}
 		
@@ -2698,68 +4187,65 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 		// {w1 U}
 		if(ambiguousUnresolvedElementIndexWW >= 0){
 			for(int i = 0; i <= ambiguousUnresolvedElementIndexWW; i++){
-				errorCatcher.ambiguousUnresolvedElementContentWarning(ambiguousUnresolvedElementQNameWW[i],
-                                                                    ambiguousUnresolvedElementSystemIdWW[i],
-                                                                    ambiguousUnresolvedElementLineNumberWW[i],
-                                                                    ambiguousUnresolvedElementColumnNumberWW[i],
-                                                                    ambiguousUnresolvedElementDefinitionWW[i]);				
+				errorCatcher.ambiguousUnresolvedElementContentWarning(ambiguousUnresolvedElementInputRecordIndexWW[i],
+                                                                        ambiguousUnresolvedElementDefinitionWW[i]);
+
+                activeInputDescriptor.unregisterClientForRecord(ambiguousUnresolvedElementInputRecordIndexWW[i], this);				
 			}
 		}
 		// {w1 A}
 		if(ambiguousAmbiguousElementIndexWW >= 0){
 			for(int i = 0; i <= ambiguousAmbiguousElementIndexWW; i++){
-				errorCatcher.ambiguousAmbiguousElementContentWarning(ambiguousAmbiguousElementQNameWW[i],
-                                                                ambiguousAmbiguousElementSystemIdWW[i],
-                                                                ambiguousAmbiguousElementLineNumberWW[i],
-                                                                ambiguousAmbiguousElementColumnNumberWW[i],
-                                                                ambiguousAmbiguousElementDefinitionWW[i]);				
+				errorCatcher.ambiguousAmbiguousElementContentWarning(ambiguousAmbiguousElementInputRecordIndexWW[i],
+                                                                ambiguousAmbiguousElementDefinitionWW[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(ambiguousAmbiguousElementInputRecordIndexWW[i], this);				
 			}
 		}
 		
 		// {w2}
 		if(ambiguousAttributeIndexWW >= 0){
 			for(int i = 0; i <= ambiguousAttributeIndexWW; i++){
-				errorCatcher.ambiguousAttributeContentWarning(ambiguousAttributeQNameWW[i],
-                                                            ambiguousAttributeSystemIdWW[i],
-                                                            ambiguousAttributeLineNumberWW[i],
-                                                            ambiguousAttributeColumnNumberWW[i],
+				errorCatcher.ambiguousAttributeContentWarning(ambiguousAttributeInputRecordIndexWW[i],
                                                             ambiguousAttributeDefinitionWW[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(ambiguousAttributeInputRecordIndexWW[i], this);
 			}
 		}
 		// {w3}
 		if(ambiguousCharsIndexWW >= 0){
 			for(int i = 0; i <= ambiguousCharsIndexWW; i++){
-				errorCatcher.ambiguousCharacterContentWarning(ambiguousCharsSystemIdWW[i],
-                                                    ambiguousCharsLineNumberWW[i],
-                                                    ambiguousCharsColumnNumberWW[i],
+				errorCatcher.ambiguousCharacterContentWarning(ambiguousCharsInputRecordIndexWW[i],
                                                     ambiguousCharsDefinitionWW[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(ambiguousCharsInputRecordIndexWW[i], this);
 			}
 		}
         // {w4}
 		if(ambiguousAVIndexWW >= 0){
 			for(int i = 0; i <= ambiguousAVIndexWW; i++){
-				errorCatcher.ambiguousAttributeValueWarning(ambiguousAVAttributeQNameWW[i],
-				                                    ambiguousAVSystemIdWW[i],
-                                                    ambiguousAVLineNumberWW[i],
-                                                    ambiguousAVColumnNumberWW[i],
+				errorCatcher.ambiguousAttributeValueWarning(ambiguousAVInputRecordIndexWW[i],
                                                     ambiguousAVDefinitionWW[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(ambiguousAVInputRecordIndexWW[i], this);
+                
 			}
 		}
 		
 		
         // {28_2}
-        if(ambiguousIndexLPICW >= 0){
-			for(int i = 0; i <= ambiguousIndexLPICW; i++){
-				errorCatcher.ambiguousListTokenInContextWarning(ambiguousTokenLPICW[i],
-                                                            ambiguousCharsSystemIdEELPICW[i],
-                                                            ambiguousCharsLineNumberEELPICW[i],
-                                                            ambiguousCharsColumnNumberEELPICW[i],
-                                                            ambiguousPossibleDefinitionsLPICW[i]);
+        if(ambiguousTokenIndexLPICW >= 0){
+			for(int i = 0; i <= ambiguousTokenIndexLPICW; i++){
+				errorCatcher.ambiguousListTokenInContextWarning(ambiguousTokenInputRecordIndexLPICW[i],
+                                                            ambiguousTokenDefinitionLPICW[i]);
+                
+                activeInputDescriptor.unregisterClientForRecord(ambiguousTokenInputRecordIndexLPICW[i], this);
 			}
 		}
 	}	
     
 	public void transferMessages(ErrorCatcher errorCatcher){
+	    isClear = true;
 	    transferErrorMessages(errorCatcher);
 	    transferWarningMessages(errorCatcher);
 	}
@@ -2767,5 +4253,90 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
     public String toString(){
         return "TemporaryMessageStorage ";
     }
+ 
+    protected void finalize(){
+        if(!isClear)clear();
+	    if(unknownElementIndex >= 0){
+	        activeInputDescriptor.unregisterClientForRecord(unknownElementInputRecordIndex, 0, unknownElementIndex+1, this);
+	    }
+	}
+	
+	public void setDiscarded(boolean isDiscarded){
+	    this.isDiscarded = isDiscarded;
+	    
+	    if(commonMessages != null)commonMessages.setDiscarded(isDiscarded);
+        
+        if(candidateMessages!= null){
+            for(int i = 0; i < candidateMessages.length; i++){
+                if(candidateMessages[i] != null)candidateMessages[i].setDiscarded(isDiscarded);;
+            }
+        }
+        
+        if(internalConflict && conflictMessageReporter != null) conflictMessageReporter.setDiscarded(isDiscarded);
+	}
+	
+	public void clear(){
+	    if(isClear) return;
+	    isClear = true;
+        // TODO check sizes to only clear when full
+        // and refactor the creation of new instances in the ErrorHandlers
+        if( unknownElementIndex >= 0 ) clearUnknownElement();
+		if( unexpectedElementIndex >= 0) clearUnexpectedElement();
+		if( unexpectedAmbiguousElementIndex >= 0) clearUnexpectedAmbiguousElement();
+		if( unknownAttributeIndex >= 0 ) clearUnknownAttribute();
+		if( unexpectedAttributeIndex >= 0) clearUnexpectedAttribute();
+		if( unexpectedAmbiguousAttributeIndex >= 0) clearUnexpectedAmbiguousAttribute();   
+        if( misplacedIndex >= 0 ) clearMisplacedElement();
+        if( excessiveIndex >= 0) clearExcessiveContent();
+        if( missingIndex >= 0) clearMissingContent();
+        if( illegalIndex >= 0) clearIllegalContent();
+        if( unresolvedAmbiguousElementIndexEE >= 0) clearUnresolvedAmbiguousElementContentError();
+        if( unresolvedUnresolvedElementIndexEE >= 0) clearUnresolvedUnresolvedElementContentError();
+        if( unresolvedAttributeIndexEE >= 0) clearUnresolvedAttributeContentError();
+        
+        if( ambiguousUnresolvedElementIndexWW >= 0) clearAmbiguousUnresolvedElementContentWarning();
+        if( ambiguousAmbiguousElementIndexWW >= 0) clearAmbiguousAmbiguousElementContentWarning();        
+        if( ambiguousAttributeIndexWW >= 0) clearAmbiguousAttributeContentWarning();
+        if( ambiguousCharsIndexWW >= 0) clearAmbiguousCharacterContentWarning();
+        if( ambiguousAVIndexWW >= 0) clearAmbiguousAttributeValueWarning();
+                
+        if( datatypeCharsIndex >= 0) clearCharacterContentDatatypeError();
+        if( datatypeAVIndex >= 0) clearAttributeValueDatatypeError();
+        if( valueCharsIndex >= 0) clearCharacterContentValueError();
+        if( valueAVIndex >= 0) clearAttributeValueValueError();
+        if( exceptCharsIndex >= 0) clearCharacterContentExceptedError();
+        if( exceptAVIndex >= 0) clearAttributeValueExceptedError();
+        if( unexpectedCharsIndex >= 0) clearUnexpectedCharacterContent();
+        if( unexpectedAVIndex >= 0) clearUnexpectedAttributeValue();
+        if( unresolvedCharsIndexEE >= 0) clearUnresolvedCharacterContent();
+        if( unresolvedAVIndexEE >= 0) clearUnresolvedAttributeValue();
+        if( datatypeTokenIndex >= 0) clearListTokenDatatypeError();
+        if( valueTokenIndex >= 0) clearListTokenValueError();
+        if( exceptTokenIndex >= 0) clearListTokenExceptedError();
+        if( unresolvedTokenIndexLPICE >= 0) clearUnresolvedListTokenInContextError();
+        if( ambiguousTokenIndexLPICW >= 0) clearAmbiguousListTokenInContextWarning();
+        if( missingCompositorContentIndex >= 0) clearMissingCompositorContent();
+        clearConflict();
+        
+        clearInternalConflict();
+        
+        /*messageTotalCount = 0;
+        
+        if(parent != null){
+            parent.clear();
+            parent = null;
+        }
     
+        reportingContextType = ContextErrorHandler.NONE;
+        reportingContextQName = null;
+        reportingContextDefinition = null;
+        reportingContextPublicId = null;
+        reportingContextSystemId = null;
+        reportingContextLineNumber = -1;
+        reportingContextColumnNumber = -1;
+        conflictResolutionId = RESOLVED;
+        
+        isMessageRetrieved = false;*/
+        isDiscarded = false;
+    }
 }

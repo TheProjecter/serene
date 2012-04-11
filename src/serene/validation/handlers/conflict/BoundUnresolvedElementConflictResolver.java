@@ -49,15 +49,16 @@ public class BoundUnresolvedElementConflictResolver extends BoundElementConflict
 	}
 		
     public void resolve(ErrorCatcher errorCatcher) throws SAXException{
-        if(qualified.cardinality() == 0){	
+        isResolved = true;
+        if(qualified.cardinality() == 0){
             // report all external conflict errors + internal conflict error for all losers
             conflictMessageReporter.setConflictInternalResolution(MessageReporter.UNRESOLVED);
             errorCatcher.internalConflict(conflictMessageReporter);
             
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
-            errorCatcher.unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedUnresolvedElementContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             
-            targetQueue.closeReservation(targetEntry);				
+            targetQueue.closeReservation(targetEntry);
         }else if(qualified.cardinality() == 1){
             // report the external conflict errors of the winner
             int qual = qualified.nextSetBit(0);				
@@ -79,7 +80,7 @@ public class BoundUnresolvedElementConflictResolver extends BoundElementConflict
                 }
             }   
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
-            errorCatcher.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.ambiguousUnresolvedElementContentWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             
             targetQueue.closeReservation(targetEntry);
         }			

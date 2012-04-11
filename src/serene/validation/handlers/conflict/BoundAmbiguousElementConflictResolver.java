@@ -49,6 +49,7 @@ public class BoundAmbiguousElementConflictResolver extends BoundElementConflictR
 	}
 		
     public void resolve(ErrorCatcher errorCatcher) throws SAXException{
+        isResolved = true;
         if(qualified.cardinality() == 0){
             // report internal conflict error for all winners + common or subtree errors reporting for the winners
             if(conflictMessageReporter != null){
@@ -57,7 +58,7 @@ public class BoundAmbiguousElementConflictResolver extends BoundElementConflictR
             }
             
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
-            errorCatcher.unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedAmbiguousElementContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             
             targetQueue.closeReservation(targetEntry);				
         }else if(qualified.cardinality() == 1){
@@ -84,7 +85,7 @@ public class BoundAmbiguousElementConflictResolver extends BoundElementConflictR
                 }
             }   
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
-            errorCatcher.ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.ambiguousAmbiguousElementContentWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             
             targetQueue.closeReservation(targetEntry);
         }			
