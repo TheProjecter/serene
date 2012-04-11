@@ -130,7 +130,7 @@ public class IdTypeBuilder implements DatatypeBuilder {
             throw new DatatypeException("No whitespace facets allowed.");            
         }else if(name.equals("enumeration")){
             throw new DatatypeException("No enumeration facets allowed.");
-        }else
+        }
         
         xsdValidationContext.setRngValidationContext(context);//normally the context is needed only for namespaces and entities
         XSSimpleType typeRestriction = xercesFactory.createTypeRestriction(typeLocalName, targetNamespace, (short)0, baseType, dummyAnnotations);
