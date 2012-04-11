@@ -22,14 +22,14 @@ import sereneWrite.MessageWriter;
 
 public class StartLevelPool extends RNGParseElementTaskPool{
 	StartLevelTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public StartLevelPool(MessageWriter debugWriter){
 		super(debugWriter);
 		
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new StartLevelTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new StartLevelTask[5];
 	}
 	
 	public StartLevelTask getTask(){
@@ -47,9 +47,9 @@ public class StartLevelPool extends RNGParseElementTaskPool{
 	}
 	
 	void recycle(StartLevelTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			StartLevelTask[] increased = new StartLevelTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			StartLevelTask[] increased = new StartLevelTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

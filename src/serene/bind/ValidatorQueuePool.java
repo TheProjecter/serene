@@ -27,7 +27,7 @@ public class ValidatorQueuePool implements Reusable{
 	
 	MessageWriter debugWriter;
 	
-	int queueFree, queuePoolSize;
+	int queueFree, queueMaxSize;
 	Queue[] queue;
 	
 	ObjectIntHashMap sattributeIndexMap;
@@ -37,8 +37,8 @@ public class ValidatorQueuePool implements Reusable{
 		this.pool = pool;
 		
 		queueFree = 0;
-		queuePoolSize = 3;
-		queue = new Queue[queuePoolSize];
+		queueMaxSize = 10;
+		queue = new Queue[5];
 	}
 	
 	public void recycle(){
@@ -62,9 +62,9 @@ public class ValidatorQueuePool implements Reusable{
 		}
 	}
 	public void recycle(Queue q){
-		if(queueFree == queuePoolSize){			 
-			queuePoolSize+=3;
-			Queue[] increased = new Queue[queuePoolSize];
+	    if(queueFree == queueMaxSize) return;
+		if(queueFree == queue.length){	
+			Queue[] increased = new Queue[5+queue.length];
 			System.arraycopy(queue, 0, increased, 0, queueFree);
 			queue = increased;
 		}

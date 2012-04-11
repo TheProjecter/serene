@@ -137,26 +137,23 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		
 		this.schemaModel = schemaModel;
 		                
-		inputStackDescriptor = new InputStackDescriptor(debugWriter);		
-		errorDispatcher = new ErrorDispatcher(debugWriter);
+		errorDispatcher = new ErrorDispatcher(debugWriter);		
+		inputStackDescriptor = new InputStackDescriptor(debugWriter);
 		matchHandler  = new MatchHandler(debugWriter);		
 		charsBuffer = new CharsBuffer(debugWriter);		
-		spaceHandler = new SpaceCharsHandler(debugWriter);
-		
-		errorHandlerPool.fill(errorDispatcher);
-		eventHandlerPool.fill(spaceHandler, matchHandler, inputStackDescriptor, errorHandlerPool);
-		
+		spaceHandler = new SpaceCharsHandler(debugWriter);					
         documentContext = new DocumentContext(debugWriter);
-        eventHandlerPool.setValidationContext(documentContext);
-		//default recognizeOutOfContext is true
+        
+        errorHandlerPool.init(errorDispatcher);        
+        eventHandlerPool.init(spaceHandler, matchHandler, inputStackDescriptor, documentContext, errorHandlerPool);
+        
+        errorHandlerPool.fill();
+        eventHandlerPool.fill();
         
         prefixNamespaces = new HashMap<String, String>();
 	}
 	
-	protected void finalize(){		
-		eventHandlerPool.releaseHandlers();
-		errorHandlerPool.releaseHandlers();
-		
+	protected void finalize(){			
 		eventHandlerPool.recycle();
 		errorHandlerPool.recycle();
 	}

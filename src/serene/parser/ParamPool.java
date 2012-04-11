@@ -26,7 +26,7 @@ public class ParamPool extends RNGParseEndElementTaskPool{
 	SAttribute name;
 	
 	ParamTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public ParamPool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -36,8 +36,8 @@ public class ParamPool extends RNGParseEndElementTaskPool{
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.name = name;
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new ParamTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new ParamTask[5];
 	}
 	
 	public ParamTask getTask(){
@@ -55,9 +55,9 @@ public class ParamPool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(ParamTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			ParamTask[] increased = new ParamTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			ParamTask[] increased = new ParamTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

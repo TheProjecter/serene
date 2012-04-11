@@ -24,7 +24,7 @@ import sereneWrite.MessageWriter;
 
 public class AttributeWithNameClassPool extends RNGParseEndElementTaskPool{
 	AttributeWithNameClassTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public AttributeWithNameClassPool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -32,8 +32,8 @@ public class AttributeWithNameClassPool extends RNGParseEndElementTaskPool{
 						MessageWriter debugWriter){
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new AttributeWithNameClassTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new AttributeWithNameClassTask[5];
 	}
 	
 	public AttributeWithNameClassTask getTask(){
@@ -51,9 +51,9 @@ public class AttributeWithNameClassPool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(AttributeWithNameClassTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			AttributeWithNameClassTask[] increased = new AttributeWithNameClassTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			AttributeWithNameClassTask[] increased = new AttributeWithNameClassTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

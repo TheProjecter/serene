@@ -43,8 +43,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import org.relaxng.datatype.ValidationContext;
-
 import serene.Reusable;
 
 import sereneWrite.MessageWriter;
@@ -53,205 +51,245 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 
 	RuleHandlerPool pool;
 	
-	// int particleHandlerCreated;
-	// int particleHandlerRequested;
-	// int particleHandlerRecycled;
-	int particleHandlerPoolSize;
-	int particleHandlerFree = 0;
+	
+	int particleHandlerCreated;
+	int particleHandlerRequested;
+	int particleHandlerRecycled;	
+	int particleHandlerMaxSize;
+	int particleHandlerFree;
+	int particleHandlerMinFree;
 	ParticleHandler[] particleHandler;
 	
-	// int choiceHandlerCreated;
-	// int choiceHandlerRequested;
-	// int choiceHandlerRecycled;
-	int choiceHandlerPoolSize;
-	int choiceHandlerFree = 0;
-	ChoiceHandler[] choiceHandler;
 	
-	// int groupHandlerCreated;
-	// int groupHandlerRequested;
-	// int groupHandlerRecycled;
-	int groupHandlerPoolSize;
-	int groupHandlerFree = 0;
+	int choiceHandlerCreated;
+	int choiceHandlerRequested;
+	int choiceHandlerRecycled;
+	int choiceHandlerMaxSize;	
+	int choiceHandlerFree;
+	int choiceHandlerMinFree;
+	ChoiceHandler[] choiceHandler;
+		
+	int groupHandlerCreated;
+	int groupHandlerRequested;
+	int groupHandlerRecycled;	
+	int groupHandlerMaxSize;
+	int groupHandlerFree;
+	int groupHandlerMinFree;
 	GroupHandler[] groupHandler;
 		
 	// int grammarHandlerCreated;
-	int grammarHandlerPoolSize;
-	int grammarHandlerFree = 0;
+	int grammarHandlerMaxSize;
+	int grammarHandlerFree;
+	int grammarHandlerMinFree;
 	GrammarHandler[] grammarHandler;	
 	
 	// int refHandlerCreated;
-	int refHandlerPoolSize;
-	int refHandlerFree = 0;
+	int refHandlerMaxSize;
+	int refHandlerFree;
+	int refHandlerMinFree;
 	RefHandler[] refHandler;
 		
 	// int uinterleaveHandlerCreated;
-	int uinterleaveHandlerPoolSize;
-	int uinterleaveHandlerFree = 0;
+	int uinterleaveHandlerMaxSize;
+	int uinterleaveHandlerFree;
+	int uinterleaveHandlerMinFree;
 	UInterleaveHandler[] uinterleaveHandler;
 		
 	// int minterleaveHandlerCreated;
-	int minterleaveHandlerPoolSize;
-	int minterleaveHandlerFree = 0;
+	int minterleaveHandlerMaxSize;
+	int minterleaveHandlerFree;
+	int minterleaveHandlerMinFree;
 	MInterleaveHandler[] minterleaveHandler;
 	
 	// int sinterleaveHandlerCreated;
-	int sinterleaveHandlerPoolSize;
-	int sinterleaveHandlerFree = 0;
+	int sinterleaveHandlerMaxSize;
+	int sinterleaveHandlerFree;
+	int sinterleaveHandlerMinFree;
 	SInterleaveHandler[] sinterleaveHandler;
-	
-	// int elementHandlerCreated;
-	// int elementHandlerRequested;
-	// int elementHandlerRecycled;
-	int elementHandlerPoolSize;
-	int elementHandlerFree = 0;
+		
+	int elementHandlerCreated;
+	int elementHandlerRequested;
+	int elementHandlerRecycled;
+	int elementHandlerMaxSize;
+	int elementHandlerFree;
+	int elementHandlerMinFree;
 	ElementHandler[] elementHandler;
 	
 	// int attributeHandlerCreated;
-	int attributeHandlerPoolSize;
-	int attributeHandlerFree = 0;
+	int attributeHandlerMaxSize;
+	int attributeHandlerFree;
+	int attributeHandlerMinFree;
 	AttributeHandler[] attributeHandler;
 	
 	// int exceptPatternHandlerCreated;
-	int exceptPatternHandlerPoolSize;
-	int exceptPatternHandlerFree = 0;
+	int exceptPatternHandlerMaxSize;
+	int exceptPatternHandlerFree;
+	int exceptPatternHandlerMinFree;
 	ExceptPatternHandler[] exceptPatternHandler;
 	
 	// int listPatternHandlerCreated;
-	int listPatternHandlerPoolSize;
-	int listPatternHandlerFree = 0;
+	int listPatternHandlerMaxSize;
+	int listPatternHandlerFree;
+	int listPatternHandlerMinFree;
 	ListPatternHandler[] listPatternHandler;
-		
+	
+	
 	
 	
 	// int groupDoubleHandlerCreated;
-	int groupDoubleHandlerPoolSize;
-	int groupDoubleHandlerFree = 0;
+	int groupDoubleHandlerMaxSize;
+	int groupDoubleHandlerFree;
+	int groupDoubleHandlerMinFree;
 	GroupDoubleHandler[] groupDoubleHandler;
 	
 	// int interleaveDoubleHandlerCreated;
-	int interleaveDoubleHandlerPoolSize;
-	int interleaveDoubleHandlerFree = 0;
+	int interleaveDoubleHandlerMaxSize;
+	int interleaveDoubleHandlerFree;
+	int interleaveDoubleHandlerMinFree;
 	InterleaveDoubleHandler[] interleaveDoubleHandler;
 
 	
 	// int groupMinimalReduceCountHandlerCreated;
-	int groupMinimalReduceCountHandlerPoolSize;
-	int groupMinimalReduceCountHandlerFree = 0;
+	int groupMinimalReduceCountHandlerMaxSize;
+	int groupMinimalReduceCountHandlerFree;
+	int groupMinimalReduceCountHandlerMinFree;
 	GroupMinimalReduceCountHandler[] groupMinimalReduceCountHandler;
 	
 	// int groupMaximalReduceCountHandlerCreated;
-	int groupMaximalReduceCountHandlerPoolSize;
-	int groupMaximalReduceCountHandlerFree = 0;
+	int groupMaximalReduceCountHandlerMaxSize;
+	int groupMaximalReduceCountHandlerFree;
+	int groupMaximalReduceCountHandlerMinFree;
 	GroupMaximalReduceCountHandler[] groupMaximalReduceCountHandler;
 	
 	// int interleaveMinimalReduceCountHandlerCreated;
-	int interleaveMinimalReduceCountHandlerPoolSize;
-	int interleaveMinimalReduceCountHandlerFree = 0;
+	int interleaveMinimalReduceCountHandlerMaxSize;
+	int interleaveMinimalReduceCountHandlerFree;
+	int interleaveMinimalReduceCountHandlerMinFree;
 	InterleaveMinimalReduceCountHandler[] interleaveMinimalReduceCountHandler;
 	
 	// int interleaveMaximalReduceCountHandlerCreated;
-	int interleaveMaximalReduceCountHandlerPoolSize;
-	int interleaveMaximalReduceCountHandlerFree = 0;
+	int interleaveMaximalReduceCountHandlerMaxSize;
+	int interleaveMaximalReduceCountHandlerFree;
+	int interleaveMaximalReduceCountHandlerMinFree;
 	InterleaveMaximalReduceCountHandler[] interleaveMaximalReduceCountHandler;
 	
 	
 	
 	
 	// int grammarMinimalReduceHandlerCreated;
-	int grammarMinimalReduceHandlerPoolSize;
-	int grammarMinimalReduceHandlerFree = 0;
+	int grammarMinimalReduceHandlerMaxSize;
+	int grammarMinimalReduceHandlerFree;
+	int grammarMinimalReduceHandlerMinFree;
 	GrammarMinimalReduceHandler[] grammarMinimalReduceHandler;
 	
 	// int grammarMaximalReduceHandlerCreated;
-	int grammarMaximalReduceHandlerPoolSize;
-	int grammarMaximalReduceHandlerFree = 0;
+	int grammarMaximalReduceHandlerMaxSize;
+	int grammarMaximalReduceHandlerFree;
+	int grammarMaximalReduceHandlerMinFree;
 	GrammarMaximalReduceHandler[] grammarMaximalReduceHandler;
 	
 	// int refMinimalReduceHandlerCreated;
-	int refMinimalReduceHandlerPoolSize;
-	int refMinimalReduceHandlerFree = 0;
+	int refMinimalReduceHandlerMaxSize;
+	int refMinimalReduceHandlerFree;
+	int refMinimalReduceHandlerMinFree;
 	RefMinimalReduceHandler[] refMinimalReduceHandler;
 	
 	// int refMaximalReduceHandlerCreated;
-	int refMaximalReduceHandlerPoolSize;
-	int refMaximalReduceHandlerFree = 0;
+	int refMaximalReduceHandlerMaxSize;
+	int refMaximalReduceHandlerFree;
+	int refMaximalReduceHandlerMinFree;
 	RefMaximalReduceHandler[] refMaximalReduceHandler;
 		
 	// int choiceMinimalReduceHandlerCreated;
-	int choiceMinimalReduceHandlerPoolSize;
-	int choiceMinimalReduceHandlerFree = 0;
+	int choiceMinimalReduceHandlerMaxSize;
+	int choiceMinimalReduceHandlerFree;
+	int choiceMinimalReduceHandlerMinFree;
 	ChoiceMinimalReduceHandler[] choiceMinimalReduceHandler;
 	
 	// int choiceMaximalReduceHandlerCreated;
-	int choiceMaximalReduceHandlerPoolSize;
-	int choiceMaximalReduceHandlerFree = 0;
+	int choiceMaximalReduceHandlerMaxSize;
+	int choiceMaximalReduceHandlerFree;
+	int choiceMaximalReduceHandlerMinFree;
 	ChoiceMaximalReduceHandler[] choiceMaximalReduceHandler;
 	
 	// int groupMinimalReduceHandlerCreated;
-	int groupMinimalReduceHandlerPoolSize;
-	int groupMinimalReduceHandlerFree = 0;
+	int groupMinimalReduceHandlerMaxSize;
+	int groupMinimalReduceHandlerFree;
+	int groupMinimalReduceHandlerMinFree;
 	GroupMinimalReduceHandler[] groupMinimalReduceHandler;
 	
 	// int groupMaximalReduceHandlerCreated;
-	int groupMaximalReduceHandlerPoolSize;
-	int groupMaximalReduceHandlerFree = 0;
+	int groupMaximalReduceHandlerMaxSize;
+	int groupMaximalReduceHandlerFree;
+	int groupMaximalReduceHandlerMinFree;
 	GroupMaximalReduceHandler[] groupMaximalReduceHandler;
 	
 	// int interleaveMinimalReduceHandlerCreated;
-	int interleaveMinimalReduceHandlerPoolSize;
-	int interleaveMinimalReduceHandlerFree = 0;
+	int interleaveMinimalReduceHandlerMaxSize;
+	int interleaveMinimalReduceHandlerFree;
+	int interleaveMinimalReduceHandlerMinFree;
 	InterleaveMinimalReduceHandler[] interleaveMinimalReduceHandler;
 	
 	// int interleaveMaximalReduceHandlerCreated;
-	int interleaveMaximalReduceHandlerPoolSize;
-	int interleaveMaximalReduceHandlerFree = 0;
+	int interleaveMaximalReduceHandlerMaxSize;
+	int interleaveMaximalReduceHandlerFree;
+	int interleaveMaximalReduceHandlerMinFree;
 	InterleaveMaximalReduceHandler[] interleaveMaximalReduceHandler;
 	
 	InputStackDescriptor inputStackDescriptor;
 		
+	boolean full;
+	
 	MessageWriter debugWriter;
 	
 	public ActiveModelRuleHandlerPool(RuleHandlerPool pool, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
-		this.pool = pool;
+		this.pool = pool;		
+		
+		particleHandlerMaxSize = 100;        
+        choiceHandlerMaxSize = 50;
+        groupHandlerMaxSize = 50;
+        grammarHandlerMaxSize = 50;
+        refHandlerMaxSize = 50;
+        uinterleaveHandlerMaxSize = 50;
+        minterleaveHandlerMaxSize = 50;
+        sinterleaveHandlerMaxSize = 50;
+        elementHandlerMaxSize = 100;
+        attributeHandlerMaxSize = 50;
+        exceptPatternHandlerMaxSize = 50;
+        listPatternHandlerMaxSize = 50;
+        groupDoubleHandlerMaxSize = 50;
+        interleaveDoubleHandlerMaxSize = 50;
+        groupMinimalReduceCountHandlerMaxSize = 50;
+        groupMaximalReduceCountHandlerMaxSize = 50;
+        interleaveMinimalReduceCountHandlerMaxSize = 50;
+        interleaveMaximalReduceCountHandlerMaxSize = 50;
+        grammarMinimalReduceHandlerMaxSize = 50;
+        grammarMaximalReduceHandlerMaxSize = 50;
+        refMinimalReduceHandlerMaxSize = 50;
+        refMaximalReduceHandlerMaxSize = 50;
+        choiceMinimalReduceHandlerMaxSize = 50;
+        choiceMaximalReduceHandlerMaxSize = 50;
+        groupMinimalReduceHandlerMaxSize = 50;
+        groupMaximalReduceHandlerMaxSize = 50;
+        interleaveMinimalReduceHandlerMaxSize = 50;
+        interleaveMaximalReduceHandlerMaxSize = 50;
+    
+        full = false;
 	}
 	
-	public void recycle(){
-		if(particleHandlerFree != 0 ||
-			choiceHandlerFree != 0 ||
-			groupHandlerFree != 0 ||
-			grammarHandlerFree != 0 ||
-			refHandlerFree != 0 ||
-			uinterleaveHandlerFree != 0 ||
-			minterleaveHandlerFree != 0 ||
-			sinterleaveHandlerFree != 0 ||
-			elementHandlerFree != 0 ||
-			attributeHandlerFree != 0 ||
-			exceptPatternHandlerFree != 0 ||
-			listPatternHandlerFree != 0 ||
-			groupDoubleHandlerFree != 0 ||
-			interleaveDoubleHandlerFree != 0 ||			
-			groupMinimalReduceCountHandlerFree != 0 ||
-			groupMaximalReduceCountHandlerFree != 0 ||
-			interleaveMinimalReduceCountHandlerFree != 0 ||
-			interleaveMaximalReduceCountHandlerFree != 0 ||
-			grammarMinimalReduceHandlerFree != 0 ||
-			grammarMaximalReduceHandlerFree != 0 ||
-			refMinimalReduceHandlerFree != 0 ||
-			refMaximalReduceHandlerFree != 0 ||
-			choiceMinimalReduceHandlerFree != 0 ||
-			choiceMaximalReduceHandlerFree != 0 ||
-			groupMinimalReduceHandlerFree != 0 ||
-			groupMaximalReduceHandlerFree != 0 ||
-			interleaveMinimalReduceHandlerFree != 0 ||
-			interleaveMaximalReduceHandlerFree != 0){
-			releaseHandlers();	
-		}
+	public int getParticleHandlerRequested(){
+	    return particleHandlerRequested;
+	}
+	
+	public void recycle(){		
+		if(full)releaseHandlers();
 		pool.recycle(this);
 	}
+	
 	public void fill(InputStackDescriptor inputStackDescriptor){
 		this.inputStackDescriptor = inputStackDescriptor;
-		 pool.fill(this,
+		pool.fill(this,
 			 		particleHandler,
 					choiceHandler,
 					groupHandler,
@@ -279,397 +317,322 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 					groupMinimalReduceHandler,
 					groupMaximalReduceHandler,
 					interleaveMinimalReduceHandler,
-					interleaveMaximalReduceHandler);				
+					interleaveMaximalReduceHandler);	
+		 full = true;
 	}
 	
-	void setHandlers(int particleHandlerFree,
-					ParticleHandler[] particleHandler,
-					int choiceHandlerFree,
-					ChoiceHandler[] choiceHandler,
-					int groupHandlerFree,
-					GroupHandler[] groupHandler,
-					int grammarHandlerFree,
-					GrammarHandler[] grammarHandler,
-					int refHandlerFree,
-					RefHandler[] refHandler,
-					int uinterleaveHandlerFree,
-					UInterleaveHandler[] uinterleaveHandler,
-					int minterleaveHandlerFree,
-					MInterleaveHandler[] minterleaveHandler,
-					int sinterleaveHandlerFree,
-					SInterleaveHandler[] sinterleaveHandler,
-					int elementHandlerFree,
-					ElementHandler[] elementHandler,
-					int attributeHandlerFree,
-					AttributeHandler[] attributeHandler,
-					int exceptPatternHandlerFree,
-					ExceptPatternHandler[] exceptPatternHandler,
-					int listPatternHandlerFree,
-					ListPatternHandler[] listPatternHandler,
-					int groupDoubleHandlerFree,
-					GroupDoubleHandler[] groupDoubleHandler,
-					int interleaveDoubleHandlerFree,
-					InterleaveDoubleHandler[] interleaveDoubleHandler,
-					int groupMinimalReduceCountHandlerFree,
-					GroupMinimalReduceCountHandler[] groupMinimalReduceCountHandler,		
-					int groupMaximalReduceCountHandlerFree,
-					GroupMaximalReduceCountHandler[] groupMaximalReduceCountHandler,
-					int interleaveMinimalReduceCountHandlerFree,
-					InterleaveMinimalReduceCountHandler[] interleaveMinimalReduceCountHandler,
-					int interleaveMaximalReduceCountHandlerFree,
-					InterleaveMaximalReduceCountHandler[] interleaveMaximalReduceCountHandler,
-					int grammarMinimalReduceHandlerFree,
-					GrammarMinimalReduceHandler[] grammarMinimalReduceHandler,
-					int grammarMaximalReduceHandlerFree,
-					GrammarMaximalReduceHandler[] grammarMaximalReduceHandler,
-					int refMinimalReduceHandlerFree,
-					RefMinimalReduceHandler[] refMinimalReduceHandler,
-					int refMaximalReduceHandlerFree,
-					RefMaximalReduceHandler[] refMaximalReduceHandler,
-					int choiceMinimalReduceHandlerFree,
-					ChoiceMinimalReduceHandler[] choiceMinimalReduceHandler,
-					int choiceMaximalReduceHandlerFree,
-					ChoiceMaximalReduceHandler[] choiceMaximalReduceHandler,
-					int groupMinimalReduceHandlerFree,
-					GroupMinimalReduceHandler[] groupMinimalReduceHandler,
-					int groupMaximalReduceHandlerFree,
-					GroupMaximalReduceHandler[] groupMaximalReduceHandler,
-					int interleaveMinimalReduceHandlerFree,
-					InterleaveMinimalReduceHandler[] interleaveMinimalReduceHandler,
-					int interleaveMaximalReduceHandlerFree,
-					InterleaveMaximalReduceHandler[] interleaveMaximalReduceHandler){
-		particleHandlerPoolSize = particleHandler.length;
-		this.particleHandlerFree = particleHandlerFree;
-		this.particleHandler = particleHandler;
+	void initFilled(int particleHandlerFillCount,
+					int choiceHandlerFillCount,
+					int groupHandlerFillCount,
+					int grammarHandlerFillCount,
+					int refHandlerFillCount,
+					int uinterleaveHandlerFillCount,
+					int minterleaveHandlerFillCount,
+					int sinterleaveHandlerFillCount,
+					int elementHandlerFillCount,
+					int attributeHandlerFillCount,
+					int exceptPatternHandlerFillCount,
+					int listPatternHandlerFillCount,
+					int groupDoubleHandlerFillCount,
+					int interleaveDoubleHandlerFillCount,
+					int groupMinimalReduceCountHandlerFillCount,		
+					int groupMaximalReduceCountHandlerFillCount,
+					int interleaveMinimalReduceCountHandlerFillCount,
+					int interleaveMaximalReduceCountHandlerFillCount,
+					int grammarMinimalReduceHandlerFillCount,
+					int grammarMaximalReduceHandlerFillCount,
+					int refMinimalReduceHandlerFillCount,
+					int refMaximalReduceHandlerFillCount,
+					int choiceMinimalReduceHandlerFillCount,
+					int choiceMaximalReduceHandlerFillCount,
+					int groupMinimalReduceHandlerFillCount,
+					int groupMaximalReduceHandlerFillCount,
+					int interleaveMinimalReduceHandlerFillCount,
+					int interleaveMaximalReduceHandlerFillCount){
+		particleHandlerFree = particleHandlerFillCount;
+		particleHandlerMinFree = particleHandlerFree;
 		for(int i = 0; i < particleHandlerFree; i++){	
 			particleHandler[i].init(this);
 		}
 		
-		choiceHandlerPoolSize = choiceHandler.length;
-		this.choiceHandlerFree = choiceHandlerFree;
-		this.choiceHandler = choiceHandler;
+		choiceHandlerFree = choiceHandlerFillCount;
+		choiceHandlerMinFree = choiceHandlerFree;
 		for(int i = 0; i < choiceHandlerFree; i++){	
 			choiceHandler[i].init(this, inputStackDescriptor);
 		}
 		
-		groupHandlerPoolSize = groupHandler.length;
-		this.groupHandlerFree = groupHandlerFree;
-		this.groupHandler = groupHandler;
+		groupHandlerFree = groupHandlerFillCount;
+		groupHandlerMinFree = groupHandlerFree;
 		for(int i = 0; i < groupHandlerFree; i++){	
 			groupHandler[i].init(this, inputStackDescriptor);
 		}
-				
-		grammarHandlerPoolSize = grammarHandler.length;
-		this.grammarHandlerFree = grammarHandlerFree;
-		this.grammarHandler = grammarHandler;
+		
+		grammarHandlerFree = grammarHandlerFillCount;
+		grammarHandlerMinFree = grammarHandlerFree;
 		for(int i = 0; i < grammarHandlerFree; i++){	
 			grammarHandler[i].init(this, inputStackDescriptor);
 		}
-				
-		uinterleaveHandlerPoolSize = uinterleaveHandler.length;
-		this.uinterleaveHandlerFree = uinterleaveHandlerFree;
-		this.uinterleaveHandler = uinterleaveHandler;
+		
+		uinterleaveHandlerFree = uinterleaveHandlerFillCount;
+		uinterleaveHandlerMinFree = uinterleaveHandlerFree;
 		for(int i = 0; i < uinterleaveHandlerFree; i++){	
 			uinterleaveHandler[i].init(this, inputStackDescriptor);
 		}
 		
-		minterleaveHandlerPoolSize = minterleaveHandler.length;
-		this.minterleaveHandlerFree = minterleaveHandlerFree;
-		this.minterleaveHandler = minterleaveHandler;
+		minterleaveHandlerFree = minterleaveHandlerFillCount;
+		minterleaveHandlerMinFree = minterleaveHandlerFree;
 		for(int i = 0; i < minterleaveHandlerFree; i++){	
 			minterleaveHandler[i].init(this, inputStackDescriptor);
 		}
 		
-		sinterleaveHandlerPoolSize = sinterleaveHandler.length;
-		this.sinterleaveHandlerFree = sinterleaveHandlerFree;
-		this.sinterleaveHandler = sinterleaveHandler;
+		sinterleaveHandlerFree = sinterleaveHandlerFillCount;
+		sinterleaveHandlerMinFree = sinterleaveHandlerFree;
 		for(int i = 0; i < sinterleaveHandlerFree; i++){	
 			sinterleaveHandler[i].init(this, inputStackDescriptor);
 		}
-				
-		refHandlerPoolSize = refHandler.length;
-		this.refHandlerFree = refHandlerFree;
-		this.refHandler = refHandler;
+		
+		refHandlerFree = refHandlerFillCount;
+		refHandlerMinFree = refHandlerFree;
 		for(int i = 0; i < refHandlerFree; i++){	
 			refHandler[i].init(this, inputStackDescriptor);
 		}
-				
-		elementHandlerPoolSize = elementHandler.length;
-		this.elementHandlerFree = elementHandlerFree;
-		this.elementHandler = elementHandler;
+		
+		elementHandlerFree = elementHandlerFillCount;
+		elementHandlerMinFree = elementHandlerFree;
 		for(int i = 0; i < elementHandlerFree; i++){	
 			elementHandler[i].init(this, inputStackDescriptor);
 		}
 		
-		attributeHandlerPoolSize = attributeHandler.length;
-		this.attributeHandlerFree = attributeHandlerFree;
-		this.attributeHandler = attributeHandler;
+		attributeHandlerFree = attributeHandlerFillCount;
+		attributeHandlerMinFree = attributeHandlerFree;
 		for(int i = 0; i < attributeHandlerFree; i++){	
 			attributeHandler[i].init(this, inputStackDescriptor);
 		}
 		
-		exceptPatternHandlerPoolSize = exceptPatternHandler.length;
-		this.exceptPatternHandlerFree = exceptPatternHandlerFree;
-		this.exceptPatternHandler = exceptPatternHandler;
+		exceptPatternHandlerFree = exceptPatternHandlerFillCount;
+		exceptPatternHandlerMinFree = exceptPatternHandlerFree;
 		for(int i = 0; i < exceptPatternHandlerFree; i++){	
 			exceptPatternHandler[i].init(this, inputStackDescriptor);
 		}
 		
-		listPatternHandlerPoolSize = listPatternHandler.length;
-		this.listPatternHandlerFree = listPatternHandlerFree;
-		this.listPatternHandler = listPatternHandler;
+		listPatternHandlerFree = listPatternHandlerFillCount;
+		listPatternHandlerMinFree = listPatternHandlerFree;
 		for(int i = 0; i < listPatternHandlerFree; i++){	
 			listPatternHandler[i].init(this, inputStackDescriptor);
 		}
 		
-		groupDoubleHandlerPoolSize = groupDoubleHandler.length;
-		this.groupDoubleHandlerFree = groupDoubleHandlerFree;
-		this.groupDoubleHandler = groupDoubleHandler;
+		groupDoubleHandlerFree = groupDoubleHandlerFillCount;
+		groupDoubleHandlerMinFree = groupDoubleHandlerFree;
 		for(int i = 0; i < groupDoubleHandlerFree; i++){	
 			groupDoubleHandler[i].init(this, inputStackDescriptor);
 		}
 		
-		interleaveDoubleHandlerPoolSize = interleaveDoubleHandler.length;
-		this.interleaveDoubleHandlerFree = interleaveDoubleHandlerFree;
-		this.interleaveDoubleHandler = interleaveDoubleHandler;
+		interleaveDoubleHandlerFree = interleaveDoubleHandlerFillCount;
+		interleaveDoubleHandlerMinFree = interleaveDoubleHandlerFree;
 		for(int i = 0; i < interleaveDoubleHandlerFree; i++){	
 			interleaveDoubleHandler[i].init(this, inputStackDescriptor);
 		}
 
-		groupMinimalReduceCountHandlerPoolSize = groupMinimalReduceCountHandler.length;
-		this.groupMinimalReduceCountHandlerFree = groupMinimalReduceCountHandlerFree;
-		this.groupMinimalReduceCountHandler = groupMinimalReduceCountHandler;
+		groupMinimalReduceCountHandlerFree = groupMinimalReduceCountHandlerFillCount;
+		groupMinimalReduceCountHandlerMinFree = groupMinimalReduceCountHandlerFree;
 		for(int i = 0; i < groupMinimalReduceCountHandlerFree; i++){	
 			groupMinimalReduceCountHandler[i].init(this, inputStackDescriptor);
 		}	
-		
-		groupMaximalReduceCountHandlerPoolSize = groupMaximalReduceCountHandler.length;
-		this.groupMaximalReduceCountHandlerFree = groupMaximalReduceCountHandlerFree;
-		this.groupMaximalReduceCountHandler = groupMaximalReduceCountHandler;
+
+		groupMaximalReduceCountHandlerFree = groupMaximalReduceCountHandlerFillCount;
+		groupMaximalReduceCountHandlerMinFree = groupMaximalReduceCountHandlerFree;
 		for(int i = 0; i < groupMaximalReduceCountHandlerFree; i++){	
 			groupMaximalReduceCountHandler[i].init(this, inputStackDescriptor);
 		}
+
 		
 		
-		interleaveMinimalReduceCountHandlerPoolSize = interleaveMinimalReduceCountHandler.length;
-		this.interleaveMinimalReduceCountHandlerFree = interleaveMinimalReduceCountHandlerFree;
-		this.interleaveMinimalReduceCountHandler = interleaveMinimalReduceCountHandler;
+		interleaveMinimalReduceCountHandlerFree = interleaveMinimalReduceCountHandlerFillCount;
+		interleaveMinimalReduceCountHandlerMinFree = interleaveMinimalReduceCountHandlerFree;
 		for(int i = 0; i < interleaveMinimalReduceCountHandlerFree; i++){	
 			interleaveMinimalReduceCountHandler[i].init(this, inputStackDescriptor);
 		}	
 		
-		interleaveMaximalReduceCountHandlerPoolSize = interleaveMaximalReduceCountHandler.length;
-		this.interleaveMaximalReduceCountHandlerFree = interleaveMaximalReduceCountHandlerFree;
-		this.interleaveMaximalReduceCountHandler = interleaveMaximalReduceCountHandler;
+		interleaveMaximalReduceCountHandlerFree = interleaveMaximalReduceCountHandlerFillCount;
+		interleaveMaximalReduceCountHandlerMinFree = interleaveMaximalReduceCountHandlerFree;
 		for(int i = 0; i < interleaveMaximalReduceCountHandlerFree; i++){	
 			interleaveMaximalReduceCountHandler[i].init(this, inputStackDescriptor);
 		}
 		
 		
 		
-				
-		grammarMinimalReduceHandlerPoolSize = grammarMinimalReduceHandler.length;
-		this.grammarMinimalReduceHandlerFree = grammarMinimalReduceHandlerFree;
-		this.grammarMinimalReduceHandler = grammarMinimalReduceHandler;
+		
+		grammarMinimalReduceHandlerFree = grammarMinimalReduceHandlerFillCount;
+		grammarMinimalReduceHandlerMinFree = grammarMinimalReduceHandlerFree;
 		for(int i = 0; i < grammarMinimalReduceHandlerFree; i++){	
 			grammarMinimalReduceHandler[i].init(this, inputStackDescriptor);
 		}	
-		
-		grammarMaximalReduceHandlerPoolSize = grammarMaximalReduceHandler.length;
-		this.grammarMaximalReduceHandlerFree = grammarMaximalReduceHandlerFree;
-		this.grammarMaximalReduceHandler = grammarMaximalReduceHandler;
+				
+		grammarMaximalReduceHandlerFree = grammarMaximalReduceHandlerFillCount;
+		grammarMaximalReduceHandlerMinFree = grammarMaximalReduceHandlerFree;
 		for(int i = 0; i < grammarMaximalReduceHandlerFree; i++){	
 			grammarMaximalReduceHandler[i].init(this, inputStackDescriptor);
 		}
-		
-		refMinimalReduceHandlerPoolSize = refMinimalReduceHandler.length;
-		this.refMinimalReduceHandlerFree = refMinimalReduceHandlerFree;
-		this.refMinimalReduceHandler = refMinimalReduceHandler;
+				
+		refMinimalReduceHandlerFree = refMinimalReduceHandlerFillCount;
+		refMinimalReduceHandlerMinFree = refMinimalReduceHandlerFree;
 		for(int i = 0; i < refMinimalReduceHandlerFree; i++){	
 			refMinimalReduceHandler[i].init(this, inputStackDescriptor);
 		}	
-		
-		refMaximalReduceHandlerPoolSize = refMaximalReduceHandler.length;
-		this.refMaximalReduceHandlerFree = refMaximalReduceHandlerFree;
-		this.refMaximalReduceHandler = refMaximalReduceHandler;
+				
+		refMaximalReduceHandlerFree = refMaximalReduceHandlerFillCount;
+		refMaximalReduceHandlerMinFree = refMaximalReduceHandlerFree;
 		for(int i = 0; i < refMaximalReduceHandlerFree; i++){	
 			refMaximalReduceHandler[i].init(this, inputStackDescriptor);
 		}
-		
-		choiceMinimalReduceHandlerPoolSize = choiceMinimalReduceHandler.length;
-		this.choiceMinimalReduceHandlerFree = choiceMinimalReduceHandlerFree;
-		this.choiceMinimalReduceHandler = choiceMinimalReduceHandler;
+				
+		choiceMinimalReduceHandlerFree = choiceMinimalReduceHandlerFillCount;
+		choiceMinimalReduceHandlerMinFree = choiceMinimalReduceHandlerFree;
 		for(int i = 0; i < choiceMinimalReduceHandlerFree; i++){	
 			choiceMinimalReduceHandler[i].init(this, inputStackDescriptor);
 		}	
 		
-		choiceMaximalReduceHandlerPoolSize = choiceMaximalReduceHandler.length;
-		this.choiceMaximalReduceHandlerFree = choiceMaximalReduceHandlerFree;
-		this.choiceMaximalReduceHandler = choiceMaximalReduceHandler;
+		choiceMaximalReduceHandlerFree = choiceMaximalReduceHandlerFillCount;
+		choiceMaximalReduceHandlerMinFree = choiceMaximalReduceHandlerFree;
 		for(int i = 0; i < choiceMaximalReduceHandlerFree; i++){	
 			choiceMaximalReduceHandler[i].init(this, inputStackDescriptor);
 		}
 		
-		groupMinimalReduceHandlerPoolSize = groupMinimalReduceHandler.length;
-		this.groupMinimalReduceHandlerFree = groupMinimalReduceHandlerFree;
-		this.groupMinimalReduceHandler = groupMinimalReduceHandler;
+		groupMinimalReduceHandlerFree = groupMinimalReduceHandlerFillCount;
+		groupMinimalReduceHandlerMinFree = groupMinimalReduceHandlerFree;
 		for(int i = 0; i < groupMinimalReduceHandlerFree; i++){	
 			groupMinimalReduceHandler[i].init(this, inputStackDescriptor);
 		}	
 		
-		groupMaximalReduceHandlerPoolSize = groupMaximalReduceHandler.length;
-		this.groupMaximalReduceHandlerFree = groupMaximalReduceHandlerFree;
-		this.groupMaximalReduceHandler = groupMaximalReduceHandler;
+		groupMaximalReduceHandlerFree = groupMaximalReduceHandlerFillCount;
+		groupMaximalReduceHandlerMinFree = groupMaximalReduceHandlerFree;
 		for(int i = 0; i < groupMaximalReduceHandlerFree; i++){	
 			groupMaximalReduceHandler[i].init(this, inputStackDescriptor);
 		}
 		
-		interleaveMinimalReduceHandlerPoolSize = interleaveMinimalReduceHandler.length;
-		this.interleaveMinimalReduceHandlerFree = interleaveMinimalReduceHandlerFree;
-		this.interleaveMinimalReduceHandler = interleaveMinimalReduceHandler;
+		interleaveMinimalReduceHandlerFree = interleaveMinimalReduceHandlerFillCount;
+		interleaveMinimalReduceHandlerMinFree = interleaveMinimalReduceHandlerFree;		
 		for(int i = 0; i < interleaveMinimalReduceHandlerFree; i++){	
 			interleaveMinimalReduceHandler[i].init(this, inputStackDescriptor);
 		}	
 		
-		interleaveMaximalReduceHandlerPoolSize = interleaveMaximalReduceHandler.length;
-		this.interleaveMaximalReduceHandlerFree = interleaveMaximalReduceHandlerFree;
-		this.interleaveMaximalReduceHandler = interleaveMaximalReduceHandler;
+		interleaveMaximalReduceHandlerFree = interleaveMaximalReduceHandlerFillCount;
+		interleaveMaximalReduceHandlerMinFree = interleaveMaximalReduceHandlerFree;
 		for(int i = 0; i < interleaveMaximalReduceHandlerFree; i++){	
 			interleaveMaximalReduceHandler[i].init(this, inputStackDescriptor);
 		}
 	}
 	
 	public void releaseHandlers(){
-		
-		// System.out.println("particle created "+particleHandlerCreated);
-		// System.out.println("choice created "+choiceHandlerCreated);
-		// System.out.println("group created "+groupHandlerCreated);
-		// System.out.println("grammar created "+grammarHandlerCreated);
-		// System.out.println("interleave created "+uinterleaveHandlerCreated);
-		// System.out.println("ref created "+refHandlerCreated);
-		// System.out.println("element created "+elementHandlerCreated);
-		// System.out.println("attribute created "+attributeHandlerCreated);
-		// System.out.println();
 		pool.recycle(particleHandlerFree,
+		            particleHandlerFree - particleHandlerMinFree,
 					particleHandler,
 					choiceHandlerFree,
+					choiceHandlerFree - choiceHandlerMinFree,
 					choiceHandler,
 					groupHandlerFree,
+					groupHandlerFree - groupHandlerMinFree,
 					groupHandler,
 					grammarHandlerFree,
+					grammarHandlerFree - grammarHandlerMinFree,
 					grammarHandler,
 					refHandlerFree,
+					refHandlerFree - refHandlerMinFree,
 					refHandler,
 					uinterleaveHandlerFree,
+					uinterleaveHandlerFree - uinterleaveHandlerMinFree,
 					uinterleaveHandler,
 					minterleaveHandlerFree,
+					minterleaveHandlerFree - minterleaveHandlerMinFree,
 					minterleaveHandler,
 					sinterleaveHandlerFree,
+					sinterleaveHandlerFree - sinterleaveHandlerMinFree,
 					sinterleaveHandler,
 					elementHandlerFree,
+					elementHandlerFree - elementHandlerMinFree,
 					elementHandler,
 					attributeHandlerFree,
+					attributeHandlerFree - attributeHandlerMinFree,
 					attributeHandler,
 					exceptPatternHandlerFree,
+					exceptPatternHandlerFree - exceptPatternHandlerMinFree,
 					exceptPatternHandler,
 					listPatternHandlerFree,
+					listPatternHandlerFree - listPatternHandlerMinFree,
 					listPatternHandler,
 					groupDoubleHandlerFree,
+					groupDoubleHandlerFree - groupDoubleHandlerMinFree,
 					groupDoubleHandler,
 					interleaveDoubleHandlerFree,
+					interleaveDoubleHandlerFree - interleaveDoubleHandlerMinFree,
 					interleaveDoubleHandler,
 					groupMinimalReduceCountHandlerFree,
+					groupMinimalReduceCountHandlerFree - groupMinimalReduceCountHandlerMinFree,
 					groupMinimalReduceCountHandler,
 					groupMaximalReduceCountHandlerFree,
+					groupMaximalReduceCountHandlerFree - groupMaximalReduceCountHandlerMinFree,
 					groupMaximalReduceCountHandler,
 					interleaveMinimalReduceCountHandlerFree,
+					interleaveMinimalReduceCountHandlerFree - interleaveMinimalReduceCountHandlerMinFree,
 					interleaveMinimalReduceCountHandler,
 					interleaveMaximalReduceCountHandlerFree,
+					interleaveMaximalReduceCountHandlerFree - interleaveMaximalReduceCountHandlerMinFree,
 					interleaveMaximalReduceCountHandler,
 					grammarMinimalReduceHandlerFree,
+					grammarMinimalReduceHandlerFree - grammarMinimalReduceHandlerMinFree,
 					grammarMinimalReduceHandler,
 					grammarMaximalReduceHandlerFree,
+					grammarMaximalReduceHandlerFree - grammarMaximalReduceHandlerMinFree,
 					grammarMaximalReduceHandler,
 					refMinimalReduceHandlerFree,
+					refMinimalReduceHandlerFree - refMinimalReduceHandlerMinFree,
 					refMinimalReduceHandler,
 					refMaximalReduceHandlerFree,
+					refMaximalReduceHandlerFree - refMaximalReduceHandlerMinFree,
 					refMaximalReduceHandler,
 					choiceMinimalReduceHandlerFree,
+					choiceMinimalReduceHandlerFree - choiceMinimalReduceHandlerMinFree,
 					choiceMinimalReduceHandler,
 					choiceMaximalReduceHandlerFree,
+					choiceMaximalReduceHandlerFree - choiceMaximalReduceHandlerMinFree,    
 					choiceMaximalReduceHandler,
 					groupMinimalReduceHandlerFree,
+					groupMinimalReduceHandlerFree - groupMinimalReduceHandlerMinFree,
 					groupMinimalReduceHandler,
 					groupMaximalReduceHandlerFree,
+					groupMaximalReduceHandlerFree - groupMaximalReduceHandlerMinFree,
 					groupMaximalReduceHandler,
 					interleaveMinimalReduceHandlerFree,
+					interleaveMinimalReduceHandlerFree - interleaveMinimalReduceHandlerMinFree,
 					interleaveMinimalReduceHandler,
 					interleaveMaximalReduceHandlerFree,
+					interleaveMaximalReduceHandlerFree - interleaveMaximalReduceHandlerMinFree,
 					interleaveMaximalReduceHandler);
-		
-		particleHandlerFree = 0;
-		choiceHandlerFree = 0;
-		groupHandlerFree = 0;
-		grammarHandlerFree = 0;
-		refHandlerFree = 0;
-		uinterleaveHandlerFree = 0;
-		minterleaveHandlerFree = 0;
-		sinterleaveHandlerFree = 0;
-		elementHandlerFree = 0;
-		attributeHandlerFree = 0;
-		exceptPatternHandlerFree = 0;
-		listPatternHandlerFree = 0;
-		groupDoubleHandlerFree = 0;
-		interleaveDoubleHandlerFree = 0;
-		groupMinimalReduceCountHandlerFree = 0;
-		groupMaximalReduceCountHandlerFree = 0;
-		interleaveMinimalReduceCountHandlerFree = 0;
-		interleaveMaximalReduceCountHandlerFree = 0;
-		grammarMinimalReduceHandlerFree = 0;
-		grammarMaximalReduceHandlerFree = 0;
-		refMinimalReduceHandlerFree = 0;
-		refMaximalReduceHandlerFree = 0;
-		choiceMinimalReduceHandlerFree = 0;
-		choiceMaximalReduceHandlerFree = 0;
-		groupMinimalReduceHandlerFree = 0;
-		groupMaximalReduceHandlerFree = 0;
-		interleaveMinimalReduceHandlerFree = 0;
-		interleaveMaximalReduceHandlerFree = 0;
+		full = false;
 	}
 	
 	public ParticleHandler getParticleHandler(ChildEventHandler childEventHandler, APattern p, ErrorCatcher errorCatcher){
-	    // particleHandlerRequested++;
+	    particleHandlerRequested++;
 		if(particleHandlerFree == 0){
-			// particleHandlerCreated++;			
+			particleHandlerCreated++;			
 			ParticleHandler ph = new ParticleHandler(debugWriter);
 			ph.init(this);
 			ph.init(childEventHandler, p, errorCatcher);
 			return ph;
-		}else{
+		}else{		    
 			ParticleHandler ph = particleHandler[--particleHandlerFree];
 			ph.init(childEventHandler, p, errorCatcher);
+			if(particleHandlerFree < particleHandlerMinFree) particleHandlerMinFree = particleHandlerFree;
 			return ph;
 		}
 	}
 	
-	/*public ParticleHandler getParticleHandler(StructureValidationHandler childEventHandler, APattern definition, int childIndex, int satisfied, int saturated, ErrorCatcher errorCatcher){
-		if(particleHandlerFree == 0){
-			ParticleHandler ph = new ParticleHandler(debugWriter);
-			ph.init(this);
-			ph.init(childEventHandler, definition, errorCatcher);
-			return ph;
-		}else{
-			ParticleHandler ph = particleHandler[--particleHandlerFree];
-			ph.init(childEventHandler, definition, errorCatcher);
-			return ph;
-		}
-	}*/
 	
-	public void recycle(ParticleHandler psh){	
-	    // particleHandlerRecycled++;
-		if(particleHandlerFree == particleHandlerPoolSize){
-			if(particleHandlerPoolSize == 100) return;			
-			ParticleHandler[] increased = new ParticleHandler[++particleHandlerPoolSize];
+	public void recycle(ParticleHandler psh){
+	    particleHandlerRecycled++;	    	    
+		if(particleHandlerFree == particleHandler.length){
+		    if(particleHandler.length == particleHandlerMaxSize) return;
+			ParticleHandler[] increased = new ParticleHandler[10+particleHandler.length];
 			System.arraycopy(particleHandler, 0, increased, 0, particleHandlerFree);
 			particleHandler = increased;
 		}
@@ -678,9 +641,9 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		
 	
 	public ChoiceHandler getStructureValidationHandler(AChoicePattern cp, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
-	    // choiceHandlerRequested++;
+	    choiceHandlerRequested++;
 		if(choiceHandlerFree == 0){
-			// choiceHandlerCreated++;
+			choiceHandlerCreated++;
 			ChoiceHandler ch = new ChoiceHandler(debugWriter);
 			ch.init(this, inputStackDescriptor);
 			ch.init(cp, errorCatcher, parent, stackHandler);
@@ -688,15 +651,16 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			ChoiceHandler ch = choiceHandler[--choiceHandlerFree];			
 			ch.init(cp, errorCatcher, parent, stackHandler);
+			if(choiceHandlerFree < choiceHandlerMinFree) choiceHandlerMinFree = choiceHandlerFree;
 			return ch;
 		}		
 	}
 	
-	public void recycle(ChoiceHandler ch){	
-	    // choiceHandlerRecycled++;
-		if(choiceHandlerFree == choiceHandlerPoolSize){
-			if(choiceHandlerPoolSize == 100) return;
-			ChoiceHandler[] increased = new ChoiceHandler[++choiceHandlerPoolSize];
+	public void recycle(ChoiceHandler ch){
+	    choiceHandlerRecycled++;	    	    
+		if(choiceHandlerFree == choiceHandler.length){
+		    if(choiceHandler.length == choiceHandlerMaxSize) return;			
+			ChoiceHandler[] increased = new ChoiceHandler[10+choiceHandler.length];
 			System.arraycopy(choiceHandler, 0, increased, 0, choiceHandlerFree);
 			choiceHandler = increased;
 		}
@@ -704,9 +668,9 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	}
 	
 	public GroupHandler getStructureValidationHandler(AGroup g, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
-	    // groupHandlerRequested++;
+	    groupHandlerRequested++;
 		if(groupHandlerFree == 0){
-			// groupHandlerCreated++;
+			groupHandlerCreated++;
 			GroupHandler gh = new GroupHandler(debugWriter);
 			gh.init(this, inputStackDescriptor);			
 			gh.init(g, errorCatcher, parent, stackHandler);
@@ -714,15 +678,16 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			GroupHandler gh = groupHandler[--groupHandlerFree];
 			gh.init(g, errorCatcher, parent, stackHandler);
+			if(groupHandlerFree < groupHandlerMinFree) groupHandlerMinFree = groupHandlerFree;
 			return gh;
 		}		
 	}
 	
 	public void recycle(GroupHandler gh){
-	    // groupHandlerRecycled++;
-		if(groupHandlerFree == groupHandlerPoolSize){
-			if(groupHandlerPoolSize == 100) return;
-			GroupHandler[] increased = new GroupHandler[++groupHandlerPoolSize];
+	    groupHandlerRecycled++;	    	    
+		if(groupHandlerFree == groupHandler.length){
+            if(groupHandler.length == groupHandlerMaxSize) return;			
+			GroupHandler[] increased = new GroupHandler[10+groupHandler.length];
 			System.arraycopy(groupHandler, 0, increased, 0, groupHandlerFree);
 			groupHandler = increased;
 		}
@@ -739,14 +704,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			RefHandler pih = refHandler[--refHandlerFree];
 			pih.init(r, errorCatcher, parent, stackHandler);
+			if(refHandlerFree < refHandlerMinFree) refHandlerMinFree = refHandlerFree;
 			return pih;
 		}		
 	}	
 	
-	public void recycle(RefHandler pih){
-		if(refHandlerFree == refHandlerPoolSize){
-			if(refHandlerPoolSize == 100) return;
-			RefHandler[] increased = new RefHandler[++refHandlerPoolSize];
+	public void recycle(RefHandler pih){	    
+		if(refHandlerFree == refHandler.length){
+            if(refHandler.length == refHandlerMaxSize) return;			
+			RefHandler[] increased = new RefHandler[10+refHandler.length];
 			System.arraycopy(refHandler, 0, increased, 0, refHandlerFree);
 			refHandler = increased;
 		}
@@ -763,14 +729,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			GrammarHandler pih = grammarHandler[--grammarHandlerFree];			
 			pih.init(g, errorCatcher, parent, stackHandler);
+			if(grammarHandlerFree < grammarHandlerMinFree) grammarHandlerMinFree = grammarHandlerFree;
 			return pih;
 		}		
 	}	
 	
-	public void recycle(GrammarHandler pih){
-		if(grammarHandlerFree == grammarHandlerPoolSize){
-			if(grammarHandlerPoolSize == 100) return;
-			GrammarHandler[] increased = new GrammarHandler[++grammarHandlerPoolSize];
+	public void recycle(GrammarHandler pih){	    
+		if(grammarHandlerFree == grammarHandler.length){
+            if(grammarHandler.length == grammarHandlerMaxSize) return;			
+			GrammarHandler[] increased = new GrammarHandler[10+grammarHandler.length];
 			System.arraycopy(grammarHandler, 0, increased, 0, grammarHandlerFree);
 			grammarHandler = increased;
 		}
@@ -783,21 +750,19 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 			UInterleaveHandler ih = new UInterleaveHandler(debugWriter);
 			ih.init(this, inputStackDescriptor);
 			ih.init(i, errorCatcher, parent, stackHandler);
-			//ih.pp();			
 			return ih;			
 		}else{
 			UInterleaveHandler ih = uinterleaveHandler[--uinterleaveHandlerFree];
 			ih.init(i, errorCatcher, parent, stackHandler);
-			//ih.pp();
+			if(uinterleaveHandlerFree < uinterleaveHandlerMinFree) uinterleaveHandlerMinFree = uinterleaveHandlerFree;
 			return ih;
 		}	
 	}
 	
-	public void recycle(UInterleaveHandler ih){
-		//ih.pp();
-		if(uinterleaveHandlerFree == uinterleaveHandlerPoolSize){
-			if(uinterleaveHandlerPoolSize == 100) return;
-			UInterleaveHandler[] increased = new UInterleaveHandler[++uinterleaveHandlerPoolSize];
+	public void recycle(UInterleaveHandler ih){		
+		if(uinterleaveHandlerFree == uinterleaveHandler.length){
+            if(uinterleaveHandler.length == uinterleaveHandlerMaxSize) return;			
+			UInterleaveHandler[] increased = new UInterleaveHandler[10+uinterleaveHandler.length];
 			System.arraycopy(uinterleaveHandler, 0, increased, 0, uinterleaveHandlerFree);
 			uinterleaveHandler = increased;
 		}
@@ -810,21 +775,19 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 			MInterleaveHandler ih = new MInterleaveHandler(debugWriter);
 			ih.init(this, inputStackDescriptor);
 			ih.init(i, errorCatcher, parent, stackHandler, this);
-			//ih.pp();			
 			return ih;			
 		}else{
 			MInterleaveHandler ih = minterleaveHandler[--minterleaveHandlerFree];
 			ih.init(i, errorCatcher, parent, stackHandler, this);
-			//ih.pp();
+			if(minterleaveHandlerFree < minterleaveHandlerMinFree) minterleaveHandlerMinFree = minterleaveHandlerFree;
 			return ih;
 		}	
 	}
 	
-	public void recycle(MInterleaveHandler ih){
-		//ih.pp();
-		if(minterleaveHandlerFree == minterleaveHandlerPoolSize){
-			if(minterleaveHandlerPoolSize == 100) return;
-			MInterleaveHandler[] increased = new MInterleaveHandler[++minterleaveHandlerPoolSize];
+	public void recycle(MInterleaveHandler ih){		
+		if(minterleaveHandlerFree == minterleaveHandler.length){
+            if(minterleaveHandler.length == minterleaveHandlerMaxSize) return;			
+			MInterleaveHandler[] increased = new MInterleaveHandler[10+minterleaveHandler.length];
 			System.arraycopy(minterleaveHandler, 0, increased, 0, minterleaveHandlerFree);
 			minterleaveHandler = increased;
 		}
@@ -837,21 +800,19 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 			SInterleaveHandler ih = new SInterleaveHandler(debugWriter);
 			ih.init(this, inputStackDescriptor);
 			ih.init(i, errorCatcher, parent, stackHandler, primaryHandler);
-			//ih.pp();			
 			return ih;			
 		}else{
 			SInterleaveHandler ih = sinterleaveHandler[--sinterleaveHandlerFree];
 			ih.init(i, errorCatcher, parent, stackHandler, primaryHandler);
-			//ih.pp();
+			if(sinterleaveHandlerFree < sinterleaveHandlerMinFree) sinterleaveHandlerMinFree = sinterleaveHandlerFree;
 			return ih;
 		}	
 	}
 	
-	public void recycle(SInterleaveHandler ih){
-		//ih.pp();
-		if(sinterleaveHandlerFree == sinterleaveHandlerPoolSize){
-			if(sinterleaveHandlerPoolSize == 100) return;
-			SInterleaveHandler[] increased = new SInterleaveHandler[++sinterleaveHandlerPoolSize];
+	public void recycle(SInterleaveHandler ih){	    
+		if(sinterleaveHandlerFree == sinterleaveHandler.length){
+            if(sinterleaveHandler.length == sinterleaveHandlerMaxSize) return;			
+			SInterleaveHandler[] increased = new SInterleaveHandler[10+sinterleaveHandler.length];
 			System.arraycopy(sinterleaveHandler, 0, increased, 0, sinterleaveHandlerFree);
 			sinterleaveHandler = increased;
 		}
@@ -860,9 +821,9 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	
 	
 	public ElementHandler getStructureValidationHandler(AElement e, ErrorCatcher errorCatcher, StackHandler stackHandler){
-	    // elementHandlerRequested++;
+	    elementHandlerRequested++;
 		if(elementHandlerFree == 0){
-			// elementHandlerCreated++;
+			elementHandlerCreated++;
 			ElementHandler eh = new ElementHandler(debugWriter);
 			eh.init(this, inputStackDescriptor);
 			eh.init(e, errorCatcher, stackHandler);
@@ -870,15 +831,16 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			ElementHandler eh = elementHandler[--elementHandlerFree];
 			eh.init(e, errorCatcher, stackHandler);
+			if(elementHandlerFree < elementHandlerMinFree) elementHandlerMinFree = elementHandlerFree;
 			return eh;
 		}		
 	}
 	
 	public void recycle(ElementHandler eh){
-	    // elementHandlerRecycled++;
-		if(elementHandlerFree == elementHandlerPoolSize){
-			if(elementHandlerPoolSize == 100) return;
-			ElementHandler[] increased = new ElementHandler[++elementHandlerPoolSize];
+	    elementHandlerRecycled++;	    	    
+		if(elementHandlerFree == elementHandler.length){
+            if(elementHandler.length == elementHandlerMaxSize) return;			
+			ElementHandler[] increased = new ElementHandler[10+elementHandler.length];
 			System.arraycopy(elementHandler, 0, increased, 0, elementHandlerFree);
 			elementHandler = increased;
 		}
@@ -895,14 +857,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			AttributeHandler ah = attributeHandler[--attributeHandlerFree];
 			ah.init(a, errorCatcher, stackHandler);
+			if(attributeHandlerFree < attributeHandlerMinFree) attributeHandlerMinFree = attributeHandlerFree;
 			return ah;
 		}		
 	}
 	
-	public void recycle(AttributeHandler ah){
-		if(attributeHandlerFree == attributeHandlerPoolSize){
-			if(attributeHandlerPoolSize == 100) return;
-			AttributeHandler[] increased = new AttributeHandler[++attributeHandlerPoolSize];
+	public void recycle(AttributeHandler ah){	    
+		if(attributeHandlerFree == attributeHandler.length){
+            if(attributeHandler.length == attributeHandlerMaxSize) return;			
+			AttributeHandler[] increased = new AttributeHandler[10+attributeHandler.length];
 			System.arraycopy(attributeHandler, 0, increased, 0, attributeHandlerFree);
 			attributeHandler = increased;
 		}
@@ -919,14 +882,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			ExceptPatternHandler ah = exceptPatternHandler[--exceptPatternHandlerFree];
 			ah.init(a, errorCatcher, stackHandler);
+			if(exceptPatternHandlerFree < exceptPatternHandlerMinFree) exceptPatternHandlerMinFree = exceptPatternHandlerFree;
 			return ah;
 		}		
 	}
 	
-	public void recycle(ExceptPatternHandler ah){
-		if(exceptPatternHandlerFree == exceptPatternHandlerPoolSize){
-			if(exceptPatternHandlerPoolSize == 100) return;
-			ExceptPatternHandler[] increased = new ExceptPatternHandler[++exceptPatternHandlerPoolSize];
+	public void recycle(ExceptPatternHandler ah){	    
+		if(exceptPatternHandlerFree == exceptPatternHandler.length){
+		    if(exceptPatternHandler.length == exceptPatternHandlerMaxSize) return;
+			ExceptPatternHandler[] increased = new ExceptPatternHandler[10+exceptPatternHandler.length];
 			System.arraycopy(exceptPatternHandler, 0, increased, 0, exceptPatternHandlerFree);
 			exceptPatternHandler = increased;
 		}
@@ -943,14 +907,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			ListPatternHandler ah = listPatternHandler[--listPatternHandlerFree];
 			ah.init(a, errorCatcher, stackHandler);
+			if(listPatternHandlerFree < listPatternHandlerMinFree) listPatternHandlerMinFree = listPatternHandlerFree;
 			return ah;
 		}		
 	}
 	
-	public void recycle(ListPatternHandler ah){
-		if(listPatternHandlerFree == listPatternHandlerPoolSize){
-			if(listPatternHandlerPoolSize == 100) return;
-			ListPatternHandler[] increased = new ListPatternHandler[++listPatternHandlerPoolSize];
+	public void recycle(ListPatternHandler ah){	    
+		if(listPatternHandlerFree == listPatternHandler.length){
+            if(listPatternHandler.length == listPatternHandlerMaxSize) return;			
+			ListPatternHandler[] increased = new ListPatternHandler[10+listPatternHandler.length];
 			System.arraycopy(listPatternHandler, 0, increased, 0, listPatternHandlerFree);
 			listPatternHandler = increased;
 		}
@@ -967,14 +932,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			GroupDoubleHandler sih = groupDoubleHandler[--groupDoubleHandlerFree];
 			sih.init(pattern, errorCatcher, parent, stackHandler, stackHandlerPool);
+			if(groupDoubleHandlerFree < groupDoubleHandlerMinFree) groupDoubleHandlerMinFree = groupDoubleHandlerFree;
 			return sih;
 		}		
 	}
 	
-	public void recycle(GroupDoubleHandler sih){
-		if(groupDoubleHandlerFree == groupDoubleHandlerPoolSize){
-			if(groupDoubleHandlerPoolSize == 100) return;
-			GroupDoubleHandler[] increased = new GroupDoubleHandler[++groupDoubleHandlerPoolSize];
+	public void recycle(GroupDoubleHandler sih){	    
+		if(groupDoubleHandlerFree == groupDoubleHandler.length){
+		    if(groupDoubleHandler.length == groupDoubleHandlerMaxSize) return;			
+			GroupDoubleHandler[] increased = new GroupDoubleHandler[10+groupDoubleHandler.length];
 			System.arraycopy(groupDoubleHandler, 0, increased, 0, groupDoubleHandlerFree);
 			groupDoubleHandler = increased;
 		}
@@ -991,14 +957,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			InterleaveDoubleHandler sih = interleaveDoubleHandler[--interleaveDoubleHandlerFree];
 			sih.init(pattern, errorCatcher, parent, stackHandler, stackHandlerPool);
+			if(interleaveDoubleHandlerFree < interleaveDoubleHandlerMinFree) interleaveDoubleHandlerMinFree = interleaveDoubleHandlerFree;
 			return sih;
 		}		
 	}
 	
 	public void recycle(InterleaveDoubleHandler sih){
-		if(interleaveDoubleHandlerFree == interleaveDoubleHandlerPoolSize){
-			if(interleaveDoubleHandlerPoolSize == 100) return;
-			InterleaveDoubleHandler[] increased = new InterleaveDoubleHandler[++interleaveDoubleHandlerPoolSize];
+		if(interleaveDoubleHandlerFree == interleaveDoubleHandler.length){
+    	    if(interleaveDoubleHandler.length == interleaveDoubleHandlerMaxSize) return;			
+			InterleaveDoubleHandler[] increased = new InterleaveDoubleHandler[10+interleaveDoubleHandler.length];
 			System.arraycopy(interleaveDoubleHandler, 0, increased, 0, interleaveDoubleHandlerFree);
 			interleaveDoubleHandler = increased;
 		}
@@ -1015,14 +982,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			GroupMinimalReduceCountHandler pih = groupMinimalReduceCountHandler[--groupMinimalReduceCountHandlerFree];			
 			pih.init(reduceCountList, startedCountList, g, errorCatcher, stackHandler);
+			if(groupMinimalReduceCountHandlerFree < groupMinimalReduceCountHandlerMinFree) groupMinimalReduceCountHandlerMinFree = groupMinimalReduceCountHandlerFree; 
 			return pih;
 		}		
 	}
 
-	public void recycle(GroupMinimalReduceCountHandler gh){
-		if(groupMinimalReduceCountHandlerFree == groupMinimalReduceCountHandlerPoolSize){
-			if(groupMinimalReduceCountHandlerPoolSize == 100) return;
-			GroupMinimalReduceCountHandler[] increased = new GroupMinimalReduceCountHandler[++groupMinimalReduceCountHandlerPoolSize];
+	public void recycle(GroupMinimalReduceCountHandler gh){	    
+		if(groupMinimalReduceCountHandlerFree == groupMinimalReduceCountHandler.length){
+		    if(groupMinimalReduceCountHandler.length == groupMinimalReduceCountHandlerMaxSize) return;			
+			GroupMinimalReduceCountHandler[] increased = new GroupMinimalReduceCountHandler[10+groupMinimalReduceCountHandler.length];
 			System.arraycopy(groupMinimalReduceCountHandler, 0, increased, 0, groupMinimalReduceCountHandlerFree);
 			groupMinimalReduceCountHandler = increased;
 		}
@@ -1039,14 +1007,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			GroupMaximalReduceCountHandler pih = groupMaximalReduceCountHandler[--groupMaximalReduceCountHandlerFree];			
 			pih.init(reduceCountList, startedCountList, g, errorCatcher, stackHandler);
+			if(groupMaximalReduceCountHandlerFree < groupMaximalReduceCountHandlerMinFree) groupMaximalReduceCountHandlerMinFree = groupMaximalReduceCountHandlerFree;
 			return pih;
 		}		
 	}
 
-	public void recycle(GroupMaximalReduceCountHandler gh){
-		if(groupMaximalReduceCountHandlerFree == groupMaximalReduceCountHandlerPoolSize){
-			if(groupMaximalReduceCountHandlerPoolSize == 100) return;
-			GroupMaximalReduceCountHandler[] increased = new GroupMaximalReduceCountHandler[++groupMaximalReduceCountHandlerPoolSize];
+	public void recycle(GroupMaximalReduceCountHandler gh){	    
+		if(groupMaximalReduceCountHandlerFree == groupMaximalReduceCountHandler.length){
+		    if(groupMaximalReduceCountHandler.length == groupMaximalReduceCountHandlerMaxSize) return;			
+			GroupMaximalReduceCountHandler[] increased = new GroupMaximalReduceCountHandler[10+groupMaximalReduceCountHandler.length];
 			System.arraycopy(groupMaximalReduceCountHandler, 0, increased, 0, groupMaximalReduceCountHandlerFree);
 			groupMaximalReduceCountHandler = increased;
 		}
@@ -1063,14 +1032,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			InterleaveMinimalReduceCountHandler pih = interleaveMinimalReduceCountHandler[--interleaveMinimalReduceCountHandlerFree];			
 			pih.init(reduceCountList, i, errorCatcher, stackHandler);
+			if(interleaveMinimalReduceCountHandlerFree < interleaveMinimalReduceCountHandlerMinFree) interleaveMinimalReduceCountHandlerMinFree = interleaveMinimalReduceCountHandlerFree;
 			return pih;
 		}		
 	}
 
-	public void recycle(InterleaveMinimalReduceCountHandler ih){
-		if(interleaveMinimalReduceCountHandlerFree == interleaveMinimalReduceCountHandlerPoolSize){
-			if(interleaveMinimalReduceCountHandlerPoolSize == 100) return;
-			InterleaveMinimalReduceCountHandler[] increased = new InterleaveMinimalReduceCountHandler[++interleaveMinimalReduceCountHandlerPoolSize];
+	public void recycle(InterleaveMinimalReduceCountHandler ih){	    
+		if(interleaveMinimalReduceCountHandlerFree == interleaveMinimalReduceCountHandler.length){
+		    if(interleaveMinimalReduceCountHandler.length == interleaveMinimalReduceCountHandlerMaxSize) return;			
+			InterleaveMinimalReduceCountHandler[] increased = new InterleaveMinimalReduceCountHandler[10+interleaveMinimalReduceCountHandler.length];
 			System.arraycopy(interleaveMinimalReduceCountHandler, 0, increased, 0, interleaveMinimalReduceCountHandlerFree);
 			interleaveMinimalReduceCountHandler = increased;
 		}
@@ -1087,14 +1057,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			InterleaveMaximalReduceCountHandler pih = interleaveMaximalReduceCountHandler[--interleaveMaximalReduceCountHandlerFree];			
 			pih.init(reduceCountList, i, errorCatcher, stackHandler);
+			if(interleaveMaximalReduceCountHandlerFree < interleaveMaximalReduceCountHandlerMinFree) interleaveMaximalReduceCountHandlerMinFree = interleaveMaximalReduceCountHandlerFree; 
 			return pih;
 		}		
 	}
 
-	public void recycle(InterleaveMaximalReduceCountHandler ih){
-		if(interleaveMaximalReduceCountHandlerFree == interleaveMaximalReduceCountHandlerPoolSize){
-			if(interleaveMaximalReduceCountHandlerPoolSize == 100) return;
-			InterleaveMaximalReduceCountHandler[] increased = new InterleaveMaximalReduceCountHandler[++interleaveMaximalReduceCountHandlerPoolSize];
+	public void recycle(InterleaveMaximalReduceCountHandler ih){	    
+		if(interleaveMaximalReduceCountHandlerFree == interleaveMaximalReduceCountHandler.length){
+            if(interleaveMaximalReduceCountHandler.length == interleaveMaximalReduceCountHandlerMaxSize) return;			
+			InterleaveMaximalReduceCountHandler[] increased = new InterleaveMaximalReduceCountHandler[10+interleaveMaximalReduceCountHandler.length];
 			System.arraycopy(interleaveMaximalReduceCountHandler, 0, increased, 0, interleaveMaximalReduceCountHandlerFree);
 			interleaveMaximalReduceCountHandler = increased;
 		}
@@ -1112,14 +1083,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			GrammarMinimalReduceHandler pih = grammarMinimalReduceHandler[--grammarMinimalReduceHandlerFree];			
 			pih.init(g, errorCatcher, parent, stackHandler);
+			if(grammarMinimalReduceHandlerFree < grammarMinimalReduceHandlerMinFree) grammarMinimalReduceHandlerMinFree = grammarMinimalReduceHandlerFree;
 			return pih;
 		}		
 	}
 
-	public void recycle(GrammarMinimalReduceHandler gh){
-		if(grammarMinimalReduceHandlerFree == grammarMinimalReduceHandlerPoolSize){
-			if(grammarMinimalReduceHandlerPoolSize == 100) return;
-			GrammarMinimalReduceHandler[] increased = new GrammarMinimalReduceHandler[++grammarMinimalReduceHandlerPoolSize];
+	public void recycle(GrammarMinimalReduceHandler gh){	    
+		if(grammarMinimalReduceHandlerFree == grammarMinimalReduceHandler.length){
+		    if(grammarMinimalReduceHandler.length == grammarMinimalReduceHandlerMaxSize) return;			
+			GrammarMinimalReduceHandler[] increased = new GrammarMinimalReduceHandler[10+grammarMinimalReduceHandler.length];
 			System.arraycopy(grammarMinimalReduceHandler, 0, increased, 0, grammarMinimalReduceHandlerFree);
 			grammarMinimalReduceHandler = increased;
 		}
@@ -1136,14 +1108,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			GrammarMaximalReduceHandler pih = grammarMaximalReduceHandler[--grammarMaximalReduceHandlerFree];			
 			pih.init(g, errorCatcher, parent, stackHandler);
+			if(grammarMaximalReduceHandlerFree < grammarMaximalReduceHandlerMinFree) grammarMaximalReduceHandlerMinFree = grammarMaximalReduceHandlerFree;
 			return pih;
 		}		
 	}
 
-	public void recycle(GrammarMaximalReduceHandler gh){
-		if(grammarMaximalReduceHandlerFree == grammarMaximalReduceHandlerPoolSize){
-			if(grammarMaximalReduceHandlerPoolSize == 100) return;
-			GrammarMaximalReduceHandler[] increased = new GrammarMaximalReduceHandler[++grammarMaximalReduceHandlerPoolSize];
+	public void recycle(GrammarMaximalReduceHandler gh){	    
+		if(grammarMaximalReduceHandlerFree == grammarMaximalReduceHandler.length){
+		    if(grammarMaximalReduceHandler.length == grammarMaximalReduceHandlerMaxSize) return;			
+			GrammarMaximalReduceHandler[] increased = new GrammarMaximalReduceHandler[10+grammarMaximalReduceHandler.length];
 			System.arraycopy(grammarMaximalReduceHandler, 0, increased, 0, grammarMaximalReduceHandlerFree);
 			grammarMaximalReduceHandler = increased;
 		}
@@ -1160,14 +1133,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			RefMinimalReduceHandler rmrh = refMinimalReduceHandler[--refMinimalReduceHandlerFree];			
 			rmrh.init(r, errorCatcher, parent, stackHandler);
+			if(refMinimalReduceHandlerFree < refMinimalReduceHandlerMinFree) refMinimalReduceHandlerMinFree = refMinimalReduceHandlerFree;
 			return rmrh;
 		}		
 	}
 
-	public void recycle(RefMinimalReduceHandler rmrh){
-		if(refMinimalReduceHandlerFree == refMinimalReduceHandlerPoolSize){
-			if(refMinimalReduceHandlerPoolSize == 100) return;
-			RefMinimalReduceHandler[] increased = new RefMinimalReduceHandler[++refMinimalReduceHandlerPoolSize];
+	public void recycle(RefMinimalReduceHandler rmrh){	    
+		if(refMinimalReduceHandlerFree == refMinimalReduceHandler.length){
+		    if(refMinimalReduceHandler.length == refMinimalReduceHandlerMaxSize) return;			
+			RefMinimalReduceHandler[] increased = new RefMinimalReduceHandler[10+refMinimalReduceHandler.length];
 			System.arraycopy(refMinimalReduceHandler, 0, increased, 0, refMinimalReduceHandlerFree);
 			refMinimalReduceHandler = increased;
 		}
@@ -1184,14 +1158,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			RefMaximalReduceHandler pih = refMaximalReduceHandler[--refMaximalReduceHandlerFree];			
 			pih.init(r, errorCatcher, parent, stackHandler);
+			if(refMaximalReduceHandlerFree < refMaximalReduceHandlerMinFree) refMaximalReduceHandlerMinFree = refMaximalReduceHandlerFree;
 			return pih;
 		}		
 	}
 
-	public void recycle(RefMaximalReduceHandler rmrh){
-		if(refMaximalReduceHandlerFree == refMaximalReduceHandlerPoolSize){
-			if(refMaximalReduceHandlerPoolSize == 100) return;
-			RefMaximalReduceHandler[] increased = new RefMaximalReduceHandler[++refMaximalReduceHandlerPoolSize];
+	public void recycle(RefMaximalReduceHandler rmrh){	    
+		if(refMaximalReduceHandlerFree == refMaximalReduceHandler.length){
+		    if(refMaximalReduceHandler.length == refMaximalReduceHandlerMaxSize) return;			
+			RefMaximalReduceHandler[] increased = new RefMaximalReduceHandler[10+refMaximalReduceHandler.length];
 			System.arraycopy(refMaximalReduceHandler, 0, increased, 0, refMaximalReduceHandlerFree);
 			refMaximalReduceHandler = increased;
 		}
@@ -1208,14 +1183,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			ChoiceMinimalReduceHandler pih = choiceMinimalReduceHandler[--choiceMinimalReduceHandlerFree];			
 			pih.init(c, errorCatcher, parent, stackHandler);
+			if(choiceMinimalReduceHandlerFree < choiceMinimalReduceHandlerMinFree) choiceMinimalReduceHandlerMinFree = choiceMinimalReduceHandlerFree;
 			return pih;
 		}		
 	}
 
-	public void recycle(ChoiceMinimalReduceHandler ch){
-		if(choiceMinimalReduceHandlerFree == choiceMinimalReduceHandlerPoolSize){
-			if(choiceMinimalReduceHandlerPoolSize == 100) return;
-			ChoiceMinimalReduceHandler[] increased = new ChoiceMinimalReduceHandler[++choiceMinimalReduceHandlerPoolSize];
+	public void recycle(ChoiceMinimalReduceHandler ch){	    
+		if(choiceMinimalReduceHandlerFree == choiceMinimalReduceHandler.length){
+		    if(choiceMinimalReduceHandler.length == choiceMinimalReduceHandlerMaxSize) return;			
+			ChoiceMinimalReduceHandler[] increased = new ChoiceMinimalReduceHandler[10+choiceMinimalReduceHandler.length];
 			System.arraycopy(choiceMinimalReduceHandler, 0, increased, 0, choiceMinimalReduceHandlerFree);
 			choiceMinimalReduceHandler = increased;
 		}
@@ -1232,14 +1208,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			ChoiceMaximalReduceHandler pih = choiceMaximalReduceHandler[--choiceMaximalReduceHandlerFree];			
 			pih.init(c, errorCatcher, parent, stackHandler);
+			if(choiceMaximalReduceHandlerFree < choiceMaximalReduceHandlerMinFree) choiceMaximalReduceHandlerMinFree = choiceMaximalReduceHandlerFree;
 			return pih;
 		}		
 	}
 
-	public void recycle(ChoiceMaximalReduceHandler ch){
-		if(choiceMaximalReduceHandlerFree == choiceMaximalReduceHandlerPoolSize){
-			if(choiceMaximalReduceHandlerPoolSize == 100) return;
-			ChoiceMaximalReduceHandler[] increased = new ChoiceMaximalReduceHandler[++choiceMaximalReduceHandlerPoolSize];
+	public void recycle(ChoiceMaximalReduceHandler ch){	    
+		if(choiceMaximalReduceHandlerFree == choiceMaximalReduceHandler.length){
+		    if(choiceMaximalReduceHandler.length == choiceMaximalReduceHandlerMaxSize) return;			
+			ChoiceMaximalReduceHandler[] increased = new ChoiceMaximalReduceHandler[10+choiceMaximalReduceHandler.length];
 			System.arraycopy(choiceMaximalReduceHandler, 0, increased, 0, choiceMaximalReduceHandlerFree);
 			choiceMaximalReduceHandler = increased;
 		}
@@ -1256,14 +1233,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			GroupMinimalReduceHandler pih = groupMinimalReduceHandler[--groupMinimalReduceHandlerFree];			
 			pih.init(g, errorCatcher, parent, stackHandler);
+			if(groupMinimalReduceHandlerFree < groupMinimalReduceHandlerMinFree) groupMinimalReduceHandlerMinFree = groupMinimalReduceHandlerFree;
 			return pih;
 		}		
 	}
 
-	public void recycle(GroupMinimalReduceHandler gh){
-		if(groupMinimalReduceHandlerFree == groupMinimalReduceHandlerPoolSize){
-			if(groupMinimalReduceHandlerPoolSize == 100) return;
-			GroupMinimalReduceHandler[] increased = new GroupMinimalReduceHandler[++groupMinimalReduceHandlerPoolSize];
+	public void recycle(GroupMinimalReduceHandler gh){	    
+		if(groupMinimalReduceHandlerFree == groupMinimalReduceHandler.length){
+		    if(groupMinimalReduceHandler.length == groupMinimalReduceHandlerMaxSize) return;			
+			GroupMinimalReduceHandler[] increased = new GroupMinimalReduceHandler[10+groupMinimalReduceHandler.length];
 			System.arraycopy(groupMinimalReduceHandler, 0, increased, 0, groupMinimalReduceHandlerFree);
 			groupMinimalReduceHandler = increased;
 		}
@@ -1280,14 +1258,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			GroupMaximalReduceHandler pih = groupMaximalReduceHandler[--groupMaximalReduceHandlerFree];			
 			pih.init(g, errorCatcher, parent, stackHandler);
+			if(groupMaximalReduceHandlerFree < groupMaximalReduceHandlerMinFree) groupMaximalReduceHandlerMinFree = groupMaximalReduceHandlerFree;
 			return pih;
 		}		
 	}
 
-	public void recycle(GroupMaximalReduceHandler gh){
-		if(groupMaximalReduceHandlerFree == groupMaximalReduceHandlerPoolSize){
-			if(groupMaximalReduceHandlerPoolSize == 100) return;
-			GroupMaximalReduceHandler[] increased = new GroupMaximalReduceHandler[++groupMaximalReduceHandlerPoolSize];
+	public void recycle(GroupMaximalReduceHandler gh){	    
+		if(groupMaximalReduceHandlerFree == groupMaximalReduceHandler.length){
+		    if(groupMaximalReduceHandler.length == groupMaximalReduceHandlerMaxSize) return;			
+			GroupMaximalReduceHandler[] increased = new GroupMaximalReduceHandler[10+groupMaximalReduceHandler.length];
 			System.arraycopy(groupMaximalReduceHandler, 0, increased, 0, groupMaximalReduceHandlerFree);
 			groupMaximalReduceHandler = increased;
 		}
@@ -1304,14 +1283,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			InterleaveMinimalReduceHandler pih = interleaveMinimalReduceHandler[--interleaveMinimalReduceHandlerFree];			
 			pih.init(i, errorCatcher, parent, stackHandler);
+			if(interleaveMinimalReduceHandlerFree < interleaveMinimalReduceHandlerMinFree) interleaveMinimalReduceHandlerMinFree = interleaveMinimalReduceHandlerFree;
 			return pih;
 		}		
 	}
 
-	public void recycle(InterleaveMinimalReduceHandler ih){
-		if(interleaveMinimalReduceHandlerFree == interleaveMinimalReduceHandlerPoolSize){
-			if(interleaveMinimalReduceHandlerPoolSize == 100) return;
-			InterleaveMinimalReduceHandler[] increased = new InterleaveMinimalReduceHandler[++interleaveMinimalReduceHandlerPoolSize];
+	public void recycle(InterleaveMinimalReduceHandler ih){	    
+		if(interleaveMinimalReduceHandlerFree == interleaveMinimalReduceHandler.length){
+		    if(interleaveMinimalReduceHandler.length == interleaveMinimalReduceHandlerMaxSize) return;			
+			InterleaveMinimalReduceHandler[] increased = new InterleaveMinimalReduceHandler[10+interleaveMinimalReduceHandler.length];
 			System.arraycopy(interleaveMinimalReduceHandler, 0, increased, 0, interleaveMinimalReduceHandlerFree);
 			interleaveMinimalReduceHandler = increased;
 		}
@@ -1328,14 +1308,15 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		}else{
 			InterleaveMaximalReduceHandler pih = interleaveMaximalReduceHandler[--interleaveMaximalReduceHandlerFree];			
 			pih.init(i, errorCatcher, parent, stackHandler);
+			if(interleaveMaximalReduceHandlerFree < interleaveMaximalReduceHandlerMinFree) interleaveMaximalReduceHandlerMinFree = interleaveMaximalReduceHandlerFree;
 			return pih;
 		}		
 	}
 
-	public void recycle(InterleaveMaximalReduceHandler ih){
-		if(interleaveMaximalReduceHandlerFree == interleaveMaximalReduceHandlerPoolSize){
-			if(interleaveMaximalReduceHandlerPoolSize == 100) return;
-			InterleaveMaximalReduceHandler[] increased = new InterleaveMaximalReduceHandler[++interleaveMaximalReduceHandlerPoolSize];
+	public void recycle(InterleaveMaximalReduceHandler ih){	    
+		if(interleaveMaximalReduceHandlerFree == interleaveMaximalReduceHandler.length){
+		    if(interleaveMaximalReduceHandler.length == interleaveMaximalReduceHandlerMaxSize) return;			
+			InterleaveMaximalReduceHandler[] increased = new InterleaveMaximalReduceHandler[10+interleaveMaximalReduceHandler.length];
 			System.arraycopy(interleaveMaximalReduceHandler, 0, increased, 0, interleaveMaximalReduceHandlerFree);
 			interleaveMaximalReduceHandler = increased;
 		}

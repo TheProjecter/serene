@@ -33,7 +33,7 @@ public class ActiveDefinitionPool implements ActiveDefinitionRecycler{
 	ActiveComponentBuilder componentBuilder;
 	
 	int definitionFree; 
-	int definitionPoolSize;
+	int definitionMaxSize;
 	ActiveDefinition[] definitions;	
 	
 	MessageWriter debugWriter;
@@ -52,8 +52,8 @@ public class ActiveDefinitionPool implements ActiveDefinitionRecycler{
         //if(originalTopPattern == null) throw new NullPointerException();
         
 		definitionFree = 0;
-		definitionPoolSize = 10;
-		definitions = new ActiveDefinition[definitionPoolSize];
+		definitionMaxSize = 10;
+		definitions = new ActiveDefinition[5];
 	}
 
 
@@ -74,8 +74,9 @@ public class ActiveDefinitionPool implements ActiveDefinitionRecycler{
 	}
 	
 	public void recycle(ActiveDefinition definition){
-		if(definitionFree == definitionPoolSize){
-			ActiveDefinition[] increased = new ActiveDefinition[++definitionPoolSize];
+	    if(definitionFree == definitionMaxSize) return;
+		if(definitionFree == definitions.length){
+			ActiveDefinition[] increased = new ActiveDefinition[5+definitions.length];
 			System.arraycopy(definitions, 0, increased, 0, definitionFree);
 			definitions = increased;
 		}

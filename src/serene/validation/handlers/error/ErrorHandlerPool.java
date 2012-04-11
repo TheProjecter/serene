@@ -23,70 +23,69 @@ public class ErrorHandlerPool{
 	private static volatile ErrorHandlerPool instance;
 	
 	int vehPoolFree; 
-	int vehPoolPoolSize;
+	int vehPoolMaxSize;
 	ValidatorErrorHandlerPool[] vehPools;
 	
 	int validationErrorHAverageUse;
-	int validationErrorHPoolSize;
+	int validationErrorHMaxSize;
 	int validationErrorHFree;
 	ValidationErrorHandler[] validationErrorH;
     
 	int conflictErrorHAverageUse;
-	int conflictErrorHPoolSize;
+	int conflictErrorHMaxSize;
 	int conflictErrorHFree;
 	ExternalConflictErrorHandler[] conflictErrorH;
 	
 	int commonErrorHAverageUse;
-	int commonErrorHPoolSize;
+	int commonErrorHMaxSize;
 	int commonErrorHFree;
 	CommonErrorHandler[] commonErrorH;
 	
 	int defaultErrorHAverageUse;
-	int defaultErrorHPoolSize;
+	int defaultErrorHMaxSize;
 	int defaultErrorHFree;
 	DefaultErrorHandler[] defaultErrorH;
     
     int startErrorHAverageUse;
-	int startErrorHPoolSize;
+	int startErrorHMaxSize;
 	int startErrorHFree;
 	StartErrorHandler[] startErrorH;
 		
-	final int UNUSED = 0;
-	
 	MessageWriter debugWriter;
 	
 	private ErrorHandlerPool(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		
 		vehPoolFree = 0;
-		vehPoolPoolSize = 10;
-		vehPools = new ValidatorErrorHandlerPool[vehPoolPoolSize];
+		vehPools = new ValidatorErrorHandlerPool[10];
 		
-		validationErrorHAverageUse = UNUSED;
-		validationErrorHPoolSize = 10;
+		validationErrorHAverageUse = 0;
 		validationErrorHFree = 0;
-		validationErrorH = new ValidationErrorHandler[validationErrorHPoolSize];
+		validationErrorH = new ValidationErrorHandler[10];
         
     	
-		conflictErrorHAverageUse = UNUSED;
-		conflictErrorHPoolSize = 10;
+		conflictErrorHAverageUse = 0;
 		conflictErrorHFree = 0;
-		conflictErrorH = new ExternalConflictErrorHandler[conflictErrorHPoolSize];
+		conflictErrorH = new ExternalConflictErrorHandler[10];
 
-		commonErrorHAverageUse = UNUSED;
-		commonErrorHPoolSize = 10;
+		commonErrorHAverageUse = 0;
 		commonErrorHFree = 0;
-		commonErrorH = new CommonErrorHandler[commonErrorHPoolSize];
+		commonErrorH = new CommonErrorHandler[10];
 		
-		defaultErrorHAverageUse = UNUSED;
-		defaultErrorHPoolSize = 10;
+		defaultErrorHAverageUse = 0;
 		defaultErrorHFree = 0;
-		defaultErrorH = new DefaultErrorHandler[defaultErrorHPoolSize];
+		defaultErrorH = new DefaultErrorHandler[10];
         
-        startErrorHAverageUse = UNUSED;
-		startErrorHPoolSize = 10;
+        startErrorHAverageUse = 0;
 		startErrorHFree = 0;
-		startErrorH = new StartErrorHandler[startErrorHPoolSize];
+		startErrorH = new StartErrorHandler[10];
+		
+		validationErrorHMaxSize = 40;
+        conflictErrorHMaxSize = 20;
+        commonErrorHMaxSize = 20;
+        defaultErrorHMaxSize = 20;
+        startErrorHMaxSize = 10;
+        
 	}
 	
 	public static ErrorHandlerPool getInstance(MessageWriter debugWriter){
@@ -111,8 +110,9 @@ public class ErrorHandlerPool{
 	}
 		
 	public synchronized void recycle(ValidatorErrorHandlerPool vehp){
-		if(vehPoolFree == vehPoolPoolSize){
-			ValidatorErrorHandlerPool[] increased = new ValidatorErrorHandlerPool[++vehPoolPoolSize];
+	    if(vehPoolFree == vehPoolMaxSize)return;
+		if(vehPoolFree == vehPools.length){
+			ValidatorErrorHandlerPool[] increased = new ValidatorErrorHandlerPool[10+vehPools.length];
 			System.arraycopy(vehPools, 0, increased, 0, vehPoolFree);
 			vehPools = increased;
 		}
@@ -120,14 +120,16 @@ public class ErrorHandlerPool{
 	}	
 	
 	synchronized void fill(ValidatorErrorHandlerPool pool,
-						ValidationErrorHandler[] validationErrorH,
-						ExternalConflictErrorHandler[] conflictErrorH,
-						CommonErrorHandler[] commonErrorH,
-						DefaultErrorHandler[] defaultErrorH,
-						StartErrorHandler[] startErrorH){
+						ValidationErrorHandler[] validationErrorHToFill,
+						ExternalConflictErrorHandler[] conflictErrorHToFill,
+						CommonErrorHandler[] commonErrorHToFill,
+						DefaultErrorHandler[] defaultErrorHToFill,
+						StartErrorHandler[] startErrorHToFill){
 		int validationErrorHFillCount;	
-		if(validationErrorH == null || validationErrorH.length < validationErrorHAverageUse)
-			validationErrorH = new ValidationErrorHandler[validationErrorHAverageUse];
+		if(validationErrorHToFill== null || validationErrorHToFill.length < validationErrorHAverageUse){
+			validationErrorHToFill = new ValidationErrorHandler[validationErrorHAverageUse];
+			pool.validationErrorH = validationErrorHToFill;
+		}
 		if(validationErrorHFree > validationErrorHAverageUse){
 			validationErrorHFillCount = validationErrorHAverageUse;
 			validationErrorHFree = validationErrorHFree - validationErrorHAverageUse;
@@ -135,14 +137,16 @@ public class ErrorHandlerPool{
 			validationErrorHFillCount = validationErrorHFree;
 			validationErrorHFree = 0;
 		}
-		System.arraycopy(this.validationErrorH, validationErrorHFree, 
-							validationErrorH, 0, validationErrorHFillCount);
+		System.arraycopy(validationErrorH, validationErrorHFree, 
+							validationErrorHToFill, 0, validationErrorHFillCount);
         
         
         
 		int conflictErrorHFillCount;	
-		if(conflictErrorH == null || conflictErrorH.length < conflictErrorHAverageUse)
-			conflictErrorH = new ExternalConflictErrorHandler[conflictErrorHAverageUse];
+		if(conflictErrorHToFill == null || conflictErrorHToFill.length < conflictErrorHAverageUse){
+			conflictErrorHToFill = new ExternalConflictErrorHandler[conflictErrorHAverageUse];
+			pool.conflictErrorH = conflictErrorHToFill;
+		}
 		if(conflictErrorHFree > conflictErrorHAverageUse){
 			conflictErrorHFillCount = conflictErrorHAverageUse;
 			conflictErrorHFree = conflictErrorHFree - conflictErrorHAverageUse;
@@ -150,12 +154,14 @@ public class ErrorHandlerPool{
 			conflictErrorHFillCount = conflictErrorHFree;
 			conflictErrorHFree = 0;
 		}
-		System.arraycopy(this.conflictErrorH, conflictErrorHFree, 
-							conflictErrorH, 0, conflictErrorHFillCount);
+		System.arraycopy(conflictErrorH, conflictErrorHFree, 
+							conflictErrorHToFill, 0, conflictErrorHFillCount);
 				
 		int commonErrorHFillCount;	
-		if(commonErrorH == null || commonErrorH.length < commonErrorHAverageUse)
-			commonErrorH = new CommonErrorHandler[commonErrorHAverageUse];
+		if(commonErrorHToFill == null || commonErrorHToFill.length < commonErrorHAverageUse){
+			commonErrorHToFill = new CommonErrorHandler[commonErrorHAverageUse];
+			pool.commonErrorH = commonErrorHToFill;
+		}
 		if(commonErrorHFree > commonErrorHAverageUse){
 			commonErrorHFillCount = commonErrorHAverageUse;
 			commonErrorHFree = commonErrorHFree - commonErrorHAverageUse;
@@ -163,12 +169,14 @@ public class ErrorHandlerPool{
 			commonErrorHFillCount = commonErrorHFree;
 			commonErrorHFree = 0;
 		}
-		System.arraycopy(this.commonErrorH, commonErrorHFree, 
-							commonErrorH, 0, commonErrorHFillCount);
+		System.arraycopy(commonErrorH, commonErrorHFree, 
+							commonErrorHToFill, 0, commonErrorHFillCount);
 		
 		int defaultErrorHFillCount;	
-		if(defaultErrorH == null || defaultErrorH.length < defaultErrorHAverageUse)
-			defaultErrorH = new DefaultErrorHandler[defaultErrorHAverageUse];
+		if(defaultErrorHToFill == null || defaultErrorHToFill.length < defaultErrorHAverageUse){
+			defaultErrorHToFill = new DefaultErrorHandler[defaultErrorHAverageUse];
+			pool.defaultErrorH = defaultErrorHToFill;
+		}
 		if(defaultErrorHFree > defaultErrorHAverageUse){
 			defaultErrorHFillCount = defaultErrorHAverageUse;
 			defaultErrorHFree = defaultErrorHFree - defaultErrorHAverageUse;
@@ -176,12 +184,14 @@ public class ErrorHandlerPool{
 			defaultErrorHFillCount = defaultErrorHFree;
 			defaultErrorHFree = 0;
 		}
-		System.arraycopy(this.defaultErrorH, defaultErrorHFree, 
-							defaultErrorH, 0, defaultErrorHFillCount);
+		System.arraycopy(defaultErrorH, defaultErrorHFree, 
+							defaultErrorHToFill, 0, defaultErrorHFillCount);
         
         int startErrorHFillCount;	
-		if(startErrorH == null || startErrorH.length < startErrorHAverageUse)
-			startErrorH = new StartErrorHandler[startErrorHAverageUse];
+		if(startErrorHToFill == null || startErrorHToFill.length < startErrorHAverageUse){
+			startErrorHToFill = new StartErrorHandler[startErrorHAverageUse];
+			pool.startErrorH = startErrorHToFill;
+		}
 		if(startErrorHFree > startErrorHAverageUse){
 			startErrorHFillCount = startErrorHAverageUse;
 			startErrorHFree = startErrorHFree - startErrorHAverageUse;
@@ -189,91 +199,173 @@ public class ErrorHandlerPool{
 			startErrorHFillCount = startErrorHFree;
 			startErrorHFree = 0;
 		}
-		System.arraycopy(this.startErrorH, startErrorHFree, 
-							startErrorH, 0, startErrorHFillCount);
+		System.arraycopy(startErrorH, startErrorHFree, 
+							startErrorHToFill, 0, startErrorHFillCount);
 		
 		
-		pool.setHandlers(validationErrorHFillCount,
-						validationErrorH,
+		pool.initFilled(validationErrorHFillCount,
 						conflictErrorHFillCount,
-						conflictErrorH,
 						commonErrorHFillCount,
-						commonErrorH,
 						defaultErrorHFillCount,
-						defaultErrorH,
-						startErrorHFillCount,
-						startErrorH);
+						startErrorHFillCount);
 	}
 		
-	synchronized void recycle(int validationErrorHAverageUse,
-							ValidationErrorHandler[] validationErrorH,
-							int conflictErrorHAverageUse,
-							ExternalConflictErrorHandler[] conflictErrorH,
-							int commonErrorHAverageUse,
-							CommonErrorHandler[] commonErrorH,
-							int defaultErrorHAverageUse,
-							DefaultErrorHandler[] defaultErrorH,
-							int startErrorHAverageUse,
-							StartErrorHandler[] startErrorH){
-		if(validationErrorHFree + validationErrorHAverageUse >= validationErrorHPoolSize){			 
-			validationErrorHPoolSize+= validationErrorHAverageUse;
-			ValidationErrorHandler[] increased = new ValidationErrorHandler[validationErrorHPoolSize];
-			System.arraycopy(this.validationErrorH, 0, increased, 0, validationErrorHFree);
-			this.validationErrorH = increased;
-		}
-		System.arraycopy(validationErrorH, 0, this.validationErrorH, validationErrorHFree, validationErrorHAverageUse);
-		validationErrorHFree += validationErrorHAverageUse;
-		if(this.validationErrorHAverageUse != 0)this.validationErrorHAverageUse = (this.validationErrorHAverageUse + validationErrorHAverageUse)/2;
-		else this.validationErrorHAverageUse = validationErrorHAverageUse;
-		// System.out.println("validationErrorH "+this.validationErrorHAverageUse);
+	synchronized void recycle(int validationErrorHRecycledCount,
+	                        int validationErrorHEffectivellyUsed,
+							ValidationErrorHandler[] validationErrorHRecycled,
+							int conflictErrorHRecycledCount,
+							int conflictErrorHEffectivellyUsed,
+							ExternalConflictErrorHandler[] conflictErrorHRecycled,
+							int commonErrorHRecycledCount,
+							int commonErrorHEffectivellyUsed,
+							CommonErrorHandler[] commonErrorHRecycled,
+							int defaultErrorHRecycledCount,
+							int defaultErrorHEffectivellyUsed,
+							DefaultErrorHandler[] defaultErrorHRecycled,
+							int startErrorHRecycledCount,
+							int startErrorHEffectivellyUsed,
+							StartErrorHandler[] startErrorHRecycled){
+	    int neededLength = validationErrorHFree + validationErrorHRecycledCount; 
+        if(neededLength > validationErrorH.length){
+            if(neededLength > validationErrorHMaxSize){
+                neededLength = validationErrorHMaxSize;
+                ValidationErrorHandler[] increased = new ValidationErrorHandler[neededLength];
+                System.arraycopy(validationErrorH, 0, increased, 0, validationErrorH.length);
+                validationErrorH = increased;		        
+                System.arraycopy(validationErrorHRecycled, 0, validationErrorH, validationErrorHFree, validationErrorHMaxSize - validationErrorHFree);
+                validationErrorHFree = validationErrorHMaxSize; 
+            }else{
+                ValidationErrorHandler[] increased = new ValidationErrorHandler[neededLength];
+                System.arraycopy(validationErrorH, 0, increased, 0, validationErrorH.length);
+                validationErrorH = increased;
+                System.arraycopy(validationErrorHRecycled, 0, validationErrorH, validationErrorHFree, validationErrorHRecycledCount);
+                validationErrorHFree += validationErrorHRecycledCount;
+            }
+        }else{
+            System.arraycopy(validationErrorHRecycled, 0, validationErrorH, validationErrorHFree, validationErrorHRecycledCount);
+            validationErrorHFree += validationErrorHRecycledCount;
+        }
         
-        				
-		if(commonErrorHFree + commonErrorHAverageUse >= commonErrorHPoolSize){			 
-			commonErrorHPoolSize+= commonErrorHAverageUse;
-			CommonErrorHandler[] increased = new CommonErrorHandler[commonErrorHPoolSize];
-			System.arraycopy(this.commonErrorH, 0, increased, 0, commonErrorHFree);
-			this.commonErrorH = increased;
-		}
-		System.arraycopy(commonErrorH, 0, this.commonErrorH, commonErrorHFree, commonErrorHAverageUse);
-		commonErrorHFree += commonErrorHAverageUse;
-		if(this.commonErrorHAverageUse != 0)this.commonErrorHAverageUse = (this.commonErrorHAverageUse + commonErrorHAverageUse)/2;
-		else this.commonErrorHAverageUse = commonErrorHAverageUse;
-		// System.out.println("commonErrorH "+this.commonErrorHAverageUse);
-		
-		if(conflictErrorHFree + conflictErrorHAverageUse >= conflictErrorHPoolSize){			 
-			conflictErrorHPoolSize+= conflictErrorHAverageUse;
-			ExternalConflictErrorHandler[] increased = new ExternalConflictErrorHandler[conflictErrorHPoolSize];
-			System.arraycopy(this.conflictErrorH, 0, increased, 0, conflictErrorHFree);
-			this.conflictErrorH = increased;
-		}
-		System.arraycopy(conflictErrorH, 0, this.conflictErrorH, conflictErrorHFree, conflictErrorHAverageUse);
-		conflictErrorHFree += conflictErrorHAverageUse;
-		if(this.conflictErrorHAverageUse != 0)this.conflictErrorHAverageUse = (this.conflictErrorHAverageUse + conflictErrorHAverageUse)/2;
-		else this.conflictErrorHAverageUse = conflictErrorHAverageUse;
-		// System.out.println("conflictErrorH "+this.conflictErrorHAverageUse);
-		
-		if(defaultErrorHFree + defaultErrorHAverageUse >= defaultErrorHPoolSize){			 
-			defaultErrorHPoolSize+= defaultErrorHAverageUse;
-			DefaultErrorHandler[] increased = new DefaultErrorHandler[defaultErrorHPoolSize];
-			System.arraycopy(this.defaultErrorH, 0, increased, 0, defaultErrorHFree);
-			this.defaultErrorH = increased;
-		}
-		System.arraycopy(defaultErrorH, 0, this.defaultErrorH, defaultErrorHFree, defaultErrorHAverageUse);
-		defaultErrorHFree += defaultErrorHAverageUse;
-		if(this.defaultErrorHAverageUse != 0)this.defaultErrorHAverageUse = (this.defaultErrorHAverageUse + defaultErrorHAverageUse)/2;
-		else this.defaultErrorHAverageUse = defaultErrorHAverageUse;
-		// System.out.println("defaultErrorH "+this.defaultErrorHAverageUse);
+        if(validationErrorHAverageUse != 0)validationErrorHAverageUse = (validationErrorHAverageUse + validationErrorHEffectivellyUsed)/2;
+        else validationErrorHAverageUse = validationErrorHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
         
-        if(startErrorHFree + startErrorHAverageUse >= startErrorHPoolSize){			 
-			startErrorHPoolSize+= startErrorHAverageUse;
-			StartErrorHandler[] increased = new StartErrorHandler[startErrorHPoolSize];
-			System.arraycopy(this.startErrorH, 0, increased, 0, startErrorHFree);
-			this.startErrorH = increased;
-		}
-		System.arraycopy(startErrorH, 0, this.startErrorH, startErrorHFree, startErrorHAverageUse);
-		startErrorHFree += startErrorHAverageUse;
-		if(this.startErrorHAverageUse != 0)this.startErrorHAverageUse = (this.startErrorHAverageUse + startErrorHAverageUse)/2;
-		else this.startErrorHAverageUse = startErrorHAverageUse;
-		// System.out.println("startErrorH "+this.startErrorHAverageUse);		
+        for(int i = 0; i < validationErrorHRecycled.length; i++){
+            validationErrorHRecycled[i] = null;
+        }		
+	
+		neededLength = commonErrorHFree + commonErrorHRecycledCount; 
+        if(neededLength > commonErrorH.length){
+            if(neededLength > commonErrorHMaxSize){
+                neededLength = commonErrorHMaxSize;
+                CommonErrorHandler[] increased = new CommonErrorHandler[neededLength];
+                System.arraycopy(commonErrorH, 0, increased, 0, commonErrorH.length);
+                commonErrorH = increased;		        
+                System.arraycopy(commonErrorHRecycled, 0, commonErrorH, commonErrorHFree, commonErrorHMaxSize - commonErrorHFree);
+                commonErrorHFree = commonErrorHMaxSize; 
+            }else{
+                CommonErrorHandler[] increased = new CommonErrorHandler[neededLength];
+                System.arraycopy(commonErrorH, 0, increased, 0, commonErrorH.length);
+                commonErrorH = increased;
+                System.arraycopy(commonErrorHRecycled, 0, commonErrorH, commonErrorHFree, commonErrorHRecycledCount);
+                commonErrorHFree += commonErrorHRecycledCount;
+            }
+        }else{
+            System.arraycopy(commonErrorHRecycled, 0, commonErrorH, commonErrorHFree, commonErrorHRecycledCount);
+            commonErrorHFree += commonErrorHRecycledCount;
+        }
+        
+        if(commonErrorHAverageUse != 0)commonErrorHAverageUse = (commonErrorHAverageUse + commonErrorHEffectivellyUsed)/2;
+        else commonErrorHAverageUse = commonErrorHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < commonErrorHRecycled.length; i++){
+            commonErrorHRecycled[i] = null;
+        }		
+        
+        
+        neededLength = conflictErrorHFree + conflictErrorHRecycledCount; 
+        if(neededLength > conflictErrorH.length){
+            if(neededLength > conflictErrorHMaxSize){
+                neededLength = conflictErrorHMaxSize;
+                ExternalConflictErrorHandler[] increased = new ExternalConflictErrorHandler[neededLength];
+                System.arraycopy(conflictErrorH, 0, increased, 0, conflictErrorH.length);
+                conflictErrorH = increased;		        
+                System.arraycopy(conflictErrorHRecycled, 0, conflictErrorH, conflictErrorHFree, conflictErrorHMaxSize - conflictErrorHFree);
+                conflictErrorHFree = conflictErrorHMaxSize; 
+            }else{
+                ExternalConflictErrorHandler[] increased = new ExternalConflictErrorHandler[neededLength];
+                System.arraycopy(conflictErrorH, 0, increased, 0, conflictErrorH.length);
+                conflictErrorH = increased;
+                System.arraycopy(conflictErrorHRecycled, 0, conflictErrorH, conflictErrorHFree, conflictErrorHRecycledCount);
+                conflictErrorHFree += conflictErrorHRecycledCount;
+            }
+        }else{
+            System.arraycopy(conflictErrorHRecycled, 0, conflictErrorH, conflictErrorHFree, conflictErrorHRecycledCount);
+            conflictErrorHFree += conflictErrorHRecycledCount;
+        }
+        
+        if(conflictErrorHAverageUse != 0)conflictErrorHAverageUse = (conflictErrorHAverageUse + conflictErrorHEffectivellyUsed)/2;
+        else conflictErrorHAverageUse = conflictErrorHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < conflictErrorHRecycled.length; i++){
+            conflictErrorHRecycled[i] = null;
+        }
+        
+		
+		neededLength = defaultErrorHFree + defaultErrorHRecycledCount; 
+        if(neededLength > defaultErrorH.length){
+            if(neededLength > defaultErrorHMaxSize){
+                neededLength = defaultErrorHMaxSize;
+                DefaultErrorHandler[] increased = new DefaultErrorHandler[neededLength];
+                System.arraycopy(defaultErrorH, 0, increased, 0, defaultErrorH.length);
+                defaultErrorH = increased;		        
+                System.arraycopy(defaultErrorHRecycled, 0, defaultErrorH, defaultErrorHFree, defaultErrorHMaxSize - defaultErrorHFree);
+                defaultErrorHFree = defaultErrorHMaxSize; 
+            }else{
+                DefaultErrorHandler[] increased = new DefaultErrorHandler[neededLength];
+                System.arraycopy(defaultErrorH, 0, increased, 0, defaultErrorH.length);
+                defaultErrorH = increased;
+                System.arraycopy(defaultErrorHRecycled, 0, defaultErrorH, defaultErrorHFree, defaultErrorHRecycledCount);
+                defaultErrorHFree += defaultErrorHRecycledCount;
+            }
+        }else{
+            System.arraycopy(defaultErrorHRecycled, 0, defaultErrorH, defaultErrorHFree, defaultErrorHRecycledCount);
+            defaultErrorHFree += defaultErrorHRecycledCount;
+        }
+        
+        if(defaultErrorHAverageUse != 0)defaultErrorHAverageUse = (defaultErrorHAverageUse + defaultErrorHEffectivellyUsed)/2;
+        else defaultErrorHAverageUse = defaultErrorHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < defaultErrorHRecycled.length; i++){
+            defaultErrorHRecycled[i] = null;
+        }
+        
+		
+		neededLength = startErrorHFree + startErrorHRecycledCount; 
+        if(neededLength > startErrorH.length){
+            if(neededLength > startErrorHMaxSize){
+                neededLength = startErrorHMaxSize;
+                StartErrorHandler[] increased = new StartErrorHandler[neededLength];
+                System.arraycopy(startErrorH, 0, increased, 0, startErrorH.length);
+                startErrorH = increased;		        
+                System.arraycopy(startErrorHRecycled, 0, startErrorH, startErrorHFree, startErrorHMaxSize - startErrorHFree);
+                startErrorHFree = startErrorHMaxSize; 
+            }else{
+                StartErrorHandler[] increased = new StartErrorHandler[neededLength];
+                System.arraycopy(startErrorH, 0, increased, 0, startErrorH.length);
+                startErrorH = increased;
+                System.arraycopy(startErrorHRecycled, 0, startErrorH, startErrorHFree, startErrorHRecycledCount);
+                startErrorHFree += startErrorHRecycledCount;
+            }
+        }else{
+            System.arraycopy(startErrorHRecycled, 0, startErrorH, startErrorHFree, startErrorHRecycledCount);
+            startErrorHFree += startErrorHRecycledCount;
+        }
+        
+        if(startErrorHAverageUse != 0)startErrorHAverageUse = (startErrorHAverageUse + startErrorHEffectivellyUsed)/2;
+        else startErrorHAverageUse = startErrorHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < startErrorHRecycled.length; i++){
+            startErrorHRecycled[i] = null;
+        }	
 	}
 } 

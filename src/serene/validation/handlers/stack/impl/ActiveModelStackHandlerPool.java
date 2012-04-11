@@ -55,40 +55,41 @@ import sereneWrite.MessageWriter;
 public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycler{
 	
 	// int contextStackHCreated;
-	int contextStackHPoolSize;
-	int contextStackHFree = 0;
+	int contextStackHMaxSize;
+	int contextStackHFree;
+	int contextStackHMinFree;
 	ContextStackHandler[] contextStackH;
 	
 	// int minimalReduceStackHCreated;
-	int minimalReduceStackHPoolSize;
-	int minimalReduceStackHFree = 0;
+	int minimalReduceStackHMaxSize;
+	int minimalReduceStackHFree;
+	int minimalReduceStackHMinFree;
 	MinimalReduceStackHandler[] minimalReduceStackH;
 	
 	// int maximalReduceStackHCreated;
-	int maximalReduceStackHPoolSize;
-	int maximalReduceStackHFree = 0;
+	int maximalReduceStackHMaxSize;
+	int maximalReduceStackHFree;
+	int maximalReduceStackHMinFree;
 	MaximalReduceStackHandler[] maximalReduceStackH;
 	
 		
-	// int candidateStackHCreated;
-	// int candidateStackHRequested;
-	// int candidateStackHRecycled;
-	int candidateStackHPoolSize;
-	int candidateStackHFree = 0;
+	int candidateStackHCreated;
+	int candidateStackHRequested;
+	int candidateStackHRecycled;
+	int candidateStackHMaxSize;
+	int candidateStackHFree;
+	int candidateStackHMinFree;
 	CandidateStackHandlerImpl[] candidateStackH;
 		
 	int concurrentStackHCreated;
-	int concurrentStackHPoolSize;
-	int concurrentStackHFree = 0;
+	int concurrentStackHMaxSize;
+	int concurrentStackHFree;
+	int concurrentStackHMinFree;
 	ConcurrentStackHandlerImpl[] concurrentStackH;
-	
-	/*int compositeConcurrentStackHCreated;
-	int compositeConcurrentStackHPoolSize;
-	int compositeConcurrentStackHFree = 0;
-	CompositeConcurrentStackHandlerImpl[] compositeConcurrentStackH;*/
 	
 	StackHandlerPool pool;
 	
+	boolean full;
 	
 	InputStackDescriptor inputStackDescriptor;
 	ActiveModelConflictHandlerPool conflictHandlerPool;
@@ -98,15 +99,19 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	public ActiveModelStackHandlerPool(StackHandlerPool pool, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		this.pool = pool;
-	}
 		
+		contextStackHMaxSize = 20;
+        minimalReduceStackHMaxSize = 20;
+        maximalReduceStackHMaxSize = 20;
+        candidateStackHMaxSize = 40;
+        concurrentStackHMaxSize = 20;
+        
+        full = false;
+	}
+	
+	
 	public void recycle(){
-		if(contextStackHFree != 0 ||
-			minimalReduceStackHFree != 0 ||
-			maximalReduceStackHFree != 0 ||
-			candidateStackHFree != 0 ||
-			concurrentStackHFree != 0 /*||
-			compositeConcurrentStackHFree != 0*/)	releaseHandlers();
+		if(full)releaseHandlers();
 		pool.recycle(this);
 	}
 	
@@ -119,63 +124,44 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 				minimalReduceStackH,
 				maximalReduceStackH,
 				candidateStackH,
-				concurrentStackH/*,
-				compositeConcurrentStackH*/);	
+				concurrentStackH);
+		full = true;
 	}	
 	
-	void setHandlers(int contextStackHFree,
-					ContextStackHandler[] contextStackH,
-					int minimalReduceStackHFree,
-					MinimalReduceStackHandler[] minimalReduceStackH,
-					int maximalReduceStackHFree,
-					MaximalReduceStackHandler[] maximalReduceStackH,
-					int candidateStackHFree,
-					CandidateStackHandlerImpl[] candidateStackH,
-					int concurrentStackHFree,
-					ConcurrentStackHandlerImpl[] concurrentStackH/*,
-					int compositeConcurrentStackHFree,
-					CompositeConcurrentStackHandlerImpl[] compositeConcurrentStackH*/){
-		contextStackHPoolSize = contextStackH.length;
-		this.contextStackHFree = contextStackHFree;
-		this.contextStackH = contextStackH;
+	void initFilled(int contextStackHFillCount,
+					int minimalReduceStackHFillCount,
+					int maximalReduceStackHFillCount,
+					int candidateStackHFillCount,
+					int concurrentStackHFillCount){
+		contextStackHFree = contextStackHFillCount;
+		contextStackHMinFree = contextStackHFree;
 		for(int i = 0; i < contextStackHFree; i++){	
 			contextStackH[i].init(inputStackDescriptor, this);
 		}
 		
-		minimalReduceStackHPoolSize = minimalReduceStackH.length;
-		this.minimalReduceStackHFree = minimalReduceStackHFree;
-		this.minimalReduceStackH = minimalReduceStackH;
+		minimalReduceStackHFree = minimalReduceStackHFillCount;
+		minimalReduceStackHMinFree = minimalReduceStackHFree;
 		for(int i = 0; i < minimalReduceStackHFree; i++){	
 			minimalReduceStackH[i].init(inputStackDescriptor, this);
 		}
 		
-		maximalReduceStackHPoolSize = maximalReduceStackH.length;
-		this.maximalReduceStackHFree = maximalReduceStackHFree;
-		this.maximalReduceStackH = maximalReduceStackH;
+		maximalReduceStackHFree = maximalReduceStackHFillCount;
+		maximalReduceStackHMinFree = maximalReduceStackHFree;
 		for(int i = 0; i < maximalReduceStackHFree; i++){	
 			maximalReduceStackH[i].init(inputStackDescriptor, this);
 		}
 		
-		candidateStackHPoolSize = candidateStackH.length;
-		this.candidateStackHFree = candidateStackHFree;
-		this.candidateStackH = candidateStackH;
+		candidateStackHFree = candidateStackHFillCount;
+		candidateStackHMinFree = candidateStackHFree;
 		for(int i = 0; i < candidateStackHFree; i++){	
 			candidateStackH[i].init(inputStackDescriptor, this);
 		}
 		
-		concurrentStackHPoolSize = concurrentStackH.length;
-		this.concurrentStackHFree = concurrentStackHFree;
-		this.concurrentStackH = concurrentStackH;
+		concurrentStackHFree = concurrentStackHFillCount;
+		concurrentStackHMinFree = concurrentStackHFree;
 		for(int i = 0; i < concurrentStackHFree; i++){	
 			concurrentStackH[i].init(inputStackDescriptor, conflictHandlerPool, this);
-		}
-		
-		/*compositeConcurrentStackHPoolSize = compositeConcurrentStackH.length;
-		this.compositeConcurrentStackHFree = compositeConcurrentStackHFree;
-		this.compositeConcurrentStackH = compositeConcurrentStackH;
-		for(int i = 0; i < compositeConcurrentStackHFree; i++){	
-			compositeConcurrentStackH[i].init(inputStackDescriptor, conflictHandlerPool, this);
-		}*/
+		}		
 	}
 	
 	public void releaseHandlers(){
@@ -188,23 +174,21 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		// System.out.println("compositeConcurrent created "+compositeConcurrentStackHCreated);
 		// System.out.println(Arrays.toString(compositeConcurrentStackH));
 		pool.recycle(contextStackHFree,
+		            contextStackHFree - contextStackHMinFree,
 					contextStackH,
 					minimalReduceStackHFree,
+					minimalReduceStackHFree - minimalReduceStackHMinFree,
 					minimalReduceStackH,
 					maximalReduceStackHFree,
+					maximalReduceStackHFree - maximalReduceStackHMinFree,
 					maximalReduceStackH,
 					candidateStackHFree,
-					candidateStackH,
+					candidateStackHFree - candidateStackHMinFree,
+					candidateStackH,					
 					concurrentStackHFree,
-					concurrentStackH/*,
-					compositeConcurrentStackHFree,
-					compositeConcurrentStackH*/);
-		contextStackHFree = 0;
-		minimalReduceStackHFree = 0;
-		maximalReduceStackHFree = 0;
-		candidateStackHFree = 0;
-		concurrentStackHFree = 0;
-		/*compositeConcurrentStackHFree = 0;	*/
+					concurrentStackHFree - concurrentStackHMinFree,
+					concurrentStackH);
+		full = false;
 	}
 	
 	public ContextStackHandler getContextStackHandler(ActiveType type, ErrorCatcher ehm){			
@@ -217,14 +201,15 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		}else{
 			ContextStackHandler csh = contextStackH[--contextStackHFree];
 			csh.init(type, ehm);
+			if(contextStackHFree < contextStackHMinFree) contextStackHMinFree = contextStackHFree;
 			return csh;
 		}		
 	}
 		
 	public void recycle(ContextStackHandler csh){		
-		if(contextStackHFree == contextStackHPoolSize){
-			if(contextStackHPoolSize == 100) return;
-			ContextStackHandler[] increased = new ContextStackHandler[++contextStackHPoolSize];
+		if(contextStackHFree == contextStackH.length){
+			if(contextStackH.length == contextStackHMaxSize) return;
+			ContextStackHandler[] increased = new ContextStackHandler[10+contextStackH.length];
 			System.arraycopy(contextStackH, 0, increased, 0, contextStackHFree);
 			contextStackH = increased;
 		}
@@ -241,6 +226,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		}else{
 			MinimalReduceStackHandler csh = minimalReduceStackH[--minimalReduceStackHFree];
 			csh.init(reduceCountList, startedCountList, compositor, ehm);
+			if(minimalReduceStackHFree < minimalReduceStackHMinFree) minimalReduceStackHMinFree = minimalReduceStackHFree;
 			return csh;
 		}		
 	}
@@ -255,13 +241,14 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		}else{
 			MinimalReduceStackHandler csh = minimalReduceStackH[--minimalReduceStackHFree];
 			csh.init(reduceCountList, compositor, ehm);
+			if(minimalReduceStackHFree < minimalReduceStackHMinFree) minimalReduceStackHMinFree = minimalReduceStackHFree;
 			return csh;
 		}		
 	}	
 	public void recycle(MinimalReduceStackHandler csh){				
-		if(minimalReduceStackHFree == minimalReduceStackHPoolSize){
-			if(100 == minimalReduceStackHPoolSize)return;
-			MinimalReduceStackHandler[] increased = new MinimalReduceStackHandler[++minimalReduceStackHPoolSize];
+		if(minimalReduceStackHFree == minimalReduceStackH.length){
+			if(minimalReduceStackH.length == minimalReduceStackHMaxSize)return;
+			MinimalReduceStackHandler[] increased = new MinimalReduceStackHandler[10+minimalReduceStackH.length];
 			System.arraycopy(minimalReduceStackH, 0, increased, 0, minimalReduceStackHFree);
 			minimalReduceStackH = increased;
 		}
@@ -278,6 +265,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		}else{
 			MaximalReduceStackHandler csh = maximalReduceStackH[--maximalReduceStackHFree];
 			csh.init(reduceCountList, startedCountList, compositor, ehm);
+			if(maximalReduceStackHFree < maximalReduceStackHMinFree) maximalReduceStackHMinFree = maximalReduceStackHFree;
 			return csh;
 		}		
 	}
@@ -292,14 +280,15 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		}else{
 			MaximalReduceStackHandler csh = maximalReduceStackH[--maximalReduceStackHFree];
 			csh.init(reduceCountList, compositor, ehm);
+			if(maximalReduceStackHFree < maximalReduceStackHMinFree) maximalReduceStackHMinFree = maximalReduceStackHFree; 
 			return csh;
 		}		
 	}
 	
 	public void recycle(MaximalReduceStackHandler csh){				
-		if(maximalReduceStackHFree == maximalReduceStackHPoolSize){
-			if(maximalReduceStackHPoolSize == 100) return;
-			MaximalReduceStackHandler[] increased = new MaximalReduceStackHandler[++maximalReduceStackHPoolSize];
+		if(maximalReduceStackHFree == maximalReduceStackH.length){
+			if(maximalReduceStackH.length == maximalReduceStackHMaxSize) return;
+			MaximalReduceStackHandler[] increased = new MaximalReduceStackHandler[10+maximalReduceStackH.length];
 			System.arraycopy(maximalReduceStackH, 0, increased, 0, maximalReduceStackHFree);
 			maximalReduceStackH = increased;
 		}
@@ -314,11 +303,12 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 													ContextConflictsDescriptor contextConflictsDescriptor,
 													boolean hasDisqualifyingError,
 													ErrorCatcher errorCatcher){
-	    //candidateStackHRequested++;
+	    candidateStackHRequested++;
 		if(candidateStackHFree == 0){
+			candidateStackHCreated++;
 			// candidateStackHCreated++;
 			// System.out.println("candidate created "+candidateStackHCreated);
-			// System.out.println("candidate size "+candidateStackHPoolSize);
+			
 			
 			CandidateStackHandlerImpl csh = new CandidateStackHandlerImpl(debugWriter);
 			csh.init(inputStackDescriptor, this);			
@@ -333,7 +323,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		}else{
 			
 			// System.out.println("candidate free "+candidateStackHFree);
-			// System.out.println("candidate size "+candidateStackHPoolSize);
+			
 			
 			CandidateStackHandlerImpl csh = candidateStackH[--candidateStackHFree];
 			csh.init(topHandler, 
@@ -343,6 +333,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 						contextConflictsDescriptor,
 						hasDisqualifyingError,
 						errorCatcher);
+			if(candidateStackHFree < candidateStackHMinFree) candidateStackHMinFree = candidateStackHFree;
 			return csh;	
 		}		
 	}
@@ -353,11 +344,11 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 													ConcurrentStackHandler parent,
 													ContextConflictsDescriptor contextConflictsDescriptor,
 													ErrorCatcher errorCatcher){
-		//candidateStackHRequested++;
+		candidateStackHRequested++;
 		if(candidateStackHFree == 0){
-			//candidateStackHCreated++;
+			candidateStackHCreated++;
 			// System.out.println("candidate created "+candidateStackHCreated);
-			// System.out.println("candidate size "+candidateStackHPoolSize);
+			
 			
 			CandidateStackHandlerImpl csh = new CandidateStackHandlerImpl(debugWriter);
 			csh.init(inputStackDescriptor, this);			
@@ -370,7 +361,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		}else{
 			
 			// System.out.println("candidate free "+candidateStackHFree);
-			// System.out.println("candidate size "+candidateStackHPoolSize);			
+						
 			
 			CandidateStackHandlerImpl csh = candidateStackH[--candidateStackHFree];
 			csh.init(topHandler, 
@@ -378,16 +369,17 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 						parent,
 						contextConflictsDescriptor,
 						errorCatcher);
+			if(candidateStackHFree < candidateStackHMinFree) candidateStackHMinFree = candidateStackHFree;
 			return csh;	
 		}		
 	}
 		
 	public void recycle(CandidateStackHandlerImpl csh){
-        //candidateStackHRecycled++;		
+        candidateStackHRecycled++;		
 	//	if(candidateStackHFree == 3) throw new IllegalStateException();
-		if(candidateStackHFree == candidateStackHPoolSize){
-			if(100 == candidateStackHPoolSize)return;
-			CandidateStackHandlerImpl[] increased = new CandidateStackHandlerImpl[++candidateStackHPoolSize];
+		if(candidateStackHFree == candidateStackH.length){
+			if(candidateStackH.length == candidateStackHMaxSize)return;
+			CandidateStackHandlerImpl[] increased = new CandidateStackHandlerImpl[10+candidateStackH.length];
 			System.arraycopy(candidateStackH, 0, increased, 0, candidateStackHFree);
 			candidateStackH = increased;
 		}
@@ -412,21 +404,19 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 			
 			ConcurrentStackHandlerImpl csh = concurrentStackH[--concurrentStackHFree];
 			csh.init(originalHandler, errorCatcher);
+			if(concurrentStackHFree < concurrentStackHMinFree) concurrentStackHMinFree = concurrentStackHFree;
 			return csh;
 		}		
 	}
 	
 		
 	public void recycle(ConcurrentStackHandlerImpl csh){
-		if(concurrentStackHFree == concurrentStackHPoolSize){
-			if(100 == concurrentStackHPoolSize)return;
-			ConcurrentStackHandlerImpl[] increased = new ConcurrentStackHandlerImpl[++concurrentStackHPoolSize];
+		if(concurrentStackHFree == concurrentStackH.length){
+			if(concurrentStackH.length == concurrentStackHMaxSize)return;
+			ConcurrentStackHandlerImpl[] increased = new ConcurrentStackHandlerImpl[10+concurrentStackH.length];
 			System.arraycopy(concurrentStackH, 0, increased, 0, concurrentStackHFree);
 			concurrentStackH = increased;
 		}
 		concurrentStackH[concurrentStackHFree++] = csh;
 	}
-	
-	
-
 }

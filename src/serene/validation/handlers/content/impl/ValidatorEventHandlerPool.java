@@ -63,191 +63,233 @@ public class ValidatorEventHandlerPool implements Reusable{
 	ValidatorErrorHandlerPool errorHandlerPool;
 	ValidationContext validationContext;
 	 
-	// Free is the number of handlers available in the pool.	
-	// PoolSize is the size of the array used for holding the handlers. 
-	int elementVHPoolSize;
-	int elementVHFree = 0;	
+	
+	int elementVHMaxSize;
+	int elementVHFree;
+	int elementVHMinFree;	
 	ElementValidationHandler[] elementVH;
 	
-	int startVHPoolSize;
-	int startVHFree = 0;	
+	int startVHMaxSize;
+	int startVHFree;
+    int startVHMinFree;	
 	StartValidationHandler[] startVH;
 		
-	int unexpectedElementHPoolSize;
-	int unexpectedElementHFree = 0;	
+	int unexpectedElementHMaxSize;
+	int unexpectedElementHFree;
+    int unexpectedElementHMinFree;	
 	UnexpectedElementHandler[] unexpectedElementH;
 	
-	int unexpectedAmbiguousEHPoolSize;
-	int unexpectedAmbiguousEHFree = 0;
+	int unexpectedAmbiguousEHMaxSize;
+	int unexpectedAmbiguousEHFree;
+	int unexpectedAmbiguousEHMinFree;
 	UnexpectedAmbiguousElementHandler[] unexpectedAmbiguousEH;
 	
-	int unknownElementHPoolSize;
-	int unknownElementHFree = 0;	
+	int unknownElementHMaxSize;
+	int unknownElementHFree;
+    int unknownElementHMinFree;	
 	UnknownElementHandler[] unknownElementH;
 	
-	int defaultElementHPoolSize;
-	int defaultElementHFree = 0;	
-	ElementDefaultHandler[] defaultElementH;
+	int elementDefaultHMaxSize;
+	int elementDefaultHFree;
+    int elementDefaultHMinFree;	
+	ElementDefaultHandler[] elementDefaultH;
 	
-	int elementConcurrentHPoolSize;
-	int elementConcurrentHFree = 0;
+	int elementConcurrentHMaxSize;
+	int elementConcurrentHFree;
+	int elementConcurrentHMinFree;
 	ElementConcurrentHandler[] elementConcurrentH;
 	
-	int elementParallelHPoolSize;
-	int elementParallelHFree = 0;
+	int elementParallelHMaxSize;
+	int elementParallelHFree;
+	int elementParallelHMinFree;
 	ElementParallelHandler[] elementParallelH;
 	
-	int elementCommonHPoolSize;
-	int elementCommonHFree = 0;
+	int elementCommonHMaxSize;
+	int elementCommonHFree;
+	int elementCommonHMinFree;
 	ElementCommonHandler[] elementCommonH;
 	
 		
-	int unexpectedAttributeHPoolSize;
-	int unexpectedAttributeHFree = 0;	
+	int unexpectedAttributeHMaxSize;
+	int unexpectedAttributeHFree;
+    int unexpectedAttributeHMinFree;	
 	UnexpectedAttributeHandler[] unexpectedAttributeH;
 	
-	int unexpectedAmbiguousAHPoolSize;
-	int unexpectedAmbiguousAHFree = 0;
+	int unexpectedAmbiguousAHMaxSize;
+	int unexpectedAmbiguousAHFree;
+	int unexpectedAmbiguousAHMinFree;
 	UnexpectedAmbiguousAttributeHandler[] unexpectedAmbiguousAH;
 	
-	int unknownAttributeHPoolSize;
-	int unknownAttributeHFree = 0;	
+	int unknownAttributeHMaxSize;
+	int unknownAttributeHFree;
+	int unknownAttributeHMinFree;	
 	UnknownAttributeHandler[] unknownAttributeH;
 	
-	int attributeVHPoolSize;
-	int attributeVHFree = 0;	
+	int attributeVHMaxSize;
+	int attributeVHFree;
+	int attributeVHMinFree;	
 	AttributeValidationHandler[] attributeVH;
     
-    int candidateAttributeVHPoolSize;
-	int candidateAttributeVHFree = 0;	
+    int candidateAttributeVHMaxSize;
+	int candidateAttributeVHFree;
+    int candidateAttributeVHMinFree;	
 	CandidateAttributeValidationHandler[] candidateAttributeVH;
 	
-	int attributeConcurrentHPoolSize;
-	int attributeConcurrentHFree = 0;
+	int attributeConcurrentHMaxSize;
+	int attributeConcurrentHFree;
+	int attributeConcurrentHMinFree;
 	AttributeConcurrentHandler[] attributeConcurrentH;
         
-    int attributeParallelHPoolSize;
-	int attributeParallelHFree = 0;
+    int attributeParallelHMaxSize;
+	int attributeParallelHFree;
+	int attributeParallelHMinFree;
 	AttributeParallelHandler[] attributeParallelH;
     
-    int attributeDefaultHPoolSize;
-	int attributeDefaultHFree = 0;
+    int attributeDefaultHMaxSize;
+	int attributeDefaultHFree;
+	int attributeDefaultHMinFree;
 	AttributeDefaultHandler[] attributeDefaultH;
 	
-	int charactersValidationHPoolSize;
-	int charactersValidationHFree = 0;
+	int charactersValidationHMaxSize;
+	int charactersValidationHFree;
+	int charactersValidationHMinFree;
 	CharactersValidationHandler[] charactersValidationH;
 	
-	int structuredDataValidationHPoolSize;
-	int structuredDataValidationHFree = 0;
+	int structuredDataValidationHMaxSize;
+	int structuredDataValidationHFree;
+	int structuredDataValidationHMinFree;
 	StructuredDataValidationHandler[] structuredDataValidationH;
 	
-	int dataValidationHPoolSize;
-	int dataValidationHFree = 0;
+	int dataValidationHMaxSize;
+	int dataValidationHFree;
+	int dataValidationHMinFree;
 	DataValidationHandler[] dataValidationH;
     
-    int defaultVAttributeHPoolSize;
-	int defaultVAttributeHFree = 0;
+    int defaultVAttributeHMaxSize;
+	int defaultVAttributeHFree;
+	int defaultVAttributeHMinFree;
 	DefaultValueAttributeValidationHandler[] defaultVAttributeH;
 	
-	int listPatternVHPoolSize;
-	int listPatternVHFree = 0;
+	int listPatternVHMaxSize;
+	int listPatternVHFree;
+	int listPatternVHMinFree;
 	ListPatternValidationHandler[] listPatternVH;
 	
-	int exceptPatternVHPoolSize;
-	int exceptPatternVHFree = 0;
+	int exceptPatternVHMaxSize;
+	int exceptPatternVHFree;
+	int exceptPatternVHMinFree;
 	ExceptPatternValidationHandler[] exceptPatternVH;
 	
 	
 	
-	int boundElementVHPoolSize;
-	int boundElementVHFree = 0;	
+	int boundElementVHMaxSize;
+	int boundElementVHFree;
+	int boundElementVHMinFree;	
 	BoundElementValidationHandler[] boundElementVH;
 	
-	int boundStartVHPoolSize;
-	int boundStartVHFree = 0;	
+	int boundStartVHMaxSize;
+	int boundStartVHFree;
+	int boundStartVHMinFree;	
 	BoundStartValidationHandler[] boundStartVH;
 	
-	int boundElementConcurrentHPoolSize;
-	int boundElementConcurrentHFree = 0;
+	int boundElementConcurrentHMaxSize;
+	int boundElementConcurrentHFree;
+	int boundElementConcurrentHMinFree;
 	BoundElementConcurrentHandler[] boundElementConcurrentH;
 	
-	int boundElementParallelHPoolSize;
-	int boundElementParallelHFree = 0;
+	int boundElementParallelHMaxSize;
+	int boundElementParallelHFree;
+	int boundElementParallelHMinFree;
 	BoundElementParallelHandler[] boundElementParallelH;
 	
-	int boundAttributeVHPoolSize;
-	int boundAttributeVHFree = 0;	
+	int boundAttributeVHMaxSize;
+	int boundAttributeVHFree;	
+	int boundAttributeVHMinFree;	
 	BoundAttributeValidationHandler[] boundAttributeVH;
     
-    int boundCandidateAttributeVHPoolSize;
-	int boundCandidateAttributeVHFree = 0;	
+    int boundCandidateAttributeVHMaxSize;
+	int boundCandidateAttributeVHFree;
+	int boundCandidateAttributeVHMinFree;	
 	BoundCandidateAttributeValidationHandler[] boundCandidateAttributeVH;
 	
-	int boundAttributeConcurrentHPoolSize;
-	int boundAttributeConcurrentHFree = 0;
+	int boundAttributeConcurrentHMaxSize;
+	int boundAttributeConcurrentHFree;
+	int boundAttributeConcurrentHMinFree;
 	BoundAttributeConcurrentHandler[] boundAttributeConcurrentH;
     
-    int boundAttributeParallelHPoolSize;
-	int boundAttributeParallelHFree = 0;
+    int boundAttributeParallelHMaxSize;
+	int boundAttributeParallelHFree;
+	int boundAttributeParallelHMinFree;
 	BoundAttributeParallelHandler[] boundAttributeParallelH;
 	
+	boolean full;
 	
 	MessageWriter debugWriter;
 	
 	ValidatorEventHandlerPool(ContentHandlerPool contentHandlerPool, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		this.contentHandlerPool = contentHandlerPool;
+		
+		elementVHMaxSize = 40;
+        startVHMaxSize = 5;
+        unexpectedElementHMaxSize = 20;
+        unexpectedAmbiguousEHMaxSize = 20;
+        unknownElementHMaxSize = 20;
+        elementDefaultHMaxSize = 20;
+        elementConcurrentHMaxSize = 20;
+        elementParallelHMaxSize = 20;
+        elementCommonHMaxSize = 20;
+            
+        unexpectedAttributeHMaxSize = 20;
+        unexpectedAmbiguousAHMaxSize = 20;
+        unknownAttributeHMaxSize = 20;
+        attributeVHMaxSize = 20;
+        candidateAttributeVHMaxSize = 20;
+        attributeConcurrentHMaxSize = 20;
+        attributeParallelHMaxSize = 20;
+        attributeDefaultHMaxSize = 20;
+        charactersValidationHMaxSize = 20;
+        structuredDataValidationHMaxSize = 20;
+        dataValidationHMaxSize = 20;
+        defaultVAttributeHMaxSize = 20;
+        listPatternVHMaxSize = 20;
+        exceptPatternVHMaxSize = 20;
+                
+        boundElementVHMaxSize = 40;
+        boundStartVHMaxSize = 5;
+        boundElementConcurrentHMaxSize = 20;
+        boundElementParallelHMaxSize = 20;
+        boundAttributeVHMaxSize = 20;
+        boundCandidateAttributeVHMaxSize = 20;
+        boundAttributeConcurrentHMaxSize = 20;
+        boundAttributeParallelHMaxSize = 20;
 	}
 	
 	public void recycle(){
-		if(elementVHFree != 0 ||
-			startVHFree != 0 ||
-			unexpectedElementHFree != 0 ||
-			unexpectedAmbiguousEHFree != 0 ||
-			unknownElementHFree != 0 ||
-			defaultElementHFree != 0 ||
-			elementConcurrentHFree != 0 ||
-			elementParallelHFree != 0 ||
-			elementCommonHFree != 0 ||
-			unexpectedAttributeHFree != 0 ||
-			unexpectedAmbiguousAHFree != 0 ||
-			unknownAttributeHFree != 0 ||
-			attributeVHFree != 0 ||
-            candidateAttributeVHFree != 0 ||
-			attributeConcurrentHFree != 0 ||
-            attributeParallelHFree != 0 ||
-            attributeDefaultHFree != 0 ||
-			charactersValidationHFree != 0 ||
-			structuredDataValidationHFree != 0 ||
-			dataValidationHFree != 0 ||
-            defaultVAttributeHFree != 0 ||
-			listPatternVHFree != 0 ||
-			exceptPatternVHFree != 0 ||
-			boundElementVHFree != 0 ||
-			boundStartVHFree != 0 ||
-			boundElementConcurrentHFree != 0 ||
-			boundElementParallelHFree != 0 ||
-			boundAttributeVHFree != 0 ||
-            boundCandidateAttributeVHFree != 0 ||
-			boundAttributeConcurrentHFree != 0 ||
-            boundAttributeParallelHFree != 0 ) releaseHandlers();
+		if(full) releaseHandlers();
 		contentHandlerPool.recycle(this);
 	}
 	
-	public void fill(SpaceCharsHandler spaceHandler, MatchHandler matchHandler, InputStackDescriptor inputStackDescriptor, ValidatorErrorHandlerPool errorHandlerPool){
-		this.spaceHandler = spaceHandler;
+	public void init(SpaceCharsHandler spaceHandler, 
+	                    MatchHandler matchHandler, 
+	                    InputStackDescriptor inputStackDescriptor, 
+	                    ValidationContext validationContext,
+	                    ValidatorErrorHandlerPool errorHandlerPool){
+	    this.spaceHandler = spaceHandler;
 		this.matchHandler = matchHandler;
 		this.inputStackDescriptor = inputStackDescriptor;
+		this.validationContext = validationContext;
 		this.errorHandlerPool = errorHandlerPool;
-		
+	}
+	
+	public void fill(){	
 		contentHandlerPool.fill(this,
 						elementVH,
 						startVH,
 						unexpectedElementH,
 						unexpectedAmbiguousEH,
 						unknownElementH,
-						defaultElementH,
+						elementDefaultH,
 						elementConcurrentH,
 						elementParallelH,
 						elementCommonH,
@@ -273,401 +315,358 @@ public class ValidatorEventHandlerPool implements Reusable{
 						boundCandidateAttributeVH,
 						boundAttributeConcurrentH,
                         boundAttributeParallelH);
+        
+        full = true;
 	}	
 	
-	void setHandlers(int elementVHFree,	
-					ElementValidationHandler[] elementVH,
-					int startVHFree,	
-					StartValidationHandler[] startVH,
-					int unexpectedElementHFree,	
-					UnexpectedElementHandler[] unexpectedElementH,
-					int unexpectedAmbiguousEHFree,
-					UnexpectedAmbiguousElementHandler[] unexpectedAmbiguousEH,
-					int unknownElementHFree,	
-					UnknownElementHandler[] unknownElementH,
-					int defaultElementHFree,	
-					ElementDefaultHandler[] defaultElementH,
-					int elementConcurrentHFree,
-					ElementConcurrentHandler[] elementConcurrentH,
-					int elementParallelHFree,
-					ElementParallelHandler[] elementParallelH,
-					int elementCommonHFree,
-					ElementCommonHandler[] elementCommonH,
-					int unexpectedAttributeHFree,	
-					UnexpectedAttributeHandler[] unexpectedAttributeH,
-					int unexpectedAmbiguousAHFree,
-					UnexpectedAmbiguousAttributeHandler[] unexpectedAmbiguousAH,
-					int unknownAttributeHFree,	
-					UnknownAttributeHandler[] unknownAttributeH,
-					int attributeVHFree,	
-					AttributeValidationHandler[] attributeVH,
-					int candidateAttributeVHFree,	
-					CandidateAttributeValidationHandler[] candidateAttributeVH,
-					int attributeConcurrentHFree,
-					AttributeConcurrentHandler[] attributeConcurrentH,
-                    int attributeParallelHFree,
-					AttributeParallelHandler[] attributeParallelH,
-                    int attributeDefaultHFree,
-					AttributeDefaultHandler[] attributeDefaultH,
-					int charactersValidationHFree,
-					CharactersValidationHandler[] charactersValidationH,					
-					int structuredDataValidationHFree,
-					StructuredDataValidationHandler[] structuredDataValidationH,
-					int dataValidationHFree,
-					DataValidationHandler[] dataValidationH,
-                    int defaultVAttributeHFree,
-					DefaultValueAttributeValidationHandler[] defaultVAttributeH,
-					int listPatternVHFree,
-					ListPatternValidationHandler[] listPatternVH,
-					int exceptPatternVHFree,
-					ExceptPatternValidationHandler[] exceptPatternVH,
-					int boundElementVHFree,	
-					BoundElementValidationHandler[] boundElementVH,
-					int boundStartVHFree,	
-					BoundStartValidationHandler[] boundStartVH,
-					int boundElementConcurrentHFree,
-					BoundElementConcurrentHandler[] boundElementConcurrentH,
-					int boundElementParallelHFree,
-					BoundElementParallelHandler[] boundElementParallelH,
-					int boundAttributeVHFree,	
-					BoundAttributeValidationHandler[] boundAttributeVH,
-                    int boundCandidateAttributeVHFree,	
-					BoundCandidateAttributeValidationHandler[] boundCandidateAttributeVH,
-					int boundAttributeConcurrentHFree,
-					BoundAttributeConcurrentHandler[] boundAttributeConcurrentH,
-                    int boundAttributeParallelHFree,
-					BoundAttributeParallelHandler[] boundAttributeParallelH){
-		elementVHPoolSize = elementVH.length;
-		this.elementVHFree = elementVHFree;
-		this.elementVH = elementVH;
+	void initFilled(int elementVHFillCount,
+					int startVHFillCount,	
+					int unexpectedElementHFillCount,
+					int unexpectedAmbiguousEHFillCount,
+					int unknownElementHFillCount,	
+					int elementDefaultHFillCount,	
+					int elementConcurrentHFillCount,
+					int elementParallelHFillCount,
+					int elementCommonHFillCount,
+					int unexpectedAttributeHFillCount,
+					int unexpectedAmbiguousAHFillCount,
+					int unknownAttributeHFillCount,	
+					int attributeVHFillCount,	
+					int candidateAttributeVHFillCount,
+					int attributeConcurrentHFillCount,
+                    int attributeParallelHFillCount,
+                    int attributeDefaultHFillCount,
+					int charactersValidationHFillCount,					
+					int structuredDataValidationHFillCount,
+					int dataValidationHFillCount,
+                    int defaultVAttributeHFillCount,
+					int listPatternVHFillCount,
+					int exceptPatternVHFillCount,
+					int boundElementVHFillCount,	
+					int boundStartVHFillCount,	
+					int boundElementConcurrentHFillCount,
+					int boundElementParallelHFillCount,
+					int boundAttributeVHFillCount,	
+                    int boundCandidateAttributeVHFillCount,
+					int boundAttributeConcurrentHFillCount,
+                    int boundAttributeParallelHFillCount){
+		elementVHFree = elementVHFillCount;
+		elementVHMinFree = elementVHFree;
 		for(int i = 0; i < elementVHFree; i++){	
 			elementVH[i].init(this, inputStackDescriptor, spaceHandler, matchHandler, errorHandlerPool);
 		}
-		
-		startVHPoolSize = startVH.length;
-		this.startVHFree = startVHFree;
-		this.startVH = startVH;
+				
+		startVHFree = startVHFillCount;
+		startVHMinFree = startVHFree;
 		for(int i = 0; i < startVHFree; i++){	
 			startVH[i].init(this, inputStackDescriptor, spaceHandler, matchHandler, errorHandlerPool);
 		}
 				
 				
 		
-		unexpectedElementHPoolSize = unexpectedElementH.length;
-		this.unexpectedElementHFree = unexpectedElementHFree;
-		this.unexpectedElementH = unexpectedElementH;
+		unexpectedElementHFree = unexpectedElementHFillCount;
+		unexpectedElementHMinFree = unexpectedElementHFree;
 		for(int i = 0; i < unexpectedElementHFree; i++){	
 			unexpectedElementH[i].init(this, inputStackDescriptor);
 		}
 		
 		
-		unexpectedAmbiguousEHPoolSize = unexpectedAmbiguousEH.length;
-		this.unexpectedAmbiguousEHFree = unexpectedAmbiguousEHFree;
-		this.unexpectedAmbiguousEH = unexpectedAmbiguousEH;
+		unexpectedAmbiguousEHFree = unexpectedAmbiguousEHFillCount;
+		unexpectedAmbiguousEHMinFree = unexpectedAmbiguousEHFree;
 		for(int i = 0; i < unexpectedAmbiguousEHFree; i++){	
 			unexpectedAmbiguousEH[i].init(this, inputStackDescriptor);
 		}
 		
 		
-		unknownElementHPoolSize = unknownElementH.length;
-		this.unknownElementHFree = unknownElementHFree;
-		this.unknownElementH = unknownElementH;
+		unknownElementHFree = unknownElementHFillCount;
+		unknownElementHMinFree = unknownElementHFree;
 		for(int i = 0; i < unknownElementHFree; i++){	
 			unknownElementH[i].init(this, inputStackDescriptor);
 		}
 				
 		
-		defaultElementHPoolSize = defaultElementH.length;
-		this.defaultElementHFree = defaultElementHFree;
-		this.defaultElementH = defaultElementH;
-		for(int i = 0; i < defaultElementHFree; i++){	
-			defaultElementH[i].init(this, inputStackDescriptor);
+		elementDefaultHFree = elementDefaultHFillCount;
+		elementDefaultHMinFree = elementDefaultHFree;
+		for(int i = 0; i < elementDefaultHFree; i++){	
+			elementDefaultH[i].init(this, inputStackDescriptor);
 		}
 				
 		
-		elementConcurrentHPoolSize = elementConcurrentH.length;
-		this.elementConcurrentHFree = elementConcurrentHFree;
-		this.elementConcurrentH = elementConcurrentH;
+		elementConcurrentHFree = elementConcurrentHFillCount;
+		elementConcurrentHMinFree = elementConcurrentHFree;
 		for(int i = 0; i < elementConcurrentHFree; i++){	
 			elementConcurrentH[i].init(this, inputStackDescriptor, errorHandlerPool);
 		}
         
 				
 		
-		elementParallelHPoolSize = elementParallelH.length;
-		this.elementParallelHFree = elementParallelHFree;
-		this.elementParallelH = elementParallelH;
+		elementParallelHFree = elementParallelHFillCount;
+		elementParallelHMinFree = elementParallelHFree;
 		for(int i = 0; i < elementParallelHFree; i++){	
 			elementParallelH[i].init(this, inputStackDescriptor);
 		}
 				
 		
-		elementCommonHPoolSize = elementCommonH.length;
-		this.elementCommonHFree = elementCommonHFree;
-		this.elementCommonH = elementCommonH;
+		elementCommonHFree = elementCommonHFillCount;
+		elementCommonHMinFree = elementCommonHFree;
 		for(int i = 0; i < elementCommonHFree; i++){	
 			elementCommonH[i].init(this, inputStackDescriptor);
 		}
 		
 		
-		unexpectedAttributeHPoolSize = unexpectedAttributeH.length;
-		this.unexpectedAttributeHFree = unexpectedAttributeHFree;
-		this.unexpectedAttributeH = unexpectedAttributeH;
+		unexpectedAttributeHFree = unexpectedAttributeHFillCount;
+		unexpectedAttributeHMinFree = unexpectedAttributeHFree;
 		for(int i = 0; i < unexpectedAttributeHFree; i++){	
 			unexpectedAttributeH[i].init(this, inputStackDescriptor);
 		}
 		
 		
-		unexpectedAmbiguousAHPoolSize = unexpectedAmbiguousAH.length;
-		this.unexpectedAmbiguousAHFree = unexpectedAmbiguousAHFree;
-		this.unexpectedAmbiguousAH = unexpectedAmbiguousAH;
+		unexpectedAmbiguousAHFree = unexpectedAmbiguousAHFillCount;
+		unexpectedAmbiguousAHMinFree = unexpectedAmbiguousAHFree;
 		for(int i = 0; i < unexpectedAmbiguousAHFree; i++){	
 			unexpectedAmbiguousAH[i].init(this, inputStackDescriptor);
 		}
 		
 		
-		unknownAttributeHPoolSize = unknownAttributeH.length;
-		this.unknownAttributeHFree = unknownAttributeHFree;
-		this.unknownAttributeH = unknownAttributeH;
+		unknownAttributeHFree = unknownAttributeHFillCount;
+		unknownAttributeHMinFree = unknownAttributeHFree;
 		for(int i = 0; i < unknownAttributeHFree; i++){	
 			unknownAttributeH[i].init(this, inputStackDescriptor);
 		}
-			
-		attributeVHPoolSize = attributeVH.length;
-		this.attributeVHFree = attributeVHFree;
-		this.attributeVH = attributeVH;
+		
+		
+		attributeVHFree = attributeVHFillCount;
+		attributeVHMinFree = attributeVHFree;
 		for(int i = 0; i < attributeVHFree; i++){	
 			attributeVH[i].init(this, inputStackDescriptor, matchHandler);
 		}
         
         
-		candidateAttributeVHPoolSize = candidateAttributeVH.length;
-		this.candidateAttributeVHFree = candidateAttributeVHFree;
-		this.candidateAttributeVH = candidateAttributeVH;
+		candidateAttributeVHFree = candidateAttributeVHFillCount;
+		candidateAttributeVHMinFree = candidateAttributeVHFree;
 		for(int i = 0; i < candidateAttributeVHFree; i++){	
 			candidateAttributeVH[i].init(this, inputStackDescriptor, matchHandler);
 		}
 		
-		attributeConcurrentHPoolSize = attributeConcurrentH.length;
-		this.attributeConcurrentHFree = attributeConcurrentHFree;
-		this.attributeConcurrentH = attributeConcurrentH;
+		
+		attributeConcurrentHFree = attributeConcurrentHFillCount;
+		attributeConcurrentHMinFree = attributeConcurrentHFree;
 		for(int i = 0; i < attributeConcurrentHFree; i++){	
 			attributeConcurrentH[i].init(this, inputStackDescriptor, errorHandlerPool);
 		}
         
-        attributeParallelHPoolSize = attributeParallelH.length;
-		this.attributeParallelHFree = attributeParallelHFree;
-		this.attributeParallelH = attributeParallelH;
+		
+		attributeParallelHFree = attributeParallelHFillCount;
+		attributeParallelHMinFree = attributeParallelHFree;
 		for(int i = 0; i < attributeParallelHFree; i++){	
 			attributeParallelH[i].init(this, inputStackDescriptor);
 		}
-			
-        attributeDefaultHPoolSize = attributeDefaultH.length;
-		this.attributeDefaultHFree = attributeDefaultHFree;
-		this.attributeDefaultH = attributeDefaultH;
+		
+		
+		attributeDefaultHFree = attributeDefaultHFillCount;
+		attributeDefaultHMinFree = attributeDefaultHFree;
 		for(int i = 0; i < attributeDefaultHFree; i++){	
 			attributeDefaultH[i].init(this, inputStackDescriptor);
 		}
-			
-		charactersValidationHPoolSize = charactersValidationH.length;
-		this.charactersValidationHFree = charactersValidationHFree;
-		this.charactersValidationH = charactersValidationH;
+		
+		
+		charactersValidationHFree = charactersValidationHFillCount;
+		charactersValidationHMinFree = charactersValidationHFree;
 		for(int i = 0; i < charactersValidationHFree; i++){	
 			charactersValidationH[i].init(matchHandler, validationContext, spaceHandler, inputStackDescriptor, this);
 		}
 		
-		structuredDataValidationHPoolSize = structuredDataValidationH.length;
-		this.structuredDataValidationHFree = structuredDataValidationHFree;
-		this.structuredDataValidationH = structuredDataValidationH;
+		
+		structuredDataValidationHFree = structuredDataValidationHFillCount;
+		structuredDataValidationHMinFree = structuredDataValidationHFree;
 		for(int i = 0; i < structuredDataValidationHFree; i++){	
 			structuredDataValidationH[i].init(matchHandler, validationContext, spaceHandler, inputStackDescriptor, this);
 		}
 		
-		dataValidationHPoolSize = dataValidationH.length;
-		this.dataValidationHFree = dataValidationHFree;
-		this.dataValidationH = dataValidationH;
+		
+		dataValidationHFree = dataValidationHFillCount;
+		dataValidationHMinFree = dataValidationHFree;
 		for(int i = 0; i < dataValidationHFree; i++){	
 			dataValidationH[i].init(matchHandler, validationContext, spaceHandler, inputStackDescriptor, this);
 		}
         
-        defaultVAttributeHPoolSize = defaultVAttributeH.length;
-		this.defaultVAttributeHFree = defaultVAttributeHFree;
-		this.defaultVAttributeH = defaultVAttributeH;
+		
+		defaultVAttributeHFree = defaultVAttributeHFillCount;
+		defaultVAttributeHMinFree = defaultVAttributeHFree;
 		for(int i = 0; i < defaultVAttributeHFree; i++){	
 			defaultVAttributeH[i].init(this, inputStackDescriptor, matchHandler);
 		}
 		
-		listPatternVHPoolSize = listPatternVH.length;
-		this.listPatternVHFree = listPatternVHFree;
-		this.listPatternVH = listPatternVH;
+		
+		listPatternVHFree = listPatternVHFillCount;
+		listPatternVHMinFree = listPatternVHFree;
 		for(int i = 0; i < listPatternVHFree; i++){	
 			listPatternVH[i].init(this, inputStackDescriptor, spaceHandler);
 		}
 		
-		exceptPatternVHPoolSize = exceptPatternVH.length;
-		this.exceptPatternVHFree = exceptPatternVHFree;
-		this.exceptPatternVH = exceptPatternVH;
+		
+		exceptPatternVHFree = exceptPatternVHFillCount;
+		exceptPatternVHMinFree = exceptPatternVHFree;
 		for(int i = 0; i < exceptPatternVHFree; i++){	
 			exceptPatternVH[i].init(this, inputStackDescriptor);
 		}
 		
 		
 		
-		boundElementVHPoolSize = boundElementVH.length;
-		this.boundElementVHFree = boundElementVHFree;
-		this.boundElementVH = boundElementVH;
+		boundElementVHFree = boundElementVHFillCount;
+		boundElementVHMinFree = boundElementVHFree;
 		for(int i = 0; i < boundElementVHFree; i++){	
 			boundElementVH[i].init(this, inputStackDescriptor, spaceHandler, matchHandler, errorHandlerPool);
 		}
 		
-		boundStartVHPoolSize = boundStartVH.length;
-		this.boundStartVHFree = boundStartVHFree;
-		this.boundStartVH = boundStartVH;
+		
+		boundStartVHFree = boundStartVHFillCount;
+		boundStartVHMinFree = boundStartVHFree;
 		for(int i = 0; i < boundStartVHFree; i++){	
 			boundStartVH[i].init(this, inputStackDescriptor, spaceHandler, matchHandler, errorHandlerPool);
 		}
 		
-		boundElementConcurrentHPoolSize = boundElementConcurrentH.length;
-		this.boundElementConcurrentHFree = boundElementConcurrentHFree;
-		this.boundElementConcurrentH = boundElementConcurrentH;
+		
+		boundElementConcurrentHFree = boundElementConcurrentHFillCount;
+		boundElementConcurrentHMinFree = boundElementConcurrentHFree;
 		for(int i = 0; i < boundElementConcurrentHFree; i++){	
 			boundElementConcurrentH[i].init(this, inputStackDescriptor, errorHandlerPool);
 		}
 		
-		boundElementParallelHPoolSize = boundElementParallelH.length;
-		this.boundElementParallelHFree = boundElementParallelHFree;
-		this.boundElementParallelH = boundElementParallelH;
+		
+		boundElementParallelHFree = boundElementParallelHFillCount;
+		boundElementParallelHMinFree = boundElementParallelHFree;
 		for(int i = 0; i < boundElementParallelHFree; i++){	
 			boundElementParallelH[i].init(this, inputStackDescriptor, errorHandlerPool);
 		}
-			
-		boundAttributeVHPoolSize = boundAttributeVH.length;
-		this.boundAttributeVHFree = boundAttributeVHFree;
-		this.boundAttributeVH = boundAttributeVH;
+		
+		
+		boundAttributeVHFree = boundAttributeVHFillCount;
+		boundAttributeVHMinFree = boundAttributeVHFree;
 		for(int i = 0; i < boundAttributeVHFree; i++){	
 			boundAttributeVH[i].init(this, inputStackDescriptor, matchHandler);
 		}
         
-        boundCandidateAttributeVHPoolSize = boundCandidateAttributeVH.length;
-		this.boundCandidateAttributeVHFree = boundCandidateAttributeVHFree;
-		this.boundCandidateAttributeVH = boundCandidateAttributeVH;
+		
+		boundCandidateAttributeVHFree = boundCandidateAttributeVHFillCount;
+		boundCandidateAttributeVHMinFree = boundCandidateAttributeVHFree;
 		for(int i = 0; i < boundCandidateAttributeVHFree; i++){	
 			boundCandidateAttributeVH[i].init(this, inputStackDescriptor, matchHandler);
 		}
 		
-		boundAttributeConcurrentHPoolSize = boundAttributeConcurrentH.length;
-		this.boundAttributeConcurrentHFree = boundAttributeConcurrentHFree;
-		this.boundAttributeConcurrentH = boundAttributeConcurrentH;
+		
+		boundAttributeConcurrentHFree = boundAttributeConcurrentHFillCount;
+		boundAttributeConcurrentHMinFree = boundAttributeConcurrentHFree;
 		for(int i = 0; i < boundAttributeConcurrentHFree; i++){	
 			boundAttributeConcurrentH[i].init(this, inputStackDescriptor, errorHandlerPool);
 		}
         
-        boundAttributeParallelHPoolSize = boundAttributeParallelH.length;
-		this.boundAttributeParallelHFree = boundAttributeParallelHFree;
-		this.boundAttributeParallelH = boundAttributeParallelH;
+		
+		boundAttributeParallelHFree = boundAttributeParallelHFillCount;
+		boundAttributeConcurrentHMinFree = boundAttributeConcurrentHFree;
 		for(int i = 0; i < boundAttributeParallelHFree; i++){	
 			boundAttributeParallelH[i].init(this, inputStackDescriptor);
 		}
 	}
 	
-	public void setValidationContext(ValidationContext validationContext){
-		this.validationContext = validationContext;
-	}
+	
 	
 	public void releaseHandlers(){
-		contentHandlerPool.recycle(elementVHFree,	
+		contentHandlerPool.recycle(elementVHFree,
+		                            elementVHFree - elementVHMinFree,
 									elementVH,
-									startVHFree,	
+									startVHFree,
+									startVHFree - startVHMinFree,
 									startVH,
-									unexpectedElementHFree,	
+									unexpectedElementHFree,
+									unexpectedElementHFree - unexpectedElementHMinFree,
 									unexpectedElementH,
 									unexpectedAmbiguousEHFree,
+									unexpectedAmbiguousEHFree - unexpectedAmbiguousEHMinFree,
 									unexpectedAmbiguousEH,
-									unknownElementHFree,	
+									unknownElementHFree,
+									unknownElementHFree - unknownElementHMinFree,
 									unknownElementH,
-									defaultElementHFree,	
-									defaultElementH,
+									elementDefaultHFree,	
+									elementDefaultHFree - elementDefaultHMinFree,
+									elementDefaultH,
 									elementConcurrentHFree,
-									elementConcurrentH,
+									elementConcurrentHFree - elementConcurrentHMinFree,
+									elementConcurrentH,									
 									elementParallelHFree,
+									elementParallelHFree - elementParallelHMinFree,
 									elementParallelH,
 									elementCommonHFree,
+									elementCommonHFree - elementCommonHMinFree,
 									elementCommonH,
-									unexpectedAttributeHFree,	
+									unexpectedAttributeHFree,
+									unexpectedAttributeHFree - unexpectedAttributeHMinFree,
 									unexpectedAttributeH,
 									unexpectedAmbiguousAHFree,
+									unexpectedAmbiguousAHFree - unexpectedAmbiguousAHMinFree,
 									unexpectedAmbiguousAH,
 									unknownAttributeHFree,	
+									unknownAttributeHFree - unknownAttributeHMinFree,	
 									unknownAttributeH,
-									attributeVHFree,	
+									attributeVHFree,
+									attributeVHFree - attributeVHMinFree,
 									attributeVH,
-                                    candidateAttributeVHFree,	
+                                    candidateAttributeVHFree,
+                                    candidateAttributeVHFree - candidateAttributeVHMinFree,
 									candidateAttributeVH,
 									attributeConcurrentHFree,
+									attributeConcurrentHFree - attributeConcurrentHMinFree,
 									attributeConcurrentH,
 									attributeParallelHFree,
+									attributeParallelHFree - attributeParallelHMinFree,
 									attributeParallelH,
                                     attributeDefaultHFree,
+                                    attributeDefaultHFree - attributeDefaultHMinFree,
 									attributeDefaultH,                                    
 									charactersValidationHFree,
+									charactersValidationHFree - charactersValidationHMinFree,
 									charactersValidationH,
 									structuredDataValidationHFree,
+									structuredDataValidationHFree - structuredDataValidationHMinFree,
 									structuredDataValidationH,
 									dataValidationHFree,
+									dataValidationHFree - dataValidationHMinFree,
 									dataValidationH,
                                     defaultVAttributeHFree,
+                                    defaultVAttributeHFree - defaultVAttributeHMinFree,
 									defaultVAttributeH,
 									listPatternVHFree,
+									listPatternVHFree - listPatternVHMinFree,
 									listPatternVH,
 									exceptPatternVHFree,
+									exceptPatternVHFree - exceptPatternVHMinFree,
 									exceptPatternVH,
 									boundElementVHFree,
+									boundElementVHFree - boundElementVHMinFree,
 									boundElementVH,
 									boundStartVHFree,
+									boundStartVHFree - boundStartVHMinFree,
 									boundStartVH,
 									boundElementConcurrentHFree,
+									boundElementConcurrentHFree - boundElementConcurrentHMinFree,
 									boundElementConcurrentH,
 									boundElementParallelHFree,
+									boundElementParallelHFree - boundElementParallelHMinFree,
 									boundElementParallelH,
-									boundAttributeVHFree,	
+									boundAttributeVHFree,
+									boundAttributeVHFree - boundAttributeVHMinFree,
 									boundAttributeVH,
-                                    boundCandidateAttributeVHFree,	
+                                    boundCandidateAttributeVHFree,
+                                    boundCandidateAttributeVHFree - boundCandidateAttributeVHMinFree,
 									boundCandidateAttributeVH,
 									boundAttributeConcurrentHFree,
+									boundAttributeConcurrentHFree - boundAttributeConcurrentHMinFree,
 									boundAttributeConcurrentH,
                                     boundAttributeParallelHFree,
-									boundAttributeParallelH);
+                                    boundAttributeParallelHFree - boundAttributeParallelHMinFree,
+									boundAttributeParallelH);			
 		
-		elementVHFree = 0;
-		startVHFree = 0;
-		unexpectedElementHFree = 0;
-		unexpectedAmbiguousEHFree = 0;
-		unknownElementHFree = 0;
-		defaultElementHFree = 0;
-		elementConcurrentHFree = 0;
-		elementParallelHFree = 0;
-		elementCommonHFree = 0;
-		unexpectedAttributeHFree = 0;
-		unexpectedAmbiguousAHFree = 0;
-		unknownAttributeHFree = 0;
-		attributeVHFree = 0;
-        candidateAttributeVHFree = 0;
-		attributeConcurrentHFree = 0;
-		attributeParallelHFree = 0;
-        attributeDefaultHFree = 0;        
-		charactersValidationHFree = 0;
-		structuredDataValidationHFree = 0;		
-		dataValidationHFree = 0;
-		listPatternVHFree = 0;
-		exceptPatternVHFree = 0;
-		boundElementVHFree = 0;
-		boundStartVHFree = 0;
-		boundElementConcurrentHFree = 0;
-		boundElementParallelHFree = 0;
-		boundAttributeVHFree = 0;
-        boundCandidateAttributeVHFree = 0;
-		boundAttributeConcurrentHFree = 0;
-        boundAttributeParallelHFree = 0;
+		full = false;
 	}
 	
 	
@@ -681,14 +680,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{						
 			ElementValidationHandler che = elementVH[--elementVHFree];
 			che.init(element, parent);
+			if(elementVHFree < elementVHMinFree) elementVHMinFree = elementVHFree;
 			return che;
 		}		
 	}
 	
 	void recycle(ElementValidationHandler eh){		
-		if(elementVHFree == elementVHPoolSize){			 
-			elementVHPoolSize+=5;
-			ElementValidationHandler[] increased = new ElementValidationHandler[elementVHPoolSize];
+		if(elementVHFree == elementVH.length){			 
+		    if(elementVHFree == elementVHMaxSize)return;
+			ElementValidationHandler[] increased = new ElementValidationHandler[10+elementVH.length];
 			System.arraycopy(elementVH, 0, increased, 0, elementVHFree);
 			elementVH = increased;
 		}
@@ -705,14 +705,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{						
 			StartValidationHandler che = startVH[--startVHFree];
 			che.init(start, null);
+			if(startVHFree < startVHMinFree) startVHMinFree = startVHFree;
 			return che;
 		}		
 	}
 		
 	void recycle(StartValidationHandler eh){		
-		if(startVHFree == startVHPoolSize){			 
-			startVHPoolSize+=5;
-			StartValidationHandler[] increased = new StartValidationHandler[startVHPoolSize];
+		if(startVHFree == startVH.length){
+		    if(startVHFree == startVHMaxSize) return;
+			StartValidationHandler[] increased = new StartValidationHandler[5];
 			System.arraycopy(startVH, 0, increased, 0, startVHFree);
 			startVH = increased;
 		}
@@ -730,14 +731,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{						
 			UnexpectedElementHandler ueh = unexpectedElementH[--unexpectedElementHFree];
 			ueh.init(e, parent);
+			if(unexpectedElementHFree < unexpectedElementHMinFree) unexpectedElementHMinFree = unexpectedElementHFree;
 			return ueh;
 		}		
 	}
 	
 	void recycle(UnexpectedElementHandler ueh){		
-		if(unexpectedElementHFree == unexpectedElementHPoolSize){
-			unexpectedElementHPoolSize+=5;
-			UnexpectedElementHandler[] increased = new UnexpectedElementHandler[unexpectedElementHPoolSize];
+		if(unexpectedElementHFree == unexpectedElementH.length){
+		    if(unexpectedElementHFree == unexpectedElementHMaxSize) return;
+			UnexpectedElementHandler[] increased = new UnexpectedElementHandler[10+unexpectedElementH.length];
 			System.arraycopy(unexpectedElementH, 0, increased, 0, unexpectedElementHFree);
 			unexpectedElementH = increased;
 		}
@@ -754,13 +756,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			UnexpectedAmbiguousElementHandler uach =  unexpectedAmbiguousEH[--unexpectedAmbiguousEHFree];
 			uach.init(elements, parent);
+			if(unexpectedElementHFree < unexpectedElementHMinFree) unexpectedElementHMinFree = unexpectedElementHFree;
 			return uach;
 		}		
 	}
 	
 	void recycle(UnexpectedAmbiguousElementHandler ucch){		
-		if(unexpectedAmbiguousEHFree == unexpectedAmbiguousEHPoolSize){			
-			UnexpectedAmbiguousElementHandler[] increased = new UnexpectedAmbiguousElementHandler[++unexpectedAmbiguousEHPoolSize];
+		if(unexpectedAmbiguousEHFree == unexpectedAmbiguousEH.length){			
+		    if(unexpectedAmbiguousEHFree == unexpectedAmbiguousEHMaxSize) return;
+			UnexpectedAmbiguousElementHandler[] increased = new UnexpectedAmbiguousElementHandler[10+unexpectedAmbiguousEH.length];
 			System.arraycopy(unexpectedAmbiguousEH, 0, increased, 0, unexpectedAmbiguousEHFree);
 			unexpectedAmbiguousEH = increased;
 		}
@@ -777,13 +781,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{						
 			UnknownElementHandler ueh = unknownElementH[--unknownElementHFree];
 			ueh.init(parent);
+			if(unknownElementHFree < unknownElementHMinFree) unknownElementHMinFree = unknownElementHFree;
 			return ueh;
 		}		
 	}
 	
 	void recycle(UnknownElementHandler ueh){		
-		if(unknownElementHFree == unknownElementHPoolSize){			
-			UnknownElementHandler[] increased = new UnknownElementHandler[++unknownElementHPoolSize];
+		if(unknownElementHFree == unknownElementH.length){
+            if(unknownElementHFree == unknownElementHMaxSize) return;			
+			UnknownElementHandler[] increased = new UnknownElementHandler[10+unknownElementH.length];
 			System.arraycopy(unknownElementH, 0, increased, 0, unknownElementHFree);
 			unknownElementH = increased;
 		}
@@ -791,26 +797,28 @@ public class ValidatorEventHandlerPool implements Reusable{
 	}
 	
 	ElementDefaultHandler getElementDefaultHandler(ElementEventHandler parent){
-		if(defaultElementHFree == 0){
+		if(elementDefaultHFree == 0){
 			ElementDefaultHandler deh = new ElementDefaultHandler(debugWriter);
 			deh.init(this, inputStackDescriptor);
 			deh.init(parent);
 			return deh;			
 		}
 		else{						
-			ElementDefaultHandler deh = defaultElementH[--defaultElementHFree];
+			ElementDefaultHandler deh = elementDefaultH[--elementDefaultHFree];
 			deh.init(parent);
+			if(unknownElementHFree < unknownElementHMinFree) unknownElementHMinFree = unknownElementHFree;
 			return deh;
 		}		
 	}
 	
 	void recycle(ElementDefaultHandler deh){		
-		if(defaultElementHFree == defaultElementHPoolSize){			
-			ElementDefaultHandler[] increased = new ElementDefaultHandler[++defaultElementHPoolSize];
-			System.arraycopy(defaultElementH, 0, increased, 0, defaultElementHFree);
-			defaultElementH = increased;
+		if(elementDefaultHFree == elementDefaultH.length){
+		    if(elementDefaultHFree == elementDefaultHMaxSize) return;			
+			ElementDefaultHandler[] increased = new ElementDefaultHandler[10+elementDefaultH.length];
+			System.arraycopy(elementDefaultH, 0, increased, 0, elementDefaultHFree);
+			elementDefaultH = increased;
 		}
-		defaultElementH[defaultElementHFree++] = deh; 
+		elementDefaultH[elementDefaultHFree++] = deh; 
 	}
 	
 	ElementConcurrentHandler getElementConcurrentHandler(List<AElement> candidateDefinitions, ElementValidationHandler parent){		
@@ -823,13 +831,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			ElementConcurrentHandler ech = elementConcurrentH[--elementConcurrentHFree];
 			ech.init(candidateDefinitions, parent);
+			if(unknownElementHFree < unknownElementHMinFree) unknownElementHMinFree = unknownElementHFree;
 			return ech; 
 		}		
 	}
 	
 	void recycle(ElementConcurrentHandler cpch){		
-		if(elementConcurrentHFree == elementConcurrentHPoolSize){			
-			ElementConcurrentHandler[] increased = new ElementConcurrentHandler[++elementConcurrentHPoolSize];
+		if(elementConcurrentHFree == elementConcurrentH.length){
+		    if(elementConcurrentHFree == elementConcurrentHMaxSize) return;			
+			ElementConcurrentHandler[] increased = new ElementConcurrentHandler[10+elementConcurrentH.length];
 			System.arraycopy(elementConcurrentH, 0, increased, 0, elementConcurrentHFree);
 			elementConcurrentH = increased;
 		}
@@ -846,13 +856,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			ElementParallelHandler eph = elementParallelH[--elementParallelHFree];
 			eph.init(conflictHandler, candidatesConflictErrorHandler, parent);
+			if(unknownElementHFree < unknownElementHMinFree) unknownElementHMinFree = unknownElementHFree;
 			return eph; 
 		}		
 	}	
 	
 	void recycle(ElementParallelHandler eph){	
-		if(elementParallelHFree == elementParallelHPoolSize){			
-			ElementParallelHandler[] increased = new ElementParallelHandler[++elementParallelHPoolSize];
+		if(elementParallelHFree == elementParallelH.length){
+		    if(elementParallelHFree == elementParallelHMaxSize) return;			
+			ElementParallelHandler[] increased = new ElementParallelHandler[10+elementParallelH.length];
 			System.arraycopy(elementParallelH, 0, increased, 0, elementParallelHFree);
 			elementParallelH = increased;
 		}
@@ -869,13 +881,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			ElementCommonHandler eph = elementCommonH[--elementCommonHFree];
 			eph.init(conflictHandler, candidateCount, parent);
+			if(elementCommonHFree < elementCommonHMinFree) elementCommonHMinFree = elementCommonHFree;
 			return eph; 
 		}		
 	}	
 	
 	void recycle(ElementCommonHandler eph){	
-		if(elementCommonHFree == elementCommonHPoolSize){			
-			ElementCommonHandler[] increased = new ElementCommonHandler[++elementCommonHPoolSize];
+		if(elementCommonHFree == elementCommonH.length){			
+		    if(elementCommonHFree == elementCommonHMaxSize) return;
+			ElementCommonHandler[] increased = new ElementCommonHandler[10+elementCommonH.length];
 			System.arraycopy(elementCommonH, 0, increased, 0, elementCommonHFree);
 			elementCommonH = increased;
 		}
@@ -894,14 +908,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{						
 			UnexpectedAttributeHandler uah = unexpectedAttributeH[--unexpectedAttributeHFree];
 			uah.init(a, parent);
+			if(unexpectedAttributeHFree < unexpectedAttributeHMinFree) unexpectedAttributeHMinFree = unexpectedAttributeHFree;
 			return uah;
 		}		
 	}
 	
 	void recycle(UnexpectedAttributeHandler ueh){		
-		if(unexpectedAttributeHFree == unexpectedAttributeHPoolSize){
-			unexpectedAttributeHPoolSize+=5;
-			UnexpectedAttributeHandler[] increased = new UnexpectedAttributeHandler[unexpectedAttributeHPoolSize];
+		if(unexpectedAttributeHFree == unexpectedAttributeH.length){
+		    if(unexpectedAttributeHFree == unexpectedAttributeHMaxSize) return;
+			UnexpectedAttributeHandler[] increased = new UnexpectedAttributeHandler[10+unexpectedAttributeH.length];
 			System.arraycopy(unexpectedAttributeH, 0, increased, 0, unexpectedAttributeHFree);
 			unexpectedAttributeH = increased;
 		}
@@ -918,13 +933,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			UnexpectedAmbiguousAttributeHandler uach =  unexpectedAmbiguousAH[--unexpectedAmbiguousAHFree];
 			uach.init(aa, parent);
+			if(unexpectedAmbiguousAHFree < unexpectedAmbiguousAHMinFree) unexpectedAmbiguousAHMinFree = unexpectedAmbiguousAHFree;
 			return uach;
 		}		
 	}
 	
 	void recycle(UnexpectedAmbiguousAttributeHandler ucch){		
-		if(unexpectedAmbiguousAHFree == unexpectedAmbiguousAHPoolSize){			
-			UnexpectedAmbiguousAttributeHandler[] increased = new UnexpectedAmbiguousAttributeHandler[++unexpectedAmbiguousAHPoolSize];
+		if(unexpectedAmbiguousAHFree == unexpectedAmbiguousAH.length){
+            if(unexpectedAmbiguousAHFree == unexpectedAmbiguousAHMaxSize) return;			
+			UnexpectedAmbiguousAttributeHandler[] increased = new UnexpectedAmbiguousAttributeHandler[10+unexpectedAmbiguousAH.length];
 			System.arraycopy(unexpectedAmbiguousAH, 0, increased, 0, unexpectedAmbiguousAHFree);
 			unexpectedAmbiguousAH = increased;
 		}
@@ -941,13 +958,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{						
 			UnknownAttributeHandler uah = unknownAttributeH[--unknownAttributeHFree];
 			uah.init(parent);
+			if(unknownAttributeHFree < unknownAttributeHMinFree) unknownAttributeHMinFree = unknownAttributeHFree;
 			return uah;
 		}		
 	}
 	
 	void recycle(UnknownAttributeHandler ueh){		
-		if(unknownAttributeHFree == unknownAttributeHPoolSize){			
-			UnknownAttributeHandler[] increased = new UnknownAttributeHandler[++unknownAttributeHPoolSize];
+		if(unknownAttributeHFree == unknownAttributeH.length){
+            if(unknownAttributeHFree == unknownAttributeHMaxSize) return;			
+			UnknownAttributeHandler[] increased = new UnknownAttributeHandler[10+unknownAttributeH.length];
 			System.arraycopy(unknownAttributeH, 0, increased, 0, unknownAttributeHFree);
 			unknownAttributeH = increased;
 		}
@@ -955,19 +974,6 @@ public class ValidatorEventHandlerPool implements Reusable{
 	}
 	
 	
-	/*public AttributeValidationHandler getAttributeValidationHandler(AAttribute attribute, ElementValidationHandler parent){		
-		if(attributeVHFree == 0){
-			AttributeValidationHandler avh = new AttributeValidationHandler(debugWriter);
-			avh.init(this, inputStackDescriptor, validationContext, matchHandler);
-			avh.init(attribute,  parent);
-			return avh;			
-		}
-		else{						
-			AttributeValidationHandler avh = attributeVH[--attributeVHFree];
-			avh.init(attribute, parent);
-			return avh;
-		}		
-	}*/
 	
 	public AttributeValidationHandler getAttributeValidationHandler(AAttribute attribute, ElementValidationHandler parent, ContextErrorHandlerManager contextErrorHandlerManager){		
 		if(attributeVHFree == 0){
@@ -979,14 +985,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{						
 			AttributeValidationHandler avh = attributeVH[--attributeVHFree];
 			avh.init(attribute, parent, contextErrorHandlerManager);
+			if(attributeVHFree < attributeVHMinFree) attributeVHMinFree = attributeVHFree;
 			return avh;
 		}		
 	}
 		
 	void recycle(AttributeValidationHandler eh){		
-		if(attributeVHFree == attributeVHPoolSize){			 
-			attributeVHPoolSize+=5;
-			AttributeValidationHandler[] increased = new AttributeValidationHandler[attributeVHPoolSize];
+		if(attributeVHFree == attributeVH.length){
+		    if(attributeVHFree == attributeVHMaxSize) return;
+			AttributeValidationHandler[] increased = new AttributeValidationHandler[10+attributeVH.length];
 			System.arraycopy(attributeVH, 0, increased, 0, attributeVHFree);
 			attributeVH = increased;
 		}
@@ -1004,14 +1011,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{						
 			CandidateAttributeValidationHandler avh = candidateAttributeVH[--candidateAttributeVHFree];
 			avh.init(candidateAttribute, parent, conflictHandler, candidateIndex, temporaryMessageStorage);
+			if(candidateAttributeVHFree < candidateAttributeVHMinFree) candidateAttributeVHMinFree = candidateAttributeVHFree;
 			return avh;
 		}		
 	}
 		
 	void recycle(CandidateAttributeValidationHandler eh){		
-		if(candidateAttributeVHFree == candidateAttributeVHPoolSize){			 
-			candidateAttributeVHPoolSize+=5;
-			CandidateAttributeValidationHandler[] increased = new CandidateAttributeValidationHandler[candidateAttributeVHPoolSize];
+		if(candidateAttributeVHFree == candidateAttributeVH.length){
+		    if(candidateAttributeVHFree == candidateAttributeVHMaxSize) return;
+			CandidateAttributeValidationHandler[] increased = new CandidateAttributeValidationHandler[10+candidateAttributeVH.length];
 			System.arraycopy(candidateAttributeVH, 0, increased, 0, candidateAttributeVHFree);
 			candidateAttributeVH = increased;
 		}
@@ -1028,13 +1036,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			AttributeConcurrentHandler ach = attributeConcurrentH[--attributeConcurrentHFree];
 			ach.init(candidateDefinitions, parent);
+			if(attributeConcurrentHFree < attributeConcurrentHMinFree) attributeConcurrentHMinFree = attributeConcurrentHFree;
 			return ach; 
 		}		
 	}
 	
 	void recycle(AttributeConcurrentHandler ach){		
-		if(attributeConcurrentHFree == attributeConcurrentHPoolSize){			
-			AttributeConcurrentHandler[] increased = new AttributeConcurrentHandler[++attributeConcurrentHPoolSize];
+		if(attributeConcurrentHFree == attributeConcurrentH.length){			
+		    if(attributeConcurrentHFree == attributeConcurrentHMaxSize) return;
+			AttributeConcurrentHandler[] increased = new AttributeConcurrentHandler[10+attributeConcurrentH.length];
 			System.arraycopy(attributeConcurrentH, 0, increased, 0, attributeConcurrentHFree);
 			attributeConcurrentH = increased;
 		}
@@ -1051,13 +1061,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			AttributeParallelHandler ach = attributeParallelH[--attributeParallelHFree];
 			ach.init(parent, candidatesConflictHandler, elementCandidatesConflictErrorHandler);
+			if(attributeParallelHFree < attributeParallelHMinFree) attributeParallelHMinFree = attributeParallelHFree;
 			return ach; 
 		}		
 	}
 	
 	void recycle(AttributeParallelHandler ach){		
-		if(attributeParallelHFree == attributeParallelHPoolSize){			
-			AttributeParallelHandler[] increased = new AttributeParallelHandler[++attributeParallelHPoolSize];
+		if(attributeParallelHFree == attributeParallelH.length){
+            if(attributeParallelHFree == attributeParallelHMaxSize) return;			
+			AttributeParallelHandler[] increased = new AttributeParallelHandler[10+attributeParallelH.length];
 			System.arraycopy(attributeParallelH, 0, increased, 0, attributeParallelHFree);
 			attributeParallelH = increased;
 		}
@@ -1074,13 +1086,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			AttributeDefaultHandler ach = attributeDefaultH[--attributeDefaultHFree];
 			ach.init(parent);
+			if(attributeDefaultHFree < attributeDefaultHMinFree) attributeDefaultHMinFree = attributeDefaultHFree;
 			return ach; 
 		}		
 	}
 	
 	void recycle(AttributeDefaultHandler ach){		
-		if(attributeDefaultHFree == attributeDefaultHPoolSize){			
-			AttributeDefaultHandler[] increased = new AttributeDefaultHandler[++attributeDefaultHPoolSize];
+		if(attributeDefaultHFree == attributeDefaultH.length){
+            if(attributeDefaultHFree == attributeDefaultHMaxSize) return;			
+			AttributeDefaultHandler[] increased = new AttributeDefaultHandler[10+attributeDefaultH.length];
 			System.arraycopy(attributeDefaultH, 0, increased, 0, attributeDefaultHFree);
 			attributeDefaultH = increased;
 		}
@@ -1096,13 +1110,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		}else{
 			CharactersValidationHandler ach = charactersValidationH[--charactersValidationHFree];
 			ach.init(parent, charsContentTypeHandler, contextErrorCatcher);
+			if(charactersValidationHFree < charactersValidationHMinFree) charactersValidationHMinFree = charactersValidationHFree;
 			return ach; 
 		}		
 	}
 		
 	void recycle(CharactersValidationHandler ach){
-		if(charactersValidationHFree == charactersValidationHPoolSize){			
-			CharactersValidationHandler[] increased = new CharactersValidationHandler[++charactersValidationHPoolSize];
+		if(charactersValidationHFree == charactersValidationH.length){
+		    if(charactersValidationHFree == charactersValidationHMaxSize) return;			
+			CharactersValidationHandler[] increased = new CharactersValidationHandler[10+charactersValidationH.length];
 			System.arraycopy(charactersValidationH, 0, increased, 0, charactersValidationHFree);
 			charactersValidationH = increased;
 		}
@@ -1120,13 +1136,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			StructuredDataValidationHandler ach = structuredDataValidationH[--structuredDataValidationHFree];
 			ach.init(parent, structuredDataContentTypeHandler, contextErrorCatcher);
+			if(structuredDataValidationHFree < structuredDataValidationHMinFree) structuredDataValidationHMinFree = structuredDataValidationHFree;
 			return ach; 
 		}		
 	}
 		
 	void recycle(StructuredDataValidationHandler ach){		
-		if(structuredDataValidationHFree == structuredDataValidationHPoolSize){			
-			StructuredDataValidationHandler[] increased = new StructuredDataValidationHandler[++structuredDataValidationHPoolSize];
+		if(structuredDataValidationHFree == structuredDataValidationH.length){
+            if(structuredDataValidationHFree == structuredDataValidationHMaxSize) return;			
+			StructuredDataValidationHandler[] increased = new StructuredDataValidationHandler[10+structuredDataValidationH.length];
 			System.arraycopy(structuredDataValidationH, 0, increased, 0, structuredDataValidationHFree);
 			structuredDataValidationH = increased;
 		}
@@ -1143,13 +1161,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			DataValidationHandler ach = dataValidationH[--dataValidationHFree];
 			ach.init(parent, dataContentTypeHandler, contextErrorCatcher);
+			if(dataValidationHFree < dataValidationHMinFree) dataValidationHMinFree = dataValidationHFree; 
 			return ach; 
 		}		
 	}
 		
 	void recycle(DataValidationHandler ach){		
-		if(dataValidationHFree == dataValidationHPoolSize){			
-			DataValidationHandler[] increased = new DataValidationHandler[++dataValidationHPoolSize];
+		if(dataValidationHFree == dataValidationH.length){
+            if(dataValidationHFree == dataValidationHMaxSize) return;
+			DataValidationHandler[] increased = new DataValidationHandler[10+dataValidationH.length];
 			System.arraycopy(dataValidationH, 0, increased, 0, dataValidationHFree);
 			dataValidationH = increased;
 		}
@@ -1165,14 +1185,16 @@ public class ValidatorEventHandlerPool implements Reusable{
 		}
 		else{
 			DefaultValueAttributeValidationHandler dvah = defaultVAttributeH[--defaultVAttributeHFree];
-            dvah.init(this, inputStackDescriptor, matchHandler);			
+            dvah.init(this, inputStackDescriptor, matchHandler);
+            if(defaultVAttributeHFree < defaultVAttributeHMinFree) defaultVAttributeHMinFree = defaultVAttributeHFree; 			
 			return dvah; 
 		}		
 	}
 		
 	void recycle(DefaultValueAttributeValidationHandler ach){		
-		if(defaultVAttributeHFree == defaultVAttributeHPoolSize){			
-			DefaultValueAttributeValidationHandler[] increased = new DefaultValueAttributeValidationHandler[++defaultVAttributeHPoolSize];
+		if(defaultVAttributeHFree == defaultVAttributeH.length){
+            if(defaultVAttributeHFree == defaultVAttributeHMaxSize) return;
+			DefaultValueAttributeValidationHandler[] increased = new DefaultValueAttributeValidationHandler[10+defaultVAttributeH.length];
 			System.arraycopy(defaultVAttributeH, 0, increased, 0, defaultVAttributeHFree);
 			defaultVAttributeH = increased;
 		}
@@ -1189,13 +1211,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			ListPatternValidationHandler lpvh = listPatternVH[--listPatternVHFree];
 			lpvh.init(listPattern, parent, errorCatcher);
+			if(listPatternVHFree < listPatternVHMinFree) listPatternVHMinFree = listPatternVHFree;
 			return lpvh; 
 		}		
 	}
 	
 	void recycle(ListPatternValidationHandler lpvh){		
-		if(listPatternVHFree == listPatternVHPoolSize){			
-			ListPatternValidationHandler[] increased = new ListPatternValidationHandler[++listPatternVHPoolSize];
+		if(listPatternVHFree == listPatternVH.length){
+            if(listPatternVHFree == listPatternVHMaxSize) return;			
+			ListPatternValidationHandler[] increased = new ListPatternValidationHandler[10+listPatternVH.length];
 			System.arraycopy(listPatternVH, 0, increased, 0, listPatternVHFree);
 			listPatternVH = increased;
 		}
@@ -1212,13 +1236,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			ExceptPatternValidationHandler ach = exceptPatternVH[--exceptPatternVHFree];
 			ach.init(data, exceptPattern, parent, errorCatcher);
+			if(exceptPatternVHFree < exceptPatternVHMinFree) exceptPatternVHMinFree = exceptPatternVHFree;
 			return ach; 
 		}		
 	}
 	
 	void recycle(ExceptPatternValidationHandler ach){		
-		if(exceptPatternVHFree == exceptPatternVHPoolSize){			
-			ExceptPatternValidationHandler[] increased = new ExceptPatternValidationHandler[++exceptPatternVHPoolSize];
+		if(exceptPatternVHFree == exceptPatternVH.length){
+		    if(exceptPatternVHFree == exceptPatternVHMaxSize) return;			
+			ExceptPatternValidationHandler[] increased = new ExceptPatternValidationHandler[10+exceptPatternVH.length];
 			System.arraycopy(exceptPatternVH, 0, increased, 0, exceptPatternVHFree);
 			exceptPatternVH = increased;
 		}
@@ -1238,14 +1264,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{						
 			BoundElementValidationHandler bevh = boundElementVH[--boundElementVHFree];
 			bevh.init(element,  parent, bindingModel, queue, queuePool);
+			if(boundElementVHFree < boundElementVHMinFree) boundElementVHMinFree = boundElementVHFree;
 			return bevh;			
 		}		
 	}
 	
 	void recycle(BoundElementValidationHandler bevh){		
-		if(boundElementVHFree == boundElementVHPoolSize){			 
-			boundElementVHPoolSize+=5;
-			BoundElementValidationHandler[] increased = new BoundElementValidationHandler[boundElementVHPoolSize];
+		if(boundElementVHFree == boundElementVH.length){
+		    if(boundElementVHFree == boundElementVHMaxSize) return;
+			BoundElementValidationHandler[] increased = new BoundElementValidationHandler[10+boundElementVH.length];
 			System.arraycopy(boundElementVH, 0, increased, 0, boundElementVHFree);
 			boundElementVH = increased;
 		}
@@ -1262,14 +1289,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{						
 			BoundStartValidationHandler bevh = boundStartVH[--boundStartVHFree];
 			bevh.init(element,  null, bindingModel, queue, queuePool);
+			if(boundStartVHFree < boundStartVHMinFree) boundStartVHMinFree = boundStartVHFree;
 			return bevh;			
 		}		
 	}
 		
 	void recycle(BoundStartValidationHandler bevh){		
-		if(boundStartVHFree == boundStartVHPoolSize){			 
-			boundStartVHPoolSize+=5;
-			BoundStartValidationHandler[] increased = new BoundStartValidationHandler[boundStartVHPoolSize];
+		if(boundStartVHFree == boundStartVH.length){
+		    if(boundStartVHFree == boundStartVHMaxSize) return;
+			BoundStartValidationHandler[] increased = new BoundStartValidationHandler[5];
 			System.arraycopy(boundStartVH, 0, increased, 0, boundStartVHFree);
 			boundStartVH = increased;
 		}
@@ -1286,13 +1314,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			BoundElementConcurrentHandler ech = boundElementConcurrentH[--boundElementConcurrentHFree];
 			ech.init(candidateDefinitions, parent, bindingModel, queue, queuePool);
+			if(boundElementConcurrentHFree < boundElementConcurrentHMinFree) boundElementConcurrentHMinFree = boundElementConcurrentHFree;
 			return ech; 
 		}		
 	}
 	
 	void recycle(BoundElementConcurrentHandler cpch){		
-		if(boundElementConcurrentHFree == boundElementConcurrentHPoolSize){			
-			BoundElementConcurrentHandler[] increased = new BoundElementConcurrentHandler[++boundElementConcurrentHPoolSize];
+		if(boundElementConcurrentHFree == boundElementConcurrentH.length){
+            if(boundElementConcurrentHFree == boundElementConcurrentHMaxSize) return;			
+			BoundElementConcurrentHandler[] increased = new BoundElementConcurrentHandler[10+boundElementConcurrentH.length];
 			System.arraycopy(boundElementConcurrentH, 0, increased, 0, boundElementConcurrentHFree);
 			boundElementConcurrentH = increased;
 		}
@@ -1310,13 +1340,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			BoundElementParallelHandler eph = boundElementParallelH[--boundElementParallelHFree];
 			eph.init(conflictHandler, candidatesConflictErrorHandler, parent, bindingModel, queue, queuePool);
+			if(boundElementParallelHFree < boundElementParallelHMinFree) boundElementParallelHMinFree = boundElementParallelHFree; 
 			return eph; 
 		}		
 	}	
 	
 	void recycle(BoundElementParallelHandler eph){	
-		if(boundElementParallelHFree == boundElementParallelHPoolSize){			
-			BoundElementParallelHandler[] increased = new BoundElementParallelHandler[++boundElementParallelHPoolSize];
+		if(boundElementParallelHFree == boundElementParallelH.length){			
+		    if(boundElementParallelHFree == boundElementParallelHMaxSize) return;
+			BoundElementParallelHandler[] increased = new BoundElementParallelHandler[10+boundElementParallelH.length];
 			System.arraycopy(boundElementParallelH, 0, increased, 0, boundElementParallelHFree);
 			boundElementParallelH = increased;
 		}
@@ -1334,14 +1366,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{						
 			BoundAttributeValidationHandler bavh = boundAttributeVH[--boundAttributeVHFree];
 			bavh.init(boundAttribute, parent, contextErrorHandlerManager, bindingModel, queue, entry);
+			if(boundAttributeVHFree < boundAttributeVHMinFree) boundAttributeVHMinFree = boundAttributeVHFree;
 			return bavh;
 		}		
 	}
 		
 	void recycle(BoundAttributeValidationHandler eh){		
-		if(boundAttributeVHFree == boundAttributeVHPoolSize){			 
-			boundAttributeVHPoolSize+=5;
-			BoundAttributeValidationHandler[] increased = new BoundAttributeValidationHandler[boundAttributeVHPoolSize];
+		if(boundAttributeVHFree == boundAttributeVH.length){
+		    if(boundAttributeVHFree == boundAttributeVHMaxSize) return;
+			BoundAttributeValidationHandler[] increased = new BoundAttributeValidationHandler[10+boundAttributeVH.length];
 			System.arraycopy(boundAttributeVH, 0, increased, 0, boundAttributeVHFree);
 			boundAttributeVH = increased;
 		}
@@ -1358,14 +1391,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{						
 			BoundCandidateAttributeValidationHandler bavh = boundCandidateAttributeVH[--boundCandidateAttributeVHFree];
 			bavh.init(boundCandidateAttribute, parent, conflictHandler, candidateIndex, bindingModel, queue, entry);
+			if(boundCandidateAttributeVHFree < boundCandidateAttributeVHMinFree) boundCandidateAttributeVHMinFree = boundCandidateAttributeVHFree;
 			return bavh;
 		}		
 	}
 		
 	void recycle(BoundCandidateAttributeValidationHandler eh){		
-		if(boundCandidateAttributeVHFree == boundCandidateAttributeVHPoolSize){			 
-			boundCandidateAttributeVHPoolSize+=5;
-			BoundCandidateAttributeValidationHandler[] increased = new BoundCandidateAttributeValidationHandler[boundCandidateAttributeVHPoolSize];
+		if(boundCandidateAttributeVHFree == boundCandidateAttributeVH.length){
+		    if(boundCandidateAttributeVHFree == boundCandidateAttributeVHMaxSize) return;
+			BoundCandidateAttributeValidationHandler[] increased = new BoundCandidateAttributeValidationHandler[10+boundCandidateAttributeVH.length];
 			System.arraycopy(boundCandidateAttributeVH, 0, increased, 0, boundCandidateAttributeVHFree);
 			boundCandidateAttributeVH = increased;
 		}
@@ -1382,13 +1416,15 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			BoundAttributeConcurrentHandler ach = boundAttributeConcurrentH[--boundAttributeConcurrentHFree];
 			ach.init(candidateDefinitions, parent, bindingModel, queue, entry);
+			if(boundAttributeConcurrentHFree < boundAttributeConcurrentHMinFree) boundAttributeConcurrentHMinFree = boundAttributeConcurrentHFree;
 			return ach; 
 		}		
 	}
 	
 	void recycle(BoundAttributeConcurrentHandler ach){		
-		if(boundAttributeConcurrentHFree == boundAttributeConcurrentHPoolSize){			
-			BoundAttributeConcurrentHandler[] increased = new BoundAttributeConcurrentHandler[++boundAttributeConcurrentHPoolSize];
+		if(boundAttributeConcurrentHFree == boundAttributeConcurrentH.length){
+            if(boundAttributeConcurrentHFree == boundAttributeConcurrentHMaxSize) return;			
+			BoundAttributeConcurrentHandler[] increased = new BoundAttributeConcurrentHandler[10+boundAttributeConcurrentH.length];
 			System.arraycopy(boundAttributeConcurrentH, 0, increased, 0, boundAttributeConcurrentHFree);
 			boundAttributeConcurrentH = increased;
 		}
@@ -1406,17 +1442,18 @@ public class ValidatorEventHandlerPool implements Reusable{
 		else{
 			BoundAttributeParallelHandler ach = boundAttributeParallelH[--boundAttributeParallelHFree];
 			ach.init(parent, candidatesConflictHandler, elementCandidatesConflictErrorHandler, bindingModel, queue, entry);
+			if(boundAttributeParallelHFree < boundAttributeParallelHMinFree) boundAttributeParallelHMinFree = boundAttributeParallelHFree;
 			return ach; 
 		}		
 	}
 	
 	void recycle(BoundAttributeParallelHandler ach){		
-		if(boundAttributeParallelHFree == boundAttributeParallelHPoolSize){			
-			BoundAttributeParallelHandler[] increased = new BoundAttributeParallelHandler[++boundAttributeParallelHPoolSize];
+		if(boundAttributeParallelHFree == boundAttributeParallelH.length){			
+		    if(boundAttributeParallelHFree == boundAttributeParallelHMaxSize) return;
+			BoundAttributeParallelHandler[] increased = new BoundAttributeParallelHandler[10+boundAttributeParallelH.length];
 			System.arraycopy(boundAttributeParallelH, 0, increased, 0, boundAttributeParallelHFree);
 			boundAttributeParallelH = increased;
 		}
 		boundAttributeParallelH[boundAttributeParallelHFree++] = ach;
 	}
-
 }

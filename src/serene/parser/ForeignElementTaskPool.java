@@ -25,7 +25,7 @@ import sereneWrite.MessageWriter;
 
 public class ForeignElementTaskPool implements ElementTaskPool{
     ForeignElementTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
     
     SAttribute any;
     
@@ -35,8 +35,8 @@ public class ForeignElementTaskPool implements ElementTaskPool{
 		this.debugWriter = debugWriter;
         this.any = any;
         taskFree = 0;
-		taskPoolSize = 3;
-		task = new ForeignElementTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new ForeignElementTask[5];
 	}
     
     public void recycle(ElementTask t){
@@ -45,9 +45,9 @@ public class ForeignElementTaskPool implements ElementTaskPool{
 	}
     
     void recycle(ForeignElementTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			ForeignElementTask[] increased = new ForeignElementTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			ForeignElementTask[] increased = new ForeignElementTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

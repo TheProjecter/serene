@@ -24,7 +24,7 @@ import sereneWrite.MessageWriter;
 
 public class ChoiceNameClassPool extends RNGParseEndElementTaskPool{
 	ChoiceNameClassTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public ChoiceNameClassPool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -32,8 +32,8 @@ public class ChoiceNameClassPool extends RNGParseEndElementTaskPool{
 						MessageWriter debugWriter){
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new ChoiceNameClassTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new ChoiceNameClassTask[5];
 	}
 	
 	public ChoiceNameClassTask getTask(){
@@ -51,9 +51,9 @@ public class ChoiceNameClassPool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(ChoiceNameClassTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			ChoiceNameClassTask[] increased = new ChoiceNameClassTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			ChoiceNameClassTask[] increased = new ChoiceNameClassTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

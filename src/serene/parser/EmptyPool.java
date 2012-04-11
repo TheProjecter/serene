@@ -24,7 +24,7 @@ import sereneWrite.MessageWriter;
 
 public class EmptyPool extends RNGParseEndElementTaskPool{
 	EmptyTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public EmptyPool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -32,8 +32,8 @@ public class EmptyPool extends RNGParseEndElementTaskPool{
 						MessageWriter debugWriter){
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new EmptyTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new EmptyTask[5];
 	}
 	
 	public EmptyTask getTask(){
@@ -51,9 +51,9 @@ public class EmptyPool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(EmptyTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			EmptyTask[] increased = new EmptyTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			EmptyTask[] increased = new EmptyTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

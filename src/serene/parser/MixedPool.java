@@ -24,7 +24,7 @@ import sereneWrite.MessageWriter;
 
 public class MixedPool extends RNGParseEndElementTaskPool{
 	MixedTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public MixedPool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -32,8 +32,8 @@ public class MixedPool extends RNGParseEndElementTaskPool{
 						MessageWriter debugWriter){
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new MixedTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new MixedTask[5];
 	}
 	
 	public MixedTask getTask(){
@@ -51,9 +51,9 @@ public class MixedPool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(MixedTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			MixedTask[] increased = new MixedTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			MixedTask[] increased = new MixedTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

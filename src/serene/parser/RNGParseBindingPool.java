@@ -46,7 +46,7 @@ public class RNGParseBindingPool extends BindingPool{
 	Map<SAttribute, AttributeTaskPool> attributeTaskPools;
 		
 	RNGParseBindingModel[] bindingModel;
-	int bindingModelFree, bindingModelPoolSize;
+	int bindingModelFree, bindingModelMaxSize;
 	
 	ParsedComponentBuilder builder;
 	
@@ -143,9 +143,9 @@ public class RNGParseBindingPool extends BindingPool{
 	}
 	
 	public synchronized void recycle(RNGParseBindingModel bm){
-		if(bindingModelFree == bindingModelPoolSize){			 
-			bindingModelPoolSize+=3;
-			RNGParseBindingModel[] increased = new RNGParseBindingModel[bindingModelPoolSize];
+	    if(bindingModelFree == bindingModelMaxSize) return;	
+		if(bindingModelFree == bindingModel.length){
+			RNGParseBindingModel[] increased = new RNGParseBindingModel[5+bindingModel.length];
 			System.arraycopy(bindingModel, 0, increased, 0, bindingModelFree);
 			bindingModel = increased;
 		}

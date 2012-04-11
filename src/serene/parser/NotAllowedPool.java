@@ -24,7 +24,7 @@ import sereneWrite.MessageWriter;
 
 public class NotAllowedPool extends RNGParseEndElementTaskPool{
 	NotAllowedTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public NotAllowedPool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -32,8 +32,8 @@ public class NotAllowedPool extends RNGParseEndElementTaskPool{
 						MessageWriter debugWriter){
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new NotAllowedTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new NotAllowedTask[5];
 	}
 	
 	public NotAllowedTask getTask(){
@@ -51,9 +51,9 @@ public class NotAllowedPool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(NotAllowedTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			NotAllowedTask[] increased = new NotAllowedTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			NotAllowedTask[] increased = new NotAllowedTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}
