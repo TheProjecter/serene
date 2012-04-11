@@ -328,12 +328,20 @@ class ElementValidationHandler extends ValidatingEEH
 	}
 	
 	public void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter){
-		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
+		if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}
 		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter);
 	}
 	
 	public void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
-		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
+		if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}
 		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter);
 	}	
 //==============================================================================
@@ -345,13 +353,21 @@ class ElementValidationHandler extends ValidatingEEH
 		stackHandler.shift(attribute);
 	}
 	
-	public void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
-		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
+	public void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){		
+		if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}
 		stackHandler.shiftAllAttributes(candidateDefinitions, temporaryMessageStorage);
 	}
 	
 	public void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
-		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);
+		if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}
 		stackHandler.shiftAllAttributes(candidateDefinitions, disqualified, temporaryMessageStorage);
 	}
 //==============================================================================
@@ -364,12 +380,20 @@ class ElementValidationHandler extends ValidatingEEH
 	}
 	
 	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
-		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);		
+		if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}		
 		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, temporaryMessageStorage);
 	}
 	
 	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
-		if(!stackHandler.handlesConflict()) stackHandler = element.getStackHandler(stackHandler, this);		
+		if(!stackHandler.handlesConflict()){
+		    StackHandler oldStackHandler = stackHandler;
+		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    oldStackHandler.recycle();
+		}		
 		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, disqualified, temporaryMessageStorage);
 	}
 //==============================================================================	
