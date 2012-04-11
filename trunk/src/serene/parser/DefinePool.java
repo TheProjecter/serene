@@ -27,7 +27,7 @@ public class DefinePool extends RNGParseEndElementTaskPool{
 	SAttribute combine;
 	
 	DefineTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public DefinePool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -39,8 +39,8 @@ public class DefinePool extends RNGParseEndElementTaskPool{
 		this.name = name;
 		this.combine = combine;
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new DefineTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new DefineTask[5];
 	}
 	
 	public DefineTask getTask(){
@@ -58,9 +58,9 @@ public class DefinePool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(DefineTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			DefineTask[] increased = new DefineTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			DefineTask[] increased = new DefineTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

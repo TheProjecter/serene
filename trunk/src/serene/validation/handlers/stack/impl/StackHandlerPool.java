@@ -21,89 +21,75 @@ import sereneWrite.MessageWriter;
 public class StackHandlerPool{
 	private static volatile StackHandlerPool instance;
 	
-	int vshPoolFree; 
-	int vshPoolPoolSize;
-	ActiveModelStackHandlerPool[] vshPools;
+	int amshPoolFree; 
+	int amshPoolMaxSize;
+	ActiveModelStackHandlerPool[] amshPools;
 		
 	int contextStackHAverageUse;	
-	int contextStackHPoolSize;
+	int contextStackHMaxSize;
 	int contextStackHFree;
 	ContextStackHandler[] contextStackH;
 	
 	int minimalReduceStackHAverageUse;	
-	int minimalReduceStackHPoolSize;
+	int minimalReduceStackHMaxSize;
 	int minimalReduceStackHFree;
 	MinimalReduceStackHandler[] minimalReduceStackH;
 	
 	int maximalReduceStackHAverageUse;	
-	int maximalReduceStackHPoolSize;
+	int maximalReduceStackHMaxSize;
 	int maximalReduceStackHFree;
 	MaximalReduceStackHandler[] maximalReduceStackH;
 	
 	
 		
 	int candidateStackHAverageUse;
-	int candidateStackHPoolSize;
+	int candidateStackHMaxSize;
 	int candidateStackHFree;
 	CandidateStackHandlerImpl[] candidateStackH;
 		
 	int concurrentStackHAverageUse;
-	int concurrentStackHPoolSize;
+	int concurrentStackHMaxSize;
 	int concurrentStackHFree;
 	ConcurrentStackHandlerImpl[] concurrentStackH;
-		
-	/*int compositeConcurrentStackHAverageUse;
-	int compositeConcurrentStackHPoolSize;
-	int compositeConcurrentStackHFree;
-	CompositeConcurrentStackHandlerImpl[] compositeConcurrentStackH;*/
-	
-	final int UNUSED = 0;
-	
+			
 	MessageWriter debugWriter;
 	
 	private StackHandlerPool(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		
-		vshPoolFree = 0;
-		vshPoolPoolSize = 10;
-		vshPools = new ActiveModelStackHandlerPool[vshPoolPoolSize];
+		amshPoolFree = 0;
+		amshPoolMaxSize = 10;
+		amshPools = new ActiveModelStackHandlerPool[10];
 		
 		
-		contextStackHAverageUse = UNUSED;
-		contextStackHPoolSize = 10;
+		contextStackHAverageUse = 0;
 		contextStackHFree = 0;
-		contextStackH = new ContextStackHandler[contextStackHPoolSize];
+		contextStackH = new ContextStackHandler[10];
+		
+		minimalReduceStackHAverageUse = 0;
+		minimalReduceStackHFree = 0;
+		minimalReduceStackH = new MinimalReduceStackHandler[10];		
+		
+		maximalReduceStackHAverageUse = 0;
+		maximalReduceStackHFree = 0;
+		maximalReduceStackH = new MaximalReduceStackHandler[10];
+		
 
 		
-		minimalReduceStackHAverageUse = UNUSED;
-		minimalReduceStackHPoolSize = 10;
-		minimalReduceStackHFree = 0;
-		minimalReduceStackH = new MinimalReduceStackHandler[minimalReduceStackHPoolSize];		
-		
-		
-		maximalReduceStackHAverageUse = UNUSED;
-		maximalReduceStackHPoolSize = 10;
-		maximalReduceStackHFree = 0;
-		maximalReduceStackH = new MaximalReduceStackHandler[maximalReduceStackHPoolSize];
-		
-		
-		
-		candidateStackHAverageUse = UNUSED;
-		candidateStackHPoolSize = 10;
+		candidateStackHAverageUse = 0;
 		candidateStackHFree = 0;
-		candidateStackH = new CandidateStackHandlerImpl[candidateStackHPoolSize];		
-				
+		candidateStackH = new CandidateStackHandlerImpl[10];		
 		
-		concurrentStackHAverageUse = UNUSED;
-		concurrentStackHPoolSize = 5;
+		concurrentStackHAverageUse = 0;
 		concurrentStackHFree = 0;
-		concurrentStackH = new ConcurrentStackHandlerImpl[concurrentStackHPoolSize];
+		concurrentStackH = new ConcurrentStackHandlerImpl[10];
 		
 		
-		/*compositeConcurrentStackHAverageUse = UNUSED;
-		compositeConcurrentStackHPoolSize = 5;
-		compositeConcurrentStackHFree = 0;
-		compositeConcurrentStackH = new CompositeConcurrentStackHandlerImpl[compositeConcurrentStackHPoolSize];*/
+		contextStackHMaxSize = 20;
+        minimalReduceStackHMaxSize = 20;
+        maximalReduceStackHMaxSize = 20;
+        candidateStackHMaxSize = 40;
+        concurrentStackHMaxSize = 20;		
 	}
 	
 	public static StackHandlerPool getInstance(MessageWriter debugWriter){
@@ -118,35 +104,37 @@ public class StackHandlerPool{
 	}
 	
 	public synchronized ActiveModelStackHandlerPool getActiveModelStackHandlerPool(){
-		if(vshPoolFree == 0){
-			ActiveModelStackHandlerPool vshp = new ActiveModelStackHandlerPool(this, debugWriter);
-			return vshp;
+		if(amshPoolFree == 0){
+			ActiveModelStackHandlerPool amshp = new ActiveModelStackHandlerPool(this, debugWriter);
+			return amshp;
 		}else{
-			ActiveModelStackHandlerPool vshp = vshPools[--vshPoolFree];
-			return vshp;
+			ActiveModelStackHandlerPool amshp = amshPools[--amshPoolFree];
+			return amshp;
 		}
 	}
 		
-	public synchronized void recycle(ActiveModelStackHandlerPool vshp){
-		if(vshPoolFree == vshPoolPoolSize){
-			ActiveModelStackHandlerPool[] increased = new ActiveModelStackHandlerPool[++vshPoolPoolSize];
-			System.arraycopy(vshPools, 0, increased, 0, vshPoolFree);
-			vshPools = increased;
+	public synchronized void recycle(ActiveModelStackHandlerPool amshp){
+	    if(amshPools.length == amshPoolMaxSize) return;
+		if(amshPoolFree == amshPools.length){
+			ActiveModelStackHandlerPool[] increased = new ActiveModelStackHandlerPool[10+amshPools.length];
+			System.arraycopy(amshPools, 0, increased, 0, amshPoolFree);
+			amshPools = increased;
 		}
-		vshPools[vshPoolFree++] = vshp;
+		amshPools[amshPoolFree++] = amshp;
 	}	
 	
 	
 	synchronized void fill(ActiveModelStackHandlerPool stackHandlerPool,
-							ContextStackHandler[] contextStackH,
-							MinimalReduceStackHandler[] minimalReduceStackH,
-							MaximalReduceStackHandler[] maximalReduceStackH,
-							CandidateStackHandlerImpl[] candidateStackH,
-							ConcurrentStackHandlerImpl[] concurrentStackH/*,
-							CompositeConcurrentStackHandlerImpl[] compositeConcurrentStackH*/){
+							ContextStackHandler[] contextStackHToFill,
+							MinimalReduceStackHandler[] minimalReduceStackHToFill,
+							MaximalReduceStackHandler[] maximalReduceStackHToFill,
+							CandidateStackHandlerImpl[] candidateStackHToFill,
+							ConcurrentStackHandlerImpl[] concurrentStackHToFill){
 		int contextStackHFillCount;		
-		if(contextStackH == null || contextStackH.length < contextStackHAverageUse)
-			contextStackH = new ContextStackHandler[contextStackHAverageUse];
+		if(contextStackHToFill == null || contextStackHToFill.length < contextStackHAverageUse){
+			contextStackHToFill = new ContextStackHandler[contextStackHAverageUse];
+			stackHandlerPool.contextStackH = contextStackHToFill;
+		}
 		if(contextStackHFree > contextStackHAverageUse){
 			contextStackHFillCount = contextStackHAverageUse;
 			contextStackHFree = contextStackHFree - contextStackHAverageUse;
@@ -154,12 +142,15 @@ public class StackHandlerPool{
 			contextStackHFillCount = contextStackHFree;
 			contextStackHFree = 0;
 		}
-		System.arraycopy(this.contextStackH, contextStackHFree,
-							contextStackH, 0, contextStackHFillCount);
+		System.arraycopy(contextStackH, contextStackHFree,
+							contextStackHToFill, 0, contextStackHFillCount);
+			
 		
 		int minimalReduceStackHFillCount;		
-		if(minimalReduceStackH == null || minimalReduceStackH.length < minimalReduceStackHAverageUse)
-			minimalReduceStackH = new MinimalReduceStackHandler[minimalReduceStackHAverageUse];
+		if(minimalReduceStackHToFill == null || minimalReduceStackHToFill.length < minimalReduceStackHAverageUse){
+			minimalReduceStackHToFill = new MinimalReduceStackHandler[minimalReduceStackHAverageUse];
+			stackHandlerPool.minimalReduceStackH = minimalReduceStackHToFill;
+		}
 		if(minimalReduceStackHFree > minimalReduceStackHAverageUse){
 			minimalReduceStackHFillCount = minimalReduceStackHAverageUse;
 			minimalReduceStackHFree = minimalReduceStackHFree - minimalReduceStackHAverageUse;
@@ -167,12 +158,14 @@ public class StackHandlerPool{
 			minimalReduceStackHFillCount = minimalReduceStackHFree;
 			minimalReduceStackHFree = 0;
 		}
-		System.arraycopy(this.minimalReduceStackH, minimalReduceStackHFree,
-							minimalReduceStackH, 0, minimalReduceStackHFillCount);
+		System.arraycopy(minimalReduceStackH, minimalReduceStackHFree,
+							minimalReduceStackHToFill, 0, minimalReduceStackHFillCount);
 		
 		int maximalReduceStackHFillCount;		
-		if(maximalReduceStackH == null || maximalReduceStackH.length < maximalReduceStackHAverageUse)
-			maximalReduceStackH = new MaximalReduceStackHandler[maximalReduceStackHAverageUse];
+		if(maximalReduceStackHToFill == null || maximalReduceStackHToFill.length < maximalReduceStackHAverageUse){		    
+			maximalReduceStackHToFill = new MaximalReduceStackHandler[maximalReduceStackHAverageUse];
+			stackHandlerPool.maximalReduceStackH = maximalReduceStackHToFill;
+		}
 		if(maximalReduceStackHFree > maximalReduceStackHAverageUse){
 			maximalReduceStackHFillCount = maximalReduceStackHAverageUse;
 			maximalReduceStackHFree = maximalReduceStackHFree - maximalReduceStackHAverageUse;
@@ -180,13 +173,15 @@ public class StackHandlerPool{
 			maximalReduceStackHFillCount = maximalReduceStackHFree;
 			maximalReduceStackHFree = 0;
 		}
-		System.arraycopy(this.maximalReduceStackH, maximalReduceStackHFree,
-							maximalReduceStackH, 0, maximalReduceStackHFillCount);
+		System.arraycopy(maximalReduceStackH, maximalReduceStackHFree,
+							maximalReduceStackHToFill, 0, maximalReduceStackHFillCount);
 		
 		
 		int candidateStackHFillCount;		
-		if(candidateStackH == null || candidateStackH.length < candidateStackHAverageUse)
-			candidateStackH = new CandidateStackHandlerImpl[candidateStackHAverageUse];
+		if(candidateStackHToFill == null || candidateStackHToFill.length < candidateStackHAverageUse){
+			candidateStackHToFill = new CandidateStackHandlerImpl[candidateStackHAverageUse];
+			stackHandlerPool.candidateStackH = candidateStackHToFill;
+		}
 		if(candidateStackHFree > candidateStackHAverageUse){
 			candidateStackHFillCount = candidateStackHAverageUse;
 			candidateStackHFree = candidateStackHFree - candidateStackHAverageUse;
@@ -194,13 +189,15 @@ public class StackHandlerPool{
 			candidateStackHFillCount = candidateStackHFree;
 			candidateStackHFree = 0;
 		}
-		System.arraycopy(this.candidateStackH, candidateStackHFree,
-							candidateStackH, 0, candidateStackHFillCount);
+		System.arraycopy(candidateStackH, candidateStackHFree,
+							candidateStackHToFill, 0, candidateStackHFillCount);
 		
 		
 		int concurrentStackHFillCount;		
-		if(concurrentStackH == null || concurrentStackH.length < concurrentStackHAverageUse)
-			concurrentStackH = new ConcurrentStackHandlerImpl[concurrentStackHAverageUse];
+		if(concurrentStackHToFill == null || concurrentStackHToFill.length < concurrentStackHAverageUse){
+			concurrentStackHToFill = new ConcurrentStackHandlerImpl[concurrentStackHAverageUse];
+			stackHandlerPool.concurrentStackH = concurrentStackHToFill;
+		}
 		if(concurrentStackHFree > concurrentStackHAverageUse){
 			concurrentStackHFillCount = concurrentStackHAverageUse;
 			concurrentStackHFree = concurrentStackHFree - concurrentStackHAverageUse;
@@ -208,124 +205,173 @@ public class StackHandlerPool{
 			concurrentStackHFillCount = concurrentStackHFree;
 			concurrentStackHFree = 0;
 		}
-		System.arraycopy(this.concurrentStackH, concurrentStackHFree,
-							concurrentStackH, 0, concurrentStackHFillCount);
+		System.arraycopy(concurrentStackH, concurrentStackHFree,
+							concurrentStackHToFill, 0, concurrentStackHFillCount);
 		
-		/*
-		int compositeConcurrentStackHFillCount;		
-		if(compositeConcurrentStackH == null || compositeConcurrentStackH.length < compositeConcurrentStackHAverageUse)
-			compositeConcurrentStackH = new CompositeConcurrentStackHandlerImpl[compositeConcurrentStackHAverageUse];
-		if(compositeConcurrentStackHFree > compositeConcurrentStackHAverageUse){
-			compositeConcurrentStackHFillCount = compositeConcurrentStackHAverageUse;
-			compositeConcurrentStackHFree = compositeConcurrentStackHFree - compositeConcurrentStackHAverageUse;
-		}else{
-			compositeConcurrentStackHFillCount = compositeConcurrentStackHFree;
-			compositeConcurrentStackHFree = 0;
-		}
-		System.arraycopy(this.compositeConcurrentStackH, compositeConcurrentStackHFree,
-							compositeConcurrentStackH, 0, compositeConcurrentStackHFillCount);
-		*/
-		stackHandlerPool.setHandlers(contextStackHFillCount,
-									contextStackH,
+		stackHandlerPool.initFilled(contextStackHFillCount,
 									minimalReduceStackHFillCount,
-									minimalReduceStackH,
 									maximalReduceStackHFillCount,
-									maximalReduceStackH,
 									candidateStackHFillCount,
-									candidateStackH,
-									concurrentStackHFillCount,
-									concurrentStackH/*,
-									compositeConcurrentStackHFillCount,
-									compositeConcurrentStackH*/);
+									concurrentStackHFillCount);
 	}
 	
-	synchronized void recycle(int contextStackHAverageUse,
-					ContextStackHandler[] contextStackH,
-					int minimalReduceStackHAverageUse,
-					MinimalReduceStackHandler[] minimalReduceStackH,
-					int maximalReduceStackHAverageUse,
-					MaximalReduceStackHandler[] maximalReduceStackH,
-					int candidateStackHAverageUse,
-					CandidateStackHandlerImpl[] candidateStackH,
-					int concurrentStackHAverageUse,
-					ConcurrentStackHandlerImpl[] concurrentStackH/*,
-					int compositeConcurrentStackHAverageUse,
-					CompositeConcurrentStackHandlerImpl[] compositeConcurrentStackH*/){
-		if(contextStackHFree + contextStackHAverageUse >= contextStackHPoolSize){			 
-			contextStackHPoolSize+= contextStackHAverageUse;
-			ContextStackHandler[] increased = new ContextStackHandler[contextStackHPoolSize];
-			System.arraycopy(this.contextStackH, 0, increased, 0, contextStackHFree);
-			this.contextStackH = increased;
-		}
-		System.arraycopy(contextStackH, 0, this.contextStackH, contextStackHFree, contextStackHAverageUse);
-		contextStackHFree += contextStackHAverageUse;
-		if(this.contextStackHAverageUse != 0) this.contextStackHAverageUse = (this.contextStackHAverageUse + contextStackHAverageUse)/2;
-		else this.contextStackHAverageUse = contextStackHAverageUse;
-		// System.out.println("contextStackH "+this.contextStackHAverageUse);
+	synchronized void recycle(int contextStackHRecycledCount,
+	                int contextStackHEffectivellyUsed,
+					ContextStackHandler[] contextStackHRecycled,
+					int minimalReduceStackHRecycledCount,
+					int minimalReduceStackHEffectivellyUsed,
+					MinimalReduceStackHandler[] minimalReduceStackHRecycled,
+					int maximalReduceStackHRecycledCount,
+					int maximalReduceStackHEffectivellyUsed,
+					MaximalReduceStackHandler[] maximalReduceStackHRecycled,
+					int candidateStackHRecycledCount,
+					int candidateStackHEffectivellyUsed,
+					CandidateStackHandlerImpl[] candidateStackHRecycled,
+					int concurrentStackHRecycledCount,
+					int concurrentStackHEffectivellyUsed,
+					ConcurrentStackHandlerImpl[] concurrentStackHRecycled){
+	    int neededLength = contextStackHFree + contextStackHRecycledCount; 
+        if(neededLength > contextStackH.length){
+            if(neededLength > contextStackHMaxSize){
+                neededLength = contextStackHMaxSize;
+                ContextStackHandler[] increased = new ContextStackHandler[neededLength];
+                System.arraycopy(contextStackH, 0, increased, 0, contextStackH.length);
+                contextStackH = increased;		        
+                System.arraycopy(contextStackHRecycled, 0, contextStackH, contextStackHFree, contextStackHMaxSize - contextStackHFree);
+                contextStackHFree = contextStackHMaxSize; 
+            }else{
+                ContextStackHandler[] increased = new ContextStackHandler[neededLength];
+                System.arraycopy(contextStackH, 0, increased, 0, contextStackH.length);
+                contextStackH = increased;
+                System.arraycopy(contextStackHRecycled, 0, contextStackH, contextStackHFree, contextStackHRecycledCount);
+                contextStackHFree += contextStackHRecycledCount;
+            }
+        }else{
+            System.arraycopy(contextStackHRecycled, 0, contextStackH, contextStackHFree, contextStackHRecycledCount);
+            contextStackHFree += contextStackHRecycledCount;
+        }
+             
+        if(contextStackHAverageUse != 0)contextStackHAverageUse = (contextStackHAverageUse + contextStackHEffectivellyUsed)/2;
+        else contextStackHAverageUse = contextStackHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+        for(int i = 0; i < contextStackHRecycled.length; i++){
+            contextStackHRecycled[i] = null;
+        }
+	
+        
+		neededLength = minimalReduceStackHFree + minimalReduceStackHRecycledCount; 
+        if(neededLength > minimalReduceStackH.length){
+            if(neededLength > minimalReduceStackHMaxSize){
+                neededLength = minimalReduceStackHMaxSize;
+                MinimalReduceStackHandler[] increased = new MinimalReduceStackHandler[neededLength];
+                System.arraycopy(minimalReduceStackH, 0, increased, 0, minimalReduceStackH.length);
+                minimalReduceStackH = increased;		        
+                System.arraycopy(minimalReduceStackHRecycled, 0, minimalReduceStackH, minimalReduceStackHFree, minimalReduceStackHMaxSize - minimalReduceStackHFree);
+                minimalReduceStackHFree = minimalReduceStackHMaxSize; 
+            }else{
+                MinimalReduceStackHandler[] increased = new MinimalReduceStackHandler[neededLength];
+                System.arraycopy(minimalReduceStackH, 0, increased, 0, minimalReduceStackH.length);
+                minimalReduceStackH = increased;
+                System.arraycopy(minimalReduceStackHRecycled, 0, minimalReduceStackH, minimalReduceStackHFree, minimalReduceStackHRecycledCount);
+                minimalReduceStackHFree += minimalReduceStackHRecycledCount;
+            }
+        }else{
+            System.arraycopy(minimalReduceStackHRecycled, 0, minimalReduceStackH, minimalReduceStackHFree, minimalReduceStackHRecycledCount);
+            minimalReduceStackHFree += minimalReduceStackHRecycledCount;
+        }
+        
+        if(minimalReduceStackHAverageUse != 0)minimalReduceStackHAverageUse = (minimalReduceStackHAverageUse + minimalReduceStackHEffectivellyUsed)/2;
+        else minimalReduceStackHAverageUse = minimalReduceStackHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < minimalReduceStackHRecycled.length; i++){
+            minimalReduceStackHRecycled[i] = null;
+        }
 		
+        
+		neededLength = maximalReduceStackHFree + maximalReduceStackHRecycledCount; 
+        if(neededLength > maximalReduceStackH.length){
+            if(neededLength > maximalReduceStackHMaxSize){
+                neededLength = maximalReduceStackHMaxSize;
+                MaximalReduceStackHandler[] increased = new MaximalReduceStackHandler[neededLength];
+                System.arraycopy(maximalReduceStackH, 0, increased, 0, maximalReduceStackH.length);
+                maximalReduceStackH = increased;		        
+                System.arraycopy(maximalReduceStackHRecycled, 0, maximalReduceStackH, maximalReduceStackHFree, maximalReduceStackHMaxSize - maximalReduceStackHFree);
+                maximalReduceStackHFree = maximalReduceStackHMaxSize; 
+            }else{
+                MaximalReduceStackHandler[] increased = new MaximalReduceStackHandler[neededLength];
+                System.arraycopy(maximalReduceStackH, 0, increased, 0, maximalReduceStackH.length);
+                maximalReduceStackH = increased;
+                System.arraycopy(maximalReduceStackHRecycled, 0, maximalReduceStackH, maximalReduceStackHFree, maximalReduceStackHRecycledCount);
+                maximalReduceStackHFree += maximalReduceStackHRecycledCount;
+            }
+        }else{
+            System.arraycopy(maximalReduceStackHRecycled, 0, maximalReduceStackH, maximalReduceStackHFree, maximalReduceStackHRecycledCount);
+            maximalReduceStackHFree += maximalReduceStackHRecycledCount;
+        }
+        
+        if(maximalReduceStackHAverageUse != 0)maximalReduceStackHAverageUse = (maximalReduceStackHAverageUse + maximalReduceStackHEffectivellyUsed)/2;
+        else maximalReduceStackHAverageUse = maximalReduceStackHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < maximalReduceStackHRecycled.length; i++){
+            maximalReduceStackHRecycled[i] = null;
+        }
 		
-		if(minimalReduceStackHFree + minimalReduceStackHAverageUse >= minimalReduceStackHPoolSize){			 
-			minimalReduceStackHPoolSize+= minimalReduceStackHAverageUse;
-			MinimalReduceStackHandler[] increased = new MinimalReduceStackHandler[minimalReduceStackHPoolSize];
-			System.arraycopy(this.minimalReduceStackH, 0, increased, 0, minimalReduceStackHFree);
-			this.minimalReduceStackH = increased;
-		}
-		System.arraycopy(minimalReduceStackH, 0, this.minimalReduceStackH, minimalReduceStackHFree, minimalReduceStackHAverageUse);
-		minimalReduceStackHFree += minimalReduceStackHAverageUse;
-		if(this.minimalReduceStackHAverageUse != 0) this.minimalReduceStackHAverageUse = (this.minimalReduceStackHAverageUse + minimalReduceStackHAverageUse)/2;
-		else this.minimalReduceStackHAverageUse = minimalReduceStackHAverageUse;
-		// System.out.println("minimalReduceStackH "+this.minimalReduceStackHAverageUse);
+        
+        
+		neededLength = candidateStackHFree + candidateStackHRecycledCount; 
+        if(neededLength > candidateStackH.length){
+            if(neededLength > candidateStackHMaxSize){
+                neededLength = candidateStackHMaxSize;
+                CandidateStackHandlerImpl[] increased = new CandidateStackHandlerImpl[neededLength];
+                System.arraycopy(candidateStackH, 0, increased, 0, candidateStackH.length);
+                candidateStackH = increased;		        
+                System.arraycopy(candidateStackHRecycled, 0, candidateStackH, candidateStackHFree, candidateStackHMaxSize - candidateStackHFree);
+                candidateStackHFree = candidateStackHMaxSize; 
+            }else{
+                CandidateStackHandlerImpl[] increased = new CandidateStackHandlerImpl[neededLength];
+                System.arraycopy(candidateStackH, 0, increased, 0, candidateStackH.length);
+                candidateStackH = increased;
+                System.arraycopy(candidateStackHRecycled, 0, candidateStackH, candidateStackHFree, candidateStackHRecycledCount);
+                candidateStackHFree += candidateStackHRecycledCount;
+            }
+        }else{
+            System.arraycopy(candidateStackHRecycled, 0, candidateStackH, candidateStackHFree, candidateStackHRecycledCount);
+            candidateStackHFree += candidateStackHRecycledCount;
+        }
+        
+        if(candidateStackHAverageUse != 0)candidateStackHAverageUse = (candidateStackHAverageUse + candidateStackHEffectivellyUsed)/2;
+        else candidateStackHAverageUse = candidateStackHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < candidateStackHRecycled.length; i++){
+            candidateStackHRecycled[i] = null;
+        }
 		
-		
-		if(maximalReduceStackHFree + maximalReduceStackHAverageUse >= maximalReduceStackHPoolSize){			 
-			maximalReduceStackHPoolSize+= maximalReduceStackHAverageUse;
-			MaximalReduceStackHandler[] increased = new MaximalReduceStackHandler[maximalReduceStackHPoolSize];
-			System.arraycopy(this.maximalReduceStackH, 0, increased, 0, maximalReduceStackHFree);
-			this.maximalReduceStackH = increased;
-		}
-		System.arraycopy(maximalReduceStackH, 0, this.maximalReduceStackH, maximalReduceStackHFree, maximalReduceStackHAverageUse);
-		maximalReduceStackHFree += maximalReduceStackHAverageUse;
-		if(this.maximalReduceStackHAverageUse != 0) this.maximalReduceStackHAverageUse = (this.maximalReduceStackHAverageUse + maximalReduceStackHAverageUse)/2;
-		else this.maximalReduceStackHAverageUse = maximalReduceStackHAverageUse;
-		// System.out.println("maximalReduceStackH "+this.maximalReduceStackHAverageUse);
-		
-		
-		if(candidateStackHFree + candidateStackHAverageUse >= candidateStackHPoolSize){			 
-			candidateStackHPoolSize+= candidateStackHAverageUse;
-			CandidateStackHandlerImpl[] increased = new CandidateStackHandlerImpl[candidateStackHPoolSize];
-			System.arraycopy(this.candidateStackH, 0, increased, 0, candidateStackHFree);
-			this.candidateStackH = increased;
-		}
-		System.arraycopy(candidateStackH, 0, this.candidateStackH, candidateStackHFree, candidateStackHAverageUse);
-		candidateStackHFree += candidateStackHAverageUse;
-		if(this.candidateStackHAverageUse != 0)this.candidateStackHAverageUse = (this.candidateStackHAverageUse + candidateStackHAverageUse)/2;
-		else this.candidateStackHAverageUse = candidateStackHAverageUse;
-		// System.out.println("candidateStackH "+this.candidateStackHAverageUse);
-		
-		
-		if(concurrentStackHFree + concurrentStackHAverageUse >= concurrentStackHPoolSize){			 
-			concurrentStackHPoolSize+= concurrentStackHAverageUse;
-			ConcurrentStackHandlerImpl[] increased = new ConcurrentStackHandlerImpl[concurrentStackHPoolSize];
-			System.arraycopy(this.concurrentStackH, 0, increased, 0, concurrentStackHFree);
-			this.concurrentStackH = increased;
-		}
-		System.arraycopy(concurrentStackH, 0, this.concurrentStackH, concurrentStackHFree, concurrentStackHAverageUse);
-		concurrentStackHFree += concurrentStackHAverageUse;
-		if(this.concurrentStackHAverageUse != 0)this.concurrentStackHAverageUse = (this.concurrentStackHAverageUse + concurrentStackHAverageUse)/2;
-		else this.concurrentStackHAverageUse = concurrentStackHAverageUse;
-		// System.out.println("concurrentStackH "+this.concurrentStackHAverageUse);
-		
-		/*
-		if(compositeConcurrentStackHFree + compositeConcurrentStackHAverageUse >= compositeConcurrentStackHPoolSize){			 
-			compositeConcurrentStackHPoolSize+= compositeConcurrentStackHAverageUse;
-			CompositeConcurrentStackHandlerImpl[] increased = new CompositeConcurrentStackHandlerImpl[compositeConcurrentStackHPoolSize];
-			System.arraycopy(this.compositeConcurrentStackH, 0, increased, 0, compositeConcurrentStackHFree);
-			this.compositeConcurrentStackH = increased;
-		}
-		System.arraycopy(compositeConcurrentStackH, 0, this.compositeConcurrentStackH, compositeConcurrentStackHFree, compositeConcurrentStackHAverageUse);
-		compositeConcurrentStackHFree += compositeConcurrentStackHAverageUse;
-		if(this.compositeConcurrentStackHAverageUse != 0)this.compositeConcurrentStackHAverageUse = (this.compositeConcurrentStackHAverageUse + compositeConcurrentStackHAverageUse)/2;
-		else this.compositeConcurrentStackHAverageUse = compositeConcurrentStackHAverageUse;
-		// System.out.println("compositeConcurrentStackH "+this.compositeConcurrentStackHAverageUse);*/
+		neededLength = concurrentStackHFree + concurrentStackHRecycledCount; 
+        if(neededLength > concurrentStackH.length){
+            if(neededLength > concurrentStackHMaxSize){
+                neededLength = concurrentStackHMaxSize;
+                ConcurrentStackHandlerImpl[] increased = new ConcurrentStackHandlerImpl[neededLength];
+                System.arraycopy(concurrentStackH, 0, increased, 0, concurrentStackH.length);
+                concurrentStackH = increased;		        
+                System.arraycopy(concurrentStackHRecycled, 0, concurrentStackH, concurrentStackHFree, concurrentStackHMaxSize - concurrentStackHFree);
+                concurrentStackHFree = concurrentStackHMaxSize; 
+            }else{
+                ConcurrentStackHandlerImpl[] increased = new ConcurrentStackHandlerImpl[neededLength];
+                System.arraycopy(concurrentStackH, 0, increased, 0, concurrentStackH.length);
+                concurrentStackH = increased;
+                System.arraycopy(concurrentStackHRecycled, 0, concurrentStackH, concurrentStackHFree, concurrentStackHRecycledCount);
+                concurrentStackHFree += concurrentStackHRecycledCount;
+            }
+        }else{
+            System.arraycopy(concurrentStackHRecycled, 0, concurrentStackH, concurrentStackHFree, concurrentStackHRecycledCount);
+            concurrentStackHFree += concurrentStackHRecycledCount;
+        }
+        
+        if(concurrentStackHAverageUse != 0)concurrentStackHAverageUse = (concurrentStackHAverageUse + concurrentStackHEffectivellyUsed)/2;
+        else concurrentStackHAverageUse = concurrentStackHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < concurrentStackHRecycled.length; i++){
+            concurrentStackHRecycled[i] = null;
+        }
 	}
 } 

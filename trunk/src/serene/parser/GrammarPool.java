@@ -24,7 +24,7 @@ import sereneWrite.MessageWriter;
 
 public class GrammarPool extends RNGParseEndElementTaskPool{
 	GrammarTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public GrammarPool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -32,8 +32,8 @@ public class GrammarPool extends RNGParseEndElementTaskPool{
 						MessageWriter debugWriter){
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new GrammarTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new GrammarTask[5];
 	}
 	
 	public GrammarTask getTask(){
@@ -51,9 +51,9 @@ public class GrammarPool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(GrammarTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			GrammarTask[] increased = new GrammarTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			GrammarTask[] increased = new GrammarTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

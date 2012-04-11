@@ -73,9 +73,9 @@ public class ActiveModel  implements Reusable{
 	}
 	
 	protected void finalize(){
-		ruleHandlerPool.releaseHandlers();
-		stackHandlerPool.releaseHandlers();		
-		conflictHandlerPool.releaseHandlers();
+		//ruleHandlerPool.releaseHandlers();
+		//stackHandlerPool.releaseHandlers();		
+		//conflictHandlerPool.releaseHandlers();
 		
 		ruleHandlerPool.recycle();
 		stackHandlerPool.recycle();		

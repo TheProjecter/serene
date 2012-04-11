@@ -24,7 +24,7 @@ import sereneWrite.MessageWriter;
 
 public class InterleavePool extends RNGParseEndElementTaskPool{
 	InterleaveTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public InterleavePool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -32,8 +32,8 @@ public class InterleavePool extends RNGParseEndElementTaskPool{
 						MessageWriter debugWriter){
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new InterleaveTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new InterleaveTask[5];
 	}
 	
 	public InterleaveTask getTask(){
@@ -51,9 +51,9 @@ public class InterleavePool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(InterleaveTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			InterleaveTask[] increased = new InterleaveTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			InterleaveTask[] increased = new InterleaveTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

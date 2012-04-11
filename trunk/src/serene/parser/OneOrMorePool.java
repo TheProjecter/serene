@@ -24,7 +24,7 @@ import sereneWrite.MessageWriter;
 
 public class OneOrMorePool extends RNGParseEndElementTaskPool{
 	OneOrMoreTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public OneOrMorePool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -32,8 +32,8 @@ public class OneOrMorePool extends RNGParseEndElementTaskPool{
 						MessageWriter debugWriter){
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new OneOrMoreTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new OneOrMoreTask[5];
 	}
 	
 	public OneOrMoreTask getTask(){
@@ -51,9 +51,9 @@ public class OneOrMorePool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(OneOrMoreTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			OneOrMoreTask[] increased = new OneOrMoreTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			OneOrMoreTask[] increased = new OneOrMoreTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

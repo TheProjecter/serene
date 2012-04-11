@@ -26,7 +26,7 @@ public class StartPool extends RNGParseEndElementTaskPool{
 	SAttribute combine;
 	
 	StartTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public StartPool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -36,8 +36,8 @@ public class StartPool extends RNGParseEndElementTaskPool{
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.combine = combine;
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new StartTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new StartTask[5];
 	}
 	
 	public StartTask getTask(){
@@ -55,9 +55,9 @@ public class StartPool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(StartTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			StartTask[] increased = new StartTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			StartTask[] increased = new StartTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

@@ -23,101 +23,101 @@ import sereneWrite.MessageWriter;
 public class RuleHandlerPool{
 	private static volatile RuleHandlerPool instance;
 	
-	int vshPoolFree; 
-	int vshPoolPoolSize;
-	ActiveModelRuleHandlerPool[] vshPools;
+	int amrhPoolFree; 
+	int amrhPoolMaxSize;
+	ActiveModelRuleHandlerPool[] amrhPools;
 	
 	int particleHandlerAverageUse;
-	int particleHandlerPoolSize;
+	int particleHandlerMaxSize;
 	int particleHandlerFree;
 	ParticleHandler[] particleHandler;
 	
 	int choiceHandlerAverageUse;
-	int choiceHandlerPoolSize;
+	int choiceHandlerMaxSize;
 	int choiceHandlerFree;
 	ChoiceHandler[] choiceHandler;
 	
 	int groupHandlerAverageUse;
-	int groupHandlerPoolSize;
+	int groupHandlerMaxSize;
 	int groupHandlerFree;
 	GroupHandler[] groupHandler;
 		
 	int grammarHandlerAverageUse;
-	int grammarHandlerPoolSize;
+	int grammarHandlerMaxSize;
 	int grammarHandlerFree;
 	GrammarHandler[] grammarHandler;	
 	
 	int refHandlerAverageUse;
-	int refHandlerPoolSize;
+	int refHandlerMaxSize;
 	int refHandlerFree;
 	RefHandler[] refHandler;
 		
 	int uinterleaveHandlerAverageUse;
-	int uinterleaveHandlerPoolSize;
+	int uinterleaveHandlerMaxSize;
 	int uinterleaveHandlerFree;
 	UInterleaveHandler[] uinterleaveHandler;
 	
 	int minterleaveHandlerAverageUse;
-	int minterleaveHandlerPoolSize;
+	int minterleaveHandlerMaxSize;
 	int minterleaveHandlerFree;
 	MInterleaveHandler[] minterleaveHandler;
 	
 	int sinterleaveHandlerAverageUse;
-	int sinterleaveHandlerPoolSize;
+	int sinterleaveHandlerMaxSize;
 	int sinterleaveHandlerFree;
 	SInterleaveHandler[] sinterleaveHandler;
 	
 	int elementHandlerAverageUse;
-	int elementHandlerPoolSize;
+	int elementHandlerMaxSize;
 	int elementHandlerFree;
 	ElementHandler[] elementHandler;
 	
 	int attributeHandlerAverageUse;
-	int attributeHandlerPoolSize;
+	int attributeHandlerMaxSize;
 	int attributeHandlerFree;
 	AttributeHandler[] attributeHandler;
 	
 	int exceptPatternHandlerAverageUse;
-	int exceptPatternHandlerPoolSize;
+	int exceptPatternHandlerMaxSize;
 	int exceptPatternHandlerFree;
 	ExceptPatternHandler[] exceptPatternHandler;
 	
 	int listPatternHandlerAverageUse;
-	int listPatternHandlerPoolSize;
+	int listPatternHandlerMaxSize;
 	int listPatternHandlerFree;
 	ListPatternHandler[] listPatternHandler;
 	
 	
 	
 	int groupDoubleHandlerAverageUse;
-	int groupDoubleHandlerPoolSize;
+	int groupDoubleHandlerMaxSize;
 	int groupDoubleHandlerFree;
 	GroupDoubleHandler[] groupDoubleHandler;
 	
 	int interleaveDoubleHandlerAverageUse;
-	int interleaveDoubleHandlerPoolSize;
+	int interleaveDoubleHandlerMaxSize;
 	int interleaveDoubleHandlerFree;
 	InterleaveDoubleHandler[] interleaveDoubleHandler;
 	
 	
 	
 	int groupMinimalReduceCountHandlerAverageUse;
-	int groupMinimalReduceCountHandlerPoolSize;
+	int groupMinimalReduceCountHandlerMaxSize;
 	int groupMinimalReduceCountHandlerFree;
 	GroupMinimalReduceCountHandler[] groupMinimalReduceCountHandler;
 	
 	int groupMaximalReduceCountHandlerAverageUse;
-	int groupMaximalReduceCountHandlerPoolSize;
+	int groupMaximalReduceCountHandlerMaxSize;
 	int groupMaximalReduceCountHandlerFree;
 	GroupMaximalReduceCountHandler[] groupMaximalReduceCountHandler;
 	
 	int interleaveMinimalReduceCountHandlerAverageUse;
-	int interleaveMinimalReduceCountHandlerPoolSize;
+	int interleaveMinimalReduceCountHandlerMaxSize;
 	int interleaveMinimalReduceCountHandlerFree;
 	InterleaveMinimalReduceCountHandler[] interleaveMinimalReduceCountHandler;
 	
 	int interleaveMaximalReduceCountHandlerAverageUse;
-	int interleaveMaximalReduceCountHandlerPoolSize;
+	int interleaveMaximalReduceCountHandlerMaxSize;
 	int interleaveMaximalReduceCountHandlerFree;
 	InterleaveMaximalReduceCountHandler[] interleaveMaximalReduceCountHandler;
 		
@@ -125,214 +125,216 @@ public class RuleHandlerPool{
 	
 	
 	int grammarMinimalReduceHandlerAverageUse;
-	int grammarMinimalReduceHandlerPoolSize;
+	int grammarMinimalReduceHandlerMaxSize;
 	int grammarMinimalReduceHandlerFree;
 	GrammarMinimalReduceHandler[] grammarMinimalReduceHandler;
 	
 	int grammarMaximalReduceHandlerAverageUse;
-	int grammarMaximalReduceHandlerPoolSize;
+	int grammarMaximalReduceHandlerMaxSize;
 	int grammarMaximalReduceHandlerFree;
 	GrammarMaximalReduceHandler[] grammarMaximalReduceHandler;
 	
 	int refMinimalReduceHandlerAverageUse;
-	int refMinimalReduceHandlerPoolSize;
+	int refMinimalReduceHandlerMaxSize;
 	int refMinimalReduceHandlerFree;
 	RefMinimalReduceHandler[] refMinimalReduceHandler;
 	
 	int refMaximalReduceHandlerAverageUse;
-	int refMaximalReduceHandlerPoolSize;
+	int refMaximalReduceHandlerMaxSize;
 	int refMaximalReduceHandlerFree;
 	RefMaximalReduceHandler[] refMaximalReduceHandler;
 		
 	int choiceMinimalReduceHandlerAverageUse;
-	int choiceMinimalReduceHandlerPoolSize;
+	int choiceMinimalReduceHandlerMaxSize;
 	int choiceMinimalReduceHandlerFree;
 	ChoiceMinimalReduceHandler[] choiceMinimalReduceHandler;
 	
 	int choiceMaximalReduceHandlerAverageUse;
-	int choiceMaximalReduceHandlerPoolSize;
+	int choiceMaximalReduceHandlerMaxSize;
 	int choiceMaximalReduceHandlerFree;
 	ChoiceMaximalReduceHandler[] choiceMaximalReduceHandler;
 	
 	int groupMinimalReduceHandlerAverageUse;
-	int groupMinimalReduceHandlerPoolSize;
+	int groupMinimalReduceHandlerMaxSize;
 	int groupMinimalReduceHandlerFree;
 	GroupMinimalReduceHandler[] groupMinimalReduceHandler;
 	
 	int groupMaximalReduceHandlerAverageUse;
-	int groupMaximalReduceHandlerPoolSize;
+	int groupMaximalReduceHandlerMaxSize;
 	int groupMaximalReduceHandlerFree;
 	GroupMaximalReduceHandler[] groupMaximalReduceHandler;
 	
 	int interleaveMinimalReduceHandlerAverageUse;
-	int interleaveMinimalReduceHandlerPoolSize;
+	int interleaveMinimalReduceHandlerMaxSize;
 	int interleaveMinimalReduceHandlerFree;
 	InterleaveMinimalReduceHandler[] interleaveMinimalReduceHandler;
 	
 	int interleaveMaximalReduceHandlerAverageUse;
-	int interleaveMaximalReduceHandlerPoolSize;
+	int interleaveMaximalReduceHandlerMaxSize;
 	int interleaveMaximalReduceHandlerFree;
 	InterleaveMaximalReduceHandler[] interleaveMaximalReduceHandler;
 	
-	final int UNUSED = 0;
 	
 	MessageWriter debugWriter;
 	
 	private RuleHandlerPool(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		
-		vshPoolFree = 0;
-		vshPoolPoolSize = 10;
-		vshPools = new ActiveModelRuleHandlerPool[vshPoolPoolSize];
+		amrhPoolFree = 0;
+		amrhPoolMaxSize = 10;
+		amrhPools = new ActiveModelRuleHandlerPool[10];
 		
-		particleHandlerAverageUse = UNUSED;
-		particleHandlerPoolSize = 30;
+		particleHandlerAverageUse = 0;
 		particleHandlerFree = 0;
-		particleHandler = new ParticleHandler[particleHandlerPoolSize];
+		particleHandler = new ParticleHandler[30];
 		
-		choiceHandlerAverageUse = UNUSED;
-		choiceHandlerPoolSize = 10;
+		choiceHandlerAverageUse = 0;
 		choiceHandlerFree = 0;
-		choiceHandler = new ChoiceHandler[choiceHandlerPoolSize];
+		choiceHandler = new ChoiceHandler[10];
 		
-		groupHandlerAverageUse = UNUSED;
-		groupHandlerPoolSize = 10;
+		groupHandlerAverageUse = 0;
 		groupHandlerFree = 0;
-		groupHandler = new GroupHandler[groupHandlerPoolSize];
+		groupHandler = new GroupHandler[10];
 		
-		grammarHandlerAverageUse = UNUSED;
-		grammarHandlerPoolSize = 10;
+		grammarHandlerAverageUse = 0;
 		grammarHandlerFree = 0;
-		grammarHandler = new GrammarHandler[grammarHandlerPoolSize];
+		grammarHandler = new GrammarHandler[10];
 		
-		refHandlerAverageUse = UNUSED;
-		refHandlerPoolSize = 10;
+		refHandlerAverageUse = 0;
 		refHandlerFree = 0;
-		refHandler = new RefHandler[refHandlerPoolSize];
+		refHandler = new RefHandler[10];
 		
-		uinterleaveHandlerAverageUse = UNUSED;
-		uinterleaveHandlerPoolSize = 10;
+		uinterleaveHandlerAverageUse = 0;
 		uinterleaveHandlerFree = 0;
-		uinterleaveHandler = new UInterleaveHandler[uinterleaveHandlerPoolSize];
+		uinterleaveHandler = new UInterleaveHandler[10];
 		
-		minterleaveHandlerAverageUse = UNUSED;
-		minterleaveHandlerPoolSize = 10;
+		minterleaveHandlerAverageUse = 0;
 		minterleaveHandlerFree = 0;
-		minterleaveHandler = new MInterleaveHandler[minterleaveHandlerPoolSize];
+		minterleaveHandler = new MInterleaveHandler[10];
 		
-		sinterleaveHandlerAverageUse = UNUSED;
-		sinterleaveHandlerPoolSize = 10;
+		sinterleaveHandlerAverageUse = 0;
 		sinterleaveHandlerFree = 0;
-		sinterleaveHandler = new SInterleaveHandler[sinterleaveHandlerPoolSize];
+		sinterleaveHandler = new SInterleaveHandler[10];
 		
-		elementHandlerAverageUse = UNUSED;
-		elementHandlerPoolSize = 10;
+		elementHandlerAverageUse = 0;
 		elementHandlerFree = 0;
-		elementHandler = new ElementHandler[elementHandlerPoolSize];
+		elementHandler = new ElementHandler[10];
 		
-		attributeHandlerAverageUse = UNUSED;
-		attributeHandlerPoolSize = 10;
+		attributeHandlerAverageUse = 0;
 		attributeHandlerFree = 0;
-		attributeHandler = new AttributeHandler[attributeHandlerPoolSize];
+		attributeHandler = new AttributeHandler[10];
 		
-		exceptPatternHandlerAverageUse = UNUSED;
-		exceptPatternHandlerPoolSize = 10;
+		exceptPatternHandlerAverageUse = 0;
 		exceptPatternHandlerFree = 0;
-		exceptPatternHandler = new ExceptPatternHandler[exceptPatternHandlerPoolSize];
+		exceptPatternHandler = new ExceptPatternHandler[10];
 		
-		listPatternHandlerAverageUse = UNUSED;
-		listPatternHandlerPoolSize = 10;
+		listPatternHandlerAverageUse = 0;
 		listPatternHandlerFree = 0;
-		listPatternHandler = new ListPatternHandler[listPatternHandlerPoolSize];
+		listPatternHandler = new ListPatternHandler[10];
 		
 		
 		
 		
 		
-		groupDoubleHandlerAverageUse = UNUSED;
-		groupDoubleHandlerPoolSize = 10;
+		groupDoubleHandlerAverageUse = 0;
 		groupDoubleHandlerFree = 0;
-		groupDoubleHandler = new GroupDoubleHandler[groupDoubleHandlerPoolSize];
+		groupDoubleHandler = new GroupDoubleHandler[10];
 				
-		interleaveDoubleHandlerAverageUse = UNUSED;
-		interleaveDoubleHandlerPoolSize = 10;
+		interleaveDoubleHandlerAverageUse = 0;
 		interleaveDoubleHandlerFree = 0;
-		interleaveDoubleHandler = new InterleaveDoubleHandler[interleaveDoubleHandlerPoolSize];
+		interleaveDoubleHandler = new InterleaveDoubleHandler[10];
 				
 		
 		
-		groupMinimalReduceCountHandlerAverageUse = UNUSED;
-		groupMinimalReduceCountHandlerPoolSize = 5;
+		groupMinimalReduceCountHandlerAverageUse = 0;
 		groupMinimalReduceCountHandlerFree = 0;
-		groupMinimalReduceCountHandler = new GroupMinimalReduceCountHandler[groupMinimalReduceCountHandlerPoolSize];
+		groupMinimalReduceCountHandler = new GroupMinimalReduceCountHandler[5];
 		
-		groupMaximalReduceCountHandlerAverageUse = UNUSED;
-		groupMaximalReduceCountHandlerPoolSize = 5;
+		groupMaximalReduceCountHandlerAverageUse = 0;
 		groupMaximalReduceCountHandlerFree = 0;
-		groupMaximalReduceCountHandler = new GroupMaximalReduceCountHandler[groupMaximalReduceCountHandlerPoolSize];
+		groupMaximalReduceCountHandler = new GroupMaximalReduceCountHandler[5];
 		
-		interleaveMinimalReduceCountHandlerAverageUse = UNUSED;
-		interleaveMinimalReduceCountHandlerPoolSize = 5;
+		interleaveMinimalReduceCountHandlerAverageUse = 0;
 		interleaveMinimalReduceCountHandlerFree = 0;
-		interleaveMinimalReduceCountHandler = new InterleaveMinimalReduceCountHandler[interleaveMinimalReduceCountHandlerPoolSize];
+		interleaveMinimalReduceCountHandler = new InterleaveMinimalReduceCountHandler[5];
 				
-		interleaveMaximalReduceCountHandlerAverageUse = UNUSED;
-		interleaveMaximalReduceCountHandlerPoolSize = 5;
+		interleaveMaximalReduceCountHandlerAverageUse = 0;
 		interleaveMaximalReduceCountHandlerFree = 0;
-		interleaveMaximalReduceCountHandler = new InterleaveMaximalReduceCountHandler[interleaveMaximalReduceCountHandlerPoolSize];
+		interleaveMaximalReduceCountHandler = new InterleaveMaximalReduceCountHandler[5];
 		
 			
 		
 		
-		grammarMinimalReduceHandlerAverageUse = UNUSED;
-		grammarMinimalReduceHandlerPoolSize = 5;
+		grammarMinimalReduceHandlerAverageUse = 0;
 		grammarMinimalReduceHandlerFree = 0;
-		grammarMinimalReduceHandler = new GrammarMinimalReduceHandler[grammarMinimalReduceHandlerPoolSize];
+		grammarMinimalReduceHandler = new GrammarMinimalReduceHandler[5];
 		
-		grammarMaximalReduceHandlerAverageUse = UNUSED;
-		grammarMaximalReduceHandlerPoolSize = 5;
+		grammarMaximalReduceHandlerAverageUse = 0;
 		grammarMaximalReduceHandlerFree = 0;
-		grammarMaximalReduceHandler = new GrammarMaximalReduceHandler[grammarMaximalReduceHandlerPoolSize];
+		grammarMaximalReduceHandler = new GrammarMaximalReduceHandler[5];
 		
-		refMinimalReduceHandlerAverageUse = UNUSED;
-		refMinimalReduceHandlerPoolSize = 5;
+		refMinimalReduceHandlerAverageUse = 0;
 		refMinimalReduceHandlerFree = 0;
-		refMinimalReduceHandler = new RefMinimalReduceHandler[refMinimalReduceHandlerPoolSize];
+		refMinimalReduceHandler = new RefMinimalReduceHandler[5];
 		
-		refMaximalReduceHandlerAverageUse = UNUSED;
-		refMaximalReduceHandlerPoolSize = 5;
+		refMaximalReduceHandlerAverageUse = 0;
 		refMaximalReduceHandlerFree = 0;
-		refMaximalReduceHandler = new RefMaximalReduceHandler[refMaximalReduceHandlerPoolSize];
+		refMaximalReduceHandler = new RefMaximalReduceHandler[5];
 			
-		choiceMinimalReduceHandlerAverageUse = UNUSED;
-		choiceMinimalReduceHandlerPoolSize = 5;
+		choiceMinimalReduceHandlerAverageUse = 0;
 		choiceMinimalReduceHandlerFree = 0;
-		choiceMinimalReduceHandler = new ChoiceMinimalReduceHandler[choiceMinimalReduceHandlerPoolSize];
+		choiceMinimalReduceHandler = new ChoiceMinimalReduceHandler[5];
 		
-		choiceMaximalReduceHandlerAverageUse = UNUSED;
-		choiceMaximalReduceHandlerPoolSize = 5;
+		choiceMaximalReduceHandlerAverageUse = 0;
 		choiceMaximalReduceHandlerFree = 0;
-		choiceMaximalReduceHandler = new ChoiceMaximalReduceHandler[choiceMaximalReduceHandlerPoolSize];
+		choiceMaximalReduceHandler = new ChoiceMaximalReduceHandler[5];
 		
-		groupMinimalReduceHandlerAverageUse = UNUSED;
-		groupMinimalReduceHandlerPoolSize = 5;
+		groupMinimalReduceHandlerAverageUse = 0;
 		groupMinimalReduceHandlerFree = 0;
-		groupMinimalReduceHandler = new GroupMinimalReduceHandler[groupMinimalReduceHandlerPoolSize];
+		groupMinimalReduceHandler = new GroupMinimalReduceHandler[5];
 		
-		groupMaximalReduceHandlerAverageUse = UNUSED;
-		groupMaximalReduceHandlerPoolSize = 5;
+		groupMaximalReduceHandlerAverageUse = 0;
 		groupMaximalReduceHandlerFree = 0;
-		groupMaximalReduceHandler = new GroupMaximalReduceHandler[groupMaximalReduceHandlerPoolSize];
+		groupMaximalReduceHandler = new GroupMaximalReduceHandler[5];
 		
-		interleaveMinimalReduceHandlerAverageUse = UNUSED;
-		interleaveMinimalReduceHandlerPoolSize = 5;
+		interleaveMinimalReduceHandlerAverageUse = 0;
 		interleaveMinimalReduceHandlerFree = 0;
-		interleaveMinimalReduceHandler = new InterleaveMinimalReduceHandler[interleaveMinimalReduceHandlerPoolSize];
+		interleaveMinimalReduceHandler = new InterleaveMinimalReduceHandler[5];
 		
-		interleaveMaximalReduceHandlerAverageUse = UNUSED;
-		interleaveMaximalReduceHandlerPoolSize = 5;
+		interleaveMaximalReduceHandlerAverageUse = 0;
 		interleaveMaximalReduceHandlerFree = 0;
-		interleaveMaximalReduceHandler = new InterleaveMaximalReduceHandler[interleaveMaximalReduceHandlerPoolSize];
+		interleaveMaximalReduceHandler = new InterleaveMaximalReduceHandler[5];
+		
+		
+		amrhPoolMaxSize = 10;
+		particleHandlerMaxSize = 100;        
+        choiceHandlerMaxSize = 50;
+        groupHandlerMaxSize = 50;
+        grammarHandlerMaxSize = 50;
+        refHandlerMaxSize = 50;
+        uinterleaveHandlerMaxSize = 50;
+        minterleaveHandlerMaxSize = 50;
+        sinterleaveHandlerMaxSize = 50;
+        elementHandlerMaxSize = 100;
+        attributeHandlerMaxSize = 50;
+        exceptPatternHandlerMaxSize = 50;
+        listPatternHandlerMaxSize = 50;
+        groupDoubleHandlerMaxSize = 50;
+        interleaveDoubleHandlerMaxSize = 50;
+        groupMinimalReduceCountHandlerMaxSize = 50;
+        groupMaximalReduceCountHandlerMaxSize = 50;
+        interleaveMinimalReduceCountHandlerMaxSize = 50;
+        interleaveMaximalReduceCountHandlerMaxSize = 50;
+        grammarMinimalReduceHandlerMaxSize = 50;
+        grammarMaximalReduceHandlerMaxSize = 50;
+        refMinimalReduceHandlerMaxSize = 50;
+        refMaximalReduceHandlerMaxSize = 50;
+        choiceMinimalReduceHandlerMaxSize = 50;
+        choiceMaximalReduceHandlerMaxSize = 50;
+        groupMinimalReduceHandlerMaxSize = 50;
+        groupMaximalReduceHandlerMaxSize = 50;
+        interleaveMinimalReduceHandlerMaxSize = 50;
+        interleaveMaximalReduceHandlerMaxSize = 50;
 	}
 	
 	public static RuleHandlerPool getInstance(MessageWriter debugWriter){
@@ -347,56 +349,61 @@ public class RuleHandlerPool{
 	}
 	
 	public synchronized ActiveModelRuleHandlerPool getActiveModelRuleHandlerPool(){
-		if(vshPoolFree == 0){
-			ActiveModelRuleHandlerPool vshp = new ActiveModelRuleHandlerPool(this, debugWriter);
-			return vshp;
+		if(amrhPoolFree == 0){
+			ActiveModelRuleHandlerPool amrhp = new ActiveModelRuleHandlerPool(this, debugWriter);
+			return amrhp;
 		}else{
-			ActiveModelRuleHandlerPool vshp = vshPools[--vshPoolFree];
-			return vshp;
+			ActiveModelRuleHandlerPool amrhp = amrhPools[--amrhPoolFree];
+			return amrhp;
 		}
 	}
 		
-	public synchronized void recycle(ActiveModelRuleHandlerPool vshp){
-		if(vshPoolFree == vshPoolPoolSize){
-			ActiveModelRuleHandlerPool[] increased = new ActiveModelRuleHandlerPool[++vshPoolPoolSize];
-			System.arraycopy(vshPools, 0, increased, 0, vshPoolFree);
-			vshPools = increased;
+	public synchronized void recycle(ActiveModelRuleHandlerPool amrhp){
+	    if(amrhPools.length == amrhPoolMaxSize) return;
+		if(amrhPoolFree == amrhPools.length){		    
+			ActiveModelRuleHandlerPool[] increased = new ActiveModelRuleHandlerPool[10+amrhPools.length];
+			System.arraycopy(amrhPools, 0, increased, 0, amrhPoolFree);
+			amrhPools = increased;
 		}
-		vshPools[vshPoolFree++] = vshp;
+		amrhPools[amrhPoolFree++] = amrhp;
 	}	
 	
 	synchronized void fill(ActiveModelRuleHandlerPool ruleHandlerPool,
-				ParticleHandler[] particleHandler,
-				ChoiceHandler[] choiceHandler,
-				GroupHandler[] groupHandler,
-				GrammarHandler[] grammarHandler,
-				RefHandler[] refHandler,
-				UInterleaveHandler[] uinterleaveHandler,
-				MInterleaveHandler[] minterleaveHandler,
-				SInterleaveHandler[] sinterleaveHandler,
-				ElementHandler[] elementHandler,
-				AttributeHandler[] attributeHandler,
-				ExceptPatternHandler[] exceptPatternHandler,
-				ListPatternHandler[] listPatternHandler,
-				GroupDoubleHandler[] groupDoubleHandler,
-				InterleaveDoubleHandler[] interleaveDoubleHandler,
-				GroupMinimalReduceCountHandler[] groupMinimalReduceCountHandler,
-				GroupMaximalReduceCountHandler[] groupMaximalReduceCountHandler,
-				InterleaveMinimalReduceCountHandler[] interleaveMinimalReduceCountHandler,
-				InterleaveMaximalReduceCountHandler[] interleaveMaximalReduceCountHandler,				
-				GrammarMinimalReduceHandler[] grammarMinimalReduceHandler,
-				GrammarMaximalReduceHandler[] grammarMaximalReduceHandler,
-				RefMinimalReduceHandler[] refMinimalReduceHandler,
-				RefMaximalReduceHandler[] refMaximalReduceHandler,
-				ChoiceMinimalReduceHandler[] choiceMinimalReduceHandler,
-				ChoiceMaximalReduceHandler[] choiceMaximalReduceHandler,
-				GroupMinimalReduceHandler[] groupMinimalReduceHandler,
-				GroupMaximalReduceHandler[] groupMaximalReduceHandler,
-				InterleaveMinimalReduceHandler[] interleaveMinimalReduceHandler,
-				InterleaveMaximalReduceHandler[] interleaveMaximalReduceHandler){
+				ParticleHandler[] particleHandlerToFill,
+				ChoiceHandler[] choiceHandlerToFill,
+				GroupHandler[] groupHandlerToFill,
+				GrammarHandler[] grammarHandlerToFill,
+				RefHandler[] refHandlerToFill,
+				UInterleaveHandler[] uinterleaveHandlerToFill,
+				MInterleaveHandler[] minterleaveHandlerToFill,
+				SInterleaveHandler[] sinterleaveHandlerToFill,
+				ElementHandler[] elementHandlerToFill,
+				AttributeHandler[] attributeHandlerToFill,
+				ExceptPatternHandler[] exceptPatternHandlerToFill,
+				ListPatternHandler[] listPatternHandlerToFill,
+				GroupDoubleHandler[] groupDoubleHandlerToFill,
+				InterleaveDoubleHandler[] interleaveDoubleHandlerToFill,
+				GroupMinimalReduceCountHandler[] groupMinimalReduceCountHandlerToFill,
+				GroupMaximalReduceCountHandler[] groupMaximalReduceCountHandlerToFill,
+				InterleaveMinimalReduceCountHandler[] interleaveMinimalReduceCountHandlerToFill,
+				InterleaveMaximalReduceCountHandler[] interleaveMaximalReduceCountHandlerToFill,				
+				GrammarMinimalReduceHandler[] grammarMinimalReduceHandlerToFill,
+				GrammarMaximalReduceHandler[] grammarMaximalReduceHandlerToFill,
+				RefMinimalReduceHandler[] refMinimalReduceHandlerToFill,
+				RefMaximalReduceHandler[] refMaximalReduceHandlerToFill,
+				ChoiceMinimalReduceHandler[] choiceMinimalReduceHandlerToFill,
+				ChoiceMaximalReduceHandler[] choiceMaximalReduceHandlerToFill,
+				GroupMinimalReduceHandler[] groupMinimalReduceHandlerToFill,
+				GroupMaximalReduceHandler[] groupMaximalReduceHandlerToFill,
+				InterleaveMinimalReduceHandler[] interleaveMinimalReduceHandlerToFill,
+				InterleaveMaximalReduceHandler[] interleaveMaximalReduceHandlerToFill){
+	    
+	    
 		int particleHandlerFillCount;
-		if(particleHandler == null || particleHandler.length < particleHandlerAverageUse)
-			particleHandler = new ParticleHandler[particleHandlerAverageUse];
+		if(particleHandlerToFill == null || particleHandlerToFill.length < particleHandlerAverageUse){
+			particleHandlerToFill = new ParticleHandler[particleHandlerAverageUse];
+		    ruleHandlerPool.particleHandler = particleHandlerToFill;
+		}
 		if(particleHandlerFree > particleHandlerAverageUse){
 			particleHandlerFillCount = particleHandlerAverageUse;
 			particleHandlerFree = particleHandlerFree - particleHandlerAverageUse;
@@ -404,25 +411,29 @@ public class RuleHandlerPool{
 			particleHandlerFillCount = particleHandlerFree;
 			particleHandlerFree = 0;
 		}		
-		System.arraycopy(this.particleHandler, particleHandlerFree, 
-							particleHandler, 0, particleHandlerFillCount);
+		System.arraycopy(particleHandler, particleHandlerFree, 
+							particleHandlerToFill, 0, particleHandlerFillCount);
 		
 		int choiceHandlerFillCount;
-		if(choiceHandler == null || choiceHandler.length < choiceHandlerAverageUse)
-			choiceHandler = new ChoiceHandler[choiceHandlerAverageUse];
+		if(choiceHandlerToFill == null || choiceHandlerToFill.length < choiceHandlerAverageUse){
+			choiceHandlerToFill = new ChoiceHandler[choiceHandlerAverageUse];
+		    ruleHandlerPool.choiceHandler = choiceHandlerToFill;
+		}
 		if(choiceHandlerFree > choiceHandlerAverageUse){
 			choiceHandlerFillCount = choiceHandlerAverageUse;
 			choiceHandlerFree = choiceHandlerFree - choiceHandlerAverageUse;
 		}else{
 			choiceHandlerFillCount = choiceHandlerFree;
 			choiceHandlerFree = 0;
-		}		
-		System.arraycopy(this.choiceHandler, choiceHandlerFree, 
-							choiceHandler, 0, choiceHandlerFillCount);
+		}
+		System.arraycopy(choiceHandler, choiceHandlerFree, 
+							choiceHandlerToFill, 0, choiceHandlerFillCount);
 		
 		int groupHandlerFillCount;
-		if(groupHandler == null || groupHandler.length < groupHandlerAverageUse)
-			groupHandler = new GroupHandler[groupHandlerAverageUse];
+		if(groupHandlerToFill == null || groupHandlerToFill.length < groupHandlerAverageUse){
+			groupHandlerToFill = new GroupHandler[groupHandlerAverageUse];
+		    ruleHandlerPool.groupHandler = groupHandlerToFill;
+		}
 		if(groupHandlerFree > groupHandlerAverageUse){
 			groupHandlerFillCount = groupHandlerAverageUse;
 			groupHandlerFree = groupHandlerFree - groupHandlerAverageUse;
@@ -430,12 +441,14 @@ public class RuleHandlerPool{
 			groupHandlerFillCount = groupHandlerFree;
 			groupHandlerFree = 0;
 		}		
-		System.arraycopy(this.groupHandler, groupHandlerFree, 
-							groupHandler, 0, groupHandlerFillCount);
+		System.arraycopy(groupHandler, groupHandlerFree, 
+							groupHandlerToFill, 0, groupHandlerFillCount);
 		
 		int grammarHandlerFillCount;
-		if(grammarHandler == null || grammarHandler.length < grammarHandlerAverageUse)
-			grammarHandler = new GrammarHandler[grammarHandlerAverageUse];
+		if(grammarHandlerToFill == null || grammarHandlerToFill.length < grammarHandlerAverageUse){
+			grammarHandlerToFill = new GrammarHandler[grammarHandlerAverageUse];
+		    ruleHandlerPool.grammarHandler = grammarHandlerToFill;
+		}
 		if(grammarHandlerFree > grammarHandlerAverageUse){
 			grammarHandlerFillCount = grammarHandlerAverageUse;
 			grammarHandlerFree = grammarHandlerFree - grammarHandlerAverageUse;
@@ -443,12 +456,14 @@ public class RuleHandlerPool{
 			grammarHandlerFillCount = grammarHandlerFree;
 			grammarHandlerFree = 0;
 		}		
-		System.arraycopy(this.grammarHandler, grammarHandlerFree, 
-							grammarHandler, 0, grammarHandlerFillCount);
+		System.arraycopy(grammarHandler, grammarHandlerFree, 
+							grammarHandlerToFill, 0, grammarHandlerFillCount);
 		
 		int refHandlerFillCount;
-		if(refHandler == null || refHandler.length < refHandlerAverageUse)
-			refHandler = new RefHandler[refHandlerAverageUse];
+		if(refHandlerToFill == null || refHandlerToFill.length < refHandlerAverageUse){
+			refHandlerToFill = new RefHandler[refHandlerAverageUse];
+		    ruleHandlerPool.refHandler = refHandlerToFill;
+		}
 		if(refHandlerFree > refHandlerAverageUse){
 			refHandlerFillCount = refHandlerAverageUse;
 			refHandlerFree = refHandlerFree - refHandlerAverageUse;
@@ -456,13 +471,15 @@ public class RuleHandlerPool{
 			refHandlerFillCount = refHandlerFree;
 			refHandlerFree = 0;
 		}		
-		System.arraycopy(this.refHandler, refHandlerFree, 
-							refHandler, 0, refHandlerFillCount);
+		System.arraycopy(refHandler, refHandlerFree, 
+							refHandlerToFill, 0, refHandlerFillCount);
 		
 		
 		int uinterleaveHandlerFillCount;
-		if(uinterleaveHandler == null || uinterleaveHandler.length < uinterleaveHandlerAverageUse)
-			uinterleaveHandler = new UInterleaveHandler[uinterleaveHandlerAverageUse];
+		if(uinterleaveHandlerToFill == null || uinterleaveHandlerToFill.length < uinterleaveHandlerAverageUse){
+			uinterleaveHandlerToFill = new UInterleaveHandler[uinterleaveHandlerAverageUse];
+		    ruleHandlerPool.uinterleaveHandler = uinterleaveHandlerToFill;
+        }
 		if(uinterleaveHandlerFree > uinterleaveHandlerAverageUse){
 			uinterleaveHandlerFillCount = uinterleaveHandlerAverageUse;
 			uinterleaveHandlerFree = uinterleaveHandlerFree - uinterleaveHandlerAverageUse;
@@ -470,12 +487,14 @@ public class RuleHandlerPool{
 			uinterleaveHandlerFillCount = uinterleaveHandlerFree;
 			uinterleaveHandlerFree = 0;
 		}		
-		System.arraycopy(this.uinterleaveHandler, uinterleaveHandlerFree, 
-							uinterleaveHandler, 0, uinterleaveHandlerFillCount);
+		System.arraycopy(uinterleaveHandler, uinterleaveHandlerFree, 
+							uinterleaveHandlerToFill, 0, uinterleaveHandlerFillCount);
 		
 		int minterleaveHandlerFillCount;
-		if(minterleaveHandler == null || minterleaveHandler.length < minterleaveHandlerAverageUse)
-			minterleaveHandler = new MInterleaveHandler[minterleaveHandlerAverageUse];
+		if(minterleaveHandlerToFill == null || minterleaveHandlerToFill.length < minterleaveHandlerAverageUse){
+			minterleaveHandlerToFill = new MInterleaveHandler[minterleaveHandlerAverageUse];
+		    ruleHandlerPool.minterleaveHandler = minterleaveHandlerToFill;
+		}
 		if(minterleaveHandlerFree > minterleaveHandlerAverageUse){
 			minterleaveHandlerFillCount = minterleaveHandlerAverageUse;
 			minterleaveHandlerFree = minterleaveHandlerFree - minterleaveHandlerAverageUse;
@@ -483,12 +502,14 @@ public class RuleHandlerPool{
 			minterleaveHandlerFillCount = minterleaveHandlerFree;
 			minterleaveHandlerFree = 0;
 		}		
-		System.arraycopy(this.minterleaveHandler, minterleaveHandlerFree, 
-							minterleaveHandler, 0, minterleaveHandlerFillCount);
+		System.arraycopy(minterleaveHandler, minterleaveHandlerFree, 
+							minterleaveHandlerToFill, 0, minterleaveHandlerFillCount);
 		
 		int sinterleaveHandlerFillCount;
-		if(sinterleaveHandler == null || sinterleaveHandler.length < sinterleaveHandlerAverageUse)
-			sinterleaveHandler = new SInterleaveHandler[sinterleaveHandlerAverageUse];
+		if(sinterleaveHandlerToFill == null || sinterleaveHandlerToFill.length < sinterleaveHandlerAverageUse){
+			sinterleaveHandlerToFill = new SInterleaveHandler[sinterleaveHandlerAverageUse];
+		    ruleHandlerPool.sinterleaveHandler = sinterleaveHandlerToFill;
+		}
 		if(sinterleaveHandlerFree > sinterleaveHandlerAverageUse){
 			sinterleaveHandlerFillCount = sinterleaveHandlerAverageUse;
 			sinterleaveHandlerFree = sinterleaveHandlerFree - sinterleaveHandlerAverageUse;
@@ -496,12 +517,14 @@ public class RuleHandlerPool{
 			sinterleaveHandlerFillCount = sinterleaveHandlerFree;
 			sinterleaveHandlerFree = 0;
 		}		
-		System.arraycopy(this.sinterleaveHandler, sinterleaveHandlerFree, 
-							sinterleaveHandler, 0, sinterleaveHandlerFillCount);
+		System.arraycopy(sinterleaveHandler, sinterleaveHandlerFree, 
+							sinterleaveHandlerToFill, 0, sinterleaveHandlerFillCount);
 		
 		int elementHandlerFillCount;
-		if(elementHandler == null || elementHandler.length < elementHandlerAverageUse)
-			elementHandler = new ElementHandler[elementHandlerAverageUse];
+		if(elementHandlerToFill == null || elementHandlerToFill.length < elementHandlerAverageUse){
+			elementHandlerToFill = new ElementHandler[elementHandlerAverageUse];
+		    ruleHandlerPool.elementHandler = elementHandlerToFill;
+		}
 		if(elementHandlerFree > elementHandlerAverageUse){
 			elementHandlerFillCount = elementHandlerAverageUse;
 			elementHandlerFree = elementHandlerFree - elementHandlerAverageUse;
@@ -509,12 +532,14 @@ public class RuleHandlerPool{
 			elementHandlerFillCount = elementHandlerFree;
 			elementHandlerFree = 0;
 		}		
-		System.arraycopy(this.elementHandler, elementHandlerFree, 
-							elementHandler, 0, elementHandlerFillCount);
+		System.arraycopy(elementHandler, elementHandlerFree, 
+							elementHandlerToFill, 0, elementHandlerFillCount);
 		
 		int attributeHandlerFillCount;
-		if(attributeHandler == null || attributeHandler.length < attributeHandlerAverageUse)
-			attributeHandler = new AttributeHandler[attributeHandlerAverageUse];
+		if(attributeHandlerToFill == null || attributeHandlerToFill.length < attributeHandlerAverageUse){
+			attributeHandlerToFill = new AttributeHandler[attributeHandlerAverageUse];
+		    ruleHandlerPool.attributeHandler = attributeHandlerToFill;
+		}
 		if(attributeHandlerFree > attributeHandlerAverageUse){
 			attributeHandlerFillCount = attributeHandlerAverageUse;
 			attributeHandlerFree = attributeHandlerFree - attributeHandlerAverageUse;
@@ -522,12 +547,14 @@ public class RuleHandlerPool{
 			attributeHandlerFillCount = attributeHandlerFree;
 			attributeHandlerFree = 0;
 		}		
-		System.arraycopy(this.attributeHandler, attributeHandlerFree, 
-							attributeHandler, 0, attributeHandlerFillCount);
+		System.arraycopy(attributeHandler, attributeHandlerFree, 
+							attributeHandlerToFill, 0, attributeHandlerFillCount);
 		
 		int exceptPatternHandlerFillCount;
-		if(exceptPatternHandler == null || exceptPatternHandler.length < exceptPatternHandlerAverageUse)
-			exceptPatternHandler = new ExceptPatternHandler[exceptPatternHandlerAverageUse];
+		if(exceptPatternHandlerToFill == null || exceptPatternHandlerToFill.length < exceptPatternHandlerAverageUse){
+			exceptPatternHandlerToFill = new ExceptPatternHandler[exceptPatternHandlerAverageUse];
+		    ruleHandlerPool.exceptPatternHandler = exceptPatternHandlerToFill;
+		}
 		if(exceptPatternHandlerFree > exceptPatternHandlerAverageUse){
 			exceptPatternHandlerFillCount = exceptPatternHandlerAverageUse;
 			exceptPatternHandlerFree = exceptPatternHandlerFree - exceptPatternHandlerAverageUse;
@@ -535,12 +562,14 @@ public class RuleHandlerPool{
 			exceptPatternHandlerFillCount = exceptPatternHandlerFree;
 			exceptPatternHandlerFree = 0;
 		}		
-		System.arraycopy(this.exceptPatternHandler, exceptPatternHandlerFree, 
-							exceptPatternHandler, 0, exceptPatternHandlerFillCount);
+		System.arraycopy(exceptPatternHandler, exceptPatternHandlerFree, 
+							exceptPatternHandlerToFill, 0, exceptPatternHandlerFillCount);
 		
 		int listPatternHandlerFillCount;
-		if(listPatternHandler == null || listPatternHandler.length < listPatternHandlerAverageUse)
-			listPatternHandler = new ListPatternHandler[listPatternHandlerAverageUse];
+		if(listPatternHandlerToFill == null || listPatternHandlerToFill.length < listPatternHandlerAverageUse){
+			listPatternHandlerToFill = new ListPatternHandler[listPatternHandlerAverageUse];
+		    ruleHandlerPool.listPatternHandler = listPatternHandlerToFill;
+		}
 		if(listPatternHandlerFree > listPatternHandlerAverageUse){
 			listPatternHandlerFillCount = listPatternHandlerAverageUse;
 			listPatternHandlerFree = listPatternHandlerFree - listPatternHandlerAverageUse;
@@ -548,16 +577,18 @@ public class RuleHandlerPool{
 			listPatternHandlerFillCount = listPatternHandlerFree;
 			listPatternHandlerFree = 0;
 		}		
-		System.arraycopy(this.listPatternHandler, listPatternHandlerFree, 
-							listPatternHandler, 0, listPatternHandlerFillCount);
+		System.arraycopy(listPatternHandler, listPatternHandlerFree, 
+							listPatternHandlerToFill, 0, listPatternHandlerFillCount);
 		
 		
 		
 		
 		
 		int groupDoubleHandlerFillCount;
-		if(groupDoubleHandler == null || groupDoubleHandler.length < groupDoubleHandlerAverageUse)
-			groupDoubleHandler = new GroupDoubleHandler[groupDoubleHandlerAverageUse];
+		if(groupDoubleHandlerToFill == null || groupDoubleHandlerToFill.length < groupDoubleHandlerAverageUse){
+			groupDoubleHandlerToFill = new GroupDoubleHandler[groupDoubleHandlerAverageUse];
+		    ruleHandlerPool.groupDoubleHandler = groupDoubleHandlerToFill;
+		}
 		if(groupDoubleHandlerFree > groupDoubleHandlerAverageUse){
 			groupDoubleHandlerFillCount = groupDoubleHandlerAverageUse;
 			groupDoubleHandlerFree = groupDoubleHandlerFree - groupDoubleHandlerAverageUse;
@@ -565,12 +596,14 @@ public class RuleHandlerPool{
 			groupDoubleHandlerFillCount = groupDoubleHandlerFree;
 			groupDoubleHandlerFree = 0;
 		}		
-		System.arraycopy(this.groupDoubleHandler, groupDoubleHandlerFree, 
-							groupDoubleHandler, 0, groupDoubleHandlerFillCount);
+		System.arraycopy(groupDoubleHandler, groupDoubleHandlerFree, 
+							groupDoubleHandlerToFill, 0, groupDoubleHandlerFillCount);
 		
 		int interleaveDoubleHandlerFillCount;
-		if(interleaveDoubleHandler == null || interleaveDoubleHandler.length < interleaveDoubleHandlerAverageUse)
-			interleaveDoubleHandler = new InterleaveDoubleHandler[interleaveDoubleHandlerAverageUse];
+		if(interleaveDoubleHandlerToFill == null || interleaveDoubleHandlerToFill.length < interleaveDoubleHandlerAverageUse){
+			interleaveDoubleHandlerToFill = new InterleaveDoubleHandler[interleaveDoubleHandlerAverageUse];
+		    ruleHandlerPool.interleaveDoubleHandler = interleaveDoubleHandlerToFill;
+		}
 		if(interleaveDoubleHandlerFree > interleaveDoubleHandlerAverageUse){
 			interleaveDoubleHandlerFillCount = interleaveDoubleHandlerAverageUse;
 			interleaveDoubleHandlerFree = interleaveDoubleHandlerFree - interleaveDoubleHandlerAverageUse;
@@ -578,15 +611,17 @@ public class RuleHandlerPool{
 			interleaveDoubleHandlerFillCount = interleaveDoubleHandlerFree;
 			interleaveDoubleHandlerFree = 0;
 		}		
-		System.arraycopy(this.interleaveDoubleHandler, interleaveDoubleHandlerFree, 
-							interleaveDoubleHandler, 0, interleaveDoubleHandlerFillCount);
+		System.arraycopy(interleaveDoubleHandler, interleaveDoubleHandlerFree, 
+							interleaveDoubleHandlerToFill, 0, interleaveDoubleHandlerFillCount);
 		
 		
 		
 		
 		int groupMinimalReduceCountHandlerFillCount;
-		if(groupMinimalReduceCountHandler == null || groupMinimalReduceCountHandler.length < groupMinimalReduceCountHandlerAverageUse)
-			groupMinimalReduceCountHandler = new GroupMinimalReduceCountHandler[groupMinimalReduceCountHandlerAverageUse];
+		if(groupMinimalReduceCountHandlerToFill == null || groupMinimalReduceCountHandlerToFill.length < groupMinimalReduceCountHandlerAverageUse){
+			groupMinimalReduceCountHandlerToFill = new GroupMinimalReduceCountHandler[groupMinimalReduceCountHandlerAverageUse];
+		    ruleHandlerPool.groupMinimalReduceCountHandler = groupMinimalReduceCountHandlerToFill;
+		}
 		if(groupMinimalReduceCountHandlerFree > groupMinimalReduceCountHandlerAverageUse){
 			groupMinimalReduceCountHandlerFillCount = groupMinimalReduceCountHandlerAverageUse;
 			groupMinimalReduceCountHandlerFree = groupMinimalReduceCountHandlerFree - groupMinimalReduceCountHandlerAverageUse;
@@ -594,12 +629,14 @@ public class RuleHandlerPool{
 			groupMinimalReduceCountHandlerFillCount = groupMinimalReduceCountHandlerFree;
 			groupMinimalReduceCountHandlerFree = 0;
 		}		
-		System.arraycopy(this.groupMinimalReduceCountHandler, groupMinimalReduceCountHandlerFree, 
-							groupMinimalReduceCountHandler, 0, groupMinimalReduceCountHandlerFillCount);
+		System.arraycopy(groupMinimalReduceCountHandler, groupMinimalReduceCountHandlerFree, 
+							groupMinimalReduceCountHandlerToFill, 0, groupMinimalReduceCountHandlerFillCount);
 		
 		int groupMaximalReduceCountHandlerFillCount;
-		if(groupMaximalReduceCountHandler == null || groupMaximalReduceCountHandler.length < groupMaximalReduceCountHandlerAverageUse)
-			groupMaximalReduceCountHandler = new GroupMaximalReduceCountHandler[groupMaximalReduceCountHandlerAverageUse];
+		if(groupMaximalReduceCountHandlerToFill == null || groupMaximalReduceCountHandlerToFill.length < groupMaximalReduceCountHandlerAverageUse){
+			groupMaximalReduceCountHandlerToFill = new GroupMaximalReduceCountHandler[groupMaximalReduceCountHandlerAverageUse];
+		    ruleHandlerPool.groupMaximalReduceCountHandler = groupMaximalReduceCountHandlerToFill;
+		}
 		if(groupMaximalReduceCountHandlerFree > groupMaximalReduceCountHandlerAverageUse){
 			groupMaximalReduceCountHandlerFillCount = groupMaximalReduceCountHandlerAverageUse;
 			groupMaximalReduceCountHandlerFree = groupMaximalReduceCountHandlerFree - groupMaximalReduceCountHandlerAverageUse;
@@ -607,12 +644,14 @@ public class RuleHandlerPool{
 			groupMaximalReduceCountHandlerFillCount = groupMaximalReduceCountHandlerFree;
 			groupMaximalReduceCountHandlerFree = 0;
 		}		
-		System.arraycopy(this.groupMaximalReduceCountHandler, groupMaximalReduceCountHandlerFree, 
-							groupMaximalReduceCountHandler, 0, groupMaximalReduceCountHandlerFillCount);
+		System.arraycopy(groupMaximalReduceCountHandler, groupMaximalReduceCountHandlerFree, 
+							groupMaximalReduceCountHandlerToFill, 0, groupMaximalReduceCountHandlerFillCount);
 		
 		int interleaveMinimalReduceCountHandlerFillCount;
-		if(interleaveMinimalReduceCountHandler == null || interleaveMinimalReduceCountHandler.length < interleaveMinimalReduceCountHandlerAverageUse)
-			interleaveMinimalReduceCountHandler = new InterleaveMinimalReduceCountHandler[interleaveMinimalReduceCountHandlerAverageUse];
+		if(interleaveMinimalReduceCountHandlerToFill == null || interleaveMinimalReduceCountHandlerToFill.length < interleaveMinimalReduceCountHandlerAverageUse){
+			interleaveMinimalReduceCountHandlerToFill = new InterleaveMinimalReduceCountHandler[interleaveMinimalReduceCountHandlerAverageUse];
+		    ruleHandlerPool.interleaveMinimalReduceCountHandler = interleaveMinimalReduceCountHandlerToFill;
+		}
 		if(interleaveMinimalReduceCountHandlerFree > interleaveMinimalReduceCountHandlerAverageUse){
 			interleaveMinimalReduceCountHandlerFillCount = interleaveMinimalReduceCountHandlerAverageUse;
 			interleaveMinimalReduceCountHandlerFree = interleaveMinimalReduceCountHandlerFree - interleaveMinimalReduceCountHandlerAverageUse;
@@ -620,12 +659,14 @@ public class RuleHandlerPool{
 			interleaveMinimalReduceCountHandlerFillCount = interleaveMinimalReduceCountHandlerFree;
 			interleaveMinimalReduceCountHandlerFree = 0;
 		}		
-		System.arraycopy(this.interleaveMinimalReduceCountHandler, interleaveMinimalReduceCountHandlerFree, 
-							interleaveMinimalReduceCountHandler, 0, interleaveMinimalReduceCountHandlerFillCount);
+		System.arraycopy(interleaveMinimalReduceCountHandler, interleaveMinimalReduceCountHandlerFree, 
+							interleaveMinimalReduceCountHandlerToFill, 0, interleaveMinimalReduceCountHandlerFillCount);
 		
 		int interleaveMaximalReduceCountHandlerFillCount;
-		if(interleaveMaximalReduceCountHandler == null || interleaveMaximalReduceCountHandler.length < interleaveMaximalReduceCountHandlerAverageUse)
-			interleaveMaximalReduceCountHandler = new InterleaveMaximalReduceCountHandler[interleaveMaximalReduceCountHandlerAverageUse];
+		if(interleaveMaximalReduceCountHandlerToFill == null || interleaveMaximalReduceCountHandlerToFill.length < interleaveMaximalReduceCountHandlerAverageUse){
+			interleaveMaximalReduceCountHandlerToFill = new InterleaveMaximalReduceCountHandler[interleaveMaximalReduceCountHandlerAverageUse];
+		    ruleHandlerPool.interleaveMaximalReduceCountHandler = interleaveMaximalReduceCountHandlerToFill;
+		}
 		if(interleaveMaximalReduceCountHandlerFree > interleaveMaximalReduceCountHandlerAverageUse){
 			interleaveMaximalReduceCountHandlerFillCount = interleaveMaximalReduceCountHandlerAverageUse;
 			interleaveMaximalReduceCountHandlerFree = interleaveMaximalReduceCountHandlerFree - interleaveMaximalReduceCountHandlerAverageUse;
@@ -633,16 +674,18 @@ public class RuleHandlerPool{
 			interleaveMaximalReduceCountHandlerFillCount = interleaveMaximalReduceCountHandlerFree;
 			interleaveMaximalReduceCountHandlerFree = 0;
 		}		
-		System.arraycopy(this.interleaveMaximalReduceCountHandler, interleaveMaximalReduceCountHandlerFree, 
-							interleaveMaximalReduceCountHandler, 0, interleaveMaximalReduceCountHandlerFillCount);
+		System.arraycopy(interleaveMaximalReduceCountHandler, interleaveMaximalReduceCountHandlerFree, 
+							interleaveMaximalReduceCountHandlerToFill, 0, interleaveMaximalReduceCountHandlerFillCount);
 				
 		
 		
 				
 		
 		int grammarMinimalReduceHandlerFillCount;
-		if(grammarMinimalReduceHandler == null || grammarMinimalReduceHandler.length < grammarMinimalReduceHandlerAverageUse)
-			grammarMinimalReduceHandler = new GrammarMinimalReduceHandler[grammarMinimalReduceHandlerAverageUse];
+		if(grammarMinimalReduceHandlerToFill == null || grammarMinimalReduceHandlerToFill.length < grammarMinimalReduceHandlerAverageUse){
+			grammarMinimalReduceHandlerToFill = new GrammarMinimalReduceHandler[grammarMinimalReduceHandlerAverageUse];
+		    ruleHandlerPool.grammarMinimalReduceHandler = grammarMinimalReduceHandlerToFill;
+		}
 		if(grammarMinimalReduceHandlerFree > grammarMinimalReduceHandlerAverageUse){
 			grammarMinimalReduceHandlerFillCount = grammarMinimalReduceHandlerAverageUse;
 			grammarMinimalReduceHandlerFree = grammarMinimalReduceHandlerFree - grammarMinimalReduceHandlerAverageUse;
@@ -650,12 +693,14 @@ public class RuleHandlerPool{
 			grammarMinimalReduceHandlerFillCount = grammarMinimalReduceHandlerFree;
 			grammarMinimalReduceHandlerFree = 0;
 		}		
-		System.arraycopy(this.grammarMinimalReduceHandler, grammarMinimalReduceHandlerFree, 
-							grammarMinimalReduceHandler, 0, grammarMinimalReduceHandlerFillCount);
+		System.arraycopy(grammarMinimalReduceHandler, grammarMinimalReduceHandlerFree, 
+							grammarMinimalReduceHandlerToFill, 0, grammarMinimalReduceHandlerFillCount);
 		
 		int grammarMaximalReduceHandlerFillCount;
-		if(grammarMaximalReduceHandler == null || grammarMaximalReduceHandler.length < grammarMaximalReduceHandlerAverageUse)
-			grammarMaximalReduceHandler = new GrammarMaximalReduceHandler[grammarMaximalReduceHandlerAverageUse];
+		if(grammarMaximalReduceHandlerToFill == null || grammarMaximalReduceHandlerToFill.length < grammarMaximalReduceHandlerAverageUse){
+			grammarMaximalReduceHandlerToFill = new GrammarMaximalReduceHandler[grammarMaximalReduceHandlerAverageUse];
+		    ruleHandlerPool.grammarMaximalReduceHandler = grammarMaximalReduceHandlerToFill;
+		}
 		if(grammarMaximalReduceHandlerFree > grammarMaximalReduceHandlerAverageUse){
 			grammarMaximalReduceHandlerFillCount = grammarMaximalReduceHandlerAverageUse;
 			grammarMaximalReduceHandlerFree = grammarMaximalReduceHandlerFree - grammarMaximalReduceHandlerAverageUse;
@@ -663,12 +708,14 @@ public class RuleHandlerPool{
 			grammarMaximalReduceHandlerFillCount = grammarMaximalReduceHandlerFree;
 			grammarMaximalReduceHandlerFree = 0;
 		}		
-		System.arraycopy(this.grammarMaximalReduceHandler, grammarMaximalReduceHandlerFree, 
-							grammarMaximalReduceHandler, 0, grammarMaximalReduceHandlerFillCount);
+		System.arraycopy(grammarMaximalReduceHandler, grammarMaximalReduceHandlerFree, 
+							grammarMaximalReduceHandlerToFill, 0, grammarMaximalReduceHandlerFillCount);
 		
 		int refMinimalReduceHandlerFillCount;
-		if(refMinimalReduceHandler == null || refMinimalReduceHandler.length < refMinimalReduceHandlerAverageUse)
-			refMinimalReduceHandler = new RefMinimalReduceHandler[refMinimalReduceHandlerAverageUse];
+		if(refMinimalReduceHandlerToFill == null || refMinimalReduceHandlerToFill.length < refMinimalReduceHandlerAverageUse){
+			refMinimalReduceHandlerToFill = new RefMinimalReduceHandler[refMinimalReduceHandlerAverageUse];
+		    ruleHandlerPool.refMinimalReduceHandler = refMinimalReduceHandlerToFill;
+		}
 		if(refMinimalReduceHandlerFree > refMinimalReduceHandlerAverageUse){
 			refMinimalReduceHandlerFillCount = refMinimalReduceHandlerAverageUse;
 			refMinimalReduceHandlerFree = refMinimalReduceHandlerFree - refMinimalReduceHandlerAverageUse;
@@ -676,12 +723,14 @@ public class RuleHandlerPool{
 			refMinimalReduceHandlerFillCount = refMinimalReduceHandlerFree;
 			refMinimalReduceHandlerFree = 0;
 		}		
-		System.arraycopy(this.refMinimalReduceHandler, refMinimalReduceHandlerFree, 
-							refMinimalReduceHandler, 0, refMinimalReduceHandlerFillCount);
+		System.arraycopy(refMinimalReduceHandler, refMinimalReduceHandlerFree, 
+							refMinimalReduceHandlerToFill, 0, refMinimalReduceHandlerFillCount);
 		
 		int refMaximalReduceHandlerFillCount;
-		if(refMaximalReduceHandler == null || refMaximalReduceHandler.length < refMaximalReduceHandlerAverageUse)
-			refMaximalReduceHandler = new RefMaximalReduceHandler[refMaximalReduceHandlerAverageUse];
+		if(refMaximalReduceHandlerToFill == null || refMaximalReduceHandlerToFill.length < refMaximalReduceHandlerAverageUse){
+			refMaximalReduceHandlerToFill = new RefMaximalReduceHandler[refMaximalReduceHandlerAverageUse];
+		    ruleHandlerPool.refMaximalReduceHandler = refMaximalReduceHandlerToFill;
+		}
 		if(refMaximalReduceHandlerFree > refMaximalReduceHandlerAverageUse){
 			refMaximalReduceHandlerFillCount = refMaximalReduceHandlerAverageUse;
 			refMaximalReduceHandlerFree = refMaximalReduceHandlerFree - refMaximalReduceHandlerAverageUse;
@@ -689,13 +738,15 @@ public class RuleHandlerPool{
 			refMaximalReduceHandlerFillCount = refMaximalReduceHandlerFree;
 			refMaximalReduceHandlerFree = 0;
 		}		
-		System.arraycopy(this.refMaximalReduceHandler, refMaximalReduceHandlerFree, 
-							refMaximalReduceHandler, 0, refMaximalReduceHandlerFillCount);
+		System.arraycopy(refMaximalReduceHandler, refMaximalReduceHandlerFree, 
+							refMaximalReduceHandlerToFill, 0, refMaximalReduceHandlerFillCount);
 		
 		
 		int choiceMinimalReduceHandlerFillCount;
-		if(choiceMinimalReduceHandler == null || choiceMinimalReduceHandler.length < choiceMinimalReduceHandlerAverageUse)
-			choiceMinimalReduceHandler = new ChoiceMinimalReduceHandler[choiceMinimalReduceHandlerAverageUse];
+		if(choiceMinimalReduceHandlerToFill == null || choiceMinimalReduceHandlerToFill.length < choiceMinimalReduceHandlerAverageUse){
+			choiceMinimalReduceHandlerToFill = new ChoiceMinimalReduceHandler[choiceMinimalReduceHandlerAverageUse];
+		    ruleHandlerPool.choiceMinimalReduceHandler = choiceMinimalReduceHandlerToFill;
+		}
 		if(choiceMinimalReduceHandlerFree > choiceMinimalReduceHandlerAverageUse){
 			choiceMinimalReduceHandlerFillCount = choiceMinimalReduceHandlerAverageUse;
 			choiceMinimalReduceHandlerFree = choiceMinimalReduceHandlerFree - choiceMinimalReduceHandlerAverageUse;
@@ -703,12 +754,14 @@ public class RuleHandlerPool{
 			choiceMinimalReduceHandlerFillCount = choiceMinimalReduceHandlerFree;
 			choiceMinimalReduceHandlerFree = 0;
 		}		
-		System.arraycopy(this.choiceMinimalReduceHandler, choiceMinimalReduceHandlerFree, 
-							choiceMinimalReduceHandler, 0, choiceMinimalReduceHandlerFillCount);
+		System.arraycopy(choiceMinimalReduceHandler, choiceMinimalReduceHandlerFree, 
+							choiceMinimalReduceHandlerToFill, 0, choiceMinimalReduceHandlerFillCount);
 		
 		int choiceMaximalReduceHandlerFillCount;
-		if(choiceMaximalReduceHandler == null || choiceMaximalReduceHandler.length < choiceMaximalReduceHandlerAverageUse)
-			choiceMaximalReduceHandler = new ChoiceMaximalReduceHandler[choiceMaximalReduceHandlerAverageUse];
+		if(choiceMaximalReduceHandlerToFill == null || choiceMaximalReduceHandlerToFill.length < choiceMaximalReduceHandlerAverageUse){
+			choiceMaximalReduceHandlerToFill = new ChoiceMaximalReduceHandler[choiceMaximalReduceHandlerAverageUse];
+		    ruleHandlerPool.choiceMaximalReduceHandler = choiceMaximalReduceHandlerToFill;
+		}
 		if(choiceMaximalReduceHandlerFree > choiceMaximalReduceHandlerAverageUse){
 			choiceMaximalReduceHandlerFillCount = choiceMaximalReduceHandlerAverageUse;
 			choiceMaximalReduceHandlerFree = choiceMaximalReduceHandlerFree - choiceMaximalReduceHandlerAverageUse;
@@ -716,13 +769,15 @@ public class RuleHandlerPool{
 			choiceMaximalReduceHandlerFillCount = choiceMaximalReduceHandlerFree;
 			choiceMaximalReduceHandlerFree = 0;
 		}		
-		System.arraycopy(this.choiceMaximalReduceHandler, choiceMaximalReduceHandlerFree, 
-							choiceMaximalReduceHandler, 0, choiceMaximalReduceHandlerFillCount);
+		System.arraycopy(choiceMaximalReduceHandler, choiceMaximalReduceHandlerFree, 
+							choiceMaximalReduceHandlerToFill, 0, choiceMaximalReduceHandlerFillCount);
 		
 		
 		int groupMinimalReduceHandlerFillCount;
-		if(groupMinimalReduceHandler == null || groupMinimalReduceHandler.length < groupMinimalReduceHandlerAverageUse)
-			groupMinimalReduceHandler = new GroupMinimalReduceHandler[groupMinimalReduceHandlerAverageUse];
+		if(groupMinimalReduceHandlerToFill == null || groupMinimalReduceHandlerToFill.length < groupMinimalReduceHandlerAverageUse){
+			groupMinimalReduceHandlerToFill = new GroupMinimalReduceHandler[groupMinimalReduceHandlerAverageUse];
+		    ruleHandlerPool.groupMinimalReduceHandler = groupMinimalReduceHandlerToFill;
+		}
 		if(groupMinimalReduceHandlerFree > groupMinimalReduceHandlerAverageUse){
 			groupMinimalReduceHandlerFillCount = groupMinimalReduceHandlerAverageUse;
 			groupMinimalReduceHandlerFree = groupMinimalReduceHandlerFree - groupMinimalReduceHandlerAverageUse;
@@ -730,12 +785,14 @@ public class RuleHandlerPool{
 			groupMinimalReduceHandlerFillCount = groupMinimalReduceHandlerFree;
 			groupMinimalReduceHandlerFree = 0;
 		}		
-		System.arraycopy(this.groupMinimalReduceHandler, groupMinimalReduceHandlerFree, 
-							groupMinimalReduceHandler, 0, groupMinimalReduceHandlerFillCount);
+		System.arraycopy(groupMinimalReduceHandler, groupMinimalReduceHandlerFree, 
+							groupMinimalReduceHandlerToFill, 0, groupMinimalReduceHandlerFillCount);
 		
 		int groupMaximalReduceHandlerFillCount;
-		if(groupMaximalReduceHandler == null || groupMaximalReduceHandler.length < groupMaximalReduceHandlerAverageUse)
-			groupMaximalReduceHandler = new GroupMaximalReduceHandler[groupMaximalReduceHandlerAverageUse];
+		if(groupMaximalReduceHandlerToFill == null || groupMaximalReduceHandlerToFill.length < groupMaximalReduceHandlerAverageUse){
+			groupMaximalReduceHandlerToFill = new GroupMaximalReduceHandler[groupMaximalReduceHandlerAverageUse];
+		    ruleHandlerPool.groupMaximalReduceHandler = groupMaximalReduceHandlerToFill;
+		}
 		if(groupMaximalReduceHandlerFree > groupMaximalReduceHandlerAverageUse){
 			groupMaximalReduceHandlerFillCount = groupMaximalReduceHandlerAverageUse;
 			groupMaximalReduceHandlerFree = groupMaximalReduceHandlerFree - groupMaximalReduceHandlerAverageUse;
@@ -743,12 +800,14 @@ public class RuleHandlerPool{
 			groupMaximalReduceHandlerFillCount = groupMaximalReduceHandlerFree;
 			groupMaximalReduceHandlerFree = 0;
 		}		
-		System.arraycopy(this.groupMaximalReduceHandler, groupMaximalReduceHandlerFree, 
-							groupMaximalReduceHandler, 0, groupMaximalReduceHandlerFillCount);
+		System.arraycopy(groupMaximalReduceHandler, groupMaximalReduceHandlerFree, 
+							groupMaximalReduceHandlerToFill, 0, groupMaximalReduceHandlerFillCount);
 		
 		int interleaveMinimalReduceHandlerFillCount;
-		if(interleaveMinimalReduceHandler == null || interleaveMinimalReduceHandler.length < interleaveMinimalReduceHandlerAverageUse)
-			interleaveMinimalReduceHandler = new InterleaveMinimalReduceHandler[interleaveMinimalReduceHandlerAverageUse];
+		if(interleaveMinimalReduceHandlerToFill == null || interleaveMinimalReduceHandlerToFill.length < interleaveMinimalReduceHandlerAverageUse){
+			interleaveMinimalReduceHandlerToFill = new InterleaveMinimalReduceHandler[interleaveMinimalReduceHandlerAverageUse];
+		    ruleHandlerPool.interleaveMinimalReduceHandler = interleaveMinimalReduceHandlerToFill;
+		}
 		if(interleaveMinimalReduceHandlerFree > interleaveMinimalReduceHandlerAverageUse){
 			interleaveMinimalReduceHandlerFillCount = interleaveMinimalReduceHandlerAverageUse;
 			interleaveMinimalReduceHandlerFree = interleaveMinimalReduceHandlerFree - interleaveMinimalReduceHandlerAverageUse;
@@ -756,12 +815,14 @@ public class RuleHandlerPool{
 			interleaveMinimalReduceHandlerFillCount = interleaveMinimalReduceHandlerFree;
 			interleaveMinimalReduceHandlerFree = 0;
 		}		
-		System.arraycopy(this.interleaveMinimalReduceHandler, interleaveMinimalReduceHandlerFree, 
-							interleaveMinimalReduceHandler, 0, interleaveMinimalReduceHandlerFillCount);
+		System.arraycopy(interleaveMinimalReduceHandler, interleaveMinimalReduceHandlerFree, 
+							interleaveMinimalReduceHandlerToFill, 0, interleaveMinimalReduceHandlerFillCount);
 		
 		int interleaveMaximalReduceHandlerFillCount;
-		if(interleaveMaximalReduceHandler == null || interleaveMaximalReduceHandler.length < interleaveMaximalReduceHandlerAverageUse)
-			interleaveMaximalReduceHandler = new InterleaveMaximalReduceHandler[interleaveMaximalReduceHandlerAverageUse];
+		if(interleaveMaximalReduceHandlerToFill == null || interleaveMaximalReduceHandlerToFill.length < interleaveMaximalReduceHandlerAverageUse){
+			interleaveMaximalReduceHandlerToFill = new InterleaveMaximalReduceHandler[interleaveMaximalReduceHandlerAverageUse];
+		    ruleHandlerPool.interleaveMaximalReduceHandler = interleaveMaximalReduceHandlerToFill;
+		}
 		if(interleaveMaximalReduceHandlerFree > interleaveMaximalReduceHandlerAverageUse){
 			interleaveMaximalReduceHandlerFillCount = interleaveMaximalReduceHandlerAverageUse;
 			interleaveMaximalReduceHandlerFree = interleaveMaximalReduceHandlerFree - interleaveMaximalReduceHandlerAverageUse;
@@ -769,468 +830,1668 @@ public class RuleHandlerPool{
 			interleaveMaximalReduceHandlerFillCount = interleaveMaximalReduceHandlerFree;
 			interleaveMaximalReduceHandlerFree = 0;
 		}		
-		System.arraycopy(this.interleaveMaximalReduceHandler, interleaveMaximalReduceHandlerFree, 
-							interleaveMaximalReduceHandler, 0, interleaveMaximalReduceHandlerFillCount);
+		System.arraycopy(interleaveMaximalReduceHandler, interleaveMaximalReduceHandlerFree, 
+							interleaveMaximalReduceHandlerToFill, 0, interleaveMaximalReduceHandlerFillCount);
 		
 		
 		
-		ruleHandlerPool.setHandlers(particleHandlerFillCount,
-										particleHandler,
+		ruleHandlerPool.initFilled(particleHandlerFillCount,
 										choiceHandlerFillCount,
-										choiceHandler,
 										groupHandlerFillCount,
-										groupHandler,
 										grammarHandlerFillCount,
-										grammarHandler,
 										refHandlerFillCount,
-										refHandler,
 										uinterleaveHandlerFillCount,
-										uinterleaveHandler,
 										minterleaveHandlerFillCount,
-										minterleaveHandler,
 										sinterleaveHandlerFillCount,
-										sinterleaveHandler,
 										elementHandlerFillCount,
-										elementHandler,
 										attributeHandlerFillCount,
-										attributeHandler,
 										exceptPatternHandlerFillCount,
-										exceptPatternHandler,
 										listPatternHandlerFillCount,
-										listPatternHandler,
 										groupDoubleHandlerFillCount,
-										groupDoubleHandler,
 										interleaveDoubleHandlerFillCount,
-										interleaveDoubleHandler,
 										groupMinimalReduceCountHandlerFillCount,
-										groupMinimalReduceCountHandler,
 										groupMaximalReduceCountHandlerFillCount,
-										groupMaximalReduceCountHandler,
 										interleaveMinimalReduceCountHandlerFillCount,
-										interleaveMinimalReduceCountHandler,
 										interleaveMaximalReduceCountHandlerFillCount,
-										interleaveMaximalReduceCountHandler,
 										grammarMinimalReduceHandlerFillCount,
-										grammarMinimalReduceHandler,
 										grammarMaximalReduceHandlerFillCount,
-										grammarMaximalReduceHandler,
 										refMinimalReduceHandlerFillCount,
-										refMinimalReduceHandler,
 										refMaximalReduceHandlerFillCount,
-										refMaximalReduceHandler,
 										choiceMinimalReduceHandlerFillCount,
-										choiceMinimalReduceHandler,
 										choiceMaximalReduceHandlerFillCount,
-										choiceMaximalReduceHandler,
 										groupMinimalReduceHandlerFillCount,
-										groupMinimalReduceHandler,
 										groupMaximalReduceHandlerFillCount,
-										groupMaximalReduceHandler,
 										interleaveMinimalReduceHandlerFillCount,
-										interleaveMinimalReduceHandler,
-										interleaveMaximalReduceHandlerFillCount,
-										interleaveMaximalReduceHandler);
+										interleaveMaximalReduceHandlerFillCount);
 	}
 	
-	synchronized void recycle(int particleHandlerAverageUse,
-							ParticleHandler[] particleHandler,
-							int choiceHandlerAverageUse,
-							ChoiceHandler[] choiceHandler,
-							int groupHandlerAverageUse,
-							GroupHandler[] groupHandler,
-							int grammarHandlerAverageUse,
-							GrammarHandler[] grammarHandler,
-							int refHandlerAverageUse,
-							RefHandler[] refHandler,
-							int uinterleaveHandlerAverageUse,
-							UInterleaveHandler[] uinterleaveHandler,
-							int minterleaveHandlerAverageUse,
-							MInterleaveHandler[] minterleaveHandler,
-							int sinterleaveHandlerAverageUse,
-							SInterleaveHandler[] sinterleaveHandler,
-							int elementHandlerAverageUse,
-							ElementHandler[] elementHandler,
-							int attributeHandlerAverageUse,
-							AttributeHandler[] attributeHandler,
-							int exceptPatternHandlerAverageUse,
-							ExceptPatternHandler[] exceptPatternHandler,
-							int listPatternHandlerAverageUse,
-							ListPatternHandler[] listPatternHandler,
-							int groupDoubleHandlerAverageUse,
-							GroupDoubleHandler[] groupDoubleHandler,
-							int interleaveDoubleHandlerAverageUse,
-							InterleaveDoubleHandler[] interleaveDoubleHandler,
-							int groupMinimalReduceCountHandlerAverageUse,
-							GroupMinimalReduceCountHandler[] groupMinimalReduceCountHandler,
-							int groupMaximalReduceCountHandlerAverageUse,
-							GroupMaximalReduceCountHandler[] groupMaximalReduceCountHandler,
-							int interleaveMinimalReduceCountHandlerAverageUse,
-							InterleaveMinimalReduceCountHandler[] interleaveMinimalReduceCountHandler,
-							int interleaveMaximalReduceCountHandlerAverageUse,
-							InterleaveMaximalReduceCountHandler[] interleaveMaximalReduceCountHandler,
-							int grammarMinimalReduceHandlerAverageUse,
-							GrammarMinimalReduceHandler[] grammarMinimalReduceHandler,
-							int grammarMaximalReduceHandlerAverageUse,
-							GrammarMaximalReduceHandler[] grammarMaximalReduceHandler,
-							int refMinimalReduceHandlerAverageUse,
-							RefMinimalReduceHandler[] refMinimalReduceHandler,
-							int refMaximalReduceHandlerAverageUse,
-							RefMaximalReduceHandler[] refMaximalReduceHandler,
-							int choiceMinimalReduceHandlerAverageUse,
-							ChoiceMinimalReduceHandler[] choiceMinimalReduceHandler,
-							int choiceMaximalReduceHandlerAverageUse,
-							ChoiceMaximalReduceHandler[] choiceMaximalReduceHandler,
-							int groupMinimalReduceHandlerAverageUse,
-							GroupMinimalReduceHandler[] groupMinimalReduceHandler,
-							int groupMaximalReduceHandlerAverageUse,
-							GroupMaximalReduceHandler[] groupMaximalReduceHandler,
-							int interleaveMinimalReduceHandlerAverageUse,
-							InterleaveMinimalReduceHandler[] interleaveMinimalReduceHandler,
-							int interleaveMaximalReduceHandlerAverageUse,
-							InterleaveMaximalReduceHandler[] interleaveMaximalReduceHandler){
-		if(particleHandlerFree + particleHandlerAverageUse >= particleHandlerPoolSize){			 
-			particleHandlerPoolSize+= particleHandlerAverageUse;
-			ParticleHandler[] increased = new ParticleHandler[particleHandlerPoolSize];
-			System.arraycopy(this.particleHandler, 0, increased, 0, particleHandlerFree);
-			this.particleHandler = increased;
-		}
-		System.arraycopy(particleHandler, 0, this.particleHandler, particleHandlerFree, particleHandlerAverageUse);
-		particleHandlerFree += particleHandlerAverageUse;
-		if(this.particleHandlerAverageUse != 0)this.particleHandlerAverageUse = (this.particleHandlerAverageUse + particleHandlerAverageUse)/2;
-		else this.particleHandlerAverageUse = particleHandlerAverageUse;
-		// System.out.println(" particleHandler "+this.particleHandlerAverageUse);		
-		
-		if(choiceHandlerFree + choiceHandlerAverageUse >= choiceHandlerPoolSize){			 
-			choiceHandlerPoolSize+= choiceHandlerAverageUse;
-			ChoiceHandler[] increased = new ChoiceHandler[choiceHandlerPoolSize];
-			System.arraycopy(this.choiceHandler, 0, increased, 0, choiceHandlerFree);
-			this.choiceHandler = increased;
-		}
-		System.arraycopy(choiceHandler, 0, this.choiceHandler, choiceHandlerFree, choiceHandlerAverageUse);
-		choiceHandlerFree += choiceHandlerAverageUse;
-		if(this.choiceHandlerAverageUse != 0) this.choiceHandlerAverageUse = (this.choiceHandlerAverageUse + choiceHandlerAverageUse)/2;
-		else this.choiceHandlerAverageUse = choiceHandlerAverageUse;
-		// System.out.println(" choiceHandler "+this.choiceHandlerAverageUse);
-				
-		if(groupHandlerFree + groupHandlerAverageUse >= groupHandlerPoolSize){			 
-			groupHandlerPoolSize+= groupHandlerAverageUse;
-			GroupHandler[] increased = new GroupHandler[groupHandlerPoolSize];
-			System.arraycopy(this.groupHandler, 0, increased, 0, groupHandlerFree);
-			this.groupHandler = increased;
-		}
-		System.arraycopy(groupHandler, 0, this.groupHandler, groupHandlerFree, groupHandlerAverageUse);
-		groupHandlerFree += groupHandlerAverageUse;
-		if(this.groupHandlerAverageUse != 0)this.groupHandlerAverageUse = (this.groupHandlerAverageUse + groupHandlerAverageUse)/2;
-		else this.groupHandlerAverageUse = groupHandlerAverageUse;
-		// System.out.println(" groupHandler "+this.groupHandlerAverageUse);
-		
-		if(grammarHandlerFree + grammarHandlerAverageUse >= grammarHandlerPoolSize){			 
-			grammarHandlerPoolSize+= grammarHandlerAverageUse;
-			GrammarHandler[] increased = new GrammarHandler[grammarHandlerPoolSize];
-			System.arraycopy(this.grammarHandler, 0, increased, 0, grammarHandlerFree);
-			this.grammarHandler = increased;
-		}
-		System.arraycopy(grammarHandler, 0, this.grammarHandler, grammarHandlerFree, grammarHandlerAverageUse);
-		grammarHandlerFree += grammarHandlerAverageUse;
-		if(this.grammarHandlerAverageUse != 0)this.grammarHandlerAverageUse = (this.grammarHandlerAverageUse + grammarHandlerAverageUse)/2;
-		else this.grammarHandlerAverageUse = grammarHandlerAverageUse;
-		// System.out.println(" grammarHandler "+this.grammarHandlerAverageUse);
-		
-		if(uinterleaveHandlerFree + uinterleaveHandlerAverageUse >= uinterleaveHandlerPoolSize){			 
-			uinterleaveHandlerPoolSize+= uinterleaveHandlerAverageUse;
-			UInterleaveHandler[] increased = new UInterleaveHandler[uinterleaveHandlerPoolSize];
-			System.arraycopy(this.uinterleaveHandler, 0, increased, 0, uinterleaveHandlerFree);
-			this.uinterleaveHandler = increased;
-		}
-		System.arraycopy(uinterleaveHandler, 0, this.uinterleaveHandler, uinterleaveHandlerFree, uinterleaveHandlerAverageUse);
-		uinterleaveHandlerFree += uinterleaveHandlerAverageUse;
-		if(this.uinterleaveHandlerAverageUse != 0) this.uinterleaveHandlerAverageUse = (this.uinterleaveHandlerAverageUse + uinterleaveHandlerAverageUse)/2;
-		else this.uinterleaveHandlerAverageUse = uinterleaveHandlerAverageUse;
-		// System.out.println(" uinterleaveHandler "+this.uinterleaveHandlerAverageUse);
-		
-		if(minterleaveHandlerFree + minterleaveHandlerAverageUse >= minterleaveHandlerPoolSize){			 
-			minterleaveHandlerPoolSize+= minterleaveHandlerAverageUse;
-			MInterleaveHandler[] increased = new MInterleaveHandler[minterleaveHandlerPoolSize];
-			System.arraycopy(this.minterleaveHandler, 0, increased, 0, minterleaveHandlerFree);
-			this.minterleaveHandler = increased;
-		}
-		System.arraycopy(minterleaveHandler, 0, this.minterleaveHandler, minterleaveHandlerFree, minterleaveHandlerAverageUse);
-		minterleaveHandlerFree += minterleaveHandlerAverageUse;
-		if(this.minterleaveHandlerAverageUse != 0) this.minterleaveHandlerAverageUse = (this.minterleaveHandlerAverageUse + minterleaveHandlerAverageUse)/2;
-		else this.minterleaveHandlerAverageUse = minterleaveHandlerAverageUse;
-		// System.out.println(" minterleaveHandler "+this.minterleaveHandlerAverageUse);
-		
-		if(sinterleaveHandlerFree + sinterleaveHandlerAverageUse >= sinterleaveHandlerPoolSize){			 
-			sinterleaveHandlerPoolSize+= sinterleaveHandlerAverageUse;
-			SInterleaveHandler[] increased = new SInterleaveHandler[sinterleaveHandlerPoolSize];
-			System.arraycopy(this.sinterleaveHandler, 0, increased, 0, sinterleaveHandlerFree);
-			this.sinterleaveHandler = increased;
-		}
-		System.arraycopy(sinterleaveHandler, 0, this.sinterleaveHandler, sinterleaveHandlerFree, sinterleaveHandlerAverageUse);
-		sinterleaveHandlerFree += sinterleaveHandlerAverageUse;
-		if(this.sinterleaveHandlerAverageUse != 0) this.sinterleaveHandlerAverageUse = (this.sinterleaveHandlerAverageUse + sinterleaveHandlerAverageUse)/2;
-		else this.sinterleaveHandlerAverageUse = sinterleaveHandlerAverageUse;
-		// System.out.println(" sinterleaveHandler "+this.sinterleaveHandlerAverageUse);
-		
-		if(refHandlerFree + refHandlerAverageUse >= refHandlerPoolSize){			 
-			refHandlerPoolSize+= refHandlerAverageUse;
-			RefHandler[] increased = new RefHandler[refHandlerPoolSize];
-			System.arraycopy(this.refHandler, 0, increased, 0, refHandlerFree);
-			this.refHandler = increased;
-		}
-		System.arraycopy(refHandler, 0, this.refHandler, refHandlerFree, refHandlerAverageUse);
-		refHandlerFree += refHandlerAverageUse;
-		if(this.refHandlerAverageUse != 0)this.refHandlerAverageUse = (this.refHandlerAverageUse + refHandlerAverageUse)/2;
-		else this.refHandlerAverageUse = refHandlerAverageUse;
-		// System.out.println(" refHandler "+this.refHandlerAverageUse);
-		
-		if(elementHandlerFree + elementHandlerAverageUse >= elementHandlerPoolSize){			 
-			elementHandlerPoolSize+= elementHandlerAverageUse;
-			ElementHandler[] increased = new ElementHandler[elementHandlerPoolSize];
-			System.arraycopy(this.elementHandler, 0, increased, 0, elementHandlerFree);
-			this.elementHandler = increased;
-		}
-		System.arraycopy(elementHandler, 0, this.elementHandler, elementHandlerFree, elementHandlerAverageUse);
-		elementHandlerFree += elementHandlerAverageUse;
-		if(this.elementHandlerAverageUse != 0)this.elementHandlerAverageUse = (this.elementHandlerAverageUse + elementHandlerAverageUse)/2;
-		else this.elementHandlerAverageUse = elementHandlerAverageUse;
-		// System.out.println(" elementHandler "+this.elementHandlerAverageUse);
-		
-		if(attributeHandlerFree + attributeHandlerAverageUse >= attributeHandlerPoolSize){			 
-			attributeHandlerPoolSize+= attributeHandlerAverageUse;
-			AttributeHandler[] increased = new AttributeHandler[attributeHandlerPoolSize];
-			System.arraycopy(this.attributeHandler, 0, increased, 0, attributeHandlerFree);
-			this.attributeHandler = increased;
-		}
-		System.arraycopy(attributeHandler, 0, this.attributeHandler, attributeHandlerFree, attributeHandlerAverageUse);
-		attributeHandlerFree += attributeHandlerAverageUse;
-		if(this.attributeHandlerAverageUse != 0)this.attributeHandlerAverageUse = (this.attributeHandlerAverageUse + attributeHandlerAverageUse)/2;
-		else this.attributeHandlerAverageUse = attributeHandlerAverageUse;
-		// System.out.println(" attributeHandler "+this.attributeHandlerAverageUse);
-		
-		if(exceptPatternHandlerFree + exceptPatternHandlerAverageUse >= exceptPatternHandlerPoolSize){			 
-			exceptPatternHandlerPoolSize+= exceptPatternHandlerAverageUse;
-			ExceptPatternHandler[] increased = new ExceptPatternHandler[exceptPatternHandlerPoolSize];
-			System.arraycopy(this.exceptPatternHandler, 0, increased, 0, exceptPatternHandlerFree);
-			this.exceptPatternHandler = increased;
-		}
-		System.arraycopy(exceptPatternHandler, 0, this.exceptPatternHandler, exceptPatternHandlerFree, exceptPatternHandlerAverageUse);
-		exceptPatternHandlerFree += exceptPatternHandlerAverageUse;
-		if(this.exceptPatternHandlerAverageUse != 0)this.exceptPatternHandlerAverageUse = (this.exceptPatternHandlerAverageUse + exceptPatternHandlerAverageUse)/2;
-		else this.exceptPatternHandlerAverageUse = exceptPatternHandlerAverageUse;
-		// System.out.println(" exceptPatternHandler "+this.exceptPatternHandlerAverageUse);
-		
-		if(listPatternHandlerFree + listPatternHandlerAverageUse >= listPatternHandlerPoolSize){			 
-			listPatternHandlerPoolSize+= listPatternHandlerAverageUse;
-			ListPatternHandler[] increased = new ListPatternHandler[listPatternHandlerPoolSize];
-			System.arraycopy(this.listPatternHandler, 0, increased, 0, listPatternHandlerFree);
-			this.listPatternHandler = increased;
-		}
-		System.arraycopy(listPatternHandler, 0, this.listPatternHandler, listPatternHandlerFree, listPatternHandlerAverageUse);
-		listPatternHandlerFree += listPatternHandlerAverageUse;
-		if(this.listPatternHandlerAverageUse != 0)this.listPatternHandlerAverageUse = (this.listPatternHandlerAverageUse + listPatternHandlerAverageUse)/2;
-		else this.listPatternHandlerAverageUse = listPatternHandlerAverageUse;
-		// System.out.println(" listPatternHandler "+this.listPatternHandlerAverageUse);
-		
-		
-		
-		
-		
-		if(groupDoubleHandlerFree + groupDoubleHandlerAverageUse >= groupDoubleHandlerPoolSize){			 
-			groupDoubleHandlerPoolSize+= groupDoubleHandlerAverageUse;
-			GroupDoubleHandler[] increased = new GroupDoubleHandler[groupDoubleHandlerPoolSize];
-			System.arraycopy(this.groupDoubleHandler, 0, increased, 0, groupDoubleHandlerFree);
-			this.groupDoubleHandler = increased;
-		}
-		System.arraycopy(groupDoubleHandler, 0, this.groupDoubleHandler, groupDoubleHandlerFree, groupDoubleHandlerAverageUse);
-		groupDoubleHandlerFree += groupDoubleHandlerAverageUse;
-		if(this.groupDoubleHandlerAverageUse != 0)this.groupDoubleHandlerAverageUse = (this.groupDoubleHandlerAverageUse + groupDoubleHandlerAverageUse)/2;
-		else this.groupDoubleHandlerAverageUse = groupDoubleHandlerAverageUse;
-		// System.out.println(" groupDoubleHandler "+this.groupDoubleHandlerAverageUse);
-		
-		if(interleaveDoubleHandlerFree + interleaveDoubleHandlerAverageUse >= interleaveDoubleHandlerPoolSize){			 
-			interleaveDoubleHandlerPoolSize+= interleaveDoubleHandlerAverageUse;
-			InterleaveDoubleHandler[] increased = new InterleaveDoubleHandler[interleaveDoubleHandlerPoolSize];
-			System.arraycopy(this.interleaveDoubleHandler, 0, increased, 0, interleaveDoubleHandlerFree);
-			this.interleaveDoubleHandler = increased;
-		}
-		System.arraycopy(interleaveDoubleHandler, 0, this.interleaveDoubleHandler, interleaveDoubleHandlerFree, interleaveDoubleHandlerAverageUse);
-		interleaveDoubleHandlerFree += interleaveDoubleHandlerAverageUse;
-		if(this.interleaveDoubleHandlerAverageUse != 0)this.interleaveDoubleHandlerAverageUse = (this.interleaveDoubleHandlerAverageUse + interleaveDoubleHandlerAverageUse)/2;
-		else this.interleaveDoubleHandlerAverageUse = interleaveDoubleHandlerAverageUse;
-		// System.out.println(" interleaveDoubleHandler "+this.interleaveDoubleHandlerAverageUse);
-		
-		
-		
-		if(groupMinimalReduceCountHandlerFree + groupMinimalReduceCountHandlerAverageUse >= groupMinimalReduceCountHandlerPoolSize){			 
-			groupMinimalReduceCountHandlerPoolSize+= groupMinimalReduceCountHandlerAverageUse;
-			GroupMinimalReduceCountHandler[] increased = new GroupMinimalReduceCountHandler[groupMinimalReduceCountHandlerPoolSize];
-			System.arraycopy(this.groupMinimalReduceCountHandler, 0, increased, 0, groupMinimalReduceCountHandlerFree);
-			this.groupMinimalReduceCountHandler = increased;
-		}
-		System.arraycopy(groupMinimalReduceCountHandler, 0, this.groupMinimalReduceCountHandler, groupMinimalReduceCountHandlerFree, groupMinimalReduceCountHandlerAverageUse);
-		groupMinimalReduceCountHandlerFree += groupMinimalReduceCountHandlerAverageUse;
-		if(this.groupMinimalReduceCountHandlerAverageUse != 0)this.groupMinimalReduceCountHandlerAverageUse = (this.groupMinimalReduceCountHandlerAverageUse + groupMinimalReduceCountHandlerAverageUse)/2;
-		else this.groupMinimalReduceCountHandlerAverageUse = groupMinimalReduceCountHandlerAverageUse;
-		// System.out.println(" groupMinimalReduceCountHandler "+this.groupMinimalReduceCountHandlerAverageUse);
-		
-		if(groupMaximalReduceCountHandlerFree + groupMaximalReduceCountHandlerAverageUse >= groupMaximalReduceCountHandlerPoolSize){			 
-			groupMaximalReduceCountHandlerPoolSize+= groupMaximalReduceCountHandlerAverageUse;
-			GroupMaximalReduceCountHandler[] increased = new GroupMaximalReduceCountHandler[groupMaximalReduceCountHandlerPoolSize];
-			System.arraycopy(this.groupMaximalReduceCountHandler, 0, increased, 0, groupMaximalReduceCountHandlerFree);
-			this.groupMaximalReduceCountHandler = increased;
-		}
-		System.arraycopy(groupMaximalReduceCountHandler, 0, this.groupMaximalReduceCountHandler, groupMaximalReduceCountHandlerFree, groupMaximalReduceCountHandlerAverageUse);
-		groupMaximalReduceCountHandlerFree += groupMaximalReduceCountHandlerAverageUse;
-		if(this.groupMaximalReduceCountHandlerAverageUse != 0)this.groupMaximalReduceCountHandlerAverageUse = (this.groupMaximalReduceCountHandlerAverageUse + groupMaximalReduceCountHandlerAverageUse)/2;
-		else this.groupMaximalReduceCountHandlerAverageUse = groupMaximalReduceCountHandlerAverageUse;
-		// System.out.println(" groupMaximalReduceCountHandler "+this.groupMaximalReduceCountHandlerAverageUse);
-		
-		if(interleaveMinimalReduceCountHandlerFree + interleaveMinimalReduceCountHandlerAverageUse >= interleaveMinimalReduceCountHandlerPoolSize){			 
-			interleaveMinimalReduceCountHandlerPoolSize+= interleaveMinimalReduceCountHandlerAverageUse;
-			InterleaveMinimalReduceCountHandler[] increased = new InterleaveMinimalReduceCountHandler[interleaveMinimalReduceCountHandlerPoolSize];
-			System.arraycopy(this.interleaveMinimalReduceCountHandler, 0, increased, 0, interleaveMinimalReduceCountHandlerFree);
-			this.interleaveMinimalReduceCountHandler = increased;
-		}
-		System.arraycopy(interleaveMinimalReduceCountHandler, 0, this.interleaveMinimalReduceCountHandler, interleaveMinimalReduceCountHandlerFree, interleaveMinimalReduceCountHandlerAverageUse);
-		interleaveMinimalReduceCountHandlerFree += interleaveMinimalReduceCountHandlerAverageUse;
-		if(this.interleaveMinimalReduceCountHandlerAverageUse != 0)this.interleaveMinimalReduceCountHandlerAverageUse = (this.interleaveMinimalReduceCountHandlerAverageUse + interleaveMinimalReduceCountHandlerAverageUse)/2;
-		else this.interleaveMinimalReduceCountHandlerAverageUse = interleaveMinimalReduceCountHandlerAverageUse;
-		// System.out.println(" interleaveMinimalReduceCountHandler "+this.interleaveMinimalReduceCountHandlerAverageUse);
-		
-		if(interleaveMaximalReduceCountHandlerFree + interleaveMaximalReduceCountHandlerAverageUse >= interleaveMaximalReduceCountHandlerPoolSize){			 
-			interleaveMaximalReduceCountHandlerPoolSize+= interleaveMaximalReduceCountHandlerAverageUse;
-			InterleaveMaximalReduceCountHandler[] increased = new InterleaveMaximalReduceCountHandler[interleaveMaximalReduceCountHandlerPoolSize];
-			System.arraycopy(this.interleaveMaximalReduceCountHandler, 0, increased, 0, interleaveMaximalReduceCountHandlerFree);
-			this.interleaveMaximalReduceCountHandler = increased;
-		}
-		System.arraycopy(interleaveMaximalReduceCountHandler, 0, this.interleaveMaximalReduceCountHandler, interleaveMaximalReduceCountHandlerFree, interleaveMaximalReduceCountHandlerAverageUse);
-		interleaveMaximalReduceCountHandlerFree += interleaveMaximalReduceCountHandlerAverageUse;
-		if(this.interleaveMaximalReduceCountHandlerAverageUse != 0)this.interleaveMaximalReduceCountHandlerAverageUse = (this.interleaveMaximalReduceCountHandlerAverageUse + interleaveMaximalReduceCountHandlerAverageUse)/2;
-		else this.interleaveMaximalReduceCountHandlerAverageUse = interleaveMaximalReduceCountHandlerAverageUse;
-		// System.out.println(" interleaveMaximalReduceCountHandler "+this.interleaveMaximalReduceCountHandlerAverageUse);
-		
-				
-		
-		
-		if(grammarMinimalReduceHandlerFree + grammarMinimalReduceHandlerAverageUse >= grammarMinimalReduceHandlerPoolSize){			 
-			grammarMinimalReduceHandlerPoolSize+= grammarMinimalReduceHandlerAverageUse;
-			GrammarMinimalReduceHandler[] increased = new GrammarMinimalReduceHandler[grammarMinimalReduceHandlerPoolSize];
-			System.arraycopy(this.grammarMinimalReduceHandler, 0, increased, 0, grammarMinimalReduceHandlerFree);
-			this.grammarMinimalReduceHandler = increased;
-		}
-		System.arraycopy(grammarMinimalReduceHandler, 0, this.grammarMinimalReduceHandler, grammarMinimalReduceHandlerFree, grammarMinimalReduceHandlerAverageUse);
-		grammarMinimalReduceHandlerFree += grammarMinimalReduceHandlerAverageUse;
-		if(this.grammarMinimalReduceHandlerAverageUse != 0)this.grammarMinimalReduceHandlerAverageUse = (this.grammarMinimalReduceHandlerAverageUse + grammarMinimalReduceHandlerAverageUse)/2;
-		else this.grammarMinimalReduceHandlerAverageUse = grammarMinimalReduceHandlerAverageUse;
-		// System.out.println(" grammarMinimalReduceHandler "+this.grammarMinimalReduceHandlerAverageUse);
-		
-		if(grammarMaximalReduceHandlerFree + grammarMaximalReduceHandlerAverageUse >= grammarMaximalReduceHandlerPoolSize){			 
-			grammarMaximalReduceHandlerPoolSize+= grammarMaximalReduceHandlerAverageUse;
-			GrammarMaximalReduceHandler[] increased = new GrammarMaximalReduceHandler[grammarMaximalReduceHandlerPoolSize];
-			System.arraycopy(this.grammarMaximalReduceHandler, 0, increased, 0, grammarMaximalReduceHandlerFree);
-			this.grammarMaximalReduceHandler = increased;
-		}
-		System.arraycopy(grammarMaximalReduceHandler, 0, this.grammarMaximalReduceHandler, grammarMaximalReduceHandlerFree, grammarMaximalReduceHandlerAverageUse);
-		grammarMaximalReduceHandlerFree += grammarMaximalReduceHandlerAverageUse;
-		if(this.grammarMaximalReduceHandlerAverageUse != 0)this.grammarMaximalReduceHandlerAverageUse = (this.grammarMaximalReduceHandlerAverageUse + grammarMaximalReduceHandlerAverageUse)/2;
-		else this.grammarMaximalReduceHandlerAverageUse = grammarMaximalReduceHandlerAverageUse;
-		// System.out.println(" grammarMaximalReduceHandler "+this.grammarMaximalReduceHandlerAverageUse);
-		
-		if(refMinimalReduceHandlerFree + refMinimalReduceHandlerAverageUse >= refMinimalReduceHandlerPoolSize){			 
-			refMinimalReduceHandlerPoolSize+= refMinimalReduceHandlerAverageUse;
-			RefMinimalReduceHandler[] increased = new RefMinimalReduceHandler[refMinimalReduceHandlerPoolSize];
-			System.arraycopy(this.refMinimalReduceHandler, 0, increased, 0, refMinimalReduceHandlerFree);
-			this.refMinimalReduceHandler = increased;
-		}
-		System.arraycopy(refMinimalReduceHandler, 0, this.refMinimalReduceHandler, refMinimalReduceHandlerFree, refMinimalReduceHandlerAverageUse);
-		refMinimalReduceHandlerFree += refMinimalReduceHandlerAverageUse;
-		if(this.refMinimalReduceHandlerAverageUse != 0)this.refMinimalReduceHandlerAverageUse = (this.refMinimalReduceHandlerAverageUse + refMinimalReduceHandlerAverageUse)/2;
-		else this.refMinimalReduceHandlerAverageUse = refMinimalReduceHandlerAverageUse;
-		// System.out.println(" refMinimalReduceHandler "+this.refMinimalReduceHandlerAverageUse);
-		
-		if(refMaximalReduceHandlerFree + refMaximalReduceHandlerAverageUse >= refMaximalReduceHandlerPoolSize){			 
-			refMaximalReduceHandlerPoolSize+= refMaximalReduceHandlerAverageUse;
-			RefMaximalReduceHandler[] increased = new RefMaximalReduceHandler[refMaximalReduceHandlerPoolSize];
-			System.arraycopy(this.refMaximalReduceHandler, 0, increased, 0, refMaximalReduceHandlerFree);
-			this.refMaximalReduceHandler = increased;
-		}
-		System.arraycopy(refMaximalReduceHandler, 0, this.refMaximalReduceHandler, refMaximalReduceHandlerFree, refMaximalReduceHandlerAverageUse);
-		refMaximalReduceHandlerFree += refMaximalReduceHandlerAverageUse;
-		if(this.refMaximalReduceHandlerAverageUse != 0)this.refMaximalReduceHandlerAverageUse = (this.refMaximalReduceHandlerAverageUse + refMaximalReduceHandlerAverageUse)/2;
-		else this.refMaximalReduceHandlerAverageUse = refMaximalReduceHandlerAverageUse;
-		// System.out.println(" refMaximalReduceHandler "+this.refMaximalReduceHandlerAverageUse);
-		
-		if(choiceMinimalReduceHandlerFree + choiceMinimalReduceHandlerAverageUse >= choiceMinimalReduceHandlerPoolSize){			 
-			choiceMinimalReduceHandlerPoolSize+= choiceMinimalReduceHandlerAverageUse;
-			ChoiceMinimalReduceHandler[] increased = new ChoiceMinimalReduceHandler[choiceMinimalReduceHandlerPoolSize];
-			System.arraycopy(this.choiceMinimalReduceHandler, 0, increased, 0, choiceMinimalReduceHandlerFree);
-			this.choiceMinimalReduceHandler = increased;
-		}
-		System.arraycopy(choiceMinimalReduceHandler, 0, this.choiceMinimalReduceHandler, choiceMinimalReduceHandlerFree, choiceMinimalReduceHandlerAverageUse);
-		choiceMinimalReduceHandlerFree += choiceMinimalReduceHandlerAverageUse;
-		if(this.choiceMinimalReduceHandlerAverageUse != 0)this.choiceMinimalReduceHandlerAverageUse = (this.choiceMinimalReduceHandlerAverageUse + choiceMinimalReduceHandlerAverageUse)/2;
-		else this.choiceMinimalReduceHandlerAverageUse = choiceMinimalReduceHandlerAverageUse;
-		// System.out.println(" choiceMinimalReduceHandler "+this.choiceMinimalReduceHandlerAverageUse);
-		
-		if(choiceMaximalReduceHandlerFree + choiceMaximalReduceHandlerAverageUse >= choiceMaximalReduceHandlerPoolSize){			 
-			choiceMaximalReduceHandlerPoolSize+= choiceMaximalReduceHandlerAverageUse;
-			ChoiceMaximalReduceHandler[] increased = new ChoiceMaximalReduceHandler[choiceMaximalReduceHandlerPoolSize];
-			System.arraycopy(this.choiceMaximalReduceHandler, 0, increased, 0, choiceMaximalReduceHandlerFree);
-			this.choiceMaximalReduceHandler = increased;
-		}
-		System.arraycopy(choiceMaximalReduceHandler, 0, this.choiceMaximalReduceHandler, choiceMaximalReduceHandlerFree, choiceMaximalReduceHandlerAverageUse);
-		choiceMaximalReduceHandlerFree += choiceMaximalReduceHandlerAverageUse;
-		if(this.choiceMaximalReduceHandlerAverageUse != 0)this.choiceMaximalReduceHandlerAverageUse = (this.choiceMaximalReduceHandlerAverageUse + choiceMaximalReduceHandlerAverageUse)/2;
-		else this.choiceMaximalReduceHandlerAverageUse = choiceMaximalReduceHandlerAverageUse;
-		// System.out.println(" choiceMaximalReduceHandler "+this.choiceMaximalReduceHandlerAverageUse);
-				
-		if(groupMinimalReduceHandlerFree + groupMinimalReduceHandlerAverageUse >= groupMinimalReduceHandlerPoolSize){			 
-			groupMinimalReduceHandlerPoolSize+= groupMinimalReduceHandlerAverageUse;
-			GroupMinimalReduceHandler[] increased = new GroupMinimalReduceHandler[groupMinimalReduceHandlerPoolSize];
-			System.arraycopy(this.groupMinimalReduceHandler, 0, increased, 0, groupMinimalReduceHandlerFree);
-			this.groupMinimalReduceHandler = increased;
-		}
-		System.arraycopy(groupMinimalReduceHandler, 0, this.groupMinimalReduceHandler, groupMinimalReduceHandlerFree, groupMinimalReduceHandlerAverageUse);
-		groupMinimalReduceHandlerFree += groupMinimalReduceHandlerAverageUse;
-		if(this.groupMinimalReduceHandlerAverageUse != 0)this.groupMinimalReduceHandlerAverageUse = (this.groupMinimalReduceHandlerAverageUse + groupMinimalReduceHandlerAverageUse)/2;
-		else this.groupMinimalReduceHandlerAverageUse = groupMinimalReduceHandlerAverageUse;
-		// System.out.println(" groupMinimalReduceHandler "+this.groupMinimalReduceHandlerAverageUse);
-		
-		if(groupMaximalReduceHandlerFree + groupMaximalReduceHandlerAverageUse >= groupMaximalReduceHandlerPoolSize){			 
-			groupMaximalReduceHandlerPoolSize+= groupMaximalReduceHandlerAverageUse;
-			GroupMaximalReduceHandler[] increased = new GroupMaximalReduceHandler[groupMaximalReduceHandlerPoolSize];
-			System.arraycopy(this.groupMaximalReduceHandler, 0, increased, 0, groupMaximalReduceHandlerFree);
-			this.groupMaximalReduceHandler = increased;
-		}
-		System.arraycopy(groupMaximalReduceHandler, 0, this.groupMaximalReduceHandler, groupMaximalReduceHandlerFree, groupMaximalReduceHandlerAverageUse);
-		groupMaximalReduceHandlerFree += groupMaximalReduceHandlerAverageUse;
-		if(this.groupMaximalReduceHandlerAverageUse != 0)this.groupMaximalReduceHandlerAverageUse = (this.groupMaximalReduceHandlerAverageUse + groupMaximalReduceHandlerAverageUse)/2;
-		else this.groupMaximalReduceHandlerAverageUse = groupMaximalReduceHandlerAverageUse;
-		// System.out.println(" groupMaximalReduceHandler "+this.groupMaximalReduceHandlerAverageUse);
-		
-		if(interleaveMinimalReduceHandlerFree + interleaveMinimalReduceHandlerAverageUse >= interleaveMinimalReduceHandlerPoolSize){			 
-			interleaveMinimalReduceHandlerPoolSize+= interleaveMinimalReduceHandlerAverageUse;
-			InterleaveMinimalReduceHandler[] increased = new InterleaveMinimalReduceHandler[interleaveMinimalReduceHandlerPoolSize];
-			System.arraycopy(this.interleaveMinimalReduceHandler, 0, increased, 0, interleaveMinimalReduceHandlerFree);
-			this.interleaveMinimalReduceHandler = increased;
-		}
-		System.arraycopy(interleaveMinimalReduceHandler, 0, this.interleaveMinimalReduceHandler, interleaveMinimalReduceHandlerFree, interleaveMinimalReduceHandlerAverageUse);
-		interleaveMinimalReduceHandlerFree += interleaveMinimalReduceHandlerAverageUse;
-		if(this.interleaveMinimalReduceHandlerAverageUse != 0)this.interleaveMinimalReduceHandlerAverageUse = (this.interleaveMinimalReduceHandlerAverageUse + interleaveMinimalReduceHandlerAverageUse)/2;
-		else this.interleaveMinimalReduceHandlerAverageUse = interleaveMinimalReduceHandlerAverageUse;
-		// System.out.println(" interleaveMinimalReduceHandler "+this.interleaveMinimalReduceHandlerAverageUse);
-		
-		if(interleaveMaximalReduceHandlerFree + interleaveMaximalReduceHandlerAverageUse >= interleaveMaximalReduceHandlerPoolSize){			 
-			interleaveMaximalReduceHandlerPoolSize+= interleaveMaximalReduceHandlerAverageUse;
-			InterleaveMaximalReduceHandler[] increased = new InterleaveMaximalReduceHandler[interleaveMaximalReduceHandlerPoolSize];
-			System.arraycopy(this.interleaveMaximalReduceHandler, 0, increased, 0, interleaveMaximalReduceHandlerFree);
-			this.interleaveMaximalReduceHandler = increased;
-		}
-		System.arraycopy(interleaveMaximalReduceHandler, 0, this.interleaveMaximalReduceHandler, interleaveMaximalReduceHandlerFree, interleaveMaximalReduceHandlerAverageUse);
-		interleaveMaximalReduceHandlerFree += interleaveMaximalReduceHandlerAverageUse;
-		if(this.interleaveMaximalReduceHandlerAverageUse != 0)this.interleaveMaximalReduceHandlerAverageUse = (this.interleaveMaximalReduceHandlerAverageUse + interleaveMaximalReduceHandlerAverageUse)/2;
-		else this.interleaveMaximalReduceHandlerAverageUse = interleaveMaximalReduceHandlerAverageUse;
-		// System.out.println(" interleaveMaximalReduceHandler "+this.interleaveMaximalReduceHandlerAverageUse);
+	synchronized void recycle(int particleHandlerRecycledCount,
+	                        int particleHandlerEffectivellyUsed,
+							ParticleHandler[] particleHandlerRecycled,
+							int choiceHandlerRecycledCount,
+							int choiceHandlerEffectivellyUsed,
+							ChoiceHandler[] choiceHandlerRecycled,
+							int groupHandlerRecycledCount,
+							int groupHandlerEffectivellyUsed,
+							GroupHandler[] groupHandlerRecycled,
+							int grammarHandlerRecycledCount,
+							int grammarHandlerEffectivellyUsed,
+							GrammarHandler[] grammarHandlerRecycled,
+							int refHandlerRecycledCount,
+							int refHandlerEffectivellyUsed,
+							RefHandler[] refHandlerRecycled,
+							int uinterleaveHandlerRecycledCount,
+							int uinterleaveHandlerEffectivellyUsed,
+							UInterleaveHandler[] uinterleaveHandlerRecycled,
+							int minterleaveHandlerRecycledCount,
+							int minterleaveHandlerEffectivellyUsed,
+							MInterleaveHandler[] minterleaveHandlerRecycled,
+							int sinterleaveHandlerRecycledCount,
+							int sinterleaveHandlerEffectivellyUsed,
+							SInterleaveHandler[] sinterleaveHandlerRecycled,
+							int elementHandlerRecycledCount,
+							int elementHandlerEffectivellyUsed,
+							ElementHandler[] elementHandlerRecycled,
+							int attributeHandlerRecycledCount,
+							int attributeHandlerEffectivellyUsed,
+							AttributeHandler[] attributeHandlerRecycled,
+							int exceptPatternHandlerRecycledCount,
+							int exceptPatternHandlerEffectivellyUsed,
+							ExceptPatternHandler[] exceptPatternHandlerRecycled,
+							int listPatternHandlerRecycledCount,
+							int listPatternHandlerEffectivellyUsed,
+							ListPatternHandler[] listPatternHandlerRecycled,
+							int groupDoubleHandlerRecycledCount,
+							int groupDoubleHandlerEffectivellyUsed,
+							GroupDoubleHandler[] groupDoubleHandlerRecycled,
+							int interleaveDoubleHandlerRecycledCount,
+							int interleaveDoubleHandlerEffectivellyUsed,
+							InterleaveDoubleHandler[] interleaveDoubleHandlerRecycled,
+							int groupMinimalReduceCountHandlerRecycledCount,
+							int groupMinimalReduceCountHandlerEffectivellyUsed,
+							GroupMinimalReduceCountHandler[] groupMinimalReduceCountHandlerRecycled,
+							int groupMaximalReduceCountHandlerRecycledCount,
+							int groupMaximalReduceCountHandlerEffectivellyUsed,
+							GroupMaximalReduceCountHandler[] groupMaximalReduceCountHandlerRecycled,
+							int interleaveMinimalReduceCountHandlerRecycledCount,
+							int interleaveMinimalReduceCountHandlerEffectivellyUsed,
+							InterleaveMinimalReduceCountHandler[] interleaveMinimalReduceCountHandlerRecycled,
+							int interleaveMaximalReduceCountHandlerRecycledCount,
+							int interleaveMaximalReduceCountHandlerEffectivellyUsed,
+							InterleaveMaximalReduceCountHandler[] interleaveMaximalReduceCountHandlerRecycled,
+							int grammarMinimalReduceHandlerRecycledCount,
+							int grammarMinimalReduceHandlerEffectivellyUsed,
+							GrammarMinimalReduceHandler[] grammarMinimalReduceHandlerRecycled,
+							int grammarMaximalReduceHandlerRecycledCount,
+							int grammarMaximalReduceHandlerEffectivellyUsed,
+							GrammarMaximalReduceHandler[] grammarMaximalReduceHandlerRecycled,
+							int refMinimalReduceHandlerRecycledCount,
+							int refMinimalReduceHandlerEffectivellyUsed,
+							RefMinimalReduceHandler[] refMinimalReduceHandlerRecycled,
+							int refMaximalReduceHandlerRecycledCount,
+							int refMaximalReduceHandlerEffectivellyUsed,
+							RefMaximalReduceHandler[] refMaximalReduceHandlerRecycled,
+							int choiceMinimalReduceHandlerRecycledCount,
+							int choiceMinimalReduceHandlerEffectivellyUsed,
+							ChoiceMinimalReduceHandler[] choiceMinimalReduceHandlerRecycled,
+							int choiceMaximalReduceHandlerRecycledCount,
+							int choiceMaximalReduceHandlerEffectivellyUsed,
+							ChoiceMaximalReduceHandler[] choiceMaximalReduceHandlerRecycled,
+							int groupMinimalReduceHandlerRecycledCount,
+							int groupMinimalReduceHandlerEffectivellyUsed,
+							GroupMinimalReduceHandler[] groupMinimalReduceHandlerRecycled,
+							int groupMaximalReduceHandlerRecycledCount,
+							int groupMaximalReduceHandlerEffectivellyUsed,
+							GroupMaximalReduceHandler[] groupMaximalReduceHandlerRecycled,
+							int interleaveMinimalReduceHandlerRecycledCount,
+							int interleaveMinimalReduceHandlerEffectivellyUsed,
+							InterleaveMinimalReduceHandler[] interleaveMinimalReduceHandlerRecycled,
+							int interleaveMaximalReduceHandlerRecycledCount,
+							int interleaveMaximalReduceHandlerEffectivellyUsed,
+							InterleaveMaximalReduceHandler[] interleaveMaximalReduceHandlerRecycled){
+	    if(elementHandlerEffectivellyUsed == 0){
+	        int neededLength = particleHandlerFree + particleHandlerRecycledCount; 
+            if(neededLength > particleHandler.length){
+                if(neededLength > particleHandlerMaxSize){
+                    neededLength = particleHandlerMaxSize;
+                    ParticleHandler[] increased = new ParticleHandler[neededLength];
+                    System.arraycopy(particleHandler, 0, increased, 0, particleHandler.length);
+                    particleHandler = increased;		        
+                    System.arraycopy(particleHandlerRecycled, 0, particleHandler, particleHandlerFree, particleHandlerMaxSize - particleHandlerFree);
+                    particleHandlerFree = particleHandlerMaxSize; 
+                }else{
+                    ParticleHandler[] increased = new ParticleHandler[neededLength];
+                    System.arraycopy(particleHandler, 0, increased, 0, particleHandler.length);
+                    particleHandler = increased;
+                    System.arraycopy(particleHandlerRecycled, 0, particleHandler, particleHandlerFree, particleHandlerRecycledCount);
+                    particleHandlerFree += particleHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(particleHandlerRecycled, 0, particleHandler, particleHandlerFree, particleHandlerRecycledCount);
+                particleHandlerFree += particleHandlerRecycledCount;
+            }
+                        
+            for(int i = 0; i < particleHandlerRecycled.length; i++){
+                particleHandlerRecycled[i] = null;
+            }		
+            
+            
+            neededLength = choiceHandlerFree + choiceHandlerRecycledCount; 
+            if(neededLength > choiceHandler.length){
+                if(neededLength > choiceHandlerMaxSize){
+                    neededLength = choiceHandlerMaxSize;
+                    ChoiceHandler[] increased = new ChoiceHandler[neededLength];
+                    System.arraycopy(choiceHandler, 0, increased, 0, choiceHandler.length);
+                    choiceHandler = increased;		        
+                    System.arraycopy(choiceHandlerRecycled, 0, choiceHandler, choiceHandlerFree, choiceHandlerMaxSize - choiceHandlerFree);
+                    choiceHandlerFree = choiceHandlerMaxSize; 
+                }else{
+                    ChoiceHandler[] increased = new ChoiceHandler[neededLength];
+                    System.arraycopy(choiceHandler, 0, increased, 0, choiceHandler.length);
+                    choiceHandler = increased;
+                    System.arraycopy(choiceHandlerRecycled, 0, choiceHandler, choiceHandlerFree, choiceHandlerRecycledCount);
+                    choiceHandlerFree += choiceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(choiceHandlerRecycled, 0, choiceHandler, choiceHandlerFree, choiceHandlerRecycledCount);
+                choiceHandlerFree += choiceHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < choiceHandlerRecycled.length; i++){
+                choiceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = groupHandlerFree + groupHandlerRecycledCount; 
+            if(neededLength > groupHandler.length){
+                if(neededLength > groupHandlerMaxSize){
+                    neededLength = groupHandlerMaxSize;
+                    GroupHandler[] increased = new GroupHandler[neededLength];
+                    System.arraycopy(groupHandler, 0, increased, 0, groupHandler.length);
+                    groupHandler = increased;		        
+                    System.arraycopy(groupHandlerRecycled, 0, groupHandler, groupHandlerFree, groupHandlerMaxSize - groupHandlerFree);
+                    groupHandlerFree = groupHandlerMaxSize; 
+                }else{
+                    GroupHandler[] increased = new GroupHandler[neededLength];
+                    System.arraycopy(groupHandler, 0, increased, 0, groupHandler.length);
+                    groupHandler = increased;
+                    System.arraycopy(groupHandlerRecycled, 0, groupHandler, groupHandlerFree, groupHandlerRecycledCount);
+                    groupHandlerFree += groupHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(groupHandlerRecycled, 0, groupHandler, groupHandlerFree, groupHandlerRecycledCount);
+                groupHandlerFree += groupHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < groupHandlerRecycled.length; i++){
+                groupHandlerRecycled[i] = null;
+            }	
+    
+            
+            neededLength = grammarHandlerFree + grammarHandlerRecycledCount; 
+            if(neededLength > grammarHandler.length){
+                if(neededLength > grammarHandlerMaxSize){
+                    neededLength = grammarHandlerMaxSize;
+                    GrammarHandler[] increased = new GrammarHandler[neededLength];
+                    System.arraycopy(grammarHandler, 0, increased, 0, grammarHandler.length);
+                    grammarHandler = increased;		        
+                    System.arraycopy(grammarHandlerRecycled, 0, grammarHandler, grammarHandlerFree, grammarHandlerMaxSize - grammarHandlerFree);
+                    grammarHandlerFree = grammarHandlerMaxSize; 
+                }else{
+                    GrammarHandler[] increased = new GrammarHandler[neededLength];
+                    System.arraycopy(grammarHandler, 0, increased, 0, grammarHandler.length);
+                    grammarHandler = increased;
+                    System.arraycopy(grammarHandlerRecycled, 0, grammarHandler, grammarHandlerFree, grammarHandlerRecycledCount);
+                    grammarHandlerFree += grammarHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(grammarHandlerRecycled, 0, grammarHandler, grammarHandlerFree, grammarHandlerRecycledCount);
+                grammarHandlerFree += grammarHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < grammarHandlerRecycled.length; i++){
+                grammarHandlerRecycled[i] = null;
+            }	
+            
+            
+            
+            neededLength = uinterleaveHandlerFree + uinterleaveHandlerRecycledCount; 
+            if(neededLength > uinterleaveHandler.length){
+                if(neededLength > uinterleaveHandlerMaxSize){
+                    neededLength = uinterleaveHandlerMaxSize;
+                    UInterleaveHandler[] increased = new UInterleaveHandler[neededLength];
+                    System.arraycopy(uinterleaveHandler, 0, increased, 0, uinterleaveHandler.length);
+                    uinterleaveHandler = increased;		        
+                    System.arraycopy(uinterleaveHandlerRecycled, 0, uinterleaveHandler, uinterleaveHandlerFree, uinterleaveHandlerMaxSize - uinterleaveHandlerFree);
+                    uinterleaveHandlerFree = uinterleaveHandlerMaxSize; 
+                }else{
+                    UInterleaveHandler[] increased = new UInterleaveHandler[neededLength];
+                    System.arraycopy(uinterleaveHandler, 0, increased, 0, uinterleaveHandler.length);
+                    uinterleaveHandler = increased;
+                    System.arraycopy(uinterleaveHandlerRecycled, 0, uinterleaveHandler, uinterleaveHandlerFree, uinterleaveHandlerRecycledCount);
+                    uinterleaveHandlerFree += uinterleaveHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(uinterleaveHandlerRecycled, 0, uinterleaveHandler, uinterleaveHandlerFree, uinterleaveHandlerRecycledCount);
+                uinterleaveHandlerFree += uinterleaveHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < uinterleaveHandlerRecycled.length; i++){
+                uinterleaveHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = minterleaveHandlerFree + minterleaveHandlerRecycledCount; 
+            if(neededLength > minterleaveHandler.length){
+                if(neededLength > minterleaveHandlerMaxSize){
+                    neededLength = minterleaveHandlerMaxSize;
+                    MInterleaveHandler[] increased = new MInterleaveHandler[neededLength];
+                    System.arraycopy(minterleaveHandler, 0, increased, 0, minterleaveHandler.length);
+                    minterleaveHandler = increased;		        
+                    System.arraycopy(minterleaveHandlerRecycled, 0, minterleaveHandler, minterleaveHandlerFree, minterleaveHandlerMaxSize - minterleaveHandlerFree);
+                    minterleaveHandlerFree = minterleaveHandlerMaxSize; 
+                }else{
+                    MInterleaveHandler[] increased = new MInterleaveHandler[neededLength];
+                    System.arraycopy(minterleaveHandler, 0, increased, 0, minterleaveHandler.length);
+                    minterleaveHandler = increased;
+                    System.arraycopy(minterleaveHandlerRecycled, 0, minterleaveHandler, minterleaveHandlerFree, minterleaveHandlerRecycledCount);
+                    minterleaveHandlerFree += minterleaveHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(minterleaveHandlerRecycled, 0, minterleaveHandler, minterleaveHandlerFree, minterleaveHandlerRecycledCount);
+                minterleaveHandlerFree += minterleaveHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < minterleaveHandlerRecycled.length; i++){
+                minterleaveHandlerRecycled[i] = null;
+            }	
+            
+            neededLength = sinterleaveHandlerFree + sinterleaveHandlerRecycledCount; 
+            if(neededLength > sinterleaveHandler.length){
+                if(neededLength > sinterleaveHandlerMaxSize){
+                    neededLength = sinterleaveHandlerMaxSize;
+                    SInterleaveHandler[] increased = new SInterleaveHandler[neededLength];
+                    System.arraycopy(sinterleaveHandler, 0, increased, 0, sinterleaveHandler.length);
+                    sinterleaveHandler = increased;		        
+                    System.arraycopy(sinterleaveHandlerRecycled, 0, sinterleaveHandler, sinterleaveHandlerFree, sinterleaveHandlerMaxSize - sinterleaveHandlerFree);
+                    sinterleaveHandlerFree = sinterleaveHandlerMaxSize; 
+                }else{
+                    SInterleaveHandler[] increased = new SInterleaveHandler[neededLength];
+                    System.arraycopy(sinterleaveHandler, 0, increased, 0, sinterleaveHandler.length);
+                    sinterleaveHandler = increased;
+                    System.arraycopy(sinterleaveHandlerRecycled, 0, sinterleaveHandler, sinterleaveHandlerFree, sinterleaveHandlerRecycledCount);
+                    sinterleaveHandlerFree += sinterleaveHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(sinterleaveHandlerRecycled, 0, sinterleaveHandler, sinterleaveHandlerFree, sinterleaveHandlerRecycledCount);
+                sinterleaveHandlerFree += sinterleaveHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < sinterleaveHandlerRecycled.length; i++){
+                sinterleaveHandlerRecycled[i] = null;
+            }	
+            
+            neededLength = refHandlerFree + refHandlerRecycledCount; 
+            if(neededLength > refHandler.length){
+                if(neededLength > refHandlerMaxSize){
+                    neededLength = refHandlerMaxSize;
+                    RefHandler[] increased = new RefHandler[neededLength];
+                    System.arraycopy(refHandler, 0, increased, 0, refHandler.length);
+                    refHandler = increased;		        
+                    System.arraycopy(refHandlerRecycled, 0, refHandler, refHandlerFree, refHandlerMaxSize - refHandlerFree);
+                    refHandlerFree = refHandlerMaxSize; 
+                }else{
+                    RefHandler[] increased = new RefHandler[neededLength];
+                    System.arraycopy(refHandler, 0, increased, 0, refHandler.length);
+                    refHandler = increased;
+                    System.arraycopy(refHandlerRecycled, 0, refHandler, refHandlerFree, refHandlerRecycledCount);
+                    refHandlerFree += refHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(refHandlerRecycled, 0, refHandler, refHandlerFree, refHandlerRecycledCount);
+                refHandlerFree += refHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < refHandlerRecycled.length; i++){
+                refHandlerRecycled[i] = null;
+            }	
+            
+            neededLength = elementHandlerFree + elementHandlerRecycledCount; 
+            if(neededLength > elementHandler.length){
+                if(neededLength > elementHandlerMaxSize){
+                    neededLength = elementHandlerMaxSize;
+                    ElementHandler[] increased = new ElementHandler[neededLength];
+                    System.arraycopy(elementHandler, 0, increased, 0, elementHandler.length);
+                    elementHandler = increased;		        
+                    System.arraycopy(elementHandlerRecycled, 0, elementHandler, elementHandlerFree, elementHandlerMaxSize - elementHandlerFree);
+                    elementHandlerFree = elementHandlerMaxSize; 
+                }else{
+                    ElementHandler[] increased = new ElementHandler[neededLength];
+                    System.arraycopy(elementHandler, 0, increased, 0, elementHandler.length);
+                    elementHandler = increased;
+                    System.arraycopy(elementHandlerRecycled, 0, elementHandler, elementHandlerFree, elementHandlerRecycledCount);
+                    elementHandlerFree += elementHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(elementHandlerRecycled, 0, elementHandler, elementHandlerFree, elementHandlerRecycledCount);
+                elementHandlerFree += elementHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < elementHandlerRecycled.length; i++){
+                elementHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = attributeHandlerFree + attributeHandlerRecycledCount; 
+            if(neededLength > attributeHandler.length){
+                if(neededLength > attributeHandlerMaxSize){
+                    neededLength = attributeHandlerMaxSize;
+                    AttributeHandler[] increased = new AttributeHandler[neededLength];
+                    System.arraycopy(attributeHandler, 0, increased, 0, attributeHandler.length);
+                    attributeHandler = increased;		        
+                    System.arraycopy(attributeHandlerRecycled, 0, attributeHandler, attributeHandlerFree, attributeHandlerMaxSize - attributeHandlerFree);
+                    attributeHandlerFree = attributeHandlerMaxSize; 
+                }else{
+                    AttributeHandler[] increased = new AttributeHandler[neededLength];
+                    System.arraycopy(attributeHandler, 0, increased, 0, attributeHandler.length);
+                    attributeHandler = increased;
+                    System.arraycopy(attributeHandlerRecycled, 0, attributeHandler, attributeHandlerFree, attributeHandlerRecycledCount);
+                    attributeHandlerFree += attributeHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(attributeHandlerRecycled, 0, attributeHandler, attributeHandlerFree, attributeHandlerRecycledCount);
+                attributeHandlerFree += attributeHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < attributeHandlerRecycled.length; i++){
+                attributeHandlerRecycled[i] = null;
+            }	
+            
+            
+            
+            neededLength = exceptPatternHandlerFree + exceptPatternHandlerRecycledCount; 
+            if(neededLength > exceptPatternHandler.length){
+                if(neededLength > exceptPatternHandlerMaxSize){
+                    neededLength = exceptPatternHandlerMaxSize;
+                    ExceptPatternHandler[] increased = new ExceptPatternHandler[neededLength];
+                    System.arraycopy(exceptPatternHandler, 0, increased, 0, exceptPatternHandler.length);
+                    exceptPatternHandler = increased;		        
+                    System.arraycopy(exceptPatternHandlerRecycled, 0, exceptPatternHandler, exceptPatternHandlerFree, exceptPatternHandlerMaxSize - exceptPatternHandlerFree);
+                    exceptPatternHandlerFree = exceptPatternHandlerMaxSize; 
+                }else{
+                    ExceptPatternHandler[] increased = new ExceptPatternHandler[neededLength];
+                    System.arraycopy(exceptPatternHandler, 0, increased, 0, exceptPatternHandler.length);
+                    exceptPatternHandler = increased;
+                    System.arraycopy(exceptPatternHandlerRecycled, 0, exceptPatternHandler, exceptPatternHandlerFree, exceptPatternHandlerRecycledCount);
+                    exceptPatternHandlerFree += exceptPatternHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(exceptPatternHandlerRecycled, 0, exceptPatternHandler, exceptPatternHandlerFree, exceptPatternHandlerRecycledCount);
+                exceptPatternHandlerFree += exceptPatternHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < exceptPatternHandlerRecycled.length; i++){
+                exceptPatternHandlerRecycled[i] = null;
+            }	
+            
+            neededLength = listPatternHandlerFree + listPatternHandlerRecycledCount; 
+            if(neededLength > listPatternHandler.length){
+                if(neededLength > listPatternHandlerMaxSize){
+                    neededLength = listPatternHandlerMaxSize;
+                    ListPatternHandler[] increased = new ListPatternHandler[neededLength];
+                    System.arraycopy(listPatternHandler, 0, increased, 0, listPatternHandler.length);
+                    listPatternHandler = increased;		        
+                    System.arraycopy(listPatternHandlerRecycled, 0, listPatternHandler, listPatternHandlerFree, listPatternHandlerMaxSize - listPatternHandlerFree);
+                    listPatternHandlerFree = listPatternHandlerMaxSize; 
+                }else{
+                    ListPatternHandler[] increased = new ListPatternHandler[neededLength];
+                    System.arraycopy(listPatternHandler, 0, increased, 0, listPatternHandler.length);
+                    listPatternHandler = increased;
+                    System.arraycopy(listPatternHandlerRecycled, 0, listPatternHandler, listPatternHandlerFree, listPatternHandlerRecycledCount);
+                    listPatternHandlerFree += listPatternHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(listPatternHandlerRecycled, 0, listPatternHandler, listPatternHandlerFree, listPatternHandlerRecycledCount);
+                listPatternHandlerFree += listPatternHandlerRecycledCount;
+            }
+                        
+            for(int i = 0; i < listPatternHandlerRecycled.length; i++){
+                listPatternHandlerRecycled[i] = null;
+            }	
+            
+            
+            
+            
+            
+            neededLength = groupDoubleHandlerFree + groupDoubleHandlerRecycledCount; 
+            if(neededLength > groupDoubleHandler.length){
+                if(neededLength > groupDoubleHandlerMaxSize){
+                    neededLength = groupDoubleHandlerMaxSize;
+                    GroupDoubleHandler[] increased = new GroupDoubleHandler[neededLength];
+                    System.arraycopy(groupDoubleHandler, 0, increased, 0, groupDoubleHandler.length);
+                    groupDoubleHandler = increased;		        
+                    System.arraycopy(groupDoubleHandlerRecycled, 0, groupDoubleHandler, groupDoubleHandlerFree, groupDoubleHandlerMaxSize - groupDoubleHandlerFree);
+                    groupDoubleHandlerFree = groupDoubleHandlerMaxSize; 
+                }else{
+                    GroupDoubleHandler[] increased = new GroupDoubleHandler[neededLength];
+                    System.arraycopy(groupDoubleHandler, 0, increased, 0, groupDoubleHandler.length);
+                    groupDoubleHandler = increased;
+                    System.arraycopy(groupDoubleHandlerRecycled, 0, groupDoubleHandler, groupDoubleHandlerFree, groupDoubleHandlerRecycledCount);
+                    groupDoubleHandlerFree += groupDoubleHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(groupDoubleHandlerRecycled, 0, groupDoubleHandler, groupDoubleHandlerFree, groupDoubleHandlerRecycledCount);
+                groupDoubleHandlerFree += groupDoubleHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < groupDoubleHandlerRecycled.length; i++){
+                groupDoubleHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = interleaveDoubleHandlerFree + interleaveDoubleHandlerRecycledCount; 
+            if(neededLength > interleaveDoubleHandler.length){
+                if(neededLength > interleaveDoubleHandlerMaxSize){
+                    neededLength = interleaveDoubleHandlerMaxSize;
+                    InterleaveDoubleHandler[] increased = new InterleaveDoubleHandler[neededLength];
+                    System.arraycopy(interleaveDoubleHandler, 0, increased, 0, interleaveDoubleHandler.length);
+                    interleaveDoubleHandler = increased;		        
+                    System.arraycopy(interleaveDoubleHandlerRecycled, 0, interleaveDoubleHandler, interleaveDoubleHandlerFree, interleaveDoubleHandlerMaxSize - interleaveDoubleHandlerFree);
+                    interleaveDoubleHandlerFree = interleaveDoubleHandlerMaxSize; 
+                }else{
+                    InterleaveDoubleHandler[] increased = new InterleaveDoubleHandler[neededLength];
+                    System.arraycopy(interleaveDoubleHandler, 0, increased, 0, interleaveDoubleHandler.length);
+                    interleaveDoubleHandler = increased;
+                    System.arraycopy(interleaveDoubleHandlerRecycled, 0, interleaveDoubleHandler, interleaveDoubleHandlerFree, interleaveDoubleHandlerRecycledCount);
+                    interleaveDoubleHandlerFree += interleaveDoubleHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(interleaveDoubleHandlerRecycled, 0, interleaveDoubleHandler, interleaveDoubleHandlerFree, interleaveDoubleHandlerRecycledCount);
+                interleaveDoubleHandlerFree += interleaveDoubleHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < interleaveDoubleHandlerRecycled.length; i++){
+                interleaveDoubleHandlerRecycled[i] = null;
+            }	
+            
+            
+            
+            
+            neededLength = groupMinimalReduceCountHandlerFree + groupMinimalReduceCountHandlerRecycledCount; 
+            if(neededLength > groupMinimalReduceCountHandler.length){
+                if(neededLength > groupMinimalReduceCountHandlerMaxSize){
+                    neededLength = groupMinimalReduceCountHandlerMaxSize;
+                    GroupMinimalReduceCountHandler[] increased = new GroupMinimalReduceCountHandler[neededLength];
+                    System.arraycopy(groupMinimalReduceCountHandler, 0, increased, 0, groupMinimalReduceCountHandler.length);
+                    groupMinimalReduceCountHandler = increased;		        
+                    System.arraycopy(groupMinimalReduceCountHandlerRecycled, 0, groupMinimalReduceCountHandler, groupMinimalReduceCountHandlerFree, groupMinimalReduceCountHandlerMaxSize - groupMinimalReduceCountHandlerFree);
+                    groupMinimalReduceCountHandlerFree = groupMinimalReduceCountHandlerMaxSize; 
+                }else{
+                    GroupMinimalReduceCountHandler[] increased = new GroupMinimalReduceCountHandler[neededLength];
+                    System.arraycopy(groupMinimalReduceCountHandler, 0, increased, 0, groupMinimalReduceCountHandler.length);
+                    groupMinimalReduceCountHandler = increased;
+                    System.arraycopy(groupMinimalReduceCountHandlerRecycled, 0, groupMinimalReduceCountHandler, groupMinimalReduceCountHandlerFree, groupMinimalReduceCountHandlerRecycledCount);
+                    groupMinimalReduceCountHandlerFree += groupMinimalReduceCountHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(groupMinimalReduceCountHandlerRecycled, 0, groupMinimalReduceCountHandler, groupMinimalReduceCountHandlerFree, groupMinimalReduceCountHandlerRecycledCount);
+                groupMinimalReduceCountHandlerFree += groupMinimalReduceCountHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < groupMinimalReduceCountHandlerRecycled.length; i++){
+                groupMinimalReduceCountHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = groupMaximalReduceCountHandlerFree + groupMaximalReduceCountHandlerRecycledCount; 
+            if(neededLength > groupMaximalReduceCountHandler.length){
+                if(neededLength > groupMaximalReduceCountHandlerMaxSize){
+                    neededLength = groupMaximalReduceCountHandlerMaxSize;
+                    GroupMaximalReduceCountHandler[] increased = new GroupMaximalReduceCountHandler[neededLength];
+                    System.arraycopy(groupMaximalReduceCountHandler, 0, increased, 0, groupMaximalReduceCountHandler.length);
+                    groupMaximalReduceCountHandler = increased;		        
+                    System.arraycopy(groupMaximalReduceCountHandlerRecycled, 0, groupMaximalReduceCountHandler, groupMaximalReduceCountHandlerFree, groupMaximalReduceCountHandlerMaxSize - groupMaximalReduceCountHandlerFree);
+                    groupMaximalReduceCountHandlerFree = groupMaximalReduceCountHandlerMaxSize; 
+                }else{
+                    GroupMaximalReduceCountHandler[] increased = new GroupMaximalReduceCountHandler[neededLength];
+                    System.arraycopy(groupMaximalReduceCountHandler, 0, increased, 0, groupMaximalReduceCountHandler.length);
+                    groupMaximalReduceCountHandler = increased;
+                    System.arraycopy(groupMaximalReduceCountHandlerRecycled, 0, groupMaximalReduceCountHandler, groupMaximalReduceCountHandlerFree, groupMaximalReduceCountHandlerRecycledCount);
+                    groupMaximalReduceCountHandlerFree += groupMaximalReduceCountHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(groupMaximalReduceCountHandlerRecycled, 0, groupMaximalReduceCountHandler, groupMaximalReduceCountHandlerFree, groupMaximalReduceCountHandlerRecycledCount);
+                groupMaximalReduceCountHandlerFree += groupMaximalReduceCountHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < groupMaximalReduceCountHandlerRecycled.length; i++){
+                groupMaximalReduceCountHandlerRecycled[i] = null;
+            }	
+            
+            neededLength = interleaveMinimalReduceCountHandlerFree + interleaveMinimalReduceCountHandlerRecycledCount; 
+            if(neededLength > interleaveMinimalReduceCountHandler.length){
+                if(neededLength > interleaveMinimalReduceCountHandlerMaxSize){
+                    neededLength = interleaveMinimalReduceCountHandlerMaxSize;
+                    InterleaveMinimalReduceCountHandler[] increased = new InterleaveMinimalReduceCountHandler[neededLength];
+                    System.arraycopy(interleaveMinimalReduceCountHandler, 0, increased, 0, interleaveMinimalReduceCountHandler.length);
+                    interleaveMinimalReduceCountHandler = increased;		        
+                    System.arraycopy(interleaveMinimalReduceCountHandlerRecycled, 0, interleaveMinimalReduceCountHandler, interleaveMinimalReduceCountHandlerFree, interleaveMinimalReduceCountHandlerMaxSize - interleaveMinimalReduceCountHandlerFree);
+                    interleaveMinimalReduceCountHandlerFree = interleaveMinimalReduceCountHandlerMaxSize; 
+                }else{
+                    InterleaveMinimalReduceCountHandler[] increased = new InterleaveMinimalReduceCountHandler[neededLength];
+                    System.arraycopy(interleaveMinimalReduceCountHandler, 0, increased, 0, interleaveMinimalReduceCountHandler.length);
+                    interleaveMinimalReduceCountHandler = increased;
+                    System.arraycopy(interleaveMinimalReduceCountHandlerRecycled, 0, interleaveMinimalReduceCountHandler, interleaveMinimalReduceCountHandlerFree, interleaveMinimalReduceCountHandlerRecycledCount);
+                    interleaveMinimalReduceCountHandlerFree += interleaveMinimalReduceCountHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(interleaveMinimalReduceCountHandlerRecycled, 0, interleaveMinimalReduceCountHandler, interleaveMinimalReduceCountHandlerFree, interleaveMinimalReduceCountHandlerRecycledCount);
+                interleaveMinimalReduceCountHandlerFree += interleaveMinimalReduceCountHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < interleaveMinimalReduceCountHandlerRecycled.length; i++){
+                interleaveMinimalReduceCountHandlerRecycled[i] = null;
+            }	
+            
+            neededLength = interleaveMaximalReduceCountHandlerFree + interleaveMaximalReduceCountHandlerRecycledCount; 
+            if(neededLength > interleaveMaximalReduceCountHandler.length){
+                if(neededLength > interleaveMaximalReduceCountHandlerMaxSize){
+                    neededLength = interleaveMaximalReduceCountHandlerMaxSize;
+                    InterleaveMaximalReduceCountHandler[] increased = new InterleaveMaximalReduceCountHandler[neededLength];
+                    System.arraycopy(interleaveMaximalReduceCountHandler, 0, increased, 0, interleaveMaximalReduceCountHandler.length);
+                    interleaveMaximalReduceCountHandler = increased;		        
+                    System.arraycopy(interleaveMaximalReduceCountHandlerRecycled, 0, interleaveMaximalReduceCountHandler, interleaveMaximalReduceCountHandlerFree, interleaveMaximalReduceCountHandlerMaxSize - interleaveMaximalReduceCountHandlerFree);
+                    interleaveMaximalReduceCountHandlerFree = interleaveMaximalReduceCountHandlerMaxSize; 
+                }else{
+                    InterleaveMaximalReduceCountHandler[] increased = new InterleaveMaximalReduceCountHandler[neededLength];
+                    System.arraycopy(interleaveMaximalReduceCountHandler, 0, increased, 0, interleaveMaximalReduceCountHandler.length);
+                    interleaveMaximalReduceCountHandler = increased;
+                    System.arraycopy(interleaveMaximalReduceCountHandlerRecycled, 0, interleaveMaximalReduceCountHandler, interleaveMaximalReduceCountHandlerFree, interleaveMaximalReduceCountHandlerRecycledCount);
+                    interleaveMaximalReduceCountHandlerFree += interleaveMaximalReduceCountHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(interleaveMaximalReduceCountHandlerRecycled, 0, interleaveMaximalReduceCountHandler, interleaveMaximalReduceCountHandlerFree, interleaveMaximalReduceCountHandlerRecycledCount);
+                interleaveMaximalReduceCountHandlerFree += interleaveMaximalReduceCountHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < interleaveMaximalReduceCountHandlerRecycled.length; i++){
+                interleaveMaximalReduceCountHandlerRecycled[i] = null;
+            }	
+            
+            
+            
+            
+            neededLength = grammarMinimalReduceHandlerFree + grammarMinimalReduceHandlerRecycledCount; 
+            if(neededLength > grammarMinimalReduceHandler.length){
+                if(neededLength > grammarMinimalReduceHandlerMaxSize){
+                    neededLength = grammarMinimalReduceHandlerMaxSize;
+                    GrammarMinimalReduceHandler[] increased = new GrammarMinimalReduceHandler[neededLength];
+                    System.arraycopy(grammarMinimalReduceHandler, 0, increased, 0, grammarMinimalReduceHandler.length);
+                    grammarMinimalReduceHandler = increased;		        
+                    System.arraycopy(grammarMinimalReduceHandlerRecycled, 0, grammarMinimalReduceHandler, grammarMinimalReduceHandlerFree, grammarMinimalReduceHandlerMaxSize - grammarMinimalReduceHandlerFree);
+                    grammarMinimalReduceHandlerFree = grammarMinimalReduceHandlerMaxSize; 
+                }else{
+                    GrammarMinimalReduceHandler[] increased = new GrammarMinimalReduceHandler[neededLength];
+                    System.arraycopy(grammarMinimalReduceHandler, 0, increased, 0, grammarMinimalReduceHandler.length);
+                    grammarMinimalReduceHandler = increased;
+                    System.arraycopy(grammarMinimalReduceHandlerRecycled, 0, grammarMinimalReduceHandler, grammarMinimalReduceHandlerFree, grammarMinimalReduceHandlerRecycledCount);
+                    grammarMinimalReduceHandlerFree += grammarMinimalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(grammarMinimalReduceHandlerRecycled, 0, grammarMinimalReduceHandler, grammarMinimalReduceHandlerFree, grammarMinimalReduceHandlerRecycledCount);
+                grammarMinimalReduceHandlerFree += grammarMinimalReduceHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < grammarMinimalReduceHandlerRecycled.length; i++){
+                grammarMinimalReduceHandlerRecycled[i] = null;
+            }	
+            
+                    
+            neededLength = grammarMaximalReduceHandlerFree + grammarMaximalReduceHandlerRecycledCount; 
+            if(neededLength > grammarMaximalReduceHandler.length){
+                if(neededLength > grammarMaximalReduceHandlerMaxSize){
+                    neededLength = grammarMaximalReduceHandlerMaxSize;
+                    GrammarMaximalReduceHandler[] increased = new GrammarMaximalReduceHandler[neededLength];
+                    System.arraycopy(grammarMaximalReduceHandler, 0, increased, 0, grammarMaximalReduceHandler.length);
+                    grammarMaximalReduceHandler = increased;		        
+                    System.arraycopy(grammarMaximalReduceHandlerRecycled, 0, grammarMaximalReduceHandler, grammarMaximalReduceHandlerFree, grammarMaximalReduceHandlerMaxSize - grammarMaximalReduceHandlerFree);
+                    grammarMaximalReduceHandlerFree = grammarMaximalReduceHandlerMaxSize; 
+                }else{
+                    GrammarMaximalReduceHandler[] increased = new GrammarMaximalReduceHandler[neededLength];
+                    System.arraycopy(grammarMaximalReduceHandler, 0, increased, 0, grammarMaximalReduceHandler.length);
+                    grammarMaximalReduceHandler = increased;
+                    System.arraycopy(grammarMaximalReduceHandlerRecycled, 0, grammarMaximalReduceHandler, grammarMaximalReduceHandlerFree, grammarMaximalReduceHandlerRecycledCount);
+                    grammarMaximalReduceHandlerFree += grammarMaximalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(grammarMaximalReduceHandlerRecycled, 0, grammarMaximalReduceHandler, grammarMaximalReduceHandlerFree, grammarMaximalReduceHandlerRecycledCount);
+                grammarMaximalReduceHandlerFree += grammarMaximalReduceHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < grammarMaximalReduceHandlerRecycled.length; i++){
+                grammarMaximalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = refMinimalReduceHandlerFree + refMinimalReduceHandlerRecycledCount; 
+            if(neededLength > refMinimalReduceHandler.length){
+                if(neededLength > refMinimalReduceHandlerMaxSize){
+                    neededLength = refMinimalReduceHandlerMaxSize;
+                    RefMinimalReduceHandler[] increased = new RefMinimalReduceHandler[neededLength];
+                    System.arraycopy(refMinimalReduceHandler, 0, increased, 0, refMinimalReduceHandler.length);
+                    refMinimalReduceHandler = increased;		        
+                    System.arraycopy(refMinimalReduceHandlerRecycled, 0, refMinimalReduceHandler, refMinimalReduceHandlerFree, refMinimalReduceHandlerMaxSize - refMinimalReduceHandlerFree);
+                    refMinimalReduceHandlerFree = refMinimalReduceHandlerMaxSize; 
+                }else{
+                    RefMinimalReduceHandler[] increased = new RefMinimalReduceHandler[neededLength];
+                    System.arraycopy(refMinimalReduceHandler, 0, increased, 0, refMinimalReduceHandler.length);
+                    refMinimalReduceHandler = increased;
+                    System.arraycopy(refMinimalReduceHandlerRecycled, 0, refMinimalReduceHandler, refMinimalReduceHandlerFree, refMinimalReduceHandlerRecycledCount);
+                    refMinimalReduceHandlerFree += refMinimalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(refMinimalReduceHandlerRecycled, 0, refMinimalReduceHandler, refMinimalReduceHandlerFree, refMinimalReduceHandlerRecycledCount);
+                refMinimalReduceHandlerFree += refMinimalReduceHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < refMinimalReduceHandlerRecycled.length; i++){
+                refMinimalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = refMaximalReduceHandlerFree + refMaximalReduceHandlerRecycledCount; 
+            if(neededLength > refMaximalReduceHandler.length){
+                if(neededLength > refMaximalReduceHandlerMaxSize){
+                    neededLength = refMaximalReduceHandlerMaxSize;
+                    RefMaximalReduceHandler[] increased = new RefMaximalReduceHandler[neededLength];
+                    System.arraycopy(refMaximalReduceHandler, 0, increased, 0, refMaximalReduceHandler.length);
+                    refMaximalReduceHandler = increased;		        
+                    System.arraycopy(refMaximalReduceHandlerRecycled, 0, refMaximalReduceHandler, refMaximalReduceHandlerFree, refMaximalReduceHandlerMaxSize - refMaximalReduceHandlerFree);
+                    refMaximalReduceHandlerFree = refMaximalReduceHandlerMaxSize; 
+                }else{
+                    RefMaximalReduceHandler[] increased = new RefMaximalReduceHandler[neededLength];
+                    System.arraycopy(refMaximalReduceHandler, 0, increased, 0, refMaximalReduceHandler.length);
+                    refMaximalReduceHandler = increased;
+                    System.arraycopy(refMaximalReduceHandlerRecycled, 0, refMaximalReduceHandler, refMaximalReduceHandlerFree, refMaximalReduceHandlerRecycledCount);
+                    refMaximalReduceHandlerFree += refMaximalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(refMaximalReduceHandlerRecycled, 0, refMaximalReduceHandler, refMaximalReduceHandlerFree, refMaximalReduceHandlerRecycledCount);
+                refMaximalReduceHandlerFree += refMaximalReduceHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < refMaximalReduceHandlerRecycled.length; i++){
+                refMaximalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = choiceMinimalReduceHandlerFree + choiceMinimalReduceHandlerRecycledCount; 
+            if(neededLength > choiceMinimalReduceHandler.length){
+                if(neededLength > choiceMinimalReduceHandlerMaxSize){
+                    neededLength = choiceMinimalReduceHandlerMaxSize;
+                    ChoiceMinimalReduceHandler[] increased = new ChoiceMinimalReduceHandler[neededLength];
+                    System.arraycopy(choiceMinimalReduceHandler, 0, increased, 0, choiceMinimalReduceHandler.length);
+                    choiceMinimalReduceHandler = increased;		        
+                    System.arraycopy(choiceMinimalReduceHandlerRecycled, 0, choiceMinimalReduceHandler, choiceMinimalReduceHandlerFree, choiceMinimalReduceHandlerMaxSize - choiceMinimalReduceHandlerFree);
+                    choiceMinimalReduceHandlerFree = choiceMinimalReduceHandlerMaxSize; 
+                }else{
+                    ChoiceMinimalReduceHandler[] increased = new ChoiceMinimalReduceHandler[neededLength];
+                    System.arraycopy(choiceMinimalReduceHandler, 0, increased, 0, choiceMinimalReduceHandler.length);
+                    choiceMinimalReduceHandler = increased;
+                    System.arraycopy(choiceMinimalReduceHandlerRecycled, 0, choiceMinimalReduceHandler, choiceMinimalReduceHandlerFree, choiceMinimalReduceHandlerRecycledCount);
+                    choiceMinimalReduceHandlerFree += choiceMinimalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(choiceMinimalReduceHandlerRecycled, 0, choiceMinimalReduceHandler, choiceMinimalReduceHandlerFree, choiceMinimalReduceHandlerRecycledCount);
+                choiceMinimalReduceHandlerFree += choiceMinimalReduceHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < choiceMinimalReduceHandlerRecycled.length; i++){
+                choiceMinimalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = choiceMaximalReduceHandlerFree + choiceMaximalReduceHandlerRecycledCount; 
+            if(neededLength > choiceMaximalReduceHandler.length){
+                if(neededLength > choiceMaximalReduceHandlerMaxSize){
+                    neededLength = choiceMaximalReduceHandlerMaxSize;
+                    ChoiceMaximalReduceHandler[] increased = new ChoiceMaximalReduceHandler[neededLength];
+                    System.arraycopy(choiceMaximalReduceHandler, 0, increased, 0, choiceMaximalReduceHandler.length);
+                    choiceMaximalReduceHandler = increased;		        
+                    System.arraycopy(choiceMaximalReduceHandlerRecycled, 0, choiceMaximalReduceHandler, choiceMaximalReduceHandlerFree, choiceMaximalReduceHandlerMaxSize - choiceMaximalReduceHandlerFree);
+                    choiceMaximalReduceHandlerFree = choiceMaximalReduceHandlerMaxSize; 
+                }else{
+                    ChoiceMaximalReduceHandler[] increased = new ChoiceMaximalReduceHandler[neededLength];
+                    System.arraycopy(choiceMaximalReduceHandler, 0, increased, 0, choiceMaximalReduceHandler.length);
+                    choiceMaximalReduceHandler = increased;
+                    System.arraycopy(choiceMaximalReduceHandlerRecycled, 0, choiceMaximalReduceHandler, choiceMaximalReduceHandlerFree, choiceMaximalReduceHandlerRecycledCount);
+                    choiceMaximalReduceHandlerFree += choiceMaximalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(choiceMaximalReduceHandlerRecycled, 0, choiceMaximalReduceHandler, choiceMaximalReduceHandlerFree, choiceMaximalReduceHandlerRecycledCount);
+                choiceMaximalReduceHandlerFree += choiceMaximalReduceHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < choiceMaximalReduceHandlerRecycled.length; i++){
+                choiceMaximalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = groupMinimalReduceHandlerFree + groupMinimalReduceHandlerRecycledCount; 
+            if(neededLength > groupMinimalReduceHandler.length){
+                if(neededLength > groupMinimalReduceHandlerMaxSize){
+                    neededLength = groupMinimalReduceHandlerMaxSize;
+                    GroupMinimalReduceHandler[] increased = new GroupMinimalReduceHandler[neededLength];
+                    System.arraycopy(groupMinimalReduceHandler, 0, increased, 0, groupMinimalReduceHandler.length);
+                    groupMinimalReduceHandler = increased;		        
+                    System.arraycopy(groupMinimalReduceHandlerRecycled, 0, groupMinimalReduceHandler, groupMinimalReduceHandlerFree, groupMinimalReduceHandlerMaxSize - groupMinimalReduceHandlerFree);
+                    groupMinimalReduceHandlerFree = groupMinimalReduceHandlerMaxSize; 
+                }else{
+                    GroupMinimalReduceHandler[] increased = new GroupMinimalReduceHandler[neededLength];
+                    System.arraycopy(groupMinimalReduceHandler, 0, increased, 0, groupMinimalReduceHandler.length);
+                    groupMinimalReduceHandler = increased;
+                    System.arraycopy(groupMinimalReduceHandlerRecycled, 0, groupMinimalReduceHandler, groupMinimalReduceHandlerFree, groupMinimalReduceHandlerRecycledCount);
+                    groupMinimalReduceHandlerFree += groupMinimalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(groupMinimalReduceHandlerRecycled, 0, groupMinimalReduceHandler, groupMinimalReduceHandlerFree, groupMinimalReduceHandlerRecycledCount);
+                groupMinimalReduceHandlerFree += groupMinimalReduceHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < groupMinimalReduceHandlerRecycled.length; i++){
+                groupMinimalReduceHandlerRecycled[i] = null;
+            }	
+            
+                    
+            neededLength = groupMaximalReduceHandlerFree + groupMaximalReduceHandlerRecycledCount; 
+            if(neededLength > groupMaximalReduceHandler.length){
+                if(neededLength > groupMaximalReduceHandlerMaxSize){
+                    neededLength = groupMaximalReduceHandlerMaxSize;
+                    GroupMaximalReduceHandler[] increased = new GroupMaximalReduceHandler[neededLength];
+                    System.arraycopy(groupMaximalReduceHandler, 0, increased, 0, groupMaximalReduceHandler.length);
+                    groupMaximalReduceHandler = increased;		        
+                    System.arraycopy(groupMaximalReduceHandlerRecycled, 0, groupMaximalReduceHandler, groupMaximalReduceHandlerFree, groupMaximalReduceHandlerMaxSize - groupMaximalReduceHandlerFree);
+                    groupMaximalReduceHandlerFree = groupMaximalReduceHandlerMaxSize; 
+                }else{
+                    GroupMaximalReduceHandler[] increased = new GroupMaximalReduceHandler[neededLength];
+                    System.arraycopy(groupMaximalReduceHandler, 0, increased, 0, groupMaximalReduceHandler.length);
+                    groupMaximalReduceHandler = increased;
+                    System.arraycopy(groupMaximalReduceHandlerRecycled, 0, groupMaximalReduceHandler, groupMaximalReduceHandlerFree, groupMaximalReduceHandlerRecycledCount);
+                    groupMaximalReduceHandlerFree += groupMaximalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(groupMaximalReduceHandlerRecycled, 0, groupMaximalReduceHandler, groupMaximalReduceHandlerFree, groupMaximalReduceHandlerRecycledCount);
+                groupMaximalReduceHandlerFree += groupMaximalReduceHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < groupMaximalReduceHandlerRecycled.length; i++){
+                groupMaximalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = interleaveMinimalReduceHandlerFree + interleaveMinimalReduceHandlerRecycledCount; 
+            if(neededLength > interleaveMinimalReduceHandler.length){
+                if(neededLength > interleaveMinimalReduceHandlerMaxSize){
+                    neededLength = interleaveMinimalReduceHandlerMaxSize;
+                    InterleaveMinimalReduceHandler[] increased = new InterleaveMinimalReduceHandler[neededLength];
+                    System.arraycopy(interleaveMinimalReduceHandler, 0, increased, 0, interleaveMinimalReduceHandler.length);
+                    interleaveMinimalReduceHandler = increased;		        
+                    System.arraycopy(interleaveMinimalReduceHandlerRecycled, 0, interleaveMinimalReduceHandler, interleaveMinimalReduceHandlerFree, interleaveMinimalReduceHandlerMaxSize - interleaveMinimalReduceHandlerFree);
+                    interleaveMinimalReduceHandlerFree = interleaveMinimalReduceHandlerMaxSize; 
+                }else{
+                    InterleaveMinimalReduceHandler[] increased = new InterleaveMinimalReduceHandler[neededLength];
+                    System.arraycopy(interleaveMinimalReduceHandler, 0, increased, 0, interleaveMinimalReduceHandler.length);
+                    interleaveMinimalReduceHandler = increased;
+                    System.arraycopy(interleaveMinimalReduceHandlerRecycled, 0, interleaveMinimalReduceHandler, interleaveMinimalReduceHandlerFree, interleaveMinimalReduceHandlerRecycledCount);
+                    interleaveMinimalReduceHandlerFree += interleaveMinimalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(interleaveMinimalReduceHandlerRecycled, 0, interleaveMinimalReduceHandler, interleaveMinimalReduceHandlerFree, interleaveMinimalReduceHandlerRecycledCount);
+                interleaveMinimalReduceHandlerFree += interleaveMinimalReduceHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < interleaveMinimalReduceHandlerRecycled.length; i++){
+                interleaveMinimalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = interleaveMaximalReduceHandlerFree + interleaveMaximalReduceHandlerRecycledCount; 
+            if(neededLength > interleaveMaximalReduceHandler.length){
+                if(neededLength > interleaveMaximalReduceHandlerMaxSize){
+                    neededLength = interleaveMaximalReduceHandlerMaxSize;
+                    InterleaveMaximalReduceHandler[] increased = new InterleaveMaximalReduceHandler[neededLength];
+                    System.arraycopy(interleaveMaximalReduceHandler, 0, increased, 0, interleaveMaximalReduceHandler.length);
+                    interleaveMaximalReduceHandler = increased;		        
+                    System.arraycopy(interleaveMaximalReduceHandlerRecycled, 0, interleaveMaximalReduceHandler, interleaveMaximalReduceHandlerFree, interleaveMaximalReduceHandlerMaxSize - interleaveMaximalReduceHandlerFree);
+                    interleaveMaximalReduceHandlerFree = interleaveMaximalReduceHandlerMaxSize; 
+                }else{
+                    InterleaveMaximalReduceHandler[] increased = new InterleaveMaximalReduceHandler[neededLength];
+                    System.arraycopy(interleaveMaximalReduceHandler, 0, increased, 0, interleaveMaximalReduceHandler.length);
+                    interleaveMaximalReduceHandler = increased;
+                    System.arraycopy(interleaveMaximalReduceHandlerRecycled, 0, interleaveMaximalReduceHandler, interleaveMaximalReduceHandlerFree, interleaveMaximalReduceHandlerRecycledCount);
+                    interleaveMaximalReduceHandlerFree += interleaveMaximalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(interleaveMaximalReduceHandlerRecycled, 0, interleaveMaximalReduceHandler, interleaveMaximalReduceHandlerFree, interleaveMaximalReduceHandlerRecycledCount);
+                interleaveMaximalReduceHandlerFree += interleaveMaximalReduceHandlerRecycledCount;
+            }
+            
+            for(int i = 0; i < interleaveMaximalReduceHandlerRecycled.length; i++){
+                interleaveMaximalReduceHandlerRecycled[i] = null;
+            }
+	    }else{
+            int neededLength = particleHandlerFree + particleHandlerRecycledCount; 
+            if(neededLength > particleHandler.length){
+                if(neededLength > particleHandlerMaxSize){
+                    neededLength = particleHandlerMaxSize;
+                    ParticleHandler[] increased = new ParticleHandler[neededLength];
+                    System.arraycopy(particleHandler, 0, increased, 0, particleHandler.length);
+                    particleHandler = increased;		        
+                    System.arraycopy(particleHandlerRecycled, 0, particleHandler, particleHandlerFree, particleHandlerMaxSize - particleHandlerFree);
+                    particleHandlerFree = particleHandlerMaxSize; 
+                }else{
+                    ParticleHandler[] increased = new ParticleHandler[neededLength];
+                    System.arraycopy(particleHandler, 0, increased, 0, particleHandler.length);
+                    particleHandler = increased;
+                    System.arraycopy(particleHandlerRecycled, 0, particleHandler, particleHandlerFree, particleHandlerRecycledCount);
+                    particleHandlerFree += particleHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(particleHandlerRecycled, 0, particleHandler, particleHandlerFree, particleHandlerRecycledCount);
+                particleHandlerFree += particleHandlerRecycledCount;
+            }
+            
+            if(particleHandlerAverageUse != 0)particleHandlerAverageUse = (particleHandlerAverageUse + particleHandlerEffectivellyUsed)/2;
+            else particleHandlerAverageUse = particleHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < particleHandlerRecycled.length; i++){
+                particleHandlerRecycled[i] = null;
+            }		
+            
+            
+            neededLength = choiceHandlerFree + choiceHandlerRecycledCount; 
+            if(neededLength > choiceHandler.length){
+                if(neededLength > choiceHandlerMaxSize){
+                    neededLength = choiceHandlerMaxSize;
+                    ChoiceHandler[] increased = new ChoiceHandler[neededLength];
+                    System.arraycopy(choiceHandler, 0, increased, 0, choiceHandler.length);
+                    choiceHandler = increased;		        
+                    System.arraycopy(choiceHandlerRecycled, 0, choiceHandler, choiceHandlerFree, choiceHandlerMaxSize - choiceHandlerFree);
+                    choiceHandlerFree = choiceHandlerMaxSize; 
+                }else{
+                    ChoiceHandler[] increased = new ChoiceHandler[neededLength];
+                    System.arraycopy(choiceHandler, 0, increased, 0, choiceHandler.length);
+                    choiceHandler = increased;
+                    System.arraycopy(choiceHandlerRecycled, 0, choiceHandler, choiceHandlerFree, choiceHandlerRecycledCount);
+                    choiceHandlerFree += choiceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(choiceHandlerRecycled, 0, choiceHandler, choiceHandlerFree, choiceHandlerRecycledCount);
+                choiceHandlerFree += choiceHandlerRecycledCount;
+            }
+            
+            if(choiceHandlerAverageUse != 0)choiceHandlerAverageUse = (choiceHandlerAverageUse + choiceHandlerEffectivellyUsed)/2;
+            else choiceHandlerAverageUse = choiceHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < choiceHandlerRecycled.length; i++){
+                choiceHandlerRecycled[i] = null;
+            }	            
+            
+            neededLength = groupHandlerFree + groupHandlerRecycledCount; 
+            if(neededLength > groupHandler.length){
+                if(neededLength > groupHandlerMaxSize){
+                    neededLength = groupHandlerMaxSize;
+                    GroupHandler[] increased = new GroupHandler[neededLength];
+                    System.arraycopy(groupHandler, 0, increased, 0, groupHandler.length);
+                    groupHandler = increased;		        
+                    System.arraycopy(groupHandlerRecycled, 0, groupHandler, groupHandlerFree, groupHandlerMaxSize - groupHandlerFree);
+                    groupHandlerFree = groupHandlerMaxSize; 
+                }else{
+                    GroupHandler[] increased = new GroupHandler[neededLength];
+                    System.arraycopy(groupHandler, 0, increased, 0, groupHandler.length);
+                    groupHandler = increased;
+                    System.arraycopy(groupHandlerRecycled, 0, groupHandler, groupHandlerFree, groupHandlerRecycledCount);
+                    groupHandlerFree += groupHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(groupHandlerRecycled, 0, groupHandler, groupHandlerFree, groupHandlerRecycledCount);
+                groupHandlerFree += groupHandlerRecycledCount;
+            }
+            
+            if(groupHandlerAverageUse != 0)groupHandlerAverageUse = (groupHandlerAverageUse + groupHandlerEffectivellyUsed)/2;
+            else groupHandlerAverageUse = groupHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < groupHandlerRecycled.length; i++){
+                groupHandlerRecycled[i] = null;
+            }	
+    
+            
+            neededLength = grammarHandlerFree + grammarHandlerRecycledCount; 
+            if(neededLength > grammarHandler.length){
+                if(neededLength > grammarHandlerMaxSize){
+                    neededLength = grammarHandlerMaxSize;
+                    GrammarHandler[] increased = new GrammarHandler[neededLength];
+                    System.arraycopy(grammarHandler, 0, increased, 0, grammarHandler.length);
+                    grammarHandler = increased;		        
+                    System.arraycopy(grammarHandlerRecycled, 0, grammarHandler, grammarHandlerFree, grammarHandlerMaxSize - grammarHandlerFree);
+                    grammarHandlerFree = grammarHandlerMaxSize; 
+                }else{
+                    GrammarHandler[] increased = new GrammarHandler[neededLength];
+                    System.arraycopy(grammarHandler, 0, increased, 0, grammarHandler.length);
+                    grammarHandler = increased;
+                    System.arraycopy(grammarHandlerRecycled, 0, grammarHandler, grammarHandlerFree, grammarHandlerRecycledCount);
+                    grammarHandlerFree += grammarHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(grammarHandlerRecycled, 0, grammarHandler, grammarHandlerFree, grammarHandlerRecycledCount);
+                grammarHandlerFree += grammarHandlerRecycledCount;
+            }
+            
+            if(grammarHandlerAverageUse != 0)grammarHandlerAverageUse = (grammarHandlerAverageUse + grammarHandlerEffectivellyUsed)/2;
+            else grammarHandlerAverageUse = grammarHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < grammarHandlerRecycled.length; i++){
+                grammarHandlerRecycled[i] = null;
+            }	
+            
+            
+            
+            neededLength = uinterleaveHandlerFree + uinterleaveHandlerRecycledCount; 
+            if(neededLength > uinterleaveHandler.length){
+                if(neededLength > uinterleaveHandlerMaxSize){
+                    neededLength = uinterleaveHandlerMaxSize;
+                    UInterleaveHandler[] increased = new UInterleaveHandler[neededLength];
+                    System.arraycopy(uinterleaveHandler, 0, increased, 0, uinterleaveHandler.length);
+                    uinterleaveHandler = increased;		        
+                    System.arraycopy(uinterleaveHandlerRecycled, 0, uinterleaveHandler, uinterleaveHandlerFree, uinterleaveHandlerMaxSize - uinterleaveHandlerFree);
+                    uinterleaveHandlerFree = uinterleaveHandlerMaxSize; 
+                }else{
+                    UInterleaveHandler[] increased = new UInterleaveHandler[neededLength];
+                    System.arraycopy(uinterleaveHandler, 0, increased, 0, uinterleaveHandler.length);
+                    uinterleaveHandler = increased;
+                    System.arraycopy(uinterleaveHandlerRecycled, 0, uinterleaveHandler, uinterleaveHandlerFree, uinterleaveHandlerRecycledCount);
+                    uinterleaveHandlerFree += uinterleaveHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(uinterleaveHandlerRecycled, 0, uinterleaveHandler, uinterleaveHandlerFree, uinterleaveHandlerRecycledCount);
+                uinterleaveHandlerFree += uinterleaveHandlerRecycledCount;
+            }
+            
+            if(uinterleaveHandlerAverageUse != 0)uinterleaveHandlerAverageUse = (uinterleaveHandlerAverageUse + uinterleaveHandlerEffectivellyUsed)/2;
+            else uinterleaveHandlerAverageUse = uinterleaveHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < uinterleaveHandlerRecycled.length; i++){
+                uinterleaveHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = minterleaveHandlerFree + minterleaveHandlerRecycledCount; 
+            if(neededLength > minterleaveHandler.length){
+                if(neededLength > minterleaveHandlerMaxSize){
+                    neededLength = minterleaveHandlerMaxSize;
+                    MInterleaveHandler[] increased = new MInterleaveHandler[neededLength];
+                    System.arraycopy(minterleaveHandler, 0, increased, 0, minterleaveHandler.length);
+                    minterleaveHandler = increased;		        
+                    System.arraycopy(minterleaveHandlerRecycled, 0, minterleaveHandler, minterleaveHandlerFree, minterleaveHandlerMaxSize - minterleaveHandlerFree);
+                    minterleaveHandlerFree = minterleaveHandlerMaxSize; 
+                }else{
+                    MInterleaveHandler[] increased = new MInterleaveHandler[neededLength];
+                    System.arraycopy(minterleaveHandler, 0, increased, 0, minterleaveHandler.length);
+                    minterleaveHandler = increased;
+                    System.arraycopy(minterleaveHandlerRecycled, 0, minterleaveHandler, minterleaveHandlerFree, minterleaveHandlerRecycledCount);
+                    minterleaveHandlerFree += minterleaveHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(minterleaveHandlerRecycled, 0, minterleaveHandler, minterleaveHandlerFree, minterleaveHandlerRecycledCount);
+                minterleaveHandlerFree += minterleaveHandlerRecycledCount;
+            }
+            
+            if(minterleaveHandlerAverageUse != 0)minterleaveHandlerAverageUse = (minterleaveHandlerAverageUse + minterleaveHandlerEffectivellyUsed)/2;
+            else minterleaveHandlerAverageUse = minterleaveHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < minterleaveHandlerRecycled.length; i++){
+                minterleaveHandlerRecycled[i] = null;
+            }	
+            
+            neededLength = sinterleaveHandlerFree + sinterleaveHandlerRecycledCount; 
+            if(neededLength > sinterleaveHandler.length){
+                if(neededLength > sinterleaveHandlerMaxSize){
+                    neededLength = sinterleaveHandlerMaxSize;
+                    SInterleaveHandler[] increased = new SInterleaveHandler[neededLength];
+                    System.arraycopy(sinterleaveHandler, 0, increased, 0, sinterleaveHandler.length);
+                    sinterleaveHandler = increased;		        
+                    System.arraycopy(sinterleaveHandlerRecycled, 0, sinterleaveHandler, sinterleaveHandlerFree, sinterleaveHandlerMaxSize - sinterleaveHandlerFree);
+                    sinterleaveHandlerFree = sinterleaveHandlerMaxSize; 
+                }else{
+                    SInterleaveHandler[] increased = new SInterleaveHandler[neededLength];
+                    System.arraycopy(sinterleaveHandler, 0, increased, 0, sinterleaveHandler.length);
+                    sinterleaveHandler = increased;
+                    System.arraycopy(sinterleaveHandlerRecycled, 0, sinterleaveHandler, sinterleaveHandlerFree, sinterleaveHandlerRecycledCount);
+                    sinterleaveHandlerFree += sinterleaveHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(sinterleaveHandlerRecycled, 0, sinterleaveHandler, sinterleaveHandlerFree, sinterleaveHandlerRecycledCount);
+                sinterleaveHandlerFree += sinterleaveHandlerRecycledCount;
+            }
+            
+            if(sinterleaveHandlerAverageUse != 0)sinterleaveHandlerAverageUse = (sinterleaveHandlerAverageUse + sinterleaveHandlerEffectivellyUsed)/2;
+            else sinterleaveHandlerAverageUse = sinterleaveHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < sinterleaveHandlerRecycled.length; i++){
+                sinterleaveHandlerRecycled[i] = null;
+            }	
+            
+            neededLength = refHandlerFree + refHandlerRecycledCount; 
+            if(neededLength > refHandler.length){
+                if(neededLength > refHandlerMaxSize){
+                    neededLength = refHandlerMaxSize;
+                    RefHandler[] increased = new RefHandler[neededLength];
+                    System.arraycopy(refHandler, 0, increased, 0, refHandler.length);
+                    refHandler = increased;		        
+                    System.arraycopy(refHandlerRecycled, 0, refHandler, refHandlerFree, refHandlerMaxSize - refHandlerFree);
+                    refHandlerFree = refHandlerMaxSize; 
+                }else{
+                    RefHandler[] increased = new RefHandler[neededLength];
+                    System.arraycopy(refHandler, 0, increased, 0, refHandler.length);
+                    refHandler = increased;
+                    System.arraycopy(refHandlerRecycled, 0, refHandler, refHandlerFree, refHandlerRecycledCount);
+                    refHandlerFree += refHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(refHandlerRecycled, 0, refHandler, refHandlerFree, refHandlerRecycledCount);
+                refHandlerFree += refHandlerRecycledCount;
+            }
+            
+            if(refHandlerAverageUse != 0)refHandlerAverageUse = (refHandlerAverageUse + refHandlerEffectivellyUsed)/2;
+            else refHandlerAverageUse = refHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < refHandlerRecycled.length; i++){
+                refHandlerRecycled[i] = null;
+            }	
+            
+            neededLength = elementHandlerFree + elementHandlerRecycledCount; 
+            if(neededLength > elementHandler.length){
+                if(neededLength > elementHandlerMaxSize){
+                    neededLength = elementHandlerMaxSize;
+                    ElementHandler[] increased = new ElementHandler[neededLength];
+                    System.arraycopy(elementHandler, 0, increased, 0, elementHandler.length);
+                    elementHandler = increased;		        
+                    System.arraycopy(elementHandlerRecycled, 0, elementHandler, elementHandlerFree, elementHandlerMaxSize - elementHandlerFree);
+                    elementHandlerFree = elementHandlerMaxSize; 
+                }else{
+                    ElementHandler[] increased = new ElementHandler[neededLength];
+                    System.arraycopy(elementHandler, 0, increased, 0, elementHandler.length);
+                    elementHandler = increased;
+                    System.arraycopy(elementHandlerRecycled, 0, elementHandler, elementHandlerFree, elementHandlerRecycledCount);
+                    elementHandlerFree += elementHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(elementHandlerRecycled, 0, elementHandler, elementHandlerFree, elementHandlerRecycledCount);
+                elementHandlerFree += elementHandlerRecycledCount;
+            }
+            
+            if(elementHandlerAverageUse != 0)elementHandlerAverageUse = (elementHandlerAverageUse + elementHandlerEffectivellyUsed)/2;
+            else elementHandlerAverageUse = elementHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < elementHandlerRecycled.length; i++){
+                elementHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = attributeHandlerFree + attributeHandlerRecycledCount; 
+            if(neededLength > attributeHandler.length){
+                if(neededLength > attributeHandlerMaxSize){
+                    neededLength = attributeHandlerMaxSize;
+                    AttributeHandler[] increased = new AttributeHandler[neededLength];
+                    System.arraycopy(attributeHandler, 0, increased, 0, attributeHandler.length);
+                    attributeHandler = increased;		        
+                    System.arraycopy(attributeHandlerRecycled, 0, attributeHandler, attributeHandlerFree, attributeHandlerMaxSize - attributeHandlerFree);
+                    attributeHandlerFree = attributeHandlerMaxSize; 
+                }else{
+                    AttributeHandler[] increased = new AttributeHandler[neededLength];
+                    System.arraycopy(attributeHandler, 0, increased, 0, attributeHandler.length);
+                    attributeHandler = increased;
+                    System.arraycopy(attributeHandlerRecycled, 0, attributeHandler, attributeHandlerFree, attributeHandlerRecycledCount);
+                    attributeHandlerFree += attributeHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(attributeHandlerRecycled, 0, attributeHandler, attributeHandlerFree, attributeHandlerRecycledCount);
+                attributeHandlerFree += attributeHandlerRecycledCount;
+            }
+            
+            if(attributeHandlerAverageUse != 0)attributeHandlerAverageUse = (attributeHandlerAverageUse + attributeHandlerEffectivellyUsed)/2;
+            else attributeHandlerAverageUse = attributeHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < attributeHandlerRecycled.length; i++){
+                attributeHandlerRecycled[i] = null;
+            }	
+            
+            
+            
+            neededLength = exceptPatternHandlerFree + exceptPatternHandlerRecycledCount; 
+            if(neededLength > exceptPatternHandler.length){
+                if(neededLength > exceptPatternHandlerMaxSize){
+                    neededLength = exceptPatternHandlerMaxSize;
+                    ExceptPatternHandler[] increased = new ExceptPatternHandler[neededLength];
+                    System.arraycopy(exceptPatternHandler, 0, increased, 0, exceptPatternHandler.length);
+                    exceptPatternHandler = increased;		        
+                    System.arraycopy(exceptPatternHandlerRecycled, 0, exceptPatternHandler, exceptPatternHandlerFree, exceptPatternHandlerMaxSize - exceptPatternHandlerFree);
+                    exceptPatternHandlerFree = exceptPatternHandlerMaxSize; 
+                }else{
+                    ExceptPatternHandler[] increased = new ExceptPatternHandler[neededLength];
+                    System.arraycopy(exceptPatternHandler, 0, increased, 0, exceptPatternHandler.length);
+                    exceptPatternHandler = increased;
+                    System.arraycopy(exceptPatternHandlerRecycled, 0, exceptPatternHandler, exceptPatternHandlerFree, exceptPatternHandlerRecycledCount);
+                    exceptPatternHandlerFree += exceptPatternHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(exceptPatternHandlerRecycled, 0, exceptPatternHandler, exceptPatternHandlerFree, exceptPatternHandlerRecycledCount);
+                exceptPatternHandlerFree += exceptPatternHandlerRecycledCount;
+            }
+            
+            if(exceptPatternHandlerAverageUse != 0)exceptPatternHandlerAverageUse = (exceptPatternHandlerAverageUse + exceptPatternHandlerEffectivellyUsed)/2;
+            else exceptPatternHandlerAverageUse = exceptPatternHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < exceptPatternHandlerRecycled.length; i++){
+                exceptPatternHandlerRecycled[i] = null;
+            }	
+            
+            neededLength = listPatternHandlerFree + listPatternHandlerRecycledCount; 
+            if(neededLength > listPatternHandler.length){
+                if(neededLength > listPatternHandlerMaxSize){
+                    neededLength = listPatternHandlerMaxSize;
+                    ListPatternHandler[] increased = new ListPatternHandler[neededLength];
+                    System.arraycopy(listPatternHandler, 0, increased, 0, listPatternHandler.length);
+                    listPatternHandler = increased;		        
+                    System.arraycopy(listPatternHandlerRecycled, 0, listPatternHandler, listPatternHandlerFree, listPatternHandlerMaxSize - listPatternHandlerFree);
+                    listPatternHandlerFree = listPatternHandlerMaxSize; 
+                }else{
+                    ListPatternHandler[] increased = new ListPatternHandler[neededLength];
+                    System.arraycopy(listPatternHandler, 0, increased, 0, listPatternHandler.length);
+                    listPatternHandler = increased;
+                    System.arraycopy(listPatternHandlerRecycled, 0, listPatternHandler, listPatternHandlerFree, listPatternHandlerRecycledCount);
+                    listPatternHandlerFree += listPatternHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(listPatternHandlerRecycled, 0, listPatternHandler, listPatternHandlerFree, listPatternHandlerRecycledCount);
+                listPatternHandlerFree += listPatternHandlerRecycledCount;
+            }
+            
+            if(listPatternHandlerAverageUse != 0)listPatternHandlerAverageUse = (listPatternHandlerAverageUse + listPatternHandlerEffectivellyUsed)/2;
+            else listPatternHandlerAverageUse = listPatternHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < listPatternHandlerRecycled.length; i++){
+                listPatternHandlerRecycled[i] = null;
+            }	
+            
+            
+            
+            
+            
+            neededLength = groupDoubleHandlerFree + groupDoubleHandlerRecycledCount; 
+            if(neededLength > groupDoubleHandler.length){
+                if(neededLength > groupDoubleHandlerMaxSize){
+                    neededLength = groupDoubleHandlerMaxSize;
+                    GroupDoubleHandler[] increased = new GroupDoubleHandler[neededLength];
+                    System.arraycopy(groupDoubleHandler, 0, increased, 0, groupDoubleHandler.length);
+                    groupDoubleHandler = increased;		        
+                    System.arraycopy(groupDoubleHandlerRecycled, 0, groupDoubleHandler, groupDoubleHandlerFree, groupDoubleHandlerMaxSize - groupDoubleHandlerFree);
+                    groupDoubleHandlerFree = groupDoubleHandlerMaxSize; 
+                }else{
+                    GroupDoubleHandler[] increased = new GroupDoubleHandler[neededLength];
+                    System.arraycopy(groupDoubleHandler, 0, increased, 0, groupDoubleHandler.length);
+                    groupDoubleHandler = increased;
+                    System.arraycopy(groupDoubleHandlerRecycled, 0, groupDoubleHandler, groupDoubleHandlerFree, groupDoubleHandlerRecycledCount);
+                    groupDoubleHandlerFree += groupDoubleHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(groupDoubleHandlerRecycled, 0, groupDoubleHandler, groupDoubleHandlerFree, groupDoubleHandlerRecycledCount);
+                groupDoubleHandlerFree += groupDoubleHandlerRecycledCount;
+            }
+            
+            if(groupDoubleHandlerAverageUse != 0)groupDoubleHandlerAverageUse = (groupDoubleHandlerAverageUse + groupDoubleHandlerEffectivellyUsed)/2;
+            else groupDoubleHandlerAverageUse = groupDoubleHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < groupDoubleHandlerRecycled.length; i++){
+                groupDoubleHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = interleaveDoubleHandlerFree + interleaveDoubleHandlerRecycledCount; 
+            if(neededLength > interleaveDoubleHandler.length){
+                if(neededLength > interleaveDoubleHandlerMaxSize){
+                    neededLength = interleaveDoubleHandlerMaxSize;
+                    InterleaveDoubleHandler[] increased = new InterleaveDoubleHandler[neededLength];
+                    System.arraycopy(interleaveDoubleHandler, 0, increased, 0, interleaveDoubleHandler.length);
+                    interleaveDoubleHandler = increased;		        
+                    System.arraycopy(interleaveDoubleHandlerRecycled, 0, interleaveDoubleHandler, interleaveDoubleHandlerFree, interleaveDoubleHandlerMaxSize - interleaveDoubleHandlerFree);
+                    interleaveDoubleHandlerFree = interleaveDoubleHandlerMaxSize; 
+                }else{
+                    InterleaveDoubleHandler[] increased = new InterleaveDoubleHandler[neededLength];
+                    System.arraycopy(interleaveDoubleHandler, 0, increased, 0, interleaveDoubleHandler.length);
+                    interleaveDoubleHandler = increased;
+                    System.arraycopy(interleaveDoubleHandlerRecycled, 0, interleaveDoubleHandler, interleaveDoubleHandlerFree, interleaveDoubleHandlerRecycledCount);
+                    interleaveDoubleHandlerFree += interleaveDoubleHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(interleaveDoubleHandlerRecycled, 0, interleaveDoubleHandler, interleaveDoubleHandlerFree, interleaveDoubleHandlerRecycledCount);
+                interleaveDoubleHandlerFree += interleaveDoubleHandlerRecycledCount;
+            }
+            
+            if(interleaveDoubleHandlerAverageUse != 0)interleaveDoubleHandlerAverageUse = (interleaveDoubleHandlerAverageUse + interleaveDoubleHandlerEffectivellyUsed)/2;
+            else interleaveDoubleHandlerAverageUse = interleaveDoubleHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < interleaveDoubleHandlerRecycled.length; i++){
+                interleaveDoubleHandlerRecycled[i] = null;
+            }	
+            
+            
+            
+            
+            neededLength = groupMinimalReduceCountHandlerFree + groupMinimalReduceCountHandlerRecycledCount; 
+            if(neededLength > groupMinimalReduceCountHandler.length){
+                if(neededLength > groupMinimalReduceCountHandlerMaxSize){
+                    neededLength = groupMinimalReduceCountHandlerMaxSize;
+                    GroupMinimalReduceCountHandler[] increased = new GroupMinimalReduceCountHandler[neededLength];
+                    System.arraycopy(groupMinimalReduceCountHandler, 0, increased, 0, groupMinimalReduceCountHandler.length);
+                    groupMinimalReduceCountHandler = increased;		        
+                    System.arraycopy(groupMinimalReduceCountHandlerRecycled, 0, groupMinimalReduceCountHandler, groupMinimalReduceCountHandlerFree, groupMinimalReduceCountHandlerMaxSize - groupMinimalReduceCountHandlerFree);
+                    groupMinimalReduceCountHandlerFree = groupMinimalReduceCountHandlerMaxSize; 
+                }else{
+                    GroupMinimalReduceCountHandler[] increased = new GroupMinimalReduceCountHandler[neededLength];
+                    System.arraycopy(groupMinimalReduceCountHandler, 0, increased, 0, groupMinimalReduceCountHandler.length);
+                    groupMinimalReduceCountHandler = increased;
+                    System.arraycopy(groupMinimalReduceCountHandlerRecycled, 0, groupMinimalReduceCountHandler, groupMinimalReduceCountHandlerFree, groupMinimalReduceCountHandlerRecycledCount);
+                    groupMinimalReduceCountHandlerFree += groupMinimalReduceCountHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(groupMinimalReduceCountHandlerRecycled, 0, groupMinimalReduceCountHandler, groupMinimalReduceCountHandlerFree, groupMinimalReduceCountHandlerRecycledCount);
+                groupMinimalReduceCountHandlerFree += groupMinimalReduceCountHandlerRecycledCount;
+            }
+            
+            if(groupMinimalReduceCountHandlerAverageUse != 0)groupMinimalReduceCountHandlerAverageUse = (groupMinimalReduceCountHandlerAverageUse + groupMinimalReduceCountHandlerEffectivellyUsed)/2;
+            else groupMinimalReduceCountHandlerAverageUse = groupMinimalReduceCountHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < groupMinimalReduceCountHandlerRecycled.length; i++){
+                groupMinimalReduceCountHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = groupMaximalReduceCountHandlerFree + groupMaximalReduceCountHandlerRecycledCount; 
+            if(neededLength > groupMaximalReduceCountHandler.length){
+                if(neededLength > groupMaximalReduceCountHandlerMaxSize){
+                    neededLength = groupMaximalReduceCountHandlerMaxSize;
+                    GroupMaximalReduceCountHandler[] increased = new GroupMaximalReduceCountHandler[neededLength];
+                    System.arraycopy(groupMaximalReduceCountHandler, 0, increased, 0, groupMaximalReduceCountHandler.length);
+                    groupMaximalReduceCountHandler = increased;		        
+                    System.arraycopy(groupMaximalReduceCountHandlerRecycled, 0, groupMaximalReduceCountHandler, groupMaximalReduceCountHandlerFree, groupMaximalReduceCountHandlerMaxSize - groupMaximalReduceCountHandlerFree);
+                    groupMaximalReduceCountHandlerFree = groupMaximalReduceCountHandlerMaxSize; 
+                }else{
+                    GroupMaximalReduceCountHandler[] increased = new GroupMaximalReduceCountHandler[neededLength];
+                    System.arraycopy(groupMaximalReduceCountHandler, 0, increased, 0, groupMaximalReduceCountHandler.length);
+                    groupMaximalReduceCountHandler = increased;
+                    System.arraycopy(groupMaximalReduceCountHandlerRecycled, 0, groupMaximalReduceCountHandler, groupMaximalReduceCountHandlerFree, groupMaximalReduceCountHandlerRecycledCount);
+                    groupMaximalReduceCountHandlerFree += groupMaximalReduceCountHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(groupMaximalReduceCountHandlerRecycled, 0, groupMaximalReduceCountHandler, groupMaximalReduceCountHandlerFree, groupMaximalReduceCountHandlerRecycledCount);
+                groupMaximalReduceCountHandlerFree += groupMaximalReduceCountHandlerRecycledCount;
+            }
+            
+            if(groupMaximalReduceCountHandlerAverageUse != 0)groupMaximalReduceCountHandlerAverageUse = (groupMaximalReduceCountHandlerAverageUse + groupMaximalReduceCountHandlerEffectivellyUsed)/2;
+            else groupMaximalReduceCountHandlerAverageUse = groupMaximalReduceCountHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < groupMaximalReduceCountHandlerRecycled.length; i++){
+                groupMaximalReduceCountHandlerRecycled[i] = null;
+            }	
+            
+            neededLength = interleaveMinimalReduceCountHandlerFree + interleaveMinimalReduceCountHandlerRecycledCount; 
+            if(neededLength > interleaveMinimalReduceCountHandler.length){
+                if(neededLength > interleaveMinimalReduceCountHandlerMaxSize){
+                    neededLength = interleaveMinimalReduceCountHandlerMaxSize;
+                    InterleaveMinimalReduceCountHandler[] increased = new InterleaveMinimalReduceCountHandler[neededLength];
+                    System.arraycopy(interleaveMinimalReduceCountHandler, 0, increased, 0, interleaveMinimalReduceCountHandler.length);
+                    interleaveMinimalReduceCountHandler = increased;		        
+                    System.arraycopy(interleaveMinimalReduceCountHandlerRecycled, 0, interleaveMinimalReduceCountHandler, interleaveMinimalReduceCountHandlerFree, interleaveMinimalReduceCountHandlerMaxSize - interleaveMinimalReduceCountHandlerFree);
+                    interleaveMinimalReduceCountHandlerFree = interleaveMinimalReduceCountHandlerMaxSize; 
+                }else{
+                    InterleaveMinimalReduceCountHandler[] increased = new InterleaveMinimalReduceCountHandler[neededLength];
+                    System.arraycopy(interleaveMinimalReduceCountHandler, 0, increased, 0, interleaveMinimalReduceCountHandler.length);
+                    interleaveMinimalReduceCountHandler = increased;
+                    System.arraycopy(interleaveMinimalReduceCountHandlerRecycled, 0, interleaveMinimalReduceCountHandler, interleaveMinimalReduceCountHandlerFree, interleaveMinimalReduceCountHandlerRecycledCount);
+                    interleaveMinimalReduceCountHandlerFree += interleaveMinimalReduceCountHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(interleaveMinimalReduceCountHandlerRecycled, 0, interleaveMinimalReduceCountHandler, interleaveMinimalReduceCountHandlerFree, interleaveMinimalReduceCountHandlerRecycledCount);
+                interleaveMinimalReduceCountHandlerFree += interleaveMinimalReduceCountHandlerRecycledCount;
+            }
+            
+            if(interleaveMinimalReduceCountHandlerAverageUse != 0)interleaveMinimalReduceCountHandlerAverageUse = (interleaveMinimalReduceCountHandlerAverageUse + interleaveMinimalReduceCountHandlerEffectivellyUsed)/2;
+            else interleaveMinimalReduceCountHandlerAverageUse = interleaveMinimalReduceCountHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < interleaveMinimalReduceCountHandlerRecycled.length; i++){
+                interleaveMinimalReduceCountHandlerRecycled[i] = null;
+            }	
+            
+            neededLength = interleaveMaximalReduceCountHandlerFree + interleaveMaximalReduceCountHandlerRecycledCount; 
+            if(neededLength > interleaveMaximalReduceCountHandler.length){
+                if(neededLength > interleaveMaximalReduceCountHandlerMaxSize){
+                    neededLength = interleaveMaximalReduceCountHandlerMaxSize;
+                    InterleaveMaximalReduceCountHandler[] increased = new InterleaveMaximalReduceCountHandler[neededLength];
+                    System.arraycopy(interleaveMaximalReduceCountHandler, 0, increased, 0, interleaveMaximalReduceCountHandler.length);
+                    interleaveMaximalReduceCountHandler = increased;		        
+                    System.arraycopy(interleaveMaximalReduceCountHandlerRecycled, 0, interleaveMaximalReduceCountHandler, interleaveMaximalReduceCountHandlerFree, interleaveMaximalReduceCountHandlerMaxSize - interleaveMaximalReduceCountHandlerFree);
+                    interleaveMaximalReduceCountHandlerFree = interleaveMaximalReduceCountHandlerMaxSize; 
+                }else{
+                    InterleaveMaximalReduceCountHandler[] increased = new InterleaveMaximalReduceCountHandler[neededLength];
+                    System.arraycopy(interleaveMaximalReduceCountHandler, 0, increased, 0, interleaveMaximalReduceCountHandler.length);
+                    interleaveMaximalReduceCountHandler = increased;
+                    System.arraycopy(interleaveMaximalReduceCountHandlerRecycled, 0, interleaveMaximalReduceCountHandler, interleaveMaximalReduceCountHandlerFree, interleaveMaximalReduceCountHandlerRecycledCount);
+                    interleaveMaximalReduceCountHandlerFree += interleaveMaximalReduceCountHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(interleaveMaximalReduceCountHandlerRecycled, 0, interleaveMaximalReduceCountHandler, interleaveMaximalReduceCountHandlerFree, interleaveMaximalReduceCountHandlerRecycledCount);
+                interleaveMaximalReduceCountHandlerFree += interleaveMaximalReduceCountHandlerRecycledCount;
+            }
+            
+            if(interleaveMaximalReduceCountHandlerAverageUse != 0)interleaveMaximalReduceCountHandlerAverageUse = (interleaveMaximalReduceCountHandlerAverageUse + interleaveMaximalReduceCountHandlerEffectivellyUsed)/2;
+            else interleaveMaximalReduceCountHandlerAverageUse = interleaveMaximalReduceCountHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < interleaveMaximalReduceCountHandlerRecycled.length; i++){
+                interleaveMaximalReduceCountHandlerRecycled[i] = null;
+            }	
+            
+            
+            
+            
+            neededLength = grammarMinimalReduceHandlerFree + grammarMinimalReduceHandlerRecycledCount; 
+            if(neededLength > grammarMinimalReduceHandler.length){
+                if(neededLength > grammarMinimalReduceHandlerMaxSize){
+                    neededLength = grammarMinimalReduceHandlerMaxSize;
+                    GrammarMinimalReduceHandler[] increased = new GrammarMinimalReduceHandler[neededLength];
+                    System.arraycopy(grammarMinimalReduceHandler, 0, increased, 0, grammarMinimalReduceHandler.length);
+                    grammarMinimalReduceHandler = increased;		        
+                    System.arraycopy(grammarMinimalReduceHandlerRecycled, 0, grammarMinimalReduceHandler, grammarMinimalReduceHandlerFree, grammarMinimalReduceHandlerMaxSize - grammarMinimalReduceHandlerFree);
+                    grammarMinimalReduceHandlerFree = grammarMinimalReduceHandlerMaxSize; 
+                }else{
+                    GrammarMinimalReduceHandler[] increased = new GrammarMinimalReduceHandler[neededLength];
+                    System.arraycopy(grammarMinimalReduceHandler, 0, increased, 0, grammarMinimalReduceHandler.length);
+                    grammarMinimalReduceHandler = increased;
+                    System.arraycopy(grammarMinimalReduceHandlerRecycled, 0, grammarMinimalReduceHandler, grammarMinimalReduceHandlerFree, grammarMinimalReduceHandlerRecycledCount);
+                    grammarMinimalReduceHandlerFree += grammarMinimalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(grammarMinimalReduceHandlerRecycled, 0, grammarMinimalReduceHandler, grammarMinimalReduceHandlerFree, grammarMinimalReduceHandlerRecycledCount);
+                grammarMinimalReduceHandlerFree += grammarMinimalReduceHandlerRecycledCount;
+            }
+            
+            if(grammarMinimalReduceHandlerAverageUse != 0)grammarMinimalReduceHandlerAverageUse = (grammarMinimalReduceHandlerAverageUse + grammarMinimalReduceHandlerEffectivellyUsed)/2;
+            else grammarMinimalReduceHandlerAverageUse = grammarMinimalReduceHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < grammarMinimalReduceHandlerRecycled.length; i++){
+                grammarMinimalReduceHandlerRecycled[i] = null;
+            }	
+            
+                    
+            neededLength = grammarMaximalReduceHandlerFree + grammarMaximalReduceHandlerRecycledCount; 
+            if(neededLength > grammarMaximalReduceHandler.length){
+                if(neededLength > grammarMaximalReduceHandlerMaxSize){
+                    neededLength = grammarMaximalReduceHandlerMaxSize;
+                    GrammarMaximalReduceHandler[] increased = new GrammarMaximalReduceHandler[neededLength];
+                    System.arraycopy(grammarMaximalReduceHandler, 0, increased, 0, grammarMaximalReduceHandler.length);
+                    grammarMaximalReduceHandler = increased;		        
+                    System.arraycopy(grammarMaximalReduceHandlerRecycled, 0, grammarMaximalReduceHandler, grammarMaximalReduceHandlerFree, grammarMaximalReduceHandlerMaxSize - grammarMaximalReduceHandlerFree);
+                    grammarMaximalReduceHandlerFree = grammarMaximalReduceHandlerMaxSize; 
+                }else{
+                    GrammarMaximalReduceHandler[] increased = new GrammarMaximalReduceHandler[neededLength];
+                    System.arraycopy(grammarMaximalReduceHandler, 0, increased, 0, grammarMaximalReduceHandler.length);
+                    grammarMaximalReduceHandler = increased;
+                    System.arraycopy(grammarMaximalReduceHandlerRecycled, 0, grammarMaximalReduceHandler, grammarMaximalReduceHandlerFree, grammarMaximalReduceHandlerRecycledCount);
+                    grammarMaximalReduceHandlerFree += grammarMaximalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(grammarMaximalReduceHandlerRecycled, 0, grammarMaximalReduceHandler, grammarMaximalReduceHandlerFree, grammarMaximalReduceHandlerRecycledCount);
+                grammarMaximalReduceHandlerFree += grammarMaximalReduceHandlerRecycledCount;
+            }
+            
+            if(grammarMaximalReduceHandlerAverageUse != 0)grammarMaximalReduceHandlerAverageUse = (grammarMaximalReduceHandlerAverageUse + grammarMaximalReduceHandlerEffectivellyUsed)/2;
+            else grammarMaximalReduceHandlerAverageUse = grammarMaximalReduceHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < grammarMaximalReduceHandlerRecycled.length; i++){
+                grammarMaximalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = refMinimalReduceHandlerFree + refMinimalReduceHandlerRecycledCount; 
+            if(neededLength > refMinimalReduceHandler.length){
+                if(neededLength > refMinimalReduceHandlerMaxSize){
+                    neededLength = refMinimalReduceHandlerMaxSize;
+                    RefMinimalReduceHandler[] increased = new RefMinimalReduceHandler[neededLength];
+                    System.arraycopy(refMinimalReduceHandler, 0, increased, 0, refMinimalReduceHandler.length);
+                    refMinimalReduceHandler = increased;		        
+                    System.arraycopy(refMinimalReduceHandlerRecycled, 0, refMinimalReduceHandler, refMinimalReduceHandlerFree, refMinimalReduceHandlerMaxSize - refMinimalReduceHandlerFree);
+                    refMinimalReduceHandlerFree = refMinimalReduceHandlerMaxSize; 
+                }else{
+                    RefMinimalReduceHandler[] increased = new RefMinimalReduceHandler[neededLength];
+                    System.arraycopy(refMinimalReduceHandler, 0, increased, 0, refMinimalReduceHandler.length);
+                    refMinimalReduceHandler = increased;
+                    System.arraycopy(refMinimalReduceHandlerRecycled, 0, refMinimalReduceHandler, refMinimalReduceHandlerFree, refMinimalReduceHandlerRecycledCount);
+                    refMinimalReduceHandlerFree += refMinimalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(refMinimalReduceHandlerRecycled, 0, refMinimalReduceHandler, refMinimalReduceHandlerFree, refMinimalReduceHandlerRecycledCount);
+                refMinimalReduceHandlerFree += refMinimalReduceHandlerRecycledCount;
+            }
+            
+            if(refMinimalReduceHandlerAverageUse != 0)refMinimalReduceHandlerAverageUse = (refMinimalReduceHandlerAverageUse + refMinimalReduceHandlerEffectivellyUsed)/2;
+            else refMinimalReduceHandlerAverageUse = refMinimalReduceHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < refMinimalReduceHandlerRecycled.length; i++){
+                refMinimalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = refMaximalReduceHandlerFree + refMaximalReduceHandlerRecycledCount; 
+            if(neededLength > refMaximalReduceHandler.length){
+                if(neededLength > refMaximalReduceHandlerMaxSize){
+                    neededLength = refMaximalReduceHandlerMaxSize;
+                    RefMaximalReduceHandler[] increased = new RefMaximalReduceHandler[neededLength];
+                    System.arraycopy(refMaximalReduceHandler, 0, increased, 0, refMaximalReduceHandler.length);
+                    refMaximalReduceHandler = increased;		        
+                    System.arraycopy(refMaximalReduceHandlerRecycled, 0, refMaximalReduceHandler, refMaximalReduceHandlerFree, refMaximalReduceHandlerMaxSize - refMaximalReduceHandlerFree);
+                    refMaximalReduceHandlerFree = refMaximalReduceHandlerMaxSize; 
+                }else{
+                    RefMaximalReduceHandler[] increased = new RefMaximalReduceHandler[neededLength];
+                    System.arraycopy(refMaximalReduceHandler, 0, increased, 0, refMaximalReduceHandler.length);
+                    refMaximalReduceHandler = increased;
+                    System.arraycopy(refMaximalReduceHandlerRecycled, 0, refMaximalReduceHandler, refMaximalReduceHandlerFree, refMaximalReduceHandlerRecycledCount);
+                    refMaximalReduceHandlerFree += refMaximalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(refMaximalReduceHandlerRecycled, 0, refMaximalReduceHandler, refMaximalReduceHandlerFree, refMaximalReduceHandlerRecycledCount);
+                refMaximalReduceHandlerFree += refMaximalReduceHandlerRecycledCount;
+            }
+            
+            if(refMaximalReduceHandlerAverageUse != 0)refMaximalReduceHandlerAverageUse = (refMaximalReduceHandlerAverageUse + refMaximalReduceHandlerEffectivellyUsed)/2;
+            else refMaximalReduceHandlerAverageUse = refMaximalReduceHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < refMaximalReduceHandlerRecycled.length; i++){
+                refMaximalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = choiceMinimalReduceHandlerFree + choiceMinimalReduceHandlerRecycledCount; 
+            if(neededLength > choiceMinimalReduceHandler.length){
+                if(neededLength > choiceMinimalReduceHandlerMaxSize){
+                    neededLength = choiceMinimalReduceHandlerMaxSize;
+                    ChoiceMinimalReduceHandler[] increased = new ChoiceMinimalReduceHandler[neededLength];
+                    System.arraycopy(choiceMinimalReduceHandler, 0, increased, 0, choiceMinimalReduceHandler.length);
+                    choiceMinimalReduceHandler = increased;		        
+                    System.arraycopy(choiceMinimalReduceHandlerRecycled, 0, choiceMinimalReduceHandler, choiceMinimalReduceHandlerFree, choiceMinimalReduceHandlerMaxSize - choiceMinimalReduceHandlerFree);
+                    choiceMinimalReduceHandlerFree = choiceMinimalReduceHandlerMaxSize; 
+                }else{
+                    ChoiceMinimalReduceHandler[] increased = new ChoiceMinimalReduceHandler[neededLength];
+                    System.arraycopy(choiceMinimalReduceHandler, 0, increased, 0, choiceMinimalReduceHandler.length);
+                    choiceMinimalReduceHandler = increased;
+                    System.arraycopy(choiceMinimalReduceHandlerRecycled, 0, choiceMinimalReduceHandler, choiceMinimalReduceHandlerFree, choiceMinimalReduceHandlerRecycledCount);
+                    choiceMinimalReduceHandlerFree += choiceMinimalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(choiceMinimalReduceHandlerRecycled, 0, choiceMinimalReduceHandler, choiceMinimalReduceHandlerFree, choiceMinimalReduceHandlerRecycledCount);
+                choiceMinimalReduceHandlerFree += choiceMinimalReduceHandlerRecycledCount;
+            }
+            
+            if(choiceMinimalReduceHandlerAverageUse != 0)choiceMinimalReduceHandlerAverageUse = (choiceMinimalReduceHandlerAverageUse + choiceMinimalReduceHandlerEffectivellyUsed)/2;
+            else choiceMinimalReduceHandlerAverageUse = choiceMinimalReduceHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < choiceMinimalReduceHandlerRecycled.length; i++){
+                choiceMinimalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = choiceMaximalReduceHandlerFree + choiceMaximalReduceHandlerRecycledCount; 
+            if(neededLength > choiceMaximalReduceHandler.length){
+                if(neededLength > choiceMaximalReduceHandlerMaxSize){
+                    neededLength = choiceMaximalReduceHandlerMaxSize;
+                    ChoiceMaximalReduceHandler[] increased = new ChoiceMaximalReduceHandler[neededLength];
+                    System.arraycopy(choiceMaximalReduceHandler, 0, increased, 0, choiceMaximalReduceHandler.length);
+                    choiceMaximalReduceHandler = increased;		        
+                    System.arraycopy(choiceMaximalReduceHandlerRecycled, 0, choiceMaximalReduceHandler, choiceMaximalReduceHandlerFree, choiceMaximalReduceHandlerMaxSize - choiceMaximalReduceHandlerFree);
+                    choiceMaximalReduceHandlerFree = choiceMaximalReduceHandlerMaxSize; 
+                }else{
+                    ChoiceMaximalReduceHandler[] increased = new ChoiceMaximalReduceHandler[neededLength];
+                    System.arraycopy(choiceMaximalReduceHandler, 0, increased, 0, choiceMaximalReduceHandler.length);
+                    choiceMaximalReduceHandler = increased;
+                    System.arraycopy(choiceMaximalReduceHandlerRecycled, 0, choiceMaximalReduceHandler, choiceMaximalReduceHandlerFree, choiceMaximalReduceHandlerRecycledCount);
+                    choiceMaximalReduceHandlerFree += choiceMaximalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(choiceMaximalReduceHandlerRecycled, 0, choiceMaximalReduceHandler, choiceMaximalReduceHandlerFree, choiceMaximalReduceHandlerRecycledCount);
+                choiceMaximalReduceHandlerFree += choiceMaximalReduceHandlerRecycledCount;
+            }
+            
+            if(choiceMaximalReduceHandlerAverageUse != 0)choiceMaximalReduceHandlerAverageUse = (choiceMaximalReduceHandlerAverageUse + choiceMaximalReduceHandlerEffectivellyUsed)/2;
+            else choiceMaximalReduceHandlerAverageUse = choiceMaximalReduceHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < choiceMaximalReduceHandlerRecycled.length; i++){
+                choiceMaximalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = groupMinimalReduceHandlerFree + groupMinimalReduceHandlerRecycledCount; 
+            if(neededLength > groupMinimalReduceHandler.length){
+                if(neededLength > groupMinimalReduceHandlerMaxSize){
+                    neededLength = groupMinimalReduceHandlerMaxSize;
+                    GroupMinimalReduceHandler[] increased = new GroupMinimalReduceHandler[neededLength];
+                    System.arraycopy(groupMinimalReduceHandler, 0, increased, 0, groupMinimalReduceHandler.length);
+                    groupMinimalReduceHandler = increased;		        
+                    System.arraycopy(groupMinimalReduceHandlerRecycled, 0, groupMinimalReduceHandler, groupMinimalReduceHandlerFree, groupMinimalReduceHandlerMaxSize - groupMinimalReduceHandlerFree);
+                    groupMinimalReduceHandlerFree = groupMinimalReduceHandlerMaxSize; 
+                }else{
+                    GroupMinimalReduceHandler[] increased = new GroupMinimalReduceHandler[neededLength];
+                    System.arraycopy(groupMinimalReduceHandler, 0, increased, 0, groupMinimalReduceHandler.length);
+                    groupMinimalReduceHandler = increased;
+                    System.arraycopy(groupMinimalReduceHandlerRecycled, 0, groupMinimalReduceHandler, groupMinimalReduceHandlerFree, groupMinimalReduceHandlerRecycledCount);
+                    groupMinimalReduceHandlerFree += groupMinimalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(groupMinimalReduceHandlerRecycled, 0, groupMinimalReduceHandler, groupMinimalReduceHandlerFree, groupMinimalReduceHandlerRecycledCount);
+                groupMinimalReduceHandlerFree += groupMinimalReduceHandlerRecycledCount;
+            }
+            
+            if(groupMinimalReduceHandlerAverageUse != 0)groupMinimalReduceHandlerAverageUse = (groupMinimalReduceHandlerAverageUse + groupMinimalReduceHandlerEffectivellyUsed)/2;
+            else groupMinimalReduceHandlerAverageUse = groupMinimalReduceHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < groupMinimalReduceHandlerRecycled.length; i++){
+                groupMinimalReduceHandlerRecycled[i] = null;
+            }	
+            
+                    
+            neededLength = groupMaximalReduceHandlerFree + groupMaximalReduceHandlerRecycledCount; 
+            if(neededLength > groupMaximalReduceHandler.length){
+                if(neededLength > groupMaximalReduceHandlerMaxSize){
+                    neededLength = groupMaximalReduceHandlerMaxSize;
+                    GroupMaximalReduceHandler[] increased = new GroupMaximalReduceHandler[neededLength];
+                    System.arraycopy(groupMaximalReduceHandler, 0, increased, 0, groupMaximalReduceHandler.length);
+                    groupMaximalReduceHandler = increased;		        
+                    System.arraycopy(groupMaximalReduceHandlerRecycled, 0, groupMaximalReduceHandler, groupMaximalReduceHandlerFree, groupMaximalReduceHandlerMaxSize - groupMaximalReduceHandlerFree);
+                    groupMaximalReduceHandlerFree = groupMaximalReduceHandlerMaxSize; 
+                }else{
+                    GroupMaximalReduceHandler[] increased = new GroupMaximalReduceHandler[neededLength];
+                    System.arraycopy(groupMaximalReduceHandler, 0, increased, 0, groupMaximalReduceHandler.length);
+                    groupMaximalReduceHandler = increased;
+                    System.arraycopy(groupMaximalReduceHandlerRecycled, 0, groupMaximalReduceHandler, groupMaximalReduceHandlerFree, groupMaximalReduceHandlerRecycledCount);
+                    groupMaximalReduceHandlerFree += groupMaximalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(groupMaximalReduceHandlerRecycled, 0, groupMaximalReduceHandler, groupMaximalReduceHandlerFree, groupMaximalReduceHandlerRecycledCount);
+                groupMaximalReduceHandlerFree += groupMaximalReduceHandlerRecycledCount;
+            }
+            
+            if(groupMaximalReduceHandlerAverageUse != 0)groupMaximalReduceHandlerAverageUse = (groupMaximalReduceHandlerAverageUse + groupMaximalReduceHandlerEffectivellyUsed)/2;
+            else groupMaximalReduceHandlerAverageUse = groupMaximalReduceHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < groupMaximalReduceHandlerRecycled.length; i++){
+                groupMaximalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = interleaveMinimalReduceHandlerFree + interleaveMinimalReduceHandlerRecycledCount; 
+            if(neededLength > interleaveMinimalReduceHandler.length){
+                if(neededLength > interleaveMinimalReduceHandlerMaxSize){
+                    neededLength = interleaveMinimalReduceHandlerMaxSize;
+                    InterleaveMinimalReduceHandler[] increased = new InterleaveMinimalReduceHandler[neededLength];
+                    System.arraycopy(interleaveMinimalReduceHandler, 0, increased, 0, interleaveMinimalReduceHandler.length);
+                    interleaveMinimalReduceHandler = increased;		        
+                    System.arraycopy(interleaveMinimalReduceHandlerRecycled, 0, interleaveMinimalReduceHandler, interleaveMinimalReduceHandlerFree, interleaveMinimalReduceHandlerMaxSize - interleaveMinimalReduceHandlerFree);
+                    interleaveMinimalReduceHandlerFree = interleaveMinimalReduceHandlerMaxSize; 
+                }else{
+                    InterleaveMinimalReduceHandler[] increased = new InterleaveMinimalReduceHandler[neededLength];
+                    System.arraycopy(interleaveMinimalReduceHandler, 0, increased, 0, interleaveMinimalReduceHandler.length);
+                    interleaveMinimalReduceHandler = increased;
+                    System.arraycopy(interleaveMinimalReduceHandlerRecycled, 0, interleaveMinimalReduceHandler, interleaveMinimalReduceHandlerFree, interleaveMinimalReduceHandlerRecycledCount);
+                    interleaveMinimalReduceHandlerFree += interleaveMinimalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(interleaveMinimalReduceHandlerRecycled, 0, interleaveMinimalReduceHandler, interleaveMinimalReduceHandlerFree, interleaveMinimalReduceHandlerRecycledCount);
+                interleaveMinimalReduceHandlerFree += interleaveMinimalReduceHandlerRecycledCount;
+            }
+            
+            if(interleaveMinimalReduceHandlerAverageUse != 0)interleaveMinimalReduceHandlerAverageUse = (interleaveMinimalReduceHandlerAverageUse + interleaveMinimalReduceHandlerEffectivellyUsed)/2;
+            else interleaveMinimalReduceHandlerAverageUse = interleaveMinimalReduceHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < interleaveMinimalReduceHandlerRecycled.length; i++){
+                interleaveMinimalReduceHandlerRecycled[i] = null;
+            }	
+            
+            
+            neededLength = interleaveMaximalReduceHandlerFree + interleaveMaximalReduceHandlerRecycledCount; 
+            if(neededLength > interleaveMaximalReduceHandler.length){
+                if(neededLength > interleaveMaximalReduceHandlerMaxSize){
+                    neededLength = interleaveMaximalReduceHandlerMaxSize;
+                    InterleaveMaximalReduceHandler[] increased = new InterleaveMaximalReduceHandler[neededLength];
+                    System.arraycopy(interleaveMaximalReduceHandler, 0, increased, 0, interleaveMaximalReduceHandler.length);
+                    interleaveMaximalReduceHandler = increased;		        
+                    System.arraycopy(interleaveMaximalReduceHandlerRecycled, 0, interleaveMaximalReduceHandler, interleaveMaximalReduceHandlerFree, interleaveMaximalReduceHandlerMaxSize - interleaveMaximalReduceHandlerFree);
+                    interleaveMaximalReduceHandlerFree = interleaveMaximalReduceHandlerMaxSize; 
+                }else{
+                    InterleaveMaximalReduceHandler[] increased = new InterleaveMaximalReduceHandler[neededLength];
+                    System.arraycopy(interleaveMaximalReduceHandler, 0, increased, 0, interleaveMaximalReduceHandler.length);
+                    interleaveMaximalReduceHandler = increased;
+                    System.arraycopy(interleaveMaximalReduceHandlerRecycled, 0, interleaveMaximalReduceHandler, interleaveMaximalReduceHandlerFree, interleaveMaximalReduceHandlerRecycledCount);
+                    interleaveMaximalReduceHandlerFree += interleaveMaximalReduceHandlerRecycledCount;
+                }
+            }else{
+                System.arraycopy(interleaveMaximalReduceHandlerRecycled, 0, interleaveMaximalReduceHandler, interleaveMaximalReduceHandlerFree, interleaveMaximalReduceHandlerRecycledCount);
+                interleaveMaximalReduceHandlerFree += interleaveMaximalReduceHandlerRecycledCount;
+            }
+            
+            if(interleaveMaximalReduceHandlerAverageUse != 0)interleaveMaximalReduceHandlerAverageUse = (interleaveMaximalReduceHandlerAverageUse + interleaveMaximalReduceHandlerEffectivellyUsed)/2;
+            else interleaveMaximalReduceHandlerAverageUse = interleaveMaximalReduceHandlerEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+            
+            for(int i = 0; i < interleaveMaximalReduceHandlerRecycled.length; i++){
+                interleaveMaximalReduceHandlerRecycled[i] = null;
+            }
+        }
 	}
 } 

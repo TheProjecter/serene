@@ -43,7 +43,7 @@ public class ActiveModelPool{
 	SimplifiedModel simplifiedModel;
 	
 	int modelFree; 
-	int modelPoolSize;
+	int modelMaxSize;
 	ActiveModel[] models;	
 	
 	ActiveModelFactory modelFactory;	
@@ -57,8 +57,8 @@ public class ActiveModelPool{
 		modelFactory = new ActiveModelFactory(debugWriter);
 		
 		modelFree = 0; 
-		modelPoolSize = 5;
-		models = new ActiveModel[modelPoolSize];
+		modelMaxSize = 10;
+		models = new ActiveModel[5];
 
 		conflictHandlerPool = ConflictHandlerPool.getInstance(debugWriter);
 		stackHandlerPool = StackHandlerPool.getInstance(debugWriter);
@@ -88,8 +88,9 @@ public class ActiveModelPool{
 	}
 	
 	public synchronized void recycle(ActiveModel model){
-		if(modelFree == modelPoolSize){
-			ActiveModel[] increased = new ActiveModel[++modelPoolSize];
+	    if(modelFree == modelMaxSize) return;
+		if(modelFree == models.length){
+			ActiveModel[] increased = new ActiveModel[5+models.length];
 			System.arraycopy(models, 0, increased, 0, modelFree);
 			models = increased;
 		}

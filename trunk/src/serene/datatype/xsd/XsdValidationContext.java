@@ -55,6 +55,7 @@ public class XsdValidationContext implements org.apache.xerces.impl.dv.Validatio
     
     
     public void setRngValidationContext(ValidationContext rngValidationContext){
+        if(rngValidationContext == null) throw new IllegalArgumentException();
         this.rngValidationContext = rngValidationContext;
     }
         

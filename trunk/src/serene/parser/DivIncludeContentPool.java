@@ -24,7 +24,7 @@ import sereneWrite.MessageWriter;
 
 public class DivIncludeContentPool extends RNGParseEndElementTaskPool{
 	DivIncludeContentTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public DivIncludeContentPool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -32,8 +32,8 @@ public class DivIncludeContentPool extends RNGParseEndElementTaskPool{
 						MessageWriter debugWriter){
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new DivIncludeContentTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new DivIncludeContentTask[5];
 	}
 	
 	public DivIncludeContentTask getTask(){
@@ -51,9 +51,9 @@ public class DivIncludeContentPool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(DivIncludeContentTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			DivIncludeContentTask[] increased = new DivIncludeContentTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			DivIncludeContentTask[] increased = new DivIncludeContentTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

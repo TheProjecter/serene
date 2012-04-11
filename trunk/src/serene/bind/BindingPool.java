@@ -28,17 +28,8 @@ import serene.util.ObjectIntHashMap;
 import sereneWrite.MessageWriter;
 
 public abstract class BindingPool{
-	/*ElementBinder[] element;
-	int elementFree, elementPoolSize;
-	
-	AttributeBinder[] attribute;
-	int attributeFree, attributePoolSize;
-	
-	CharacterContentBinder[] characterContent;
-	int characterContentFree, characterContentPoolSize;*/
-		
 	ValidatorQueuePool[] queuePool;
-	int queuePoolFree, queuePoolPoolSize;
+	int queuePoolFree, queuePoolMaxSize;
 	
 	protected MessageWriter debugWriter;
 	
@@ -53,86 +44,15 @@ public abstract class BindingPool{
 		// this.endElementTaskPools = endElementTaskPools;
 		// this.attributeTaskPools = attributeTaskPools;
 		
-		/*elementFree = 0;
-		elementPoolSize = 50;
-		element = new ElementBinder[elementPoolSize] ;
-		
-		attributeFree = 0;
-		attributePoolSize = 20;
-		attribute = new AttributeBinder[attributePoolSize];
-		
-		characterContentFree = 0;
-		characterContentPoolSize = 3;
-		characterContent = new CharacterContentBinder[characterContentPoolSize];*/
-		
 		queuePoolFree = 0;
-		queuePoolPoolSize = 3;	
-		queuePool = new ValidatorQueuePool[queuePoolPoolSize];
+		queuePoolMaxSize = 3;	
+		queuePool = new ValidatorQueuePool[5];
 					
 	}	
 	
 	public abstract BindingModel getBindingModel();
 		
 	public abstract void recycle(BindingModel bm);
-	
-	/*
-	protected ElementBinder getElementBinder(){
-		if(elementFree == 0){			
-			return new ElementBinder(debugWriter);			
-		}
-		else{				
-			return element[--elementFree];
-		}		
-	}
-	protected void recycle(ElementBinder[] elementBinder){
-		int recycleCount = elementBinder.length;		
-		if(elementFree+recycleCount >= elementPoolSize){			 
-			elementPoolSize+=recycleCount;
-			ElementBinder[] increased = new ElementBinder[elementPoolSize];
-			System.arraycopy(element, 0, increased, 0, elementFree);
-			element = increased;
-		}
-		System.arraycopy(elementBinder, 0, element, elementFree, recycleCount);
-		elementFree += recycleCount;
-	}
-	
-	protected AttributeBinder getAttributeBinder(){
-		if(attributeFree == 0){			
-			return new AttributeBinder(debugWriter);			
-		}
-		else{				
-			return attribute[--attributeFree];
-		}
-	}
-	protected void recycle(AttributeBinder[] attributeBinder){
-		int recycleCount = attributeBinder.length;
-		if(attributeFree+recycleCount >= attributePoolSize){			 
-			attributePoolSize+=recycleCount;
-			AttributeBinder[] increased = new AttributeBinder[attributePoolSize];
-			System.arraycopy(attribute, 0, increased, 0, attributeFree);
-			attribute = increased;
-		}
-		System.arraycopy(attributeBinder, 0, attribute, attributeFree, recycleCount);
-		attributeFree += recycleCount;
-	}
-	
-	protected CharacterContentBinder getCharacterContentBinder(){
-		if(characterContentFree == 0){			
-			return new CharacterContentBinder(debugWriter);			
-		}
-		else{				
-			return characterContent[--characterContentFree];
-		}
-	}
-	protected void recycle(CharacterContentBinder characterContentBinder){
-		if(characterContentFree == characterContentPoolSize){			 
-			characterContentPoolSize+=3;
-			CharacterContentBinder[] increased = new CharacterContentBinder[characterContentPoolSize];
-			System.arraycopy(characterContent, 0, increased, 0, characterContentFree);
-			characterContent = increased;
-		}
-		characterContent[characterContentFree++] = characterContentBinder;
-	}*/
 	
 		
 	synchronized public ValidatorQueuePool getValidatorQueuePool(){
@@ -144,9 +64,9 @@ public abstract class BindingPool{
 		}
 	}
 	synchronized public void recycle(ValidatorQueuePool qp){
-		if(queuePoolFree == queuePoolPoolSize){			 
-			queuePoolPoolSize+=3;
-			ValidatorQueuePool[] increased = new ValidatorQueuePool[queuePoolPoolSize];
+	    if(queuePoolFree == queuePoolMaxSize) return;
+		if(queuePoolFree == queuePool.length){
+			ValidatorQueuePool[] increased = new ValidatorQueuePool[5+queuePool.length];
 			System.arraycopy(queuePool, 0, increased, 0, queuePoolFree);
 			queuePool = increased;
 		}

@@ -32,339 +32,340 @@ public class ContentHandlerPool{
 	MessageWriter debugWriter;
 		
 	int eventHandlerPoolFree; 
-	int eventHandlerPoolPoolSize;
+	int eventHandlerPoolMaxSize;
 	ValidatorEventHandlerPool[] eventHandlerPools;	
 	
 	
 	int elementVHAverageUse;
-	int elementVHPoolSize;
+	int elementVHMaxSize;
 	int elementVHFree;	
 	ElementValidationHandler[] elementVH;
 	
 	int startVHAverageUse;
-	int startVHPoolSize;
+	int startVHMaxSize;
 	int startVHFree;	
 	StartValidationHandler[] startVH;
 		
 	int unexpectedElementHAverageUse;
-	int unexpectedElementHPoolSize;
+	int unexpectedElementHMaxSize;
 	int unexpectedElementHFree;	
 	UnexpectedElementHandler[] unexpectedElementH;
 	
 	int unexpectedAmbiguousEHAverageUse;
-	int unexpectedAmbiguousEHPoolSize;
+	int unexpectedAmbiguousEHMaxSize;
 	int unexpectedAmbiguousEHFree;
 	UnexpectedAmbiguousElementHandler[] unexpectedAmbiguousEH;
 	
 	int unknownElementHAverageUse;
-	int unknownElementHPoolSize;
+	int unknownElementHMaxSize;
 	int unknownElementHFree;	
 	UnknownElementHandler[] unknownElementH;
 	
-	int defaultElementHAverageUse;
-	int defaultElementHPoolSize;
-	int defaultElementHFree;	
-	ElementDefaultHandler[] defaultElementH;
+	int elementDefaultHAverageUse;
+	int elementDefaultHMaxSize;
+	int elementDefaultHFree;	
+	ElementDefaultHandler[] elementDefaultH;
 	
 	int elementConcurrentHAverageUse;
-	int elementConcurrentHPoolSize;
+	int elementConcurrentHMaxSize;
 	int elementConcurrentHFree;
 	ElementConcurrentHandler[] elementConcurrentH;
 	
 	int elementParallelHAverageUse;
-	int elementParallelHPoolSize;
+	int elementParallelHMaxSize;
 	int elementParallelHFree;
 	ElementParallelHandler[] elementParallelH;
 	
 	int elementCommonHAverageUse;
-	int elementCommonHPoolSize;
+	int elementCommonHMaxSize;
 	int elementCommonHFree;
 	ElementCommonHandler[] elementCommonH;
 	
 	int unexpectedAttributeHAverageUse;
-	int unexpectedAttributeHPoolSize;
+	int unexpectedAttributeHMaxSize;
 	int unexpectedAttributeHFree;	
 	UnexpectedAttributeHandler[] unexpectedAttributeH;
 	
 	int unexpectedAmbiguousAHAverageUse;
-	int unexpectedAmbiguousAHPoolSize;
+	int unexpectedAmbiguousAHMaxSize;
 	int unexpectedAmbiguousAHFree;
 	UnexpectedAmbiguousAttributeHandler[] unexpectedAmbiguousAH;
 	
 	int unknownAttributeHAverageUse;
-	int unknownAttributeHPoolSize;
+	int unknownAttributeHMaxSize;
 	int unknownAttributeHFree;	
 	UnknownAttributeHandler[] unknownAttributeH;
 	
 	int attributeVHAverageUse;
-	int attributeVHPoolSize;
+	int attributeVHMaxSize;
 	int attributeVHFree;	
 	AttributeValidationHandler[] attributeVH;
     
     int candidateAttributeVHAverageUse;
-	int candidateAttributeVHPoolSize;
+	int candidateAttributeVHMaxSize;
 	int candidateAttributeVHFree;	
 	CandidateAttributeValidationHandler[] candidateAttributeVH;
 		
 	int attributeConcurrentHAverageUse;
-	int attributeConcurrentHPoolSize;
+	int attributeConcurrentHMaxSize;
 	int attributeConcurrentHFree;
 	AttributeConcurrentHandler[] attributeConcurrentH;
     
     int attributeParallelHAverageUse;
-	int attributeParallelHPoolSize;
+	int attributeParallelHMaxSize;
 	int attributeParallelHFree;
 	AttributeParallelHandler[] attributeParallelH;
     
     int attributeDefaultHAverageUse;
-	int attributeDefaultHPoolSize;
+	int attributeDefaultHMaxSize;
 	int attributeDefaultHFree;
 	AttributeDefaultHandler[] attributeDefaultH;
 	
 	int charactersValidationHAverageUse;
-	int charactersValidationHPoolSize;
+	int charactersValidationHMaxSize;
 	int charactersValidationHFree;
 	CharactersValidationHandler[] charactersValidationH;
 	
 	int structuredDataValidationHAverageUse;
-	int structuredDataValidationHPoolSize;
+	int structuredDataValidationHMaxSize;
 	int structuredDataValidationHFree;
 	StructuredDataValidationHandler[] structuredDataValidationH;
     
 	int dataValidationHAverageUse;
-	int dataValidationHPoolSize;
+	int dataValidationHMaxSize;
 	int dataValidationHFree;
 	DataValidationHandler[] dataValidationH;
 	
     int defaultVAttributeHAverageUse;
-	int defaultVAttributeHPoolSize;
+	int defaultVAttributeHMaxSize;
 	int defaultVAttributeHFree;
 	DefaultValueAttributeValidationHandler[] defaultVAttributeH;
 		
 	int listPatternVHAverageUse;
-	int listPatternVHPoolSize;
+	int listPatternVHMaxSize;
 	int listPatternVHFree;
 	ListPatternValidationHandler[] listPatternVH;
 	
 	int exceptPatternVHAverageUse;
-	int exceptPatternVHPoolSize;
+	int exceptPatternVHMaxSize;
 	int exceptPatternVHFree;
 	ExceptPatternValidationHandler[] exceptPatternVH;
 	
 	
 	
 	int boundElementVHAverageUse;
-	int boundElementVHPoolSize;
+	int boundElementVHMaxSize;
 	int boundElementVHFree;	
 	BoundElementValidationHandler[] boundElementVH;
 	
 	int boundStartVHAverageUse;
-	int boundStartVHPoolSize;
+	int boundStartVHMaxSize;
 	int boundStartVHFree;	
 	BoundStartValidationHandler[] boundStartVH;
 	
 	int boundElementConcurrentHAverageUse;
-	int boundElementConcurrentHPoolSize;
+	int boundElementConcurrentHMaxSize;
 	int boundElementConcurrentHFree;
 	BoundElementConcurrentHandler[] boundElementConcurrentH;
 		
 	int boundElementParallelHAverageUse;
-	int boundElementParallelHPoolSize;
+	int boundElementParallelHMaxSize;
 	int boundElementParallelHFree;
 	BoundElementParallelHandler[] boundElementParallelH;
 	
 	int boundAttributeVHAverageUse;
-	int boundAttributeVHPoolSize;
+	int boundAttributeVHMaxSize;
 	int boundAttributeVHFree;	
 	BoundAttributeValidationHandler[] boundAttributeVH;
     
     int boundCandidateAttributeVHAverageUse;
-	int boundCandidateAttributeVHPoolSize;
+	int boundCandidateAttributeVHMaxSize;
 	int boundCandidateAttributeVHFree;	
 	BoundCandidateAttributeValidationHandler[] boundCandidateAttributeVH;
 		
 	int boundAttributeConcurrentHAverageUse;
-	int boundAttributeConcurrentHPoolSize;
+	int boundAttributeConcurrentHMaxSize;
 	int boundAttributeConcurrentHFree;
 	BoundAttributeConcurrentHandler[] boundAttributeConcurrentH;
     
     int boundAttributeParallelHAverageUse;
-	int boundAttributeParallelHPoolSize;
+	int boundAttributeParallelHMaxSize;
 	int boundAttributeParallelHFree;
 	BoundAttributeParallelHandler[] boundAttributeParallelH;
-	
-	final int UNUSED = 0;
-	
+		
 	
 	private ContentHandlerPool(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 				
 		
 		eventHandlerPoolFree = 0; 
-		eventHandlerPoolPoolSize = 10;
-		eventHandlerPools = new ValidatorEventHandlerPool[eventHandlerPoolPoolSize];
+		eventHandlerPools = new ValidatorEventHandlerPool[10];
 		
-		elementVHAverageUse = UNUSED;
-		elementVHPoolSize = 20;
+		elementVHAverageUse = 0;
 		elementVHFree = 0;
-		elementVH = new ElementValidationHandler[elementVHPoolSize];
+		elementVH = new ElementValidationHandler[10];
 		
-		startVHAverageUse = UNUSED;
-		startVHPoolSize = 20;
+		startVHAverageUse = 0;
 		startVHFree = 0;
-		startVH = new StartValidationHandler[startVHPoolSize];
+		startVH = new StartValidationHandler[10];
 		
 
-		unexpectedElementHAverageUse = UNUSED;
-		unexpectedElementHPoolSize = 3;
+		unexpectedElementHAverageUse = 0;
 		unexpectedElementHFree = 0;
-		unexpectedElementH = new UnexpectedElementHandler[unexpectedElementHPoolSize];
+		unexpectedElementH = new UnexpectedElementHandler[10];
 	
-		unexpectedAmbiguousEHAverageUse = UNUSED;
-		unexpectedAmbiguousEHPoolSize = 1;
+		unexpectedAmbiguousEHAverageUse = 0;
 		unexpectedAmbiguousEHFree = 0;
-		unexpectedAmbiguousEH = new UnexpectedAmbiguousElementHandler[unexpectedAmbiguousEHPoolSize];
+		unexpectedAmbiguousEH = new UnexpectedAmbiguousElementHandler[10];
 	
-		unknownElementHAverageUse = UNUSED;
-		unknownElementHPoolSize = 3;
+		unknownElementHAverageUse = 0;
 		unknownElementHFree = 0;
-		unknownElementH = new UnknownElementHandler[unknownElementHPoolSize];
+		unknownElementH = new UnknownElementHandler[10];
 		
-		defaultElementHAverageUse = UNUSED;
-		defaultElementHPoolSize = 3;
-		defaultElementHFree = 0;	
-		defaultElementH = new ElementDefaultHandler[defaultElementHPoolSize];
+		elementDefaultHAverageUse = 0;
+		elementDefaultHFree = 0;	
+		elementDefaultH = new ElementDefaultHandler[10];
 		
-		elementConcurrentHAverageUse = UNUSED;
-		elementConcurrentHPoolSize = 1;
+		elementConcurrentHAverageUse = 0;
 		elementConcurrentHFree = 0;
-		elementConcurrentH = new ElementConcurrentHandler[elementConcurrentHPoolSize];
+		elementConcurrentH = new ElementConcurrentHandler[10];
 	
-		elementParallelHAverageUse = UNUSED;
-		elementParallelHPoolSize = 3;
+		elementParallelHAverageUse = 0;
 		elementParallelHFree = 0;
-		elementParallelH = new ElementParallelHandler[elementParallelHPoolSize];
+		elementParallelH = new ElementParallelHandler[10];
 		
-		elementCommonHAverageUse = UNUSED;
-		elementCommonHPoolSize = 3;
+		elementCommonHAverageUse = 0;
 		elementCommonHFree = 0;
-		elementCommonH = new ElementCommonHandler[elementCommonHPoolSize];		
+		elementCommonH = new ElementCommonHandler[10];		
 	
 
-		unexpectedAttributeHAverageUse = UNUSED;
-		unexpectedAttributeHPoolSize = 3;
+		unexpectedAttributeHAverageUse = 0;
 		unexpectedAttributeHFree = 0;
-		unexpectedAttributeH = new UnexpectedAttributeHandler[unexpectedAttributeHPoolSize];
+		unexpectedAttributeH = new UnexpectedAttributeHandler[10];
 	
-		unexpectedAmbiguousAHAverageUse = UNUSED;
-		unexpectedAmbiguousAHPoolSize = 1;
+		unexpectedAmbiguousAHAverageUse = 0;
 		unexpectedAmbiguousAHFree = 0;
-		unexpectedAmbiguousAH = new UnexpectedAmbiguousAttributeHandler[unexpectedAmbiguousAHPoolSize];
+		unexpectedAmbiguousAH = new UnexpectedAmbiguousAttributeHandler[10];
 	
-		unknownAttributeHAverageUse = UNUSED;
-		unknownAttributeHPoolSize = 3;
+		unknownAttributeHAverageUse = 0;
 		unknownAttributeHFree = 0;
-		unknownAttributeH = new UnknownAttributeHandler[unknownAttributeHPoolSize];
+		unknownAttributeH = new UnknownAttributeHandler[10];
 		
-		attributeVHAverageUse = UNUSED;
-		attributeVHPoolSize = 20;
+		attributeVHAverageUse = 0;
 		attributeVHFree = 0;
-		attributeVH = new AttributeValidationHandler[attributeVHPoolSize];
+		attributeVH = new AttributeValidationHandler[10];
         
-		candidateAttributeVHAverageUse = UNUSED;
-		candidateAttributeVHPoolSize = 20;
+		candidateAttributeVHAverageUse = 0;
 		candidateAttributeVHFree = 0;
-		candidateAttributeVH = new CandidateAttributeValidationHandler[candidateAttributeVHPoolSize];
+		candidateAttributeVH = new CandidateAttributeValidationHandler[10];
 		
-		attributeConcurrentHAverageUse = UNUSED;
-		attributeConcurrentHPoolSize = 1;
+		attributeConcurrentHAverageUse = 0;
 		attributeConcurrentHFree = 0;
-		attributeConcurrentH = new AttributeConcurrentHandler[attributeConcurrentHPoolSize];
+		attributeConcurrentH = new AttributeConcurrentHandler[10];
         
-        attributeParallelHAverageUse = UNUSED;
-		attributeParallelHPoolSize = 1;
+        attributeParallelHAverageUse = 0;
 		attributeParallelHFree = 0;
-		attributeParallelH = new AttributeParallelHandler[attributeParallelHPoolSize];
+		attributeParallelH = new AttributeParallelHandler[10];
 		
-        attributeDefaultHAverageUse = UNUSED;
-		attributeDefaultHPoolSize = 1;
+        attributeDefaultHAverageUse = 0;
 		attributeDefaultHFree = 0;
-		attributeDefaultH = new AttributeDefaultHandler[attributeDefaultHPoolSize];
+		attributeDefaultH = new AttributeDefaultHandler[10];
         
         
-		charactersValidationHAverageUse = UNUSED;
-		charactersValidationHPoolSize = 1;
+		charactersValidationHAverageUse = 0;
 		charactersValidationHFree = 0;
-		charactersValidationH = new CharactersValidationHandler[charactersValidationHPoolSize];
+		charactersValidationH = new CharactersValidationHandler[10];
 		
-		structuredDataValidationHAverageUse = UNUSED;
-		structuredDataValidationHPoolSize = 1;
+		structuredDataValidationHAverageUse = 0;
 		structuredDataValidationHFree = 0;
-		structuredDataValidationH = new StructuredDataValidationHandler[structuredDataValidationHPoolSize];
+		structuredDataValidationH = new StructuredDataValidationHandler[10];
         
-		dataValidationHAverageUse = UNUSED;
-		dataValidationHPoolSize = 1;
+		dataValidationHAverageUse = 0;
 		dataValidationHFree = 0;
-		dataValidationH = new DataValidationHandler[dataValidationHPoolSize];
+		dataValidationH = new DataValidationHandler[10];
         
 		
-        defaultVAttributeHAverageUse = UNUSED;
-		defaultVAttributeHPoolSize = 1;
+        defaultVAttributeHAverageUse = 0;
 		defaultVAttributeHFree = 0;
-		defaultVAttributeH = new DefaultValueAttributeValidationHandler[defaultVAttributeHPoolSize];
+		defaultVAttributeH = new DefaultValueAttributeValidationHandler[10];
 		
-		listPatternVHAverageUse = UNUSED;
-		listPatternVHPoolSize = 1;
+		listPatternVHAverageUse = 0;
 		listPatternVHFree = 0;
-		listPatternVH = new ListPatternValidationHandler[listPatternVHPoolSize];
+		listPatternVH = new ListPatternValidationHandler[10];
 		
-		exceptPatternVHAverageUse = UNUSED;
-		exceptPatternVHPoolSize = 1;
+		exceptPatternVHAverageUse = 0;
 		exceptPatternVHFree = 0;
-		exceptPatternVH = new ExceptPatternValidationHandler[exceptPatternVHPoolSize];
+		exceptPatternVH = new ExceptPatternValidationHandler[10];
 		
 		
 		
-		boundElementVHAverageUse = UNUSED;
-		boundElementVHPoolSize = 20;
+		boundElementVHAverageUse = 0;
 		boundElementVHFree = 0;
-		boundElementVH = new BoundElementValidationHandler[boundElementVHPoolSize];
+		boundElementVH = new BoundElementValidationHandler[10];
 		
-		boundStartVHAverageUse = UNUSED;
-		boundStartVHPoolSize = 20;
+		boundStartVHAverageUse = 0;
 		boundStartVHFree = 0;
-		boundStartVH = new BoundStartValidationHandler[boundStartVHPoolSize];
+		boundStartVH = new BoundStartValidationHandler[10];
 		
-		boundElementConcurrentHAverageUse = UNUSED;
-		boundElementConcurrentHPoolSize = 1;
+		boundElementConcurrentHAverageUse = 0;
 		boundElementConcurrentHFree = 0;
-		boundElementConcurrentH = new BoundElementConcurrentHandler[boundElementConcurrentHPoolSize];
+		boundElementConcurrentH = new BoundElementConcurrentHandler[10];
 		
-		boundElementParallelHAverageUse = UNUSED;
-		boundElementParallelHPoolSize = 3;
+		boundElementParallelHAverageUse = 0;
 		boundElementParallelHFree = 0;
-		boundElementParallelH = new BoundElementParallelHandler[boundElementParallelHPoolSize];
+		boundElementParallelH = new BoundElementParallelHandler[10];
 		
-		boundAttributeVHAverageUse = UNUSED;
-		boundAttributeVHPoolSize = 20;
+		boundAttributeVHAverageUse = 0;
 		boundAttributeVHFree = 0;
-		boundAttributeVH = new BoundAttributeValidationHandler[boundAttributeVHPoolSize];
+		boundAttributeVH = new BoundAttributeValidationHandler[10];
         
-        boundCandidateAttributeVHAverageUse = UNUSED;
-		boundCandidateAttributeVHPoolSize = 20;
+        boundCandidateAttributeVHAverageUse = 0;
 		boundCandidateAttributeVHFree = 0;
-		boundCandidateAttributeVH = new BoundCandidateAttributeValidationHandler[boundCandidateAttributeVHPoolSize];
+		boundCandidateAttributeVH = new BoundCandidateAttributeValidationHandler[10];
 		
-		boundAttributeConcurrentHAverageUse = UNUSED;
-		boundAttributeConcurrentHPoolSize = 1;
+		boundAttributeConcurrentHAverageUse = 0;
 		boundAttributeConcurrentHFree = 0;
-		boundAttributeConcurrentH = new BoundAttributeConcurrentHandler[boundAttributeConcurrentHPoolSize];
+		boundAttributeConcurrentH = new BoundAttributeConcurrentHandler[10];
         
-        boundAttributeParallelHAverageUse = UNUSED;
-		boundAttributeParallelHPoolSize = 1;
+        boundAttributeParallelHAverageUse = 0;
 		boundAttributeParallelHFree = 0;
-		boundAttributeParallelH = new BoundAttributeParallelHandler[boundAttributeParallelHPoolSize];
+		boundAttributeParallelH = new BoundAttributeParallelHandler[10];
 		
+		
+		
+		elementVHMaxSize = 40;
+        startVHMaxSize = 10;
+        unexpectedElementHMaxSize = 20;
+        unexpectedAmbiguousEHMaxSize = 20;
+        unknownElementHMaxSize = 20;
+        elementDefaultHMaxSize = 20;
+        elementConcurrentHMaxSize = 20;
+        elementParallelHMaxSize = 20;
+        elementCommonHMaxSize = 20;
+            
+        unexpectedAttributeHMaxSize = 20;
+        unexpectedAmbiguousAHMaxSize = 20;
+        unknownAttributeHMaxSize = 20;
+        attributeVHMaxSize = 20;
+        candidateAttributeVHMaxSize = 20;
+        attributeConcurrentHMaxSize = 20;
+        attributeParallelHMaxSize = 20;
+        attributeDefaultHMaxSize = 20;
+        charactersValidationHMaxSize = 20;
+        structuredDataValidationHMaxSize = 20;
+        dataValidationHMaxSize = 20;
+        defaultVAttributeHMaxSize = 20;
+        listPatternVHMaxSize = 20;
+        exceptPatternVHMaxSize = 20;
+                
+        boundElementVHMaxSize = 40;
+        boundStartVHMaxSize = 10;
+        boundElementConcurrentHMaxSize = 20;
+        boundElementParallelHMaxSize = 20;
+        boundAttributeVHMaxSize = 20;
+        boundCandidateAttributeVHMaxSize = 20;
+        boundAttributeConcurrentHMaxSize = 20;
+        boundAttributeParallelHMaxSize = 20;
 	}
 	
 	public static ContentHandlerPool getInstance(MessageWriter debugWriter){
@@ -388,9 +389,10 @@ public class ContentHandlerPool{
 		}
 	}
 	
-	public synchronized void recycle(ValidatorEventHandlerPool eventHandlerPool){		
-		if(eventHandlerPoolFree == eventHandlerPoolPoolSize){
-			ValidatorEventHandlerPool[] increased = new ValidatorEventHandlerPool[++eventHandlerPoolPoolSize];
+	public synchronized void recycle(ValidatorEventHandlerPool eventHandlerPool){
+		if(eventHandlerPoolFree == eventHandlerPoolMaxSize) return;
+		if(eventHandlerPoolFree == eventHandlerPools.length){
+			ValidatorEventHandlerPool[] increased = new ValidatorEventHandlerPool[10+eventHandlerPools.length];
 			System.arraycopy(eventHandlerPools, 0, increased, 0, eventHandlerPoolFree);
 			eventHandlerPools = increased;
 		}
@@ -398,41 +400,43 @@ public class ContentHandlerPool{
 	}
 	
 	synchronized void fill(ValidatorEventHandlerPool eventHandlerPool,
-					ElementValidationHandler[] elementVH,
-					StartValidationHandler[] startVH,
-					UnexpectedElementHandler[] unexpectedElementH,
-					UnexpectedAmbiguousElementHandler[] unexpectedAmbiguousEH,
-					UnknownElementHandler[] unknownElementH,
-					ElementDefaultHandler[] defaultElementH,
-					ElementConcurrentHandler[] elementConcurrentH,
-					ElementParallelHandler[] elementParallelH,
-					ElementCommonHandler[] elementCommonH,
-					UnexpectedAttributeHandler[] unexpectedAttributeH,
-					UnexpectedAmbiguousAttributeHandler[] unexpectedAmbiguousAH,
-					UnknownAttributeHandler[] unknownAttributeH,
-					AttributeValidationHandler[] attributeVH,
-					CandidateAttributeValidationHandler[] candidateAttributeVH,
-					AttributeConcurrentHandler[] attributeConcurrentH,
-                    AttributeParallelHandler[] attributeParallelH,
-                    AttributeDefaultHandler[] attributeDefaultH,
-					CharactersValidationHandler[] charactersValidationH,					
-					StructuredDataValidationHandler[] structuredDataValidationH,
-					DataValidationHandler[] dataValidationH,
-                    DefaultValueAttributeValidationHandler[] defaultVAttributeH,
-					ListPatternValidationHandler[] listPatternVH,
-					ExceptPatternValidationHandler[] exceptPatternVH,
-					BoundElementValidationHandler[] boundElementVH,
-					BoundStartValidationHandler[] boundStartVH,
-					BoundElementConcurrentHandler[] boundElementConcurrentH,
-					BoundElementParallelHandler[] boundElementParallelH,
-					BoundAttributeValidationHandler[] boundAttributeVH,
-					BoundCandidateAttributeValidationHandler[] boundCandidateAttributeVH,
-					BoundAttributeConcurrentHandler[] boundAttributeConcurrentH,
-					BoundAttributeParallelHandler[] boundAttributeParallelH){
-	
+					ElementValidationHandler[] elementVHToFill,
+					StartValidationHandler[] startVHToFill,
+					UnexpectedElementHandler[] unexpectedElementHToFill,
+					UnexpectedAmbiguousElementHandler[] unexpectedAmbiguousEHToFill,
+					UnknownElementHandler[] unknownElementHToFill,
+					ElementDefaultHandler[] elementDefaultHToFill,
+					ElementConcurrentHandler[] elementConcurrentHToFill,
+					ElementParallelHandler[] elementParallelHToFill,
+					ElementCommonHandler[] elementCommonHToFill,
+					UnexpectedAttributeHandler[] unexpectedAttributeHToFill,
+					UnexpectedAmbiguousAttributeHandler[] unexpectedAmbiguousAHToFill,
+					UnknownAttributeHandler[] unknownAttributeHToFill,
+					AttributeValidationHandler[] attributeVHToFill,
+					CandidateAttributeValidationHandler[] candidateAttributeVHToFill,
+					AttributeConcurrentHandler[] attributeConcurrentHToFill,
+                    AttributeParallelHandler[] attributeParallelHToFill,
+                    AttributeDefaultHandler[] attributeDefaultHToFill,
+					CharactersValidationHandler[] charactersValidationHToFill,					
+					StructuredDataValidationHandler[] structuredDataValidationHToFill,
+					DataValidationHandler[] dataValidationHToFill,
+                    DefaultValueAttributeValidationHandler[] defaultVAttributeHToFill,
+					ListPatternValidationHandler[] listPatternVHToFill,
+					ExceptPatternValidationHandler[] exceptPatternVHToFill,
+					BoundElementValidationHandler[] boundElementVHToFill,
+					BoundStartValidationHandler[] boundStartVHToFill,
+					BoundElementConcurrentHandler[] boundElementConcurrentHToFill,
+					BoundElementParallelHandler[] boundElementParallelHToFill,
+					BoundAttributeValidationHandler[] boundAttributeVHToFill,
+					BoundCandidateAttributeValidationHandler[] boundCandidateAttributeVHToFill,
+					BoundAttributeConcurrentHandler[] boundAttributeConcurrentHToFill,
+					BoundAttributeParallelHandler[] boundAttributeParallelHToFill){
+	    
 		int elementVHFillCount;
-		if(elementVH == null || elementVH.length < elementVHAverageUse)
-			elementVH = new ElementValidationHandler[elementVHAverageUse];		
+		if(elementVHToFill == null || elementVHToFill.length < elementVHAverageUse){
+			elementVHToFill = new ElementValidationHandler[elementVHAverageUse];
+	        eventHandlerPool.elementVH = elementVHToFill;		
+		}
 		if(elementVHFree > elementVHAverageUse){
 			elementVHFillCount = elementVHAverageUse;
 			elementVHFree = elementVHFree - elementVHAverageUse;
@@ -440,12 +444,14 @@ public class ContentHandlerPool{
 			elementVHFillCount = elementVHFree;
 			elementVHFree = 0;
 		}		
-		System.arraycopy(this.elementVH, elementVHFree, 
-							elementVH, 0, elementVHFillCount);
+		System.arraycopy(elementVH, elementVHFree, 
+							elementVHToFill, 0, elementVHFillCount);
 		
 		int startVHFillCount;
-		if(startVH == null || startVH.length < startVHAverageUse)
-			startVH = new StartValidationHandler[startVHAverageUse];		
+		if(startVHToFill == null || startVHToFill.length < startVHAverageUse){
+			startVHToFill = new StartValidationHandler[startVHAverageUse];
+			eventHandlerPool.startVH = startVHToFill;
+		}
 		if(startVHFree > startVHAverageUse){
 			startVHFillCount = startVHAverageUse;
 			startVHFree = startVHFree - startVHAverageUse;
@@ -453,14 +459,16 @@ public class ContentHandlerPool{
 			startVHFillCount = startVHFree;
 			startVHFree = 0;
 		}		
-		System.arraycopy(this.startVH, startVHFree, 
-							startVH, 0, startVHFillCount);
+		System.arraycopy(startVH, startVHFree, 
+							startVHToFill, 0, startVHFillCount);
 		
 	
 		
 		int unexpectedElementHFillCount;
-		if(unexpectedElementH == null || unexpectedElementH.length < unexpectedElementHAverageUse)
-			unexpectedElementH = new UnexpectedElementHandler[unexpectedElementHAverageUse];		
+		if(unexpectedElementHToFill == null || unexpectedElementHToFill.length < unexpectedElementHAverageUse){
+			unexpectedElementHToFill = new UnexpectedElementHandler[unexpectedElementHAverageUse];		
+			eventHandlerPool.unexpectedElementH = unexpectedElementHToFill;
+		}
 		if(unexpectedElementHFree > unexpectedElementHAverageUse){
 			unexpectedElementHFillCount = unexpectedElementHAverageUse;
 			unexpectedElementHFree = unexpectedElementHFree - unexpectedElementHAverageUse;
@@ -468,12 +476,14 @@ public class ContentHandlerPool{
 			unexpectedElementHFillCount = unexpectedElementHFree;
 			unexpectedElementHFree = 0;
 		}		
-		System.arraycopy(this.unexpectedElementH, unexpectedElementHFree, 
-							unexpectedElementH, 0, unexpectedElementHFillCount);
+		System.arraycopy(unexpectedElementH, unexpectedElementHFree, 
+							unexpectedElementHToFill, 0, unexpectedElementHFillCount);
 			
 		int unexpectedAmbiguousEHFillCount;
-		if(unexpectedAmbiguousEH == null || unexpectedAmbiguousEH.length < unexpectedAmbiguousEHAverageUse)
-			unexpectedAmbiguousEH = new UnexpectedAmbiguousElementHandler[unexpectedAmbiguousEHAverageUse];		
+		if(unexpectedAmbiguousEHToFill == null || unexpectedAmbiguousEHToFill.length < unexpectedAmbiguousEHAverageUse){
+			unexpectedAmbiguousEHToFill = new UnexpectedAmbiguousElementHandler[unexpectedAmbiguousEHAverageUse];		
+			eventHandlerPool.unexpectedAmbiguousEH = unexpectedAmbiguousEHToFill;
+		}
 		if(unexpectedAmbiguousEHFree > unexpectedAmbiguousEHAverageUse){
 			unexpectedAmbiguousEHFillCount = unexpectedAmbiguousEHAverageUse;
 			unexpectedAmbiguousEHFree = unexpectedAmbiguousEHFree - unexpectedAmbiguousEHAverageUse;
@@ -481,12 +491,14 @@ public class ContentHandlerPool{
 			unexpectedAmbiguousEHFillCount = unexpectedAmbiguousEHFree;
 			unexpectedAmbiguousEHFree = 0;
 		}		
-		System.arraycopy(this.unexpectedAmbiguousEH, unexpectedAmbiguousEHFree, 
-							unexpectedAmbiguousEH, 0, unexpectedAmbiguousEHFillCount);
+		System.arraycopy(unexpectedAmbiguousEH, unexpectedAmbiguousEHFree, 
+							unexpectedAmbiguousEHToFill, 0, unexpectedAmbiguousEHFillCount);
 		
 		int unknownElementHFillCount;
-		if(unknownElementH == null || unknownElementH.length < unknownElementHAverageUse)
-			unknownElementH = new UnknownElementHandler[unknownElementHAverageUse];		
+		if(unknownElementHToFill == null || unknownElementHToFill.length < unknownElementHAverageUse){            
+			unknownElementHToFill = new UnknownElementHandler[unknownElementHAverageUse];		
+			eventHandlerPool.unknownElementH = unknownElementHToFill;
+		}
 		if(unknownElementHFree > unknownElementHAverageUse){
 			unknownElementHFillCount = unknownElementHAverageUse;
 			unknownElementHFree = unknownElementHFree - unknownElementHAverageUse;
@@ -494,25 +506,29 @@ public class ContentHandlerPool{
 			unknownElementHFillCount = unknownElementHFree;
 			unknownElementHFree = 0;
 		}		
-		System.arraycopy(this.unknownElementH, unknownElementHFree, 
-							unknownElementH, 0, unknownElementHFillCount);
+		System.arraycopy(unknownElementH, unknownElementHFree, 
+							unknownElementHToFill, 0, unknownElementHFillCount);
 				
-		int defaultElementHFillCount;
-		if(defaultElementH == null || defaultElementH.length < defaultElementHAverageUse)
-			defaultElementH = new ElementDefaultHandler[defaultElementHAverageUse];		
-		if(defaultElementHFree > defaultElementHAverageUse){
-			defaultElementHFillCount = defaultElementHAverageUse;
-			defaultElementHFree = defaultElementHFree - defaultElementHAverageUse;
+		int elementDefaultHFillCount;
+		if(elementDefaultHToFill == null || elementDefaultHToFill.length < elementDefaultHAverageUse){
+			elementDefaultHToFill = new ElementDefaultHandler[elementDefaultHAverageUse];		
+			eventHandlerPool.elementDefaultH = elementDefaultHToFill;
+		}
+		if(elementDefaultHFree > elementDefaultHAverageUse){
+			elementDefaultHFillCount = elementDefaultHAverageUse;
+			elementDefaultHFree = elementDefaultHFree - elementDefaultHAverageUse;
 		}else{
-			defaultElementHFillCount = defaultElementHFree;
-			defaultElementHFree = 0;
+			elementDefaultHFillCount = elementDefaultHFree;
+			elementDefaultHFree = 0;
 		}		
-		System.arraycopy(this.defaultElementH, defaultElementHFree, 
-							defaultElementH, 0, defaultElementHFillCount);
+		System.arraycopy(elementDefaultH, elementDefaultHFree, 
+							elementDefaultHToFill, 0, elementDefaultHFillCount);
 
 		int elementConcurrentHFillCount;
-		if(elementConcurrentH == null || elementConcurrentH.length < elementConcurrentHAverageUse)
-			elementConcurrentH = new ElementConcurrentHandler[elementConcurrentHAverageUse];		
+		if(elementConcurrentHToFill == null || elementConcurrentHToFill.length < elementConcurrentHAverageUse){
+			elementConcurrentHToFill = new ElementConcurrentHandler[elementConcurrentHAverageUse];		
+			eventHandlerPool.elementConcurrentH = elementConcurrentHToFill;
+		}
 		if(elementConcurrentHFree > elementConcurrentHAverageUse){
 			elementConcurrentHFillCount = elementConcurrentHAverageUse;
 			elementConcurrentHFree = elementConcurrentHFree - elementConcurrentHAverageUse;
@@ -520,12 +536,14 @@ public class ContentHandlerPool{
 			elementConcurrentHFillCount = elementConcurrentHFree;
 			elementConcurrentHFree = 0;
 		}		
-		System.arraycopy(this.elementConcurrentH, elementConcurrentHFree, 
-							elementConcurrentH, 0, elementConcurrentHFillCount);
+		System.arraycopy(elementConcurrentH, elementConcurrentHFree, 
+							elementConcurrentHToFill, 0, elementConcurrentHFillCount);
 				
 		int elementParallelHFillCount;
-		if(elementParallelH == null || elementParallelH.length < elementParallelHAverageUse)
-			elementParallelH = new ElementParallelHandler[elementParallelHAverageUse];		
+		if(elementParallelHToFill == null || elementParallelHToFill.length < elementParallelHAverageUse){
+			elementParallelHToFill = new ElementParallelHandler[elementParallelHAverageUse];		
+			eventHandlerPool.elementParallelH = elementParallelHToFill;
+		}
 		if(elementParallelHFree > elementParallelHAverageUse){
 			elementParallelHFillCount = elementParallelHAverageUse;
 			elementParallelHFree = elementParallelHFree - elementParallelHAverageUse;
@@ -533,12 +551,14 @@ public class ContentHandlerPool{
 			elementParallelHFillCount = elementParallelHFree;
 			elementParallelHFree = 0;
 		}		
-		System.arraycopy(this.elementParallelH, elementParallelHFree, 
-							elementParallelH, 0, elementParallelHFillCount);
+		System.arraycopy(elementParallelH, elementParallelHFree, 
+							elementParallelHToFill, 0, elementParallelHFillCount);
 				
 		int elementCommonHFillCount;
-		if(elementCommonH == null || elementCommonH.length < elementCommonHAverageUse)
-			elementCommonH = new ElementCommonHandler[elementCommonHAverageUse];		
+		if(elementCommonHToFill == null || elementCommonHToFill.length < elementCommonHAverageUse){
+			elementCommonHToFill = new ElementCommonHandler[elementCommonHAverageUse];		
+			eventHandlerPool.elementCommonH = elementCommonHToFill;
+		}
 		if(elementCommonHFree > elementCommonHAverageUse){
 			elementCommonHFillCount = elementCommonHAverageUse;
 			elementCommonHFree = elementCommonHFree - elementCommonHAverageUse;
@@ -546,14 +566,16 @@ public class ContentHandlerPool{
 			elementCommonHFillCount = elementCommonHFree;
 			elementCommonHFree = 0;
 		}		
-		System.arraycopy(this.elementCommonH, elementCommonHFree, 
-							elementCommonH, 0, elementCommonHFillCount);
+		System.arraycopy(elementCommonH, elementCommonHFree, 
+							elementCommonHToFill, 0, elementCommonHFillCount);
 		
 		
 		
 		int unexpectedAttributeHFillCount;
-		if(unexpectedAttributeH == null || unexpectedAttributeH.length < unexpectedAttributeHAverageUse)
-			unexpectedAttributeH = new UnexpectedAttributeHandler[unexpectedAttributeHAverageUse];		
+		if(unexpectedAttributeHToFill == null || unexpectedAttributeHToFill.length < unexpectedAttributeHAverageUse){
+			unexpectedAttributeHToFill = new UnexpectedAttributeHandler[unexpectedAttributeHAverageUse];		
+			eventHandlerPool.unexpectedAttributeH = unexpectedAttributeHToFill;
+		}
 		if(unexpectedAttributeHFree > unexpectedAttributeHAverageUse){
 			unexpectedAttributeHFillCount = unexpectedAttributeHAverageUse;
 			unexpectedAttributeHFree = unexpectedAttributeHFree - unexpectedAttributeHAverageUse;
@@ -561,12 +583,14 @@ public class ContentHandlerPool{
 			unexpectedAttributeHFillCount = unexpectedAttributeHFree;
 			unexpectedAttributeHFree = 0;
 		}		
-		System.arraycopy(this.unexpectedAttributeH, unexpectedAttributeHFree, 
-							unexpectedAttributeH, 0, unexpectedAttributeHFillCount);
+		System.arraycopy(unexpectedAttributeH, unexpectedAttributeHFree, 
+							unexpectedAttributeHToFill, 0, unexpectedAttributeHFillCount);
 			
 		int unexpectedAmbiguousAHFillCount;
-		if(unexpectedAmbiguousAH == null || unexpectedAmbiguousAH.length < unexpectedAmbiguousAHAverageUse)
-			unexpectedAmbiguousAH = new UnexpectedAmbiguousAttributeHandler[unexpectedAmbiguousAHAverageUse];		
+		if(unexpectedAmbiguousAHToFill == null || unexpectedAmbiguousAHToFill.length < unexpectedAmbiguousAHAverageUse){
+			unexpectedAmbiguousAHToFill = new UnexpectedAmbiguousAttributeHandler[unexpectedAmbiguousAHAverageUse];		
+			eventHandlerPool.unexpectedAmbiguousAH = unexpectedAmbiguousAHToFill;
+		}
 		if(unexpectedAmbiguousAHFree > unexpectedAmbiguousAHAverageUse){
 			unexpectedAmbiguousAHFillCount = unexpectedAmbiguousAHAverageUse;
 			unexpectedAmbiguousAHFree = unexpectedAmbiguousAHFree - unexpectedAmbiguousAHAverageUse;
@@ -574,12 +598,14 @@ public class ContentHandlerPool{
 			unexpectedAmbiguousAHFillCount = unexpectedAmbiguousAHFree;
 			unexpectedAmbiguousAHFree = 0;
 		}		
-		System.arraycopy(this.unexpectedAmbiguousAH, unexpectedAmbiguousAHFree, 
-							unexpectedAmbiguousAH, 0, unexpectedAmbiguousAHFillCount);
+		System.arraycopy(unexpectedAmbiguousAH, unexpectedAmbiguousAHFree, 
+							unexpectedAmbiguousAHToFill, 0, unexpectedAmbiguousAHFillCount);
 		
 		int unknownAttributeHFillCount;
-		if(unknownAttributeH == null || unknownAttributeH.length < unknownAttributeHAverageUse)
-			unknownAttributeH = new UnknownAttributeHandler[unknownAttributeHAverageUse];		
+		if(unknownAttributeHToFill == null || unknownAttributeHToFill.length < unknownAttributeHAverageUse){
+			unknownAttributeHToFill = new UnknownAttributeHandler[unknownAttributeHAverageUse];		
+			eventHandlerPool.unknownAttributeH = unknownAttributeHToFill;
+		}
 		if(unknownAttributeHFree > unknownAttributeHAverageUse){
 			unknownAttributeHFillCount = unknownAttributeHAverageUse;
 			unknownAttributeHFree = unknownAttributeHFree - unknownAttributeHAverageUse;
@@ -587,12 +613,14 @@ public class ContentHandlerPool{
 			unknownAttributeHFillCount = unknownAttributeHFree;
 			unknownAttributeHFree = 0;
 		}		
-		System.arraycopy(this.unknownAttributeH, unknownAttributeHFree, 
-							unknownAttributeH, 0, unknownAttributeHFillCount);
+		System.arraycopy(unknownAttributeH, unknownAttributeHFree, 
+							unknownAttributeHToFill, 0, unknownAttributeHFillCount);
 				
 		int attributeVHFillCount;
-		if(attributeVH == null || attributeVH.length < attributeVHAverageUse)
-			attributeVH = new AttributeValidationHandler[attributeVHAverageUse];		
+		if(attributeVHToFill == null || attributeVHToFill.length < attributeVHAverageUse){
+			attributeVHToFill = new AttributeValidationHandler[attributeVHAverageUse];		
+			eventHandlerPool.attributeVH = attributeVHToFill;
+		}
 		if(attributeVHFree > attributeVHAverageUse){
 			attributeVHFillCount = attributeVHAverageUse;
 			attributeVHFree = attributeVHFree - attributeVHAverageUse;
@@ -600,12 +628,14 @@ public class ContentHandlerPool{
 			attributeVHFillCount = attributeVHFree;
 			attributeVHFree = 0;
 		}		
-		System.arraycopy(this.attributeVH, attributeVHFree, 
-							attributeVH, 0, attributeVHFillCount);
+		System.arraycopy(attributeVH, attributeVHFree, 
+							attributeVHToFill, 0, attributeVHFillCount);
 		
         int candidateAttributeVHFillCount;
-		if(candidateAttributeVH == null || candidateAttributeVH.length < candidateAttributeVHAverageUse)
-			candidateAttributeVH = new CandidateAttributeValidationHandler[candidateAttributeVHAverageUse];		
+		if(candidateAttributeVHToFill == null || candidateAttributeVHToFill.length < candidateAttributeVHAverageUse){
+			candidateAttributeVHToFill = new CandidateAttributeValidationHandler[candidateAttributeVHAverageUse];	
+			eventHandlerPool.candidateAttributeVH = candidateAttributeVHToFill;
+		}
 		if(candidateAttributeVHFree > candidateAttributeVHAverageUse){
 			candidateAttributeVHFillCount = candidateAttributeVHAverageUse;
 			candidateAttributeVHFree = candidateAttributeVHFree - candidateAttributeVHAverageUse;
@@ -613,12 +643,14 @@ public class ContentHandlerPool{
 			candidateAttributeVHFillCount = candidateAttributeVHFree;
 			candidateAttributeVHFree = 0;
 		}		
-		System.arraycopy(this.candidateAttributeVH, candidateAttributeVHFree, 
-							candidateAttributeVH, 0, candidateAttributeVHFillCount);
+		System.arraycopy(candidateAttributeVH, candidateAttributeVHFree, 
+							candidateAttributeVHToFill, 0, candidateAttributeVHFillCount);
 		
 		int attributeConcurrentHFillCount;
-		if(attributeConcurrentH == null || attributeConcurrentH.length < attributeConcurrentHAverageUse)
-			attributeConcurrentH = new AttributeConcurrentHandler[attributeConcurrentHAverageUse];		
+		if(attributeConcurrentHToFill == null || attributeConcurrentHToFill.length < attributeConcurrentHAverageUse){
+			attributeConcurrentHToFill = new AttributeConcurrentHandler[attributeConcurrentHAverageUse];		
+			eventHandlerPool.attributeConcurrentH = attributeConcurrentHToFill;
+		}
 		if(attributeConcurrentHFree > attributeConcurrentHAverageUse){
 			attributeConcurrentHFillCount = attributeConcurrentHAverageUse;
 			attributeConcurrentHFree = attributeConcurrentHFree - attributeConcurrentHAverageUse;
@@ -626,12 +658,14 @@ public class ContentHandlerPool{
 			attributeConcurrentHFillCount = attributeConcurrentHFree;
 			attributeConcurrentHFree = 0;
 		}		
-		System.arraycopy(this.attributeConcurrentH, attributeConcurrentHFree, 
-							attributeConcurrentH, 0, attributeConcurrentHFillCount);
+		System.arraycopy(attributeConcurrentH, attributeConcurrentHFree, 
+							attributeConcurrentHToFill, 0, attributeConcurrentHFillCount);
         
         int attributeParallelHFillCount;
-		if(attributeParallelH == null || attributeParallelH.length < attributeParallelHAverageUse)
-			attributeParallelH = new AttributeParallelHandler[attributeParallelHAverageUse];		
+		if(attributeParallelHToFill == null || attributeParallelHToFill.length < attributeParallelHAverageUse){
+			attributeParallelHToFill = new AttributeParallelHandler[attributeParallelHAverageUse];		
+			eventHandlerPool.attributeParallelH = attributeParallelHToFill;
+		}
 		if(attributeParallelHFree > attributeParallelHAverageUse){
 			attributeParallelHFillCount = attributeParallelHAverageUse;
 			attributeParallelHFree = attributeParallelHFree - attributeParallelHAverageUse;
@@ -639,12 +673,14 @@ public class ContentHandlerPool{
 			attributeParallelHFillCount = attributeParallelHFree;
 			attributeParallelHFree = 0;
 		}		
-		System.arraycopy(this.attributeParallelH, attributeParallelHFree, 
-							attributeParallelH, 0, attributeParallelHFillCount);
+		System.arraycopy(attributeParallelH, attributeParallelHFree, 
+							attributeParallelHToFill, 0, attributeParallelHFillCount);
         
         int attributeDefaultHFillCount;
-		if(attributeDefaultH == null || attributeDefaultH.length < attributeDefaultHAverageUse)
-			attributeDefaultH = new AttributeDefaultHandler[attributeDefaultHAverageUse];		
+		if(attributeDefaultHToFill == null || attributeDefaultHToFill.length < attributeDefaultHAverageUse){
+			attributeDefaultHToFill = new AttributeDefaultHandler[attributeDefaultHAverageUse];		
+			eventHandlerPool.attributeDefaultH = attributeDefaultHToFill;
+		}
 		if(attributeDefaultHFree > attributeDefaultHAverageUse){
 			attributeDefaultHFillCount = attributeDefaultHAverageUse;
 			attributeDefaultHFree = attributeDefaultHFree - attributeDefaultHAverageUse;
@@ -652,12 +688,14 @@ public class ContentHandlerPool{
 			attributeDefaultHFillCount = attributeDefaultHFree;
 			attributeDefaultHFree = 0;
 		}		
-		System.arraycopy(this.attributeDefaultH, attributeDefaultHFree, 
-							attributeDefaultH, 0, attributeDefaultHFillCount);
+		System.arraycopy(attributeDefaultH, attributeDefaultHFree, 
+							attributeDefaultHToFill, 0, attributeDefaultHFillCount);
 		
 		int charactersValidationHFillCount;
-		if(charactersValidationH == null || charactersValidationH.length < charactersValidationHAverageUse)
-			charactersValidationH = new CharactersValidationHandler[charactersValidationHAverageUse];		
+		if(charactersValidationHToFill == null || charactersValidationHToFill.length < charactersValidationHAverageUse){
+			charactersValidationHToFill = new CharactersValidationHandler[charactersValidationHAverageUse];		
+			eventHandlerPool.charactersValidationH = charactersValidationHToFill;
+		}
 		if(charactersValidationHFree > charactersValidationHAverageUse){
 			charactersValidationHFillCount = charactersValidationHAverageUse;
 			charactersValidationHFree = charactersValidationHFree - charactersValidationHAverageUse;
@@ -665,12 +703,14 @@ public class ContentHandlerPool{
 			charactersValidationHFillCount = charactersValidationHFree;
 			charactersValidationHFree = 0;
 		}		
-		System.arraycopy(this.charactersValidationH, charactersValidationHFree, 
-							charactersValidationH, 0, charactersValidationHFillCount);
+		System.arraycopy(charactersValidationH, charactersValidationHFree, 
+							charactersValidationHToFill, 0, charactersValidationHFillCount);
 		
 		int structuredDataValidationHFillCount;
-		if(structuredDataValidationH == null || structuredDataValidationH.length < structuredDataValidationHAverageUse)
-			structuredDataValidationH = new StructuredDataValidationHandler[structuredDataValidationHAverageUse];		
+		if(structuredDataValidationHToFill == null || structuredDataValidationHToFill.length < structuredDataValidationHAverageUse){
+			structuredDataValidationHToFill = new StructuredDataValidationHandler[structuredDataValidationHAverageUse];		
+			eventHandlerPool.structuredDataValidationH = structuredDataValidationHToFill;
+		}
 		if(structuredDataValidationHFree > structuredDataValidationHAverageUse){
 			structuredDataValidationHFillCount = structuredDataValidationHAverageUse;
 			structuredDataValidationHFree = structuredDataValidationHFree - structuredDataValidationHAverageUse;
@@ -678,12 +718,14 @@ public class ContentHandlerPool{
 			structuredDataValidationHFillCount = structuredDataValidationHFree;
 			structuredDataValidationHFree = 0;
 		}		
-		System.arraycopy(this.structuredDataValidationH, structuredDataValidationHFree, 
-							structuredDataValidationH, 0, structuredDataValidationHFillCount);
+		System.arraycopy(structuredDataValidationH, structuredDataValidationHFree, 
+							structuredDataValidationHToFill, 0, structuredDataValidationHFillCount);
         
 		int dataValidationHFillCount;
-		if(dataValidationH == null || dataValidationH.length < dataValidationHAverageUse)
-			dataValidationH = new DataValidationHandler[dataValidationHAverageUse];		
+		if(dataValidationHToFill == null || dataValidationHToFill.length < dataValidationHAverageUse){
+			dataValidationHToFill = new DataValidationHandler[dataValidationHAverageUse];		
+			eventHandlerPool.dataValidationH = dataValidationHToFill;
+		}
 		if(dataValidationHFree > dataValidationHAverageUse){
 			dataValidationHFillCount = dataValidationHAverageUse;
 			dataValidationHFree = dataValidationHFree - dataValidationHAverageUse;
@@ -691,13 +733,15 @@ public class ContentHandlerPool{
 			dataValidationHFillCount = dataValidationHFree;
 			dataValidationHFree = 0;
 		}		
-		System.arraycopy(this.dataValidationH, dataValidationHFree, 
-							dataValidationH, 0, dataValidationHFillCount);
+		System.arraycopy(dataValidationH, dataValidationHFree, 
+							dataValidationHToFill, 0, dataValidationHFillCount);
         
 		
         int defaultVAttributeHFillCount;
-		if(defaultVAttributeH == null || defaultVAttributeH.length < defaultVAttributeHAverageUse)
-			defaultVAttributeH = new DefaultValueAttributeValidationHandler[defaultVAttributeHAverageUse];		
+		if(defaultVAttributeHToFill == null || defaultVAttributeHToFill.length < defaultVAttributeHAverageUse){
+			defaultVAttributeHToFill = new DefaultValueAttributeValidationHandler[defaultVAttributeHAverageUse];
+			eventHandlerPool.defaultVAttributeH = defaultVAttributeHToFill;
+		}
 		if(defaultVAttributeHFree > defaultVAttributeHAverageUse){
 			defaultVAttributeHFillCount = defaultVAttributeHAverageUse;
 			defaultVAttributeHFree = defaultVAttributeHFree - defaultVAttributeHAverageUse;
@@ -705,12 +749,14 @@ public class ContentHandlerPool{
 			defaultVAttributeHFillCount = defaultVAttributeHFree;
 			defaultVAttributeHFree = 0;
 		}		
-		System.arraycopy(this.defaultVAttributeH, defaultVAttributeHFree, 
-							defaultVAttributeH, 0, defaultVAttributeHFillCount);
+		System.arraycopy(defaultVAttributeH, defaultVAttributeHFree, 
+							defaultVAttributeHToFill, 0, defaultVAttributeHFillCount);
 		
 		int listPatternVHFillCount;
-		if(listPatternVH == null || listPatternVH.length < listPatternVHAverageUse)
-			listPatternVH = new ListPatternValidationHandler[listPatternVHAverageUse];		
+		if(listPatternVHToFill == null || listPatternVHToFill.length < listPatternVHAverageUse){
+			listPatternVHToFill = new ListPatternValidationHandler[listPatternVHAverageUse];	
+			eventHandlerPool.listPatternVH = listPatternVHToFill;
+		}
 		if(listPatternVHFree > listPatternVHAverageUse){
 			listPatternVHFillCount = listPatternVHAverageUse;
 			listPatternVHFree = listPatternVHFree - listPatternVHAverageUse;
@@ -718,12 +764,14 @@ public class ContentHandlerPool{
 			listPatternVHFillCount = listPatternVHFree;
 			listPatternVHFree = 0;
 		}		
-		System.arraycopy(this.listPatternVH, listPatternVHFree, 
-							listPatternVH, 0, listPatternVHFillCount);
+		System.arraycopy(listPatternVH, listPatternVHFree, 
+							listPatternVHToFill, 0, listPatternVHFillCount);
 		
 		int exceptPatternVHFillCount;
-		if(exceptPatternVH == null || exceptPatternVH.length < exceptPatternVHAverageUse)
-			exceptPatternVH = new ExceptPatternValidationHandler[exceptPatternVHAverageUse];		
+		if(exceptPatternVHToFill == null || exceptPatternVHToFill.length < exceptPatternVHAverageUse){
+			exceptPatternVHToFill = new ExceptPatternValidationHandler[exceptPatternVHAverageUse];		
+			eventHandlerPool.exceptPatternVH = exceptPatternVHToFill;
+		}
 		if(exceptPatternVHFree > exceptPatternVHAverageUse){
 			exceptPatternVHFillCount = exceptPatternVHAverageUse;
 			exceptPatternVHFree = exceptPatternVHFree - exceptPatternVHAverageUse;
@@ -731,14 +779,16 @@ public class ContentHandlerPool{
 			exceptPatternVHFillCount = exceptPatternVHFree;
 			exceptPatternVHFree = 0;
 		}		
-		System.arraycopy(this.exceptPatternVH, exceptPatternVHFree, 
-							exceptPatternVH, 0, exceptPatternVHFillCount);
+		System.arraycopy(exceptPatternVH, exceptPatternVHFree, 
+							exceptPatternVHToFill, 0, exceptPatternVHFillCount);
 		
 		
 		
 		int boundElementVHFillCount;
-		if(boundElementVH == null || boundElementVH.length < boundElementVHAverageUse)
-			boundElementVH = new BoundElementValidationHandler[boundElementVHAverageUse];		
+		if(boundElementVHToFill == null || boundElementVHToFill.length < boundElementVHAverageUse){
+			boundElementVHToFill = new BoundElementValidationHandler[boundElementVHAverageUse];		
+			eventHandlerPool.boundElementVH = boundElementVHToFill;
+		}
 		if(boundElementVHFree > boundElementVHAverageUse){
 			boundElementVHFillCount = boundElementVHAverageUse;
 			boundElementVHFree = boundElementVHFree - boundElementVHAverageUse;
@@ -746,12 +796,14 @@ public class ContentHandlerPool{
 			boundElementVHFillCount = boundElementVHFree;
 			boundElementVHFree = 0;
 		}		
-		System.arraycopy(this.boundElementVH, boundElementVHFree, 
-							boundElementVH, 0, boundElementVHFillCount);
+		System.arraycopy(boundElementVH, boundElementVHFree, 
+							boundElementVHToFill, 0, boundElementVHFillCount);
 				
 		int boundStartVHFillCount;
-		if(boundStartVH == null || boundStartVH.length < boundStartVHAverageUse)
-			boundStartVH = new BoundStartValidationHandler[boundStartVHAverageUse];		
+		if(boundStartVHToFill == null || boundStartVHToFill.length < boundStartVHAverageUse){
+			boundStartVHToFill = new BoundStartValidationHandler[boundStartVHAverageUse];	
+			eventHandlerPool.boundStartVH = boundStartVHToFill;
+		}
 		if(boundStartVHFree > boundStartVHAverageUse){
 			boundStartVHFillCount = boundStartVHAverageUse;
 			boundStartVHFree = boundStartVHFree - boundStartVHAverageUse;
@@ -759,12 +811,14 @@ public class ContentHandlerPool{
 			boundStartVHFillCount = boundStartVHFree;
 			boundStartVHFree = 0;
 		}		
-		System.arraycopy(this.boundStartVH, boundStartVHFree, 
-							boundStartVH, 0, boundStartVHFillCount);
+		System.arraycopy(boundStartVH, boundStartVHFree, 
+							boundStartVHToFill, 0, boundStartVHFillCount);
 		
 		int boundElementConcurrentHFillCount;
-		if(boundElementConcurrentH == null || boundElementConcurrentH.length < boundElementConcurrentHAverageUse)
-			boundElementConcurrentH = new BoundElementConcurrentHandler[boundElementConcurrentHAverageUse];		
+		if(boundElementConcurrentHToFill == null || boundElementConcurrentHToFill.length < boundElementConcurrentHAverageUse){
+			boundElementConcurrentHToFill = new BoundElementConcurrentHandler[boundElementConcurrentHAverageUse];		
+			eventHandlerPool.boundElementConcurrentH = boundElementConcurrentHToFill;
+		}
 		if(boundElementConcurrentHFree > boundElementConcurrentHAverageUse){
 			boundElementConcurrentHFillCount = boundElementConcurrentHAverageUse;
 			boundElementConcurrentHFree = boundElementConcurrentHFree - boundElementConcurrentHAverageUse;
@@ -772,12 +826,14 @@ public class ContentHandlerPool{
 			boundElementConcurrentHFillCount = boundElementConcurrentHFree;
 			boundElementConcurrentHFree = 0;
 		}		
-		System.arraycopy(this.boundElementConcurrentH, boundElementConcurrentHFree, 
-							boundElementConcurrentH, 0, boundElementConcurrentHFillCount);
+		System.arraycopy(boundElementConcurrentH, boundElementConcurrentHFree, 
+							boundElementConcurrentHToFill, 0, boundElementConcurrentHFillCount);
 				
 		int boundElementParallelHFillCount;
-		if(boundElementParallelH == null || boundElementParallelH.length < boundElementParallelHAverageUse)
-			boundElementParallelH = new BoundElementParallelHandler[boundElementParallelHAverageUse];		
+		if(boundElementParallelHToFill == null || boundElementParallelHToFill.length < boundElementParallelHAverageUse){
+			boundElementParallelHToFill = new BoundElementParallelHandler[boundElementParallelHAverageUse];		
+			eventHandlerPool.boundElementParallelH = boundElementParallelHToFill;
+		}
 		if(boundElementParallelHFree > boundElementParallelHAverageUse){
 			boundElementParallelHFillCount = boundElementParallelHAverageUse;
 			boundElementParallelHFree = boundElementParallelHFree - boundElementParallelHAverageUse;
@@ -785,13 +841,15 @@ public class ContentHandlerPool{
 			boundElementParallelHFillCount = boundElementParallelHFree;
 			boundElementParallelHFree = 0;
 		}		
-		System.arraycopy(this.boundElementParallelH, boundElementParallelHFree, 
-							boundElementParallelH, 0, boundElementParallelHFillCount);
+		System.arraycopy(boundElementParallelH, boundElementParallelHFree, 
+							boundElementParallelHToFill, 0, boundElementParallelHFillCount);
 		
 		
 		int boundAttributeVHFillCount;
-		if(boundAttributeVH == null || boundAttributeVH.length < boundAttributeVHAverageUse)
-			boundAttributeVH = new BoundAttributeValidationHandler[boundAttributeVHAverageUse];		
+		if(boundAttributeVHToFill == null || boundAttributeVHToFill.length < boundAttributeVHAverageUse){
+			boundAttributeVHToFill = new BoundAttributeValidationHandler[boundAttributeVHAverageUse];	
+			eventHandlerPool.boundAttributeVH = boundAttributeVHToFill;
+		}
 		if(boundAttributeVHFree > boundAttributeVHAverageUse){
 			boundAttributeVHFillCount = boundAttributeVHAverageUse;
 			boundAttributeVHFree = boundAttributeVHFree - boundAttributeVHAverageUse;
@@ -799,12 +857,14 @@ public class ContentHandlerPool{
 			boundAttributeVHFillCount = boundAttributeVHFree;
 			boundAttributeVHFree = 0;
 		}		
-		System.arraycopy(this.boundAttributeVH, boundAttributeVHFree, 
-							boundAttributeVH, 0, boundAttributeVHFillCount);
+		System.arraycopy(boundAttributeVH, boundAttributeVHFree, 
+							boundAttributeVHToFill, 0, boundAttributeVHFillCount);
         
         int boundCandidateAttributeVHFillCount;
-		if(boundCandidateAttributeVH == null || boundCandidateAttributeVH.length < boundCandidateAttributeVHAverageUse)
-			boundCandidateAttributeVH = new BoundCandidateAttributeValidationHandler[boundCandidateAttributeVHAverageUse];		
+		if(boundCandidateAttributeVHToFill == null || boundCandidateAttributeVHToFill.length < boundCandidateAttributeVHAverageUse){
+			boundCandidateAttributeVHToFill = new BoundCandidateAttributeValidationHandler[boundCandidateAttributeVHAverageUse];	
+			eventHandlerPool.boundCandidateAttributeVH = boundCandidateAttributeVHToFill;
+		}
 		if(boundCandidateAttributeVHFree > boundCandidateAttributeVHAverageUse){
 			boundCandidateAttributeVHFillCount = boundCandidateAttributeVHAverageUse;
 			boundCandidateAttributeVHFree = boundCandidateAttributeVHFree - boundCandidateAttributeVHAverageUse;
@@ -812,12 +872,14 @@ public class ContentHandlerPool{
 			boundCandidateAttributeVHFillCount = boundCandidateAttributeVHFree;
 			boundCandidateAttributeVHFree = 0;
 		}		
-		System.arraycopy(this.boundCandidateAttributeVH, boundCandidateAttributeVHFree, 
-							boundCandidateAttributeVH, 0, boundCandidateAttributeVHFillCount);
+		System.arraycopy(boundCandidateAttributeVH, boundCandidateAttributeVHFree, 
+							boundCandidateAttributeVHToFill, 0, boundCandidateAttributeVHFillCount);
 		
 		int boundAttributeConcurrentHFillCount;
-		if(boundAttributeConcurrentH == null || boundAttributeConcurrentH.length < boundAttributeConcurrentHAverageUse)
-			boundAttributeConcurrentH = new BoundAttributeConcurrentHandler[boundAttributeConcurrentHAverageUse];		
+		if(boundAttributeConcurrentHToFill == null || boundAttributeConcurrentHToFill.length < boundAttributeConcurrentHAverageUse){
+			boundAttributeConcurrentHToFill = new BoundAttributeConcurrentHandler[boundAttributeConcurrentHAverageUse];		
+			eventHandlerPool.boundAttributeConcurrentH = boundAttributeConcurrentHToFill;
+		}
 		if(boundAttributeConcurrentHFree > boundAttributeConcurrentHAverageUse){
 			boundAttributeConcurrentHFillCount = boundAttributeConcurrentHAverageUse;
 			boundAttributeConcurrentHFree = boundAttributeConcurrentHFree - boundAttributeConcurrentHAverageUse;
@@ -825,13 +887,15 @@ public class ContentHandlerPool{
 			boundAttributeConcurrentHFillCount = boundAttributeConcurrentHFree;
 			boundAttributeConcurrentHFree = 0;
 		}		
-		System.arraycopy(this.boundAttributeConcurrentH, boundAttributeConcurrentHFree, 
-							boundAttributeConcurrentH, 0, boundAttributeConcurrentHFillCount);
+		System.arraycopy(boundAttributeConcurrentH, boundAttributeConcurrentHFree, 
+							boundAttributeConcurrentHToFill, 0, boundAttributeConcurrentHFillCount);
 		
 		
         int boundAttributeParallelHFillCount;
-		if(boundAttributeParallelH == null || boundAttributeParallelH.length < boundAttributeParallelHAverageUse)
-			boundAttributeParallelH = new BoundAttributeParallelHandler[boundAttributeParallelHAverageUse];		
+		if(boundAttributeParallelHToFill == null || boundAttributeParallelHToFill.length < boundAttributeParallelHAverageUse){
+			boundAttributeParallelHToFill = new BoundAttributeParallelHandler[boundAttributeParallelHAverageUse];		
+			eventHandlerPool.boundAttributeParallelH = boundAttributeParallelHToFill;
+		}
 		if(boundAttributeParallelHFree > boundAttributeParallelHAverageUse){
 			boundAttributeParallelHFillCount = boundAttributeParallelHAverageUse;
 			boundAttributeParallelHFree = boundAttributeParallelHFree - boundAttributeParallelHAverageUse;
@@ -839,514 +903,1037 @@ public class ContentHandlerPool{
 			boundAttributeParallelHFillCount = boundAttributeParallelHFree;
 			boundAttributeParallelHFree = 0;
 		}		
-		System.arraycopy(this.boundAttributeParallelH, boundAttributeParallelHFree, 
-							boundAttributeParallelH, 0, boundAttributeParallelHFillCount);
+		System.arraycopy(boundAttributeParallelH, boundAttributeParallelHFree, 
+							boundAttributeParallelHToFill, 0, boundAttributeParallelHFillCount);
 		
         
-		eventHandlerPool.setHandlers(elementVHFillCount,	
-										elementVH,
-										startVHFillCount,	
-										startVH,
-										unexpectedElementHFillCount,	
-										unexpectedElementH,
+		eventHandlerPool.initFilled(elementVHFillCount,
+										startVHFillCount,
+										unexpectedElementHFillCount,
 										unexpectedAmbiguousEHFillCount,
-										unexpectedAmbiguousEH,
 										unknownElementHFillCount,	
-										unknownElementH,
-										defaultElementHFillCount,	
-										defaultElementH,
+										elementDefaultHFillCount,	
 										elementConcurrentHFillCount,
-										elementConcurrentH,
 										elementParallelHFillCount,
-										elementParallelH,
 										elementCommonHFillCount,
-										elementCommonH,
-										unexpectedAttributeHFillCount,	
-										unexpectedAttributeH,
+										unexpectedAttributeHFillCount,
 										unexpectedAmbiguousAHFillCount,
-										unexpectedAmbiguousAH,
 										unknownAttributeHFillCount,	
-										unknownAttributeH,
 										attributeVHFillCount,	
-										attributeVH,
-										candidateAttributeVHFillCount,	
-										candidateAttributeVH,
+										candidateAttributeVHFillCount,
 										attributeConcurrentHFillCount,
-										attributeConcurrentH,
 										attributeParallelHFillCount,
-										attributeParallelH,
                                         attributeDefaultHFillCount,
-										attributeDefaultH,
 										charactersValidationHFillCount,
-										charactersValidationH,
 										structuredDataValidationHFillCount,
-										structuredDataValidationH,
 										dataValidationHFillCount,
-										dataValidationH,
                                         defaultVAttributeHFillCount,
-										defaultVAttributeH,
 										listPatternVHFillCount,
-										listPatternVH,
 										exceptPatternVHFillCount,
-										exceptPatternVH,
-										boundElementVHFillCount,	
-										boundElementVH,
+										boundElementVHFillCount,
 										boundStartVHFillCount,	
-										boundStartVH,
 										boundElementConcurrentHFillCount,
-										boundElementConcurrentH,
 										boundElementParallelHFillCount,
-										boundElementParallelH,
 										boundAttributeVHFillCount,	
-										boundAttributeVH,
-										boundCandidateAttributeVHFillCount,	
-										boundCandidateAttributeVH,
+										boundCandidateAttributeVHFillCount,
 										boundAttributeConcurrentHFillCount,
-										boundAttributeConcurrentH,
-                                        boundAttributeParallelHFillCount,
-										boundAttributeParallelH);
+                                        boundAttributeParallelHFillCount);
 	}
 	
-	synchronized void recycle(int elementVHAverageUse,	
-							ElementValidationHandler[] elementVH,
-							int startVHAverageUse,	
-							StartValidationHandler[] startVH,
-							int unexpectedElementHAverageUse,	
-							UnexpectedElementHandler[] unexpectedElementH,
-							int unexpectedAmbiguousEHAverageUse,
-							UnexpectedAmbiguousElementHandler[] unexpectedAmbiguousEH,
-							int unknownElementHAverageUse,	
-							UnknownElementHandler[] unknownElementH,
-							int defaultElementHAverageUse,	
-							ElementDefaultHandler[] defaultElementH,
-							int elementConcurrentHAverageUse,
-							ElementConcurrentHandler[] elementConcurrentH,
-							int elementParallelHAverageUse,
-							ElementParallelHandler[] elementParallelH,
-							int elementCommonHAverageUse,
-							ElementCommonHandler[] elementCommonH,
-							int unexpectedAttributeHAverageUse,	
-							UnexpectedAttributeHandler[] unexpectedAttributeH,
-							int unexpectedAmbiguousAHAverageUse,
-							UnexpectedAmbiguousAttributeHandler[] unexpectedAmbiguousAH,
-							int unknownAttributeHAverageUse,	
-							UnknownAttributeHandler[] unknownAttributeH,
-							int attributeVHAverageUse,	
-							AttributeValidationHandler[] attributeVH,
-							int candidateAttributeVHAverageUse,	
-							CandidateAttributeValidationHandler[] candidateAttributeVH,
-							int attributeConcurrentHAverageUse,
-							AttributeConcurrentHandler[] attributeConcurrentH,
-                            int attributeParallelHAverageUse,
-							AttributeParallelHandler[] attributeParallelH,
-                            int attributeDefaultHAverageUse,
-							AttributeDefaultHandler[] attributeDefaultH,
-							int charactersValidationHAverageUse,
-							CharactersValidationHandler[] charactersValidationH,
-							int structuredDataValidationHAverageUse,
-							StructuredDataValidationHandler[] structuredDataValidationH,
-							int dataValidationHAverageUse,
-							DataValidationHandler[] dataValidationH,
-                            int defaultVAttributeHAverageUse,
-							DefaultValueAttributeValidationHandler[] defaultVAttributeH,
-							int listPatternVHAverageUse,
-							ListPatternValidationHandler[] listPatternVH,
-							int exceptPatternVHAverageUse,
-							ExceptPatternValidationHandler[] exceptPatternVH,
-							int boundElementVHAverageUse,	
-							BoundElementValidationHandler[] boundElementVH,
-							int boundStartVHAverageUse,	
-							BoundStartValidationHandler[] boundStartVH,
-							int boundElementConcurrentHAverageUse,
-							BoundElementConcurrentHandler[] boundElementConcurrentH,
-							int boundElementParallelHAverageUse,
-							BoundElementParallelHandler[] boundElementParallelH,
-							int boundAttributeVHAverageUse,	
-							BoundAttributeValidationHandler[] boundAttributeVH,
-                            int boundCandidateAttributeVHAverageUse,	
-							BoundCandidateAttributeValidationHandler[] boundCandidateAttributeVH,
-							int boundAttributeConcurrentHAverageUse,
-							BoundAttributeConcurrentHandler[] boundAttributeConcurrentH,
-                            int boundAttributeParallelHAverageUse,
-							BoundAttributeParallelHandler[] boundAttributeParallelH){			
+	synchronized void recycle(int elementVHRecycledCount,
+	                        int elementVHEffectivellyUsed,
+							ElementValidationHandler[] elementVHRecycled,
+							int startVHRecycledCount,	
+							int startVHEffectivellyUsed,
+							StartValidationHandler[] startVHRecycled,
+							int unexpectedElementHRecycledCount,
+							int unexpectedElementHEffectivellyUsed,
+							UnexpectedElementHandler[] unexpectedElementHRecycled,
+							int unexpectedAmbiguousEHRecycledCount,
+							int unexpectedAmbiguousEHEffectivellyUsed,
+							UnexpectedAmbiguousElementHandler[] unexpectedAmbiguousEHRecycled,
+							int unknownElementHRecycledCount,
+							int unknownElementHEffectivellyUsed,
+							UnknownElementHandler[] unknownElementHRecycled,
+							int elementDefaultHRecycledCount,
+							int elementDefaultHEffectivellyUsed,
+							ElementDefaultHandler[] elementDefaultHRecycled,
+							int elementConcurrentHRecycledCount,
+							int elementConcurrentHEffectivellyUsed,
+							ElementConcurrentHandler[] elementConcurrentHRecycled,
+							int elementParallelHRecycledCount,
+							int elementParallelHEffectivellyUsed,
+							ElementParallelHandler[] elementParallelHRecycled,
+							int elementCommonHRecycledCount,
+							int elementCommonHEffectivellyUsed,
+							ElementCommonHandler[] elementCommonHRecycled,
+							int unexpectedAttributeHRecycledCount,
+							int unexpectedAttributeHEffectivellyUsed,
+							UnexpectedAttributeHandler[] unexpectedAttributeHRecycled,
+							int unexpectedAmbiguousAHRecycledCount,
+							int unexpectedAmbiguousAHEffectivellyUsed,
+							UnexpectedAmbiguousAttributeHandler[] unexpectedAmbiguousAHRecycled,
+							int unknownAttributeHRecycledCount,	
+							int unknownAttributeHEffectivellyUsed,	
+							UnknownAttributeHandler[] unknownAttributeHRecycled,
+							int attributeVHRecycledCount,	
+							int attributeVHEffectivellyUsed,	
+							AttributeValidationHandler[] attributeVHRecycled,
+							int candidateAttributeVHRecycledCount,
+							int candidateAttributeVHEffectivellyUsed,
+							CandidateAttributeValidationHandler[] candidateAttributeVHRecycled,
+							int attributeConcurrentHRecycledCount,
+							int attributeConcurrentHEffectivellyUsed,
+							AttributeConcurrentHandler[] attributeConcurrentHRecycled,
+                            int attributeParallelHRecycledCount,
+                            int attributeParallelHEffectivellyUsed,
+							AttributeParallelHandler[] attributeParallelHRecycled,
+                            int attributeDefaultHRecycledCount,
+                            int attributeDefaultHEffectivellyUsed,
+							AttributeDefaultHandler[] attributeDefaultHRecycled,
+							int charactersValidationHRecycledCount,
+							int charactersValidationHEffectivellyUsed,
+							CharactersValidationHandler[] charactersValidationHRecycled,
+							int structuredDataValidationHRecycledCount,
+							int structuredDataValidationHEffectivellyUsed,
+							StructuredDataValidationHandler[] structuredDataValidationHRecycled,
+							int dataValidationHRecycledCount,
+							int dataValidationHEffectivellyUsed,
+							DataValidationHandler[] dataValidationHRecycled,
+                            int defaultVAttributeHRecycledCount,
+                            int defaultVAttributeHEffectivellyUsed,
+							DefaultValueAttributeValidationHandler[] defaultVAttributeHRecycled,
+							int listPatternVHRecycledCount,
+							int listPatternVHEffectivellyUsed,
+							ListPatternValidationHandler[] listPatternVHRecycled,
+							int exceptPatternVHRecycledCount,
+							int exceptPatternVHEffectivellyUsed,
+							ExceptPatternValidationHandler[] exceptPatternVHRecycled,
+							int boundElementVHRecycledCount,
+							int boundElementVHEffectivellyUsed,
+							BoundElementValidationHandler[] boundElementVHRecycled,
+							int boundStartVHRecycledCount,	
+							int boundStartVHEffectivellyUsed,	
+							BoundStartValidationHandler[] boundStartVHRecycled,
+							int boundElementConcurrentHRecycledCount,
+							int boundElementConcurrentHEffectivellyUsed,
+							BoundElementConcurrentHandler[] boundElementConcurrentHRecycled,
+							int boundElementParallelHRecycledCount,
+							int boundElementParallelHEffectivellyUsed,
+							BoundElementParallelHandler[] boundElementParallelHRecycled,
+							int boundAttributeVHRecycledCount,	
+							int boundAttributeVHEffectivellyUsed,	
+							BoundAttributeValidationHandler[] boundAttributeVHRecycled,
+                            int boundCandidateAttributeVHRecycledCount,
+                            int boundCandidateAttributeVHEffectivellyUsed,
+							BoundCandidateAttributeValidationHandler[] boundCandidateAttributeVHRecycled,
+							int boundAttributeConcurrentHRecycledCount,
+							int boundAttributeConcurrentHEffectivellyUsed,
+							BoundAttributeConcurrentHandler[] boundAttributeConcurrentHRecycled,
+                            int boundAttributeParallelHRecycledCount,
+                            int boundAttributeParallelHEffectivellyUsed,
+							BoundAttributeParallelHandler[] boundAttributeParallelHRecycled){			
+	    int neededLength = elementVHFree + elementVHRecycledCount; 
+        if(neededLength > elementVH.length){
+            if(neededLength > elementVHMaxSize){
+                neededLength = elementVHMaxSize;
+                ElementValidationHandler[] increased = new ElementValidationHandler[neededLength];
+                System.arraycopy(elementVH, 0, increased, 0, elementVH.length);
+                elementVH = increased;		        
+                System.arraycopy(elementVHRecycled, 0, elementVH, elementVHFree, elementVHMaxSize - elementVHFree);
+                elementVHFree = elementVHMaxSize; 
+            }else{
+                ElementValidationHandler[] increased = new ElementValidationHandler[neededLength];
+                System.arraycopy(elementVH, 0, increased, 0, elementVH.length);
+                elementVH = increased;
+                System.arraycopy(elementVHRecycled, 0, elementVH, elementVHFree, elementVHRecycledCount);
+                elementVHFree += elementVHRecycledCount;
+            }
+        }else{
+            System.arraycopy(elementVHRecycled, 0, elementVH, elementVHFree, elementVHRecycledCount);
+            elementVHFree += elementVHRecycledCount;
+        }
+        
+        if(elementVHAverageUse != 0)elementVHAverageUse = (elementVHAverageUse + elementVHEffectivellyUsed)/2;
+        else elementVHAverageUse = elementVHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < elementVHRecycled.length; i++){
+            elementVHRecycled[i] = null;
+        }
+         
+        
+		neededLength = startVHFree + startVHRecycledCount; 
+        if(neededLength > startVH.length){
+            if(neededLength > startVHMaxSize){
+                neededLength = startVHMaxSize;
+                StartValidationHandler[] increased = new StartValidationHandler[neededLength];
+                System.arraycopy(startVH, 0, increased, 0, startVH.length);
+                startVH = increased;		        
+                System.arraycopy(startVHRecycled, 0, startVH, startVHFree, startVHMaxSize - startVHFree);
+                startVHFree = startVHMaxSize; 
+            }else{
+                StartValidationHandler[] increased = new StartValidationHandler[neededLength];
+                System.arraycopy(startVH, 0, increased, 0, startVH.length);
+                startVH = increased;
+                System.arraycopy(startVHRecycled, 0, startVH, startVHFree, startVHRecycledCount);
+                startVHFree += startVHRecycledCount;
+            }
+        }else{
+            System.arraycopy(startVHRecycled, 0, startVH, startVHFree, startVHRecycledCount);
+            startVHFree += startVHRecycledCount;
+        }
+        
+        if(startVHAverageUse != 0)startVHAverageUse = (startVHAverageUse + startVHEffectivellyUsed)/2;
+        else startVHAverageUse = startVHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < startVHRecycled.length; i++){
+            startVHRecycled[i] = null;
+        }
+		
+        
+		neededLength = unexpectedElementHFree + unexpectedElementHRecycledCount; 
+        if(neededLength > unexpectedElementH.length){
+            if(neededLength > unexpectedElementHMaxSize){
+                neededLength = unexpectedElementHMaxSize;
+                UnexpectedElementHandler[] increased = new UnexpectedElementHandler[neededLength];
+                System.arraycopy(unexpectedElementH, 0, increased, 0, unexpectedElementH.length);
+                unexpectedElementH = increased;		        
+                System.arraycopy(unexpectedElementHRecycled, 0, unexpectedElementH, unexpectedElementHFree, unexpectedElementHMaxSize - unexpectedElementHFree);
+                unexpectedElementHFree = unexpectedElementHMaxSize; 
+            }else{
+                UnexpectedElementHandler[] increased = new UnexpectedElementHandler[neededLength];
+                System.arraycopy(unexpectedElementH, 0, increased, 0, unexpectedElementH.length);
+                unexpectedElementH = increased;
+                System.arraycopy(unexpectedElementHRecycled, 0, unexpectedElementH, unexpectedElementHFree, unexpectedElementHRecycledCount);
+                unexpectedElementHFree += unexpectedElementHRecycledCount;
+            }
+        }else{
+            System.arraycopy(unexpectedElementHRecycled, 0, unexpectedElementH, unexpectedElementHFree, unexpectedElementHRecycledCount);
+            unexpectedElementHFree += unexpectedElementHRecycledCount;
+        }
+        
+        if(unexpectedElementHAverageUse != 0)unexpectedElementHAverageUse = (unexpectedElementHAverageUse + unexpectedElementHEffectivellyUsed)/2;
+        else unexpectedElementHAverageUse = unexpectedElementHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < unexpectedElementHRecycled.length; i++){
+            unexpectedElementHRecycled[i] = null;
+        }
+		
 
-		if(elementVHFree + elementVHAverageUse >= elementVHPoolSize){			 
-			elementVHPoolSize+= elementVHAverageUse;
-			ElementValidationHandler[] increased = new ElementValidationHandler[elementVHPoolSize];
-			System.arraycopy(this.elementVH, 0, increased, 0, elementVHFree);
-			this.elementVH = increased;
-		}
-		System.arraycopy(elementVH, 0, this.elementVH, elementVHFree, elementVHAverageUse);
-		elementVHFree += elementVHAverageUse;
-		if(this.elementVHAverageUse != 0)this.elementVHAverageUse = (this.elementVHAverageUse + elementVHAverageUse)/2;
-		else this.elementVHAverageUse = elementVHAverageUse;
-		// System.out.println("vh "+this.elementVHAverageUse);
+		neededLength = unexpectedAmbiguousEHFree + unexpectedAmbiguousEHRecycledCount; 
+        if(neededLength > unexpectedAmbiguousEH.length){
+            if(neededLength > unexpectedAmbiguousEHMaxSize){
+                neededLength = unexpectedAmbiguousEHMaxSize;
+                UnexpectedAmbiguousElementHandler[] increased = new UnexpectedAmbiguousElementHandler[neededLength];
+                System.arraycopy(unexpectedAmbiguousEH, 0, increased, 0, unexpectedAmbiguousEH.length);
+                unexpectedAmbiguousEH = increased;		        
+                System.arraycopy(unexpectedAmbiguousEHRecycled, 0, unexpectedAmbiguousEH, unexpectedAmbiguousEHFree, unexpectedAmbiguousEHMaxSize - unexpectedAmbiguousEHFree);
+                unexpectedAmbiguousEHFree = unexpectedAmbiguousEHMaxSize; 
+            }else{
+                UnexpectedAmbiguousElementHandler[] increased = new UnexpectedAmbiguousElementHandler[neededLength];
+                System.arraycopy(unexpectedAmbiguousEH, 0, increased, 0, unexpectedAmbiguousEH.length);
+                unexpectedAmbiguousEH = increased;
+                System.arraycopy(unexpectedAmbiguousEHRecycled, 0, unexpectedAmbiguousEH, unexpectedAmbiguousEHFree, unexpectedAmbiguousEHRecycledCount);
+                unexpectedAmbiguousEHFree += unexpectedAmbiguousEHRecycledCount;
+            }
+        }else{
+            System.arraycopy(unexpectedAmbiguousEHRecycled, 0, unexpectedAmbiguousEH, unexpectedAmbiguousEHFree, unexpectedAmbiguousEHRecycledCount);
+            unexpectedAmbiguousEHFree += unexpectedAmbiguousEHRecycledCount;
+        }
+        
+        if(unexpectedAmbiguousEHAverageUse != 0)unexpectedAmbiguousEHAverageUse = (unexpectedAmbiguousEHAverageUse + unexpectedAmbiguousEHEffectivellyUsed)/2;
+        else unexpectedAmbiguousEHAverageUse = unexpectedAmbiguousEHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < unexpectedAmbiguousEHRecycled.length; i++){
+            unexpectedAmbiguousEHRecycled[i] = null;
+        }
 		
-		if(startVHFree + startVHAverageUse >= startVHPoolSize){			 
-			startVHPoolSize+= startVHAverageUse;
-			StartValidationHandler[] increased = new StartValidationHandler[startVHPoolSize];
-			System.arraycopy(this.startVH, 0, increased, 0, startVHFree);
-			this.startVH = increased;
-		}
-		System.arraycopy(startVH, 0, this.startVH, startVHFree, startVHAverageUse);
-		startVHFree += startVHAverageUse;
-		if(this.startVHAverageUse != 0)this.startVHAverageUse = (this.startVHAverageUse + startVHAverageUse)/2;
-		else this.startVHAverageUse = startVHAverageUse;
-		// System.out.println("vh "+this.startVHAverageUse);
 		
-
-		if(unexpectedElementHFree + unexpectedElementHAverageUse >= unexpectedElementHPoolSize){
-			unexpectedElementHPoolSize+= unexpectedElementHAverageUse;
-			UnexpectedElementHandler[] increased = new UnexpectedElementHandler[unexpectedElementHPoolSize];
-			System.arraycopy(this.unexpectedElementH, 0, increased, 0, unexpectedElementHFree);
-			this.unexpectedElementH = increased;
-		}
-		System.arraycopy(unexpectedElementH, 0, this.unexpectedElementH, unexpectedElementHFree, unexpectedElementHAverageUse);
-		unexpectedElementHFree += unexpectedElementHAverageUse;
-		if(this.unexpectedElementHAverageUse != 0)this.unexpectedElementHAverageUse = (this.unexpectedElementHAverageUse + unexpectedElementHAverageUse)/2;
-		else this.unexpectedElementHAverageUse = unexpectedElementHAverageUse;
-		// System.out.println("unexpected "+this.unexpectedElementHAverageUse);
+		neededLength = unknownElementHFree + unknownElementHRecycledCount; 
+        if(neededLength > unknownElementH.length){
+            if(neededLength > unknownElementHMaxSize){
+                neededLength = unknownElementHMaxSize;
+                UnknownElementHandler[] increased = new UnknownElementHandler[neededLength];
+                System.arraycopy(unknownElementH, 0, increased, 0, unknownElementH.length);
+                unknownElementH = increased;		        
+                System.arraycopy(unknownElementHRecycled, 0, unknownElementH, unknownElementHFree, unknownElementHMaxSize - unknownElementHFree);
+                unknownElementHFree = unknownElementHMaxSize; 
+            }else{
+                UnknownElementHandler[] increased = new UnknownElementHandler[neededLength];
+                System.arraycopy(unknownElementH, 0, increased, 0, unknownElementH.length);
+                unknownElementH = increased;
+                System.arraycopy(unknownElementHRecycled, 0, unknownElementH, unknownElementHFree, unknownElementHRecycledCount);
+                unknownElementHFree += unknownElementHRecycledCount;
+            }
+        }else{
+            System.arraycopy(unknownElementHRecycled, 0, unknownElementH, unknownElementHFree, unknownElementHRecycledCount);
+            unknownElementHFree += unknownElementHRecycledCount;
+        }
+        
+        if(unknownElementHAverageUse != 0)unknownElementHAverageUse = (unknownElementHAverageUse + unknownElementHEffectivellyUsed)/2;
+        else unknownElementHAverageUse = unknownElementHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < unknownElementHRecycled.length; i++){
+            unknownElementHRecycled[i] = null;
+        }
 		
-		if(unexpectedAmbiguousEHFree + unexpectedAmbiguousEHAverageUse >= unexpectedAmbiguousEHPoolSize){
-			unexpectedAmbiguousEHPoolSize += unexpectedAmbiguousEHAverageUse;
-			UnexpectedAmbiguousElementHandler[] increased = new UnexpectedAmbiguousElementHandler[unexpectedAmbiguousEHPoolSize];
-			System.arraycopy(this.unexpectedAmbiguousEH, 0, increased, 0, unexpectedAmbiguousEHFree);
-			this.unexpectedAmbiguousEH = increased;
-		}
-		System.arraycopy(unexpectedAmbiguousEH, 0, this.unexpectedAmbiguousEH, unexpectedAmbiguousEHFree, unexpectedAmbiguousEHAverageUse);
-		unexpectedAmbiguousEHFree += unexpectedAmbiguousEHAverageUse;
-		if(this.unexpectedAmbiguousEHAverageUse != 0)this.unexpectedAmbiguousEHAverageUse = (this.unexpectedAmbiguousEHAverageUse + unexpectedAmbiguousEHAverageUse)/2;
-		else this.unexpectedAmbiguousEHAverageUse = unexpectedAmbiguousEHAverageUse;
-		// System.out.println("unexpectedAmbiguous "+this.unexpectedAmbiguousEHAverageUse);
 		
-		if(unknownElementHFree + unknownElementHAverageUse >= unknownElementHPoolSize){		
-			unknownElementHPoolSize += unknownElementHAverageUse;
-			UnknownElementHandler[] increased = new UnknownElementHandler[unknownElementHPoolSize];
-			System.arraycopy(this.unknownElementH, 0, increased, 0, unknownElementHFree);
-			this.unknownElementH = increased;
-		}
-		System.arraycopy(unknownElementH, 0, this.unknownElementH, unknownElementHFree, unknownElementHAverageUse);
-		unknownElementHFree += unknownElementHAverageUse;
-		if(this.unknownElementHAverageUse != 0)this.unknownElementHAverageUse = (this.unknownElementHAverageUse + unknownElementHAverageUse)/2;
-		else this.unknownElementHAverageUse = unknownElementHAverageUse;
-		// System.out.println("unknown "+this.unknownElementHAverageUse);
+		neededLength = elementDefaultHFree + elementDefaultHRecycledCount; 
+        if(neededLength > elementDefaultH.length){
+            if(neededLength > elementDefaultHMaxSize){
+                neededLength = elementDefaultHMaxSize;
+                ElementDefaultHandler[] increased = new ElementDefaultHandler[neededLength];
+                System.arraycopy(elementDefaultH, 0, increased, 0, elementDefaultH.length);
+                elementDefaultH = increased;		        
+                System.arraycopy(elementDefaultHRecycled, 0, elementDefaultH, elementDefaultHFree, elementDefaultHMaxSize - elementDefaultHFree);
+                elementDefaultHFree = elementDefaultHMaxSize; 
+            }else{
+                ElementDefaultHandler[] increased = new ElementDefaultHandler[neededLength];
+                System.arraycopy(elementDefaultH, 0, increased, 0, elementDefaultH.length);
+                elementDefaultH = increased;
+                System.arraycopy(elementDefaultHRecycled, 0, elementDefaultH, elementDefaultHFree, elementDefaultHRecycledCount);
+                elementDefaultHFree += elementDefaultHRecycledCount;
+            }
+        }else{
+            System.arraycopy(elementDefaultHRecycled, 0, elementDefaultH, elementDefaultHFree, elementDefaultHRecycledCount);
+            elementDefaultHFree += elementDefaultHRecycledCount;
+        }
+        
+        if(elementDefaultHAverageUse != 0)elementDefaultHAverageUse = (elementDefaultHAverageUse + elementDefaultHEffectivellyUsed)/2;
+        else elementDefaultHAverageUse = elementDefaultHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < elementDefaultHRecycled.length; i++){
+            elementDefaultHRecycled[i] = null;
+        }
 		
-		if(defaultElementHFree + defaultElementHAverageUse >= defaultElementHPoolSize){			
-			defaultElementHPoolSize += defaultElementHAverageUse;
-			ElementDefaultHandler[] increased = new ElementDefaultHandler[defaultElementHPoolSize];
-			System.arraycopy(this.defaultElementH, 0, increased, 0, defaultElementHFree);
-			this.defaultElementH = increased;
-		}
-		System.arraycopy(defaultElementH, 0, this.defaultElementH, defaultElementHFree, defaultElementHAverageUse);
-		defaultElementHFree += defaultElementHAverageUse;
-		if(this.defaultElementHAverageUse != 0) this.defaultElementHAverageUse = (this.defaultElementHAverageUse + defaultElementHAverageUse)/2;
-		else this.defaultElementHAverageUse = defaultElementHAverageUse;
-		// System.out.println("default "+this.defaultElementHAverageUse);
 		
-		if(elementConcurrentHFree + elementConcurrentHAverageUse >= elementConcurrentHPoolSize){
-			elementConcurrentHPoolSize += elementConcurrentHAverageUse;			
-			ElementConcurrentHandler[] increased = new ElementConcurrentHandler[elementConcurrentHPoolSize];
-			System.arraycopy(this.elementConcurrentH, 0, increased, 0, elementConcurrentHFree);
-			this.elementConcurrentH = increased;
-		}	
-		System.arraycopy(elementConcurrentH, 0, this.elementConcurrentH, elementConcurrentHFree, elementConcurrentHAverageUse);
-		elementConcurrentHFree += elementConcurrentHAverageUse;
-		if(this.elementConcurrentHAverageUse != 0)this.elementConcurrentHAverageUse = (this.elementConcurrentHAverageUse + elementConcurrentHAverageUse)/2;
-		else this.elementConcurrentHAverageUse = elementConcurrentHAverageUse;
-		// System.out.println("concurrent "+this.elementConcurrentHAverageUse);		
+		neededLength = elementConcurrentHFree + elementConcurrentHRecycledCount; 
+        if(neededLength > elementConcurrentH.length){
+            if(neededLength > elementConcurrentHMaxSize){
+                neededLength = elementConcurrentHMaxSize;
+                ElementConcurrentHandler[] increased = new ElementConcurrentHandler[neededLength];
+                System.arraycopy(elementConcurrentH, 0, increased, 0, elementConcurrentH.length);
+                elementConcurrentH = increased;		        
+                System.arraycopy(elementConcurrentHRecycled, 0, elementConcurrentH, elementConcurrentHFree, elementConcurrentHMaxSize - elementConcurrentHFree);
+                elementConcurrentHFree = elementConcurrentHMaxSize; 
+            }else{
+                ElementConcurrentHandler[] increased = new ElementConcurrentHandler[neededLength];
+                System.arraycopy(elementConcurrentH, 0, increased, 0, elementConcurrentH.length);
+                elementConcurrentH = increased;
+                System.arraycopy(elementConcurrentHRecycled, 0, elementConcurrentH, elementConcurrentHFree, elementConcurrentHRecycledCount);
+                elementConcurrentHFree += elementConcurrentHRecycledCount;
+            }
+        }else{
+            System.arraycopy(elementConcurrentHRecycled, 0, elementConcurrentH, elementConcurrentHFree, elementConcurrentHRecycledCount);
+            elementConcurrentHFree += elementConcurrentHRecycledCount;
+        }
+        
+        if(elementConcurrentHAverageUse != 0)elementConcurrentHAverageUse = (elementConcurrentHAverageUse + elementConcurrentHEffectivellyUsed)/2;
+        else elementConcurrentHAverageUse = elementConcurrentHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < elementConcurrentHRecycled.length; i++){
+            elementConcurrentHRecycled[i] = null;
+        }
 		
-		if(elementParallelHFree + elementParallelHAverageUse >= elementParallelHPoolSize){
-			elementParallelHPoolSize += elementParallelHAverageUse;			
-			ElementParallelHandler[] increased = new ElementParallelHandler[elementParallelHPoolSize];
-			System.arraycopy(this.elementParallelH, 0, increased, 0, elementParallelHFree);
-			this.elementParallelH = increased;
-		}
-		System.arraycopy(elementParallelH, 0, this.elementParallelH, elementParallelHFree, elementParallelHAverageUse);
-		elementParallelHFree += elementParallelHAverageUse;
-		if(this.elementParallelHAverageUse != 0)this.elementParallelHAverageUse = (this.elementParallelHAverageUse + elementParallelHAverageUse)/2;
-		else this.elementParallelHAverageUse = elementParallelHAverageUse;
-		// System.out.println("parallel "+this.elementParallelHAverageUse);
 		
-		if(elementCommonHFree + elementCommonHAverageUse >= elementCommonHPoolSize){
-			elementCommonHPoolSize += elementCommonHAverageUse;			
-			ElementCommonHandler[] increased = new ElementCommonHandler[elementCommonHPoolSize];
-			System.arraycopy(this.elementCommonH, 0, increased, 0, elementCommonHFree);
-			this.elementCommonH = increased;
-		}
-		System.arraycopy(elementCommonH, 0, this.elementCommonH, elementCommonHFree, elementCommonHAverageUse);
-		elementCommonHFree += elementCommonHAverageUse;
-		if(this.elementCommonHAverageUse != 0)this.elementCommonHAverageUse = (this.elementCommonHAverageUse + elementCommonHAverageUse)/2;
-		else this.elementCommonHAverageUse = elementCommonHAverageUse;
-		// System.out.println("common "+this.elementCommonHAverageUse);
+		neededLength = elementParallelHFree + elementParallelHRecycledCount; 
+        if(neededLength > elementParallelH.length){
+            if(neededLength > elementParallelHMaxSize){
+                neededLength = elementParallelHMaxSize;
+                ElementParallelHandler[] increased = new ElementParallelHandler[neededLength];
+                System.arraycopy(elementParallelH, 0, increased, 0, elementParallelH.length);
+                elementParallelH = increased;		        
+                System.arraycopy(elementParallelHRecycled, 0, elementParallelH, elementParallelHFree, elementParallelHMaxSize - elementParallelHFree);
+                elementParallelHFree = elementParallelHMaxSize; 
+            }else{
+                ElementParallelHandler[] increased = new ElementParallelHandler[neededLength];
+                System.arraycopy(elementParallelH, 0, increased, 0, elementParallelH.length);
+                elementParallelH = increased;
+                System.arraycopy(elementParallelHRecycled, 0, elementParallelH, elementParallelHFree, elementParallelHRecycledCount);
+                elementParallelHFree += elementParallelHRecycledCount;
+            }
+        }else{
+            System.arraycopy(elementParallelHRecycled, 0, elementParallelH, elementParallelHFree, elementParallelHRecycledCount);
+            elementParallelHFree += elementParallelHRecycledCount;
+        }
+        
+        if(elementParallelHAverageUse != 0)elementParallelHAverageUse = (elementParallelHAverageUse + elementParallelHEffectivellyUsed)/2;
+        else elementParallelHAverageUse = elementParallelHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < elementParallelHRecycled.length; i++){
+            elementParallelHRecycled[i] = null;
+        }
 				
 		
-		if(unexpectedAttributeHFree + unexpectedAttributeHAverageUse >= unexpectedAttributeHPoolSize){
-			unexpectedAttributeHPoolSize+= unexpectedAttributeHAverageUse;
-			UnexpectedAttributeHandler[] increased = new UnexpectedAttributeHandler[unexpectedAttributeHPoolSize];
-			System.arraycopy(this.unexpectedAttributeH, 0, increased, 0, unexpectedAttributeHFree);
-			this.unexpectedAttributeH = increased;
-		}
-		System.arraycopy(unexpectedAttributeH, 0, this.unexpectedAttributeH, unexpectedAttributeHFree, unexpectedAttributeHAverageUse);
-		unexpectedAttributeHFree += unexpectedAttributeHAverageUse;
-		if(this.unexpectedAttributeHAverageUse != 0)this.unexpectedAttributeHAverageUse = (this.unexpectedAttributeHAverageUse + unexpectedAttributeHAverageUse)/2;
-		else this.unexpectedAttributeHAverageUse = unexpectedAttributeHAverageUse;
-		// System.out.println("unexpected "+this.unexpectedAttributeHAverageUse);
-		
-		if(unexpectedAmbiguousAHFree + unexpectedAmbiguousAHAverageUse >= unexpectedAmbiguousAHPoolSize){
-			unexpectedAmbiguousAHPoolSize += unexpectedAmbiguousAHAverageUse;
-			UnexpectedAmbiguousAttributeHandler[] increased = new UnexpectedAmbiguousAttributeHandler[unexpectedAmbiguousAHPoolSize];
-			System.arraycopy(this.unexpectedAmbiguousAH, 0, increased, 0, unexpectedAmbiguousAHFree);
-			this.unexpectedAmbiguousAH = increased;
-		}
-		System.arraycopy(unexpectedAmbiguousAH, 0, this.unexpectedAmbiguousAH, unexpectedAmbiguousAHFree, unexpectedAmbiguousAHAverageUse);
-		unexpectedAmbiguousAHFree += unexpectedAmbiguousAHAverageUse;
-		if(this.unexpectedAmbiguousAHAverageUse != 0)this.unexpectedAmbiguousAHAverageUse = (this.unexpectedAmbiguousAHAverageUse + unexpectedAmbiguousAHAverageUse)/2;
-		else this.unexpectedAmbiguousAHAverageUse = unexpectedAmbiguousAHAverageUse;
-		// System.out.println("unexpectedAmbiguous "+this.unexpectedAmbiguousAHAverageUse);
-		
-		if(unknownAttributeHFree + unknownAttributeHAverageUse >= unknownAttributeHPoolSize){		
-			unknownAttributeHPoolSize += unknownAttributeHAverageUse;
-			UnknownAttributeHandler[] increased = new UnknownAttributeHandler[unknownAttributeHPoolSize];
-			System.arraycopy(this.unknownAttributeH, 0, increased, 0, unknownAttributeHFree);
-			this.unknownAttributeH = increased;
-		}
-		System.arraycopy(unknownAttributeH, 0, this.unknownAttributeH, unknownAttributeHFree, unknownAttributeHAverageUse);
-		unknownAttributeHFree += unknownAttributeHAverageUse;
-		if(this.unknownAttributeHAverageUse != 0)this.unknownAttributeHAverageUse = (this.unknownAttributeHAverageUse + unknownAttributeHAverageUse)/2;
-		else this.unknownAttributeHAverageUse = unknownAttributeHAverageUse;
-		// System.out.println("unknown "+this.unknownAttributeHAverageUse);
-		
-		if(attributeVHFree + attributeVHAverageUse >= attributeVHPoolSize){			 
-			attributeVHPoolSize+= attributeVHAverageUse;
-			AttributeValidationHandler[] increased = new AttributeValidationHandler[attributeVHPoolSize];
-			System.arraycopy(this.attributeVH, 0, increased, 0, attributeVHFree);
-			this.attributeVH = increased;
-		}
-		System.arraycopy(attributeVH, 0, this.attributeVH, attributeVHFree, attributeVHAverageUse);
-		attributeVHFree += attributeVHAverageUse;
-		if(this.attributeVHAverageUse != 0)this.attributeVHAverageUse = (this.attributeVHAverageUse + attributeVHAverageUse)/2;
-		else this.attributeVHAverageUse = attributeVHAverageUse;
-		// System.out.println("vh "+this.attributeVHAverageUse);
+		neededLength = elementCommonHFree + elementCommonHRecycledCount; 
+        if(neededLength > elementCommonH.length){
+            if(neededLength > elementCommonHMaxSize){
+                neededLength = elementCommonHMaxSize;
+                ElementCommonHandler[] increased = new ElementCommonHandler[neededLength];
+                System.arraycopy(elementCommonH, 0, increased, 0, elementCommonH.length);
+                elementCommonH = increased;		        
+                System.arraycopy(elementCommonHRecycled, 0, elementCommonH, elementCommonHFree, elementCommonHMaxSize - elementCommonHFree);
+                elementCommonHFree = elementCommonHMaxSize; 
+            }else{
+                ElementCommonHandler[] increased = new ElementCommonHandler[neededLength];
+                System.arraycopy(elementCommonH, 0, increased, 0, elementCommonH.length);
+                elementCommonH = increased;
+                System.arraycopy(elementCommonHRecycled, 0, elementCommonH, elementCommonHFree, elementCommonHRecycledCount);
+                elementCommonHFree += elementCommonHRecycledCount;
+            }
+        }else{
+            System.arraycopy(elementCommonHRecycled, 0, elementCommonH, elementCommonHFree, elementCommonHRecycledCount);
+            elementCommonHFree += elementCommonHRecycledCount;
+        }
         
-        if(candidateAttributeVHFree + candidateAttributeVHAverageUse >= candidateAttributeVHPoolSize){			 
-			candidateAttributeVHPoolSize+= candidateAttributeVHAverageUse;
-			CandidateAttributeValidationHandler[] increased = new CandidateAttributeValidationHandler[candidateAttributeVHPoolSize];
-			System.arraycopy(this.candidateAttributeVH, 0, increased, 0, candidateAttributeVHFree);
-			this.candidateAttributeVH = increased;
-		}
-		System.arraycopy(candidateAttributeVH, 0, this.candidateAttributeVH, candidateAttributeVHFree, candidateAttributeVHAverageUse);
-		candidateAttributeVHFree += candidateAttributeVHAverageUse;
-		if(this.candidateAttributeVHAverageUse != 0)this.candidateAttributeVHAverageUse = (this.candidateAttributeVHAverageUse + candidateAttributeVHAverageUse)/2;
-		else this.candidateAttributeVHAverageUse = candidateAttributeVHAverageUse;
-		// System.out.println("vh "+this.candidateAttributeVHAverageUse);
-		
-		if(attributeConcurrentHFree + attributeConcurrentHAverageUse >= attributeConcurrentHPoolSize){			 
-			attributeConcurrentHPoolSize+= attributeConcurrentHAverageUse;
-			AttributeConcurrentHandler[] increased = new AttributeConcurrentHandler[attributeConcurrentHPoolSize];
-			System.arraycopy(this.attributeConcurrentH, 0, increased, 0, attributeConcurrentHFree);
-			this.attributeConcurrentH = increased;
-		}
-		System.arraycopy(attributeConcurrentH, 0, this.attributeConcurrentH, attributeConcurrentHFree, attributeConcurrentHAverageUse);
-		attributeConcurrentHFree += attributeConcurrentHAverageUse;
-		if(this.attributeConcurrentHAverageUse != 0)this.attributeConcurrentHAverageUse = (this.attributeConcurrentHAverageUse + attributeConcurrentHAverageUse)/2;
-		else this.attributeConcurrentHAverageUse = attributeConcurrentHAverageUse;
-		// System.out.println("vh "+this.attributeConcurrentHAverageUse);
+        if(elementCommonHAverageUse != 0)elementCommonHAverageUse = (elementCommonHAverageUse + elementCommonHEffectivellyUsed)/2;
+        else elementCommonHAverageUse = elementCommonHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
         
-        if(attributeParallelHFree + attributeParallelHAverageUse >= attributeParallelHPoolSize){			 
-			attributeParallelHPoolSize+= attributeParallelHAverageUse;
-			AttributeParallelHandler[] increased = new AttributeParallelHandler[attributeParallelHPoolSize];
-			System.arraycopy(this.attributeParallelH, 0, increased, 0, attributeParallelHFree);
-			this.attributeParallelH = increased;
-		}
-		System.arraycopy(attributeParallelH, 0, this.attributeParallelH, attributeParallelHFree, attributeParallelHAverageUse);
-		attributeParallelHFree += attributeParallelHAverageUse;
-		if(this.attributeParallelHAverageUse != 0)this.attributeParallelHAverageUse = (this.attributeParallelHAverageUse + attributeParallelHAverageUse)/2;
-		else this.attributeParallelHAverageUse = attributeParallelHAverageUse;
-		// System.out.println("vh "+this.attributeParallelHAverageUse);
+        for(int i = 0; i < elementCommonHRecycled.length; i++){
+            elementCommonHRecycled[i] = null;
+        }
+		
+		
+		neededLength = unexpectedAttributeHFree + unexpectedAttributeHRecycledCount; 
+        if(neededLength > unexpectedAttributeH.length){
+            if(neededLength > unexpectedAttributeHMaxSize){
+                neededLength = unexpectedAttributeHMaxSize;
+                UnexpectedAttributeHandler[] increased = new UnexpectedAttributeHandler[neededLength];
+                System.arraycopy(unexpectedAttributeH, 0, increased, 0, unexpectedAttributeH.length);
+                unexpectedAttributeH = increased;		        
+                System.arraycopy(unexpectedAttributeHRecycled, 0, unexpectedAttributeH, unexpectedAttributeHFree, unexpectedAttributeHMaxSize - unexpectedAttributeHFree);
+                unexpectedAttributeHFree = unexpectedAttributeHMaxSize; 
+            }else{
+                UnexpectedAttributeHandler[] increased = new UnexpectedAttributeHandler[neededLength];
+                System.arraycopy(unexpectedAttributeH, 0, increased, 0, unexpectedAttributeH.length);
+                unexpectedAttributeH = increased;
+                System.arraycopy(unexpectedAttributeHRecycled, 0, unexpectedAttributeH, unexpectedAttributeHFree, unexpectedAttributeHRecycledCount);
+                unexpectedAttributeHFree += unexpectedAttributeHRecycledCount;
+            }
+        }else{
+            System.arraycopy(unexpectedAttributeHRecycled, 0, unexpectedAttributeH, unexpectedAttributeHFree, unexpectedAttributeHRecycledCount);
+            unexpectedAttributeHFree += unexpectedAttributeHRecycledCount;
+        }
         
-        if(attributeDefaultHFree + attributeDefaultHAverageUse >= attributeDefaultHPoolSize){			 
-			attributeDefaultHPoolSize+= attributeDefaultHAverageUse;
-			AttributeDefaultHandler[] increased = new AttributeDefaultHandler[attributeDefaultHPoolSize];
-			System.arraycopy(this.attributeDefaultH, 0, increased, 0, attributeDefaultHFree);
-			this.attributeDefaultH = increased;
-		}
-		System.arraycopy(attributeDefaultH, 0, this.attributeDefaultH, attributeDefaultHFree, attributeDefaultHAverageUse);
-		attributeDefaultHFree += attributeDefaultHAverageUse;
-		if(this.attributeDefaultHAverageUse != 0)this.attributeDefaultHAverageUse = (this.attributeDefaultHAverageUse + attributeDefaultHAverageUse)/2;
-		else this.attributeDefaultHAverageUse = attributeDefaultHAverageUse;
-		// System.out.println("vh "+this.attributeDefaultHAverageUse);
-		
-		if(charactersValidationHFree + charactersValidationHAverageUse >= charactersValidationHPoolSize){			 
-			charactersValidationHPoolSize+= charactersValidationHAverageUse;
-			CharactersValidationHandler[] increased = new CharactersValidationHandler[charactersValidationHPoolSize];
-			System.arraycopy(this.charactersValidationH, 0, increased, 0, charactersValidationHFree);
-			this.charactersValidationH = increased;
-		}
-		System.arraycopy(charactersValidationH, 0, this.charactersValidationH, charactersValidationHFree, charactersValidationHAverageUse);
-		charactersValidationHFree += charactersValidationHAverageUse;
-		if(this.charactersValidationHAverageUse != 0)this.charactersValidationHAverageUse = (this.charactersValidationHAverageUse + charactersValidationHAverageUse)/2;
-		else this.charactersValidationHAverageUse = charactersValidationHAverageUse;
-		// System.out.println("vh "+this.charactersValidationHAverageUse);
-		
-		if(structuredDataValidationHFree + structuredDataValidationHAverageUse >= structuredDataValidationHPoolSize){			 
-			structuredDataValidationHPoolSize+= structuredDataValidationHAverageUse;
-			StructuredDataValidationHandler[] increased = new StructuredDataValidationHandler[structuredDataValidationHPoolSize];
-			System.arraycopy(this.structuredDataValidationH, 0, increased, 0, structuredDataValidationHFree);
-			this.structuredDataValidationH = increased;
-		}
-		System.arraycopy(structuredDataValidationH, 0, this.structuredDataValidationH, structuredDataValidationHFree, structuredDataValidationHAverageUse);
-		structuredDataValidationHFree += structuredDataValidationHAverageUse;
-		if(this.structuredDataValidationHAverageUse != 0)this.structuredDataValidationHAverageUse = (this.structuredDataValidationHAverageUse + structuredDataValidationHAverageUse)/2;
-		else this.structuredDataValidationHAverageUse = structuredDataValidationHAverageUse;
-		// System.out.println("vh "+this.structuredDataValidationHAverageUse);
+        if(unexpectedAttributeHAverageUse != 0)unexpectedAttributeHAverageUse = (unexpectedAttributeHAverageUse + unexpectedAttributeHEffectivellyUsed)/2;
+        else unexpectedAttributeHAverageUse = unexpectedAttributeHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
         
-		if(dataValidationHFree + dataValidationHAverageUse >= dataValidationHPoolSize){			 
-			dataValidationHPoolSize+= dataValidationHAverageUse;
-			DataValidationHandler[] increased = new DataValidationHandler[dataValidationHPoolSize];
-			System.arraycopy(this.dataValidationH, 0, increased, 0, dataValidationHFree);
-			this.dataValidationH = increased;
-		}
-		System.arraycopy(dataValidationH, 0, this.dataValidationH, dataValidationHFree, dataValidationHAverageUse);
-		dataValidationHFree += dataValidationHAverageUse;
-		if(this.dataValidationHAverageUse != 0)this.dataValidationHAverageUse = (this.dataValidationHAverageUse + dataValidationHAverageUse)/2;
-		else this.dataValidationHAverageUse = dataValidationHAverageUse;
-		// System.out.println("vh "+this.dataValidationHAverageUse);
+        for(int i = 0; i < unexpectedAttributeHRecycled.length; i++){
+            unexpectedAttributeHRecycled[i] = null;
+        }
+		
+				
+		
+		neededLength = unexpectedAmbiguousAHFree + unexpectedAmbiguousAHRecycledCount; 
+        if(neededLength > unexpectedAmbiguousAH.length){
+            if(neededLength > unexpectedAmbiguousAHMaxSize){
+                neededLength = unexpectedAmbiguousAHMaxSize;
+                UnexpectedAmbiguousAttributeHandler[] increased = new UnexpectedAmbiguousAttributeHandler[neededLength];
+                System.arraycopy(unexpectedAmbiguousAH, 0, increased, 0, unexpectedAmbiguousAH.length);
+                unexpectedAmbiguousAH = increased;		        
+                System.arraycopy(unexpectedAmbiguousAHRecycled, 0, unexpectedAmbiguousAH, unexpectedAmbiguousAHFree, unexpectedAmbiguousAHMaxSize - unexpectedAmbiguousAHFree);
+                unexpectedAmbiguousAHFree = unexpectedAmbiguousAHMaxSize; 
+            }else{
+                UnexpectedAmbiguousAttributeHandler[] increased = new UnexpectedAmbiguousAttributeHandler[neededLength];
+                System.arraycopy(unexpectedAmbiguousAH, 0, increased, 0, unexpectedAmbiguousAH.length);
+                unexpectedAmbiguousAH = increased;
+                System.arraycopy(unexpectedAmbiguousAHRecycled, 0, unexpectedAmbiguousAH, unexpectedAmbiguousAHFree, unexpectedAmbiguousAHRecycledCount);
+                unexpectedAmbiguousAHFree += unexpectedAmbiguousAHRecycledCount;
+            }
+        }else{
+            System.arraycopy(unexpectedAmbiguousAHRecycled, 0, unexpectedAmbiguousAH, unexpectedAmbiguousAHFree, unexpectedAmbiguousAHRecycledCount);
+            unexpectedAmbiguousAHFree += unexpectedAmbiguousAHRecycledCount;
+        }
+        
+        if(unexpectedAmbiguousAHAverageUse != 0)unexpectedAmbiguousAHAverageUse = (unexpectedAmbiguousAHAverageUse + unexpectedAmbiguousAHEffectivellyUsed)/2;
+        else unexpectedAmbiguousAHAverageUse = unexpectedAmbiguousAHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < unexpectedAmbiguousAHRecycled.length; i++){
+            unexpectedAmbiguousAHRecycled[i] = null;
+        }
+		
+		
+		neededLength = unknownAttributeHFree + unknownAttributeHRecycledCount; 
+        if(neededLength > unknownAttributeH.length){
+            if(neededLength > unknownAttributeHMaxSize){
+                neededLength = unknownAttributeHMaxSize;
+                UnknownAttributeHandler[] increased = new UnknownAttributeHandler[neededLength];
+                System.arraycopy(unknownAttributeH, 0, increased, 0, unknownAttributeH.length);
+                unknownAttributeH = increased;		        
+                System.arraycopy(unknownAttributeHRecycled, 0, unknownAttributeH, unknownAttributeHFree, unknownAttributeHMaxSize - unknownAttributeHFree);
+                unknownAttributeHFree = unknownAttributeHMaxSize; 
+            }else{
+                UnknownAttributeHandler[] increased = new UnknownAttributeHandler[neededLength];
+                System.arraycopy(unknownAttributeH, 0, increased, 0, unknownAttributeH.length);
+                unknownAttributeH = increased;
+                System.arraycopy(unknownAttributeHRecycled, 0, unknownAttributeH, unknownAttributeHFree, unknownAttributeHRecycledCount);
+                unknownAttributeHFree += unknownAttributeHRecycledCount;
+            }
+        }else{
+            System.arraycopy(unknownAttributeHRecycled, 0, unknownAttributeH, unknownAttributeHFree, unknownAttributeHRecycledCount);
+            unknownAttributeHFree += unknownAttributeHRecycledCount;
+        }
+        
+        if(unknownAttributeHAverageUse != 0)unknownAttributeHAverageUse = (unknownAttributeHAverageUse + unknownAttributeHEffectivellyUsed)/2;
+        else unknownAttributeHAverageUse = unknownAttributeHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < unknownAttributeHRecycled.length; i++){
+            unknownAttributeHRecycled[i] = null;
+        }
+		
+		
+		neededLength = attributeVHFree + attributeVHRecycledCount; 
+        if(neededLength > attributeVH.length){
+            if(neededLength > attributeVHMaxSize){
+                neededLength = attributeVHMaxSize;
+                AttributeValidationHandler[] increased = new AttributeValidationHandler[neededLength];
+                System.arraycopy(attributeVH, 0, increased, 0, attributeVH.length);
+                attributeVH = increased;		        
+                System.arraycopy(attributeVHRecycled, 0, attributeVH, attributeVHFree, attributeVHMaxSize - attributeVHFree);
+                attributeVHFree = attributeVHMaxSize; 
+            }else{
+                AttributeValidationHandler[] increased = new AttributeValidationHandler[neededLength];
+                System.arraycopy(attributeVH, 0, increased, 0, attributeVH.length);
+                attributeVH = increased;
+                System.arraycopy(attributeVHRecycled, 0, attributeVH, attributeVHFree, attributeVHRecycledCount);
+                attributeVHFree += attributeVHRecycledCount;
+            }
+        }else{
+            System.arraycopy(attributeVHRecycled, 0, attributeVH, attributeVHFree, attributeVHRecycledCount);
+            attributeVHFree += attributeVHRecycledCount;
+        }
+        
+        if(attributeVHAverageUse != 0)attributeVHAverageUse = (attributeVHAverageUse + attributeVHEffectivellyUsed)/2;
+        else attributeVHAverageUse = attributeVHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < attributeVHRecycled.length; i++){
+            attributeVHRecycled[i] = null;
+        }
+		
+        
+		neededLength = candidateAttributeVHFree + candidateAttributeVHRecycledCount; 
+        if(neededLength > candidateAttributeVH.length){
+            if(neededLength > candidateAttributeVHMaxSize){
+                neededLength = candidateAttributeVHMaxSize;
+                CandidateAttributeValidationHandler[] increased = new CandidateAttributeValidationHandler[neededLength];
+                System.arraycopy(candidateAttributeVH, 0, increased, 0, candidateAttributeVH.length);
+                candidateAttributeVH = increased;		        
+                System.arraycopy(candidateAttributeVHRecycled, 0, candidateAttributeVH, candidateAttributeVHFree, candidateAttributeVHMaxSize - candidateAttributeVHFree);
+                candidateAttributeVHFree = candidateAttributeVHMaxSize; 
+            }else{
+                CandidateAttributeValidationHandler[] increased = new CandidateAttributeValidationHandler[neededLength];
+                System.arraycopy(candidateAttributeVH, 0, increased, 0, candidateAttributeVH.length);
+                candidateAttributeVH = increased;
+                System.arraycopy(candidateAttributeVHRecycled, 0, candidateAttributeVH, candidateAttributeVHFree, candidateAttributeVHRecycledCount);
+                candidateAttributeVHFree += candidateAttributeVHRecycledCount;
+            }
+        }else{
+            System.arraycopy(candidateAttributeVHRecycled, 0, candidateAttributeVH, candidateAttributeVHFree, candidateAttributeVHRecycledCount);
+            candidateAttributeVHFree += candidateAttributeVHRecycledCount;
+        }
+        
+        if(candidateAttributeVHAverageUse != 0)candidateAttributeVHAverageUse = (candidateAttributeVHAverageUse + candidateAttributeVHEffectivellyUsed)/2;
+        else candidateAttributeVHAverageUse = candidateAttributeVHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < candidateAttributeVHRecycled.length; i++){
+            candidateAttributeVHRecycled[i] = null;
+        }
+		
+        
+        neededLength = attributeConcurrentHFree + attributeConcurrentHRecycledCount; 
+        if(neededLength > attributeConcurrentH.length){
+            if(neededLength > attributeConcurrentHMaxSize){
+                neededLength = attributeConcurrentHMaxSize;
+                AttributeConcurrentHandler[] increased = new AttributeConcurrentHandler[neededLength];
+                System.arraycopy(attributeConcurrentH, 0, increased, 0, attributeConcurrentH.length);
+                attributeConcurrentH = increased;		        
+                System.arraycopy(attributeConcurrentHRecycled, 0, attributeConcurrentH, attributeConcurrentHFree, attributeConcurrentHMaxSize - attributeConcurrentHFree);
+                attributeConcurrentHFree = attributeConcurrentHMaxSize; 
+            }else{
+                AttributeConcurrentHandler[] increased = new AttributeConcurrentHandler[neededLength];
+                System.arraycopy(attributeConcurrentH, 0, increased, 0, attributeConcurrentH.length);
+                attributeConcurrentH = increased;
+                System.arraycopy(attributeConcurrentHRecycled, 0, attributeConcurrentH, attributeConcurrentHFree, attributeConcurrentHRecycledCount);
+                attributeConcurrentHFree += attributeConcurrentHRecycledCount;
+            }
+        }else{
+            System.arraycopy(attributeConcurrentHRecycled, 0, attributeConcurrentH, attributeConcurrentHFree, attributeConcurrentHRecycledCount);
+            attributeConcurrentHFree += attributeConcurrentHRecycledCount;
+        }
+        
+        if(attributeConcurrentHAverageUse != 0)attributeConcurrentHAverageUse = (attributeConcurrentHAverageUse + attributeConcurrentHEffectivellyUsed)/2;
+        else attributeConcurrentHAverageUse = attributeConcurrentHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < attributeConcurrentHRecycled.length; i++){
+            attributeConcurrentHRecycled[i] = null;
+        }
+		
+		
+		neededLength = attributeParallelHFree + attributeParallelHRecycledCount; 
+        if(neededLength > attributeParallelH.length){
+            if(neededLength > attributeParallelHMaxSize){
+                neededLength = attributeParallelHMaxSize;
+                AttributeParallelHandler[] increased = new AttributeParallelHandler[neededLength];
+                System.arraycopy(attributeParallelH, 0, increased, 0, attributeParallelH.length);
+                attributeParallelH = increased;		        
+                System.arraycopy(attributeParallelHRecycled, 0, attributeParallelH, attributeParallelHFree, attributeParallelHMaxSize - attributeParallelHFree);
+                attributeParallelHFree = attributeParallelHMaxSize; 
+            }else{
+                AttributeParallelHandler[] increased = new AttributeParallelHandler[neededLength];
+                System.arraycopy(attributeParallelH, 0, increased, 0, attributeParallelH.length);
+                attributeParallelH = increased;
+                System.arraycopy(attributeParallelHRecycled, 0, attributeParallelH, attributeParallelHFree, attributeParallelHRecycledCount);
+                attributeParallelHFree += attributeParallelHRecycledCount;
+            }
+        }else{
+            System.arraycopy(attributeParallelHRecycled, 0, attributeParallelH, attributeParallelHFree, attributeParallelHRecycledCount);
+            attributeParallelHFree += attributeParallelHRecycledCount;
+        }
+        
+        if(attributeParallelHAverageUse != 0)attributeParallelHAverageUse = (attributeParallelHAverageUse + attributeParallelHEffectivellyUsed)/2;
+        else attributeParallelHAverageUse = attributeParallelHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < attributeParallelHRecycled.length; i++){
+            attributeParallelHRecycled[i] = null;
+        }
+		
+        
+        neededLength = attributeDefaultHFree + attributeDefaultHRecycledCount; 
+        if(neededLength > attributeDefaultH.length){
+            if(neededLength > attributeDefaultHMaxSize){
+                neededLength = attributeDefaultHMaxSize;
+                AttributeDefaultHandler[] increased = new AttributeDefaultHandler[neededLength];
+                System.arraycopy(attributeDefaultH, 0, increased, 0, attributeDefaultH.length);
+                attributeDefaultH = increased;		        
+                System.arraycopy(attributeDefaultHRecycled, 0, attributeDefaultH, attributeDefaultHFree, attributeDefaultHMaxSize - attributeDefaultHFree);
+                attributeDefaultHFree = attributeDefaultHMaxSize; 
+            }else{
+                AttributeDefaultHandler[] increased = new AttributeDefaultHandler[neededLength];
+                System.arraycopy(attributeDefaultH, 0, increased, 0, attributeDefaultH.length);
+                attributeDefaultH = increased;
+                System.arraycopy(attributeDefaultHRecycled, 0, attributeDefaultH, attributeDefaultHFree, attributeDefaultHRecycledCount);
+                attributeDefaultHFree += attributeDefaultHRecycledCount;
+            }
+        }else{
+            System.arraycopy(attributeDefaultHRecycled, 0, attributeDefaultH, attributeDefaultHFree, attributeDefaultHRecycledCount);
+            attributeDefaultHFree += attributeDefaultHRecycledCount;
+        }
+        
+        if(attributeDefaultHAverageUse != 0)attributeDefaultHAverageUse = (attributeDefaultHAverageUse + attributeDefaultHEffectivellyUsed)/2;
+        else attributeDefaultHAverageUse = attributeDefaultHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < attributeDefaultHRecycled.length; i++){
+            attributeDefaultHRecycled[i] = null;
+        }
+		
+        
+        neededLength = charactersValidationHFree + charactersValidationHRecycledCount; 
+        if(neededLength > charactersValidationH.length){
+            if(neededLength > charactersValidationHMaxSize){
+                neededLength = charactersValidationHMaxSize;
+                CharactersValidationHandler[] increased = new CharactersValidationHandler[neededLength];
+                System.arraycopy(charactersValidationH, 0, increased, 0, charactersValidationH.length);
+                charactersValidationH = increased;		        
+                System.arraycopy(charactersValidationHRecycled, 0, charactersValidationH, charactersValidationHFree, charactersValidationHMaxSize - charactersValidationHFree);
+                charactersValidationHFree = charactersValidationHMaxSize; 
+            }else{
+                CharactersValidationHandler[] increased = new CharactersValidationHandler[neededLength];
+                System.arraycopy(charactersValidationH, 0, increased, 0, charactersValidationH.length);
+                charactersValidationH = increased;
+                System.arraycopy(charactersValidationHRecycled, 0, charactersValidationH, charactersValidationHFree, charactersValidationHRecycledCount);
+                charactersValidationHFree += charactersValidationHRecycledCount;
+            }
+        }else{
+            System.arraycopy(charactersValidationHRecycled, 0, charactersValidationH, charactersValidationHFree, charactersValidationHRecycledCount);
+            charactersValidationHFree += charactersValidationHRecycledCount;
+        }
+        
+        if(charactersValidationHAverageUse != 0)charactersValidationHAverageUse = (charactersValidationHAverageUse + charactersValidationHEffectivellyUsed)/2;
+        else charactersValidationHAverageUse = charactersValidationHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < charactersValidationHRecycled.length; i++){
+            charactersValidationHRecycled[i] = null;
+        }
+		
+		
+		neededLength = structuredDataValidationHFree + structuredDataValidationHRecycledCount; 
+        if(neededLength > structuredDataValidationH.length){
+            if(neededLength > structuredDataValidationHMaxSize){
+                neededLength = structuredDataValidationHMaxSize;
+                StructuredDataValidationHandler[] increased = new StructuredDataValidationHandler[neededLength];
+                System.arraycopy(structuredDataValidationH, 0, increased, 0, structuredDataValidationH.length);
+                structuredDataValidationH = increased;		        
+                System.arraycopy(structuredDataValidationHRecycled, 0, structuredDataValidationH, structuredDataValidationHFree, structuredDataValidationHMaxSize - structuredDataValidationHFree);
+                structuredDataValidationHFree = structuredDataValidationHMaxSize; 
+            }else{
+                StructuredDataValidationHandler[] increased = new StructuredDataValidationHandler[neededLength];
+                System.arraycopy(structuredDataValidationH, 0, increased, 0, structuredDataValidationH.length);
+                structuredDataValidationH = increased;
+                System.arraycopy(structuredDataValidationHRecycled, 0, structuredDataValidationH, structuredDataValidationHFree, structuredDataValidationHRecycledCount);
+                structuredDataValidationHFree += structuredDataValidationHRecycledCount;
+            }
+        }else{
+            System.arraycopy(structuredDataValidationHRecycled, 0, structuredDataValidationH, structuredDataValidationHFree, structuredDataValidationHRecycledCount);
+            structuredDataValidationHFree += structuredDataValidationHRecycledCount;
+        }
+        
+        if(structuredDataValidationHAverageUse != 0)structuredDataValidationHAverageUse = (structuredDataValidationHAverageUse + structuredDataValidationHEffectivellyUsed)/2;
+        else structuredDataValidationHAverageUse = structuredDataValidationHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < structuredDataValidationHRecycled.length; i++){
+            structuredDataValidationHRecycled[i] = null;
+        }
+		
+		
+		neededLength = dataValidationHFree + dataValidationHRecycledCount; 
+        if(neededLength > dataValidationH.length){
+            if(neededLength > dataValidationHMaxSize){
+                neededLength = dataValidationHMaxSize;
+                DataValidationHandler[] increased = new DataValidationHandler[neededLength];
+                System.arraycopy(dataValidationH, 0, increased, 0, dataValidationH.length);
+                dataValidationH = increased;		        
+                System.arraycopy(dataValidationHRecycled, 0, dataValidationH, dataValidationHFree, dataValidationHMaxSize - dataValidationHFree);
+                dataValidationHFree = dataValidationHMaxSize; 
+            }else{
+                DataValidationHandler[] increased = new DataValidationHandler[neededLength];
+                System.arraycopy(dataValidationH, 0, increased, 0, dataValidationH.length);
+                dataValidationH = increased;
+                System.arraycopy(dataValidationHRecycled, 0, dataValidationH, dataValidationHFree, dataValidationHRecycledCount);
+                dataValidationHFree += dataValidationHRecycledCount;
+            }
+        }else{
+            System.arraycopy(dataValidationHRecycled, 0, dataValidationH, dataValidationHFree, dataValidationHRecycledCount);
+            dataValidationHFree += dataValidationHRecycledCount;
+        }
+        
+        if(dataValidationHAverageUse != 0)dataValidationHAverageUse = (dataValidationHAverageUse + dataValidationHEffectivellyUsed)/2;
+        else dataValidationHAverageUse = dataValidationHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < dataValidationHRecycled.length; i++){
+            dataValidationHRecycled[i] = null;
+        }
+		
+        
+		neededLength = defaultVAttributeHFree + defaultVAttributeHRecycledCount; 
+        if(neededLength > defaultVAttributeH.length){
+            if(neededLength > defaultVAttributeHMaxSize){
+                neededLength = defaultVAttributeHMaxSize;
+                DefaultValueAttributeValidationHandler[] increased = new DefaultValueAttributeValidationHandler[neededLength];
+                System.arraycopy(defaultVAttributeH, 0, increased, 0, defaultVAttributeH.length);
+                defaultVAttributeH = increased;		        
+                System.arraycopy(defaultVAttributeHRecycled, 0, defaultVAttributeH, defaultVAttributeHFree, defaultVAttributeHMaxSize - defaultVAttributeHFree);
+                defaultVAttributeHFree = defaultVAttributeHMaxSize; 
+            }else{
+                DefaultValueAttributeValidationHandler[] increased = new DefaultValueAttributeValidationHandler[neededLength];
+                System.arraycopy(defaultVAttributeH, 0, increased, 0, defaultVAttributeH.length);
+                defaultVAttributeH = increased;
+                System.arraycopy(defaultVAttributeHRecycled, 0, defaultVAttributeH, defaultVAttributeHFree, defaultVAttributeHRecycledCount);
+                defaultVAttributeHFree += defaultVAttributeHRecycledCount;
+            }
+        }else{
+            System.arraycopy(defaultVAttributeHRecycled, 0, defaultVAttributeH, defaultVAttributeHFree, defaultVAttributeHRecycledCount);
+            defaultVAttributeHFree += defaultVAttributeHRecycledCount;
+        }
+        
+        if(defaultVAttributeHAverageUse != 0)defaultVAttributeHAverageUse = (defaultVAttributeHAverageUse + defaultVAttributeHEffectivellyUsed)/2;
+        else defaultVAttributeHAverageUse = defaultVAttributeHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < defaultVAttributeHRecycled.length; i++){
+            defaultVAttributeHRecycled[i] = null;
+        }
+		
         
         
-        if(defaultVAttributeHFree + defaultVAttributeHAverageUse >= defaultVAttributeHPoolSize){			 
-			defaultVAttributeHPoolSize+= defaultVAttributeHAverageUse;
-			DefaultValueAttributeValidationHandler[] increased = new DefaultValueAttributeValidationHandler[defaultVAttributeHPoolSize];
-			System.arraycopy(this.defaultVAttributeH, 0, increased, 0, defaultVAttributeHFree);
-			this.defaultVAttributeH = increased;
-		}
-		System.arraycopy(defaultVAttributeH, 0, this.defaultVAttributeH, defaultVAttributeHFree, defaultVAttributeHAverageUse);
-		defaultVAttributeHFree += defaultVAttributeHAverageUse;
-		if(this.defaultVAttributeHAverageUse != 0)this.defaultVAttributeHAverageUse = (this.defaultVAttributeHAverageUse + defaultVAttributeHAverageUse)/2;
-		else this.defaultVAttributeHAverageUse = defaultVAttributeHAverageUse;
-		// System.out.println("vh "+this.defaultVAttributeHAverageUse);
-		
-		
-		if(listPatternVHFree + listPatternVHAverageUse >= listPatternVHPoolSize){			 
-			listPatternVHPoolSize+= listPatternVHAverageUse;
-			ListPatternValidationHandler[] increased = new ListPatternValidationHandler[listPatternVHPoolSize];
-			System.arraycopy(this.listPatternVH, 0, increased, 0, listPatternVHFree);
-			this.listPatternVH = increased;
-		}
-		System.arraycopy(listPatternVH, 0, this.listPatternVH, listPatternVHFree, listPatternVHAverageUse);
-		listPatternVHFree += listPatternVHAverageUse;
-		if(this.listPatternVHAverageUse != 0)this.listPatternVHAverageUse = (this.listPatternVHAverageUse + listPatternVHAverageUse)/2;
-		else this.listPatternVHAverageUse = listPatternVHAverageUse;
-		// System.out.println("vh "+this.listPatternVHAverageUse);
-		
-		if(exceptPatternVHFree + exceptPatternVHAverageUse >= exceptPatternVHPoolSize){			 
-			exceptPatternVHPoolSize+= exceptPatternVHAverageUse;
-			ExceptPatternValidationHandler[] increased = new ExceptPatternValidationHandler[exceptPatternVHPoolSize];
-			System.arraycopy(this.exceptPatternVH, 0, increased, 0, exceptPatternVHFree);
-			this.exceptPatternVH = increased;
-		}
-		System.arraycopy(exceptPatternVH, 0, this.exceptPatternVH, exceptPatternVHFree, exceptPatternVHAverageUse);
-		exceptPatternVHFree += exceptPatternVHAverageUse;
-		if(this.exceptPatternVHAverageUse != 0)this.exceptPatternVHAverageUse = (this.exceptPatternVHAverageUse + exceptPatternVHAverageUse)/2;
-		else this.exceptPatternVHAverageUse = exceptPatternVHAverageUse;
-		// System.out.println("vh "+this.exceptPatternVHAverageUse);
-		
-		
-		
-		if(boundElementVHFree + boundElementVHAverageUse >= boundElementVHPoolSize){			 
-			boundElementVHPoolSize+= boundElementVHAverageUse;
-			BoundElementValidationHandler[] increased = new BoundElementValidationHandler[boundElementVHPoolSize];
-			System.arraycopy(this.boundElementVH, 0, increased, 0, boundElementVHFree);
-			this.boundElementVH = increased;
-		}
-		System.arraycopy(boundElementVH, 0, this.boundElementVH, boundElementVHFree, boundElementVHAverageUse);
-		boundElementVHFree += boundElementVHAverageUse;
-		if(this.boundElementVHAverageUse != 0)this.boundElementVHAverageUse = (this.boundElementVHAverageUse + boundElementVHAverageUse)/2;
-		else this.boundElementVHAverageUse = boundElementVHAverageUse;
-		// System.out.println("vh "+this.boundElementVHAverageUse);
-		
-		if(boundStartVHFree + boundStartVHAverageUse >= boundStartVHPoolSize){			 
-			boundStartVHPoolSize+= boundStartVHAverageUse;
-			BoundStartValidationHandler[] increased = new BoundStartValidationHandler[boundStartVHPoolSize];
-			System.arraycopy(this.boundStartVH, 0, increased, 0, boundStartVHFree);
-			this.boundStartVH = increased;
-		}
-		System.arraycopy(boundStartVH, 0, this.boundStartVH, boundStartVHFree, boundStartVHAverageUse);
-		boundStartVHFree += boundStartVHAverageUse;
-		if(this.boundStartVHAverageUse != 0)this.boundStartVHAverageUse = (this.boundStartVHAverageUse + boundStartVHAverageUse)/2;
-		else this.boundStartVHAverageUse = boundStartVHAverageUse;
-		// System.out.println("vh "+this.boundStartVHAverageUse);
-		
-		if(boundElementConcurrentHFree + boundElementConcurrentHAverageUse >= boundElementConcurrentHPoolSize){
-			boundElementConcurrentHPoolSize += boundElementConcurrentHAverageUse;			
-			BoundElementConcurrentHandler[] increased = new BoundElementConcurrentHandler[boundElementConcurrentHPoolSize];
-			System.arraycopy(this.boundElementConcurrentH, 0, increased, 0, boundElementConcurrentHFree);
-			this.boundElementConcurrentH = increased;
-		}	
-		System.arraycopy(boundElementConcurrentH, 0, this.boundElementConcurrentH, boundElementConcurrentHFree, boundElementConcurrentHAverageUse);
-		boundElementConcurrentHFree += boundElementConcurrentHAverageUse;
-		if(this.boundElementConcurrentHAverageUse != 0)this.boundElementConcurrentHAverageUse = (this.boundElementConcurrentHAverageUse + boundElementConcurrentHAverageUse)/2;
-		else this.boundElementConcurrentHAverageUse = boundElementConcurrentHAverageUse;
-		// System.out.println("concurrent "+this.boundElementConcurrentHAverageUse);	
-		
-		if(boundElementParallelHFree + boundElementParallelHAverageUse >= boundElementParallelHPoolSize){
-			boundElementParallelHPoolSize += boundElementParallelHAverageUse;			
-			BoundElementParallelHandler[] increased = new BoundElementParallelHandler[boundElementParallelHPoolSize];
-			System.arraycopy(this.boundElementParallelH, 0, increased, 0, boundElementParallelHFree);
-			this.boundElementParallelH = increased;
-		}
-		System.arraycopy(boundElementParallelH, 0, this.boundElementParallelH, boundElementParallelHFree, boundElementParallelHAverageUse);
-		boundElementParallelHFree += boundElementParallelHAverageUse;
-		if(this.boundElementParallelHAverageUse != 0)this.boundElementParallelHAverageUse = (this.boundElementParallelHAverageUse + boundElementParallelHAverageUse)/2;
-		else this.boundElementParallelHAverageUse = boundElementParallelHAverageUse;
-		// System.out.println("parallel "+this.boundElementParallelHAverageUse);
-		
-		if(boundAttributeVHFree + boundAttributeVHAverageUse >= boundAttributeVHPoolSize){			 
-			boundAttributeVHPoolSize+= boundAttributeVHAverageUse;
-			BoundAttributeValidationHandler[] increased = new BoundAttributeValidationHandler[boundAttributeVHPoolSize];
-			System.arraycopy(this.boundAttributeVH, 0, increased, 0, boundAttributeVHFree);
-			this.boundAttributeVH = increased;
-		}
-		System.arraycopy(boundAttributeVH, 0, this.boundAttributeVH, boundAttributeVHFree, boundAttributeVHAverageUse);
-		boundAttributeVHFree += boundAttributeVHAverageUse;
-		if(this.boundAttributeVHAverageUse != 0)this.boundAttributeVHAverageUse = (this.boundAttributeVHAverageUse + boundAttributeVHAverageUse)/2;
-		else this.boundAttributeVHAverageUse = boundAttributeVHAverageUse;
-		// System.out.println("vh "+this.boundAttributeVHAverageUse);
+        neededLength = listPatternVHFree + listPatternVHRecycledCount; 
+        if(neededLength > listPatternVH.length){
+            if(neededLength > listPatternVHMaxSize){
+                neededLength = listPatternVHMaxSize;
+                ListPatternValidationHandler[] increased = new ListPatternValidationHandler[neededLength];
+                System.arraycopy(listPatternVH, 0, increased, 0, listPatternVH.length);
+                listPatternVH = increased;		        
+                System.arraycopy(listPatternVHRecycled, 0, listPatternVH, listPatternVHFree, listPatternVHMaxSize - listPatternVHFree);
+                listPatternVHFree = listPatternVHMaxSize; 
+            }else{
+                ListPatternValidationHandler[] increased = new ListPatternValidationHandler[neededLength];
+                System.arraycopy(listPatternVH, 0, increased, 0, listPatternVH.length);
+                listPatternVH = increased;
+                System.arraycopy(listPatternVHRecycled, 0, listPatternVH, listPatternVHFree, listPatternVHRecycledCount);
+                listPatternVHFree += listPatternVHRecycledCount;
+            }
+        }else{
+            System.arraycopy(listPatternVHRecycled, 0, listPatternVH, listPatternVHFree, listPatternVHRecycledCount);
+            listPatternVHFree += listPatternVHRecycledCount;
+        }
         
-        if(boundCandidateAttributeVHFree + boundCandidateAttributeVHAverageUse >= boundCandidateAttributeVHPoolSize){			 
-			boundCandidateAttributeVHPoolSize+= boundCandidateAttributeVHAverageUse;
-			BoundCandidateAttributeValidationHandler[] increased = new BoundCandidateAttributeValidationHandler[boundCandidateAttributeVHPoolSize];
-			System.arraycopy(this.boundCandidateAttributeVH, 0, increased, 0, boundCandidateAttributeVHFree);
-			this.boundCandidateAttributeVH = increased;
-		}
-		System.arraycopy(boundCandidateAttributeVH, 0, this.boundCandidateAttributeVH, boundCandidateAttributeVHFree, boundCandidateAttributeVHAverageUse);
-		boundCandidateAttributeVHFree += boundCandidateAttributeVHAverageUse;
-		if(this.boundCandidateAttributeVHAverageUse != 0)this.boundCandidateAttributeVHAverageUse = (this.boundCandidateAttributeVHAverageUse + boundCandidateAttributeVHAverageUse)/2;
-		else this.boundCandidateAttributeVHAverageUse = boundCandidateAttributeVHAverageUse;
-		// System.out.println("vh "+this.boundCandidateAttributeVHAverageUse);
-		
-		if(boundAttributeConcurrentHFree + boundAttributeConcurrentHAverageUse >= boundAttributeConcurrentHPoolSize){			 
-			boundAttributeConcurrentHPoolSize+= boundAttributeConcurrentHAverageUse;
-			BoundAttributeConcurrentHandler[] increased = new BoundAttributeConcurrentHandler[boundAttributeConcurrentHPoolSize];
-			System.arraycopy(this.boundAttributeConcurrentH, 0, increased, 0, boundAttributeConcurrentHFree);
-			this.boundAttributeConcurrentH = increased;
-		}
-		System.arraycopy(boundAttributeConcurrentH, 0, this.boundAttributeConcurrentH, boundAttributeConcurrentHFree, boundAttributeConcurrentHAverageUse);
-		boundAttributeConcurrentHFree += boundAttributeConcurrentHAverageUse;
-		if(this.boundAttributeConcurrentHAverageUse != 0)this.boundAttributeConcurrentHAverageUse = (this.boundAttributeConcurrentHAverageUse + boundAttributeConcurrentHAverageUse)/2;
-		else this.boundAttributeConcurrentHAverageUse = boundAttributeConcurrentHAverageUse;
-		// System.out.println("vh "+this.boundAttributeConcurrentHAverageUse);
+        if(listPatternVHAverageUse != 0)listPatternVHAverageUse = (listPatternVHAverageUse + listPatternVHEffectivellyUsed)/2;
+        else listPatternVHAverageUse = listPatternVHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
         
-        if(boundAttributeParallelHFree + boundAttributeParallelHAverageUse >= boundAttributeParallelHPoolSize){			 
-			boundAttributeParallelHPoolSize+= boundAttributeParallelHAverageUse;
-			BoundAttributeParallelHandler[] increased = new BoundAttributeParallelHandler[boundAttributeParallelHPoolSize];
-			System.arraycopy(this.boundAttributeParallelH, 0, increased, 0, boundAttributeParallelHFree);
-			this.boundAttributeParallelH = increased;
-		}
-		System.arraycopy(boundAttributeParallelH, 0, this.boundAttributeParallelH, boundAttributeParallelHFree, boundAttributeParallelHAverageUse);
-		boundAttributeParallelHFree += boundAttributeParallelHAverageUse;
-		if(this.boundAttributeParallelHAverageUse != 0)this.boundAttributeParallelHAverageUse = (this.boundAttributeParallelHAverageUse + boundAttributeParallelHAverageUse)/2;
-		else this.boundAttributeParallelHAverageUse = boundAttributeParallelHAverageUse;
-		// System.out.println("vh "+this.boundAttributeParallelHAverageUse);
+        for(int i = 0; i < listPatternVHRecycled.length; i++){
+            listPatternVHRecycled[i] = null;
+        }
 		
+		
+		
+		neededLength = exceptPatternVHFree + exceptPatternVHRecycledCount; 
+        if(neededLength > exceptPatternVH.length){
+            if(neededLength > exceptPatternVHMaxSize){
+                neededLength = exceptPatternVHMaxSize;
+                ExceptPatternValidationHandler[] increased = new ExceptPatternValidationHandler[neededLength];
+                System.arraycopy(exceptPatternVH, 0, increased, 0, exceptPatternVH.length);
+                exceptPatternVH = increased;		        
+                System.arraycopy(exceptPatternVHRecycled, 0, exceptPatternVH, exceptPatternVHFree, exceptPatternVHMaxSize - exceptPatternVHFree);
+                exceptPatternVHFree = exceptPatternVHMaxSize; 
+            }else{
+                ExceptPatternValidationHandler[] increased = new ExceptPatternValidationHandler[neededLength];
+                System.arraycopy(exceptPatternVH, 0, increased, 0, exceptPatternVH.length);
+                exceptPatternVH = increased;
+                System.arraycopy(exceptPatternVHRecycled, 0, exceptPatternVH, exceptPatternVHFree, exceptPatternVHRecycledCount);
+                exceptPatternVHFree += exceptPatternVHRecycledCount;
+            }
+        }else{
+            System.arraycopy(exceptPatternVHRecycled, 0, exceptPatternVH, exceptPatternVHFree, exceptPatternVHRecycledCount);
+            exceptPatternVHFree += exceptPatternVHRecycledCount;
+        }
+        
+        if(exceptPatternVHAverageUse != 0)exceptPatternVHAverageUse = (exceptPatternVHAverageUse + exceptPatternVHEffectivellyUsed)/2;
+        else exceptPatternVHAverageUse = exceptPatternVHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < exceptPatternVHRecycled.length; i++){
+            exceptPatternVHRecycled[i] = null;
+        }
+		
+        
+        
+		
+		neededLength = boundElementVHFree + boundElementVHRecycledCount; 
+        if(neededLength > boundElementVH.length){
+            if(neededLength > boundElementVHMaxSize){
+                neededLength = boundElementVHMaxSize;
+                BoundElementValidationHandler[] increased = new BoundElementValidationHandler[neededLength];
+                System.arraycopy(boundElementVH, 0, increased, 0, boundElementVH.length);
+                boundElementVH = increased;		        
+                System.arraycopy(boundElementVHRecycled, 0, boundElementVH, boundElementVHFree, boundElementVHMaxSize - boundElementVHFree);
+                boundElementVHFree = boundElementVHMaxSize; 
+            }else{
+                BoundElementValidationHandler[] increased = new BoundElementValidationHandler[neededLength];
+                System.arraycopy(boundElementVH, 0, increased, 0, boundElementVH.length);
+                boundElementVH = increased;
+                System.arraycopy(boundElementVHRecycled, 0, boundElementVH, boundElementVHFree, boundElementVHRecycledCount);
+                boundElementVHFree += boundElementVHRecycledCount;
+            }
+        }else{
+            System.arraycopy(boundElementVHRecycled, 0, boundElementVH, boundElementVHFree, boundElementVHRecycledCount);
+            boundElementVHFree += boundElementVHRecycledCount;
+        }
+        
+        if(boundElementVHAverageUse != 0)boundElementVHAverageUse = (boundElementVHAverageUse + boundElementVHEffectivellyUsed)/2;
+        else boundElementVHAverageUse = boundElementVHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < boundElementVHRecycled.length; i++){
+            boundElementVHRecycled[i] = null;
+        }
+		
+		
+		neededLength = boundStartVHFree + boundStartVHRecycledCount; 
+        if(neededLength > boundStartVH.length){
+            if(neededLength > boundStartVHMaxSize){
+                neededLength = boundStartVHMaxSize;
+                BoundStartValidationHandler[] increased = new BoundStartValidationHandler[neededLength];
+                System.arraycopy(boundStartVH, 0, increased, 0, boundStartVH.length);
+                boundStartVH = increased;		        
+                System.arraycopy(boundStartVHRecycled, 0, boundStartVH, boundStartVHFree, boundStartVHMaxSize - boundStartVHFree);
+                boundStartVHFree = boundStartVHMaxSize; 
+            }else{
+                BoundStartValidationHandler[] increased = new BoundStartValidationHandler[neededLength];
+                System.arraycopy(boundStartVH, 0, increased, 0, boundStartVH.length);
+                boundStartVH = increased;
+                System.arraycopy(boundStartVHRecycled, 0, boundStartVH, boundStartVHFree, boundStartVHRecycledCount);
+                boundStartVHFree += boundStartVHRecycledCount;
+            }
+        }else{
+            System.arraycopy(boundStartVHRecycled, 0, boundStartVH, boundStartVHFree, boundStartVHRecycledCount);
+            boundStartVHFree += boundStartVHRecycledCount;
+        }
+        
+        if(boundStartVHAverageUse != 0)boundStartVHAverageUse = (boundStartVHAverageUse + boundStartVHEffectivellyUsed)/2;
+        else boundStartVHAverageUse = boundStartVHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < boundStartVHRecycled.length; i++){
+            boundStartVHRecycled[i] = null;
+        }
+		
+		
+		neededLength = boundElementConcurrentHFree + boundElementConcurrentHRecycledCount; 
+        if(neededLength > boundElementConcurrentH.length){
+            if(neededLength > boundElementConcurrentHMaxSize){
+                neededLength = boundElementConcurrentHMaxSize;
+                BoundElementConcurrentHandler[] increased = new BoundElementConcurrentHandler[neededLength];
+                System.arraycopy(boundElementConcurrentH, 0, increased, 0, boundElementConcurrentH.length);
+                boundElementConcurrentH = increased;		        
+                System.arraycopy(boundElementConcurrentHRecycled, 0, boundElementConcurrentH, boundElementConcurrentHFree, boundElementConcurrentHMaxSize - boundElementConcurrentHFree);
+                boundElementConcurrentHFree = boundElementConcurrentHMaxSize; 
+            }else{
+                BoundElementConcurrentHandler[] increased = new BoundElementConcurrentHandler[neededLength];
+                System.arraycopy(boundElementConcurrentH, 0, increased, 0, boundElementConcurrentH.length);
+                boundElementConcurrentH = increased;
+                System.arraycopy(boundElementConcurrentHRecycled, 0, boundElementConcurrentH, boundElementConcurrentHFree, boundElementConcurrentHRecycledCount);
+                boundElementConcurrentHFree += boundElementConcurrentHRecycledCount;
+            }
+        }else{
+            System.arraycopy(boundElementConcurrentHRecycled, 0, boundElementConcurrentH, boundElementConcurrentHFree, boundElementConcurrentHRecycledCount);
+            boundElementConcurrentHFree += boundElementConcurrentHRecycledCount;
+        }
+        
+        if(boundElementConcurrentHAverageUse != 0)boundElementConcurrentHAverageUse = (boundElementConcurrentHAverageUse + boundElementConcurrentHEffectivellyUsed)/2;
+        else boundElementConcurrentHAverageUse = boundElementConcurrentHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < boundElementConcurrentHRecycled.length; i++){
+            boundElementConcurrentHRecycled[i] = null;
+        }
+		
+		
+		neededLength = boundElementParallelHFree + boundElementParallelHRecycledCount; 
+        if(neededLength > boundElementParallelH.length){
+            if(neededLength > boundElementParallelHMaxSize){
+                neededLength = boundElementParallelHMaxSize;
+                BoundElementParallelHandler[] increased = new BoundElementParallelHandler[neededLength];
+                System.arraycopy(boundElementParallelH, 0, increased, 0, boundElementParallelH.length);
+                boundElementParallelH = increased;		        
+                System.arraycopy(boundElementParallelHRecycled, 0, boundElementParallelH, boundElementParallelHFree, boundElementParallelHMaxSize - boundElementParallelHFree);
+                boundElementParallelHFree = boundElementParallelHMaxSize; 
+            }else{
+                BoundElementParallelHandler[] increased = new BoundElementParallelHandler[neededLength];
+                System.arraycopy(boundElementParallelH, 0, increased, 0, boundElementParallelH.length);
+                boundElementParallelH = increased;
+                System.arraycopy(boundElementParallelHRecycled, 0, boundElementParallelH, boundElementParallelHFree, boundElementParallelHRecycledCount);
+                boundElementParallelHFree += boundElementParallelHRecycledCount;
+            }
+        }else{
+            System.arraycopy(boundElementParallelHRecycled, 0, boundElementParallelH, boundElementParallelHFree, boundElementParallelHRecycledCount);
+            boundElementParallelHFree += boundElementParallelHRecycledCount;
+        }
+        
+        if(boundElementParallelHAverageUse != 0)boundElementParallelHAverageUse = (boundElementParallelHAverageUse + boundElementParallelHEffectivellyUsed)/2;
+        else boundElementParallelHAverageUse = boundElementParallelHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < boundElementParallelHRecycled.length; i++){
+            boundElementParallelHRecycled[i] = null;
+        }
+			
+		
+		neededLength = boundAttributeVHFree + boundAttributeVHRecycledCount; 
+        if(neededLength > boundAttributeVH.length){
+            if(neededLength > boundAttributeVHMaxSize){
+                neededLength = boundAttributeVHMaxSize;
+                BoundAttributeValidationHandler[] increased = new BoundAttributeValidationHandler[neededLength];
+                System.arraycopy(boundAttributeVH, 0, increased, 0, boundAttributeVH.length);
+                boundAttributeVH = increased;		        
+                System.arraycopy(boundAttributeVHRecycled, 0, boundAttributeVH, boundAttributeVHFree, boundAttributeVHMaxSize - boundAttributeVHFree);
+                boundAttributeVHFree = boundAttributeVHMaxSize; 
+            }else{
+                BoundAttributeValidationHandler[] increased = new BoundAttributeValidationHandler[neededLength];
+                System.arraycopy(boundAttributeVH, 0, increased, 0, boundAttributeVH.length);
+                boundAttributeVH = increased;
+                System.arraycopy(boundAttributeVHRecycled, 0, boundAttributeVH, boundAttributeVHFree, boundAttributeVHRecycledCount);
+                boundAttributeVHFree += boundAttributeVHRecycledCount;
+            }
+        }else{
+            System.arraycopy(boundAttributeVHRecycled, 0, boundAttributeVH, boundAttributeVHFree, boundAttributeVHRecycledCount);
+            boundAttributeVHFree += boundAttributeVHRecycledCount;
+        }
+        
+        if(boundAttributeVHAverageUse != 0)boundAttributeVHAverageUse = (boundAttributeVHAverageUse + boundAttributeVHEffectivellyUsed)/2;
+        else boundAttributeVHAverageUse = boundAttributeVHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < boundAttributeVHRecycled.length; i++){
+            boundAttributeVHRecycled[i] = null;
+        }
+		
+		
+		neededLength = boundCandidateAttributeVHFree + boundCandidateAttributeVHRecycledCount; 
+        if(neededLength > boundCandidateAttributeVH.length){
+            if(neededLength > boundCandidateAttributeVHMaxSize){
+                neededLength = boundCandidateAttributeVHMaxSize;
+                BoundCandidateAttributeValidationHandler[] increased = new BoundCandidateAttributeValidationHandler[neededLength];
+                System.arraycopy(boundCandidateAttributeVH, 0, increased, 0, boundCandidateAttributeVH.length);
+                boundCandidateAttributeVH = increased;		        
+                System.arraycopy(boundCandidateAttributeVHRecycled, 0, boundCandidateAttributeVH, boundCandidateAttributeVHFree, boundCandidateAttributeVHMaxSize - boundCandidateAttributeVHFree);
+                boundCandidateAttributeVHFree = boundCandidateAttributeVHMaxSize; 
+            }else{
+                BoundCandidateAttributeValidationHandler[] increased = new BoundCandidateAttributeValidationHandler[neededLength];
+                System.arraycopy(boundCandidateAttributeVH, 0, increased, 0, boundCandidateAttributeVH.length);
+                boundCandidateAttributeVH = increased;
+                System.arraycopy(boundCandidateAttributeVHRecycled, 0, boundCandidateAttributeVH, boundCandidateAttributeVHFree, boundCandidateAttributeVHRecycledCount);
+                boundCandidateAttributeVHFree += boundCandidateAttributeVHRecycledCount;
+            }
+        }else{
+            System.arraycopy(boundCandidateAttributeVHRecycled, 0, boundCandidateAttributeVH, boundCandidateAttributeVHFree, boundCandidateAttributeVHRecycledCount);
+            boundCandidateAttributeVHFree += boundCandidateAttributeVHRecycledCount;
+        }
+        
+        if(boundCandidateAttributeVHAverageUse != 0)boundCandidateAttributeVHAverageUse = (boundCandidateAttributeVHAverageUse + boundCandidateAttributeVHEffectivellyUsed)/2;
+        else boundCandidateAttributeVHAverageUse = boundCandidateAttributeVHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < boundCandidateAttributeVHRecycled.length; i++){
+            boundCandidateAttributeVHRecycled[i] = null;
+        }
+		
+        
+        neededLength = boundAttributeConcurrentHFree + boundAttributeConcurrentHRecycledCount; 
+        if(neededLength > boundAttributeConcurrentH.length){
+            if(neededLength > boundAttributeConcurrentHMaxSize){
+                neededLength = boundAttributeConcurrentHMaxSize;
+                BoundAttributeConcurrentHandler[] increased = new BoundAttributeConcurrentHandler[neededLength];
+                System.arraycopy(boundAttributeConcurrentH, 0, increased, 0, boundAttributeConcurrentH.length);
+                boundAttributeConcurrentH = increased;		        
+                System.arraycopy(boundAttributeConcurrentHRecycled, 0, boundAttributeConcurrentH, boundAttributeConcurrentHFree, boundAttributeConcurrentHMaxSize - boundAttributeConcurrentHFree);
+                boundAttributeConcurrentHFree = boundAttributeConcurrentHMaxSize; 
+            }else{
+                BoundAttributeConcurrentHandler[] increased = new BoundAttributeConcurrentHandler[neededLength];
+                System.arraycopy(boundAttributeConcurrentH, 0, increased, 0, boundAttributeConcurrentH.length);
+                boundAttributeConcurrentH = increased;
+                System.arraycopy(boundAttributeConcurrentHRecycled, 0, boundAttributeConcurrentH, boundAttributeConcurrentHFree, boundAttributeConcurrentHRecycledCount);
+                boundAttributeConcurrentHFree += boundAttributeConcurrentHRecycledCount;
+            }
+        }else{
+            System.arraycopy(boundAttributeConcurrentHRecycled, 0, boundAttributeConcurrentH, boundAttributeConcurrentHFree, boundAttributeConcurrentHRecycledCount);
+            boundAttributeConcurrentHFree += boundAttributeConcurrentHRecycledCount;
+        }
+        
+        if(boundAttributeConcurrentHAverageUse != 0)boundAttributeConcurrentHAverageUse = (boundAttributeConcurrentHAverageUse + boundAttributeConcurrentHEffectivellyUsed)/2;
+        else boundAttributeConcurrentHAverageUse = boundAttributeConcurrentHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < boundAttributeConcurrentHRecycled.length; i++){
+            boundAttributeConcurrentHRecycled[i] = null;
+        }
+		
+		
+		neededLength = boundAttributeParallelHFree + boundAttributeParallelHRecycledCount; 
+        if(neededLength > boundAttributeParallelH.length){
+            if(neededLength > boundAttributeParallelHMaxSize){
+                neededLength = boundAttributeParallelHMaxSize;
+                BoundAttributeParallelHandler[] increased = new BoundAttributeParallelHandler[neededLength];
+                System.arraycopy(boundAttributeParallelH, 0, increased, 0, boundAttributeParallelH.length);
+                boundAttributeParallelH = increased;		        
+                System.arraycopy(boundAttributeParallelHRecycled, 0, boundAttributeParallelH, boundAttributeParallelHFree, boundAttributeParallelHMaxSize - boundAttributeParallelHFree);
+                boundAttributeParallelHFree = boundAttributeParallelHMaxSize; 
+            }else{
+                BoundAttributeParallelHandler[] increased = new BoundAttributeParallelHandler[neededLength];
+                System.arraycopy(boundAttributeParallelH, 0, increased, 0, boundAttributeParallelH.length);
+                boundAttributeParallelH = increased;
+                System.arraycopy(boundAttributeParallelHRecycled, 0, boundAttributeParallelH, boundAttributeParallelHFree, boundAttributeParallelHRecycledCount);
+                boundAttributeParallelHFree += boundAttributeParallelHRecycledCount;
+            }
+        }else{
+            System.arraycopy(boundAttributeParallelHRecycled, 0, boundAttributeParallelH, boundAttributeParallelHFree, boundAttributeParallelHRecycledCount);
+            boundAttributeParallelHFree += boundAttributeParallelHRecycledCount;
+        }
+        
+        if(boundAttributeParallelHAverageUse != 0)boundAttributeParallelHAverageUse = (boundAttributeParallelHAverageUse + boundAttributeParallelHEffectivellyUsed)/2;
+        else boundAttributeParallelHAverageUse = boundAttributeParallelHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < boundAttributeParallelHRecycled.length; i++){
+            boundAttributeParallelHRecycled[i] = null;
+        }
 	}
 }

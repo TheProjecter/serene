@@ -24,7 +24,7 @@ import sereneWrite.MessageWriter;
 
 public class DivGrammarContentPool extends RNGParseEndElementTaskPool{
 	DivGrammarContentTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public DivGrammarContentPool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -32,8 +32,8 @@ public class DivGrammarContentPool extends RNGParseEndElementTaskPool{
 						MessageWriter debugWriter){
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new DivGrammarContentTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new DivGrammarContentTask[5];
 	}
 	
 	public DivGrammarContentTask getTask(){
@@ -51,9 +51,9 @@ public class DivGrammarContentPool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(DivGrammarContentTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			DivGrammarContentTask[] increased = new DivGrammarContentTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			DivGrammarContentTask[] increased = new DivGrammarContentTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

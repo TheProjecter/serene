@@ -24,7 +24,7 @@ import sereneWrite.MessageWriter;
 
 public class ExceptNameClassPool extends RNGParseEndElementTaskPool{
 	ExceptNameClassTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public ExceptNameClassPool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -32,8 +32,8 @@ public class ExceptNameClassPool extends RNGParseEndElementTaskPool{
 						MessageWriter debugWriter){
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new ExceptNameClassTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new ExceptNameClassTask[5];
 	}
 	
 	public ExceptNameClassTask getTask(){
@@ -51,9 +51,9 @@ public class ExceptNameClassPool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(ExceptNameClassTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			ExceptNameClassTask[] increased = new ExceptNameClassTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			ExceptNameClassTask[] increased = new ExceptNameClassTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}

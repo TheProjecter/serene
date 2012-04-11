@@ -26,7 +26,7 @@ public class ElementWithNameInstancePool extends RNGParseEndElementTaskPool{
 	SAttribute name;
 	
 	ElementWithNameInstanceTask[] task;
-	int taskFree, taskPoolSize;
+	int taskFree, taskMaxSize;
 	
 	public ElementWithNameInstancePool(SAttribute ns,
 						SAttribute datatypeLibrary,
@@ -36,8 +36,8 @@ public class ElementWithNameInstancePool extends RNGParseEndElementTaskPool{
 		super(ns, datatypeLibrary, foreign, debugWriter);
 		this.name = name;
 		taskFree = 0;
-		taskPoolSize = 3;
-		task = new ElementWithNameInstanceTask[taskPoolSize];
+		taskMaxSize = 10;
+		task = new ElementWithNameInstanceTask[5];
 	}
 	
 	public ElementWithNameInstanceTask getTask(){
@@ -60,9 +60,9 @@ public class ElementWithNameInstancePool extends RNGParseEndElementTaskPool{
 	}
 	
 	void recycle(ElementWithNameInstanceTask t){		
-		if(taskFree == taskPoolSize){			 
-			taskPoolSize+=3;
-			ElementWithNameInstanceTask[] increased = new ElementWithNameInstanceTask[taskPoolSize];
+		if(taskFree == taskMaxSize) return;			
+		if(taskFree == task.length){
+			ElementWithNameInstanceTask[] increased = new ElementWithNameInstanceTask[5+task.length];
 			System.arraycopy(task, 0, increased, 0, taskFree);
 			task = increased;
 		}
