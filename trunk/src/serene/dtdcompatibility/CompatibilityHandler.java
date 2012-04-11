@@ -202,7 +202,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
         this.activeInputDescriptor = activeInputDescriptor;
         this.inputStackDescriptor = inputStackDescriptor;        
         this.errorDispatcher = errorDispatcher; 
-        defaultValueErrorHandler = new AttributeDefaultValueErrorHandler(errorDispatcher, debugWriter);
+        defaultValueErrorHandler = new AttributeDefaultValueErrorHandler(activeInputDescriptor, errorDispatcher, debugWriter);
         simetryController = new CompetitionSimetryController(controllerPool, errorDispatcher, debugWriter);
         
         attributesDVListsStack = new Stack<ArrayList<AttributeInfo>>();

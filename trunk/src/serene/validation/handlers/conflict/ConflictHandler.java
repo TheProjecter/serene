@@ -32,7 +32,7 @@ public abstract class ConflictHandler{
 	public ConflictHandler(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		disqualified = new BitSet();
-        candidatesCount = -1;		
+        candidatesCount = -1;
 	}
 		
     public void init(int candidatesCount){

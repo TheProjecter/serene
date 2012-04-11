@@ -32,10 +32,11 @@ public abstract class ElementConflictResolver extends InternalConflictResolver{
 	
 	List<AElement> candidateDefinitions;
 	ConflictMessageReporter conflictMessageReporter;
-	
+	boolean isResolved;	
 	public ElementConflictResolver(MessageWriter debugWriter){				
 		super(debugWriter);
 		candidateDefinitions = new ArrayList<AElement>();
+		isResolved = false;
 	}
 			
 	void init(ConflictMessageReporter conflictMessageReporter){
@@ -46,6 +47,11 @@ public abstract class ElementConflictResolver extends InternalConflictResolver{
     void reset(){
         super.reset();
         candidateDefinitions.clear();
+        if(!isResolved && conflictMessageReporter != null) {
+            conflictMessageReporter.setDiscarded(true);
+            conflictMessageReporter.clear();
+        }
+        isResolved = false;
     }
     
     public void addCandidate(AElement candidate){

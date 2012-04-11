@@ -24,6 +24,7 @@ import java.util.BitSet;
 import org.xml.sax.Locator;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
@@ -43,6 +44,7 @@ import sereneWrite.MessageWriter;
 public class ActiveModelConflictHandlerPool implements Reusable{
 	ConflictHandlerPool pool;
 	InputStackDescriptor inputStackDescriptor;
+	ActiveInputDescriptor activeInputDescriptor;
 	
 	//int ambiguousElementConflictResolverCreated;
 	int ambiguousElementConflictResolverMaxSize;
@@ -152,8 +154,9 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(full)releaseHandlers();
 		pool.recycle(this);
 	}	
-	public void fill(InputStackDescriptor inputStackDescriptor){
+	public void fill(ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){
 		this.inputStackDescriptor = inputStackDescriptor;
+		this.activeInputDescriptor = activeInputDescriptor;
 		pool.fill(this,
 				ambiguousElementConflictResolver,
 				unresolvedElementConflictResolver,
@@ -186,74 +189,74 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		ambiguousElementConflictResolverFree = ambiguousElementConflictResolverFillCount;
 		ambiguousElementConflictResolverMinFree = ambiguousElementConflictResolverFree;
 		for(int i = 0; i < ambiguousElementConflictResolverFree; i++){	
-			ambiguousElementConflictResolver[i].init(this, inputStackDescriptor);
+			ambiguousElementConflictResolver[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		unresolvedElementConflictResolverFree = unresolvedElementConflictResolverFillCount;
 		unresolvedElementConflictResolverMinFree = unresolvedElementConflictResolverFree;
 		for(int i = 0; i < unresolvedElementConflictResolverFree; i++){	
-			unresolvedElementConflictResolver[i].init(this, inputStackDescriptor);
+			unresolvedElementConflictResolver[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		ambiguousAttributeConflictResolverFree = ambiguousAttributeConflictResolverFillCount;
 		ambiguousAttributeConflictResolverMinFree = ambiguousAttributeConflictResolverFree;
 		for(int i = 0; i < ambiguousAttributeConflictResolverFree; i++){	
-			ambiguousAttributeConflictResolver[i].init(this, inputStackDescriptor);
+			ambiguousAttributeConflictResolver[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 				
 		unresolvedAttributeConflictResolverFree = unresolvedAttributeConflictResolverFillCount;
 		unresolvedAttributeConflictResolverMinFree = unresolvedAttributeConflictResolverFree;
 		for(int i = 0; i < unresolvedAttributeConflictResolverFree; i++){	
-			unresolvedAttributeConflictResolver[i].init(this, inputStackDescriptor);
+			unresolvedAttributeConflictResolver[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		ambiguousCharsConflictResolverFree = ambiguousCharsConflictResolverFillCount;
 		ambiguousCharsConflictResolverMinFree = ambiguousCharsConflictResolverFree;
 		for(int i = 0; i < ambiguousCharsConflictResolverFree; i++){	
-			ambiguousCharsConflictResolver[i].init(this, inputStackDescriptor);
+			ambiguousCharsConflictResolver[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		unresolvedCharsConflictResolverFree = unresolvedCharsConflictResolverFillCount;
 		unresolvedCharsConflictResolverMinFree = unresolvedCharsConflictResolverFree;
 		for(int i = 0; i < unresolvedCharsConflictResolverFree; i++){	
-			unresolvedCharsConflictResolver[i].init(this, inputStackDescriptor);
+			unresolvedCharsConflictResolver[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
         
 		ambiguousListTokenConflictResolverFree = ambiguousListTokenConflictResolverFillCount;
 		ambiguousListTokenConflictResolverMinFree = ambiguousListTokenConflictResolverFree;
 		for(int i = 0; i < ambiguousListTokenConflictResolverFree; i++){	
-			ambiguousListTokenConflictResolver[i].init(this, inputStackDescriptor);
+			ambiguousListTokenConflictResolver[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		unresolvedListTokenConflictResolverFree = unresolvedListTokenConflictResolverFillCount;
 		unresolvedListTokenConflictResolverMinFree = unresolvedListTokenConflictResolverFree;
 		for(int i = 0; i < unresolvedListTokenConflictResolverFree; i++){	
-			unresolvedListTokenConflictResolver[i].init(this, inputStackDescriptor);
+			unresolvedListTokenConflictResolver[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		
 		boundAmbiguousElementConflictResolverFree = boundAmbiguousElementConflictResolverFillCount;
 		boundAmbiguousElementConflictResolverMinFree = boundAmbiguousElementConflictResolverFree;
 		for(int i = 0; i < boundAmbiguousElementConflictResolverFree; i++){	
-			boundAmbiguousElementConflictResolver[i].init(this, inputStackDescriptor);
+			boundAmbiguousElementConflictResolver[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		boundUnresolvedElementConflictResolverFree = boundUnresolvedElementConflictResolverFillCount;
 		boundUnresolvedElementConflictResolverMinFree = boundUnresolvedElementConflictResolverFree;
 		for(int i = 0; i < boundUnresolvedElementConflictResolverFree; i++){	
-			boundUnresolvedElementConflictResolver[i].init(this, inputStackDescriptor);
+			boundUnresolvedElementConflictResolver[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		boundAmbiguousAttributeConflictResolverFree = boundAmbiguousAttributeConflictResolverFillCount;
 		boundAmbiguousAttributeConflictResolverMinFree = boundAmbiguousAttributeConflictResolverFree;
 		for(int i = 0; i < boundAmbiguousAttributeConflictResolverFree; i++){	
-			boundAmbiguousAttributeConflictResolver[i].init(this, inputStackDescriptor);
+			boundAmbiguousAttributeConflictResolver[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 		
 		boundUnresolvedAttributeConflictResolverFree = boundUnresolvedAttributeConflictResolverFillCount;
 		boundUnresolvedAttributeConflictResolverMinFree = boundUnresolvedAttributeConflictResolverFree;
 		for(int i = 0; i < boundUnresolvedAttributeConflictResolverFree; i++){	
-			boundUnresolvedAttributeConflictResolver[i].init(this, inputStackDescriptor);
+			boundUnresolvedAttributeConflictResolver[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
 	}
 	
@@ -302,7 +305,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(ambiguousElementConflictResolverFree == 0){
 			// ambiguousElementConflictResolverCreated++;
 			AmbiguousElementConflictResolver icr = new AmbiguousElementConflictResolver(debugWriter);
-			icr.init(this, inputStackDescriptor);
+			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(conflictMessageReporter);			
 			return icr;			
 		}else{
@@ -327,7 +330,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(unresolvedElementConflictResolverFree == 0){
 			// unresolvedElementConflictResolverCreated++;
 			UnresolvedElementConflictResolver icr = new UnresolvedElementConflictResolver(debugWriter);
-			icr.init(this, inputStackDescriptor);
+			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(conflictMessageReporter);			
 			return icr;			
 		}else{
@@ -352,7 +355,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(ambiguousAttributeConflictResolverFree == 0){
 			// ambiguousAttributeConflictResolverCreated++;
 			AmbiguousAttributeConflictResolver icr = new AmbiguousAttributeConflictResolver(debugWriter);
-			icr.init(this, inputStackDescriptor);
+			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(disqualified, temporaryMessageStorage);			
 			return icr;			
 		}else{
@@ -378,7 +381,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(unresolvedAttributeConflictResolverFree == 0){
 			// unresolvedAttributeConflictResolverCreated++;
 			UnresolvedAttributeConflictResolver icr = new UnresolvedAttributeConflictResolver(debugWriter);
-			icr.init(this, inputStackDescriptor);
+			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(temporaryMessageStorage);			
 			return icr;			
 		}else{
@@ -403,7 +406,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(ambiguousCharsConflictResolverFree == 0){
 			// ambiguousCharsConflictResolverCreated++;
 			AmbiguousCharsConflictResolver icr = new AmbiguousCharsConflictResolver(debugWriter);
-			icr.init(this, inputStackDescriptor);
+			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(disqualified, temporaryMessageStorage);			
 			return icr;			
 		}else{
@@ -428,7 +431,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(unresolvedCharsConflictResolverFree == 0){
 			// unresolvedCharsConflictResolverCreated++;
 			UnresolvedCharsConflictResolver icr = new UnresolvedCharsConflictResolver(debugWriter);
-			icr.init(this, inputStackDescriptor);
+			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(temporaryMessageStorage);			
 			return icr;			
 		}else{
@@ -453,7 +456,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(ambiguousListTokenConflictResolverFree == 0){
 			// ambiguousListTokenConflictResolverCreated++;
 			AmbiguousListTokenConflictResolver icr = new AmbiguousListTokenConflictResolver(debugWriter);
-			icr.init(this, inputStackDescriptor);
+			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(disqualified, temporaryMessageStorage);			
 			return icr;			
 		}else{
@@ -478,7 +481,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(unresolvedListTokenConflictResolverFree == 0){
 			// unresolvedListTokenConflictResolverCreated++;
 			UnresolvedListTokenConflictResolver icr = new UnresolvedListTokenConflictResolver(debugWriter);
-			icr.init(this, inputStackDescriptor);
+			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(temporaryMessageStorage);
 			return icr;			
 		}else{
@@ -508,7 +511,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(boundAmbiguousElementConflictResolverFree == 0){
 			// boundAmbiguousElementConflictResolverCreated++;
 			BoundAmbiguousElementConflictResolver icr = new BoundAmbiguousElementConflictResolver(debugWriter);
-			icr.init(this, inputStackDescriptor);
+			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(conflictMessageReporter,
 			        targetQueue,
 					targetEntry,
@@ -542,7 +545,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(boundUnresolvedElementConflictResolverFree == 0){
 			// boundUnresolvedElementConflictResolverCreated++;
 			BoundUnresolvedElementConflictResolver icr = new BoundUnresolvedElementConflictResolver(debugWriter);
-			icr.init(this, inputStackDescriptor);
+			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(conflictMessageReporter,
 			        targetQueue,
 					targetEntry,
@@ -571,9 +574,9 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	
 	public BoundAmbiguousAttributeConflictResolver getBoundAmbiguousAttributeConflictResolver(BitSet disqualified,
 	                                                                                        TemporaryMessageStorage[] temporaryMessageStorage,
-                                                                                            String namespaceURI,
+                                                                                            /*String namespaceURI,
                                                                                             String localName,
-                                                                                            String qName,
+                                                                                            String qName,*/
                                                                                             String value, 
                                                                                             Queue queue, 
                                                                                             int entry, 
@@ -581,12 +584,12 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(boundAmbiguousAttributeConflictResolverFree == 0){
 			// boundAmbiguousAttributeConflictResolverCreated++;
 			BoundAmbiguousAttributeConflictResolver icr = new BoundAmbiguousAttributeConflictResolver(debugWriter);
-			icr.init(this, inputStackDescriptor);
+			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(disqualified,
 			        temporaryMessageStorage,
-			        namespaceURI,
+			        /*namespaceURI,
                     localName,
-                    qName,
+                    qName,*/
                     value, 
 					queue, 
 					entry, 
@@ -596,9 +599,9 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			BoundAmbiguousAttributeConflictResolver icr = boundAmbiguousAttributeConflictResolver[--boundAmbiguousAttributeConflictResolverFree];
 			icr.init(disqualified,
 			        temporaryMessageStorage,
-			        namespaceURI,
+			        /*namespaceURI,
                     localName,
-                    qName,
+                    qName,*/
                     value, 
 					queue, 
 					entry, 
@@ -619,9 +622,9 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	}
 	
 	public BoundUnresolvedAttributeConflictResolver getBoundUnresolvedAttributeConflictResolver(TemporaryMessageStorage[] temporaryMessageStorage,
-                                                                                            String namespaceURI,
+                                                                                            /*String namespaceURI,
                                                                                             String localName,
-                                                                                            String qName,
+                                                                                            String qName,*/
                                                                                             String value, 
                                                                                             Queue queue, 
                                                                                             int entry, 
@@ -629,11 +632,11 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		if(boundUnresolvedAttributeConflictResolverFree == 0){
 			// boundUnresolvedAttributeConflictResolverCreated++;
 			BoundUnresolvedAttributeConflictResolver icr = new BoundUnresolvedAttributeConflictResolver(debugWriter);
-			icr.init(this, inputStackDescriptor);
+			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(temporaryMessageStorage,
-			        namespaceURI,
+			        /*namespaceURI,
                     localName,
-                    qName,
+                    qName,*/
                     value, 
 					queue, 
 					entry, 
@@ -642,9 +645,9 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		}else{
 			BoundUnresolvedAttributeConflictResolver icr = boundUnresolvedAttributeConflictResolver[--boundUnresolvedAttributeConflictResolverFree];
 			icr.init(temporaryMessageStorage,
-			        namespaceURI,
+			        /*namespaceURI,
                     localName,
-                    qName,
+                    qName,*/
                     value, 
 					queue, 
 					entry, 

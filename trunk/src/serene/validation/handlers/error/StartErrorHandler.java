@@ -63,137 +63,137 @@ public class StartErrorHandler extends AbstractContextErrorHandler{
     public void setCandidate(boolean isCandidate){}
     
     
-	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unknownElement(qName);		
+	public void unknownElement(int inputRecordIndex){
+		messageHandler.unknownElement(activeInputDescriptor.getItemDescription(inputRecordIndex));		
 	}	
-	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unexpectedElement(qName, definition);	
+	public void unexpectedElement(SimplifiedComponent definition, int inputRecordIndex){
+		messageHandler.unexpectedElement(activeInputDescriptor.getItemDescription(inputRecordIndex), definition);	
 	}	
-	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
-		messageHandler.unexpectedAmbiguousElement(qName, definition);	
+	public void unexpectedAmbiguousElement(SimplifiedComponent[] definition, int inputRecordIndex){
+		messageHandler.unexpectedAmbiguousElement(activeInputDescriptor.getItemDescription(inputRecordIndex), definition);	
 	}
 
 	
-	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownAttribute(int inputRecordIndex){
         throw new IllegalStateException();
 	}	
-	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(SimplifiedComponent definition, int inputRecordIndex){
         throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(SimplifiedComponent[] possibleDefinition, int inputRecordIndex){
         throw new IllegalStateException();
 	}
 	
 	
-	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
         throw new IllegalStateException();
 	}
 	
-	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int itemId, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
         throw new IllegalStateException();
 	}
 	
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){
         throw new IllegalStateException();
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
         throw new IllegalStateException();
 	}
 	
-	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
 	}
 	
-	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+	public void illegalContent(Rule context, int startInputRecordIndex){
         throw new IllegalStateException();
 	}
 	
-	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		messageHandler.unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+		messageHandler.unresolvedAmbiguousElementContentError(activeInputDescriptor.getItemDescription(inputRecordIndex), activeInputDescriptor.getSystemId(inputRecordIndex), activeInputDescriptor.getLineNumber(inputRecordIndex), activeInputDescriptor.getColumnNumber(inputRecordIndex), possibleDefinitions);
 	}
 	
-	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		messageHandler.unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+		messageHandler.unresolvedUnresolvedElementContentError(activeInputDescriptor.getItemDescription(inputRecordIndex), activeInputDescriptor.getSystemId(inputRecordIndex), activeInputDescriptor.getLineNumber(inputRecordIndex), activeInputDescriptor.getColumnNumber(inputRecordIndex), possibleDefinitions);
 	}
 	
-	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
         throw new IllegalStateException();
 	}
 	
 	
-	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		messageHandler.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+		messageHandler.ambiguousUnresolvedElementContentWarning(activeInputDescriptor.getItemDescription(inputRecordIndex), activeInputDescriptor.getSystemId(inputRecordIndex), activeInputDescriptor.getLineNumber(inputRecordIndex), activeInputDescriptor.getColumnNumber(inputRecordIndex), possibleDefinitions);
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
-		messageHandler.ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+		messageHandler.ambiguousAmbiguousElementContentWarning(activeInputDescriptor.getItemDescription(inputRecordIndex), activeInputDescriptor.getSystemId(inputRecordIndex), activeInputDescriptor.getLineNumber(inputRecordIndex), activeInputDescriptor.getColumnNumber(inputRecordIndex), possibleDefinitions);
 	}
 	
-	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
-        throw new IllegalStateException();
-	}
-	
-	public void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
         throw new IllegalStateException();
 	}
 	
-	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         throw new IllegalStateException();
 	}
 	
-	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        throw new IllegalStateException();
-	}
-	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         throw new IllegalStateException();
 	}
 	
-	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
         throw new IllegalStateException();
 	}
-	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-        throw new IllegalStateException();
-	}
-	
-	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
-        throw new IllegalStateException();
-	}	
-	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
         throw new IllegalStateException();
 	}
 	
-	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
+	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
+        throw new IllegalStateException();
+	}
+	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
+        throw new IllegalStateException();
+	}
+	
+	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
         throw new IllegalStateException();
 	}	
-	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
         throw new IllegalStateException();
 	}
 	
-	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
         throw new IllegalStateException();
-	}
-	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	}	
+	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
         throw new IllegalStateException();
 	}
 	
-	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         throw new IllegalStateException();
 	}
-	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         throw new IllegalStateException();
 	}
-	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	
+	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+        throw new IllegalStateException();
+	}
+	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
+        throw new IllegalStateException();
+	}
+	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
         throw new IllegalStateException();
 	}
 	    
-    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         throw new IllegalStateException();
     }    
-	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         throw new IllegalStateException();
     }
 	
-	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
+	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
         throw new IllegalStateException();
 	}
     
@@ -203,6 +203,7 @@ public class StartErrorHandler extends AbstractContextErrorHandler{
     
     public void internalConflict(ConflictMessageReporter conflictMessageReporter) throws SAXException{
 	    conflictMessageReporter.report();
+	    conflictMessageReporter.clear();
     }
     
 	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
@@ -217,10 +218,14 @@ public class StartErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.clear();
 	}
 	
+	public void discard(){
+	    throw new IllegalStateException();
+	}
+	
 	public void record(int contextType, String qName, boolean restrictToFileName, Locator locator){
-	    messageHandler.setContextQName(qName);
-        messageHandler.setContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
-        messageHandler.setContextType(contextType);
+	    messageHandler.setReportingContextQName(qName);
+        messageHandler.setReportingContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
+        messageHandler.setReportingContextType(contextType);
         messageHandler.setRestrictToFileName(restrictToFileName);
 	}
 

@@ -52,7 +52,7 @@ public class InterleaveDoubleHandler extends StructureDoubleHandler{
 		maximalReduceStackHandler.recycle();
 		
 		if(isStartSet){
-		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex, this);
 		    isStartSet = false;
 		    startInputRecordIndex = -1;
 		}
@@ -161,12 +161,12 @@ public class InterleaveDoubleHandler extends StructureDoubleHandler{
 		this.maximalReduceStackHandler = maximalReduceStackHandler;
 		
 		if(this.isStartSet){
-            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex, this);
         }
 		this.startInputRecordIndex = startInputRecordIndex;
 		this.isStartSet = isStartSet;
 		if(isStartSet){		    
-		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
 		}
 	}
 	

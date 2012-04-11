@@ -69,6 +69,7 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 		this.candidateDefinitions = candidateDefinitions; 
 		localCandidatesConflictHandler.init(candidateDefinitions.size());
 		temporaryMessageStorage = new TemporaryMessageStorage[candidateDefinitions.size()];
+		
 		for(int i = 0; i < candidateDefinitions.size(); i++){						
 			// To each candidate set a ConflictErrorHandler that knows the ExternalConflictHandler
 			// and the candidate index. Errors will not be handled and reported.
@@ -98,6 +99,14 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 		}else if(qualifiedCount == 1){
 			AAttribute qAttribute = candidateDefinitions.get(localCandidatesConflictHandler.getNextQualified(0));
 			parent.addAttribute(qAttribute);
+			if(temporaryMessageStorage != null){
+                for(int i = 0;  i < temporaryMessageStorage.length; i++){
+                    if(temporaryMessageStorage[i] != null){
+                        temporaryMessageStorage[i].setDiscarded(true);
+                        temporaryMessageStorage[i].clear();
+                    }
+                }
+            }
 		}else if(qualifiedCount > 1){
 			parent.addAttribute(candidateDefinitions, localCandidatesConflictHandler.getDisqualified(), temporaryMessageStorage);
 		}

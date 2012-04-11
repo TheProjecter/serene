@@ -20,12 +20,15 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
 import serene.validation.handlers.content.ElementEventHandler;
+
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
+
 
 import sereneWrite.MessageWriter;
 
 abstract class AbstractEEH implements ElementEventHandler{
-
+    ActiveInputDescriptor activeInputDescriptor;
 	InputStackDescriptor inputStackDescriptor;	
 	ValidatorEventHandlerPool pool;
 	
@@ -35,13 +38,15 @@ abstract class AbstractEEH implements ElementEventHandler{
 		this.debugWriter = debugWriter;
 	}
 	
-	void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor){
+	void init(ValidatorEventHandlerPool pool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){
 		this.pool = pool;
 		this.inputStackDescriptor = inputStackDescriptor;
+		this.activeInputDescriptor = activeInputDescriptor;
 	}	
     
 	abstract ComparableAEH getAttributeHandler(String qName, String namespace, String name);
 	abstract void validateContext() throws SAXException;
 	abstract void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException;
+	abstract void discardContextErrors();
 	abstract void validateInContext();	
 }

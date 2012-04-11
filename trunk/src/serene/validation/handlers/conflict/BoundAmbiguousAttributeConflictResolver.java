@@ -47,19 +47,24 @@ public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConfl
 	    pool.recycle(this);
 	}
 	
+	void reset(){
+	    super.reset();
+	    disqualified = null;
+	}
+	
 	void init(BitSet disqualified,
 	        TemporaryMessageStorage[] temporaryMessageStorage,
-	        String namespaceURI, 
+	        /*String namespaceURI, 
             String localName,
-            String qName,
+            String qName,*/
             String value, 
 			Queue queue, 
 			int entry, 
 			Map<AAttribute, AttributeBinder> attributeBinders){		
 		super.init(temporaryMessageStorage,
-		            namespaceURI, 
+		            /*namespaceURI, 
                     localName,
-                    qName,
+                    qName,*/
                     value, 
                     queue, 
                     entry, 
@@ -70,17 +75,20 @@ public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConfl
     public void resolve(ErrorCatcher errorCatcher){
         if(qualified.cardinality() == 0){				
             AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
-            errorCatcher.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedAttributeContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
         }else if(qualified.cardinality() == 1){
             int qual = qualified.nextSetBit(0);
             
-            if(temporaryMessageStorage != null && temporaryMessageStorage[qual] != null)temporaryMessageStorage[qual].transferMessages(errorCatcher);
+            if(temporaryMessageStorage != null && temporaryMessageStorage[qual] != null){
+                temporaryMessageStorage[qual].transferMessages(errorCatcher);
+                temporaryMessageStorage[qual] = null;
+            }
             
             AAttribute attribute = candidateDefinitions.get(qual);
             int definitionIndex = attribute.getDefinitionIndex();
             AttributeBinder binder = attributeBinders.get(attribute);
             if(binder != null){
-                binder.bindAttribute(targetQueue, targetEntry, definitionIndex, namespaceURI, localName, qName, Datatype.ID_TYPE_NULL, value);
+                binder.bindAttribute(targetQueue, targetEntry, definitionIndex, activeInputDescriptor.getNamespaceURI(inputRecordIndex), activeInputDescriptor.getLocalName(inputRecordIndex), activeInputDescriptor.getItemDescription(inputRecordIndex), Datatype.ID_TYPE_NULL, value);
             }
         }else{
             for(int i = 0; i < disqualified.length(); i++){
@@ -89,7 +97,7 @@ public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConfl
             
             if(qualified.cardinality()== 0){
                 AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
-                errorCatcher.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+                errorCatcher.unresolvedAttributeContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             }else if(qualified.cardinality() > 1){
                 int j = 0;
                 for(int i = 0; i < candidateDefinitions.size(); i++){			
@@ -99,9 +107,13 @@ public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConfl
                     }
                 }   
                 AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
-                errorCatcher.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+                errorCatcher.ambiguousAttributeContentWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             }else{
-                if(temporaryMessageStorage != null && temporaryMessageStorage[qualified.nextSetBit(0)] != null)temporaryMessageStorage[qualified.nextSetBit(0)].transferMessages(errorCatcher);        
+                int q = qualified.nextSetBit(0);
+                if(temporaryMessageStorage != null && temporaryMessageStorage[q] != null){
+                    temporaryMessageStorage[q].transferMessages(errorCatcher);
+                    temporaryMessageStorage[q] = null;
+                }
             }
         }
     }

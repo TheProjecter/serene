@@ -44,10 +44,12 @@ public class UnresolvedListTokenConflictResolver extends ListTokenConflictResolv
 	
 	public void resolve(ErrorCatcher errorCatcher){
         if(qualified.cardinality() == 1){
-            temporaryMessageStorage[qualified.nextSetBit(0)].transferMessages(errorCatcher);
+            int q = qualified.nextSetBit(0);
+            temporaryMessageStorage[q].transferMessages(errorCatcher);
+            temporaryMessageStorage[q] = null;
         }else{
             CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
-            errorCatcher.unresolvedListTokenInContextError(token, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedListTokenInContextError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
         }
     }	
 		

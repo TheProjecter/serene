@@ -211,6 +211,14 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	void handleAddToParent(){
 	    if(matches.size() == 1){
 	        charsContentTypeHandler.addChars(matches.get(0));
+	        if(temporaryMessageStorage != null) {	            
+                for(int i = 0; i < temporaryMessageStorage.length; i++){                    
+                    if(temporaryMessageStorage[i] != null){
+                        temporaryMessageStorage[i].setDiscarded(true);
+                        temporaryMessageStorage[i].clear();
+                    }
+                }
+            }
 	    }else{
 	        int matchesCount = matches.size();		
 	        int qualifiedCount = matchesCount - externalConflictHandler.getDisqualifiedCount();	        
@@ -242,9 +250,9 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	    setCurrentErrorCatcher();
 	    
 	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
-			currentErrorCatcher.characterContentDatatypeError(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), item, datatypeErrorMessage); 
+			currentErrorCatcher.characterContentDatatypeError(inputStackDescriptor.getCurrentItemInputRecordIndex(), item, datatypeErrorMessage); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){		   
-			currentErrorCatcher.attributeValueDatatypeError(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), item, datatypeErrorMessage);
+			currentErrorCatcher.attributeValueDatatypeError(inputStackDescriptor.getCurrentItemInputRecordIndex(), item, datatypeErrorMessage);
 		}else{
 			throw new IllegalStateException();
 		}		
@@ -256,9 +264,9 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	    setCurrentErrorCatcher();
 	    
 	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
-			currentErrorCatcher.characterContentValueError(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), value); 
+			currentErrorCatcher.characterContentValueError(inputStackDescriptor.getCurrentItemInputRecordIndex(), value); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){		    
-			currentErrorCatcher.attributeValueValueError(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), value);
+			currentErrorCatcher.attributeValueValueError(inputStackDescriptor.getCurrentItemInputRecordIndex(), value);
 		}else{
 			throw new IllegalStateException();
 		}
@@ -269,175 +277,179 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	        currentErrorCatcher = contextErrorCatcher;
 	    }else{
 	        if(temporaryMessageStorage == null) temporaryMessageStorage = new TemporaryMessageStorage[matches.size()];
-	        if(temporaryMessageStorage[currentIndex] == null) temporaryMessageStorage[currentIndex] = new TemporaryMessageStorage(debugWriter);
+	        
+	        if(temporaryMessageStorage[currentIndex] == null){
+                temporaryMessageStorage[currentIndex] = new TemporaryMessageStorage(debugWriter);
+                temporaryMessageStorage[currentIndex].init(activeInputDescriptor);
+            }
 	        currentErrorCatcher = temporaryMessageStorage[currentIndex];
 	    }	    
 	}
 	
-	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownElement(int inputRecordIndex){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(SimplifiedComponent definition, int inputRecordIndex){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(SimplifiedComponent[] definition, int inputRecordIndex){
 		throw new IllegalStateException();
 	}
 	
-	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownAttribute(int inputRecordIndex){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(SimplifiedComponent definition, int inputRecordIndex){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(SimplifiedComponent[] possibleDefinition, int inputRecordIndex){
 		throw new IllegalStateException();
 	}
 	
 		
-	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int itemId, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
 	    externalConflictHandler.disqualify(currentIndex);	    
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.misplacedContent(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+		currentErrorCatcher.misplacedContent(contextDefinition, startInputRecordIndex, definition, inputRecordIndex, sourceDefinition, reper);
 	}
 		
-	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.misplacedContent(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+		currentErrorCatcher.misplacedContent(contextDefinition, startInputRecordIndex, definition, inputRecordIndex, sourceDefinition, reper);
 	}
 	
 		
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
+		currentErrorCatcher.excessiveContent(context, startInputRecordIndex, excessiveDefinition, inputRecordIndex);
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.excessiveContent(context, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
+		currentErrorCatcher.excessiveContent(context, excessiveDefinition, inputRecordIndex);
 	}
 	
-	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.missingContent(context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
+		currentErrorCatcher.missingContent(context, startInputRecordIndex, definition, expected, found, inputRecordIndex);
 	}
 	
-	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+	public void illegalContent(Rule context, int startInputRecordIndex){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.illegalContent(context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
+		currentErrorCatcher.illegalContent(context, startInputRecordIndex);
 	}
 		
-	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 
-    public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+    public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
 	
-	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
+		currentErrorCatcher.ambiguousCharacterContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.ambiguousAttributeValueWarning(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		currentErrorCatcher.ambiguousAttributeValueWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		throw new IllegalStateException();
 	}
-	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		throw new IllegalStateException();
-	}
-	
-	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-		throw new IllegalStateException();
-	}
-	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		throw new IllegalStateException();
 	}
 	
-	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
+		throw new IllegalStateException();
+	}
+	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
+		throw new IllegalStateException();
+	}
+	
+	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
 		externalConflictHandler.disqualify(currentIndex);
 		setCurrentErrorCatcher();
-		currentErrorCatcher.characterContentExceptedError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		currentErrorCatcher.characterContentExceptedError(inputRecordIndex, charsDefinition);
 	}	
-	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
 		externalConflictHandler.disqualify(currentIndex);
 		setCurrentErrorCatcher();
-		currentErrorCatcher.attributeValueExceptedError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		currentErrorCatcher.attributeValueExceptedError(inputRecordIndex, charsDefinition);
 	}
 	
-	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
 		throw new IllegalStateException();
 	}
 	
-	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
-	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.listTokenDatatypeError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		currentErrorCatcher.listTokenDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}
-	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.listTokenValueError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		currentErrorCatcher.listTokenValueError(inputRecordIndex, charsDefinition);
 	}
-	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.listTokenExceptedError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		currentErrorCatcher.listTokenExceptedError(inputRecordIndex, charsDefinition);
 	}
 	
-	public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.unresolvedListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		currentErrorCatcher.unresolvedListTokenInContextError(inputRecordIndex, possibleDefinitions);
     }    
-	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		currentErrorCatcher.ambiguousListTokenInContextWarning(inputRecordIndex, possibleDefinitions);
     }
-	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
+	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
-		currentErrorCatcher.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
+		currentErrorCatcher.missingCompositorContent(context, startInputRecordIndex, definition, expected, found);
 	}
 	
 	public void internalConflict(ConflictMessageReporter conflictMessageReporter){

@@ -42,6 +42,8 @@ import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.error.util.MissingContentAnalyser;
 
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
+
 import serene.util.IntList;
 
 import sereneWrite.MessageWriter;
@@ -81,15 +83,23 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     ExternalConflictHandler conflictHandler;
     List<AElement> candidates;
     int candidatesCount;    
+    // Message handlers form the candidates 
     ConflictMessageHandler[] candidateMessageHandlers;
+    MessageReporter candidatesCommonMessages;
     
     ConflictMessageHandler localMessageHandler;    
-    MessageReporter[] candidateDelayedMessages;
-    MessageReporter commonMessages;
-    MessageReporter candidatesCommonMessages;
+    // Stacks of delayed messages from the candidates and their subtrees. Top of 
+    // the stacks are candidateMessageHandlers and candidatesCommonMessages when 
+    // not null.     
+    MessageReporter[] candidateMessagesStack;
+    MessageReporter commonMessagesStack;
+    
 
     boolean allDisqualified;    
     boolean hasDelayedMessages;
+    
+    
+    boolean isHandled;
     
 	public CandidatesConflictErrorHandler(ExternalConflictHandler conflictHandler, MessageWriter debugWriter){
         this.debugWriter = debugWriter;        
@@ -110,10 +120,14 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         
         commonWarningIds = new IntList();
         commonWarningCodes = new IntList();
+        
+        isHandled = false;
 	}	       
     
-    public void init(){
-        localMessageHandler = new CandidatesConflictMessageHandler(debugWriter);        
+    public void init(ActiveInputDescriptor activeInputDescriptor){
+        localMessageHandler = new CandidatesConflictMessageHandler(debugWriter);   
+        localMessageHandler.init(activeInputDescriptor);
+        isHandled = false;
     }
     
     void addCandidateMessageHandler(int candidateIndex, ConflictMessageHandler messageHandler){
@@ -133,19 +147,19 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         //      => disqualifying error:  an errorId/FEC combination is present to some of the candidates, but not the others
         //      => partially common error: for MISSING_CONTENT error present to all candidates with several different FECs 
         //          where there is at least one candidate whose missingDefinition constitutes a subset of the other candidates' definitions   
-        //      
+        //  
+        
         if(! errorIds.isEmpty()){
             for(int i = 0; i < errorIds.size(); i++){
                 int errorId = errorIds.get(i);                
                 if(errorId == MISSING_CONTENT 
                             && errorCandidates[i].length > 1 
                         && missingContentCandidateIndexes.size() == candidatesCount ){
-                                    
                     if(missingContentAnalyser == null) missingContentAnalyser = new MissingContentAnalyser(debugWriter);
                     BitSet partiallyCommon = missingContentAnalyser.getPartiallyCommon(missingContentDefinitions);
                     
                     if(partiallyCommon.isEmpty()){
-                        // DISQUALIFYING ERRORS
+                        // DISQUALIFYING ERRORS 
                         for(int j = 0; j < errorCandidates[i].length; j++){
                             conflictHandler.disqualify(errorCandidates[i][j]);
                         }
@@ -165,15 +179,15 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
                            }
                         }
                     }                     
-                }else{
+                }else{ 
                     for(int j = 0; j < errorCandidates[i].length; j++){
                         if(errorCandidates[i][j].cardinality() == candidatesCount){
-                            // COMMON
+                            // COMMON 
                             // Store the errorId and the codes. Transfer at the end.
                             commonErrorIds.add(errorId);
                             commonErrorCodes.add(errorCodes[i][j]);
                         }else{
-                            // DISQUALIFYING
+                            // DISQUALIFYING 
                             conflictHandler.disqualify(errorCandidates[i][j]);
                         }                    
                     }
@@ -206,7 +220,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     }
     
     
-    private boolean allCandidatesPresentError(int errorId){
+    /*private boolean allCandidatesPresentError(int errorId){
         if(cumulatorDummy == null) cumulatorDummy = new BitSet();
         for(int j = 0; j < errorCandidates[errorId].length; j++){
            cumulatorDummy.or(errorCandidates[errorId][j]);
@@ -217,7 +231,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         }   
         cumulatorDummy.clear();
         return false;
-    }
+    }*/
     
     // In case the result is ambiguous (several qualified candidates) it attempts 
     // to disqualify all those with errors in the subtree (delayed messages), but 
@@ -235,11 +249,11 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             }
             if(!commonWarningIds.isEmpty()){
                 transferAllCommonWarnings();
-            }
+            }            
             return;
         }
-        
-        if(candidateDelayedMessages == null){           
+                
+        if(candidateMessagesStack == null){           
             if(!commonErrorIds.isEmpty()
                 || !commonWarningIds.isEmpty()){
                 throw new IllegalStateException();
@@ -249,26 +263,32 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         
         if(qualifiedCount == 1){
             int winnerIndex = conflictHandler.getNextQualified(0);
-            if(candidateDelayedMessages[winnerIndex] != null) hasDelayedMessages = true;
-            for(int i = 0; i < candidateDelayedMessages.length; i++){
-                if(i != winnerIndex && candidateDelayedMessages[i] != null) candidateDelayedMessages[i] = null;
+            if(candidateMessagesStack[winnerIndex] != null) hasDelayedMessages = true;
+            for(int i = 0; i < candidateMessagesStack.length; i++){ 
+                if(i != winnerIndex && candidateMessagesStack[i] != null){
+                    candidateMessagesStack[i].setDiscarded(true);
+                    candidateMessagesStack[i].clear();
+                    candidateMessagesStack[i] = null;
+                }
             }
             return;
         }
-        
+                
         BitSet disqualified = conflictHandler.getDisqualified();// it's a clone, not the actual object, so it can be modified without changing the conflict handler
         
         for(int i = 0; i < candidatesCount; i++){
-            if(candidateDelayedMessages[i] != null){
+            if(candidateMessagesStack[i] != null){
                 if(!disqualified.get(i)){
-                    if(candidateDelayedMessages[i].containsOtherErrorMessage(commonErrorIds, commonErrorCodes)
-                        //candidateDelayedMessages[i].containsErrorMessage()
-                        ){                    
+                    if(candidateMessagesStack[i].containsOtherErrorMessage(commonErrorIds, commonErrorCodes)
+                        //candidateMessagesStack[i].containsErrorMessage()
+                        ){            
                         disqualified.set(i);
                         if(!hasDelayedMessages)  hasDelayedMessages = true;
                     }
                 }else{
-                    candidateDelayedMessages[i] = null;
+                    candidateMessagesStack[i].setDiscarded(true);
+                    candidateMessagesStack[i].clear();
+                    candidateMessagesStack[i] = null;
                 }
             }
         }
@@ -283,14 +303,18 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             }
             return;
         }
-        
+                
         hasDelayedMessages = false;
+        
         conflictHandler.disqualify(disqualified);
+        
         for(int i = 0; i < candidatesCount; i++){            
             if(disqualified.get(i)){
-                candidateDelayedMessages[i] = null; 
+                candidateMessagesStack[i].setDiscarded(true);
+                candidateMessagesStack[i].clear();
+                candidateMessagesStack[i] = null; 
             }
-            else if(!hasDelayedMessages && candidateDelayedMessages[i] != null) hasDelayedMessages = true;
+            else if(!hasDelayedMessages && candidateMessagesStack[i] != null) hasDelayedMessages = true;
         }
         
         disqualifiedCount = conflictHandler.getDisqualifiedCount();
@@ -303,7 +327,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             if(!commonWarningIds.isEmpty()){
                 transferQualifiedCommonWarnings();
             }
-        }
+        }        
     }
     
     void transferAllCommonErrors(){
@@ -342,7 +366,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         if(allDisqualified || hasDelayedMessages){
             return true; 
         }
-        if(commonMessages != null){
+        if(commonMessagesStack != null){
             return true;
         }
         if(localMessageHandler.getMessageTotalCount() > 0){
@@ -352,30 +376,31 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     }
 
     public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator, ContextErrorHandler contextErrorHandler) throws SAXException{
+        isHandled = true;
         if(localMessageHandler.getMessageTotalCount() > 0){
             delayMessageReporter(contextType, qName, locator, localMessageHandler, false);
         }        
         int qualifiedCount = candidatesCount - conflictHandler.getDisqualifiedCount();
     
-        localMessageHandler.setContextQName(qName);
-        localMessageHandler.setContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
-        localMessageHandler.setContextType(contextType);
+        localMessageHandler.setReportingContextQName(qName);
+        localMessageHandler.setReportingContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
+        localMessageHandler.setReportingContextType(contextType);
         if(qualifiedCount == 1){
             int q = conflictHandler.getNextQualified(0);
             localMessageHandler.setConflictResolutionId(MessageReporter.RESOLVED);
-            localMessageHandler.setContextDefinition(candidates.get(q));            
+            localMessageHandler.setReportingContextDefinition(candidates.get(q));            
             if(candidatesCommonMessages != null){
                 candidatesCommonMessages.setConflictResolutionId(MessageReporter.RESOLVED);
-                candidatesCommonMessages.setContextDefinition(candidates.get(conflictHandler.getNextQualified(0)));
+                candidatesCommonMessages.setReportingContextDefinition(candidates.get(conflictHandler.getNextQualified(0)));
             }
                           
-            contextErrorHandler.conflict(MessageReporter.RESOLVED, commonMessages, candidatesCount, conflictHandler.getDisqualified(), candidateDelayedMessages);
+            contextErrorHandler.conflict(MessageReporter.RESOLVED, commonMessagesStack, candidatesCount, conflictHandler.getDisqualified(), candidateMessagesStack);
             contextErrorHandler.handle(contextType, qName, candidates.get(conflictHandler.getNextQualified(0)), restrictToFileName, locator);
         }else if(qualifiedCount == 0){
             if(candidatesCommonMessages != null)candidatesCommonMessages.setConflictResolutionId(MessageReporter.UNRESOLVED);
             localMessageHandler.setConflictResolutionId(MessageReporter.UNRESOLVED);
             
-            contextErrorHandler.conflict(MessageReporter.UNRESOLVED, commonMessages, candidatesCount, conflictHandler.getDisqualified(), candidateDelayedMessages);
+            contextErrorHandler.conflict(MessageReporter.UNRESOLVED, commonMessagesStack, candidatesCount, conflictHandler.getDisqualified(), candidateMessagesStack);
             contextErrorHandler.record(contextType, qName, restrictToFileName, locator);
             // The contextErrorHandler's MessageReporter will be passed to the 
             // InternalConflictResolver and the messages will be integrated 
@@ -383,7 +408,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             if(candidatesCommonMessages != null)candidatesCommonMessages.setConflictResolutionId(MessageReporter.AMBIGUOUS);
             localMessageHandler.setConflictResolutionId(MessageReporter.AMBIGUOUS);
             
-            contextErrorHandler.conflict(MessageReporter.AMBIGUOUS, commonMessages, candidatesCount, conflictHandler.getDisqualified(), candidateDelayedMessages);
+            contextErrorHandler.conflict(MessageReporter.AMBIGUOUS, commonMessagesStack, candidatesCount, conflictHandler.getDisqualified(), candidateMessagesStack);
             contextErrorHandler.record(contextType, qName, restrictToFileName, locator);
             // The contextErrorHandler's MessageReporter will be passed to the 
             // InternalConflictResolver and the messages will be integrated 
@@ -500,139 +525,134 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     
     // from direct candidates and subtree through ExternalConflictErrorHandler    
     public void delayMessageReporter(int contextType, String qName, AElement definition, Locator locator, MessageReporter messageHandler, int candidateIndex){
-        messageHandler.setContextType(contextType);
-        messageHandler.setContextQName(qName);
-		messageHandler.setContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
-		messageHandler.setContextDefinition(definition);
         
-        if(candidateDelayedMessages == null)candidateDelayedMessages = new MessageReporter[candidatesCount];
-        if(candidateDelayedMessages[candidateIndex] == null){
-            candidateDelayedMessages[candidateIndex] = messageHandler;
+        
+        messageHandler.setReportingContextType(contextType);
+        messageHandler.setReportingContextQName(qName);
+		messageHandler.setReportingContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
+		messageHandler.setReportingContextDefinition(definition);
+        
+        if(candidateMessagesStack == null)candidateMessagesStack = new MessageReporter[candidatesCount];
+        if(candidateMessagesStack[candidateIndex] == null){
+            candidateMessagesStack[candidateIndex] = messageHandler;
         }else{
-            messageHandler.setParent(candidateDelayedMessages[candidateIndex]);
-            candidateDelayedMessages[candidateIndex] = messageHandler;
+            messageHandler.setParent(candidateMessagesStack[candidateIndex]);
+            candidateMessagesStack[candidateIndex] = messageHandler;
         }
     }
-    public void delayMessageReporter(int contextType, String qName, Locator locator, MessageReporter messageHandler, int candidateIndex){        
-        messageHandler.setContextType(contextType);
-        messageHandler.setContextQName(qName);
-		messageHandler.setContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
+    public void delayMessageReporter(int contextType, String qName, Locator locator, MessageReporter messageHandler, int candidateIndex){
+
+        messageHandler.setReportingContextType(contextType);
+        messageHandler.setReportingContextQName(qName);
+		messageHandler.setReportingContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
         
-        if(candidateDelayedMessages == null)candidateDelayedMessages = new MessageReporter[candidatesCount];
-        if(candidateDelayedMessages[candidateIndex] == null){
-            candidateDelayedMessages[candidateIndex] = messageHandler;
+        if(candidateMessagesStack == null)candidateMessagesStack = new MessageReporter[candidatesCount];
+        if(candidateMessagesStack[candidateIndex] == null){
+            candidateMessagesStack[candidateIndex] = messageHandler;
         }else{
-            messageHandler.setParent(candidateDelayedMessages[candidateIndex]);
-            candidateDelayedMessages[candidateIndex] = messageHandler;
+            messageHandler.setParent(candidateMessagesStack[candidateIndex]);
+            candidateMessagesStack[candidateIndex] = messageHandler;
         }
     }
     // internal conflict from direct candidates and subtree through ExternalConflictErrorHandler
     public void delayMessageReporter(ConflictMessageReporter conflictMessageReporter, int candidateIndex){
-        if(candidateDelayedMessages == null)candidateDelayedMessages = new MessageReporter[candidatesCount];
-        if(candidateDelayedMessages[candidateIndex] == null){
-            candidateDelayedMessages[candidateIndex] = conflictMessageReporter;
+                
+        if(candidateMessagesStack == null)candidateMessagesStack = new MessageReporter[candidatesCount];
+        if(candidateMessagesStack[candidateIndex] == null){
+            candidateMessagesStack[candidateIndex] = conflictMessageReporter;
         }else{
-            conflictMessageReporter.setParent(candidateDelayedMessages[candidateIndex]);
-            candidateDelayedMessages[candidateIndex] = conflictMessageReporter;
+            conflictMessageReporter.setParent(candidateMessagesStack[candidateIndex]);
+            candidateMessagesStack[candidateIndex] = conflictMessageReporter;
         }
     }
     
     
     // from direct candidates and subtree through CommonErrorHandler or localMessageHandler
     public void delayMessageReporter(int contextType, String qName, AElement definition, Locator locator, MessageReporter messageHandler, boolean isCandidate){
-        messageHandler.setContextType(contextType);
-        messageHandler.setContextQName(qName);
-		messageHandler.setContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
-		messageHandler.setContextDefinition(definition); 
+        
+        messageHandler.setReportingContextType(contextType);
+        messageHandler.setReportingContextQName(qName);
+		messageHandler.setReportingContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
+		messageHandler.setReportingContextDefinition(definition); 
                 
-        if(commonMessages == null){
-            commonMessages = messageHandler;
+        if(commonMessagesStack == null){
+            commonMessagesStack = messageHandler;
         }else{
-            messageHandler.setParent(commonMessages);
-            commonMessages = messageHandler;
+            messageHandler.setParent(commonMessagesStack);
+            commonMessagesStack = messageHandler;
         }
         
         if(isCandidate) candidatesCommonMessages = messageHandler;
     }
     public void delayMessageReporter(int contextType, String qName, Locator locator, MessageReporter messageHandler, boolean isCandidate){
-        messageHandler.setContextType(contextType);
-        messageHandler.setContextQName(qName);
-		messageHandler.setContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
+                
+        messageHandler.setReportingContextType(contextType);
+        messageHandler.setReportingContextQName(qName);
+		messageHandler.setReportingContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
         
-        if(commonMessages == null){
-            commonMessages = messageHandler;
+        if(commonMessagesStack == null){
+            commonMessagesStack = messageHandler;
         }else{
-            messageHandler.setParent(commonMessages);
-            commonMessages = messageHandler;
+            messageHandler.setParent(commonMessagesStack);
+            commonMessagesStack = messageHandler;
         }
         
         if(isCandidate) candidatesCommonMessages = messageHandler;
     }
     // internal conflict from direct candidates and subtree through CommonErrorHandler or localMessageHandler
     public void delayMessageReporter(ConflictMessageReporter conflictMessageReporter, boolean isCandidate){
-        if(commonMessages == null){
-            commonMessages = conflictMessageReporter;
+        
+        if(commonMessagesStack == null){
+            commonMessagesStack = conflictMessageReporter;
         }else{
-            conflictMessageReporter.setParent(commonMessages);
-            commonMessages = conflictMessageReporter;
+            conflictMessageReporter.setParent(commonMessagesStack);
+            commonMessagesStack = conflictMessageReporter;
         }
         
         if(isCandidate) candidatesCommonMessages = conflictMessageReporter;
     }
     
-	public void unknownElement(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownElement(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex){
         recordError(UNKNOWN_ELEMENT, functionalEquivalenceCode, candidateIndex);
 	}	
 	
-	public void unexpectedElement(int candidateIndex, int functionalEquivalenceCode, String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(int candidateIndex, int functionalEquivalenceCode, SimplifiedComponent definition, int inputRecordIndex){
         recordError(UNEXPECTED_ELEMENT, functionalEquivalenceCode, candidateIndex);
 	}	
     
     
-	public void unexpectedAmbiguousElement(int candidateIndex, int functionalEquivalenceCode, String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(int candidateIndex, int functionalEquivalenceCode, SimplifiedComponent[] possibleDefinitions, int inputRecordIndex){
         recordError(UNEXPECTED_AMBIGUOUS_ELEMENT, functionalEquivalenceCode, candidateIndex);
 	}		
 	
 	
-	public void unknownAttribute(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownAttribute(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex){
         recordError(UNKNOWN_ATTRIBUTE, functionalEquivalenceCode, candidateIndex);
 	}
 	
-	public void unexpectedAttribute(int candidateIndex, int functionalEquivalenceCode, String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){	    
+	public void unexpectedAttribute(int candidateIndex, int functionalEquivalenceCode, SimplifiedComponent definition, int inputRecordIndex){	    
         recordError(UNEXPECTED_ATTRIBUTE, functionalEquivalenceCode, candidateIndex);
 	}
 	
 	
-	public void unexpectedAmbiguousAttribute(int candidateIndex, int functionalEquivalenceCode, String qName, SimplifiedComponent[] possibleDefinitions, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(int candidateIndex, int functionalEquivalenceCode, SimplifiedComponent[] possibleDefinitions, int inputRecordIndex){
         recordError(UNEXPECTED_AMBIGUOUS_ATTRIBUTE, functionalEquivalenceCode, candidateIndex);
 	}
 	
 	public void misplacedContent(int candidateIndex, int functionalEquivalenceCode, 
-                                            APattern contextDefinition, 
-											String startSystemId, 
-											int startLineNumber, 
-											int startColumnNumber, 
+                                            APattern contextDefinition,
+											int startInputRecordIndex, 
 											APattern definition, 
-											int itemId, 
-											String qName, 
-											String systemId, 
-											int lineNumber, 
-											int columnNumber,
+											int inputRecordIndex,
 											APattern sourceDefinition, 
 											APattern reper){//not stored, only used for internal conflict handling
         recordError(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex);
 	}
     public void misplacedContent(int candidateIndex, int functionalEquivalenceCode, 
-                                            APattern contextDefinition, 
-											String startSystemId, 
-											int startLineNumber, 
-											int startColumnNumber, 
+                                            APattern contextDefinition,
+											int startInputRecordIndex,
 											APattern definition,
-											int[] itemId, 
-											String[] qName, 
-											String[] systemId, 
-											int[] lineNumber, 
-											int[] columnNumber,
+											int[] inputRecordIndex,
 											APattern[] sourceDefinition, 
 											APattern reper){//not stored, only used for internal conflict handling
         recordError(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex);
@@ -641,180 +661,150 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 	
 	public void excessiveContent(int candidateIndex, int functionalEquivalenceCode, 
                                     Rule context,
-									String startSystemId,
-									int startLineNumber,
-									int startColumnNumber,
+									int startInputRecordIndex,
 									APattern definition, 
-									int[] itemId, 
-									String[] qName, 
-									String[] systemId, 
-									int[] lineNumber, 
-									int[] columnNumber){
+									int[] inputRecordIndex){
         recordError(EXCESSIVE_CONTENT, functionalEquivalenceCode, candidateIndex);
 	}   
 	public void excessiveContent(int candidateIndex, int functionalEquivalenceCode, 
                                 Rule context, 
 								APattern definition,
-								int itemId, 
-								String qName, 
-								String systemId, 
-								int lineNumber,		
-								int columnNumber){
+								int inputRecordIndex){
 	}
     
     
 	public void unresolvedAmbiguousElementContentError(int candidateIndex, int functionalEquivalenceCode, 
-                                    String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
+                                    int inputRecordIndex, 
 									AElement[] possibleDefinitions){
         recordError(UNRESOLVED_AMBIGUOUS_ELEMENT_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);
 	}
 	
 	public void unresolvedUnresolvedElementContentError(int candidateIndex, int functionalEquivalenceCode, 
-                                    String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
+                                    int inputRecordIndex, 
 									AElement[] possibleDefinitions){
         recordError(UNRESOLVED_UNRESOLVED_ELEMENT_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);        
 	}
     
     
 	public void unresolvedAttributeContentError(int candidateIndex, int functionalEquivalenceCode, 
-                                    String qName, 
-									String systemId, 
-									int lineNumber, 
-									int columnNumber, 
+                                    int inputRecordIndex, 
 									AAttribute[] possibleDefinitions){
         recordError(UNRESOLVED_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);        
 	}
 
-    public void ambiguousUnresolvedElementContentWarning(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+    public void ambiguousUnresolvedElementContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AElement[] possibleDefinitions){
         recordWarning(AMBIGUOUS_UNRESOLVED_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
     
-    public void ambiguousAmbiguousElementContentWarning(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+    public void ambiguousAmbiguousElementContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AElement[] possibleDefinitions){
         recordWarning(AMBIGUOUS_AMBIGUOUS_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
     
-	public void ambiguousAttributeContentWarning(int candidateIndex, int functionalEquivalenceCode, String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AAttribute[] possibleDefinitions){
         recordWarning(AMBIGUOUS_ATTRIBUTE_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
     
-	public void ambiguousCharacterContentWarning(int candidateIndex, int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         recordWarning(AMBIGUOUS_CHARACTER_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
 
-    public void ambiguousAttributeValueWarning(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+    public void ambiguousAttributeValueWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         recordWarning(AMBIGUOUS_ATTRIBUTE_VALUE_WARNING, functionalEquivalenceCode, candidateIndex);        
     }    
 	
 	
 	public void missingContent(int candidateIndex, int functionalEquivalenceCode,
                                 Rule context, 
-								String startSystemId, 
-								int startLineNumber, 
-								int startColumnNumber,								 
+								int startInputRecordIndex,						 
 								APattern definition, 
 								int expected, 
-								int found,
-								String[] qName, 
-								String[] systemId, 
-								int[] lineNumber, 
-								int[] columnNumber){
+								int found, 
+								int[] inputRecordIndex){
 	    //if(definition.getQName().equals("name attribute with QName value"))throw new IllegalStateException();
         recordMissingContentError(functionalEquivalenceCode, candidateIndex, definition);        
     }
     
 	public void illegalContent(int candidateIndex, int functionalEquivalenceCode, 
                             Rule context, 
-                            int startItemId, 
-							String startQName, 
-							String startSystemId, 
-							int startLineNumber, 
-							int startColumnNumber){
+                            int startInputRecordIndex){
         recordError(ILLEGAL_CONTENT, functionalEquivalenceCode, candidateIndex);        
 	}
     
     // {15}
-	public void characterContentDatatypeError(int candidateIndex, int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){	    
+	public void characterContentDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){	    
         recordError(CHARACTER_CONTENT_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
         
     //{16}
-	public void attributeValueDatatypeError(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void attributeValueDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
         recordError(ATTRIBUTE_VALUE_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
         
         
-	public void characterContentValueError(int candidateIndex, int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition){
         recordError(CHARACTER_CONTENT_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
     
-	public void attributeValueValueError(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void attributeValueValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition){
         recordError(ATTRIBUTE_VALUE_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
     
     
-	public void characterContentExceptedError(int candidateIndex, int functionalEquivalenceCode, String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void characterContentExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition){
         recordError(CHARACTER_CONTENT_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
     
-	public void attributeValueExceptedError(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void attributeValueExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition){
         recordError(ATTRIBUTE_VALUE_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
     
-	public void unexpectedCharacterContent(int candidateIndex, int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
+	public void unexpectedCharacterContent(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AElement elementDefinition){
         recordError(UNEXPECTED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex);	    
 	}
     
-	public void unexpectedAttributeValue(int candidateIndex, int functionalEquivalenceCode, String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AAttribute attributeDefinition){
         recordError(UNEXPECTED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex);	    
 	}
     
-	public void unresolvedCharacterContent(int candidateIndex, int functionalEquivalenceCode, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         recordError(UNRESOLVED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex);	    
 	}
     
 	// {24}
-	public void unresolvedAttributeValue(int candidateIndex, int functionalEquivalenceCode, String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         recordError(UNRESOLVED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex);	    
 	}        
     
     
     // {25}
-	public void listTokenDatatypeError(int candidateIndex, int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
         recordError(LIST_TOKEN_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);        
 	}
     
         
-	public void listTokenValueError(int candidateIndex, int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void listTokenValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition){
         recordError(LIST_TOKEN_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}        
     
-	public void listTokenExceptedError(int candidateIndex, int functionalEquivalenceCode, String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void listTokenExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition){
         recordError(LIST_TOKEN_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex);		
 	}
     
     	    
-    public void unresolvedListTokenInContextError(int candidateIndex, int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         recordError(UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR, functionalEquivalenceCode, candidateIndex);        
     }
-    public void ambiguousListTokenInContextWarning(int candidateIndex, int functionalEquivalenceCode, String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+    public void ambiguousListTokenInContextWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         recordWarning(AMBIGUOUS_LIST_TOKEN_IN_CONTEXT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
     
-    public  void conflict(int candidateIndex, int functionalEquivalenceCode, int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter[] candidateMessages){
+    public  void conflict(int candidateIndex, int functionalEquivalenceCode, int conflictResolutionId, MessageReporter commonMessagesStack, int candidatesCount, BitSet disqualified, MessageReporter[] candidateMessages){
         recordError(CONFLICT, functionalEquivalenceCode, candidateIndex);
     }
         
 	public void missingCompositorContent(int candidateIndex, int functionalEquivalenceCode, 
                                 Rule context, 
-								String startSystemId, 
-								int startLineNumber, 
-								int startColumnNumber,								 
+								int startInputRecordIndex,								 
 								APattern definition, 
 								int expected, 
 								int found){
@@ -822,15 +812,34 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 	}
 
 
-    public void clear(){
+    public void clear(boolean deep){
+        if(deep || !isHandled){
+            if(localMessageHandler !=null ){
+                localMessageHandler.setDiscarded(true);
+                localMessageHandler.clear();
+            }
+            if(candidateMessagesStack != null){
+                for(int i = 0; i< candidateMessagesStack.length; i++){
+                    if(candidateMessagesStack[i] != null){
+                        candidateMessageHandlers[i].setDiscarded(true);
+                        candidateMessageHandlers[i].clear();
+                    }
+                }
+            } 
+            if(commonMessagesStack !=null ){
+                commonMessagesStack.setDiscarded(true);
+                commonMessagesStack.clear();
+            }
+        }
+        
         Arrays.fill(errorCodes, null);
         Arrays.fill(errorCandidates, null);
         
         conflictHandler.clear();
-        if(candidateMessageHandlers != null) candidateMessageHandlers = null;
+        candidateMessageHandlers = null;
         candidatesCount = -1;
-        candidateDelayedMessages = null;
-        commonMessages = null;
+        candidateMessagesStack = null;
+        commonMessagesStack = null;
         allDisqualified = false;
         hasDelayedMessages = false;
         candidatesCommonMessages = null;
@@ -840,5 +849,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     
         commonWarningIds.clear();
         commonWarningCodes.clear();
+        
+        isHandled = false;
     }	
 }

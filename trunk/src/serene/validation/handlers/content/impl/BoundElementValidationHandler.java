@@ -170,7 +170,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
             ceh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
             ceh.recycle();
         }else if(!isIgnorable && ! element.allowsChars()){
-            unexpectedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), element);
+            unexpectedCharacterContent(inputStackDescriptor.getCurrentItemInputRecordIndex(), element);
         }else{
             // element.allowsDataContent()
             //  || element.allowsValueContent()
@@ -226,7 +226,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
         }else{
             if(!element.allowsChars()){
                 if(!isIgnorable || !isBufferIgnorable){
-                    unexpectedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), element);
+                    unexpectedCharacterContent(inputStackDescriptor.getCurrentItemInputRecordIndex(), element);
                 }
                 return;
             }

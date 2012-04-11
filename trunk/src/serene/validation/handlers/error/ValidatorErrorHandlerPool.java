@@ -18,6 +18,8 @@ package serene.validation.handlers.error;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
+
 import serene.Reusable;
 
 import sereneWrite.MessageWriter;
@@ -25,6 +27,8 @@ import sereneWrite.MessageWriter;
 public class ValidatorErrorHandlerPool implements Reusable{
 	
 	ErrorDispatcher errorDispatcher;
+	ActiveInputDescriptor activeInputDescriptor;
+	
 	
 	// int validationErrorHCreated;
 	int validationErrorHMaxSize;
@@ -80,8 +84,9 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		errorHandlerPool.recycle(this);
 	}
 	
-	public void init(ErrorDispatcher errorDispatcher){
+	public void init(ErrorDispatcher errorDispatcher, ActiveInputDescriptor activeInputDescriptor){
 		this.errorDispatcher = errorDispatcher;
+		this.activeInputDescriptor = activeInputDescriptor;
 	}
 	
 	public void fill(){		
@@ -103,34 +108,34 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		validationErrorHFree = validationErrorHFillCount;
 		validationErrorHMinFree = validationErrorHFree;
 		for(int i = 0; i < validationErrorHFree; i++){	
-			validationErrorH[i].init(this, errorDispatcher);
+			validationErrorH[i].init(this, errorDispatcher, activeInputDescriptor);
 		}
         		
 		conflictErrorHFree = conflictErrorHFillCount;
 		conflictErrorHMinFree = conflictErrorHFree;
 		for(int i = 0; i < conflictErrorHFree; i++){	
-			conflictErrorH[i].init(this, errorDispatcher);
+			conflictErrorH[i].init(this, errorDispatcher, activeInputDescriptor);
 		}
 
 		
 		commonErrorHFree = commonErrorHFillCount;
 		commonErrorHMinFree = commonErrorHFree;
 		for(int i = 0; i < commonErrorHFree; i++){	
-			commonErrorH[i].init(this, errorDispatcher);
+			commonErrorH[i].init(this, errorDispatcher, activeInputDescriptor);
 		}
 		
 				
 		defaultErrorHFree = defaultErrorHFillCount;
 		defaultErrorHMinFree = defaultErrorHFree;
 		for(int i = 0; i < defaultErrorHFree; i++){	
-			defaultErrorH[i].init(this, errorDispatcher);
+			defaultErrorH[i].init(this, errorDispatcher, activeInputDescriptor);
 		}
         
 		
 		startErrorHFree = startErrorHFillCount;
 		startErrorHMinFree = startErrorHFree;
 		for(int i = 0; i < startErrorHFree; i++){	
-			startErrorH[i].init(this, errorDispatcher);
+			startErrorH[i].init(this, errorDispatcher, activeInputDescriptor);
 		}		
 	}
 	
@@ -164,7 +169,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		if(validationErrorHFree == 0){
 			// validationErrorHCreated++;
 			ValidationErrorHandler veh = new ValidationErrorHandler(debugWriter);			 
-			veh.init(this, errorDispatcher);
+			veh.init(this, errorDispatcher, activeInputDescriptor);
 			return veh;			
 		}else{
 			ValidationErrorHandler veh = validationErrorH[--validationErrorHFree];
@@ -189,7 +194,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		if(conflictErrorHFree == 0){
 			// conflictErrorHCreated++;
 			ExternalConflictErrorHandler eh = new ExternalConflictErrorHandler(debugWriter);
-			eh.init(this, errorDispatcher);
+			eh.init(this, errorDispatcher, activeInputDescriptor);
 			eh.init(candidatesConflictErrorHandler, candidateIndex, isCandidate);
 			return eh;			
 		}else{
@@ -215,7 +220,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		if(commonErrorHFree == 0){
 			// commonErrorHCreated++;
 			CommonErrorHandler eh = new CommonErrorHandler(debugWriter);
-			eh.init(this, errorDispatcher);
+			eh.init(this, errorDispatcher, activeInputDescriptor);
 			eh.init(candidatesConflictErrorHandler, isCandidate);
 			return eh;			
 		}else{
@@ -240,7 +245,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		if(defaultErrorHFree == 0){
 			// defaultErrorHCreated++;
 			DefaultErrorHandler eh = new DefaultErrorHandler(debugWriter);
-			eh.init(this, errorDispatcher);
+			eh.init(this, errorDispatcher, activeInputDescriptor);
 			//eh.init();
 			return eh;			
 		}else{
@@ -265,7 +270,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 		if(startErrorHFree == 0){
 			// startErrorHCreated++;
 			StartErrorHandler eh = new StartErrorHandler(debugWriter);
-			eh.init(this, errorDispatcher);
+			eh.init(this, errorDispatcher, activeInputDescriptor);
 			//eh.init();
 			return eh;			
 		}else{

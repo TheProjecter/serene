@@ -54,7 +54,7 @@ public class AmbiguousListTokenConflictResolver extends ListTokenConflictResolve
 	public void resolve(ErrorCatcher errorCatcher){
         if(qualified.cardinality() == 0){
             CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
-            errorCatcher.unresolvedListTokenInContextError(token, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedListTokenInContextError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));            
         }else if(qualified.cardinality() > 1){ 
             int j = 0;
             for(int i = 0; i < candidateDefinitions.size(); i++){			
@@ -64,9 +64,13 @@ public class AmbiguousListTokenConflictResolver extends ListTokenConflictResolve
                 }
             }
             CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
-            errorCatcher.ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.ambiguousListTokenInContextWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
         }else{
-            if(temporaryMessageStorage != null && temporaryMessageStorage[qualified.nextSetBit(0)] != null)temporaryMessageStorage[qualified.nextSetBit(0)].transferMessages(errorCatcher);        
+            int q = qualified.nextSetBit(0);
+            if(temporaryMessageStorage != null && temporaryMessageStorage[q] != null){
+                temporaryMessageStorage[q].transferMessages(errorCatcher);
+                temporaryMessageStorage[q] = null;
+            }
         }
     }	
 		

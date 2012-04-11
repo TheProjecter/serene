@@ -36,7 +36,7 @@ class UnknownElementHandler extends ErrorEEH{
 	}
 		
 	void validateInContext(){
-		parent.unknownElement(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
+		parent.unknownElement(inputStackDescriptor.getCurrentItemInputRecordIndex());
 	}
 	
 	public String toString(){

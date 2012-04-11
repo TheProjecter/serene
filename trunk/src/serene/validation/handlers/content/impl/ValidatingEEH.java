@@ -30,6 +30,7 @@ import serene.validation.handlers.error.ContextErrorHandlerManager;
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -63,8 +64,8 @@ abstract class ValidatingEEH extends ComparableEEH implements ContextErrorHandle
         isCandidate = false;
 	}
 	
-	void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor, ValidatorErrorHandlerPool errorHandlerPool){
-		super.init(pool, inputStackDescriptor);
+	void init(ValidatorEventHandlerPool pool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ValidatorErrorHandlerPool errorHandlerPool){
+		super.init(pool, activeInputDescriptor, inputStackDescriptor);
 		this.errorHandlerPool = errorHandlerPool;
 	}
 	

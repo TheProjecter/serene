@@ -145,7 +145,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 				prevSourceDefinition = childSourceDefinition[childRecordIndex];
 				prevDetailsCurrentIndex = childDetailsCurrentIndex[childRecordIndex];
 				
-				activeInputDescriptor.registerClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
+				activeInputDescriptor.registerClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1, this);
 								
 				removeLastCorrectChildIndex();					
 				addLastCorrectChildIndex(sourceDefinition);
@@ -162,7 +162,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 				prevSourceDefinition = childSourceDefinition[childRecordIndex];
 				prevDetailsCurrentIndex = childDetailsCurrentIndex[childRecordIndex];
 				
-				activeInputDescriptor.registerClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
+				activeInputDescriptor.registerClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1, this);
 				
 				removeLastCorrectChildIndex();				
 				addLastCorrectChildIndex(child, sourceDefinition);
@@ -175,94 +175,58 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 		if(--expectedOrderHandlingCount > 0){		
 			if(parent.handleContentOrder(expectedOrderHandlingCount, rule, sourceDefinition)){
 				// report errors
-				String contextSystemId;
-				int contextLineNumber;
-				int contextColumnNumber;
+				int contextInputRecordIndex;
 				if(!isStartSet){
-					contextSystemId = inputStackDescriptor.getSystemId();
-					contextLineNumber = inputStackDescriptor.getLineNumber();
-					contextColumnNumber = inputStackDescriptor.getColumnNumber();
+					contextInputRecordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();
 				}else{
-					contextSystemId = activeInputDescriptor.getSystemId(startInputRecordIndex);
-					contextLineNumber = activeInputDescriptor.getLineNumber(startInputRecordIndex);
-					contextColumnNumber = activeInputDescriptor.getColumnNumber(startInputRecordIndex);
+					contextInputRecordIndex = startInputRecordIndex;
 				}
 				
 				if(orderIndex == CURRENT_MISPLACED){					
 					errorCatcher.misplacedContent(rule, 
-														contextSystemId,//inputStackDescriptor.getSystemId(), 
-														contextLineNumber, //inputStackDescriptor.getLineNumber(), 
-														contextColumnNumber, //inputStackDescriptor.getColumnNumber(), 
+														contextInputRecordIndex, 
 														child, 
-														inputStackDescriptor.getItemId(),
-														inputStackDescriptor.getItemDescription(),
-														inputStackDescriptor.getSystemId(), 
-														inputStackDescriptor.getLineNumber(), 
-														inputStackDescriptor.getColumnNumber(),
+														inputStackDescriptor.getCurrentItemInputRecordIndex(),
 														sourceDefinition, 
 														reper);
 				}else if(orderIndex == PREVIOUS_MISPLACED){						
 					errorCatcher.misplacedContent(rule, 
-														contextSystemId,//inputStackDescriptor.getSystemId(), 
-														contextLineNumber, //inputStackDescriptor.getLineNumber(), 
-														contextColumnNumber, //inputStackDescriptor.getColumnNumber(),															
+														contextInputRecordIndex,															
 														prevDefinition,
-														activeInputDescriptor.getItemId(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
-														activeInputDescriptor.getItemDescription(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
-														activeInputDescriptor.getSystemId(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
-														activeInputDescriptor.getLineNumber(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
-														activeInputDescriptor.getColumnNumber(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),														
+														Arrays.copyOfRange(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),														
 														prevSourceDefinition,
 														reper);
-					activeInputDescriptor.unregisterClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
+					activeInputDescriptor.unregisterClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1, this);
 				}
 				return true;
 			}else{
-			    if(prevChildInputRecordIndex != null)activeInputDescriptor.unregisterClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
+			    if(prevChildInputRecordIndex != null)activeInputDescriptor.unregisterClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1, this);
 				return false;
 			}
 		}else{
 			// report errors
-			String contextSystemId;
-			int contextLineNumber;
-			int contextColumnNumber;
+			int contextInputRecordIndex;
 			if(!isStartSet){
-				contextSystemId = inputStackDescriptor.getSystemId();
-				contextLineNumber = inputStackDescriptor.getLineNumber();
-				contextColumnNumber = inputStackDescriptor.getColumnNumber();
+				contextInputRecordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();
 			}else{
-				contextSystemId = activeInputDescriptor.getSystemId(startInputRecordIndex);
-				contextLineNumber = activeInputDescriptor.getLineNumber(startInputRecordIndex);
-				contextColumnNumber = activeInputDescriptor.getColumnNumber(startInputRecordIndex);
+				contextInputRecordIndex = startInputRecordIndex;
 			}
 				
 			if(orderIndex == CURRENT_MISPLACED){				
 				errorCatcher.misplacedContent(rule, 
-													contextSystemId,//inputStackDescriptor.getSystemId(), 
-													contextLineNumber, //inputStackDescriptor.getLineNumber(), 
-													contextColumnNumber, //inputStackDescriptor.getColumnNumber(), 
+													contextInputRecordIndex, 
 													child,
-													inputStackDescriptor.getItemId(),
-													inputStackDescriptor.getItemDescription(),
-													inputStackDescriptor.getSystemId(), 
-													inputStackDescriptor.getLineNumber(), 
-													inputStackDescriptor.getColumnNumber(),
+													inputStackDescriptor.getCurrentItemInputRecordIndex(),
 													sourceDefinition,
 													reper);
 				}else if(orderIndex == PREVIOUS_MISPLACED){
 					errorCatcher.misplacedContent(rule, 
-														contextSystemId,//inputStackDescriptor.getSystemId(), 
-														contextLineNumber, //inputStackDescriptor.getLineNumber(), 
-														contextColumnNumber, //inputStackDescriptor.getColumnNumber(),															
+														contextInputRecordIndex,															
 														prevDefinition,
-														activeInputDescriptor.getItemId(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
-														activeInputDescriptor.getItemDescription(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
-														activeInputDescriptor.getSystemId(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
-														activeInputDescriptor.getLineNumber(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
-														activeInputDescriptor.getColumnNumber(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
+														Arrays.copyOfRange(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1),
 														prevSourceDefinition,
 														reper);
-					activeInputDescriptor.unregisterClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1);
+					activeInputDescriptor.unregisterClientForRecord(prevChildInputRecordIndex, 0, prevDetailsCurrentIndex+1, this);
 				}
 		}
 		return true;
@@ -356,7 +320,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 		
 		for(int j = 0; j <= childRecordIndex; j++){
 		    for(int i = 0; i <= childDetailsCurrentIndex[j]; i++){
-		        activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[j][i]);
+		        activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[j][i], this);
 		        childSourceDefinition[j][i] = null;
 		    }
 		    childDetailsCurrentIndex[j] = -1;
@@ -411,7 +375,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
             for(int j = 0; j <= childDetailsCurrentIndex[i]; j++){
                 this.childInputRecordIndex[i][j] = childInputRecordIndex[i][j];                
                 this.childSourceDefinition[i][j] = childSourceDefinition[i][j];
-                activeInputDescriptor.registerClientForRecord(childInputRecordIndex[i][j]);
+                activeInputDescriptor.registerClientForRecord(childInputRecordIndex[i][j], this);
 			}
 		}
 		this.childRecordIndex = childRecordIndex;
@@ -447,12 +411,12 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 		this.saturationLevel = saturationLevel;
 		
 		if(this.isStartSet){
-            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex, this);
         }
 		this.startInputRecordIndex = startInputRecordIndex;
 		this.isStartSet = isStartSet;
 		if(isStartSet){		    
-		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
 		}
 	}	
 	
@@ -504,7 +468,7 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 		childSourceDefinition[childRecordIndex] = new ActiveTypeItem[childDetailsInitialSize];
 		childSourceDefinition[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = sourceDefinition;
 				
-		activeInputDescriptor.registerClientForRecord(childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]]);
+		activeInputDescriptor.registerClientForRecord(childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]], this);
 	}	
 	//-> adds to the end of the arrays from lastCorrectChildIndexIndex
 	private void addLastCorrectChildIndex(APattern sourceDefinition){
@@ -527,11 +491,11 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 		childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = inputStackDescriptor.getCurrentItemInputRecordIndex();
 		childSourceDefinition[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]] = sourceDefinition;
 		
-		activeInputDescriptor.registerClientForRecord(childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]]);
+		activeInputDescriptor.registerClientForRecord(childInputRecordIndex[childRecordIndex][childDetailsCurrentIndex[childRecordIndex]], this);
 	}	
 	private void removeLastCorrectChildIndex(){
 		for(int i = 0; i <= childDetailsCurrentIndex[childRecordIndex]; i++){
-	        activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[childRecordIndex][i]);
+	        activeInputDescriptor.unregisterClientForRecord(childInputRecordIndex[childRecordIndex][i], this);
 	        childSourceDefinition[childRecordIndex][i] = null;
 	    }
 	    

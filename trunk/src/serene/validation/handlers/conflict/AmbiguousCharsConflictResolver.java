@@ -67,10 +67,18 @@ public class AmbiguousCharsConflictResolver extends CharsConflictResolver{
                 }   
                 reportAmbiguousWarning(errorCatcher);
             }else{
-                if(temporaryMessageStorage != null && temporaryMessageStorage[qualified.nextSetBit(0)] != null)temporaryMessageStorage[qualified.nextSetBit(0)].transferMessages(errorCatcher);        
+                int q = qualified.nextSetBit(0);
+                if(temporaryMessageStorage != null && temporaryMessageStorage[q] != null){
+                    temporaryMessageStorage[q].transferMessages(errorCatcher);
+                    temporaryMessageStorage[q] = null;
+                }
             }
-        }else{            
-            if(temporaryMessageStorage != null && temporaryMessageStorage[qualified.nextSetBit(0)] != null)temporaryMessageStorage[qualified.nextSetBit(0)].transferMessages(errorCatcher);        
+        }else{  
+            int q = qualified.nextSetBit(0);
+            if(temporaryMessageStorage != null && temporaryMessageStorage[q] != null){                
+                temporaryMessageStorage[q].transferMessages(errorCatcher);
+                temporaryMessageStorage[q] = null;
+            }
         }
     }	
     

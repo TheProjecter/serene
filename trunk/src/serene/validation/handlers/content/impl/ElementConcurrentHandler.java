@@ -62,9 +62,9 @@ class ElementConcurrentHandler extends CandidatesEEH{
 	void init(List<AElement> candidateDefinitions, ElementValidationHandler parent){		
 		this.parent = parent;
 		this.candidateDefinitions = candidateDefinitions;
-        localCandidatesConflictErrorHandler.init();         
+        localCandidatesConflictErrorHandler.init(activeInputDescriptor);         
 		init((ContextErrorHandlerManager)parent);		
-		for(int i = 0; i < candidateDefinitions.size(); i++){			
+		for(int i = 0; i < candidateDefinitions.size(); i++){
 			ElementValidationHandler candidate = pool.getElementValidationHandler(candidateDefinitions.get(i), parent);
             candidate.setCandidateIndex(i);
             candidate.setCandidate(true);
@@ -73,6 +73,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
 			candidates.add(candidate);	
 		}	
         localCandidatesConflictErrorHandler.setCandidates(candidateDefinitions);
+        candidatesConflictHandler.init(candidateDefinitions.size());
 	}
 	    
 	public void recycle(){
@@ -82,7 +83,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
 		candidates.clear();	
 		candidateDefinitions.clear();		
 		candidatesConflictHandler.reset();
-        localCandidatesConflictErrorHandler.clear();
+        localCandidatesConflictErrorHandler.clear(false);
 		resetContextErrorHandlerManager();
 		
 		parent = null;
@@ -158,10 +159,21 @@ class ElementConcurrentHandler extends CandidatesEEH{
         localCandidatesConflictErrorHandler.endContextValidation();
         
         boolean mustReport = localCandidatesConflictErrorHandler.mustReport();
-        if(mustReport){
+        if(mustReport){            
             if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
             localCandidatesConflictErrorHandler.handle(ContextErrorHandler.ELEMENT, inputStackDescriptor.getItemDescription(), restrictToFileName, locator, contextErrorHandler[contextErrorHandlerIndex]);
+        }else{
+            //System.out.println(hashCode()+" MUST NOT REPORT");
+            //localCandidatesConflictErrorHandler.clear(true);
         }
+	}
+	
+	void discardContextErrors(){
+        for(int i = 0; i < candidates.size(); i++){
+			//if(!candidatesConflictHandler.isDisqualified(i))
+            candidates.get(i).discardContextErrors();
+		}        
+        localCandidatesConflictErrorHandler.clear(true);
 	}
 	
 	
@@ -172,7 +184,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
 			// Shift all with errors, hope the parent context disqualifies all but 1
 			// Why shift, they all have errors already??? 
 			// Maybe the parent actually expects one of them and not shifting 
-			// results in a fake error.			
+			// results in a fake error.		
 			parent.addChildElement(candidateDefinitions, contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter());
 		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
 			AElement qElement = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
@@ -209,7 +221,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
     public void handleLastCharacters(char[] chars) throws SAXException{		
 		int candidatesCount = candidates.size();
 		for(int i = 0; i < candidatesCount; i++){
-			//if(!candidatesConflictHandler.isDisqualified(i)) 
+			//if(!candidatesConflictHandler.isDisqualified(i))
             candidates.get(i).handleLastCharacters(chars);
 		}
         localCandidatesConflictErrorHandler.endValidationStage();

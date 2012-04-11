@@ -1,3 +1,4 @@
+
 /*
 Copyright 2011 Radu Cernuta 
 
@@ -40,6 +41,8 @@ import serene.validation.schema.simplified.components.SElement;
 
 import serene.dtdcompatibility.AttributeDefaultValueException;
 
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
+
 import sereneWrite.MessageWriter;
 
 public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
@@ -54,11 +57,17 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
     
     boolean restrictToFileName;
     
+    ActiveInputDescriptor activeInputDescriptor;
+    
     MessageWriter debugWriter;
     
-    public AttributeDefaultValueErrorHandler(ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
+    public AttributeDefaultValueErrorHandler(ActiveInputDescriptor activeInputDescriptor,
+                                                ErrorDispatcher errorDispatcher, 
+                                                MessageWriter debugWriter){
         this.debugWriter = debugWriter;
         this.errorDispatcher = errorDispatcher;
+        this.activeInputDescriptor = activeInputDescriptor;
+        
         errorMessages = new ArrayList<String>();
         warningMessages = new ArrayList<String>();
     }
@@ -94,38 +103,38 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
     }
     //errorCatcher
 	//--------------------------------------------------------------------------
-	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownElement(int inputRecordIndex){
         throw new IllegalStateException();
 	}	
-	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(SimplifiedComponent definition, int inputRecordIndex){
         throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(SimplifiedComponent[] definition, int inputRecordIndex){
         throw new IllegalStateException();
 	}
 	
 	
-	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownAttribute(int inputRecordIndex){
         throw new IllegalStateException();
 	}	
-	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(SimplifiedComponent definition, int inputRecordIndex){
         throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(SimplifiedComponent[] possibleDefinition, int inputRecordIndex){
         throw new IllegalStateException();
 	}
 	
 		
-	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int itemId, String qName, String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
         throw new IllegalStateException();
 	}
 	
-	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
         throw new IllegalStateException();
 	}
 		
 	
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){		
+	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){		
 		/*String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Excessive content in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+". ";                 
@@ -133,7 +142,7 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
         throw new IllegalStateException();
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
 		/*String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Excessive content in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+". ";
@@ -141,7 +150,7 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
         throw new IllegalStateException();
 	}
 	
-	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
 		/*String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Missing content in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+". ";
@@ -149,7 +158,7 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
         throw new IllegalStateException();
 	}
 
-	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+	public void illegalContent(Rule context, int startInputRecordIndex){
 		/*String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Illegal content in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+". ";
@@ -157,36 +166,36 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
         throw new IllegalStateException();        
 	}
 	
-	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
         throw new IllegalStateException();
 	}
 	
-	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
         throw new IllegalStateException();
 	}
 
-	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 
 	
-	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 
-	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 
-	public void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         throw new IllegalStateException();
 	}
 	
-	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         String message = "DTD compatibility warning. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match a single definition in attribute pattern."
                         +" Ambiguous value, possible definitions: ";
@@ -198,50 +207,50 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
 	}
 
 	
-	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		throw new IllegalStateException();        
 	}
-	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Datatype error in <"+charsDefinition.getQName()+"> at "+charsDefinition.getLocation(restrictToFileName)+". "+datatypeErrorMessage;
         errorMessages.add(message);
 	}
 	
-	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
 		throw new IllegalStateException();        
 	}
-	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Value error in <"+charsDefinition.getQName()+"> at . "+charsDefinition.getLocation(restrictToFileName);
         errorMessages.add(message);
 	}
 	
-	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
 		throw new IllegalStateException();
 	}	
-	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Value excepted by in <"+charsDefinition.getQName()+"> at "+charsDefinition.getLocation(restrictToFileName)+". ";
         errorMessages.add(message);
 	}
 	
-	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
         String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Unexpected value.";
         errorMessages.add(message);
 	}
 	
-	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
-	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Unresolved value, all candidates resulted in errors, available definitions: ";
@@ -252,40 +261,40 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
         errorMessages.add(message);
 	}
 	
-	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
-                        +" List token "+token+" does not match datatype of <"+charsDefinition.getQName()+"> at "+charsDefinition.getLocation(restrictToFileName)+". "+datatypeErrorMessage;
+                        +" List token "+activeInputDescriptor.getItemDescription(inputRecordIndex)+" does not match datatype of <"+charsDefinition.getQName()+"> at "+charsDefinition.getLocation(restrictToFileName)+". "+datatypeErrorMessage;
         errorMessages.add(message);
 	}
     
-	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
-                        +" List token "+token+" does not match <"+charsDefinition.getQName()+"> at "+charsDefinition.getLocation(restrictToFileName)+". ";
+                        +" List token "+activeInputDescriptor.getItemDescription(inputRecordIndex)+" does not match <"+charsDefinition.getQName()+"> at "+charsDefinition.getLocation(restrictToFileName)+". ";
         errorMessages.add(message);
 	}
-	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
-                        +" List token "+token+" is excepted by datatype of <"+charsDefinition.getQName()+"> at "+charsDefinition.getLocation(restrictToFileName)+". ";
+                        +" List token "+activeInputDescriptor.getItemDescription(inputRecordIndex)+" is excepted by datatype of <"+charsDefinition.getQName()+"> at "+charsDefinition.getLocation(restrictToFileName)+". ";
         errorMessages.add(message);
 	}
 	
-    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
-                        +" Token \""+token+"\" could not be resolved resolved to a single definition, all candidates resulted in errors. Available definitions: ";
+                        +" Token \""+activeInputDescriptor.getItemDescription(inputRecordIndex)+"\" could not be resolved resolved to a single definition, all candidates resulted in errors. Available definitions: ";
         for(CharsActiveTypeItem definition : possibleDefinitions){
             message += "\n<"+definition.getQName()+"> at "+definition.getLocation(restrictToFileName);
         }
         message += ".";
         errorMessages.add(message);
     }    
-	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
-                        +" Token \""+token+"\" could not be resolved to a single definition, several candidates could be correct. Possible definitions: ";
+                        +" Token \""+activeInputDescriptor.getItemDescription(inputRecordIndex)+"\" could not be resolved to a single definition, several candidates could be correct. Possible definitions: ";
         for(CharsActiveTypeItem definition : possibleDefinitions){
             message += "\n<"+definition.getQName()+"> at "+definition.getLocation(restrictToFileName);
         }
@@ -294,7 +303,7 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
     }
     
     
-	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
+	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
 		String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Missing compositor content in <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+"."

@@ -32,7 +32,7 @@ import sereneWrite.MessageWriter;
 
 public abstract class CharsConflictResolver extends InternalConflictResolver{	
     List<CharsActiveTypeItem> candidateDefinitions;
-    TemporaryMessageStorage[] temporaryMessageStorage;    
+    TemporaryMessageStorage[] temporaryMessageStorage;  
 	public CharsConflictResolver(MessageWriter debugWriter){				
 		super(debugWriter);
 		candidateDefinitions = new ArrayList<CharsActiveTypeItem>();
@@ -40,43 +40,53 @@ public abstract class CharsConflictResolver extends InternalConflictResolver{
 	
 	void init(TemporaryMessageStorage[] temporaryMessageStorage){
 	    super.init();
-	    this.temporaryMessageStorage = temporaryMessageStorage;
+	    this.temporaryMessageStorage = temporaryMessageStorage;	    	    
 	}	
     void reset(){
         super.reset();
-        candidateDefinitions.clear();
+        	    
+        if(temporaryMessageStorage != null) {
+            for(int i = 0; i < temporaryMessageStorage.length; i++){
+                if(temporaryMessageStorage[i] != null){
+                    temporaryMessageStorage[i].setDiscarded(true);
+                    temporaryMessageStorage[i].clear();
+                }
+            }
+            temporaryMessageStorage = null;
+        }
+        
     }
     public void addCandidate(CharsActiveTypeItem candidate){
         candidateDefinitions.add(candidate);
     }
     
-    void reportUnresolvedError(ErrorCatcher errorCatcher){
+    void reportUnresolvedError(ErrorCatcher errorCatcher){        
         CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
         //errorCatcher.ambiguousCharsContentErrorsystemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
         if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){
             //only possible within the context of an except pattern			
-			errorCatcher.unresolvedCharacterContent(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
+			errorCatcher.unresolvedCharacterContent(inputRecordIndex, Arrays.copyOf(definitions, definitions.length)); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ELEMENT){
-			errorCatcher.unresolvedCharacterContent(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
+			errorCatcher.unresolvedCharacterContent(inputRecordIndex, Arrays.copyOf(definitions, definitions.length)); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
-			errorCatcher.unresolvedAttributeValue(inputStackDescriptor.getItemDescription(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+			errorCatcher.unresolvedAttributeValue(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
 		}else{		    
 			throw new IllegalStateException();
-		}	
+		}
     }
     
     void reportAmbiguousWarning(ErrorCatcher errorCatcher){
         CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);        
         if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){
             //only possible within the context of an except pattern		
-			errorCatcher.ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
+			errorCatcher.ambiguousCharacterContentWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length)); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ELEMENT){
-			errorCatcher.ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
+			errorCatcher.ambiguousCharacterContentWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length)); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
-		    errorCatcher.ambiguousAttributeValueWarning(inputStackDescriptor.getItemDescription(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+		    errorCatcher.ambiguousAttributeValueWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
 		}else{		    
 			throw new IllegalStateException();
-		}	
+		}
     }
     
     public String toString(){

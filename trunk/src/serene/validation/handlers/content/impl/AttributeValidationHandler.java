@@ -98,7 +98,7 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
 	void validateValue(String value) throws SAXException{
 	    stackHandler = attribute.getStackHandler(this);
 		if(!attribute.allowsChars()){
-			unexpectedAttributeValue(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), attribute);
+			unexpectedAttributeValue(inputStackDescriptor.getCurrentItemInputRecordIndex(), attribute);
 			return;
 		}				
 		CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
@@ -141,116 +141,116 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
 
 	//errorCatcher
 	//--------------------------------------------------------------------------
-	public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownElement(int inputRecordIndex){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unknownElement( qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler.unknownElement(inputRecordIndex);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}	
-	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(SimplifiedComponent definition, int inputRecordIndex){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unexpectedElement( qName, definition, systemId, lineNumber, columnNumber);
+		contextErrorHandler.unexpectedElement( definition, inputRecordIndex);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}	
-	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(SimplifiedComponent[] definition, int inputRecordIndex){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unexpectedAmbiguousElement( qName, definition, systemId, lineNumber, columnNumber);
+		contextErrorHandler.unexpectedAmbiguousElement( definition, inputRecordIndex);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
 	
-	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownAttribute(int inputRecordIndex){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unknownAttribute( qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler.unknownAttribute(inputRecordIndex);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}	
-	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(SimplifiedComponent definition, int inputRecordIndex){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unexpectedAttribute( qName, definition, systemId, lineNumber, columnNumber);
+		contextErrorHandler.unexpectedAttribute( definition, inputRecordIndex);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(SimplifiedComponent[] possibleDefinition, int inputRecordIndex){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unexpectedAmbiguousAttribute( qName, definition, systemId, lineNumber, columnNumber);
+		contextErrorHandler.unexpectedAmbiguousAttribute( possibleDefinition, inputRecordIndex);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
 		
-	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int itemId, String qName, String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.misplacedContent(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+		contextErrorHandler.misplacedContent(contextDefinition, startInputRecordIndex, definition, inputRecordIndex, sourceDefinition, reper);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-    public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
+    public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.misplacedContent(contextDefinition, startSystemId, startLineNumber, startColumnNumber, definition, itemId, qName, systemId, lineNumber, columnNumber, sourceDefinition, reper);
+		contextErrorHandler.misplacedContent(contextDefinition, startInputRecordIndex, definition, inputRecordIndex, sourceDefinition, reper);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
     
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.excessiveContent(context, startSystemId, startLineNumber, startColumnNumber, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler.excessiveContent(context, startInputRecordIndex, excessiveDefinition, inputRecordIndex);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.excessiveContent(context, excessiveDefinition, itemId, qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler.excessiveContent(context, excessiveDefinition, inputRecordIndex);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
+	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.missingContent(context, startSystemId, startLineNumber, startColumnNumber, missingDefinition, expected, found, qName, systemId, lineNumber, columnNumber);
+		contextErrorHandler.missingContent(context, startInputRecordIndex, definition, expected, found, inputRecordIndex);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
     
-    public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+    public void illegalContent(Rule context, int startInputRecordIndex){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.illegalContent(context, startItemId, startQName, startSystemId, startLineNumber, startColumnNumber);
+		contextErrorHandler.illegalContent(context, startInputRecordIndex);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
     
-	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.unresolvedAmbiguousElementContentError(inputRecordIndex, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
-	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
 	    ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unresolvedUnresolvedElementContentError(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.unresolvedUnresolvedElementContentError(inputRecordIndex, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 
-	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
         /*ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
@@ -259,165 +259,165 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
         throw new IllegalStateException();
 	}
 	
-	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousUnresolvedElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.ambiguousUnresolvedElementContentWarning(inputRecordIndex, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.ambiguousAmbiguousElementContentWarning(inputRecordIndex, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 
-	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousAttributeContentWarning(qName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.ambiguousAttributeContentWarning(inputRecordIndex, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 
-	public void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.ambiguousCharacterContentWarning(inputRecordIndex, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousAttributeValueWarning(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.ambiguousAttributeValueWarning(inputRecordIndex, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-    public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+    public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.characterContentDatatypeError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		contextErrorHandler.characterContentDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
-	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);        
-		contextErrorHandler.attributeValueDatatypeError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		contextErrorHandler.attributeValueDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.characterContentValueError(charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler.characterContentValueError(inputRecordIndex, charsDefinition);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
-	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);        
-		contextErrorHandler.attributeValueValueError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler.attributeValueValueError(inputRecordIndex, charsDefinition);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.characterContentExceptedError(elementQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler.characterContentExceptedError(inputRecordIndex, charsDefinition);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}	
-	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.attributeValueExceptedError(attributeQName, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler.attributeValueExceptedError(inputRecordIndex, charsDefinition);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unexpectedCharacterContent(charsSystemId, charsLineNumber, columnNumber, elementDefinition);
+		contextErrorHandler.unexpectedCharacterContent(inputRecordIndex, elementDefinition);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}	
-	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unexpectedAttributeValue(charsSystemId, charsLineNumber, columnNumber, attributeDefinition);
+		contextErrorHandler.unexpectedAttributeValue(inputRecordIndex, attributeDefinition);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unresolvedCharacterContent(systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.unresolvedCharacterContent(inputRecordIndex, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
-	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unresolvedAttributeValue(attributeQName, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.unresolvedAttributeValue(inputRecordIndex, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 	
-	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.listTokenDatatypeError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition, datatypeErrorMessage);
+		contextErrorHandler.listTokenDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
-	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.listTokenValueError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler.listTokenValueError(inputRecordIndex, charsDefinition);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
-	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.listTokenExceptedError(token, charsSystemId, charsLineNumber, columnNumber, charsDefinition);
+		contextErrorHandler.listTokenExceptedError(inputRecordIndex, charsDefinition);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 
     
-    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.unresolvedListTokenInContextError(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.unresolvedListTokenInContextError(inputRecordIndex, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
     }    
-	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.ambiguousListTokenInContextWarning(token, systemId, lineNumber, columnNumber, possibleDefinitions);
+		contextErrorHandler.ambiguousListTokenInContextWarning(inputRecordIndex, possibleDefinitions);
         contextErrorHandler.setCandidate(oldIsCandidate);
     }
     
     
-	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
+	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);
-		contextErrorHandler.missingCompositorContent(context, startSystemId, startLineNumber, startColumnNumber, definition, expected, found);
+		contextErrorHandler.missingCompositorContent(context, startInputRecordIndex, definition, expected, found);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}
 

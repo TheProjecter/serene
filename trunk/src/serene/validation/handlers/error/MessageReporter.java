@@ -28,10 +28,10 @@ public interface MessageReporter{
     int RESOLVED = 1;    
     int AMBIGUOUS = 2;
     
-    void setContextType(int contextType);
-	void setContextQName(String qName);
-	void setContextLocation(String publicId, String systemId, int lineNumber, int columnNumber);
-	void setContextDefinition(AElement definition);    
+    void setReportingContextType(int contextType);
+	void setReportingContextQName(String qName);
+	void setReportingContextLocation(String publicId, String systemId, int lineNumber, int columnNumber);
+	void setReportingContextDefinition(AElement definition);    
 	void setRestrictToFileName(boolean restrictToFileName);
     
     void setParent(MessageReporter parent);
@@ -49,4 +49,7 @@ public interface MessageReporter{
     boolean containsErrorMessage();
     
     boolean containsOtherErrorMessage(IntList exceptedErrorIds, IntList exceptedErrorCodes);
+    
+    void clear();
+    void setDiscarded(boolean isDiscarded);
 }

@@ -25,13 +25,13 @@ import sereneWrite.MessageWriter;
 public abstract class AbstractMessageReporter implements MessageReporter{
     MessageReporter parent;// the handler that is supposed to report before this when delayed in a conflict situation
     
-    int contextType;
-	String qName;
-	AElement definition;
-	String publicId;
-	String systemId;
-	int lineNumber;
-	int columnNumber;
+    int reportingContextType;// TODO it could probably be removed
+	String reportingContextQName;
+	AElement reportingContextDefinition;
+	String reportingContextPublicId;
+	String reportingContextSystemId;
+	int reportingContextLineNumber;
+	int reportingContextColumnNumber;
 	
     boolean restrictToFileName;
     
@@ -55,21 +55,22 @@ public abstract class AbstractMessageReporter implements MessageReporter{
         return conflictResolutionId;
     }
     
-	public void setContextType(int contextType){
-        this.contextType = contextType;
+	public void setReportingContextType(int reportingContextType){
+        this.reportingContextType = reportingContextType;
     }    
     
-	public void setContextQName(String qName){
-		this.qName = qName;
+	public void setReportingContextQName(String reportingContextQName){
+		this.reportingContextQName = reportingContextQName;
 	}	
-	public void setContextLocation(String publicId, String systemId, int lineNumber, int columnNumber){
-	    this.publicId = publicId;
-		this.systemId = systemId;
-		this.lineNumber = lineNumber;
-		this.columnNumber = columnNumber;		
+	public void setReportingContextLocation(String reportingContextPublicId, String reportingContextSystemId, int reportingContextLineNumber, int reportingContextColumnNumber){
+	    this.reportingContextPublicId = reportingContextPublicId;
+		this.reportingContextSystemId = reportingContextSystemId;
+		this.reportingContextLineNumber = reportingContextLineNumber;
+		this.reportingContextColumnNumber = reportingContextColumnNumber;		
 	}
-	public void setContextDefinition(AElement definition){
-		this.definition = definition;		
+		
+	public void setReportingContextDefinition(AElement reportingContextDefinition){
+		this.reportingContextDefinition = reportingContextDefinition;		
 	}
 	public void setRestrictToFileName(boolean restrictToFileName){
 	    this.restrictToFileName = restrictToFileName;
@@ -77,6 +78,8 @@ public abstract class AbstractMessageReporter implements MessageReporter{
 	
 	public void setParent(MessageReporter parent){
         if(this.parent != null) throw new IllegalStateException();
+        
         this.parent = parent;
-    }
+    }    
+    
 }

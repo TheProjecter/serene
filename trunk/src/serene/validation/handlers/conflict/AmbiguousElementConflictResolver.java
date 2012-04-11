@@ -43,6 +43,7 @@ public class AmbiguousElementConflictResolver extends ElementConflictResolver{
 	}
 	
     public void resolve(ErrorCatcher errorCatcher) throws SAXException{
+        isResolved = true;
         if(qualified.cardinality() == 0){	
             // report internal conflict error for all winners + common or subtree errors reporting for the winners
             if(conflictMessageReporter != null){
@@ -51,7 +52,7 @@ public class AmbiguousElementConflictResolver extends ElementConflictResolver{
             }
             
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
-            errorCatcher.unresolvedAmbiguousElementContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));                        
+            errorCatcher.unresolvedAmbiguousElementContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));                        
         }else if(qualified.cardinality() > 1){
             // internal conflict warning + common or subtree errors reporting for the winners            
             if(conflictMessageReporter != null){
@@ -66,7 +67,7 @@ public class AmbiguousElementConflictResolver extends ElementConflictResolver{
                 }
             }             
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
-            errorCatcher.ambiguousAmbiguousElementContentWarning(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.ambiguousAmbiguousElementContentWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
         }else if(qualified.cardinality() == 1){
             // simple error reporting if external conflict detected any common or subtree errors
             if(conflictMessageReporter != null){

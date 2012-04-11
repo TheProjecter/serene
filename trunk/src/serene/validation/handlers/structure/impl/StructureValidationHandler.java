@@ -56,12 +56,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	StackHandler stackHandler;
 	
 	RuleHandlerRecycler recycler;
-	
-	/*int ittemId;
-	String starttQName;
-	String starttSystemId;
-	int starttLineNumber;
-	int starttColumnNumber;*/
+		
     int startInputRecordIndex;
     boolean isStartSet;	
 	
@@ -105,21 +100,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	// int functionalEquivalenceCode(); subclass	
 	public abstract StructureValidationHandler getCopy(StackHandler stackHandler, ErrorCatcher errorCatcher);
 	public abstract StructureValidationHandler getCopy(StructureHandler parent, StackHandler stackHandler, ErrorCatcher errorCatcher);
-	/*public int getItemId(){
-	    return ittemId;
-	}
-	public String getStartQName(){
-		return starttQName;
-	}
-	public String getStartSystemId(){
-		return starttSystemId;
-	}
-	public int getStartLineNumber(){
-		return starttLineNumber;
-	}
-	public int getStartColumnNumber(){
-		return starttColumnNumber;
-	}*/
+	
 	
 	public int getStartInputRecordIndex(){
 	    return startInputRecordIndex;
@@ -140,8 +121,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	
 	abstract void handleParticleShift(int inputRecordIndex, APattern childPattern);
 	abstract void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver);
-	/*abstract void handleParticleShift(APattern childPattern, StackConflictsHandler stackConflictsHandler);*/	
-			
+				
 	
 	/**
 	* Used to handle the order in groups and propagate the content order 
@@ -155,20 +135,15 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	// actually pattern is always a compositor, more precisely group or interleave
 	// LATER really???	
 	
-	void setStart(){	
-	    /*ittemId = inputStackDescriptor.getItemId();
-		starttSystemId = inputStackDescriptor.getSystemId();		
-		starttLineNumber = inputStackDescriptor.getLineNumber();
-		starttColumnNumber = inputStackDescriptor.getColumnNumber();
-		starttQName = inputStackDescriptor.getItemDescription();*/
+	void setStart(){
 		if(isStartSet){
 		    //throw new IllegalStateException();
-		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex, this);
 		    startInputRecordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();
-		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
 		}else{
             startInputRecordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();            
-            activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+            activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
             isStartSet = true;
         }
 	}	
@@ -189,12 +164,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	public void optionalChildSatisfied(){
 		contentHandler.optionalChildSatisfied();
 	}
-	
-	/*public void childSatisfiedPlus(){
-		contentHandler.childSatisfiedPlus();
-		return result;
-	}*/
-	
+		
 	public void childSaturated(){
 		contentHandler.childSaturated();
 	}
@@ -237,10 +207,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	abstract class AbstractNoContent extends ContentHandler{
 		public int getContentIndex(){
 			return NO_CONTENT;
-		}		
-		/*public void childSatisfiedPlus(){
-			throw new IllegalStateException();
-		}*/	
+		}	
 		public void childExcessive(){			
 			throw new IllegalStateException();
 		}			

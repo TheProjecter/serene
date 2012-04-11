@@ -130,11 +130,11 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	void handleExcept(){
 	    if(hasError)return;		
 		if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
-			errorCatcher.characterContentExceptedError(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), data); 
+			errorCatcher.characterContentExceptedError(inputStackDescriptor.getCurrentItemInputRecordIndex(), data); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
-			errorCatcher.attributeValueExceptedError(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), data);
+			errorCatcher.attributeValueExceptedError(inputStackDescriptor.getCurrentItemInputRecordIndex(), data);
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.LIST_TOKEN){ 
-			errorCatcher.listTokenExceptedError(inputStackDescriptor.getItemDescription(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), data);
+			errorCatcher.listTokenExceptedError(inputStackDescriptor.getCurrentItemInputRecordIndex(), data);
 		}else{
 			throw new IllegalStateException();
 		}
@@ -163,136 +163,136 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 //==============================================================================
 
 
-    public void unknownElement(String qName, String systemId, int lineNumber, int columnNumber){
+    public void unknownElement(int inputRecordIndex){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedElement(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedElement(SimplifiedComponent definition, int inputRecordIndex){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousElement(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousElement(SimplifiedComponent[] definition, int inputRecordIndex){
 		throw new IllegalStateException();
 	}
 	
-	public void unknownAttribute(String qName, String systemId, int lineNumber, int columnNumber){
+	public void unknownAttribute(int inputRecordIndex){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAttribute(String qName, SimplifiedComponent definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAttribute(SimplifiedComponent definition, int inputRecordIndex){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAmbiguousAttribute(String qName, SimplifiedComponent[] definition, String systemId, int lineNumber, int columnNumber){
+	public void unexpectedAmbiguousAttribute(SimplifiedComponent[] possibleDefinition, int inputRecordIndex){
 		throw new IllegalStateException();
 	}
 	
 			
-	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int itemId, String qName,  String systemId, int lineNumber, int columnNumber, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
 		hasError = true;
 	}
 	
-	public void misplacedContent(APattern contextDefinition, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int[] itemId, String[] qName,  String[] systemId, int[] lineNumber, int[] columnNumber, APattern[] sourceDefinition, APattern reper){
-		hasError = true;
-	}
-	
-	
-	public void excessiveContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern excessiveDefinition, int[] itemId, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
-		hasError = true;
-	}
-	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int itemId, String qName, String systemId, int lineNumber, int columnNumber){
-		hasError = true;
-	}
-	
-	public void missingContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern missingDefinition, int expected, int found, String[] qName, String[] systemId, int[] lineNumber, int[] columnNumber){
-		hasError = true;
-	}
-	
-	public void illegalContent(Rule context, int startItemId, String startQName, String startSystemId, int startLineNumber, int startColumnNumber){
+	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
 		hasError = true;
 	}
 	
 	
-	public void unresolvedAmbiguousElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){
+		hasError = true;
+	}
+	
+	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
+		hasError = true;
+	}
+	
+	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
+		hasError = true;
+	}
+	
+	public void illegalContent(Rule context, int startInputRecordIndex){
+		hasError = true;
+	}
+	
+	
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void unresolvedUnresolvedElementContentError(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void unresolvedAttributeContentError(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
 	
-	public void ambiguousUnresolvedElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AElement[] possibleDefinitions){
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousAttributeContentWarning(String qName, String systemId, int lineNumber, int columnNumber, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousCharacterContentWarning(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 	}
 	
-	public void ambiguousAttributeValueWarning(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 	}
 		
 	
-	public void characterContentDatatypeError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		hasError = true;
 	}
-	public void attributeValueDatatypeError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		hasError = true;
-	}
-	
-	public void characterContentValueError(String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-		hasError = true;
-	}
-	public void attributeValueValueError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
+	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		hasError = true;
 	}
 	
-	public void characterContentExceptedError(String elementQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
+		hasError = true;
+	}
+	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
+		hasError = true;
+	}
+	
+	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
 		hasError = true;
 	}	
-	public void attributeValueExceptedError(String attributeQName, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
 		hasError = true;
 	}
 	
-	public void unexpectedCharacterContent(String charsSystemId, int charsLineNumber, int columnNumber, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
 		hasError = true;
 	}	
-	public void unexpectedAttributeValue(String charsSystemId, int charsLineNumber, int columnNumber, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
 		hasError = true;
 	}
 	
-	public void unresolvedCharacterContent(String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
 	}
-	public void unresolvedAttributeValue(String attributeQName, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
-		hasError = true;
-	}
-	
-	public void listTokenDatatypeError(String token, String charsSystemId, int charsLineNumber, int columnNumber, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		hasError = true;
-	}
-	public void listTokenValueError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AValue charsDefinition){
-		hasError = true;
-	}
-	public void listTokenExceptedError(String token, String charsSystemId, int charsLineNumber, int columnNumber, AData charsDefinition){
+	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
 	}
 	
-    public void unresolvedListTokenInContextError(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+		hasError = true;
+	}
+	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
+		hasError = true;
+	}
+	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
+		hasError = true;
+	}
+	
+    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		hasError = true;
     }    
-	public void ambiguousListTokenInContextWarning(String token, String systemId, int lineNumber, int columnNumber, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
     }
-	public void missingCompositorContent(Rule context, String startSystemId, int startLineNumber, int startColumnNumber, APattern definition, int expected, int found){
+	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
 		hasError = true;
 	}
 	public void internalConflict(ConflictMessageReporter conflictMessageReporter){

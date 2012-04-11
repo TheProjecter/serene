@@ -66,6 +66,7 @@ class ElementDefaultHandler extends ComparableEEH{
 	}
 	void validateContext(){}
 	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{}
+	void discardContextErrors(){}
 	void validateInContext(){}
 	public void handleInnerCharacters(char[] chars){
 	}

@@ -1,17 +1,17 @@
 package serene.validation.handlers.content.util;
 
 import java.util.Arrays;
-//import java.util.HashSet;
 
 import serene.validation.handlers.structure.impl.*;
+import serene.validation.handlers.error.*;
+
+
 /**
 * Stores location and item identification data for the document items 
 * involved in validation. 
 */
 public class ActiveInputDescriptor{
-        
-   // HashSet<Object> clients = new HashSet<Object>();
-    
+            
     int[] recordedClientsCount;
     int[] itemIdTable;
     int[] itemDescriptionIndexTable;
@@ -146,7 +146,7 @@ public class ActiveInputDescriptor{
         return oldSize;
 	}
 
-	int getItemDescriptionIndex(String itemDescription){
+	int getItemDescriptionIndex(String itemDescription){	    
 	    if(itemDescription == null)return NULL_INDEX;
 	    
 	    int firstNullRecordIndex = NULL_INDEX;
@@ -270,7 +270,7 @@ public class ActiveInputDescriptor{
 	}
 	
 	public void printLeftOvers(){
-	    //System.out.println(hashCode()+"  "+(++used)+"LEFT OVERS------------------------------------------");
+	    //System.out.println(hashCode()+"  LEFT OVERS------------------------------------------");
 	    boolean hasLeftOvers = false;
 	    for(int i = 0; i < recordedClientsCount.length; i++){
 	        if(recordedClientsCount[i] == 0){
@@ -278,46 +278,51 @@ public class ActiveInputDescriptor{
 	        }else{
 	            //System.out.println(i+"\t"+recordedClientsCount[i]);
 	            hasLeftOvers = true;
+	            throw new IllegalStateException();
 	        }
-	    }
-	    //System.out.println(clients.size()+" "+clients);
+	    }	    
 	    
-	    
-	   //if(hasLeftOvers) System.out.println(hashCode()+"  "+(++used)+"LEFT OVERS------------------------------------------");
+	   //if(hasLeftOvers) System.out.println(hashCode()+" LEFT OVERS------------------------------------------");
+	   //else System.out.println(hashCode()+" ----");
 	}
-	public void registerClientForRecord(int recordIndex){
-	    //clients.add(o);
+	public void registerClientForRecord(int recordIndex, Object o){
 	    recordedClientsCount[recordIndex] += 1;
-	    //System.out.println("+++ 1 recordIndex="+recordIndex+" "+o.hashCode()+" "+o.getClass().getName());
+	    //System.out.println("+++ 1 recordIndex="+recordIndex+" clientsCount="+recordedClientsCount[recordIndex]+" "+o.hashCode()+" "+o.getClass().getName());
+	    
+	    /*if(o instanceof ConflictMessageHandler
+	        && recordIndex == 4 
+	        && recordedClientsCount[recordIndex] == 8) throw new IllegalStateException();*/
 	}
 	
 	
-	public void registerClientForRecord(int[] recordIndex){
+	public void registerClientForRecord(int[] recordIndex, Object o){
 	    //System.out.println("+++ 2 recordIndex="+Arrays.toString(recordIndex)+" "+o.hashCode()+" "+o.getClass().getName());
-	    //clients.add(o);
 	    for(int i = 0; i < recordIndex.length; i++){
 	        recordedClientsCount[recordIndex[i]] += 1;
-	        //System.out.println("+++ 2 recordIndex="+recordIndex[i]+" clientsCount="+recordedClientsCount[recordIndex[i]]);
+	        //System.out.println("+++ 2 recordIndex="+recordIndex[i]+" clientsCount="+recordedClientsCount[recordIndex[i]]+" "+o.hashCode()+" "+o.getClass().getName());
 	    }	    
 	    //System.out.println("+++ 2 indexes="+Arrays.toString(recordedClientsCount));
 	}
 	
-	public void registerClientForRecord(int[] recordIndex, int offset, int count){
+	public void registerClientForRecord(int[] recordIndex, int offset, int count, Object o){
 	    //System.out.println("+++ 3 recordIndex="+Arrays.toString(recordIndex)+" offset="+offset+" count="+count+" "+o.hashCode()+" "+o.getClass().getName());
-	    //clients.add(o);
 	    for(int i = offset; i < offset+count; i++){
 	        recordedClientsCount[recordIndex[i]] += 1;
-	        //System.out.println(i+"+++ 3 recordIndex="+recordIndex[i]+" clientsCount="+recordedClientsCount[recordIndex[i]]);
+	        //System.out.println(i+"+++ 3 recordIndex="+recordIndex[i]+" clientsCount="+recordedClientsCount[recordIndex[i]]+" "+o.hashCode()+" "+o.getClass().getName());
 	    }
 	    //System.out.println("+++ 3 indexes="+Arrays.toString(recordedClientsCount));
 	}
 	
-	public void unregisterClientForRecord(int recordIndex){
-	    //System.out.println("--- 1 recordIndex="+recordIndex+" "+o.hashCode()+" "+o.getClass().getName());
-	    //clients.remove(o);
+	public void unregisterClientForRecord(int recordIndex, Object o){
+	    //System.out.println("--- 1 recordIndex="+recordIndex+" "+o.hashCode()+" "+o.getClass().getName());    
 	    recordedClientsCount[recordIndex] -= 1;
-	    //System.out.println("--- 1 recordIndex="+recordIndex+" clientsCount="+recordedClientsCount[recordIndex]);
-	    if(recordedClientsCount[recordIndex] == 0){	 
+	    //String s = o.getClass().getName(); 
+	    //System.out.println("--- 1 recordIndex="+recordIndex+" clientsCount="+recordedClientsCount[recordIndex]+" "+o.hashCode()+" "+o.getClass().getName());
+	   
+	    /*if(o instanceof ConflictMessageHandler
+	        && recordIndex == 4 
+	        && recordedClientsCount[recordIndex] == 1) throw new IllegalStateException();*/
+	    if(recordedClientsCount[recordIndex] == 0){
 	        //System.out.println("--- 1 remove "+recordIndex);
 	        handleItemDescriptionTableRemove(recordIndex);
 	        handleLocalNameTableRemove(recordIndex);
@@ -326,7 +331,7 @@ public class ActiveInputDescriptor{
 	        handlePublicIdTableRemove(recordIndex);
 	        
 	        
-	        itemIdTable[recordIndex] = AVAILABLE;
+	        itemDescriptionIndexTable[recordIndex] = AVAILABLE;
 	        itemIdTable[recordIndex] = AVAILABLE;
 	        localNameIndexTable[recordIndex] = AVAILABLE;
 	        namespaceURIIndexTable[recordIndex] = AVAILABLE;
@@ -336,12 +341,13 @@ public class ActiveInputDescriptor{
 	        columnNumberTable[recordIndex] = AVAILABLE;
 	        
 	        if(recordIndex < startSearch) startSearch = recordIndex;
+	    }else if(recordedClientsCount[recordIndex] < 0){
+	        throw new IllegalStateException();
 	    }
 	}
-	public void unregisterClientForRecord(int[] recordIndex){
+	public void unregisterClientForRecord(int[] recordIndex, Object o){
 	    //System.out.println("--- 2 recordIndex="+Arrays.toString(recordIndex)+" "+o.hashCode()+" "+o.getClass().getName());
-	    //clients.remove(o);	    
-        for(int i = 0; i < recordIndex.length; i++){
+	    for(int i = 0; i < recordIndex.length; i++){
             recordedClientsCount[recordIndex[i]] -= 1;            
             //System.out.println("--- 2 recordIndex="+recordIndex[i]+" clientsCount="+recordedClientsCount[recordIndex[i]]+" "+o.hashCode()+" "+o.getClass().getName());
             if(recordedClientsCount[recordIndex[i]] == 0){	
@@ -363,13 +369,14 @@ public class ActiveInputDescriptor{
                 columnNumberTable[recordIndex[i]] = AVAILABLE;
                 
                 if(recordIndex[i] < startSearch) startSearch = recordIndex[i];
+            }else if(recordedClientsCount[recordIndex[i]] < 0){
+                throw new IllegalStateException();
             }
         }
 	}
-	public void unregisterClientForRecord(int[] recordIndex, int offset, int count){
+	public void unregisterClientForRecord(int[] recordIndex, int offset, int count, Object o){
 	    //System.out.println("--- 3 recordIndex="+recordIndex+" "+o.hashCode()+" "+o.getClass().getName());
-	    //clients.remove(o);
-        for(int i = offset; i < offset+count; i++){
+	    for(int i = offset; i < offset+count; i++){
             recordedClientsCount[recordIndex[i]] -= 1;
             //System.out.println("--- 3 recordIndex="+recordIndex[i]+" clientsCount="+recordedClientsCount[recordIndex[i]]+" "+o.hashCode()+" "+o.getClass().getName());
             if(recordedClientsCount[recordIndex[i]] == 0){	
@@ -379,8 +386,7 @@ public class ActiveInputDescriptor{
                 handleNamespaceURITableRemove(recordIndex[i]);
                 handleSystemIdTableRemove(recordIndex[i]);
                 handlePublicIdTableRemove(recordIndex[i]);
-                
-                
+                                
                 itemIdTable[recordIndex[i]] = AVAILABLE;
                 itemIdTable[recordIndex[i]] = AVAILABLE;
                 localNameIndexTable[recordIndex[i]] = AVAILABLE;
@@ -391,6 +397,8 @@ public class ActiveInputDescriptor{
                 columnNumberTable[recordIndex[i]] = AVAILABLE;
                 
                 if(recordIndex[i] < startSearch) startSearch = recordIndex[i];
+            }else if(recordedClientsCount[recordIndex[i]] < 0){
+                throw new IllegalStateException();
             }
         }
 	}

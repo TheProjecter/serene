@@ -127,7 +127,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	
 	void reset(){
 		for(int i = 0; i <= currentIndex; i++){
-		    activeInputDescriptor.unregisterClientForRecord(correspondingInputRecordIndex[i]);
+		    activeInputDescriptor.unregisterClientForRecord(correspondingInputRecordIndex[i], this);
 		}
 		if(correspondingInputRecordIndex.length > maxSize){
 		    correspondingInputRecordIndex = new int[startSize];
@@ -175,7 +175,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		this.currentIndex = currentIndex;		
 		this.original = original;
 		
-		if(currentIndex >= 0)activeInputDescriptor.registerClientForRecord(correspondingInputRecordIndex, 0, currentIndex+1);
+		if(currentIndex >= 0)activeInputDescriptor.registerClientForRecord(correspondingInputRecordIndex, 0, currentIndex+1, this);
 	}		
 	
 	public int getIndex(){
@@ -352,7 +352,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	    }
 	    correspondingInputRecordIndex[currentIndex] = lastIndex;
 	
-	    activeInputDescriptor.registerClientForRecord(lastIndex);
+	    activeInputDescriptor.registerClientForRecord(lastIndex, this);
 	}
 		
 	void maintainLastCorrespondingInputRecordIndex(int lastIndex){
@@ -360,13 +360,13 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	    currentIndex = 0;
 	    correspondingInputRecordIndex[currentIndex] = lastIndex;
 	
-	    activeInputDescriptor.registerClientForRecord(lastIndex);
+	    activeInputDescriptor.registerClientForRecord(lastIndex, this);
 	}
 	
 	
 	void clearCorrespondingInputRecordIndex(){
 	    for(int i = 0; i <= currentIndex; i++){
-		    activeInputDescriptor.unregisterClientForRecord(correspondingInputRecordIndex[i]);
+		    activeInputDescriptor.unregisterClientForRecord(correspondingInputRecordIndex[i], this);
 		}
 	    currentIndex = -1;
 	}
@@ -404,15 +404,9 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 				return;
 			}			
 			errorCatcher.excessiveContent(context,
-											activeInputDescriptor.getSystemId(startInputRecordIndex),
-                                            activeInputDescriptor.getLineNumber(startInputRecordIndex),
-                                            activeInputDescriptor.getColumnNumber(startInputRecordIndex),
+											startInputRecordIndex,
 											definition, 
-											activeInputDescriptor.getItemId(correspondingInputRecordIndex, 0, currentIndex+1),
-											activeInputDescriptor.getItemDescription(correspondingInputRecordIndex, 0, currentIndex+1),
-                                            activeInputDescriptor.getSystemId(correspondingInputRecordIndex, 0, currentIndex+1),
-                                            activeInputDescriptor.getLineNumber(correspondingInputRecordIndex, 0, currentIndex+1),
-                                            activeInputDescriptor.getColumnNumber(correspondingInputRecordIndex, 0, currentIndex+1));		    
+											Arrays.copyOfRange(correspondingInputRecordIndex, 0, currentIndex+1));		    
 		}else if(stateId == CardinalityHandler.EXCESSIVE){
 		    if(stackConflictsHandler != null){
 				stackConflictsHandler.disqualify(definition);
@@ -420,11 +414,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 			}
 			errorCatcher.excessiveContent(context,											
 											definition, 
-											activeInputDescriptor.getItemId(correspondingInputRecordIndex[currentIndex]),
-											activeInputDescriptor.getItemDescription(correspondingInputRecordIndex[currentIndex]),
-                                            activeInputDescriptor.getSystemId(correspondingInputRecordIndex[currentIndex]),
-                                            activeInputDescriptor.getLineNumber(correspondingInputRecordIndex[currentIndex]),
-                                            activeInputDescriptor.getColumnNumber(correspondingInputRecordIndex[currentIndex]));		    
+											correspondingInputRecordIndex[currentIndex]);		    
 		}else{
 			throw new IllegalStateException();
 		}
@@ -437,16 +427,11 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 				return;
 			}	
 			errorCatcher.missingContent(context,  
-									activeInputDescriptor.getSystemId(startInputRecordIndex),
-									activeInputDescriptor.getLineNumber(startInputRecordIndex),
-									activeInputDescriptor.getColumnNumber(startInputRecordIndex),
+									startInputRecordIndex,
 									definition, 
 									occursSatisfied, 
 									occurs, 
-									activeInputDescriptor.getItemDescription(correspondingInputRecordIndex, 0, currentIndex+1),
-									activeInputDescriptor.getSystemId(correspondingInputRecordIndex, 0, currentIndex+1),
-									activeInputDescriptor.getLineNumber(correspondingInputRecordIndex, 0, currentIndex+1),
-									activeInputDescriptor.getColumnNumber(correspondingInputRecordIndex, 0, currentIndex+1));		    
+									Arrays.copyOfRange(correspondingInputRecordIndex, 0, currentIndex+1));		    
 		}else if(stateId == CardinalityHandler.SATISFIED_SIMPLE){
 		    
 		    
@@ -465,16 +450,11 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 				return;
 			}	
 			errorCatcher.missingContent(context,  
-									activeInputDescriptor.getSystemId(startInputRecordIndex),
-									activeInputDescriptor.getLineNumber(startInputRecordIndex),
-									activeInputDescriptor.getColumnNumber(startInputRecordIndex),
+									startInputRecordIndex,
 									definition, 
 									occursSatisfied, 
 									occurs,
-									activeInputDescriptor.getItemDescription(correspondingInputRecordIndex, 0, currentIndex+1),
-									activeInputDescriptor.getSystemId(correspondingInputRecordIndex, 0, currentIndex+1),
-									activeInputDescriptor.getLineNumber(correspondingInputRecordIndex, 0, currentIndex+1),
-									activeInputDescriptor.getColumnNumber(correspondingInputRecordIndex, 0, currentIndex+1));		    
+									Arrays.copyOfRange(correspondingInputRecordIndex, 0, currentIndex+1));		    
 		}else{
 			throw new IllegalStateException();
 		}

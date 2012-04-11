@@ -26,6 +26,8 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
+
 import serene.validation.handlers.error.ErrorCatcher;
 
 import sereneWrite.MessageWriter;
@@ -40,12 +42,9 @@ public abstract class InternalConflictResolver implements ConflictResolver{
 	BitSet qualified;
 		
 	
-	String qName;
-	String systemId;
-	int lineNumber;
-	int columnNumber;
+	int inputRecordIndex;
 	InputStackDescriptor inputStackDescriptor;
-	
+	ActiveInputDescriptor activeInputDescriptor;
 	
 	ActiveModelConflictHandlerPool pool;
 	MessageWriter debugWriter;
@@ -55,25 +54,22 @@ public abstract class InternalConflictResolver implements ConflictResolver{
 		qualified = new BitSet();
 	}
 		
-	void init(ActiveModelConflictHandlerPool pool, InputStackDescriptor inputStackDescriptor){
+	void init(ActiveModelConflictHandlerPool pool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){
+	    this.activeInputDescriptor = activeInputDescriptor;
 		this.inputStackDescriptor = inputStackDescriptor;
 		this.pool = pool;
 	}
 	
 	void init(){		 
-		this.systemId = inputStackDescriptor.getSystemId();
-		this.lineNumber = inputStackDescriptor.getLineNumber();
-		this.columnNumber = inputStackDescriptor.getColumnNumber();
-		this.qName = inputStackDescriptor.getItemDescription();
+		inputRecordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();
+		activeInputDescriptor.registerClientForRecord(inputRecordIndex, this);
 	}
 
 	
 	void reset(){
 	    qualified.clear();
-		systemId = null;
-		lineNumber = -1;
-		columnNumber = -1;
-		qName = null;
+	    activeInputDescriptor.unregisterClientForRecord(inputRecordIndex, this);
+		inputRecordIndex = -1;
 	}
 	
 	

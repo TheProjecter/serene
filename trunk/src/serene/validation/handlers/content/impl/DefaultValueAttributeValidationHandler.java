@@ -82,7 +82,7 @@ class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler
     void validateValue(String value) throws SAXException{
         stackHandler = attribute.getStackHandler(errorCatcher);
 		if(!attribute.allowsChars()){
-			errorCatcher.unexpectedAttributeValue(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), attribute);
+			errorCatcher.unexpectedAttributeValue(inputStackDescriptor.getCurrentItemInputRecordIndex(), attribute);
 			return;
 		}
 		CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, errorCatcher);

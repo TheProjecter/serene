@@ -143,7 +143,7 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 					if(((MultipleChildrenAPattern)rule).isChildRequired(i)){						
 						APattern child = ((MultipleChildrenAPattern)rule).getChild(i);				
 						int minOccurs = child.getMinOccurs();
-						errorCatcher.missingContent(rule, activeInputDescriptor.getSystemId(startInputRecordIndex), activeInputDescriptor.getLineNumber(startInputRecordIndex), activeInputDescriptor.getColumnNumber(startInputRecordIndex), child, minOccurs, 0, null, null, null, null);						
+						errorCatcher.missingContent(rule, startInputRecordIndex, child, minOccurs, 0, null);						
 					}
 				}
 			}			
@@ -273,7 +273,7 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 		saturationLevel = 0;
 		
 		if(isStartSet){
-		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex, this);
 		    isStartSet = false;
 		    startInputRecordIndex = -1;
 		}

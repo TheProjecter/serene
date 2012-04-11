@@ -202,7 +202,7 @@ abstract class UniqueChildPatternHandler extends InnerPatternHandler{
 		contentHandler = noContent;	
 		
 		if(isStartSet){
-		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex, this);
 		    isStartSet = false;
 		    startInputRecordIndex = -1;
 		}

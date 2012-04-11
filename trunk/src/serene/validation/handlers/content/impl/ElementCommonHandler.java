@@ -106,6 +106,11 @@ class ElementCommonHandler extends UndeterminedEEH{
 	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
 		uniqueHandler.reportContextErrors(restrictToFileName, locator);
 	}
+	
+	void discardContextErrors(){
+	    uniqueHandler.discardContextErrors();
+	}
+	
 	// called from a larger conflict( another ElementParallelHandler/ElementCommonHandler)
 	void validateInContext(){		
 		uniqueHandler.validateInContext();		

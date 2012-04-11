@@ -52,17 +52,18 @@ public class BoundUnresolvedAttributeConflictResolver extends BoundAttributeConf
     public void resolve(ErrorCatcher errorCatcher){
         if(qualified.cardinality() == 0){				
             AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
-            errorCatcher.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedAttributeContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
         }else if(qualified.cardinality() == 1){
             int qual = qualified.nextSetBit(0);
             
             temporaryMessageStorage[qual].transferMessages(errorCatcher);
+            temporaryMessageStorage[qual] = null;
             
             AAttribute attribute = candidateDefinitions.get(qual);
             int definitionIndex = attribute.getDefinitionIndex();
             AttributeBinder binder = attributeBinders.get(attribute);
             if(binder != null){
-                binder.bindAttribute(targetQueue, targetEntry, definitionIndex, namespaceURI, localName, qName, Datatype.ID_TYPE_NULL, value);
+                binder.bindAttribute(targetQueue, targetEntry, definitionIndex, activeInputDescriptor.getNamespaceURI(inputRecordIndex), activeInputDescriptor.getLocalName(inputRecordIndex), activeInputDescriptor.getItemDescription(inputRecordIndex), Datatype.ID_TYPE_NULL, value);
             }
         }else{		
             int j = 0;
@@ -73,7 +74,7 @@ public class BoundUnresolvedAttributeConflictResolver extends BoundAttributeConf
                 }
             }   
             AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
-            errorCatcher.unresolvedAttributeContentError(qName, systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+            errorCatcher.unresolvedAttributeContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
         }
     }
 	

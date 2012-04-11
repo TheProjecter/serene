@@ -61,6 +61,7 @@ abstract class ErrorEEH extends ComparableEEH{
 	}	
 	void validateContext(){}
 	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{}
+	void discardContextErrors() {}
 	public void handleInnerCharacters(char[] chars){
 	}
     public void handleLastCharacters(char[] chars){

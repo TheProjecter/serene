@@ -74,7 +74,7 @@ public class AttributeHandler extends StructureValidationHandler{
 		original = null;
 		
 		if(isStartSet){
-		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex, this);
 		    isStartSet = false;
 		    startInputRecordIndex = -1;
 		}
@@ -185,7 +185,7 @@ public class AttributeHandler extends StructureValidationHandler{
 			if(rule.isChildRequired()){
 				APattern child = rule.getChild();				
 				int minOccurs = child.getMinOccurs();
-				errorCatcher.missingContent(rule, activeInputDescriptor.getSystemId(startInputRecordIndex), activeInputDescriptor.getLineNumber(startInputRecordIndex), activeInputDescriptor.getColumnNumber(startInputRecordIndex), child, minOccurs, 0, null, null, null, null);
+				errorCatcher.missingContent(rule, startInputRecordIndex, child, minOccurs, 0, null);
 			}
 		}
 	}		
@@ -317,12 +317,12 @@ public class AttributeHandler extends StructureValidationHandler{
 		}		
 		
 		if(this.isStartSet){
-            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex);
+            activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex, this);
         }
 		this.startInputRecordIndex = startInputRecordIndex;
 		this.isStartSet = isStartSet;
 		if(isStartSet){		    
-		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex);
+		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
 		}
 	}
 	
