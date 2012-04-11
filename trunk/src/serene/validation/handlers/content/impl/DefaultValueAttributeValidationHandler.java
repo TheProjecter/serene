@@ -29,7 +29,7 @@ import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.handlers.content.DefaultValueAttributeHandler;
 import serene.validation.handlers.content.CharactersEventHandler;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.match.MatchHandler;
 
@@ -55,8 +55,8 @@ class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler
         reset();
         pool.recycle(this);
     } 
-    void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator, MatchHandler matchHandler){
-		super.init(pool, validationItemLocator);
+    void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor, MatchHandler matchHandler){
+		super.init(pool, inputStackDescriptor);
 		this.matchHandler = matchHandler;
 	}
     
@@ -82,7 +82,7 @@ class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler
     void validateValue(String value) throws SAXException{
         stackHandler = attribute.getStackHandler(errorCatcher);
 		if(!attribute.allowsChars()){
-			errorCatcher.unexpectedAttributeValue(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), attribute);
+			errorCatcher.unexpectedAttributeValue(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), attribute);
 			return;
 		}
 		CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, errorCatcher);

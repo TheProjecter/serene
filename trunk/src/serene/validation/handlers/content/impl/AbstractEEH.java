@@ -20,13 +20,13 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
 import serene.validation.handlers.content.ElementEventHandler;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
 abstract class AbstractEEH implements ElementEventHandler{
 
-	ValidationItemLocator validationItemLocator;	
+	InputStackDescriptor inputStackDescriptor;	
 	ValidatorEventHandlerPool pool;
 	
 	MessageWriter debugWriter;
@@ -35,9 +35,9 @@ abstract class AbstractEEH implements ElementEventHandler{
 		this.debugWriter = debugWriter;
 	}
 	
-	void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator){
+	void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor){
 		this.pool = pool;
-		this.validationItemLocator = validationItemLocator;
+		this.inputStackDescriptor = inputStackDescriptor;
 	}	
     
 	abstract ComparableAEH getAttributeHandler(String qName, String namespace, String name);

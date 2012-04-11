@@ -108,7 +108,7 @@ import serene.SchemaModel;
 import serene.validation.handlers.error.ErrorDispatcher;
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.util.IntStack;
 
@@ -260,7 +260,7 @@ public class RNGSchemaFactory extends SchemaFactory{
         try{
             ValidatorErrorHandlerPool vehp = (ValidatorErrorHandlerPool)validatorHandler.getProperty(Constants.ERROR_HANDLER_POOL_PROPERTY);
             ValidatorEventHandlerPool ehp = (ValidatorEventHandlerPool)validatorHandler.getProperty(Constants.EVENT_HANDLER_POOL_PROPERTY);
-            ValidationItemLocator vil = (ValidationItemLocator)validatorHandler.getProperty(Constants.ITEM_LOCATOR_PROPERTY);
+            InputStackDescriptor vil = (InputStackDescriptor)validatorHandler.getProperty(Constants.ITEM_LOCATOR_PROPERTY);
             ControllerPool cp = (ControllerPool)restrictionController.getProperty(Constants.CONTROLLER_POOL_PROPERTY);
             compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, vil, errorDispatcher, debugWriter);
             compatibilityHandler.setRestrictToFileName(restrictToFileName);
@@ -659,7 +659,7 @@ public class RNGSchemaFactory extends SchemaFactory{
                     if(compatibilityHandler == null){                
                         ValidatorErrorHandlerPool vehp = (ValidatorErrorHandlerPool)validatorHandler.getProperty(Constants.ERROR_HANDLER_POOL_PROPERTY);
                         ValidatorEventHandlerPool ehp = (ValidatorEventHandlerPool)validatorHandler.getProperty(Constants.EVENT_HANDLER_POOL_PROPERTY);
-                        ValidationItemLocator vil = (ValidationItemLocator)validatorHandler.getProperty(Constants.ITEM_LOCATOR_PROPERTY);
+                        InputStackDescriptor vil = (InputStackDescriptor)validatorHandler.getProperty(Constants.ITEM_LOCATOR_PROPERTY);
                         ControllerPool cp = (ControllerPool)restrictionController.getProperty(Constants.CONTROLLER_POOL_PROPERTY);
                         compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, vil, errorDispatcher, debugWriter);                
                     }

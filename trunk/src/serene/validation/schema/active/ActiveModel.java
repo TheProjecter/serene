@@ -34,7 +34,7 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
 
 import serene.validation.handlers.match.MatchHandler;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -82,17 +82,18 @@ public class ActiveModel  implements Reusable{
 		conflictHandlerPool.recycle();
 	}	
 	
-	public void recycle(){		
+	public void recycle(){
 		ruleHandlerPool.releaseHandlers();
 		stackHandlerPool.releaseHandlers();		
 		conflictHandlerPool.releaseHandlers();
 		pool.recycle(this);
+		
 	}
 	
-	public void init(ValidationItemLocator validationItemLocator, ErrorDispatcher errorDispatcher){
-		ruleHandlerPool.fill(validationItemLocator);
-		stackHandlerPool.fill(validationItemLocator, conflictHandlerPool);		
-		conflictHandlerPool.fill(validationItemLocator);
+	public void init(InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
+		ruleHandlerPool.fill(inputStackDescriptor);
+		stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool);		
+		conflictHandlerPool.fill(inputStackDescriptor);
 	}
 	
 	public AElement getStartElement(){		

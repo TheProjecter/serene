@@ -100,13 +100,13 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	public void qNameBinding(){
 		int definitionIndex = element.getDefinitionIndex();
 		ElementBinder binder = bindingModel.getElementBinder(definitionIndex);
-		if(binder != null)binder.bindName(queue, queueStartEntry, validationItemLocator.getNamespaceURI(), validationItemLocator.getLocalName(),validationItemLocator.getItemIdentifier());
+		if(binder != null)binder.bindName(queue, queueStartEntry, inputStackDescriptor.getNamespaceURI(), inputStackDescriptor.getLocalName(),inputStackDescriptor.getItemIdentifier());
 	}
 	
 	public void startLocationBinding(){
 		int definitionIndex = element.getDefinitionIndex();
 		ElementBinder binder = bindingModel.getElementBinder(definitionIndex);
-		if(binder != null)binder.bindLocation(queue, queueStartEntry, validationItemLocator.getSystemId()+":"+validationItemLocator.getLineNumber()+":"+validationItemLocator.getColumnNumber());
+		if(binder != null)binder.bindLocation(queue, queueStartEntry, inputStackDescriptor.getSystemId()+":"+inputStackDescriptor.getLineNumber()+":"+inputStackDescriptor.getColumnNumber());
 	}
 
 	public void endLocationBinding(){
@@ -170,7 +170,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
             ceh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
             ceh.recycle();
         }else if(!isIgnorable && ! element.allowsChars()){
-            unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+            unexpectedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), element);
         }else{
             // element.allowsDataContent()
             //  || element.allowsValueContent()
@@ -180,10 +180,10 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
             if(chars.length > 0){            
                 charContentBuffer.append(chars, 0, chars.length);
                 if(charContentLineNumber == -1 ){
-                    charContentSystemId = validationItemLocator.getSystemId();
-                    charContentPublicId = validationItemLocator.getPublicId();
-                    charContentLineNumber = validationItemLocator.getLineNumber();
-                    charContentColumnNumber = validationItemLocator.getColumnNumber();
+                    charContentSystemId = inputStackDescriptor.getSystemId();
+                    charContentPublicId = inputStackDescriptor.getPublicId();
+                    charContentLineNumber = inputStackDescriptor.getLineNumber();
+                    charContentColumnNumber = inputStackDescriptor.getColumnNumber();
                 }
             }
         }    
@@ -207,7 +207,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
                 cvh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
                 cvh.recycle();
             }else if(!isIgnorable || !isBufferIgnorable){
-                //unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+                //unexpectedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), element);
                 // append the content, it could be that the element following is an error            
                 if(chars.length > 0){
                     charContentBuffer.append(chars, 0, chars.length);
@@ -215,8 +215,8 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
                 
                 // see that the right location is used in the messages
                 if(charContentLineNumber != -1){
-                    validationItemLocator.closeCharsContent();
-                    validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
+                    inputStackDescriptor.popCharsContent();
+                    inputStackDescriptor.pushCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
                 }
                 
                 CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
@@ -226,7 +226,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
         }else{
             if(!element.allowsChars()){
                 if(!isIgnorable || !isBufferIgnorable){
-                    unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+                    unexpectedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), element);
                 }
                 return;
             }
@@ -236,8 +236,8 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
             
             // see that the right location is used in the messages
             if(charContentLineNumber != -1){
-                validationItemLocator.closeCharsContent();
-                validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
+                inputStackDescriptor.popCharsContent();
+                inputStackDescriptor.pushCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
             }
             
             CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);

@@ -23,7 +23,7 @@ import org.xml.sax.Locator;
 import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.content.ElementEventHandler;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -43,7 +43,7 @@ class UnexpectedElementHandler extends ErrorEEH{
 	}
 	
 	void validateInContext(){		
-		parent.unexpectedElement(validationItemLocator.getItemIdentifier(), element, validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+		parent.unexpectedElement(inputStackDescriptor.getItemIdentifier(), element, inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 	}
 	
 	boolean functionalEquivalent(ComparableEEH other){

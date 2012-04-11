@@ -35,7 +35,7 @@ import serene.validation.schema.active.DataActiveType;
 import serene.validation.schema.active.Rule;
 
 import serene.validation.handlers.content.DataEventHandler;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.stack.StackHandler;
 
@@ -50,7 +50,7 @@ import sereneWrite.MessageWriter;
 class ListPatternValidationHandler implements DataEventHandler,
                                         DataContentTypeHandler{
     ValidatorEventHandlerPool pool;
-    ValidationItemLocator validationItemLocator;
+    InputStackDescriptor inputStackDescriptor;
     SpaceCharsHandler spaceHandler;
     
     AbstractSDVH parent;
@@ -66,8 +66,8 @@ class ListPatternValidationHandler implements DataEventHandler,
     }
         
     
-    void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator, SpaceCharsHandler spaceHandler){		
-		this.validationItemLocator = validationItemLocator;		
+    void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor, SpaceCharsHandler spaceHandler){		
+		this.inputStackDescriptor = inputStackDescriptor;		
 		this.pool = pool;
 		this.spaceHandler = spaceHandler; 
 	}
@@ -102,10 +102,10 @@ class ListPatternValidationHandler implements DataEventHandler,
         char[][] tokens = spaceHandler.removeSpace(chars);
         
 		for(int i = 0; i < tokens.length; i++){
-		    validationItemLocator.newListToken(new String(tokens[i]), validationItemLocator.getSystemId(), validationItemLocator.getPublicId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+		    inputStackDescriptor.pushListToken(new String(tokens[i]), inputStackDescriptor.getSystemId(), inputStackDescriptor.getPublicId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 			dvh.handleChars(tokens[i], context); 
 			dvh.reset();
-			validationItemLocator.closeListToken();
+			inputStackDescriptor.popListToken();
 		}
 		dvh.recycle();
 				
@@ -122,10 +122,10 @@ class ListPatternValidationHandler implements DataEventHandler,
 	    char[][] tokens = spaceHandler.removeSpace(value.toCharArray());
         
 		for(int i = 0; i < tokens.length; i++){
-		    validationItemLocator.newListToken(new String(tokens[i]), validationItemLocator.getSystemId(), validationItemLocator.getPublicId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+		    inputStackDescriptor.pushListToken(new String(tokens[i]), inputStackDescriptor.getSystemId(), inputStackDescriptor.getPublicId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 			dvh.handleChars(tokens[i], context);   
 			dvh.reset();
-			validationItemLocator.closeListToken();
+			inputStackDescriptor.popListToken();
 		}
 		dvh.recycle();
 				

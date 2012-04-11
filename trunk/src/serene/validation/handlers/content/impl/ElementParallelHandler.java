@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
 
 import serene.validation.handlers.content.ElementEventHandler;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
@@ -320,11 +320,11 @@ class ElementParallelHandler extends CandidatesEEH{
                 String attributeName = attributes.getLocalName(i);
                 String attributeValue = attributes.getValue(i);
                 
-                validationItemLocator.newAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);			           
+                inputStackDescriptor.pushAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);			           
                 AttributeParallelHandler aph = getAttributeHandler(attributeQName, attributeNamespace, attributeName);                
                 aph.handleAttribute(attributeValue);
                 aph.recycle();
-                validationItemLocator.closeAttribute();            
+                inputStackDescriptor.popAttribute();            
             }	
 		}
         

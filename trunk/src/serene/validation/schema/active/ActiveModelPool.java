@@ -30,7 +30,7 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 
 import serene.validation.handlers.error.ErrorDispatcher;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -65,7 +65,7 @@ public class ActiveModelPool{
 		ruleHandlerPool = RuleHandlerPool.getInstance(debugWriter);		
 	}
 	
-	public ActiveModel getActiveModel(ValidationItemLocator validationItemLocator, ErrorDispatcher errorDispatcher){
+	public ActiveModel getActiveModel(InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
         
         if(simplifiedModel == null) return null;
         
@@ -78,11 +78,11 @@ public class ActiveModelPool{
 															stack,
 															conflict,
 															this);			
-			model.init(validationItemLocator, errorDispatcher);
+			model.init(inputStackDescriptor, errorDispatcher);
 			return model;
 		}else{
 			ActiveModel model = models[--modelFree];
-			model.init(validationItemLocator, errorDispatcher);
+			model.init(inputStackDescriptor, errorDispatcher);
 			return model;
 		}
 	}

@@ -25,7 +25,7 @@ import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.error.ErrorCatcher;
 
 import sereneWrite.MessageWriter;
@@ -44,7 +44,7 @@ public abstract class InternalConflictResolver implements ConflictResolver{
 	String systemId;
 	int lineNumber;
 	int columnNumber;
-	ValidationItemLocator validationItemLocator;
+	InputStackDescriptor inputStackDescriptor;
 	
 	
 	ActiveModelConflictHandlerPool pool;
@@ -55,16 +55,16 @@ public abstract class InternalConflictResolver implements ConflictResolver{
 		qualified = new BitSet();
 	}
 		
-	void init(ActiveModelConflictHandlerPool pool, ValidationItemLocator validationItemLocator){
-		this.validationItemLocator = validationItemLocator;
+	void init(ActiveModelConflictHandlerPool pool, InputStackDescriptor inputStackDescriptor){
+		this.inputStackDescriptor = inputStackDescriptor;
 		this.pool = pool;
 	}
 	
 	void init(){		 
-		this.systemId = validationItemLocator.getSystemId();
-		this.lineNumber = validationItemLocator.getLineNumber();
-		this.columnNumber = validationItemLocator.getColumnNumber();
-		this.qName = validationItemLocator.getItemIdentifier();
+		this.systemId = inputStackDescriptor.getSystemId();
+		this.lineNumber = inputStackDescriptor.getLineNumber();
+		this.columnNumber = inputStackDescriptor.getColumnNumber();
+		this.qName = inputStackDescriptor.getItemIdentifier();
 	}
 
 	

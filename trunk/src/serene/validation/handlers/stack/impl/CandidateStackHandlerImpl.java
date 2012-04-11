@@ -52,13 +52,12 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.validation.handlers.structure.StructureHandler;
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.handlers.stack.CandidateStackHandler;
 import serene.validation.handlers.stack.ConcurrentStackHandler;
 import serene.validation.handlers.stack.util.RuleHandlerReplacer;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -146,11 +145,11 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	}
 	
 	// super
-	// void init(ValidationItemLocator validationItemLocator, StackHandlerRecycler recycler)
-	void init(ValidationItemLocator validationItemLocator, ActiveModelStackHandlerPool pool){
+	// void init(InputStackDescriptor inputStackDescriptor, StackHandlerRecycler recycler)
+	void init(InputStackDescriptor inputStackDescriptor, ActiveModelStackHandlerPool pool){
 		this.recycler = pool;
 		this.pool = pool;
-		this.validationItemLocator = validationItemLocator;
+		this.inputStackDescriptor = inputStackDescriptor;
 	}
 	
 	// first init

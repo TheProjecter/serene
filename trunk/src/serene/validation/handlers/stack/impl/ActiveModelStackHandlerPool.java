@@ -30,7 +30,7 @@ import serene.validation.schema.active.components.ACompositor;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
@@ -69,8 +69,10 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	int maximalReduceStackHFree = 0;
 	MaximalReduceStackHandler[] maximalReduceStackH;
 	
-	
-	int candidateStackHCreated;
+		
+	// int candidateStackHCreated;
+	// int candidateStackHRequested;
+	// int candidateStackHRecycled;
 	int candidateStackHPoolSize;
 	int candidateStackHFree = 0;
 	CandidateStackHandlerImpl[] candidateStackH;
@@ -88,7 +90,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	StackHandlerPool pool;
 	
 	
-	ValidationItemLocator validationItemLocator;
+	InputStackDescriptor inputStackDescriptor;
 	ActiveModelConflictHandlerPool conflictHandlerPool;
 	
 	MessageWriter debugWriter;
@@ -97,7 +99,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		this.debugWriter = debugWriter;
 		this.pool = pool;
 	}
-	
+		
 	public void recycle(){
 		if(contextStackHFree != 0 ||
 			minimalReduceStackHFree != 0 ||
@@ -108,8 +110,8 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		pool.recycle(this);
 	}
 	
-	public void fill(ValidationItemLocator validationItemLocator, ActiveModelConflictHandlerPool conflictHandlerPool){
-		this.validationItemLocator = validationItemLocator;
+	public void fill(InputStackDescriptor inputStackDescriptor, ActiveModelConflictHandlerPool conflictHandlerPool){
+		this.inputStackDescriptor = inputStackDescriptor;
 		this.conflictHandlerPool = conflictHandlerPool;
 		
 		pool.fill(this,
@@ -137,42 +139,42 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		this.contextStackHFree = contextStackHFree;
 		this.contextStackH = contextStackH;
 		for(int i = 0; i < contextStackHFree; i++){	
-			contextStackH[i].init(validationItemLocator, this);
+			contextStackH[i].init(inputStackDescriptor, this);
 		}
 		
 		minimalReduceStackHPoolSize = minimalReduceStackH.length;
 		this.minimalReduceStackHFree = minimalReduceStackHFree;
 		this.minimalReduceStackH = minimalReduceStackH;
 		for(int i = 0; i < minimalReduceStackHFree; i++){	
-			minimalReduceStackH[i].init(validationItemLocator, this);
+			minimalReduceStackH[i].init(inputStackDescriptor, this);
 		}
 		
 		maximalReduceStackHPoolSize = maximalReduceStackH.length;
 		this.maximalReduceStackHFree = maximalReduceStackHFree;
 		this.maximalReduceStackH = maximalReduceStackH;
 		for(int i = 0; i < maximalReduceStackHFree; i++){	
-			maximalReduceStackH[i].init(validationItemLocator, this);
+			maximalReduceStackH[i].init(inputStackDescriptor, this);
 		}
 		
 		candidateStackHPoolSize = candidateStackH.length;
 		this.candidateStackHFree = candidateStackHFree;
 		this.candidateStackH = candidateStackH;
 		for(int i = 0; i < candidateStackHFree; i++){	
-			candidateStackH[i].init(validationItemLocator, this);
+			candidateStackH[i].init(inputStackDescriptor, this);
 		}
 		
 		concurrentStackHPoolSize = concurrentStackH.length;
 		this.concurrentStackHFree = concurrentStackHFree;
 		this.concurrentStackH = concurrentStackH;
 		for(int i = 0; i < concurrentStackHFree; i++){	
-			concurrentStackH[i].init(validationItemLocator, conflictHandlerPool, this);
+			concurrentStackH[i].init(inputStackDescriptor, conflictHandlerPool, this);
 		}
 		
 		/*compositeConcurrentStackHPoolSize = compositeConcurrentStackH.length;
 		this.compositeConcurrentStackHFree = compositeConcurrentStackHFree;
 		this.compositeConcurrentStackH = compositeConcurrentStackH;
 		for(int i = 0; i < compositeConcurrentStackHFree; i++){	
-			compositeConcurrentStackH[i].init(validationItemLocator, conflictHandlerPool, this);
+			compositeConcurrentStackH[i].init(inputStackDescriptor, conflictHandlerPool, this);
 		}*/
 	}
 	
@@ -209,7 +211,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		if(contextStackHFree == 0){
 			// contextStackHCreated++;			
 			ContextStackHandler csh = new ContextStackHandler(debugWriter);	
-			csh.init(validationItemLocator, this);
+			csh.init(inputStackDescriptor, this);
 			csh.init(type, ehm);
 			return csh;			
 		}else{
@@ -233,7 +235,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		if(minimalReduceStackHFree == 0){
 			// minimalReduceStackHCreated++;			
 			MinimalReduceStackHandler csh = new MinimalReduceStackHandler(debugWriter);	
-			csh.init(validationItemLocator, this);
+			csh.init(inputStackDescriptor, this);
 			csh.init(reduceCountList, startedCountList, compositor, ehm);
 			return csh;			
 		}else{
@@ -247,7 +249,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		if(minimalReduceStackHFree == 0){
 			// minimalReduceStackHCreated++;			
 			MinimalReduceStackHandler csh = new MinimalReduceStackHandler(debugWriter);	
-			csh.init(validationItemLocator, this);
+			csh.init(inputStackDescriptor, this);
 			csh.init(reduceCountList, compositor, ehm);
 			return csh;			
 		}else{
@@ -270,7 +272,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		if(maximalReduceStackHFree == 0){
 			// maximalReduceStackHCreated++;			
 			MaximalReduceStackHandler csh = new MaximalReduceStackHandler(debugWriter);	
-			csh.init(validationItemLocator, this);
+			csh.init(inputStackDescriptor, this);
 			csh.init(reduceCountList, startedCountList, compositor, ehm);
 			return csh;			
 		}else{
@@ -284,7 +286,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		if(maximalReduceStackHFree == 0){
 			// maximalReduceStackHCreated++;			
 			MaximalReduceStackHandler csh = new MaximalReduceStackHandler(debugWriter);	
-			csh.init(validationItemLocator, this);
+			csh.init(inputStackDescriptor, this);
 			csh.init(reduceCountList, compositor, ehm);
 			return csh;			
 		}else{
@@ -311,15 +313,15 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 													ConcurrentStackHandler parent,
 													ContextConflictsDescriptor contextConflictsDescriptor,
 													boolean hasDisqualifyingError,
-													ErrorCatcher errorCatcher){		
+													ErrorCatcher errorCatcher){
+	    //candidateStackHRequested++;
 		if(candidateStackHFree == 0){
-			
 			// candidateStackHCreated++;
 			// System.out.println("candidate created "+candidateStackHCreated);
 			// System.out.println("candidate size "+candidateStackHPoolSize);
 			
 			CandidateStackHandlerImpl csh = new CandidateStackHandlerImpl(debugWriter);
-			csh.init(validationItemLocator, this);			
+			csh.init(inputStackDescriptor, this);			
 			csh.init(topHandler, 
 						currentRule,
 						stackConflictsHandler,
@@ -351,15 +353,14 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 													ConcurrentStackHandler parent,
 													ContextConflictsDescriptor contextConflictsDescriptor,
 													ErrorCatcher errorCatcher){
-		
+		//candidateStackHRequested++;
 		if(candidateStackHFree == 0){
-			
-			// candidateStackHCreated++;
+			//candidateStackHCreated++;
 			// System.out.println("candidate created "+candidateStackHCreated);
 			// System.out.println("candidate size "+candidateStackHPoolSize);
 			
 			CandidateStackHandlerImpl csh = new CandidateStackHandlerImpl(debugWriter);
-			csh.init(validationItemLocator, this);			
+			csh.init(inputStackDescriptor, this);			
 			csh.init(topHandler, 
 						currentRule,
 						parent,
@@ -381,7 +382,8 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		}		
 	}
 		
-	public void recycle(CandidateStackHandlerImpl csh){		
+	public void recycle(CandidateStackHandlerImpl csh){
+        //candidateStackHRecycled++;		
 	//	if(candidateStackHFree == 3) throw new IllegalStateException();
 		if(candidateStackHFree == candidateStackHPoolSize){
 			if(100 == candidateStackHPoolSize)return;
@@ -400,7 +402,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 			// System.out.println("base size "+concurrentStackHPoolSize);
 			
 			ConcurrentStackHandlerImpl csh = new ConcurrentStackHandlerImpl(debugWriter);
-			csh.init(validationItemLocator, conflictHandlerPool, this);
+			csh.init(inputStackDescriptor, conflictHandlerPool, this);
 			csh.init(originalHandler, errorCatcher);
 			return csh;			
 		}else{

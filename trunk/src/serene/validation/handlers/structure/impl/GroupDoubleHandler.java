@@ -156,11 +156,11 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 		//System.out.println("ORDER "+sourceDefinition+" maxCount "+maxCount);
 		for(int i = currentIndex+1; i < size; i++){
 			// System.out.println(startSystemId+":"+startLineNumber);
-			// System.out.println(validationItemLocator.getSystemId()+":"+validationItemLocator.getLineNumber());
+			// System.out.println(inputStackDescriptor.getSystemId()+":"+inputStackDescriptor.getLineNumber());
 			// System.out.println(i+" "+maxCount+"//"+minimalStartedCount.get(i));
 			if(minimalStartedCount.get(i) >= maxCount){	
 				APattern reper = ((AGroup)rule).getChild(i);
-				errorCatcher.misplacedContent(rule, starttSystemId, starttLineNumber, starttColumnNumber, currentChild, validationItemLocator.getItemId(), validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), sourceDefinition, reper);
+				errorCatcher.misplacedContent(rule, starttSystemId, starttLineNumber, starttColumnNumber, currentChild, inputStackDescriptor.getItemId(), inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), sourceDefinition, reper);
 				//System.out.println("order error "+sourceDefinition
 				//	+"   MIN "+minimalStartedCount.get(i)+" MAX "+maxCount);
 				break;

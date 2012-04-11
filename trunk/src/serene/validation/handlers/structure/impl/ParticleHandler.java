@@ -26,12 +26,11 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.handlers.structure.CardinalityHandler;
 import serene.validation.handlers.structure.ChildEventHandler;
 import serene.validation.handlers.structure.RuleHandlerVisitor;
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ErrorCatcher;
 

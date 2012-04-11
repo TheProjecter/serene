@@ -48,7 +48,7 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 	
 	ArrayList<InternalConflictResolver> removable;
 	// Maps a rule to the count of all the handlers and group that are involved 
-	// with that rule and could result in disqualifying erors;
+	// with that rule and could result in disqualifying errors;
 	ObjectIntHashMap ruleDisqualifiersCount; 
 	 
 	MessageWriter debugWriter;

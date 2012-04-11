@@ -26,7 +26,7 @@ import serene.validation.handlers.structure.RuleHandler;
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
@@ -50,7 +50,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	protected ContentHandler excessiveContent;
 
 
-	protected ValidationItemLocator validationItemLocator;	
+	protected InputStackDescriptor inputStackDescriptor;	
 	protected ErrorCatcher errorCatcher; 
 	protected StackHandler stackHandler;
 	
@@ -69,9 +69,9 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 		this.debugWriter = debugWriter;		
 	}	
 		
-	void init(RuleHandlerRecycler recycler, ValidationItemLocator validationItemLocator){
+	void init(RuleHandlerRecycler recycler, InputStackDescriptor inputStackDescriptor){
 		this.recycler = recycler;
-		this.validationItemLocator = validationItemLocator; 
+		this.inputStackDescriptor = inputStackDescriptor; 
 	}	
 	
 	//Start RuleHandler---------------------------------------------------------------
@@ -146,11 +146,11 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	// LATER really???	
 	
 	void setStart(){	
-	    ittemId = validationItemLocator.getItemId();
-		starttSystemId = validationItemLocator.getSystemId();		
-		starttLineNumber = validationItemLocator.getLineNumber();
-		starttColumnNumber = validationItemLocator.getColumnNumber();
-		starttQName = validationItemLocator.getItemIdentifier();
+	    ittemId = inputStackDescriptor.getItemId();
+		starttSystemId = inputStackDescriptor.getSystemId();		
+		starttLineNumber = inputStackDescriptor.getLineNumber();
+		starttColumnNumber = inputStackDescriptor.getColumnNumber();
+		starttQName = inputStackDescriptor.getItemIdentifier();
 	}	
 	//End ValidationHandler-----------------------------------------------------------
 	

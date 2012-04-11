@@ -29,7 +29,7 @@ import serene.validation.handlers.error.ContextErrorHandlerManager;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -63,8 +63,8 @@ abstract class ValidatingEEH extends ComparableEEH implements ContextErrorHandle
         isCandidate = false;
 	}
 	
-	void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator, ValidatorErrorHandlerPool errorHandlerPool){
-		super.init(pool, validationItemLocator);
+	void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor, ValidatorErrorHandlerPool errorHandlerPool){
+		super.init(pool, inputStackDescriptor);
 		this.errorHandlerPool = errorHandlerPool;
 	}
 	

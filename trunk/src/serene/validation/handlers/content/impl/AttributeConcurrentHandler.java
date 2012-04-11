@@ -29,7 +29,7 @@ import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 //import serene.validation.handlers.error.CandidatesConflictErrorHandler;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -59,8 +59,8 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 		pool.recycle(this);
 	}
 		
-	void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator, ValidatorErrorHandlerPool errorHandlerPool){
-		super.init(pool, validationItemLocator);
+	void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor, ValidatorErrorHandlerPool errorHandlerPool){
+		super.init(pool, inputStackDescriptor);
 		this.errorHandlerPool = errorHandlerPool;
 	}
 	

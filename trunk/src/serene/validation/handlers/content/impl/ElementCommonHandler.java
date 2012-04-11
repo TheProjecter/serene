@@ -28,7 +28,7 @@ import serene.util.CharsBuffer;
 import serene.validation.handlers.content.ElementEventHandler;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ContextErrorHandlerManager;
 

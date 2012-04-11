@@ -40,7 +40,7 @@ import serene.validation.handlers.error.ContextErrorHandler;
 import serene.validation.handlers.error.MessageReporter;
 import serene.validation.handlers.error.ConflictMessageReporter;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -113,14 +113,14 @@ class ElementConcurrentHandler extends CandidatesEEH{
 			String attributeName = attributes.getLocalName(i);
 			String attributeValue = attributes.getValue(i);
 			
-			validationItemLocator.newAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);
+			inputStackDescriptor.pushAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);
 			
             AttributeParallelHandler aph = getAttributeHandler(attributeQName, attributeNamespace, attributeName);
             aph.handleAttribute(attributeValue);
             
             localCandidatesConflictErrorHandler.endValidationStage();
                         
-			validationItemLocator.closeAttribute();
+			inputStackDescriptor.popAttribute();
 			aph.recycle();            
 		}		
 	}	
@@ -160,7 +160,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
         boolean mustReport = localCandidatesConflictErrorHandler.mustReport();
         if(mustReport){
             if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
-            localCandidatesConflictErrorHandler.handle(ContextErrorHandler.ELEMENT, validationItemLocator.getItemIdentifier(), restrictToFileName, locator, contextErrorHandler[contextErrorHandlerIndex]);
+            localCandidatesConflictErrorHandler.handle(ContextErrorHandler.ELEMENT, inputStackDescriptor.getItemIdentifier(), restrictToFileName, locator, contextErrorHandler[contextErrorHandlerIndex]);
         }
 	}
 	

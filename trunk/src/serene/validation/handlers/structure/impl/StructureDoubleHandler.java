@@ -33,7 +33,7 @@ import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
 import serene.validation.handlers.structure.StructureHandler;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
@@ -54,7 +54,7 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 	MinimalReduceStackHandler minimalReduceStackHandler;
 	MaximalReduceStackHandler maximalReduceStackHandler;
 	
-	ValidationItemLocator validationItemLocator;	
+	InputStackDescriptor inputStackDescriptor;	
 	ErrorCatcher errorCatcher; 
 	StackHandler stackHandler;
 	
@@ -74,9 +74,9 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 		maximalReduceCount = new IntList();
 	}
 	
-	void init(RuleHandlerRecycler recycler, ValidationItemLocator validationItemLocator){				
+	void init(RuleHandlerRecycler recycler, InputStackDescriptor inputStackDescriptor){				
 		this.recycler = recycler;
-		this.validationItemLocator = validationItemLocator; 
+		this.inputStackDescriptor = inputStackDescriptor; 
 	}	
 	
 	
@@ -238,10 +238,10 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 	//End StructureHandler------------------------------------------------------------
 	
 	void setStart(){
-	    ittemId = validationItemLocator.getItemId();
-		starttSystemId = validationItemLocator.getSystemId();		
-		starttLineNumber = validationItemLocator.getLineNumber();
-		starttColumnNumber = validationItemLocator.getColumnNumber();
-		starttQName = validationItemLocator.getItemIdentifier();		
+	    ittemId = inputStackDescriptor.getItemId();
+		starttSystemId = inputStackDescriptor.getSystemId();		
+		starttLineNumber = inputStackDescriptor.getLineNumber();
+		starttColumnNumber = inputStackDescriptor.getColumnNumber();
+		starttQName = inputStackDescriptor.getItemIdentifier();		
 	}	
 }
