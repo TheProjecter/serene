@@ -48,7 +48,7 @@ import serene.validation.schema.parsed.ParsedComponentBuilder;
 import serene.validation.schema.parsed.Pattern;
 
 import serene.validation.handlers.error.ErrorDispatcher;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.Constants;
 

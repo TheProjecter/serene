@@ -37,7 +37,7 @@ import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
@@ -48,7 +48,7 @@ import serene.validation.handlers.structure.StructureHandler;
 import sereneWrite.MessageWriter;
 
 public class ContextStackHandler  implements  StackHandler{
-	ValidationItemLocator validationItemLocator;
+	InputStackDescriptor inputStackDescriptor;
 	StructureHandler topHandler;
 	StructureHandler currentHandler;
 	int expectedOrderHandlingCount;	
@@ -84,9 +84,9 @@ public class ContextStackHandler  implements  StackHandler{
 		recycler.recycle(this);		
 	}
 	
-	void init(ValidationItemLocator validationItemLocator, StackHandlerRecycler recycler){
+	void init(InputStackDescriptor inputStackDescriptor, StackHandlerRecycler recycler){
 		this.recycler = recycler;
-		this.validationItemLocator = validationItemLocator;
+		this.inputStackDescriptor = inputStackDescriptor;
 	}
 	
 	void init(ActiveType type, ErrorCatcher errorCatcher){

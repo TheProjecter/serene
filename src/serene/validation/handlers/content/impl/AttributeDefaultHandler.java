@@ -42,7 +42,7 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ContextErrorHandler;
 
 import serene.validation.handlers.content.CharactersEventHandler;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.Reusable;
 

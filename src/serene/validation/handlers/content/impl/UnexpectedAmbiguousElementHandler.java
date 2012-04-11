@@ -24,7 +24,7 @@ import org.xml.sax.Locator;
 import serene.validation.handlers.content.ElementEventHandler;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -45,7 +45,7 @@ class UnexpectedAmbiguousElementHandler extends ErrorEEH{
 	}
 	
 	void validateInContext(){
-		parent.unexpectedAmbiguousElement(validationItemLocator.getItemIdentifier(), Arrays.copyOf(elements, elements.length), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+		parent.unexpectedAmbiguousElement(inputStackDescriptor.getItemIdentifier(), Arrays.copyOf(elements, elements.length), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 	}
 	
 	boolean functionalEquivalent(ComparableEEH other){

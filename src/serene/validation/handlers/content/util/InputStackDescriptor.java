@@ -9,7 +9,7 @@ import sereneWrite.MessageWriter;
 * Stores location and item identification data for the stack of document items 
 * involved in validation. 
 */
-public class ValidationItemLocator implements Locator{
+public class InputStackDescriptor implements Locator{
     public static final int NONE = -1;
 	public static final int ROOT = 0;
 	public static final int ELEMENT = 1;
@@ -38,7 +38,7 @@ public class ValidationItemLocator implements Locator{
 	boolean currentCharsContent;
 	
 	MessageWriter debugWriter;
-	public ValidationItemLocator(MessageWriter debugWriter){
+	public InputStackDescriptor(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		
 		maxDepth = 13;
@@ -82,7 +82,7 @@ public class ValidationItemLocator implements Locator{
 		columnNumber[depth] = 0;
 	}
 	
-	public void newElement(String si, String pi, int ln, int cn, String uri, String lN, String qn){
+	public void pushElement(String si, String pi, int ln, int cn, String uri, String lN, String qn){
 		depth++;
 		if(depth == maxDepth){				
 			increaseSize(10);
@@ -97,7 +97,7 @@ public class ValidationItemLocator implements Locator{
 		columnNumber[depth] = cn;
 	}
 	
-	public void closeElement(){
+	public void popElement(){
 		itemIdentifier[depth] = null;
         localName[depth] = null; 
         namespaceURI[depth] = null;
@@ -106,7 +106,7 @@ public class ValidationItemLocator implements Locator{
 		depth--;
 	}
 	
-	public void newAttribute(String si, String pi, int ln, int cn, String uri, String lN, String qn){
+	public void pushAttribute(String si, String pi, int ln, int cn, String uri, String lN, String qn){
 		depth++;
 		if(depth == maxDepth){				
 			increaseSize(10);
@@ -121,7 +121,7 @@ public class ValidationItemLocator implements Locator{
 		columnNumber[depth] = cn;
 	}
 	
-	public void closeAttribute(){
+	public void popAttribute(){
 		itemIdentifier[depth] = null;
         localName[depth] = null; 
         namespaceURI[depth] = null;
@@ -130,7 +130,7 @@ public class ValidationItemLocator implements Locator{
 		depth--;
 	}
 	
-	public void newCharsContent(String si, String pi, int ln, int cn){
+	public void pushCharsContent(String si, String pi, int ln, int cn){
 		if(currentCharsContent)return;
 		currentCharsContent = true;
 		depth++;
@@ -145,7 +145,7 @@ public class ValidationItemLocator implements Locator{
 		columnNumber[depth] = cn;
 	}
 		
-	public void closeCharsContent(){	
+	public void popCharsContent(){	
 		if(!currentCharsContent)return;
 		itemIdentifier[depth] = null;
 		systemId[depth] = null;
@@ -154,7 +154,7 @@ public class ValidationItemLocator implements Locator{
 		currentCharsContent = false;
 	}
 	
-    public void newListToken(String token, String si, String pi, int ln, int cn){
+    public void pushListToken(String token, String si, String pi, int ln, int cn){
 		depth++;
 		if(depth == maxDepth){				
 			increaseSize(10);
@@ -167,7 +167,7 @@ public class ValidationItemLocator implements Locator{
 		columnNumber[depth] = cn;
 	}
 
-    public void closeListToken(){	
+    public void popListToken(){	
 		itemIdentifier[depth] = null;
 		systemId[depth] = null;
 		publicId[depth]  = null;

@@ -6,7 +6,7 @@ import serene.validation.schema.active.ActiveModel;
 import serene.validation.schema.active.ActiveModelPool;
 
 import serene.validation.handlers.error.ErrorDispatcher;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -35,7 +35,7 @@ public class ValidationModelImpl implements ValidationModel{
         return simplifiedModel;
     }
     
-    public ActiveModel getActiveModel(ValidationItemLocator validationItemLocator, ErrorDispatcher errorDispatcher){
-        return activeModelPool.getActiveModel(validationItemLocator, errorDispatcher);
+    public ActiveModel getActiveModel(InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
+        return activeModelPool.getActiveModel(inputStackDescriptor, errorDispatcher);
     }    
 }

@@ -22,7 +22,7 @@ import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.active.ActiveModel;
 
 import serene.validation.handlers.error.ErrorDispatcher;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.dtdcompatibility.DTDCompatibilityModel;
 import serene.dtdcompatibility.AttributeDefaultValueModel;
@@ -56,9 +56,9 @@ public class SchemaModel implements ValidationModel, DTDCompatibilityModel{
         return validationModel.getSimplifiedModel();
     }
     
-    public ActiveModel getActiveModel(ValidationItemLocator validationItemLocator, ErrorDispatcher errorDispatcher){
+    public ActiveModel getActiveModel(InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
         if(validationModel == null) return null;
-        return validationModel.getActiveModel(validationItemLocator, errorDispatcher);
+        return validationModel.getActiveModel(inputStackDescriptor, errorDispatcher);
     }    
     
     public AttributeDefaultValueModel getAttributeDefaultValueModel(){

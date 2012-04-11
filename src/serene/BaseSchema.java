@@ -20,7 +20,7 @@ package serene;
 import javax.xml.validation.Schema;
 
 import serene.validation.handlers.content.impl.ContentHandlerPool;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ErrorHandlerPool;
 import serene.validation.handlers.error.ErrorDispatcher;

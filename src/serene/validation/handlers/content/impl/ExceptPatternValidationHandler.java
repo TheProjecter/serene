@@ -37,7 +37,7 @@ import serene.validation.schema.active.Rule;
 
 import serene.validation.handlers.content.StructuredDataEventHandler;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.stack.StackHandler;
 
@@ -51,7 +51,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
                                         StructuredDataContentTypeHandler,
                                         ErrorCatcher{
     ValidatorEventHandlerPool pool;
-    ValidationItemLocator validationItemLocator;
+    InputStackDescriptor inputStackDescriptor;
     
     AbstractDVH parent;
     AData data;
@@ -69,8 +69,8 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
     }
          
     
-    void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator){		
-		this.validationItemLocator = validationItemLocator;		
+    void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor){		
+		this.inputStackDescriptor = inputStackDescriptor;		
 		this.pool = pool;
 	}
     
@@ -129,12 +129,12 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	
 	void handleExcept(){
 	    if(hasError)return;		
-		if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
-			errorCatcher.characterContentExceptedError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data); 
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
-			errorCatcher.attributeValueExceptedError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data);
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){ 
-			errorCatcher.listTokenExceptedError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), data);
+		if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
+			errorCatcher.characterContentExceptedError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), data); 
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
+			errorCatcher.attributeValueExceptedError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), data);
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.LIST_TOKEN){ 
+			errorCatcher.listTokenExceptedError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), data);
 		}else{
 			throw new IllegalStateException();
 		}

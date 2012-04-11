@@ -59,14 +59,14 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
 		if(!element.allowsElementContent()){
 			handleUnexpectedElementHandler(namespace, name, restrictToFileName);
-            reportContextErrors(restrictToFileName, validationItemLocator);
+            reportContextErrors(restrictToFileName, inputStackDescriptor);
             return pool.getElementDefaultHandler(this);
         }
 		List<AElement> elementMatches = matchHandler.matchElement(namespace, name, element);
 		int matchCount = elementMatches.size();
 		if(matchCount == 0){
 			handleUnexpectedElementHandler(namespace, name, restrictToFileName);
-            reportContextErrors(restrictToFileName, validationItemLocator);
+            reportContextErrors(restrictToFileName, inputStackDescriptor);
             return pool.getElementDefaultHandler(this);
 		}else if(matchCount == 1){			
 			BoundElementValidationHandler next = pool.getElementValidationHandler(elementMatches.get(0), this, bindingModel, queue, queuePool);
@@ -81,11 +81,11 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 		List<SimplifiedComponent> elementMatches = matchHandler.matchElement(namespace, name);        
 		int matchCount = elementMatches.size();
 		if(matchCount == 0){            
-			unknownElement(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+			unknownElement(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 		}else if(matchCount == 1){
-            unexpectedElement(validationItemLocator.getItemIdentifier(), elementMatches.get(0), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+            unexpectedElement(inputStackDescriptor.getItemIdentifier(), elementMatches.get(0), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 		}else{
-            unexpectedAmbiguousElement(validationItemLocator.getItemIdentifier(), elementMatches.toArray(new SimplifiedComponent[elementMatches.size()]), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+            unexpectedAmbiguousElement(inputStackDescriptor.getItemIdentifier(), elementMatches.toArray(new SimplifiedComponent[elementMatches.size()]), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 		}        
 	}
     
@@ -97,7 +97,7 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 
     void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
 		if(contextErrorHandler[contextErrorHandlerIndex] != null){
-			contextErrorHandler[contextErrorHandlerIndex].handle(ContextErrorHandler.ROOT, validationItemLocator.getItemIdentifier(), element, restrictToFileName, locator);
+			contextErrorHandler[contextErrorHandlerIndex].handle(ContextErrorHandler.ROOT, inputStackDescriptor.getItemIdentifier(), element, restrictToFileName, locator);
 		}
 	}
 	//--------------------------------------------------------------------------

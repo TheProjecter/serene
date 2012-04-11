@@ -33,7 +33,7 @@ import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.APattern;
 
 import serene.validation.handlers.content.EventHandler;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
@@ -54,8 +54,8 @@ abstract class AbstractDVH extends AbstractCH implements ErrorCatcher{
 		super(debugWriter);
 	}
 	
-	void init(MatchHandler matchHandler, ValidationContext validationContext, SpaceCharsHandler spaceHandler, ValidationItemLocator validationItemLocator, ValidatorEventHandlerPool pool){
-	    super.init(matchHandler, validationItemLocator, pool);
+	void init(MatchHandler matchHandler, ValidationContext validationContext, SpaceCharsHandler spaceHandler, InputStackDescriptor inputStackDescriptor, ValidatorEventHandlerPool pool){
+	    super.init(matchHandler, inputStackDescriptor, pool);
         this.validationContext = validationContext;
         this.spaceHandler = spaceHandler;
 	}

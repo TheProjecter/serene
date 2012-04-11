@@ -41,7 +41,7 @@ import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.util.StackRedundanceHandler;
 import serene.validation.handlers.stack.util.ConflictPathMaker;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
 import serene.validation.handlers.conflict.InternalConflictResolver;
@@ -87,7 +87,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 	boolean reportCurrentMisplaced;
 	boolean reportCompositorContentMissing;
 
-	ValidationItemLocator validationItemLocator;	
+	InputStackDescriptor inputStackDescriptor;	
 	
 	MessageWriter debugWriter;
 	
@@ -117,9 +117,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		pool.recycle(this);		
 	}
 	
-	void init(ValidationItemLocator validationItemLocator, ActiveModelConflictHandlerPool conflictHandlerPool, ActiveModelStackHandlerPool pool){
+	void init(InputStackDescriptor inputStackDescriptor, ActiveModelConflictHandlerPool conflictHandlerPool, ActiveModelStackHandlerPool pool){
 		this.pool = pool;
-		this.validationItemLocator = validationItemLocator;
+		this.inputStackDescriptor = inputStackDescriptor;
 		this.conflictHandlerPool = conflictHandlerPool;
 	}
 	
@@ -724,9 +724,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		candidates.clear();
 		
 		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundUnresolvedAttributeConflictResolver(temporaryMessageStorage,
-		                                                                             validationItemLocator.getNamespaceURI(),
-                                                                                     validationItemLocator.getLocalName(),
-                                                                                     validationItemLocator.getItemIdentifier(),
+		                                                                             inputStackDescriptor.getNamespaceURI(),
+                                                                                     inputStackDescriptor.getLocalName(),
+                                                                                     inputStackDescriptor.getItemIdentifier(),
                                                                                      value, 
                                                                                      targetQueue, 
                                                                                      targetEntry, 
@@ -907,9 +907,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		
 		BoundAttributeConflictResolver resolver = conflictHandlerPool.getBoundAmbiguousAttributeConflictResolver(disqualified,
 		                                                                                    temporaryMessageStorage,
-		                                                                                    validationItemLocator.getNamespaceURI(),
-                                                                                            validationItemLocator.getLocalName(),
-                                                                                            validationItemLocator.getItemIdentifier(),
+		                                                                                    inputStackDescriptor.getNamespaceURI(),
+                                                                                            inputStackDescriptor.getLocalName(),
+                                                                                            inputStackDescriptor.getItemIdentifier(),
                                                                                             value, 
                                                                                             targetQueue, 
                                                                                             targetEntry, 

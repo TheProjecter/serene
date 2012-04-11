@@ -279,7 +279,7 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 	boolean handleExcessiveChildReduce(){
 		//APattern child = currentChildParticleHandler.getPattern();
 		//handleReset();
-		//handleChildShift(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), validationItemLocator.getQName(), child);
+		//handleChildShift(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), inputStackDescriptor.getQName(), child);
 		
 		if(isReduceAllowed() && isReduceAcceptable()){
 			handleReshift(currentChildParticleHandler.getRule());

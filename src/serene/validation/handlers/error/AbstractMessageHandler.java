@@ -40,7 +40,7 @@ import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.util.IntList;
 
@@ -1327,13 +1327,13 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     
     private String getItemDescription(int itemId, String qName){
         String description = null;
-        if(itemId == ValidationItemLocator.ELEMENT){
+        if(itemId == InputStackDescriptor.ELEMENT){
             description = "element <"+qName+">";
-        }else if(itemId == ValidationItemLocator.ATTRIBUTE){
+        }else if(itemId == InputStackDescriptor.ATTRIBUTE){
             description = "attribute \""+qName+"\"";
-        }else if(itemId == ValidationItemLocator.CHARACTER_CONTENT){
+        }else if(itemId == InputStackDescriptor.CHARACTER_CONTENT){
             description = "character content";
-        }else if(itemId == ValidationItemLocator.LIST_TOKEN){
+        }else if(itemId == InputStackDescriptor.LIST_TOKEN){
             description = "list token \""+qName+"\"";
         }
         return description;

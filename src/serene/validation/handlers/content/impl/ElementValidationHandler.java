@@ -62,7 +62,7 @@ import serene.validation.handlers.conflict.ExternalConflictHandler;
 import serene.validation.handlers.stack.StackHandler;
 
 import serene.validation.handlers.content.AttributeEventHandler;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -116,8 +116,8 @@ class ElementValidationHandler extends ValidatingEEH
 		pool.recycle(this);
 	}
 	
-	void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator, SpaceCharsHandler spaceHandler, MatchHandler matchHandler, ValidatorErrorHandlerPool errorHandlerPool){
-		super.init(pool, validationItemLocator, errorHandlerPool);
+	void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor, SpaceCharsHandler spaceHandler, MatchHandler matchHandler, ValidatorErrorHandlerPool errorHandlerPool){
+		super.init(pool, inputStackDescriptor, errorHandlerPool);
 		this.matchHandler = matchHandler;
 		this.spaceHandler = spaceHandler;		
 	}
@@ -182,11 +182,11 @@ class ElementValidationHandler extends ValidatingEEH
 			String attributeNamespace = attributes.getURI(i); 
 			String attributeName = attributes.getLocalName(i);
 			String attributeValue = attributes.getValue(i);
-			validationItemLocator.newAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);			
+			inputStackDescriptor.pushAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);			
             ComparableAEH aeh = getAttributeHandler(attributeQName, attributeNamespace, attributeName);
             aeh.handleAttribute(attributeValue);
             aeh.recycle();
-			validationItemLocator.closeAttribute();
+			inputStackDescriptor.popAttribute();
 		}		
 	}	
 		
@@ -236,7 +236,7 @@ class ElementValidationHandler extends ValidatingEEH
 	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{
         for(int i = 0; i < HANDLER_COUNT; i++){
             if(contextErrorHandler[i] != null){            
-                contextErrorHandler[i].handle(ContextErrorHandler.ELEMENT, validationItemLocator.getItemIdentifier(), element, restrictToFileName, locator);
+                contextErrorHandler[i].handle(ContextErrorHandler.ELEMENT, inputStackDescriptor.getItemIdentifier(), element, restrictToFileName, locator);
             }
         }
 	}
@@ -252,7 +252,7 @@ class ElementValidationHandler extends ValidatingEEH
             cvh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
             cvh.recycle();
         }else if(!isIgnorable && !element.allowsChars()){
-            unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+            unexpectedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), element);
         }else{
             // element.allowsDataContent()
             //  || element.allowsValueContent()
@@ -262,10 +262,10 @@ class ElementValidationHandler extends ValidatingEEH
             if(chars.length > 0){            
                 charContentBuffer.append(chars, 0, chars.length);
                 if(charContentLineNumber == -1 ){
-                    charContentSystemId = validationItemLocator.getSystemId();
-                    charContentPublicId = validationItemLocator.getPublicId();
-                    charContentLineNumber = validationItemLocator.getLineNumber();
-                    charContentColumnNumber = validationItemLocator.getColumnNumber();
+                    charContentSystemId = inputStackDescriptor.getSystemId();
+                    charContentPublicId = inputStackDescriptor.getPublicId();
+                    charContentLineNumber = inputStackDescriptor.getLineNumber();
+                    charContentColumnNumber = inputStackDescriptor.getColumnNumber();
                 }
             }
         }        
@@ -280,7 +280,7 @@ class ElementValidationHandler extends ValidatingEEH
                 cvh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
                 cvh.recycle();
             }else if(!isIgnorable || !isBufferIgnorable){
-                //unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+                //unexpectedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), element);
                 // append the content, it could be that the element following is an error            
                 if(chars.length > 0){
                     charContentBuffer.append(chars, 0, chars.length);
@@ -288,8 +288,8 @@ class ElementValidationHandler extends ValidatingEEH
                 
                 // see that the right location is used in the messages
                 if(charContentLineNumber != -1){
-                    validationItemLocator.closeCharsContent();
-                    validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
+                    inputStackDescriptor.popCharsContent();
+                    inputStackDescriptor.pushCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
                 }
                 
                 CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
@@ -299,7 +299,7 @@ class ElementValidationHandler extends ValidatingEEH
         }else{
             if(!element.allowsChars()){
                 if(!isIgnorable || !isBufferIgnorable){
-                    unexpectedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), element);
+                    unexpectedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), element);
                 }
                 return;
             }
@@ -311,8 +311,8 @@ class ElementValidationHandler extends ValidatingEEH
             
             // see that the right location is used in the messages
             if(charContentLineNumber != -1){
-                validationItemLocator.closeCharsContent();
-                validationItemLocator.newCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
+                inputStackDescriptor.popCharsContent();
+                inputStackDescriptor.pushCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
             }
             
             CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);

@@ -26,7 +26,7 @@ import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -53,13 +53,13 @@ public abstract class CharsConflictResolver extends InternalConflictResolver{
     void reportUnresolvedError(ErrorCatcher errorCatcher){
         CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
         //errorCatcher.ambiguousCharsContentErrorsystemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
-        if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){
+        if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){
             //only possible within the context of an except pattern			
 			errorCatcher.unresolvedCharacterContent(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ELEMENT){
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ELEMENT){
 			errorCatcher.unresolvedCharacterContent(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
-			errorCatcher.unresolvedAttributeValue(validationItemLocator.getItemIdentifier(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
+			errorCatcher.unresolvedAttributeValue(inputStackDescriptor.getItemIdentifier(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
 		}else{		    
 			throw new IllegalStateException();
 		}	
@@ -67,13 +67,13 @@ public abstract class CharsConflictResolver extends InternalConflictResolver{
     
     void reportAmbiguousWarning(ErrorCatcher errorCatcher){
         CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);        
-        if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){
+        if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){
             //only possible within the context of an except pattern		
 			errorCatcher.ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ELEMENT){
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ELEMENT){
 			errorCatcher.ambiguousCharacterContentWarning(systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length)); 
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
-		    errorCatcher.ambiguousAttributeValueWarning(validationItemLocator.getItemIdentifier(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
+		    errorCatcher.ambiguousAttributeValueWarning(inputStackDescriptor.getItemIdentifier(), systemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
 		}else{		    
 			throw new IllegalStateException();
 		}	

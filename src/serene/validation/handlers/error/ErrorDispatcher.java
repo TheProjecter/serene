@@ -29,7 +29,7 @@ import serene.dtdcompatibility.AttributeDefaultValueException;
 import serene.dtdcompatibility.AttributeIdTypeException;
 import serene.dtdcompatibility.DocumentationElementException;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 import sereneWrite.FileHandler;

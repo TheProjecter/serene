@@ -39,7 +39,7 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.content.DataEventHandler;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
@@ -192,8 +192,8 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 	    
-	    if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){			
-			currentErrorCatcher.listTokenDatatypeError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
+	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.LIST_TOKEN){			
+			currentErrorCatcher.listTokenDatatypeError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), item, datatypeErrorMessage); 
 		}else{
 			throw new IllegalStateException();
 		}		
@@ -203,8 +203,8 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 	    
-	    if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){			
-			currentErrorCatcher.listTokenValueError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
+	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.LIST_TOKEN){			
+			currentErrorCatcher.listTokenValueError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), value); 
 		}else{
 			throw new IllegalStateException();
 		}

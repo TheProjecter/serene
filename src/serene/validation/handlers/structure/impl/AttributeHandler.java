@@ -31,7 +31,7 @@ import serene.validation.handlers.stack.StackHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
@@ -105,7 +105,7 @@ public class AttributeHandler extends StructureValidationHandler{
 				return false;//TODO problem is that it did shift, but in the order's reshift, so this is not 100% correct
 			}				
 		}
-		handleParticleShift(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), validationItemLocator.getItemIdentifier(), validationItemLocator.getItemId(), pattern);		
+		handleParticleShift(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getItemId(), pattern);		
 		//handleStateSaturationReduce();
 		//throw new IllegalStateException();
 		return true;

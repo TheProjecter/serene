@@ -38,7 +38,7 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.content.StructuredDataEventHandler;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
@@ -194,7 +194,7 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	        int qualifiedCount = matchesCount - externalConflictHandler.getDisqualifiedCount();        
 	        if(qualifiedCount == 0){
 	            // it's error, no need for details, the report will come from except anyway 
-	            parent.unresolvedCharacterContent(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), matches.toArray(new CharsActiveTypeItem[matches.size()]));
+	            parent.unresolvedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), matches.toArray(new CharsActiveTypeItem[matches.size()]));
 	        }else{
 	            structuredDataContentTypeHandler.addStructuredData(matches, externalConflictHandler.getDisqualified(), temporaryMessageStorage);
 	        }
@@ -203,13 +203,13 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	
 	boolean mustHandleError(char[] chars, APattern pattern){
 	    //TODO review this
-	    /*if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){
+	    /*if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){
 			if(matches.size() == 1){
 			    if(pattern.isRequiredBranch())return true;
 			    return !(chars.length == 0 || spaceHandler.isSpace(chars));
             }
             return true;			
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
             return true;
 		}else{
 			throw new IllegalStateException();
@@ -222,13 +222,13 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 	    
-	    if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
-			currentErrorCatcher.characterContentDatatypeError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
-			currentErrorCatcher.attributeValueDatatypeError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage);
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){
+	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
+			currentErrorCatcher.characterContentDatatypeError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), item, datatypeErrorMessage); 
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
+			currentErrorCatcher.attributeValueDatatypeError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), item, datatypeErrorMessage);
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.LIST_TOKEN){
 		    // doesn't really matter since the report will come from except anyway			
-			currentErrorCatcher.characterContentDatatypeError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
+			currentErrorCatcher.characterContentDatatypeError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), item, datatypeErrorMessage); 
 		}else{
 			throw new IllegalStateException();
 		}		
@@ -238,13 +238,13 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 	    
-	    if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
-			currentErrorCatcher.characterContentValueError(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
-			currentErrorCatcher.attributeValueValueError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value);
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.LIST_TOKEN){
+	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
+			currentErrorCatcher.characterContentValueError(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), value); 
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
+			currentErrorCatcher.attributeValueValueError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), value);
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.LIST_TOKEN){
 		    // doesn't really matter since the report will come from except anyway			
-			currentErrorCatcher.characterContentValueError(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
+			currentErrorCatcher.characterContentValueError(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), value); 
 		}else{
 			throw new IllegalStateException();
 		}

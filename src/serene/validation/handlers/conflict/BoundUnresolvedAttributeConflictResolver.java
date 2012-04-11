@@ -29,7 +29,7 @@ import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.bind.Queue;

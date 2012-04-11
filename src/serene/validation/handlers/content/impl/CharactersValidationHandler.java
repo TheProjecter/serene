@@ -38,7 +38,7 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.handlers.content.CharactersEventHandler;
 import serene.validation.handlers.content.MarkupEventHandler;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
@@ -223,13 +223,13 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	}
 	
 	boolean mustHandleError(char[] chars, APattern pattern){
-	    if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){
+	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){
 			if(matches.size() == 1){
 			    if(pattern.isRequiredBranch())return true;
 			    return !(chars.length == 0 || spaceHandler.isSpace(chars));
             }
             return true;
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
             return true;
 		}else{
 			throw new IllegalStateException();
@@ -241,10 +241,10 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	    
 	    setCurrentErrorCatcher();
 	    
-	    if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
-			currentErrorCatcher.characterContentDatatypeError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage); 
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){		   
-			currentErrorCatcher.attributeValueDatatypeError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), item, datatypeErrorMessage);
+	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
+			currentErrorCatcher.characterContentDatatypeError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), item, datatypeErrorMessage); 
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){		   
+			currentErrorCatcher.attributeValueDatatypeError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), item, datatypeErrorMessage);
 		}else{
 			throw new IllegalStateException();
 		}		
@@ -255,10 +255,10 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	    
 	    setCurrentErrorCatcher();
 	    
-	    if(validationItemLocator.getItemId() == ValidationItemLocator.CHARACTER_CONTENT){			
-			currentErrorCatcher.characterContentValueError(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value); 
-		}else if(validationItemLocator.getItemId() == ValidationItemLocator.ATTRIBUTE){		    
-			currentErrorCatcher.attributeValueValueError(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), value);
+	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
+			currentErrorCatcher.characterContentValueError(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), value); 
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){		    
+			currentErrorCatcher.attributeValueValueError(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), value);
 		}else{
 			throw new IllegalStateException();
 		}

@@ -22,7 +22,7 @@ import org.xml.sax.Locator;
 
 import serene.validation.handlers.content.ElementEventHandler;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -36,7 +36,7 @@ class UnknownElementHandler extends ErrorEEH{
 	}
 		
 	void validateInContext(){
-		parent.unknownElement(validationItemLocator.getItemIdentifier(), validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber());
+		parent.unknownElement(inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber());
 	}
 	
 	public String toString(){

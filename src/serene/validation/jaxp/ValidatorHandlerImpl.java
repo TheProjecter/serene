@@ -50,7 +50,7 @@ import serene.validation.handlers.match.MatchHandler;
 
 import serene.validation.handlers.content.ElementEventHandler;
 import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 
@@ -85,7 +85,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 	SpaceCharsHandler spaceHandler;
 	MatchHandler matchHandler;
 	ErrorDispatcher errorDispatcher;
-	ValidationItemLocator validationItemLocator;
+	InputStackDescriptor inputStackDescriptor;
 	CharsBuffer charsBuffer;
 		
 	ElementEventHandler elementHandler;	
@@ -137,14 +137,14 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		
 		this.schemaModel = schemaModel;
 		                
-		validationItemLocator = new ValidationItemLocator(debugWriter);		
+		inputStackDescriptor = new InputStackDescriptor(debugWriter);		
 		errorDispatcher = new ErrorDispatcher(debugWriter);
 		matchHandler  = new MatchHandler(debugWriter);		
 		charsBuffer = new CharsBuffer(debugWriter);		
 		spaceHandler = new SpaceCharsHandler(debugWriter);
 		
 		errorHandlerPool.fill(errorDispatcher);
-		eventHandlerPool.fill(spaceHandler, matchHandler, validationItemLocator, errorHandlerPool);
+		eventHandlerPool.fill(spaceHandler, matchHandler, inputStackDescriptor, errorHandlerPool);
 		
         documentContext = new DocumentContext(debugWriter);
         eventHandlerPool.setValidationContext(documentContext);
@@ -162,8 +162,8 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 	}
 	
 	
-	public ValidationItemLocator getValidationItemLocator(){
-		return validationItemLocator;
+	public InputStackDescriptor getInputStackDescriptor(){
+		return inputStackDescriptor;
 	}
 	
 	public ContentHandler getContentHandler(){
@@ -214,8 +214,8 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 	public void startDocument()  throws SAXException{		
 		errorDispatcher.init();
 		documentContext.reset();        
-		validationItemLocator.clear();
-		activeModel = schemaModel.getActiveModel(validationItemLocator, 
+		inputStackDescriptor.clear();
+		activeModel = schemaModel.getActiveModel(inputStackDescriptor, 
 														errorDispatcher);
         if(activeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Due to errors in the schema document, it cannot be used for validation.");
         
@@ -238,7 +238,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         }
         // TODO see about this, according to SAX spec the functioning of the Locator 
         // is not guaranteed here. It seems to work though.
-        validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), "", "document root", "document root");
+        inputStackDescriptor.pushElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), "", "document root", "document root");
 		elementHandler = eventHandlerPool.getStartValidationHandler(activeModel.getStartElement());
                         
         defaultNamespace = null;
@@ -279,7 +279,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		//TODO make sure this is correct for all circumstances
 		String chunk = new String(chars, start, length);	
 		charsBuffer.append(chars, start, length);
-		validationItemLocator.newCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
+		inputStackDescriptor.pushCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
         if(contentHandler != null) contentHandler.characters(chars, start, length);		
 	}
 	
@@ -292,9 +292,9 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		char[] charContent = charsBuffer.removeCharsArray();
 		if(charContent.length > 0){			
 			elementHandler.handleInnerCharacters(charContent);		
-			validationItemLocator.closeCharsContent();
+			inputStackDescriptor.popCharsContent();
 		}
-		validationItemLocator.newElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), namespaceURI, localName, qName);
+		inputStackDescriptor.pushElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), namespaceURI, localName, qName);
 		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName, restrictToFileName);
 		elementHandler.handleAttributes(attributes, locator);
         
@@ -345,15 +345,15 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 							String localName, 
 							String qName) throws SAXException{
 		char[] charContent = charsBuffer.removeCharsArray();
-		if(charContent.length == 0)validationItemLocator.newCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
+		if(charContent.length == 0)inputStackDescriptor.pushCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
 		elementHandler.handleLastCharacters(charContent);
-        validationItemLocator.closeCharsContent();
+        inputStackDescriptor.popCharsContent();
 		
 		elementHandler.handleEndElement(restrictToFileName, locator);
 		ElementEventHandler parent = elementHandler.getParentHandler(); 
 		elementHandler.recycle();
 		elementHandler = parent;		
-		validationItemLocator.closeElement();
+		inputStackDescriptor.popElement();
         
         if(contentHandler != null) contentHandler.endElement(namespaceURI, localName, qName);
 	}
@@ -477,7 +477,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
             return eventHandlerPool;
         }else if(name.equals(Constants.ITEM_LOCATOR_PROPERTY)){
-            return validationItemLocator;
+            return inputStackDescriptor;
         }else if(name.equals(Constants.DOCUMENT_CONTEXT_PROPERTY)){
             return documentContext;
         }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){

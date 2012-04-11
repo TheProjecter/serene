@@ -20,7 +20,7 @@ import serene.util.IntList;
 
 import serene.validation.schema.active.components.ACompositor;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.StructureHandler;
@@ -43,10 +43,10 @@ public class MaximalReduceStackHandler extends ContextStackHandler{
 		recycler.recycle(this);		
 	}
 	
-	void init(ValidationItemLocator validationItemLocator, ActiveModelStackHandlerPool pool){
+	void init(InputStackDescriptor inputStackDescriptor, ActiveModelStackHandlerPool pool){
 		this.recycler = pool;
 		this.pool = pool;
-		this.validationItemLocator = validationItemLocator;
+		this.inputStackDescriptor = inputStackDescriptor;
 	}
 	
 	void init(IntList reduceCountList, ACompositor topPattern, ErrorCatcher errorCatcher){

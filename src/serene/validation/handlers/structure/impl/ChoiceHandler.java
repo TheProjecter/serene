@@ -103,7 +103,7 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 				return false;//TODO problem is that it did shift, but in the order's reshift, so this is not 100% correct
 			}				
 		}
-		handleParticleShift(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), validationItemLocator.getItemIdentifier(), validationItemLocator.getItemId(), pattern);
+		handleParticleShift(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getItemId(), pattern);
 		boolean result = !handleStateSaturationReduce();
 		return result;
 	}

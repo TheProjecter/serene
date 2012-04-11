@@ -177,9 +177,9 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 				int contextLineNumber;
 				int contextColumnNumber;
 				if(starttSystemId == null){
-					contextSystemId = validationItemLocator.getSystemId();
-					contextLineNumber = validationItemLocator.getLineNumber();
-					contextColumnNumber = validationItemLocator.getColumnNumber();
+					contextSystemId = inputStackDescriptor.getSystemId();
+					contextLineNumber = inputStackDescriptor.getLineNumber();
+					contextColumnNumber = inputStackDescriptor.getColumnNumber();
 				}else{
 					contextSystemId = starttSystemId;
 					contextLineNumber = starttLineNumber;
@@ -188,22 +188,22 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 				
 				if(orderIndex == CURRENT_MISPLACED){					
 					errorCatcher.misplacedContent(rule, 
-														contextSystemId,//validationItemLocator.getSystemId(), 
-														contextLineNumber, //validationItemLocator.getLineNumber(), 
-														contextColumnNumber, //validationItemLocator.getColumnNumber(), 
+														contextSystemId,//inputStackDescriptor.getSystemId(), 
+														contextLineNumber, //inputStackDescriptor.getLineNumber(), 
+														contextColumnNumber, //inputStackDescriptor.getColumnNumber(), 
 														child, 
-														validationItemLocator.getItemId(),
-														validationItemLocator.getItemIdentifier(),
-														validationItemLocator.getSystemId(), 
-														validationItemLocator.getLineNumber(), 
-														validationItemLocator.getColumnNumber(), 
+														inputStackDescriptor.getItemId(),
+														inputStackDescriptor.getItemIdentifier(),
+														inputStackDescriptor.getSystemId(), 
+														inputStackDescriptor.getLineNumber(), 
+														inputStackDescriptor.getColumnNumber(), 
 														sourceDefinition, 
 														reper);
 				}else if(orderIndex == PREVIOUS_MISPLACED){						
 					errorCatcher.misplacedContent(rule, 
-														contextSystemId,//validationItemLocator.getSystemId(), 
-														contextLineNumber, //validationItemLocator.getLineNumber(), 
-														contextColumnNumber, //validationItemLocator.getColumnNumber(),															
+														contextSystemId,//inputStackDescriptor.getSystemId(), 
+														contextLineNumber, //inputStackDescriptor.getLineNumber(), 
+														contextColumnNumber, //inputStackDescriptor.getColumnNumber(),															
 														prevDefinition, 
 														prevItemId,
 														prevQName,
@@ -223,9 +223,9 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 			int contextLineNumber;
 			int contextColumnNumber;
 			if(starttSystemId == null){
-				contextSystemId = validationItemLocator.getSystemId();
-				contextLineNumber = validationItemLocator.getLineNumber();
-				contextColumnNumber = validationItemLocator.getColumnNumber();
+				contextSystemId = inputStackDescriptor.getSystemId();
+				contextLineNumber = inputStackDescriptor.getLineNumber();
+				contextColumnNumber = inputStackDescriptor.getColumnNumber();
 			}else{
 				contextSystemId = starttSystemId;
 				contextLineNumber = starttLineNumber;
@@ -234,22 +234,22 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 				
 			if(orderIndex == CURRENT_MISPLACED){				
 				errorCatcher.misplacedContent(rule, 
-													contextSystemId,//validationItemLocator.getSystemId(), 
-													contextLineNumber, //validationItemLocator.getLineNumber(), 
-													contextColumnNumber, //validationItemLocator.getColumnNumber(), 
+													contextSystemId,//inputStackDescriptor.getSystemId(), 
+													contextLineNumber, //inputStackDescriptor.getLineNumber(), 
+													contextColumnNumber, //inputStackDescriptor.getColumnNumber(), 
 													child, 
-													validationItemLocator.getItemId(),
-													validationItemLocator.getItemIdentifier(),
-													validationItemLocator.getSystemId(), 
-													validationItemLocator.getLineNumber(), 
-													validationItemLocator.getColumnNumber(), 
+													inputStackDescriptor.getItemId(),
+													inputStackDescriptor.getItemIdentifier(),
+													inputStackDescriptor.getSystemId(), 
+													inputStackDescriptor.getLineNumber(), 
+													inputStackDescriptor.getColumnNumber(), 
 													sourceDefinition,
 													reper);
 				}else if(orderIndex == PREVIOUS_MISPLACED){
 					errorCatcher.misplacedContent(rule, 
-														contextSystemId,//validationItemLocator.getSystemId(), 
-														contextLineNumber, //validationItemLocator.getLineNumber(), 
-														contextColumnNumber, //validationItemLocator.getColumnNumber(),															
+														contextSystemId,//inputStackDescriptor.getSystemId(), 
+														contextLineNumber, //inputStackDescriptor.getLineNumber(), 
+														contextColumnNumber, //inputStackDescriptor.getColumnNumber(),															
 														prevDefinition, 
 														prevItemId,
 														prevQName,
@@ -568,19 +568,19 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 		childDefinition[lastCorrectChildIndexIndex] = definition;
 		
 		childItemId[lastCorrectChildIndexIndex] = new int[1];
-		childItemId[lastCorrectChildIndexIndex][0] = validationItemLocator.getItemId();
+		childItemId[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getItemId();
 		
 		childQName[lastCorrectChildIndexIndex] = new String[1];
-		childQName[lastCorrectChildIndexIndex][0] = validationItemLocator.getItemIdentifier();
+		childQName[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getItemIdentifier();
 		
 		childSystemId[lastCorrectChildIndexIndex] = new String[1];
-		childSystemId[lastCorrectChildIndexIndex][0] = validationItemLocator.getSystemId();
+		childSystemId[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getSystemId();
 		
 		childLineNumber[lastCorrectChildIndexIndex] = new int[1];
-		childLineNumber[lastCorrectChildIndexIndex][0] = validationItemLocator.getLineNumber();
+		childLineNumber[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getLineNumber();
 		
 		childColumnNumber[lastCorrectChildIndexIndex] = new int[1];
-		childColumnNumber[lastCorrectChildIndexIndex][0] = validationItemLocator.getColumnNumber();
+		childColumnNumber[lastCorrectChildIndexIndex][0] = inputStackDescriptor.getColumnNumber();
 		
 		childSourceDefinition[lastCorrectChildIndexIndex] = new APattern[1];
 		childSourceDefinition[lastCorrectChildIndexIndex][0] = sourceDefinition;
@@ -618,11 +618,11 @@ public class GroupMinimalReduceHandler extends MCMinimalReduceHandler{
 		
 		int newIndex = oldLength;
 		
-		childItemId[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getItemId();
-		childQName[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getItemIdentifier();
-		childSystemId[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getSystemId();
-		childLineNumber[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getLineNumber();
-		childColumnNumber[lastCorrectChildIndexIndex][newIndex] = validationItemLocator.getColumnNumber();
+		childItemId[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getItemId();
+		childQName[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getItemIdentifier();
+		childSystemId[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getSystemId();
+		childLineNumber[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getLineNumber();
+		childColumnNumber[lastCorrectChildIndexIndex][newIndex] = inputStackDescriptor.getColumnNumber();
 		childSourceDefinition[lastCorrectChildIndexIndex][newIndex] = sourceDefinition;
 	}	
 	private void removeLastCorrectChildIndex(){

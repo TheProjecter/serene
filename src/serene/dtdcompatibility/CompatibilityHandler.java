@@ -102,7 +102,7 @@ import serene.validation.handlers.error.AttributeDefaultValueErrorHandler;
 
 import serene.validation.handlers.content.DefaultValueAttributeHandler;
 import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.SchemaModel;
 import serene.validation.schema.ValidationModel;
@@ -129,7 +129,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
     
     ValidatorErrorHandlerPool errorHandlerPool;
     ValidatorEventHandlerPool eventHandlerPool;
-    ValidationItemLocator validationItemLocator;
+    InputStackDescriptor inputStackDescriptor;
         
     ErrorDispatcher errorDispatcher;
 
@@ -188,14 +188,14 @@ public class CompatibilityHandler implements RestrictingVisitor{
     public CompatibilityHandler(ControllerPool controllerPool,
                                 ValidatorErrorHandlerPool errorHandlerPool,
                                 ValidatorEventHandlerPool eventHandlerPool,
-                                ValidationItemLocator validationItemLocator,
+                                InputStackDescriptor inputStackDescriptor,
                                 ErrorDispatcher errorDispatcher, 
                                 MessageWriter debugWriter){
         this.debugWriter = debugWriter;
         this.controllerPool = controllerPool;
         this.errorHandlerPool = errorHandlerPool;
         this.eventHandlerPool = eventHandlerPool;
-        this.validationItemLocator = validationItemLocator;        
+        this.inputStackDescriptor = inputStackDescriptor;        
         this.errorDispatcher = errorDispatcher; 
         defaultValueErrorHandler = new AttributeDefaultValueErrorHandler(errorDispatcher, debugWriter);
         simetryController = new CompetitionSimetryController(controllerPool, errorDispatcher, debugWriter);
@@ -237,7 +237,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
     public SchemaModel handle(ValidationModel validationModel) throws SAXException{     
         SimplifiedModel simplifiedModel = validationModel.getSimplifiedModel();
         if(simplifiedModel == null)return new SchemaModel(validationModel, new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
-        activeModel = validationModel.getActiveModel(validationItemLocator, errorDispatcher);
+        activeModel = validationModel.getActiveModel(inputStackDescriptor, errorDispatcher);
         grammarModel = activeModel.getGrammarModel();       
                 
         startTopPattern = simplifiedModel.getStartTopPattern();
@@ -532,12 +532,12 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 needsOptionalChoice.add(true);
                 
                 ccAttribute.init(grammarModel.getIndex(attribute), attribute);
-                validationItemLocator.newAttribute(null, null, -1, -1, null, null, attribute.getQName());                
+                inputStackDescriptor.pushAttribute(null, null, -1, -1, null, null, attribute.getQName());                
                 defaultValueErrorHandler.setAttribute(attribute.getQName(), attribute.getLocation(restrictToFileName));                
                 defaultValueHandler.init(ccAttribute, defaultValueErrorHandler);
                 defaultValueHandler.handleAttribute(defaultValue);
                 defaultValueHandler.reset();
-                validationItemLocator.closeAttribute();
+                inputStackDescriptor.popAttribute();
                                 
                 defaultedAttributeContext = true;    
                 controlAlternative = false; 

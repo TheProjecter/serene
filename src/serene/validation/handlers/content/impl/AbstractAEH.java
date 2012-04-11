@@ -17,12 +17,12 @@ limitations under the License.
 package serene.validation.handlers.content.impl;
 
 import serene.validation.handlers.content.AttributeEventHandler;
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.MessageWriter;
 
 abstract class AbstractAEH implements AttributeEventHandler{
-	ValidationItemLocator validationItemLocator;	
+	InputStackDescriptor inputStackDescriptor;	
 	ValidatorEventHandlerPool pool;	
 	MessageWriter debugWriter;
 	
@@ -30,9 +30,9 @@ abstract class AbstractAEH implements AttributeEventHandler{
 		this.debugWriter = debugWriter;
 	}
 	
-	void init(ValidatorEventHandlerPool pool, ValidationItemLocator validationItemLocator){
+	void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor){
 		this.pool = pool;
-		this.validationItemLocator = validationItemLocator;
+		this.inputStackDescriptor = inputStackDescriptor;
 	}	
 	
 	abstract public ComparableEEH getParentHandler();

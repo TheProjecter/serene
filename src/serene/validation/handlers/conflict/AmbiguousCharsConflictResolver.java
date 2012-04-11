@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;

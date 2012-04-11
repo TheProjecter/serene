@@ -35,7 +35,7 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
-import serene.validation.handlers.content.util.ValidationItemLocator;
+import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
@@ -127,7 +127,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 				return false;//TODO problem is that it did shift, but in the order's reshift, so this is not 100% correct
 			}				
 		}
-		handleParticleShift(validationItemLocator.getSystemId(), validationItemLocator.getLineNumber(), validationItemLocator.getColumnNumber(), validationItemLocator.getItemIdentifier(), validationItemLocator.getItemId(), pattern);
+		handleParticleShift(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), inputStackDescriptor.getItemIdentifier(), inputStackDescriptor.getItemId(), pattern);
 		//handleStateSaturationReduce();
 		return true;
 	}
@@ -287,7 +287,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 			definition[i] = null;
 			qName[i] = null;
 			systemId[i] = null;
-			itemId[i] = ValidationItemLocator.NONE;
+			itemId[i] = InputStackDescriptor.NONE;
 		}
 		childIndex = -1;
 		
@@ -416,7 +416,6 @@ public class MInterleaveHandler extends InterleaveHandler{
 	
 	void excessiveOccurrence(){
 		if(secondaryHandlers.isEmpty()){
-			// System.out.println("ERROR: illegal content in document structure corresponding to interleave");
 			errorCatcher.illegalContent(rule, itemId[0], qName[0], systemId[0], lineNumber[0], columnNumber[0]);
 			mValidationLoopCounter = childIndex+1;//stop the loop
 			return;
