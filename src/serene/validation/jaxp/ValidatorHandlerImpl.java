@@ -102,6 +102,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
     boolean level2AttributeIdType;
     boolean level1AttributeIdTypeMemo;
     boolean restrictToFileName;
+    boolean optimizedForResourceSharing;
         
     AttributeDefaultValueHandler attributeDefaultValueHandler;
     AttributeIdTypeHandler attributeIdTypeHandler;
@@ -120,6 +121,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
                             boolean level1AttributeIdType,
                             boolean level2AttributeIdType,
                             boolean restrictToFileName,
+                            boolean optimizedForResourceSharing,
                             ValidatorEventHandlerPool eventHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
 							SchemaModel schemaModel,
@@ -134,9 +136,10 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         this.level2AttributeIdType = level2AttributeIdType;
         level1AttributeIdTypeMemo = level1AttributeIdType;
         this.restrictToFileName = restrictToFileName;
+        this.optimizedForResourceSharing = optimizedForResourceSharing;
+        
 		this.eventHandlerPool = eventHandlerPool;	
-		this.errorHandlerPool = errorHandlerPool;
-				
+		this.errorHandlerPool = errorHandlerPool;				
 		
 		this.schemaModel = schemaModel;
 		                
@@ -147,17 +150,35 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		charsBuffer = new CharsBuffer(debugWriter);		
 		spaceHandler = new SpaceCharsHandler(debugWriter);					
         documentContext = new DocumentContext(debugWriter);
+        prefixNamespaces = new HashMap<String, String>();
         
         errorHandlerPool.init(errorDispatcher, activeInputDescriptor);        
         eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, errorHandlerPool);
         
-        errorHandlerPool.fill();
-        eventHandlerPool.fill();
-        
-        prefixNamespaces = new HashMap<String, String>();
+
+        if(!optimizedForResourceSharing)initResources();        
 	}
 	
-	protected void finalize(){			
+	void initResources(){
+	    errorHandlerPool.fill();
+        eventHandlerPool.fill();
+        
+        activeModel = schemaModel.getActiveModel(activeInputDescriptor,
+		                                            inputStackDescriptor, 
+													errorDispatcher);
+		if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
+        matchHandler.setActiveModel(activeModel);
+	}
+	void releaseResources(){
+	    eventHandlerPool.releaseHandlers();
+		errorHandlerPool.releaseHandlers();
+		
+		activeModel.recycle();
+		activeModel = null;
+	}
+	
+	protected void finalize(){	
+        if(!optimizedForResourceSharing) return;		
 		eventHandlerPool.recycle();
 		errorHandlerPool.recycle();
 	}
@@ -213,16 +234,10 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
     }
     
 	public void startDocument()  throws SAXException{		
-		errorDispatcher.init();
-		documentContext.reset();        
-		inputStackDescriptor.clear();
-		activeModel = schemaModel.getActiveModel(activeInputDescriptor,
-		                                                inputStackDescriptor, 
-														errorDispatcher);
-        if(activeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Due to errors in the schema document, it cannot be used for validation.");
-        
-        matchHandler.setActiveModel(activeModel);
-        
+		errorDispatcher.init();			
+		if(optimizedForResourceSharing)initResources();
+		    
+		
         if(level2AttributeDefaultValue){                        
             AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
             if(attributeDefaultValueModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Feature "+Constants.LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE+" cannot be supported.");
@@ -364,15 +379,19 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler.recycle();
 		elementHandler = null;
 		inputStackDescriptor.popElement();
-		activeModel.recycle();
-		activeModel = null;
+				
         if(level1AttributeIdType){
             attributeIdTypeHandler.handleRefs(locator);
-        }
+        }        
         if(contentHandler != null) contentHandler.endDocument();
+                
+        // activeInputDescriptor.printLeftOvers();
         
-        
-        activeInputDescriptor.printLeftOvers();
+        //just in case        
+		inputStackDescriptor.clear();
+		documentContext.reset();
+				
+		if(optimizedForResourceSharing)releaseResources();
 	}
 	
 	void xmlVersion(String version){}
@@ -447,24 +466,34 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
             throw new NullPointerException();
         }else if(name.equals(Constants.DTD_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.DTD_MAPPING_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.ERROR_HANDLER_POOL_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.INPUT_STACK_DESCRIPTOR_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.DOCUMENT_CONTEXT_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }
 
         throw new SAXNotRecognizedException(name);

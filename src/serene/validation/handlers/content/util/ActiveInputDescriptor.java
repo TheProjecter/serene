@@ -278,12 +278,12 @@ public class ActiveInputDescriptor{
 	        }else{
 	            //System.out.println(i+"\t"+recordedClientsCount[i]);
 	            hasLeftOvers = true;
-	            throw new IllegalStateException();
+	            //throw new IllegalStateException();
 	        }
 	    }	    
 	    
-	   //if(hasLeftOvers) System.out.println(hashCode()+" LEFT OVERS------------------------------------------");
-	   //else System.out.println(hashCode()+" ----");
+	   if(hasLeftOvers) System.out.println(hashCode()+" LEFT OVERS------------------------------------------");
+	   else System.out.println(hashCode()+" ----");
 	}
 	public void registerClientForRecord(int recordIndex, Object o){
 	    recordedClientsCount[recordIndex] += 1;

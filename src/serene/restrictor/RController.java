@@ -703,6 +703,7 @@ public class RController implements RestrictingVisitor{
 		}
 	}
 	public void visit(SGroup group) throws SAXException{
+	    //System.out.println("R CONTROLLER VISIT Element <"+group.getQName()+"> at "+group.getLocation(restrictToFileName));
 		if(exceptPatternContext714){
 			// error 7.1.4
 			ArrayList<SimplifiedComponent> path = dataPath.peek();
@@ -1222,7 +1223,7 @@ public class RController implements RestrictingVisitor{
             contentType = definitionsContentTypes.get(definitionTopPatterns[index]);
             return;
         }
-		definitionTopPatterns[index].accept(this);		
+		definitionTopPatterns[index].accept(this);
 		handledDefinitions.add(index);
         definitionsContentTypes.put(definitionTopPatterns[index], contentType);
 	}	

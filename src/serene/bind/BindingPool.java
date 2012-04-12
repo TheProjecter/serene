@@ -18,8 +18,6 @@ package serene.bind;
 
 import java.util.Map;
 
-import org.xml.sax.SAXNotRecognizedException;
-
 import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SAttribute;
 
@@ -28,57 +26,56 @@ import serene.util.ObjectIntHashMap;
 import sereneWrite.MessageWriter;
 
 public abstract class BindingPool{
-	ValidatorQueuePool[] queuePool;
-	int queuePoolFree, queuePoolMaxSize;
+    protected ElementTaskPool startDocumentElementTaskPool;
+    protected AttributeTaskPool[] documentElementTaskPool;
+    protected ElementTaskPool endDocumentElementTaskPool;
+    
+    protected Map<SElement, ElementTaskPool> startElementTaskPools;
+    protected ElementTaskPool genericStartElementTaskPool;
+	protected Map<SElement, ElementTaskPool> endElementTaskPools;
+	protected ElementTaskPool genericEndElementTaskPool;
+	protected Map<SAttribute, AttributeTaskPool> attributeTaskPools;
+	protected AttributeTaskPool genericAttributeTaskPool;
+    
+	protected ValidatorQueuePool[] queuePool;
+	protected int queuePoolFree, queuePoolMaxSize;
 	
 	protected MessageWriter debugWriter;
 	
-	public BindingPool(Map<SElement, ? extends ElementTaskPool> startElementTaskPools,
-						Map<SAttribute, ? extends AttributeTaskPool> attributeTaskPools,
-						Map<SElement, ? extends ElementTaskPool> endElementTaskPools,									
-						MessageWriter debugWriter){
+	public BindingPool(ElementTaskPool startDocumentElementTaskPool,
+	                                AttributeTaskPool[] documentElementTaskPool,
+	                                ElementTaskPool endDocumentElementTaskPool,
+	                                Map<SElement, ElementTaskPool> startElementTaskPools,
+	                                ElementTaskPool genericStartElementTaskPool,
+									Map<SAttribute, AttributeTaskPool> attributeTaskPools,
+									AttributeTaskPool genericAttributeTaskPool,
+									Map<SElement, ElementTaskPool> endElementTaskPools,
+                                    ElementTaskPool genericEndElementTaskPool,									
+									MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
-		// the rest will be done by the subclasses so they can use the concrete 
-		// task pool classes, cheaper, no more casts  
-		// this.startElementTaskPools = startElementTaskPools;
-		// this.endElementTaskPools = endElementTaskPools;
-		// this.attributeTaskPools = attributeTaskPools;
+		
+		this.startDocumentElementTaskPool = startDocumentElementTaskPool;
+	    this.documentElementTaskPool = documentElementTaskPool;
+	    this.endDocumentElementTaskPool = endDocumentElementTaskPool;
+	    
+		this.startElementTaskPools = startElementTaskPools;
+		this.genericStartElementTaskPool = genericStartElementTaskPool;
+		this.endElementTaskPools = endElementTaskPools;
+		this.genericEndElementTaskPool = genericEndElementTaskPool;
+		this.attributeTaskPools = attributeTaskPools;
+		this.genericAttributeTaskPool = genericAttributeTaskPool;
+		
 		
 		queuePoolFree = 0;
 		queuePoolMaxSize = 3;	
-		queuePool = new ValidatorQueuePool[5];
-					
+		queuePool = new ValidatorQueuePool[5];					
 	}	
 	
 	public abstract BindingModel getBindingModel();
 		
 	public abstract void recycle(BindingModel bm);
-	
 		
-	synchronized public ValidatorQueuePool getValidatorQueuePool(){
-		if(queuePoolFree == 0){			
-			return new ValidatorQueuePool(this, debugWriter);			
-		}
-		else{				
-			return queuePool[--queuePoolFree];
-		}
-	}
-	synchronized public void recycle(ValidatorQueuePool qp){
-	    if(queuePoolFree == queuePoolMaxSize) return;
-		if(queuePoolFree == queuePool.length){
-			ValidatorQueuePool[] increased = new ValidatorQueuePool[5+queuePool.length];
-			System.arraycopy(queuePool, 0, increased, 0, queuePoolFree);
-			queuePool = increased;
-		}
-		queuePool[queuePoolFree++] = qp;
-	}
+	public abstract ValidatorQueuePool getValidatorQueuePool();
 	
-	public abstract void setProperty(String name, Object value) throws SAXNotRecognizedException;
-	
-	public abstract Object getProperty(String name)  throws SAXNotRecognizedException;
-
-	public abstract void setFeature(String name, boolean value)  throws SAXNotRecognizedException;
-
-	public abstract boolean getFeature(String name)  throws SAXNotRecognizedException;	
-	
+	public abstract void recycle(ValidatorQueuePool qp);	
 }

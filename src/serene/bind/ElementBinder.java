@@ -52,7 +52,7 @@ public class ElementBinder{
 		queue.addLocation(record, location);
 	}
 	
-	public void bind(Queue queue, int endRecord){
+	public void bindTasks(Queue queue, int endRecord){
 		queue.addElementTasks(endRecord, startTask, endTask);
 	}
 }

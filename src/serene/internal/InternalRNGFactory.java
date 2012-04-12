@@ -36,17 +36,12 @@ import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.SimplifiedModel;
 
 import serene.parser.RNGParseBindingPool;
-import serene.parser.StartLevelPool;
-import serene.parser.DummyPool;
+
 
 import sereneWrite.MessageWriter;
 
-/**
-* The InternalRNGFactory class is not thread-safe and not re-entrant. One instance *
-* is created for every InternalRNGSchemaFactory.  
-*/
-public class InternalRNGFactory{	
-	private static volatile InternalRNGFactory instance; 
+
+public abstract class InternalRNGFactory{	
 	
 	SimplifiedComponentBuilder builder;	
 	RNGDirector rngDirector;
@@ -56,33 +51,28 @@ public class InternalRNGFactory{
 	SimplifiedModel externalRefModel;	
 	RNGParseBindingPool pool;
 	
-	StartLevelPool startPool;
-	DummyPool dummyPool;
-
     boolean level1DocumentationElement;
     boolean restrictToFileName;
+    boolean optimizedForResourceSharing;
 	
 	MessageWriter debugWriter;
 	
-	private InternalRNGFactory(boolean level1DocumentationElement, boolean restrictToFileName, MessageWriter debugWriter) throws DatatypeException{		
-		super();		
+	protected InternalRNGFactory(boolean level1DocumentationElement, 
+	                                boolean restrictToFileName, 
+	                                boolean optimizedForResourceSharing,
+	                                MessageWriter debugWriter) throws DatatypeException{		
 		this.debugWriter = debugWriter;
         this.level1DocumentationElement = level1DocumentationElement;
         this.restrictToFileName = restrictToFileName;
+        this.optimizedForResourceSharing = optimizedForResourceSharing;
 		
-		builder = new SimplifiedComponentBuilder(debugWriter);
-		
-		rngDirector = new RNGDirector(debugWriter);
+		builder = new SimplifiedComponentBuilder(debugWriter);			
+		rngDirector = new RNGDirector(false, debugWriter);
 
 		rngDirector.createModels(builder);		
 		
-		rngModel = rngDirector.getRNGModel();
-		includeModel = rngDirector.getIncludeModel();
-		externalRefModel = rngDirector.getExternalRefModel();
+		rngModel = rngDirector.getRNGModel();		
 		pool = rngDirector.getBindingModelPool();
-		
-		dummyPool = new DummyPool(debugWriter);
-		startPool = new StartLevelPool(debugWriter);
 	}
     
     public void setLevel1DocumentationElement(boolean level1DocumentationElement){
@@ -93,64 +83,51 @@ public class InternalRNGFactory{
         this.restrictToFileName = restrictToFileName;    
     }
     
-    
-	public static InternalRNGFactory getInstance(boolean level1DocumentationElement, boolean restrictToFileName, MessageWriter debugWriter)  throws DatatypeException{
-		if(instance == null){
-			synchronized(InternalRNGFactory.class){
-				if(instance == null){
-					instance = new InternalRNGFactory(level1DocumentationElement, restrictToFileName, debugWriter); 
-				}
-			}
-		}
-		return instance;
-	}
-	
+  
 	public InternalRNGSchema getInternalRNGSchema(){
 		//TODO could be loaded from a previously serialized 
 		//or created on the spot
 		// TODO see that you add the unexpected and the unknown nodes somehow
 		// here or in the builder, whereever you see fit
 		// they have to be added to all elements, including empty		
-		ValidationModel vm = new ValidationModelImpl(null, rngModel, debugWriter); 
+		ValidationModel vm = new ValidationModelImpl(null, rngModel, optimizedForResourceSharing, debugWriter); 
         SchemaModel sm = new SchemaModel(vm, null, debugWriter); 
 		InternalRNGSchema schema = new InternalRNGSchema(false,
                                         level1DocumentationElement,                                        
                                         restrictToFileName,
+                                        optimizedForResourceSharing,
                                         sm, 
+                                        pool,
 										debugWriter);					
 		return schema;
 	}
 	
-	public InternalRNGSchema getExternalRefSchema(){		
-		ValidationModel vm = new ValidationModelImpl(null, externalRefModel, debugWriter); 
+	public InternalRNGSchema getExternalRefSchema(){	
+	    if(externalRefModel == null) externalRefModel = rngDirector.getExternalRefModel();
+		ValidationModel vm = new ValidationModelImpl(null, externalRefModel, optimizedForResourceSharing, debugWriter); 
         SchemaModel sm = new SchemaModel(vm, null, debugWriter);
 		InternalRNGSchema schema = new InternalRNGSchema(false,
                                         level1DocumentationElement,
                                         restrictToFileName,
+                                        optimizedForResourceSharing,
                                         sm,
+                                        pool,
 										debugWriter);		
 		return schema;
 	}
 	
-	public InternalRNGSchema getIncludeSchema(){		
-		ValidationModel vm = new ValidationModelImpl(null, includeModel, debugWriter); 
+	public InternalRNGSchema getIncludeSchema(){	
+	    if(includeModel == null) includeModel = rngDirector.getIncludeModel();
+		ValidationModel vm = new ValidationModelImpl(null, includeModel, optimizedForResourceSharing, debugWriter); 
         SchemaModel sm = new SchemaModel(vm, null, debugWriter);
 		InternalRNGSchema schema = new InternalRNGSchema(false,
                                         level1DocumentationElement,
                                         restrictToFileName,
+                                        optimizedForResourceSharing,
                                         sm,
+                                        pool,
 										debugWriter);		
 		return schema;
 	}
-	public RNGParseBindingPool getRNGParseBindingPool(){		
-		return pool;
-	}
 	
-	public StartLevelPool getStartDummyPool(){
-		return startPool;
-	}
-	
-	public DummyPool getEndDummyPool(){
-		return dummyPool;
-	}
 }

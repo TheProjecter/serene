@@ -19,4 +19,5 @@ package serene.bind;
 import serene.Reusable;
 public interface Task extends Reusable{
 	void execute();	
+	void setExecutant(Object executant);
 }

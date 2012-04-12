@@ -24,9 +24,9 @@ import serene.validation.schema.parsed.Grammar;
 
 import sereneWrite.MessageWriter;
  
-class IncludedParsedModel extends ParsedModel{
+public class IncludedParsedModel extends ParsedModel{
 	Grammar grammar;
-	IncludedParsedModel(DTDMapping dtdMapping, Grammar topPattern, MessageWriter debugWriter){		
+	public IncludedParsedModel(DTDMapping dtdMapping, Grammar topPattern, MessageWriter debugWriter){		
 		super(dtdMapping, topPattern, debugWriter);
         this.grammar = topPattern;
 	}

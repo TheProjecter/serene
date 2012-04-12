@@ -20,11 +20,10 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.xml.sax.SAXNotRecognizedException;
-
 import serene.bind.BindingPool;
 import serene.bind.BindingModel;
 import serene.bind.ValidatorQueuePool;
+import serene.bind.DocumentBinder;
 import serene.bind.ElementBinder;
 import serene.bind.AttributeBinder;
 import serene.bind.CharacterContentBinder;
@@ -40,69 +39,45 @@ import serene.validation.schema.parsed.ParsedComponentBuilder;
 
 import sereneWrite.MessageWriter;
 
-public class RNGParseBindingPool extends BindingPool{
-	Map<SElement, ElementTaskPool> startElementTaskPools;
-	Map<SElement, ElementTaskPool> endElementTaskPools;
-	Map<SAttribute, AttributeTaskPool> attributeTaskPools;
-		
+public abstract class RNGParseBindingPool extends BindingPool{		
 	RNGParseBindingModel[] bindingModel;
-	int bindingModelFree, bindingModelMaxSize;
+	int bindingModelFree, bindingModelMaxSize;	
 	
-	ParsedComponentBuilder builder;
-	
-	public RNGParseBindingPool(Map<SElement, ElementTaskPool> startElementTaskPools,
+	public RNGParseBindingPool(ElementTaskPool startDocumentElementTaskPool,
+	                                AttributeTaskPool[] documentElementTaskPool,
+	                                ElementTaskPool endDocumentElementTaskPool,
+	                                Map<SElement, ElementTaskPool> startElementTaskPools,
+	                                ElementTaskPool genericStartElementTaskPool,
 									Map<SAttribute, AttributeTaskPool> attributeTaskPools,
-									Map<SElement, ElementTaskPool> endElementTaskPools,									
+									AttributeTaskPool genericAttributeTaskPool,
+									Map<SElement, ElementTaskPool> endElementTaskPools,
+                                    ElementTaskPool genericEndElementTaskPool,									
 									MessageWriter debugWriter){
-		super(startElementTaskPools, attributeTaskPools, endElementTaskPools,debugWriter);
-		this.startElementTaskPools = startElementTaskPools;
-		this.endElementTaskPools = endElementTaskPools;
-		this.attributeTaskPools = attributeTaskPools;
-			
+		super(startDocumentElementTaskPool,
+	                    documentElementTaskPool,
+	                    endDocumentElementTaskPool,
+	                    startElementTaskPools, 
+	                    genericStartElementTaskPool,
+	                    attributeTaskPools, 
+	                    genericAttributeTaskPool,
+	                    endElementTaskPools,
+	                    genericEndElementTaskPool,
+	                    debugWriter);			
 	} 
 	
-	public synchronized RNGParseBindingModel getBindingModel(){
-		if(bindingModelFree == 0){			
-			return createModel();			
-		}
-		else{				
-			return bindingModel[--bindingModelFree];
-		}
-	}
-	
-	public void setProperty(String name, Object value) throws SAXNotRecognizedException{
-		if(name.equals("builder")){
-			builder = (ParsedComponentBuilder)value;
-			return;
-		}
-		throw new SAXNotRecognizedException();
-	}
-	
-	public Object getProperty(String name)  throws SAXNotRecognizedException{
-		if(name.equals("builder")){
-			return builder;
-		}
-		throw new SAXNotRecognizedException();
-	}
+	public abstract RNGParseBindingModel getBindingModel();
 
-	public void setFeature(String name, boolean value)  throws SAXNotRecognizedException{
-		if (name == null) {
-            throw new NullPointerException();
-        }
-		throw new SAXNotRecognizedException();
-	}
-
-	public boolean getFeature(String name)  throws SAXNotRecognizedException{
-		if (name == null) {
-            throw new NullPointerException();
-        }
-		throw new SAXNotRecognizedException();
-	}
 	
-	
-	
-	private RNGParseBindingModel createModel(){
-		//ParsedComponentBuilder builder = new ParsedComponentBuilder(debugWriter);
+	RNGParseBindingModel createModel(){
+		ParsedComponentBuilder builder = new ParsedComponentBuilder(debugWriter);
+		
+		ElementBinder documentElementBinder = new ElementBinder(debugWriter);
+		ElementTask startDocumentElementTask = startDocumentElementTaskPool.getTask();
+		startDocumentElementTask.setExecutant(builder);
+		documentElementBinder.setStartTask(startDocumentElementTask);
+		
+		DocumentBinder documentBinder = new DocumentBinder(debugWriter);
+		documentBinder.setElementBinder(documentElementBinder);
 		
 		Set<SElement> startKeys = startElementTaskPools.keySet();
 		Map<SElement, ElementBinder> selementBinders = new HashMap<SElement, ElementBinder>();
@@ -134,21 +109,18 @@ public class RNGParseBindingPool extends BindingPool{
 		for(SAttribute attribute : attributeKeys){
 			sattributeBinders.put(attribute, new AttributeBinder(debugWriter));			
 		}
-		builder = null; // so it cannot be reused for another calls
-		return new RNGParseBindingModel(selementBinders, sattributeBinders, this, builder, debugWriter);
+		
+		ElementBinder genericElementBinder = new ElementBinder(debugWriter);
+		ElementTask genericStartElementTask = genericStartElementTaskPool.getTask();
+		genericStartElementTask.setExecutant(builder);
+		genericElementBinder.setStartTask(genericStartElementTask);
+		ElementTask genericEndElementTask = genericEndElementTaskPool.getTask();
+		genericEndElementTask.setExecutant(builder);
+		genericElementBinder.setEndTask(genericEndElementTask);
+		
+		// not here: builder = null; // so it cannot be reused for another calls	
+		return new RNGParseBindingModel(documentBinder, selementBinders, genericElementBinder, sattributeBinders, null, this, builder, debugWriter);
 	}
-	public synchronized void recycle(BindingModel bm){
-		if(bm instanceof RNGParseBindingModel) recycle((RNGParseBindingModel)bm);
-		else throw new IllegalStateException();
-	}
-	
-	public synchronized void recycle(RNGParseBindingModel bm){
-	    if(bindingModelFree == bindingModelMaxSize) return;	
-		if(bindingModelFree == bindingModel.length){
-			RNGParseBindingModel[] increased = new RNGParseBindingModel[5+bindingModel.length];
-			System.arraycopy(bindingModel, 0, increased, 0, bindingModelFree);
-			bindingModel = increased;
-		}
-		bindingModel[bindingModelFree++] = bm;
-	} 
+	public abstract void recycle(BindingModel bm);	
+	public abstract void recycle(RNGParseBindingModel bm);
 }

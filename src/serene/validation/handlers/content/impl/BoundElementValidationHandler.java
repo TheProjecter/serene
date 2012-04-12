@@ -26,6 +26,8 @@ import java.util.BitSet;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 import serene.validation.schema.active.CharsActiveType;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.schema.active.components.AElement;
@@ -124,7 +126,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		
 		int definitionIndex = element.getDefinitionIndex();
 		ElementBinder binder = bindingModel.getElementBinder(definitionIndex);
-		if(binder != null)binder.bind(queue, queueEndEntry);
+		if(binder != null)binder.bindTasks(queue, queueEndEntry);
 	}
 	
 	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
@@ -145,6 +147,21 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		}		
 	}
 
+	protected ComparableEEH getUnexpectedElementHandler(String namespace, String name){
+		List<SimplifiedComponent> elementMatches = matchHandler.matchElement(namespace, name);
+		int matchCount = elementMatches.size();
+		if(matchCount == 0){
+			BoundUnknownElementHandler next = pool.getBoundUnknownElementHandler(this, queue);
+			return next;
+		}else if(matchCount == 1){
+			BoundUnexpectedElementHandler next = pool.getBoundUnexpectedElementHandler(elementMatches.get(0), this, queue);				
+			return next;
+		}else{					
+			BoundUnexpectedAmbiguousElementHandler next = pool.getBoundUnexpectedAmbiguousElementHandler(elementMatches, this, queue);				
+			return next;
+		}		
+	}	
+	
 	
     ComparableAEH getAttributeHandler(String qName, String namespace, String name){
 		if(!element.allowsAttributes()) 
@@ -266,13 +283,13 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	// Only used when conflict exists and is unsolved and it is possible that
 	// in context validation would lead to the resolution of the conflict and 
 	// the binding can happen.
-	void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
+	void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = element.getStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter, targetQueue, targetEntry, candidateQueues);
+		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter, bindingModel, targetQueue, targetEntry, candidateQueues);
 	}
 	void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
 		if(!stackHandler.handlesConflict()){
@@ -282,13 +299,13 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		}
 		stackHandler.shiftAllAttributes(candidateDefinitions, temporaryMessageStorage, value, queue, entry, attributeBinders);
 	}
-	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
+	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = element.getStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter, targetQueue, targetEntry, candidateQueues);
+		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter, bindingModel, targetQueue, targetEntry, candidateQueues);
 	}
 	void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
 		if(!stackHandler.handlesConflict()){

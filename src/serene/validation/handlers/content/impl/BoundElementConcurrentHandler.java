@@ -121,12 +121,12 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 			queue.reserve(queueStartEntry, size);
 		}else{
 			for(int i = 0; i < candidatesCount; i++){
-				if(!candidatesConflictHandler.isDisqualified(i)) ((BoundElementValidationHandler)candidates.get(i)).elementTasksBinding();
+				 ((BoundElementValidationHandler)candidates.get(i)).elementTasksBinding();
 			}
 			int qual = candidatesConflictHandler.getNextQualified(0);
 			BoundElementValidationHandler cc = (BoundElementValidationHandler)candidates.get(qual);
 			Queue q = cc.getQueue();
-			int size = q.getSize();
+			int size = q.getSize();			
 			queue.reserve(queueStartEntry, size);
 			if(qualified == 1){
 				queue.closeReservation(queueStartEntry, q);
@@ -169,7 +169,7 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 			// Why shift, they all have errors already??? 
 			// Maybe the parent actually expects one of them and not shifting 
 			// results in a fake error.			
-			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter(), queue, queueStartEntry, mapCandidateToQueue());
+			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter(), bindingModel, queue, queueStartEntry, mapCandidateToQueue());
 		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
 			AElement qElement = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
 			parent.addChildElement(qElement);			
@@ -178,7 +178,7 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 			// Shift all without errors, hope the parent conflict disqualifies all but one	
 			ConflictMessageReporter cmr = null;
 			if(contextErrorHandler[contextErrorHandlerIndex] != null) cmr = contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();
-			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, candidatesConflictHandler, cmr, queue, queueStartEntry, mapCandidateToQueue());
+			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, candidatesConflictHandler, cmr, bindingModel, queue, queueStartEntry, mapCandidateToQueue());
 		}
 	}
 	

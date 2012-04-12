@@ -36,6 +36,8 @@ import serene.validation.schema.active.components.AAttribute;
 
 import serene.bind.Queue;
 import serene.bind.AttributeBinder;
+import serene.bind.BindingModel;
+
 
 import serene.Reusable;
 
@@ -157,7 +159,8 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	public void fill(ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){
 		this.inputStackDescriptor = inputStackDescriptor;
 		this.activeInputDescriptor = activeInputDescriptor;
-		pool.fill(this,
+		if(pool != null){
+		    pool.fill(this,
 				ambiguousElementConflictResolver,
 				unresolvedElementConflictResolver,
 				ambiguousAttributeConflictResolver,
@@ -170,6 +173,23 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 				boundUnresolvedElementConflictResolver,
 				boundAmbiguousAttributeConflictResolver,
 				boundUnresolvedAttributeConflictResolver);
+		}else{		    
+            ambiguousElementConflictResolver = new AmbiguousElementConflictResolver[10];            
+            unresolvedElementConflictResolver = new UnresolvedElementConflictResolver[10];            
+            ambiguousAttributeConflictResolver = new AmbiguousAttributeConflictResolver[10];            
+            unresolvedAttributeConflictResolver = new UnresolvedAttributeConflictResolver[10];
+                        
+            ambiguousCharsConflictResolver = new AmbiguousCharsConflictResolver[10];            
+            unresolvedCharsConflictResolver = new UnresolvedCharsConflictResolver[10];
+                                
+            ambiguousListTokenConflictResolver = new AmbiguousListTokenConflictResolver[10];
+            unresolvedListTokenConflictResolver = new UnresolvedListTokenConflictResolver[10];            
+                        
+            boundAmbiguousElementConflictResolver = new BoundAmbiguousElementConflictResolver[10];
+            boundUnresolvedElementConflictResolver = new BoundUnresolvedElementConflictResolver[10];
+            boundAmbiguousAttributeConflictResolver = new BoundAmbiguousAttributeConflictResolver[10];
+            boundUnresolvedAttributeConflictResolver = new BoundUnresolvedAttributeConflictResolver[10];            
+		}
 		
 		full = true;
 	}
@@ -261,7 +281,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	}
 	
 	public void releaseHandlers(){
-		pool.recycle(ambiguousElementConflictResolverFree,
+		        pool.recycle(ambiguousElementConflictResolverFree,
 		        ambiguousElementConflictResolverFree - ambiguousElementConflictResolverFree,
 				ambiguousElementConflictResolver,
 				unresolvedElementConflictResolverFree,
@@ -297,6 +317,19 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 				boundUnresolvedAttributeConflictResolverFree,
 				boundUnresolvedAttributeConflictResolverFree - boundUnresolvedAttributeConflictResolverFree,
 				boundUnresolvedAttributeConflictResolver);
+				
+		ambiguousElementConflictResolverFree = 0;
+        unresolvedElementConflictResolverFree = 0;
+        ambiguousAttributeConflictResolverFree = 0;
+        unresolvedAttributeConflictResolverFree = 0;
+        ambiguousCharsConflictResolverFree = 0;
+        unresolvedCharsConflictResolverFree = 0;
+        ambiguousListTokenConflictResolverFree = 0;
+        unresolvedListTokenConflictResolverFree = 0;
+        boundAmbiguousElementConflictResolverFree = 0;
+        boundUnresolvedElementConflictResolverFree = 0;
+        boundAmbiguousAttributeConflictResolverFree = 0;
+        boundUnresolvedAttributeConflictResolverFree = 0;
 		
 		full = false;
 	}
@@ -505,6 +538,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	
 	
 	public BoundAmbiguousElementConflictResolver getBoundAmbiguousElementConflictResolver(ConflictMessageReporter conflictMessageReporter,
+	                                                                    BindingModel bindingModel,
 	                                                                    Queue targetQueue,
 																		int targetEntry,
 																		Map<AElement, Queue> candidateQueues){				
@@ -513,6 +547,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			BoundAmbiguousElementConflictResolver icr = new BoundAmbiguousElementConflictResolver(debugWriter);
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(conflictMessageReporter,
+			        bindingModel,
 			        targetQueue,
 					targetEntry,
 					candidateQueues);			
@@ -520,6 +555,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		}else{
 			BoundAmbiguousElementConflictResolver icr = boundAmbiguousElementConflictResolver[--boundAmbiguousElementConflictResolverFree];
 			icr.init(conflictMessageReporter,
+			        bindingModel,
 			        targetQueue,
 					targetEntry,
 					candidateQueues);
@@ -539,6 +575,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	}
 	
 	public BoundUnresolvedElementConflictResolver getBoundUnresolvedElementConflictResolver(ConflictMessageReporter conflictMessageReporter,
+	                                                                    BindingModel bindingModel,
 	                                                                    Queue targetQueue,
 																		int targetEntry,
 																		Map<AElement, Queue> candidateQueues){				
@@ -547,6 +584,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			BoundUnresolvedElementConflictResolver icr = new BoundUnresolvedElementConflictResolver(debugWriter);
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(conflictMessageReporter,
+			        bindingModel,
 			        targetQueue,
 					targetEntry,
 					candidateQueues);			
@@ -554,6 +592,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		}else{
 			BoundUnresolvedElementConflictResolver icr = boundUnresolvedElementConflictResolver[--boundUnresolvedElementConflictResolverFree];
 			icr.init(conflictMessageReporter,
+			        bindingModel,
 			        targetQueue,
 					targetEntry,
 					candidateQueues);
@@ -587,9 +626,6 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(disqualified,
 			        temporaryMessageStorage,
-			        /*namespaceURI,
-                    localName,
-                    qName,*/
                     value, 
 					queue, 
 					entry, 
@@ -599,9 +635,6 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			BoundAmbiguousAttributeConflictResolver icr = boundAmbiguousAttributeConflictResolver[--boundAmbiguousAttributeConflictResolverFree];
 			icr.init(disqualified,
 			        temporaryMessageStorage,
-			        /*namespaceURI,
-                    localName,
-                    qName,*/
                     value, 
 					queue, 
 					entry, 
@@ -634,9 +667,6 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			BoundUnresolvedAttributeConflictResolver icr = new BoundUnresolvedAttributeConflictResolver(debugWriter);
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(temporaryMessageStorage,
-			        /*namespaceURI,
-                    localName,
-                    qName,*/
                     value, 
 					queue, 
 					entry, 
@@ -645,9 +675,6 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 		}else{
 			BoundUnresolvedAttributeConflictResolver icr = boundUnresolvedAttributeConflictResolver[--boundUnresolvedAttributeConflictResolverFree];
 			icr.init(temporaryMessageStorage,
-			        /*namespaceURI,
-                    localName,
-                    qName,*/
                     value, 
 					queue, 
 					entry, 

@@ -17,6 +17,5 @@ limitations under the License.
 package serene.bind;
 
 public interface ElementTask extends Task{
-	void setContext(ElementTaskContext context);
-	void setExecutant(Object executant);
+	void setContext(ElementTaskContext context);	
 }

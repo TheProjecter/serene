@@ -21,8 +21,16 @@ import org.relaxng.datatype.ValidationContext;
 import serene.validation.schema.simplified.SimplifiedModel;
 
 import serene.validation.handlers.conflict.ConflictHandlerPool;
+import serene.validation.handlers.conflict.SynchronizedConflictHandlerPool;
+import serene.validation.handlers.conflict.UnsynchronizedConflictHandlerPool;
+
 import serene.validation.handlers.stack.impl.StackHandlerPool;
+import serene.validation.handlers.stack.impl.SynchronizedStackHandlerPool;
+import serene.validation.handlers.stack.impl.UnsynchronizedStackHandlerPool;
+
 import serene.validation.handlers.structure.impl.RuleHandlerPool;
+import serene.validation.handlers.structure.impl.SynchronizedRuleHandlerPool;
+import serene.validation.handlers.structure.impl.UnsynchronizedRuleHandlerPool;
 
 import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
 import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
@@ -50,21 +58,31 @@ public class ActiveModelPool{
 	
 	ActiveModelFactory modelFactory;	
 		
+	boolean optimizedForResourceSharing;
+	
 	MessageWriter debugWriter;
 	
 	public ActiveModelPool(SimplifiedModel simplifiedModel,
+	                        boolean optimizedForResourceSharing,
 							MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		this.simplifiedModel = simplifiedModel;
+		this.optimizedForResourceSharing = optimizedForResourceSharing;
 		modelFactory = new ActiveModelFactory(debugWriter);
 		
 		modelFree = 0; 
 		modelMaxSize = 10;
 		models = new ActiveModel[5];
 
-		conflictHandlerPool = ConflictHandlerPool.getInstance(debugWriter);
-		stackHandlerPool = StackHandlerPool.getInstance(debugWriter);
-		ruleHandlerPool = RuleHandlerPool.getInstance(debugWriter);		
+		if(optimizedForResourceSharing){
+            conflictHandlerPool = SynchronizedConflictHandlerPool.getInstance(debugWriter);
+            stackHandlerPool = SynchronizedStackHandlerPool.getInstance(debugWriter);
+            ruleHandlerPool = SynchronizedRuleHandlerPool.getInstance(debugWriter);
+        }else{
+            conflictHandlerPool = UnsynchronizedConflictHandlerPool.getInstance(debugWriter);
+            stackHandlerPool = UnsynchronizedStackHandlerPool.getInstance(debugWriter);
+            ruleHandlerPool = UnsynchronizedRuleHandlerPool.getInstance(debugWriter);
+        }
 	}
 	
 	public ActiveModel getActiveModel(ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){

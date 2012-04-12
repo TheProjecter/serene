@@ -71,6 +71,12 @@ public class ParsedComponentWriter extends AbstractParsedComponentVisitor{
 		component.accept(this);
 	}
 	
+	public void write(ParsedComponent component){
+		debugWriter = new MessageWriter();
+		tab = 0;
+		component.accept(this);
+	}
+	
 	private String getTabString(){
 		String s = "";
 		for(int i =0; i<=tab;i++){

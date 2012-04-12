@@ -20,30 +20,44 @@ package serene;
 import javax.xml.validation.Schema;
 
 import serene.validation.handlers.content.impl.ContentHandlerPool;
+import serene.validation.handlers.content.impl.SynchronizedContentHandlerPool;
+import serene.validation.handlers.content.impl.UnsynchronizedContentHandlerPool;
+
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ErrorHandlerPool;
+import serene.validation.handlers.error.SynchronizedErrorHandlerPool;
+import serene.validation.handlers.error.UnsynchronizedErrorHandlerPool;
 import serene.validation.handlers.error.ErrorDispatcher;
 
 import sereneWrite.MessageWriter;
 
 public abstract class BaseSchema extends Schema{
-    protected boolean secureProcessing;    
+    protected boolean secureProcessing;
+    protected boolean optimizedForResourceSharing;
+    
 	protected SchemaModel schemaModel;
     		
 	protected ContentHandlerPool contentHandlerPool;	
 	protected ErrorHandlerPool errorHandlerPool;
-		
+	
 	protected MessageWriter debugWriter;
     
     public BaseSchema(boolean secureProcessing,
+                    boolean optimizedForResourceSharing,
                     SchemaModel schemaModel,
                     MessageWriter debugWriter){
         this.debugWriter = debugWriter; 
         this.schemaModel = schemaModel;
-        this.secureProcessing = secureProcessing;        
+        this.secureProcessing = secureProcessing;       
+        this.optimizedForResourceSharing = optimizedForResourceSharing;
         
-        contentHandlerPool = ContentHandlerPool.getInstance(debugWriter);
-		errorHandlerPool = ErrorHandlerPool.getInstance(debugWriter);
+        if(optimizedForResourceSharing){
+            contentHandlerPool = SynchronizedContentHandlerPool.getInstance(debugWriter);
+            errorHandlerPool = SynchronizedErrorHandlerPool.getInstance(debugWriter);
+        }else{
+            contentHandlerPool = UnsynchronizedContentHandlerPool.getInstance(debugWriter);
+            errorHandlerPool = UnsynchronizedErrorHandlerPool.getInstance(debugWriter);
+        }
     }    
 }

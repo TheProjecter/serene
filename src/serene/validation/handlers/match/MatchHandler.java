@@ -89,13 +89,13 @@ public class MatchHandler{
 	
 	public List<AElement> matchElement(String namespace, String name, ElementContentType type){		
 		elementMatches.clear();		
-		elementMatches = type.getElementMatches(namespace, name, elementMatches);
+		elementMatches = type.getElementMatches(namespace, name, elementMatches);		
 		return elementMatches;		
 	}
 	
 	public List<AAttribute> matchAttribute(String namespace, String name, AttributesType type){		
 		attributeMatches.clear();
-		attributeMatches = type.getAttributeMatches(namespace, name, attributeMatches);				
+		attributeMatches = type.getAttributeMatches(namespace, name, attributeMatches);	
 		return attributeMatches;		
 	}
 		

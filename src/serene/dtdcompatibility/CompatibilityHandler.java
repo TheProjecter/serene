@@ -185,6 +185,8 @@ public class CompatibilityHandler implements RestrictingVisitor{
     
     ControllerPool controllerPool;
     CompetitionSimetryController simetryController;
+    
+    boolean optimizedForResourceSharing;
         
     MessageWriter debugWriter;
     
@@ -200,7 +202,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
         this.errorHandlerPool = errorHandlerPool;
         this.eventHandlerPool = eventHandlerPool;
         this.activeInputDescriptor = activeInputDescriptor;
-        this.inputStackDescriptor = inputStackDescriptor;        
+        this.inputStackDescriptor = inputStackDescriptor;     
         this.errorDispatcher = errorDispatcher; 
         defaultValueErrorHandler = new AttributeDefaultValueErrorHandler(activeInputDescriptor, errorDispatcher, debugWriter);
         simetryController = new CompetitionSimetryController(controllerPool, errorDispatcher, debugWriter);
@@ -237,6 +239,10 @@ public class CompatibilityHandler implements RestrictingVisitor{
         restrictToFileName = value;
         simetryController.setRestrictToFileName(restrictToFileName);
         defaultValueErrorHandler.setRestrictToFileName(restrictToFileName);
+    }
+    
+    public void setOptimizeForResourceSharing(boolean optimizedForResourceSharing){
+        this.optimizedForResourceSharing = optimizedForResourceSharing;
     }
     
     public SchemaModel handle(ValidationModel validationModel) throws SAXException{     
@@ -293,7 +299,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
         for(SPattern start : startTopPattern){
             start.accept(this);
         }
-        activeModel.recycle();
+        if(optimizedForResourceSharing)activeModel.recycle();
         if(level1AttributeDefaultValue){
             if(errorDispatcher.hasAttributeDefaultValueError()) attributeDefaultValueModel = null;
             else attributeDefaultValueModel.wrapUp();

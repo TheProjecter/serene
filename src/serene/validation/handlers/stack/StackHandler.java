@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 
 import serene.bind.Queue;
 import serene.bind.AttributeBinder;
+import serene.bind.BindingModel;
 
 import serene.validation.handlers.FunctionallyEquivalable;
 
@@ -49,9 +50,9 @@ public interface StackHandler extends FunctionallyEquivalable{
 	// to the concrete structure handlers.
 	void shift(AElement element);	
 	void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter);	
-	void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues);	
+	void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues);	
 	void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter);
-	void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues);
+	void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues);
 	
 	void shift(AAttribute attribute);	
 	void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);

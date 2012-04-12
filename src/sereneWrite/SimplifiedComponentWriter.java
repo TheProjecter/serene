@@ -58,6 +58,13 @@ public class SimplifiedComponentWriter extends AbstractSimplifiedComponentVisito
 		component.accept(this);
 	}
 	
+	public void write(SimplifiedComponent component){
+	    debugWriter = new MessageWriter();
+		debugWriter.write("simplifiedComponentWriter WRITE: ");
+		tab = 0;
+		component.accept(this);
+	}
+	
 	private String getTabString(){
 		String s = "";
 		for(int i =0; i<=tab;i++){

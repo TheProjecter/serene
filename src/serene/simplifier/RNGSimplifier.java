@@ -36,10 +36,8 @@ import serene.util.IntStack;
 
 import serene.validation.schema.parsed.ParsedComponent;
 import serene.validation.schema.parsed.ParsedModel;
-
 import serene.validation.schema.parsed.Pattern;
 import serene.validation.schema.parsed.Definition;
-
 import serene.validation.schema.parsed.Grammar;
 import serene.validation.schema.parsed.ExternalRef;
 
@@ -65,7 +63,7 @@ public class RNGSimplifier extends Simplifier{
 	Stack<URI> inclusionPath;
 	
     
-	public RNGSimplifier(XMLReader xmlReader, InternalRNGFactory internalRNGFactory, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
+	public RNGSimplifier(ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
 		super(errorDispatcher, debugWriter);
 				
 		grammarDefinitions = new HashMap<Grammar, Map<String, ArrayList<Definition>>>();		
@@ -90,10 +88,13 @@ public class RNGSimplifier extends Simplifier{
 		pcw = new ParsedComponentWriter();
 		
 		
-		inclusionPath = new Stack<URI>();
-		mapper = new Mapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, debugWriter);
+		inclusionPath = new Stack<URI>();		
         
         simplificationContext = new DocumentSimplificationContext(debugWriter);
+	}
+	
+	public void setParserComponents(XMLReader xmlReader, InternalRNGFactory internalRNGFactory){
+	    mapper = new Mapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, debugWriter);
 	}
 	
 	public void setReplaceMissingDatatypeLibrary(boolean value){

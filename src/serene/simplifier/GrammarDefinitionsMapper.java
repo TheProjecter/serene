@@ -125,17 +125,17 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	
 	MessageWriter debugWriter;
 	
-	GrammarDefinitionsMapper(XMLReader xmlReader, 
-							InternalRNGFactory internalRNGFactory, 
-							ErrorDispatcher errorDispatcher, 
+	GrammarDefinitionsMapper(XMLReader xmlReader,
+	                        InternalRNGFactory internalRNGFactory,
+							ErrorDispatcher errorDispatcher,
 							NamespaceInheritanceHandler namespaceInheritanceHandler,
 							DatatypeLibraryFactory datatypeLibraryFactory,
 							MessageWriter debugWriter){
 		this.debugWriter = debugWriter;		
 		this.xmlReader = xmlReader;
 		this.internalRNGFactory = internalRNGFactory;
-		this.errorDispatcher = errorDispatcher;
 		this.namespaceInheritanceHandler = namespaceInheritanceHandler;
+		this.errorDispatcher = errorDispatcher;
 		this.datatypeLibraryFactory = datatypeLibraryFactory;
 		
 		replaceMissingDatatypeLibrary = true;
@@ -241,6 +241,9 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		}
 		
         IncludedParsedModel includedModel = parse(hrefURI); 
+        
+        if(includedModel == null) return;
+        
 		Grammar includedGrammar = includedModel.getTopPattern();
         
 		if(includedGrammar == null) return;

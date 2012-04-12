@@ -39,6 +39,8 @@ class UnexpectedElementHandler extends ErrorEEH{
 	}
 	
 	public void recycle(){
+	    element = null;
+	    
 		pool.recycle(this);
 	}
 	

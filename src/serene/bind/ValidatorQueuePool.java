@@ -32,7 +32,7 @@ public class ValidatorQueuePool implements Reusable{
 	
 	ObjectIntHashMap sattributeIndexMap;
 	
-	ValidatorQueuePool(BindingPool pool, MessageWriter debugWriter){
+	public ValidatorQueuePool(BindingPool pool, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		this.pool = pool;
 		

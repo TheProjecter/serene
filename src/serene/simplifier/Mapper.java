@@ -41,7 +41,6 @@ import serene.validation.schema.parsed.Definition;
 import serene.validation.schema.parsed.Grammar;
 import serene.validation.schema.parsed.ExternalRef;
 
-
 import serene.validation.handlers.error.ErrorDispatcher;
 
 import sereneWrite.MessageWriter;
@@ -59,6 +58,7 @@ class Mapper{
 	Mapper mapper;
 	
 	ErrorDispatcher errorDispatcher;
+	
 	
 	MessageWriter debugWriter;
 	
@@ -120,19 +120,21 @@ class Mapper{
 				URI uri = externalRefURIs.get(eRef);
 				externalRefs.put(eRef, uri);
 				if(!docParsedModels.containsKey(uri)){
-					ParsedModel refModel = externalRefParser.parse(uri);;
-					docParsedModels.put(uri, refModel);
-                    Pattern docTopPattern = refModel.getTopPattern();
-					namespaceInheritanceHandler.put(docTopPattern, eRef);
-					mapper.map(uri,
-						docTopPattern,
-						grammarDefinitions,	
-						externalRefs,
-						docParsedModels,
-						inclusionPath,
-						componentAsciiDL,
-						asciiDlDatatypeLibrary,
-                        simplificationContext);
+					ParsedModel refModel = externalRefParser.parse(uri);
+					if(refModel != null){
+                        docParsedModels.put(uri, refModel);
+                        Pattern docTopPattern = refModel.getTopPattern();
+                        namespaceInheritanceHandler.put(docTopPattern, eRef);
+                        mapper.map(uri,
+                            docTopPattern,
+                            grammarDefinitions,	
+                            externalRefs,
+                            docParsedModels,
+                            inclusionPath,
+                            componentAsciiDL,
+                            asciiDlDatatypeLibrary,
+                            simplificationContext);
+                    }
 				}
 			}
 		} 	

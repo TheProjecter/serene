@@ -44,7 +44,7 @@ public abstract class CharsConflictResolver extends InternalConflictResolver{
 	}	
     void reset(){
         super.reset();
-        	    
+        candidateDefinitions.clear(); 
         if(temporaryMessageStorage != null) {
             for(int i = 0; i < temporaryMessageStorage.length; i++){
                 if(temporaryMessageStorage[i] != null){
@@ -60,7 +60,7 @@ public abstract class CharsConflictResolver extends InternalConflictResolver{
         candidateDefinitions.add(candidate);
     }
     
-    void reportUnresolvedError(ErrorCatcher errorCatcher){        
+    void reportUnresolvedError(ErrorCatcher errorCatcher){  
         CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
         //errorCatcher.ambiguousCharsContentErrorsystemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
         if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){

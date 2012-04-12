@@ -1236,7 +1236,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
 	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
-        
+                
 		messageTotalCount++;
 		if(unresolvedCharsIndexEE < 0){
 			unresolvedCharsIndexEE = 0;	

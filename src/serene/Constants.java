@@ -16,7 +16,7 @@ limitations under the License.
 
 package serene;
 
-public interface Constants{    
+public interface Constants{
     String ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/attributeDefaultValueHandler";
     String ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/attributeIdTypeHandler";
     String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
@@ -28,7 +28,9 @@ public interface Constants{
     String DOCUMENT_CONTEXT_PROPERTY = "http://serenerng.org/validatorHandler/property/documentContextProperty";
     String MATCH_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/matchHandler";
     String CONTROLLER_POOL_PROPERTY = "http://serenerng.org/controller/property/controllerPool";
-    
+    String PARSED_COMPONENT_BUILDER_PROPERTY = "http://serenerng.org/controller/property/parsedComponentBuilder";
+    String PARSED_MODEL_PROPERTY = "http://serenerng.org/controller/property/parsedModel";
+    String INCLUDED_PARSED_MODEL_PROPERTY = "http://serenerng.org/controller/property/includedParsedModel";
     
     String TARGET_NAMESPACE_NAME = "http://serenerng.org/param/targetNamespace";
     
@@ -56,4 +58,6 @@ public interface Constants{
     String LEVEL1_DOCUMENTATION_ELEMENT_FEATURE = "http://serenerng.org/features/DTDCompatibility/level1/documentationElement";
     
     String RESTRICT_TO_FILE_NAME_FEATURE = "http://serenerng.org/features/restrictToFileName";
+    
+    String OPTIMIZE_FOR_RESOURCE_SHARING_FEATURE = "http://serenerng.org/features/optimizeForResourceSharing";
 }
