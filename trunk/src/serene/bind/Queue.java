@@ -70,12 +70,7 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		
 	HashMap<String, String> prefixMapping;	
 	
-	
-	ElementTask reservationStartDummyElementTask;
-	ElementTask reservationEndDummyElementTask;
-	
-	boolean useReservationStartDummyElementTask;
-	boolean useReservationEndDummyElementTask;
+	boolean isClear;
 	
 	MessageWriter debugWriter;
 	
@@ -104,12 +99,23 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		reservationOffset = new int[reservationSize];
 		reservationEntriesCount = new int[reservationSize];
 		reservationUsed = new boolean[reservationSize];
+		
+		isClear = true;
 	}	
 	
 	public void clear(){
 		// System.out.println(hashCode()+" CLEAR ");		
 		currentIndex = -1;
 		currentAttributeIndex = -1;
+		
+		isClear = true;
+		
+		clearContent();				
+	}
+	
+	
+	public void clearContent(){
+		// System.out.println(hashCode()+" CLEAR ");
 		
 		Arrays.fill(location, null);
         Arrays.fill(elementNameInfo, null);
@@ -133,10 +139,11 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 	
 	void init(ValidatorQueuePool pool){
 		this.pool = pool;
+		isClear = false;
 	}
 	
 	public void recycle(){
-		clear();
+		if(!isClear)clear();
 		sattributeIndexMap = null;
 		attributeCount = -1;
 		pool.recycle(this);
@@ -147,56 +154,36 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		attributeCount = sattributeIndexMap.size();
 	}	
 	
-	public void setProperty(String name, Object value) throws SAXNotRecognizedException{		
-		if(name.equals("reservationStartDummyElementTask")){
-			reservationStartDummyElementTask = (ElementTask)value;
-		}else if(name.equals("reservationEndDummyElementTask")){
-			reservationEndDummyElementTask = (ElementTask)value;
-		}else{
-			throw new SAXNotRecognizedException("UNKNOWN PROPERTY.");
-		}
+	public void setProperty(String name, Object value) throws SAXNotRecognizedException{
+	    if(name == null)throw new NullPointerException();
+		throw new SAXNotRecognizedException("UNKNOWN PROPERTY.");
 	}
 	
 	public Object getProperty(String name)  throws SAXNotRecognizedException{
-		if(name.equals("reservationStartDummyElementTask")){
-			return reservationStartDummyElementTask;
-		}else if(name.equals("reservationEndDummyElementTask")){
-			return reservationEndDummyElementTask;
-		}else{
-			throw new SAXNotRecognizedException("UNKNOWN PROPERTY.");
-		}
+		if(name == null)throw new NullPointerException();
+		throw new SAXNotRecognizedException("UNKNOWN PROPERTY.");
 	}
 	
 	public void setFeature(String name, boolean value)  throws SAXNotRecognizedException{	
 		if (name == null) {
             throw new NullPointerException();
         }
-		if(name.equals("useReservationStartDummyElementTask")){
-			useReservationStartDummyElementTask = value;
-		}else if(name.equals("useReservationEndDummyElementTask")){
-			useReservationEndDummyElementTask = value;
-		}else{
-			throw new SAXNotRecognizedException("UNKNOWN PROPERTY.");
-		}
+		throw new SAXNotRecognizedException("UNKNOWN FEATURE.");
 	}
 	
 	public boolean getFeature(String name) throws SAXNotRecognizedException{
 		if (name == null) {
             throw new NullPointerException();
         }
-		if(name.equals("useReservationStartDummyElementTask")){
-			return useReservationStartDummyElementTask;
-		}else if(name.equals("useReservationEndDummyElementTask")){
-			return useReservationEndDummyElementTask;
-		}else{
-			throw new SAXNotRecognizedException("UNKNOWN PROPERTY.");
-		}
+		throw new SAXNotRecognizedException("UNKNOWN FEATURE.");
 	}
 		
 	public int newRecord(){
 		// System.out.println(hashCode()+" RECORD ");
 		// System.out.println("size "+size);
 		// System.out.println("currentIndex "+currentIndex);
+		// System.out.println("correspStartIndex "+correspStartIndex.length);
+		 
 		if(++currentIndex == size)increaseSize();
 		correspStartIndex[currentIndex] = -1;
 		if(prefixMapping != null){
@@ -293,7 +280,7 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		// System.out.println("index after "+currentIndex);
 	}
 	public void closeReservation( int reservedStartEntry, Queue other){
-		// System.out.println(hashCode()+" CLOSE RESERVATION "+other.hashCode());
+		//System.out.println(hashCode()+" CLOSE RESERVATION "+other.hashCode());
 		int reservationRegistrationIndex = -1;		 
 		for(int i = 0; i < reservationOffset.length; i++){
 			if(reservationOffset[i] == reservedStartEntry) {
@@ -305,7 +292,7 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 		if(reservationRegistrationIndex == -1)throw new IllegalArgumentException();
 		if(reservationUsed[reservationRegistrationIndex]) throw new IllegalStateException();
 		int reservationCount = reservationEntriesCount[reservationRegistrationIndex]; 
-		if(reservationCount != other.getSize()) throw new IllegalArgumentException();
+		if(reservationCount != other.getSize()) throw new IllegalArgumentException("Reservation count is "+reservationCount+"; size of other queue "+other.getSize()+".");
 	
 		
 		String[] otherL = other.getAllLocations();
@@ -358,7 +345,7 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 	}
 	
 	public void closeReservation(int reservedStartEntry){
-		// System.out.println(hashCode()+" CLOSE RESERVATION ");
+		//System.out.println(hashCode()+" CLOSE RESERVATION ");
 		int reservationRegistrationIndex = -1;		 
 		for(int i = 0; i < reservationOffset.length; i++){
 			if(reservationOffset[i] == reservedStartEntry) {
@@ -369,15 +356,6 @@ public class Queue implements ElementTaskContext, AttributeTaskContext, Reusable
 				
 		if(reservationRegistrationIndex == -1)throw new IllegalArgumentException();
 		if(reservationUsed[reservationRegistrationIndex]) throw new IllegalStateException();
-		int reservationCount = reservationEntriesCount[reservationRegistrationIndex];		
-		int offset = reservationOffset[reservationRegistrationIndex];
-		
-		if(useReservationStartDummyElementTask){
-			elementTask[offset] = reservationStartDummyElementTask;
-		}	
-		if(useReservationEndDummyElementTask){
-			elementTask[offset+reservationCount-1] = reservationEndDummyElementTask;
-		}
 				
 		reservationUsed[reservationRegistrationIndex] = true;	
 	}

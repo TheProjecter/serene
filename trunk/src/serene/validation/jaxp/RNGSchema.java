@@ -41,9 +41,10 @@ public class RNGSchema extends BaseSchema{
                     boolean level1AttributeIdType,
                     boolean level2AttributeIdType,
                     boolean restrictToFileName,
+                    boolean optimizedForResourceSharing,
                     SchemaModel schemaModel,
                     MessageWriter debugWriter){
-		super(secureProcessing, schemaModel, debugWriter);
+		super(secureProcessing, optimizedForResourceSharing, schemaModel, debugWriter);
         this.namespacePrefixes = namespacePrefixes;
         this.level1AttributeDefaultValue = level1AttributeDefaultValue;
         this.level2AttributeDefaultValue = level2AttributeDefaultValue;
@@ -73,6 +74,7 @@ public class RNGSchema extends BaseSchema{
                                         level1AttributeIdType,
                                         level2AttributeIdType,
                                         restrictToFileName,
+                                        optimizedForResourceSharing,
                                         contentHandlerPool.getValidatorEventHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										schemaModel,

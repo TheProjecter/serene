@@ -22,7 +22,7 @@ import java.util.BitSet;
 
 import serene.bind.Queue;
 import serene.bind.AttributeBinder;
-
+import serene.bind.BindingModel;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.util.PathHandler;
@@ -138,7 +138,7 @@ public class ContextStackHandler  implements  StackHandler{
 	public void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 	    throw new IllegalStateException();
 	}
-	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
+	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
 		throw new IllegalStateException();
 	}
 	
@@ -146,7 +146,7 @@ public class ContextStackHandler  implements  StackHandler{
 		throw new IllegalStateException();
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
+	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
 		throw new IllegalStateException();
 	}
 	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders){

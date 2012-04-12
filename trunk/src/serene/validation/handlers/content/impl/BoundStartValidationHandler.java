@@ -22,7 +22,15 @@ import java.util.List;
 
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+
 import sereneWrite.MessageWriter;
+
+import serene.validation.schema.active.components.AElement;
+
+import serene.bind.DocumentBinder;
+import serene.bind.Queue;
+import serene.bind.BindingModel;
+import serene.bind.ValidatorQueuePool;
 
 import serene.validation.schema.active.components.AElement;
 
@@ -44,7 +52,37 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 		element.releaseDefinition();
 		pool.recycle(this);
 	}
+	
+	void init(AElement element, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){
+		super.init(element, parent, bindingModel, queue, queuePool);
+		// TODO
+		// here should bind attributes, but there are none
+	}
+	public void qNameBinding(){
+		int definitionIndex = element.getDefinitionIndex();
+		DocumentBinder binder = bindingModel.getDocumentBinder();
+		if(binder != null)binder.bindName(queue, queueStartEntry, inputStackDescriptor.getNamespaceURI(), inputStackDescriptor.getLocalName(),inputStackDescriptor.getItemDescription());
+	}
+	
+	public void startLocationBinding(){
+		int definitionIndex = element.getDefinitionIndex();
+		DocumentBinder binder = bindingModel.getDocumentBinder();
+		if(binder != null)binder.bindLocation(queue, queueStartEntry, inputStackDescriptor.getSystemId()+":"+inputStackDescriptor.getLineNumber()+":"+inputStackDescriptor.getColumnNumber());
+	}
     
+	public void characterContentBinding(char[] chars){
+		throw new IllegalStateException();		
+	}
+	
+	public void elementTasksBinding(){
+		int queueEndEntry = queue.newRecord();
+		queue.addIndexCorrespondence(queueEndEntry, queueStartEntry);
+		
+		int definitionIndex = element.getDefinitionIndex();
+		DocumentBinder binder = bindingModel.getDocumentBinder();
+		if(binder != null)binder.bindElementTasks(queue, queueEndEntry);
+	}
+	
     protected void setContextErrorHandler(){
 		if(contextErrorHandlerIndex == NONE){
 			contextErrorHandler = null;		
@@ -93,6 +131,7 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{		
 		validateContext();
 		reportContextErrors(restrictToFileName, locator);
+		elementTasksBinding();
 	}
 
     void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{

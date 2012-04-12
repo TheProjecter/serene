@@ -97,6 +97,29 @@ public class ValidatorEventHandlerPool implements Reusable{
     int elementDefaultHMinFree;	
 	ElementDefaultHandler[] elementDefaultH;
 	
+	
+	int boundUnexpectedElementHMaxSize;
+	int boundUnexpectedElementHFree;
+    int boundUnexpectedElementHMinFree;	
+	BoundUnexpectedElementHandler[] boundUnexpectedElementH;
+	
+	int boundUnexpectedAmbiguousEHMaxSize;
+	int boundUnexpectedAmbiguousEHFree;
+	int boundUnexpectedAmbiguousEHMinFree;
+	BoundUnexpectedAmbiguousElementHandler[] boundUnexpectedAmbiguousEH;
+	
+	int boundUnknownElementHMaxSize;
+	int boundUnknownElementHFree;
+    int boundUnknownElementHMinFree;	
+	BoundUnknownElementHandler[] boundUnknownElementH;
+	
+	int boundElementDefaultHMaxSize;
+	int boundElementDefaultHFree;
+    int boundElementDefaultHMinFree;	
+	BoundElementDefaultHandler[] boundElementDefaultH;
+	
+	
+	
 	int elementConcurrentHMaxSize;
 	int elementConcurrentHFree;
 	int elementConcurrentHMinFree;
@@ -239,6 +262,10 @@ public class ValidatorEventHandlerPool implements Reusable{
         unexpectedAmbiguousEHMaxSize = 20;
         unknownElementHMaxSize = 20;
         elementDefaultHMaxSize = 20;
+        boundUnexpectedElementHMaxSize = 20;
+        boundUnexpectedAmbiguousEHMaxSize = 20;
+        boundUnknownElementHMaxSize = 20;
+        boundElementDefaultHMaxSize = 20;
         elementConcurrentHMaxSize = 20;
         elementParallelHMaxSize = 20;
         elementCommonHMaxSize = 20;
@@ -287,13 +314,18 @@ public class ValidatorEventHandlerPool implements Reusable{
 	}
 	
 	public void fill(){	
-		contentHandlerPool.fill(this,
+		if(contentHandlerPool != null){
+		    contentHandlerPool.fill(this,
 						elementVH,
 						startVH,
 						unexpectedElementH,
 						unexpectedAmbiguousEH,
 						unknownElementH,
 						elementDefaultH,
+						boundUnexpectedElementH,
+						boundUnexpectedAmbiguousEH,
+						boundUnknownElementH,
+						boundElementDefaultH,
 						elementConcurrentH,
 						elementParallelH,
 						elementCommonH,
@@ -319,6 +351,57 @@ public class ValidatorEventHandlerPool implements Reusable{
 						boundCandidateAttributeVH,
 						boundAttributeConcurrentH,
                         boundAttributeParallelH);
+        }else{
+            elementVH = new ElementValidationHandler[10];
+            startVH = new StartValidationHandler[10];
+            
+    
+            unexpectedElementH = new UnexpectedElementHandler[10];
+            unexpectedAmbiguousEH = new UnexpectedAmbiguousElementHandler[10];
+            unknownElementH = new UnknownElementHandler[10];
+            elementDefaultH = new ElementDefaultHandler[10];
+            
+            
+            boundUnexpectedElementH = new BoundUnexpectedElementHandler[10];
+            boundUnexpectedAmbiguousEH = new BoundUnexpectedAmbiguousElementHandler[10];
+            boundUnknownElementH = new BoundUnknownElementHandler[10];
+            boundElementDefaultH = new BoundElementDefaultHandler[10];
+            
+            
+            elementConcurrentH = new ElementConcurrentHandler[10];
+            elementParallelH = new ElementParallelHandler[10];
+            elementCommonH = new ElementCommonHandler[10];		
+        
+    
+            unexpectedAttributeH = new UnexpectedAttributeHandler[10];
+            unexpectedAmbiguousAH = new UnexpectedAmbiguousAttributeHandler[10];
+            unknownAttributeH = new UnknownAttributeHandler[10];
+            attributeVH = new AttributeValidationHandler[10];
+            candidateAttributeVH = new CandidateAttributeValidationHandler[10];
+            attributeConcurrentH = new AttributeConcurrentHandler[10];
+            attributeParallelH = new AttributeParallelHandler[10];
+            attributeDefaultH = new AttributeDefaultHandler[10];
+            
+            
+            charactersValidationH = new CharactersValidationHandler[10];
+            structuredDataValidationH = new StructuredDataValidationHandler[10];
+            dataValidationH = new DataValidationHandler[10];
+            
+            
+            defaultVAttributeH = new DefaultValueAttributeValidationHandler[10];
+            listPatternVH = new ListPatternValidationHandler[10];
+            exceptPatternVH = new ExceptPatternValidationHandler[10];
+            
+            
+            boundElementVH = new BoundElementValidationHandler[10];
+            boundStartVH = new BoundStartValidationHandler[10];
+            boundElementConcurrentH = new BoundElementConcurrentHandler[10];
+            boundElementParallelH = new BoundElementParallelHandler[10];
+            boundAttributeVH = new BoundAttributeValidationHandler[10];
+            boundCandidateAttributeVH = new BoundCandidateAttributeValidationHandler[10];
+            boundAttributeConcurrentH = new BoundAttributeConcurrentHandler[10];
+            boundAttributeParallelH = new BoundAttributeParallelHandler[10];
+        }
         
         full = true;
 	}	
@@ -328,7 +411,11 @@ public class ValidatorEventHandlerPool implements Reusable{
 					int unexpectedElementHFillCount,
 					int unexpectedAmbiguousEHFillCount,
 					int unknownElementHFillCount,	
-					int elementDefaultHFillCount,	
+					int elementDefaultHFillCount,
+					int boundUnexpectedElementHFillCount,
+					int boundUnexpectedAmbiguousEHFillCount,
+					int boundUnknownElementHFillCount,	
+					int boundElementDefaultHFillCount,
 					int elementConcurrentHFillCount,
 					int elementParallelHFillCount,
 					int elementCommonHFillCount,
@@ -394,6 +481,38 @@ public class ValidatorEventHandlerPool implements Reusable{
 		for(int i = 0; i < elementDefaultHFree; i++){	
 			elementDefaultH[i].init(this, activeInputDescriptor, inputStackDescriptor);
 		}
+		
+		
+		
+		
+		boundUnexpectedElementHFree = boundUnexpectedElementHFillCount;
+		boundUnexpectedElementHMinFree = boundUnexpectedElementHFree;
+		for(int i = 0; i < boundUnexpectedElementHFree; i++){	
+			boundUnexpectedElementH[i].init(this, activeInputDescriptor, inputStackDescriptor);
+		}
+		
+		
+		boundUnexpectedAmbiguousEHFree = boundUnexpectedAmbiguousEHFillCount;
+		boundUnexpectedAmbiguousEHMinFree = boundUnexpectedAmbiguousEHFree;
+		for(int i = 0; i < boundUnexpectedAmbiguousEHFree; i++){	
+			boundUnexpectedAmbiguousEH[i].init(this, activeInputDescriptor, inputStackDescriptor);
+		}
+		
+		
+		boundUnknownElementHFree = boundUnknownElementHFillCount;
+		boundUnknownElementHMinFree = boundUnknownElementHFree;
+		for(int i = 0; i < boundUnknownElementHFree; i++){	
+			boundUnknownElementH[i].init(this, activeInputDescriptor, inputStackDescriptor);
+		}
+				
+		
+		boundElementDefaultHFree = boundElementDefaultHFillCount;
+		boundElementDefaultHMinFree = boundElementDefaultHFree;
+		for(int i = 0; i < boundElementDefaultHFree; i++){	
+			boundElementDefaultH[i].init(this, activeInputDescriptor, inputStackDescriptor);
+		}
+		
+		
 				
 		
 		elementConcurrentHFree = elementConcurrentHFillCount;
@@ -594,6 +713,18 @@ public class ValidatorEventHandlerPool implements Reusable{
 									elementDefaultHFree,	
 									elementDefaultHFree - elementDefaultHMinFree,
 									elementDefaultH,
+									boundUnexpectedElementHFree,
+									boundUnexpectedElementHFree - boundUnexpectedElementHMinFree,
+									boundUnexpectedElementH,
+									boundUnexpectedAmbiguousEHFree,
+									boundUnexpectedAmbiguousEHFree - boundUnexpectedAmbiguousEHMinFree,
+									boundUnexpectedAmbiguousEH,
+									boundUnknownElementHFree,
+									boundUnknownElementHFree - boundUnknownElementHMinFree,
+									boundUnknownElementH,
+									boundElementDefaultHFree,	
+									boundElementDefaultHFree - boundElementDefaultHMinFree,
+									boundElementDefaultH,
 									elementConcurrentHFree,
 									elementConcurrentHFree - elementConcurrentHMinFree,
 									elementConcurrentH,									
@@ -670,6 +801,42 @@ public class ValidatorEventHandlerPool implements Reusable{
                                     boundAttributeParallelHFree - boundAttributeParallelHMinFree,
 									boundAttributeParallelH);			
 		
+		elementVHFree = 0;
+        startVHFree = 0;
+        unexpectedElementHFree = 0;
+        unexpectedAmbiguousEHFree = 0;
+        unknownElementHFree = 0;
+        elementDefaultHFree = 0;
+        boundUnexpectedElementHFree = 0;
+        boundUnexpectedAmbiguousEHFree = 0;
+        boundUnknownElementHFree = 0;
+        boundElementDefaultHFree = 0;
+        elementConcurrentHFree = 0;							
+        elementParallelHFree = 0;
+        elementCommonHFree = 0;
+        unexpectedAttributeHFree = 0;
+        unexpectedAmbiguousAHFree = 0;
+        unknownAttributeHFree = 0;	
+        attributeVHFree = 0;
+        candidateAttributeVHFree = 0;
+        attributeConcurrentHFree = 0;
+        attributeParallelHFree = 0;
+        attributeDefaultHFree = 0;                               
+        charactersValidationHFree = 0;
+        structuredDataValidationHFree = 0;
+        dataValidationHFree = 0;
+        defaultVAttributeHFree = 0;
+        listPatternVHFree = 0;
+        exceptPatternVHFree = 0;
+        boundElementVHFree = 0;
+        boundStartVHFree = 0;
+        boundElementConcurrentHFree = 0;
+        boundElementParallelHFree = 0;
+        boundAttributeVHFree = 0;
+        boundCandidateAttributeVHFree = 0;
+        boundAttributeConcurrentHFree = 0;
+        boundAttributeParallelHFree = 0;
+        
 		full = false;
 	}
 	
@@ -824,6 +991,113 @@ public class ValidatorEventHandlerPool implements Reusable{
 		}
 		elementDefaultH[elementDefaultHFree++] = deh; 
 	}
+	
+	
+	
+	
+	
+	BoundUnexpectedElementHandler getBoundUnexpectedElementHandler(SimplifiedComponent e, ElementValidationHandler parent, Queue queue){				
+		if(boundUnexpectedElementHFree == 0){
+			BoundUnexpectedElementHandler ueh = new BoundUnexpectedElementHandler(debugWriter);
+			ueh.init(this, activeInputDescriptor, inputStackDescriptor);
+			ueh.init(e, parent, queue);			
+			return ueh;			
+		}
+		else{						
+			BoundUnexpectedElementHandler ueh = boundUnexpectedElementH[--boundUnexpectedElementHFree];
+			ueh.init(e, parent, queue);
+			if(boundUnexpectedElementHFree < boundUnexpectedElementHMinFree) boundUnexpectedElementHMinFree = boundUnexpectedElementHFree;
+			return ueh;
+		}		
+	}
+	
+	void recycle(BoundUnexpectedElementHandler ueh){		
+		if(boundUnexpectedElementHFree == boundUnexpectedElementH.length){
+		    if(boundUnexpectedElementHFree == boundUnexpectedElementHMaxSize) return;
+			BoundUnexpectedElementHandler[] increased = new BoundUnexpectedElementHandler[10+boundUnexpectedElementH.length];
+			System.arraycopy(boundUnexpectedElementH, 0, increased, 0, boundUnexpectedElementHFree);
+			boundUnexpectedElementH = increased;
+		}
+		boundUnexpectedElementH[boundUnexpectedElementHFree++] = ueh; 
+	}
+	
+	BoundUnexpectedAmbiguousElementHandler getBoundUnexpectedAmbiguousElementHandler(List<SimplifiedComponent> boundElements, ElementValidationHandler parent, Queue queue){		
+		if(boundUnexpectedAmbiguousEHFree == 0){
+			BoundUnexpectedAmbiguousElementHandler uach = new BoundUnexpectedAmbiguousElementHandler(debugWriter);
+			uach.init(this, activeInputDescriptor, inputStackDescriptor);
+			uach.init(boundElements, parent, queue);
+			return uach;
+		}
+		else{
+			BoundUnexpectedAmbiguousElementHandler uach =  boundUnexpectedAmbiguousEH[--boundUnexpectedAmbiguousEHFree];
+			uach.init(boundElements, parent, queue);
+			if(boundUnexpectedElementHFree < boundUnexpectedElementHMinFree) boundUnexpectedElementHMinFree = boundUnexpectedElementHFree;
+			return uach;
+		}		
+	}
+	
+	void recycle(BoundUnexpectedAmbiguousElementHandler ucch){		
+		if(boundUnexpectedAmbiguousEHFree == boundUnexpectedAmbiguousEH.length){			
+		    if(boundUnexpectedAmbiguousEHFree == boundUnexpectedAmbiguousEHMaxSize) return;
+			BoundUnexpectedAmbiguousElementHandler[] increased = new BoundUnexpectedAmbiguousElementHandler[10+boundUnexpectedAmbiguousEH.length];
+			System.arraycopy(boundUnexpectedAmbiguousEH, 0, increased, 0, boundUnexpectedAmbiguousEHFree);
+			boundUnexpectedAmbiguousEH = increased;
+		}
+		boundUnexpectedAmbiguousEH[boundUnexpectedAmbiguousEHFree++] = ucch;
+	}		
+	
+	BoundUnknownElementHandler getBoundUnknownElementHandler(BoundElementValidationHandler parent, Queue queue){
+		if(boundUnknownElementHFree == 0){
+			BoundUnknownElementHandler ueh = new BoundUnknownElementHandler(debugWriter);
+			ueh.init(this, activeInputDescriptor, inputStackDescriptor);
+			ueh.init(parent, queue);			
+			return ueh;			
+		}
+		else{						
+			BoundUnknownElementHandler ueh = boundUnknownElementH[--boundUnknownElementHFree];
+			ueh.init(parent, queue);
+			if(boundUnknownElementHFree < boundUnknownElementHMinFree) boundUnknownElementHMinFree = boundUnknownElementHFree;
+			return ueh;
+		}		
+	}
+	
+	void recycle(BoundUnknownElementHandler ueh){		
+		if(boundUnknownElementHFree == boundUnknownElementH.length){
+            if(boundUnknownElementHFree == boundUnknownElementHMaxSize) return;			
+			BoundUnknownElementHandler[] increased = new BoundUnknownElementHandler[10+boundUnknownElementH.length];
+			System.arraycopy(boundUnknownElementH, 0, increased, 0, boundUnknownElementHFree);
+			boundUnknownElementH = increased;
+		}
+		boundUnknownElementH[boundUnknownElementHFree++] = ueh; 
+	}
+	
+	BoundElementDefaultHandler getBoundElementDefaultHandler(ElementEventHandler parent, Queue queue){
+		if(boundElementDefaultHFree == 0){
+			BoundElementDefaultHandler deh = new BoundElementDefaultHandler(debugWriter);
+			deh.init(this, activeInputDescriptor, inputStackDescriptor);
+			deh.init(parent, queue);
+			return deh;			
+		}
+		else{						
+			BoundElementDefaultHandler deh = boundElementDefaultH[--boundElementDefaultHFree];
+			deh.init(parent, queue);
+			if(boundUnknownElementHFree < boundUnknownElementHMinFree) boundUnknownElementHMinFree = boundUnknownElementHFree;
+			return deh;
+		}		
+	}
+	
+	void recycle(BoundElementDefaultHandler deh){		
+		if(boundElementDefaultHFree == boundElementDefaultH.length){
+		    if(boundElementDefaultHFree == boundElementDefaultHMaxSize) return;			
+			BoundElementDefaultHandler[] increased = new BoundElementDefaultHandler[10+boundElementDefaultH.length];
+			System.arraycopy(boundElementDefaultH, 0, increased, 0, boundElementDefaultHFree);
+			boundElementDefaultH = increased;
+		}
+		boundElementDefaultH[boundElementDefaultHFree++] = deh; 
+	}
+	
+	
+	
 	
 	ElementConcurrentHandler getElementConcurrentHandler(List<AElement> candidateDefinitions, ElementValidationHandler parent){		
 		if(elementConcurrentHFree == 0){

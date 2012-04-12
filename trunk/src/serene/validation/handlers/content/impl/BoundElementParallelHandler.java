@@ -100,8 +100,6 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 	}
 	public void elementTasksBinding(){
 		int individualHandlersCount = individualHandlers.size();
-		int qualified = individualHandlersCount-candidatesConflictHandler.getDisqualifiedCount();
-		if(qualified == 0)return;		
 		for(int i = 0; i < individualHandlersCount; i++){
 			ComparableEEH ih = individualHandlers.get(i);
 			if(//!candidatesConflictHandler.isDisqualified(i) &&

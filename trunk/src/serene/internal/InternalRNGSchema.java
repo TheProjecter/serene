@@ -22,9 +22,7 @@ import javax.xml.validation.ValidatorHandler;
 import serene.BaseSchema;
 import serene.SchemaModel;
 
-import serene.bind.BindingModel;
-import serene.bind.Queue;
-import serene.bind.ValidatorQueuePool;
+import serene.parser.RNGParseBindingPool;
 
 import sereneWrite.MessageWriter;
 
@@ -41,33 +39,33 @@ import sereneWrite.MessageWriter;
 public class InternalRNGSchema extends BaseSchema{		
     boolean level1DocumentationElement;	
     boolean restrictToFileName;
+    RNGParseBindingPool bindingPool;
 	public InternalRNGSchema(boolean secureProcessing,
                     boolean level1DocumentationElement,
                     boolean restrictToFileName,
+                    boolean optimizedForResourceSharing,
                     SchemaModel schemaModel,
+                    RNGParseBindingPool bindingPool,
                     MessageWriter debugWriter){
-		super(secureProcessing, schemaModel, debugWriter);
+		super(secureProcessing, optimizedForResourceSharing, schemaModel, debugWriter);
         this.level1DocumentationElement = level1DocumentationElement;
         this.restrictToFileName = restrictToFileName;
+        this.bindingPool = bindingPool;
 	}
     
     public Validator newValidator(){
 		throw new UnsupportedOperationException();
 	}
     
-	public ValidatorHandler newValidatorHandler(){	
-		throw new UnsupportedOperationException();
-	}	
 	
-	public ValidatorHandler newValidatorHandler(BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){
+	public ValidatorHandler newValidatorHandler(){
 		return new BoundValidatorHandlerImpl(contentHandlerPool.getValidatorEventHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										schemaModel,
-										bindingModel,
-										queue,
-										queuePool,
+										bindingPool,
                                         level1DocumentationElement,
                                         restrictToFileName,
+                                        optimizedForResourceSharing,
 										debugWriter);
 	}    
 }

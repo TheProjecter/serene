@@ -53,53 +53,21 @@ import sereneWrite.MessageWriter;
 class IncludeParser{
 	XMLReader xmlReader;		
 	
-	ValidatorHandler validatorHandler;		
-	Queue queue;
-	ParsedComponentBuilder parsedComponentBuilder;
-	
-	ErrorDispatcher errorDispatcher;
-	
+	ValidatorHandler validatorHandler;
 	MessageWriter debugWriter;
-	
+		
 	IncludeParser(XMLReader xmlReader, InternalRNGFactory internalRNGFactory, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		this.xmlReader = xmlReader;
-		this.errorDispatcher = errorDispatcher;	
-		
-		parsedComponentBuilder = new ParsedComponentBuilder(debugWriter);
 		
 		InternalRNGSchema schema = internalRNGFactory.getIncludeSchema();
-		
-		ElementTaskPool startDummyPool = internalRNGFactory.getStartDummyPool();
-		ElementTask startDummyTask = startDummyPool.getTask();
-		startDummyTask.setExecutant(parsedComponentBuilder);
-		
-		ElementTaskPool endDummyPool = internalRNGFactory.getEndDummyPool();
-		ElementTask endDummyTask = endDummyPool.getTask();
-		endDummyTask.setExecutant(parsedComponentBuilder);
-		
-		BindingPool bindingPool = internalRNGFactory.getRNGParseBindingPool();
-		ValidatorQueuePool queuePool = bindingPool.getValidatorQueuePool();
-		queue = queuePool.getQueue();
-		try{
-			bindingPool.setProperty("builder", parsedComponentBuilder);
-			queue.setFeature("useReservationStartDummyElementTask", true);
-			queue.setProperty("reservationStartDummyElementTask", startDummyTask);
-			queue.setFeature("useReservationEndDummyElementTask", true);
-			queue.setProperty("reservationEndDummyElementTask", endDummyTask);
-		}catch(SAXNotRecognizedException snre){
-			snre.printStackTrace();
-		}
-				
-		BindingModel model = bindingPool.getBindingModel();
-		
-		validatorHandler = schema.newValidatorHandler(model, queue, queuePool);
+		validatorHandler = schema.newValidatorHandler();// the parsedComponentBuilder has already been set to the bindingPool		
 		validatorHandler.setErrorHandler(errorDispatcher);
 	}
 	
-	IncludedParsedModel parse(URI uri){		
+	IncludedParsedModel parse(URI uri){
 		xmlReader.setContentHandler(validatorHandler);
-        try{
+		try{
             DTDHandler dtdHandler = (DTDHandler)validatorHandler.getProperty(Constants.DTD_HANDLER_PROPERTY);
             xmlReader.setDTDHandler(dtdHandler);
         }catch(SAXNotRecognizedException e){
@@ -107,6 +75,7 @@ class IncludeParser{
         }catch(SAXNotSupportedException e){
             e.printStackTrace();
         }
+        
         
 		try{					
 			xmlReader.parse(uri.toString());			
@@ -116,31 +85,19 @@ class IncludeParser{
 			e.printStackTrace();
 		}catch(SAXException e){
 			e.printStackTrace();
-		}		
-		parsedComponentBuilder.startBuild();
-		queue.executeAll();
-		Grammar g = null;
+		}	
+		
+		IncludedParsedModel p = null;		
 		try{
-            g = (Grammar)parsedComponentBuilder.getCurrentParsedComponent();
-		}catch(ClassCastException cce){
-			// TODO
-			// the included document was not valid, 
-			// you should have aborted earlier
-			// see about that
-            // SEEN , but needs review
-            return null;
-		}
-        
-        DTDMapping dtdMapping = null;
-        
-        try{
-            dtdMapping = (DTDMapping)validatorHandler.getProperty(Constants.DTD_MAPPING_PROPERTY);
+            p = (IncludedParsedModel)validatorHandler.getProperty(Constants.INCLUDED_PARSED_MODEL_PROPERTY);
+        }catch(ClassCastException c){
+            // syntax error, already handled
         }catch(SAXNotRecognizedException e){
             e.printStackTrace();
         }catch(SAXNotSupportedException e){
             e.printStackTrace();
         }
         
-		return new IncludedParsedModel(dtdMapping, g, debugWriter); 
+        return p;
 	}	
 }

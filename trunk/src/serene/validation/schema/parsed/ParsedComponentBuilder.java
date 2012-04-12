@@ -290,7 +290,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		writeLevels();
 	}
 	public void buildStart(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String combine, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
+		writeLevels();	
 		Start s = new Start(prefixMapping, xmlBase, ns, datatypeLibrary, combine, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
 		clearContent();
 		addToCurrentLevel(s);

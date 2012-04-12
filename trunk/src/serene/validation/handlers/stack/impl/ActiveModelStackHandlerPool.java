@@ -118,12 +118,21 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		this.inputStackDescriptor = inputStackDescriptor;
 		this.conflictHandlerPool = conflictHandlerPool;
 		
-		pool.fill(this,
+		if(pool != null){
+		    pool.fill(this,
 				contextStackH,
 				minimalReduceStackH,
 				maximalReduceStackH,
 				candidateStackH,
 				concurrentStackH);
+		}else{
+		    contextStackH = new ContextStackHandler[10];
+            minimalReduceStackH = new MinimalReduceStackHandler[10];
+            maximalReduceStackH = new MaximalReduceStackHandler[10];
+                
+            candidateStackH = new CandidateStackHandlerImpl[10];
+            concurrentStackH = new ConcurrentStackHandlerImpl[10];
+		}
 		full = true;
 	}	
 	
@@ -179,6 +188,13 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 					concurrentStackHFree,
 					concurrentStackHFree - concurrentStackHMinFree,
 					concurrentStackH);
+		
+		contextStackHFree = 0;
+        minimalReduceStackHFree = 0;
+        maximalReduceStackHFree = 0;
+        candidateStackHFree = 0;			
+        concurrentStackHFree = 0;
+        
 		full = false;
 	}
 	

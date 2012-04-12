@@ -41,8 +41,7 @@ public class DocumentContext implements  ValidationContext, InfosetModificationC
 		this.debugWriter = debugWriter;
 		isBaseURISet = false;
         
-        prefixMapping = new PrefixMapping(debugWriter);
-        dtdMapping = new DTDMapping(debugWriter);		
+        prefixMapping = new PrefixMapping(debugWriter);        
 	}
     	
     public void reset(){
@@ -50,29 +49,31 @@ public class DocumentContext implements  ValidationContext, InfosetModificationC
         baseURI = null;
               
         prefixMapping = prefixMapping.reset();
-        dtdMapping.reset();
+        dtdMapping = null;
     }
         
     // start DTDHandler
     public void unparsedEntityDecl(String entityName, String publicId, String systemId, String notationName){
+        if(dtdMapping == null) dtdMapping = new DTDMapping(debugWriter);		
 		dtdMapping.unparsedEntityDecl(entityName, publicId, systemId, notationName);
 	}
 	
     public void notationDecl(String notationName, String publicId, String systemId){
+        if(dtdMapping == null) dtdMapping = new DTDMapping(debugWriter);		
 		dtdMapping.notationDecl(notationName, publicId, systemId);
 	} 
     // end DTDHandler
     
-	public PrefixMapping getPrefixMapping(){
+	/*public PrefixMapping getPrefixMapping(){
 		return prefixMapping;
-	}
+	}*/
 	
 	public DTDMapping getDTDMapping(){
 		return dtdMapping;
 	}
     
 	public void startPrefixMapping(String prefix, String uri){
-		prefixMapping = prefixMapping.startMapping(prefix, uri);	
+		prefixMapping = prefixMapping.startMapping(prefix, uri);		
 	}
 	
 	public void endPrefixMapping(String prefix){
@@ -94,10 +95,12 @@ public class DocumentContext implements  ValidationContext, InfosetModificationC
 	}
 	
 	public boolean isNotation(String notationName){
+	    if(dtdMapping == null) return false;		
 		return dtdMapping.isNotation(notationName);
 	}
 	    
 	public boolean isUnparsedEntity(String entityName){
+	    if(dtdMapping == null) return false;
 		return dtdMapping.isUnparsedEntity(entityName);
 	} 
 	

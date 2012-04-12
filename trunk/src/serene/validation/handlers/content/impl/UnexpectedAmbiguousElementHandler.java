@@ -41,6 +41,8 @@ class UnexpectedAmbiguousElementHandler extends ErrorEEH{
 	}
 	
 	public void recycle(){
+	    elements = null;
+	    
 		pool.recycle(this);
 	}
 	

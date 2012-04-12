@@ -417,7 +417,8 @@ abstract class Simplifier implements SimplifyingVisitor{
         patternChild = false;
 	}	
 	
-	public void visit(Define define) throws SAXException{		
+	public void visit(Define define) throws SAXException{	
+	    //System.out.println("SIMPLIFIER VISIT Element <"+define.getQName()+"> at "+define.getLocation(restrictToFileName));
 		ParsedComponent[] children = define.getChildren();
 			
 		if(children == null) {
@@ -1485,7 +1486,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         patternChild = true;
 	}
 	public void visit(ExternalRef externalRef)  throws SAXException{
-		Pattern docTopPattern = getReferencedPattern(externalRef);		
+		Pattern docTopPattern = getReferencedPattern(externalRef);
 		if(docTopPattern == null){
 			// ? error ?
 			// or was that reported already
@@ -2235,7 +2236,10 @@ abstract class Simplifier implements SimplifyingVisitor{
 	Pattern getReferencedPattern(ExternalRef ref){
 		URI uri = externalRefs.get(ref);
 		if(uri == null)return null;
-		return docParsedModels.get(uri).getTopPattern();
+		//docParsedModels.get(uri).write();
+		ParsedModel pm = docParsedModels.get(uri);
+		if(pm == null) return null;
+		return pm.getTopPattern();
 	}
 
     void startXmlnsContext(Map<String, String> prefixMapping){

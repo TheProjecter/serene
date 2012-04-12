@@ -31,12 +31,15 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.bind.Queue;
-import serene.bind.AttributeBinder;
+import serene.bind.BindingModel;
+import serene.bind.ElementBinder;
 
 import sereneWrite.MessageWriter;
 
 
 public abstract class BoundElementConflictResolver extends ElementConflictResolver{
+    BindingModel bindingModel;
+    
 	Queue targetQueue;
 	int targetEntry;	
 	
@@ -47,10 +50,12 @@ public abstract class BoundElementConflictResolver extends ElementConflictResolv
 	}
 	
 	void init(ConflictMessageReporter conflictMessageReporter,
+	        BindingModel bindingModel,
 	        Queue targetQueue,
 			int targetEntry,
 			Map<AElement, Queue> candidateQueues){    
 		super.init(conflictMessageReporter);
+		this.bindingModel = bindingModel;
 		this.targetQueue = targetQueue;
 		this.targetEntry = targetEntry;
 		this.candidateQueues = candidateQueues;
@@ -64,6 +69,27 @@ public abstract class BoundElementConflictResolver extends ElementConflictResolv
 		candidateDefinitions.clear();
 		candidateQueues = null;
 	}
+    
+	
+	void closeReservation(int qual){        				
+        Queue qq = candidateQueues.get(candidateDefinitions.get(qual));
+        targetQueue.closeReservation(targetEntry, qq);        
+    }
+    
+    void closeReservation(){ 
+        for(Queue qq : candidateQueues.values()){
+            if(qq != null){
+                int size = qq.getSize();
+                qq.clearContent();
+                qq.addIndexCorrespondence(size-1, 0);
+                ElementBinder fallbackBinder = bindingModel.getElementBinder();
+                fallbackBinder.bindTasks(qq, size-1);
+                targetQueue.closeReservation(targetEntry, qq);
+                return;
+            }            
+        }   
+        
+    }
     
 	public String toString(){
 		return "BoundElementConflictResolver ";

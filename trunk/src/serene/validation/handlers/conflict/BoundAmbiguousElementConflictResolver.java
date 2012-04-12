@@ -32,7 +32,6 @@ import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.MessageReporter;
 
 import serene.bind.Queue;
-import serene.bind.AttributeBinder;
 
 import sereneWrite.MessageWriter;
 
@@ -60,13 +59,11 @@ public class BoundAmbiguousElementConflictResolver extends BoundElementConflictR
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
             errorCatcher.unresolvedAmbiguousElementContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             
-            targetQueue.closeReservation(targetEntry);				
+            closeReservation();			
         }else if(qualified.cardinality() == 1){
             // simple error reporting if external conflict detected any common or subtree errors
-            int qual = qualified.nextSetBit(0);				
-            Queue qq = candidateQueues.get(candidateDefinitions.get(qual));
-            targetQueue.closeReservation(targetEntry, qq);	
-            
+            int qual = qualified.nextSetBit(0);
+            closeReservation(qual);
             if(conflictMessageReporter != null){
                 conflictMessageReporter.setConflictInternalResolution(MessageReporter.RESOLVED, qual, candidateDefinitions.get(qual));
                 errorCatcher.internalConflict(conflictMessageReporter);
@@ -87,9 +84,12 @@ public class BoundAmbiguousElementConflictResolver extends BoundElementConflictR
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
             errorCatcher.ambiguousAmbiguousElementContentWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             
-            targetQueue.closeReservation(targetEntry);
+            closeReservation();
         }			
     }
+    
+    
+    
 	public String toString(){
 		return "BounAmbiguousElementConflictResolver ";
 	}

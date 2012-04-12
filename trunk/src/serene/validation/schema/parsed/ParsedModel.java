@@ -20,6 +20,7 @@ package serene.validation.schema.parsed;
 import serene.DTDMapping;
 
 import sereneWrite.MessageWriter;
+import sereneWrite.ParsedComponentWriter;
  
 public class ParsedModel{
 	Pattern topPattern;
@@ -31,6 +32,9 @@ public class ParsedModel{
 		this.debugWriter = debugWriter;
         this.dtdMapping = dtdMapping;
         this.topPattern = topPattern;
+        
+        /*ParsedComponentWriter pcw = new ParsedComponentWriter();
+        pcw.write(topPattern);*/
 	}
     
     public Pattern getTopPattern(){
@@ -41,5 +45,8 @@ public class ParsedModel{
         return dtdMapping;
     }
     
-	public void write(){}
+	public void write(){
+	    ParsedComponentWriter pcw = new ParsedComponentWriter();
+        pcw.write(topPattern);
+	}
 }

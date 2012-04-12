@@ -36,6 +36,7 @@ import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.SimplifiedModel;
 
+import serene.parser.DocumentStartPool;
 import serene.parser.AnyNamePool;
 import serene.parser.AttributeWithNameClassPool;
 import serene.parser.AttributeWithNameInstancePool;
@@ -74,12 +75,16 @@ import serene.parser.ZeroOrMorePool;
 import serene.parser.ForeignElementTaskPool;
 
 import serene.parser.StartLevelPool;
+import serene.parser.DummyPool;
 
 import serene.parser.RNGParseElementTaskPool;
 import serene.parser.RNGParseBindingPool;
+import serene.parser.SynchronizedRNGParseBindingPool;
+import serene.parser.UnsynchronizedRNGParseBindingPool;
 
 import serene.bind.AttributeTaskPool;
 import serene.bind.ElementTaskPool;
+
 
 import sereneWrite.MessageWriter;
 
@@ -140,10 +145,13 @@ class RNGDirector{
 	DatatypeLibrary internalLibrary;
     DatatypeLibrary nativeLibrary;
 	
+    boolean needsSynchronizedBindingPool;
+    
 	MessageWriter debugWriter;
 	
-	RNGDirector(MessageWriter debugWriter){
+	RNGDirector(boolean needsSynchronizedBindingPool, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
+		this.needsSynchronizedBindingPool = needsSynchronizedBindingPool;
                 
         SecuritySupport ss = new SecuritySupport();		
 		ClassLoader cl;        
@@ -226,7 +234,13 @@ class RNGDirector{
 	}
 	
 	RNGParseBindingPool getBindingModelPool(){
-		return new RNGParseBindingPool(startElementTaskPool, attributeTaskPool, endElementTaskPool, debugWriter);
+	    DummyPool dummyPool = new DummyPool(debugWriter);
+	    DocumentStartPool documentStartPool = new DocumentStartPool(debugWriter);
+	    	    
+	    if(needsSynchronizedBindingPool){
+	        return new SynchronizedRNGParseBindingPool(documentStartPool, null, null, startElementTaskPool, startLevelPool, attributeTaskPool, null, endElementTaskPool, dummyPool, debugWriter);
+	    }
+	    return new UnsynchronizedRNGParseBindingPool(documentStartPool, null, null, startElementTaskPool, startLevelPool, attributeTaskPool, null, endElementTaskPool, dummyPool, debugWriter);
 	}
 	
 	private void startGrammar(){

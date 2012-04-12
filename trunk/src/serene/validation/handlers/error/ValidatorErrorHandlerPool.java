@@ -90,12 +90,21 @@ public class ValidatorErrorHandlerPool implements Reusable{
 	}
 	
 	public void fill(){		
-		errorHandlerPool.fill(this,
+		if(errorHandlerPool != null){
+		    errorHandlerPool.fill(this,
 							validationErrorH,
 							conflictErrorH,
 							commonErrorH,
 							defaultErrorH,
 							startErrorH);
+		}else{
+		    validationErrorH = new ValidationErrorHandler[10];
+                        
+            conflictErrorH = new ExternalConflictErrorHandler[10];
+            commonErrorH = new CommonErrorHandler[10];
+            defaultErrorH = new DefaultErrorHandler[10];
+            startErrorH = new StartErrorHandler[10];
+		}
 		
 		full = true; 
 	}
@@ -161,6 +170,13 @@ public class ValidatorErrorHandlerPool implements Reusable{
 								startErrorHFree,
 								startErrorHFree - startErrorHMinFree,
 								startErrorH);
+		
+		validationErrorHFree = 0;
+        conflictErrorHFree = 0;
+        commonErrorHFree = 0;
+        defaultErrorHFree = 0;
+        startErrorHFree = 0;
+        
 		full = false;
 	}
 	

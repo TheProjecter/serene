@@ -62,7 +62,7 @@ class ElementDefaultHandler extends ComparableEEH{
     }
     
 	public void handleAttributes(Attributes attributes, Locator locator){}	
-	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{
+	public void handleEndElement(boolean restrictToFileName, Locator locator){
 	}
 	void validateContext(){}
 	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{}

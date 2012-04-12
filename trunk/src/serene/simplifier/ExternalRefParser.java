@@ -57,49 +57,22 @@ import sereneWrite.MessageWriter;
 class ExternalRefParser{    
 	XMLReader xmlReader;
 	
-	ValidatorHandler validatorHandler;		
-	Queue queue;
-	ParsedComponentBuilder parsedComponentBuilder;
+	ValidatorHandler validatorHandler;
 	
 	ErrorDispatcher errorDispatcher;
 	
 	MessageWriter debugWriter;
 	
-	ExternalRefParser(XMLReader xmlReader, InternalRNGFactory internalRNGFactory, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
+	ExternalRefParser(XMLReader xmlReader, 
+	                    InternalRNGFactory internalRNGFactory, 
+	                    ErrorDispatcher errorDispatcher, 
+	                    MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
-		this.xmlReader = xmlReader;
-		this.errorDispatcher = errorDispatcher;	
-				
-		
-		parsedComponentBuilder = new ParsedComponentBuilder(debugWriter);
+		this.xmlReader = xmlReader;	
 		
 		InternalRNGSchema schema = internalRNGFactory.getExternalRefSchema();
-		
-		ElementTaskPool startDummyPool = internalRNGFactory.getStartDummyPool();
-		ElementTask startDummyTask = startDummyPool.getTask();
-		startDummyTask.setExecutant(parsedComponentBuilder);
-		
-		ElementTaskPool endDummyPool = internalRNGFactory.getEndDummyPool();
-		ElementTask endDummyTask = endDummyPool.getTask();
-		endDummyTask.setExecutant(parsedComponentBuilder);
-		
-		BindingPool bindingPool = internalRNGFactory.getRNGParseBindingPool();
-		ValidatorQueuePool queuePool = bindingPool.getValidatorQueuePool();
-		queue = queuePool.getQueue();
-		try{
-			bindingPool.setProperty("builder", parsedComponentBuilder);
-			queue.setFeature("useReservationStartDummyElementTask", true);
-			queue.setProperty("reservationStartDummyElementTask", startDummyTask);
-			queue.setFeature("useReservationEndDummyElementTask", true);
-			queue.setProperty("reservationEndDummyElementTask", endDummyTask);
-		}catch(SAXNotRecognizedException snre){
-			snre.printStackTrace();
-		}
-				
-		BindingModel model = bindingPool.getBindingModel();
-		
-		validatorHandler = schema.newValidatorHandler(model, queue, queuePool);		
-		validatorHandler.setErrorHandler(errorDispatcher);	
+		validatorHandler = schema.newValidatorHandler();// the parsedComponentBuilder has already been set to the bindingPool		
+		validatorHandler.setErrorHandler(errorDispatcher);
 	}
 	
 	ParsedModel parse(URI uri){	
@@ -121,25 +94,20 @@ class ExternalRefParser{
 			e.printStackTrace();
 		}catch(SAXException e){
 			e.printStackTrace();
-		}		
-		parsedComponentBuilder.startBuild();
-		queue.executeAll();
-        Pattern top = null;
+		}
+		
+		
+		ParsedModel p = null;		
 		try{
-            top = (Pattern)parsedComponentBuilder.getCurrentParsedComponent();
+            p = (ParsedModel)validatorHandler.getProperty(Constants.PARSED_MODEL_PROPERTY);
         }catch(ClassCastException c){
-            //syntax error, already handled
-        }
-		DTDMapping dtdMapping = null;
-        
-        try{
-            dtdMapping = (DTDMapping)validatorHandler.getProperty(Constants.DTD_MAPPING_PROPERTY);
+            // syntax error, already handled
         }catch(SAXNotRecognizedException e){
             e.printStackTrace();
         }catch(SAXNotSupportedException e){
             e.printStackTrace();
         }
         
-		return new ParsedModel(dtdMapping, top, debugWriter);
+        return p;
 	}	
 }

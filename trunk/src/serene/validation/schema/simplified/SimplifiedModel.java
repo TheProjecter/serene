@@ -43,6 +43,11 @@ public class SimplifiedModel{
 		this.startTopPattern = startTopPattern;
 		this.refDefinitionTopPattern = refDefinitionTopPattern;
 		this.recursionModel = recursionModel;
+		
+		/*SimplifiedComponentWriter scw = new SimplifiedComponentWriter();
+		for(SPattern stp : startTopPattern){
+		    scw.write(stp);
+		}*/		
 	}
 	
     

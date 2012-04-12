@@ -58,12 +58,11 @@ public class BoundUnresolvedElementConflictResolver extends BoundElementConflict
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
             errorCatcher.unresolvedUnresolvedElementContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             
-            targetQueue.closeReservation(targetEntry);
+            closeReservation();
         }else if(qualified.cardinality() == 1){
             // report the external conflict errors of the winner
-            int qual = qualified.nextSetBit(0);				
-            Queue qq = candidateQueues.get(candidateDefinitions.get(qual));
-            targetQueue.closeReservation(targetEntry, qq);	
+            int qual = qualified.nextSetBit(0);
+            closeReservation(qual);	
             
             conflictMessageReporter.setConflictInternalResolution(MessageReporter.RESOLVED, qual, candidateDefinitions.get(qual));
             errorCatcher.internalConflict(conflictMessageReporter);			
@@ -82,7 +81,7 @@ public class BoundUnresolvedElementConflictResolver extends BoundElementConflict
             AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
             errorCatcher.ambiguousUnresolvedElementContentWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             
-            targetQueue.closeReservation(targetEntry);
+            closeReservation();
         }			
     }
 	public String toString(){

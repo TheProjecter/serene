@@ -34,6 +34,12 @@ import org.w3c.dom.ls.LSResourceResolver;
 import org.relaxng.datatype.ValidationContext;
 
 import serene.SchemaModel;
+
+import serene.validation.schema.parsed.ParsedComponentBuilder;
+import serene.validation.schema.parsed.ParsedModel;
+import serene.validation.schema.parsed.Pattern;
+import serene.validation.schema.parsed.Grammar;
+
 import serene.validation.schema.active.ActiveModel;
 
 import serene.validation.schema.active.components.AElement;
@@ -59,14 +65,19 @@ import sereneWrite.MessageWriter;
 
 
 import serene.bind.BindingModel;
+import serene.bind.BindingPool;
 import serene.bind.ValidatorQueuePool;
 import serene.bind.Queue;
+import serene.bind.ElementTask;
 import serene.bind.XmlBaseBinder;
 import serene.bind.XmlnsBinder;
+
+import serene.simplifier.IncludedParsedModel;
 
 import serene.dtdcompatibility.DocumentationElementHandler;
 
 import serene.Constants;
+import serene.DTDMapping;
 
 class BoundValidatorHandlerImpl extends ValidatorHandler{
 	ContentHandler contentHandler;	
@@ -95,24 +106,31 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	int count = 0;
     
     
+	BindingPool bindingPool;
 	BindingModel bindingModel;	
 	ValidatorQueuePool queuePool;
 	Queue queue;
 	XmlBaseBinder xmlBaseBinder;
 	XmlnsBinder xmlnsBinder;
-
+	ParsedComponentBuilder builder;
+	Pattern topPattern;
+	DTDMapping dtdMapping;
+	
     boolean level1DocumentationElement;
     boolean restrictToFileName;
+    boolean optimizedForResourceSharing;
+    
     DocumentationElementHandler documentationElementHandler;
+    
+    
 	
 	BoundValidatorHandlerImpl(ValidatorEventHandlerPool eventHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
 							SchemaModel schemaModel,
-							BindingModel bindingModel,
-							Queue queue,
-							ValidatorQueuePool queuePool,
+                            BindingPool bindingPool,
                             boolean level1DocumentationElement,
-                            boolean restrictToFileName,                            
+                            boolean restrictToFileName,
+                            boolean optimizedForResourceSharing,                            
 							MessageWriter debugWriter){
 	    this.debugWriter = debugWriter;
 		
@@ -121,6 +139,13 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		
 		this.schemaModel = schemaModel;
 							
+		
+        this.level1DocumentationElement = level1DocumentationElement;
+        this.restrictToFileName = restrictToFileName;
+        this.optimizedForResourceSharing = optimizedForResourceSharing;
+                
+        this.bindingPool = bindingPool;
+        
 		errorDispatcher = new ErrorDispatcher(debugWriter);		
 		activeInputDescriptor = new ActiveInputDescriptor();
 		inputStackDescriptor = new InputStackDescriptor(activeInputDescriptor, debugWriter);
@@ -129,24 +154,54 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		spaceHandler = new SpaceCharsHandler(debugWriter);					
         documentContext = new DocumentContext(debugWriter);
         
-        errorHandlerPool.init(errorDispatcher, activeInputDescriptor);        
-        eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, errorHandlerPool);
-        
-        errorHandlerPool.fill();
-        eventHandlerPool.fill();
-        
-		this.bindingModel = bindingModel;
-		this.queuePool = queuePool;		
-		this.queue = queue;
-		
-		xmlBaseBinder = new XmlBaseBinder(debugWriter);
+        // TODO move
+        xmlBaseBinder = new XmlBaseBinder(debugWriter);
 		xmlnsBinder = new XmlnsBinder(debugWriter);
         
-        this.level1DocumentationElement = level1DocumentationElement;
-        this.restrictToFileName = restrictToFileName;
+        errorHandlerPool.init(errorDispatcher, activeInputDescriptor);        
+        eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, errorHandlerPool);
+        		
+		if(!optimizedForResourceSharing)initResources();
 	}
-    
-	protected void finalize(){			
+	
+	void initResources(){
+	    errorHandlerPool.fill();
+        eventHandlerPool.fill();
+        
+        queuePool = bindingPool.getValidatorQueuePool();	
+        bindingModel = bindingPool.getBindingModel();
+        
+        activeModel = schemaModel.getActiveModel(activeInputDescriptor,
+		                                            inputStackDescriptor, 
+													errorDispatcher);
+		if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
+        matchHandler.setActiveModel(activeModel);
+        
+        bindingModel.index(activeModel.getSElementIndexMap(), activeModel.getSAttributeIndexMap());
+        queuePool.index(activeModel.getSAttributeIndexMap());
+        queue = queuePool.getQueue();
+	}
+	void releaseResources(){
+	    eventHandlerPool.releaseHandlers();
+		errorHandlerPool.releaseHandlers();
+		
+		activeModel.recycle();
+		activeModel = null;
+		
+		bindingModel.recycle();
+        bindingModel = null;	
+        builder = null;
+		
+		queue.recycle();
+		queue = null;
+		
+		queuePool.recycle();
+		queuePool = null;		
+	}
+
+	
+	protected void finalize(){	
+        if(!optimizedForResourceSharing) return;		
 		eventHandlerPool.recycle();
 		errorHandlerPool.recycle();
 	}
@@ -192,27 +247,17 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	public void skippedEntity(String name){}	
 	public void ignorableWhitespace(char[] ch, int start, int len){}
 	
-	public void startDocument(){				
-		errorDispatcher.init();
-		documentContext.reset();
-		inputStackDescriptor.clear();
-		activeModel = schemaModel.getActiveModel(activeInputDescriptor,
-		                                            inputStackDescriptor, 
-													errorDispatcher);
-        if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
-        matchHandler.setActiveModel(activeModel);
-        
-		bindingModel.index(activeModel.getSElementIndexMap(), activeModel.getSAttributeIndexMap());
-		queue.clear();
-		queue.index(activeModel.getSAttributeIndexMap());
-		queuePool.index(activeModel.getSAttributeIndexMap());
+	public void startDocument(){	    
+		errorDispatcher.init();			
+		if(optimizedForResourceSharing)initResources();		
+		
+		startBinding();
 		
 		// TODO see about this, according to SAX spec the functioning of the Locator 
         // is not guaranteed here. It seems to work though.
         inputStackDescriptor.pushElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), "", "document root", "document root");
 		elementHandler = eventHandlerPool.getBoundStartValidationHandler(activeModel.getStartElement(), bindingModel, queue, queuePool);
-			
-		xmlBaseBinder.bind(queue, locator.getSystemId());// must happen last, after queue.newRecord() which is in elementHandler's init, might need to be moved  
+		xmlBaseBinder.bind(queue, locator.getSystemId());// must happen last, after queue.newRecord() which is in elementHandler's init
 		
         if(level1DocumentationElement){
             if(documentationElementHandler == null) documentationElementHandler = new DocumentationElementHandler(errorDispatcher, debugWriter);
@@ -221,10 +266,13 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		//Note that locator is only garanteed to pass correct information AFTER
 		//startDocument. The base URI of the document is also passed independently 
 		//to the Simplifier. This needs reviewing. 		
-	}			
+	}	
+	
+	protected void startBinding(){}
+	
 	public void setDocumentLocator(Locator locator){
 		this.locator = locator;
-        if(!documentContext.isBaseURISet())documentContext.setBaseURI(locator.getSystemId());
+        if(!documentContext.isBaseURISet())documentContext.setBaseURI(locator.getSystemId());        
 	}
 	public void characters(char[] chars, int start, int length)throws SAXException{
 		//TODO make sure this is correct for all circumstances
@@ -242,7 +290,7 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 	public void startElement(String namespaceURI, 
 							String localName, 
 							String qName, 
-							Attributes attributes) throws SAXException{	
+							Attributes attributes) throws SAXException{
 		char[] charContent = charsBuffer.removeCharsArray();		
 		if(charContent.length > 0){			
 			elementHandler.handleInnerCharacters(charContent);		
@@ -285,13 +333,33 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
 		elementHandler.handleEndElement(restrictToFileName, locator);
 		elementHandler.recycle();
 		elementHandler = null;
-		inputStackDescriptor.popElement();
-		activeModel.recycle();
-		activeModel = null;	
+		inputStackDescriptor.popElement();	
 		
-		activeInputDescriptor.printLeftOvers();
+		// activeInputDescriptor.printLeftOvers();
+		
+		queue.executeAll();
+		queue.clear();
+		
+		 
+		endBinding();
+				
+		//just in case		
+		inputStackDescriptor.clear();	
+		documentContext.reset();
+		
+		if(optimizedForResourceSharing)releaseResources();
 	}
 
+	protected void endBinding() throws SAXNotRecognizedException, SAXNotSupportedException{
+	    try{
+	        if(builder == null) builder = (ParsedComponentBuilder)bindingModel.getProperty(Constants.PARSED_COMPONENT_BUILDER_PROPERTY);
+	        topPattern = (Pattern)builder.getCurrentParsedComponent();
+	    }catch(ClassCastException c){
+            // syntax error, already handled
+        }
+        dtdMapping = documentContext.getDTDMapping();
+	}
+	
     public void setProperty(String name, Object object)
         throws SAXNotRecognizedException, SAXNotSupportedException {
 
@@ -299,18 +367,31 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
             throw new NullPointerException();
         }else if(name.equals(Constants.DTD_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.DTD_MAPPING_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.ERROR_HANDLER_POOL_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.INPUT_STACK_DESCRIPTOR_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){
             // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
+        }else if(name.equals(Constants.PARSED_MODEL_PROPERTY)){
+            // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
+        }else if(name.equals(Constants.INCLUDED_PARSED_MODEL_PROPERTY)){
+            // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }
 
         throw new SAXNotRecognizedException(name);
@@ -335,6 +416,23 @@ class BoundValidatorHandlerImpl extends ValidatorHandler{
             return inputStackDescriptor;
         }else if(name.equals(Constants.MATCH_HANDLER_PROPERTY)){
             return matchHandler;
+        }else if(name.equals(Constants.PARSED_MODEL_PROPERTY)){
+            if(topPattern == null) return null;
+            return new ParsedModel(dtdMapping, topPattern, debugWriter);
+        }else if(name.equals(Constants.INCLUDED_PARSED_MODEL_PROPERTY)){
+            if(topPattern == null) return null;
+            Grammar g = null;
+            try{
+                g = (Grammar)topPattern;
+            }catch(ClassCastException cce){
+                // TODO
+                // the included document was not valid, 
+                // you should have aborted earlier
+                // see about that
+                // SEEN , but needs review
+                return null;
+            }
+            return new IncludedParsedModel(dtdMapping, g, debugWriter);
         }
 
         throw new SAXNotRecognizedException(name);

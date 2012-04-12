@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 
 import serene.bind.Queue;
 import serene.bind.AttributeBinder;
+import serene.bind.BindingModel;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.APattern;
@@ -316,7 +317,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
+	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
 			
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -330,7 +331,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 				
-		BoundElementConflictResolver resolver = conflictHandlerPool.getBoundUnresolvedElementConflictResolver(conflictMessageReporter, targetQueue, targetEntry, candidateQueues);		
+		BoundElementConflictResolver resolver = conflictHandlerPool.getBoundUnresolvedElementConflictResolver(conflictMessageReporter, bindingModel, targetQueue, targetEntry, candidateQueues);		
 		resolvers.add(resolver);		
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
@@ -507,7 +508,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		    resolver.addCandidate(elementDefinitions.get(lastQualifiedIndex));
 		}
 	}
-	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
+	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
 		reportCurrentMisplaced = true;
@@ -520,7 +521,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 				
-		BoundElementConflictResolver resolver = conflictHandlerPool.getBoundAmbiguousElementConflictResolver(conflictMessageReporter, targetQueue, targetEntry, candidateQueues);
+		BoundElementConflictResolver resolver = conflictHandlerPool.getBoundAmbiguousElementConflictResolver(conflictMessageReporter, bindingModel, targetQueue, targetEntry, candidateQueues);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);

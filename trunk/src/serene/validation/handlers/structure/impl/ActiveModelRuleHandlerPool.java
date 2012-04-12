@@ -293,7 +293,8 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public void fill(ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){
 	    this.activeInputDescriptor = activeInputDescriptor;
 		this.inputStackDescriptor = inputStackDescriptor;
-		pool.fill(this,
+		if(pool != null){
+		    pool.fill(this,
 			 		particleHandler,
 					choiceHandler,
 					groupHandler,
@@ -321,8 +322,42 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 					groupMinimalReduceHandler,
 					groupMaximalReduceHandler,
 					interleaveMinimalReduceHandler,
-					interleaveMaximalReduceHandler);	
-		 full = true;
+					interleaveMaximalReduceHandler);
+		}else{
+		    particleHandler = new ParticleHandler[30];
+            choiceHandler = new ChoiceHandler[10];
+            groupHandler = new GroupHandler[10];
+            grammarHandler = new GrammarHandler[10];
+            refHandler = new RefHandler[10];
+            uinterleaveHandler = new UInterleaveHandler[10];
+            minterleaveHandler = new MInterleaveHandler[10];
+            sinterleaveHandler = new SInterleaveHandler[10];
+            elementHandler = new ElementHandler[10];
+            attributeHandler = new AttributeHandler[10];
+            exceptPatternHandler = new ExceptPatternHandler[10];
+            listPatternHandler = new ListPatternHandler[10];
+            
+            
+            groupDoubleHandler = new GroupDoubleHandler[10];
+            interleaveDoubleHandler = new InterleaveDoubleHandler[10];
+            
+            groupMinimalReduceCountHandler = new GroupMinimalReduceCountHandler[5];
+            groupMaximalReduceCountHandler = new GroupMaximalReduceCountHandler[5];
+            interleaveMinimalReduceCountHandler = new InterleaveMinimalReduceCountHandler[5];
+            interleaveMaximalReduceCountHandler = new InterleaveMaximalReduceCountHandler[5];
+            
+            grammarMinimalReduceHandler = new GrammarMinimalReduceHandler[5];
+            grammarMaximalReduceHandler = new GrammarMaximalReduceHandler[5];
+            refMinimalReduceHandler = new RefMinimalReduceHandler[5];
+            refMaximalReduceHandler = new RefMaximalReduceHandler[5];
+            choiceMinimalReduceHandler = new ChoiceMinimalReduceHandler[5];
+            choiceMaximalReduceHandler = new ChoiceMaximalReduceHandler[5];
+            groupMinimalReduceHandler = new GroupMinimalReduceHandler[5];
+            groupMaximalReduceHandler = new GroupMaximalReduceHandler[5];
+            interleaveMinimalReduceHandler = new InterleaveMinimalReduceHandler[5];
+            interleaveMaximalReduceHandler = new InterleaveMaximalReduceHandler[5];            
+		}
+		full = true;
 	}
 	
 	void initFilled(int particleHandlerFillCount,
@@ -612,6 +647,36 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 					interleaveMaximalReduceHandlerFree,
 					interleaveMaximalReduceHandlerFree - interleaveMaximalReduceHandlerMinFree,
 					interleaveMaximalReduceHandler);
+		
+		particleHandlerFree = 0;
+        choiceHandlerFree = 0;
+        groupHandlerFree = 0;
+        grammarHandlerFree = 0;
+        refHandlerFree = 0;
+        uinterleaveHandlerFree = 0;
+        minterleaveHandlerFree = 0;
+        sinterleaveHandlerFree = 0;
+        elementHandlerFree = 0;
+        attributeHandlerFree = 0;
+        exceptPatternHandlerFree = 0;
+        listPatternHandlerFree = 0;
+        groupDoubleHandlerFree = 0;
+        interleaveDoubleHandlerFree = 0;
+        groupMinimalReduceCountHandlerFree = 0;
+        groupMaximalReduceCountHandlerFree = 0;
+        interleaveMinimalReduceCountHandlerFree = 0;
+        interleaveMaximalReduceCountHandlerFree = 0;
+        grammarMinimalReduceHandlerFree = 0;
+        grammarMaximalReduceHandlerFree = 0;
+        refMinimalReduceHandlerFree = 0;
+        refMaximalReduceHandlerFree = 0;
+        choiceMinimalReduceHandlerFree = 0;
+        choiceMaximalReduceHandlerFree = 0;
+        groupMinimalReduceHandlerFree = 0;
+        groupMaximalReduceHandlerFree = 0;
+        interleaveMinimalReduceHandlerFree = 0;
+        interleaveMaximalReduceHandlerFree = 0;
+        
 		full = false;
 	}
 	
