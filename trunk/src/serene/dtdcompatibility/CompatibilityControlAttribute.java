@@ -16,7 +16,7 @@ limitations under the License.
 
 package serene.dtdcompatibility;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SAttribute;
 
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.ActiveGrammarModel;
@@ -40,8 +40,8 @@ class CompatibilityControlAttribute extends AAttribute{
         this.ruleHandlerPool = ruleHandlerPool;
     }
     
-    void init(int index, SimplifiedComponent simplifiedComponent){
-        this.simplifiedComponent = simplifiedComponent;
+    void init(int index, SAttribute sattribute){
+        this.sattribute = sattribute;
         this.index = index;
     }
     

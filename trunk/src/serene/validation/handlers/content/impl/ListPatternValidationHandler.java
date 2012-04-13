@@ -42,7 +42,6 @@ import serene.validation.handlers.stack.StackHandler;
 import serene.util.SpaceCharsHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
-import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import sereneWrite.MessageWriter;

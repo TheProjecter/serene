@@ -18,7 +18,7 @@ package serene.validation.schema.active.components;
 
 import org.relaxng.datatype.Datatype;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SData;
 
 import serene.validation.schema.active.ActiveGrammarModel;
 
@@ -38,13 +38,16 @@ import sereneWrite.MessageWriter;
 
 public class AData extends DatatypedCharsAPattern{	
 	AExceptPattern exceptPattern;    
+	
+	SData sdata;
 	public AData(Datatype datatype,
 				AExceptPattern exceptPattern,
 				ActiveGrammarModel grammarModel,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SimplifiedComponent simplifiedComponent, 
+				SData sdata, 
 				MessageWriter debugWriter){
-		super(datatype, grammarModel, ruleHandlerPool, simplifiedComponent, debugWriter);
+		super(datatype, grammarModel, ruleHandlerPool, debugWriter);
+		this.sdata = sdata;
 		asParent(exceptPattern);
 	}
 	
@@ -59,6 +62,22 @@ public class AData extends DatatypedCharsAPattern{
 	public AExceptPattern getExceptPattern(){
 		return exceptPattern;
 	}
+	
+	public String getQName(){
+		return sdata.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return sdata.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return sdata.hashCode();
+    }   
+    
+    public SData getCorrespondingSimplifiedComponent(){
+        return sdata;
+    }
 	
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);

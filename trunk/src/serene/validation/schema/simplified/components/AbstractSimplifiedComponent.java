@@ -21,20 +21,24 @@ import java.io.File;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 import serene.validation.schema.simplified.SimplifiedComponent;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 abstract class AbstractSimplifiedComponent implements SimplifiedComponent{
 	protected int childIndex;	
 	protected SimplifiedComponent parent;
 		
-	protected String qName;
-	protected String location;	
+	/*protected String qName;
+	protected String location;*/
+    int recordIndex;
+    DocumentIndexedData documentIndexedData;	
 	protected MessageWriter debugWriter;	
 	
-	public AbstractSimplifiedComponent(String qName, String location, MessageWriter debugWriter){		
+	public AbstractSimplifiedComponent(int recordIndex, DocumentIndexedData documentIndexedData, MessageWriter debugWriter){		
 		this.debugWriter = debugWriter;
-		this.qName = qName;
-		this.location = location;
+		this.recordIndex = recordIndex;
+		this.documentIndexedData = documentIndexedData;
 		
 		childIndex = -1;		
 	}
@@ -55,13 +59,37 @@ abstract class AbstractSimplifiedComponent implements SimplifiedComponent{
 		return childIndex;
 	}
 	
+	public int getRecordIndex(){
+	    return recordIndex;
+	}
+	
+	public DocumentIndexedData getDocumentIndexedData(){
+	    return documentIndexedData;
+	}
+	
+	
 	public String getQName(){
-		return qName;
+	    //System.out.println("ABSTRACT SIMPLIFIED COMPONENT documentIndexedData="+documentIndexedData);
+		return documentIndexedData.getItemDescription(recordIndex);
 	}
 	public String getLocation(boolean restrictToFileName){
-        if(location == null || !restrictToFileName)return location;
-        int nameIndex = location.lastIndexOf(File.separatorChar)+1;
-        if(nameIndex == 0) nameIndex = location.lastIndexOf('/')+1;
-        return location.substring(nameIndex);
+	    String si = documentIndexedData.getSystemId(recordIndex);
+	    int ln = documentIndexedData.getLineNumber(recordIndex);
+	    if(ln == DocumentIndexedData.UNKNOWN){
+	        if(si == null || !restrictToFileName)return si;
+	        return getRestrictedSystemId(si);
+	    }
+	    
+	    int cn = documentIndexedData.getColumnNumber(recordIndex);
+	    
+        if(si == null || !restrictToFileName){
+            return si+":"+ln+":"+cn;
+        }
+        return getRestrictedSystemId(si)+":"+ln+":"+cn;
+	}
+	String getRestrictedSystemId(String si){
+	    int nameIndex = si.lastIndexOf(File.separatorChar)+1;
+        if(nameIndex == 0) nameIndex = si.lastIndexOf('/')+1;
+        return si.substring(nameIndex);
 	}
 }	

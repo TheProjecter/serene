@@ -189,7 +189,7 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 		}
 	}
 	
-	private void createRecord(SElement originalElement){        
+	private void createRecord(SElement originalElement){
 		if(elementIndex == elementSize) increaseElementSize();
 		selementIndexMap.put(originalElement, elementIndex);
 		elementNameClasses[elementIndex] = nameClassDirector.createActiveNameClass(componentBuilder,

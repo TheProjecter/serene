@@ -1,5 +1,5 @@
 /*
-Copyright 2010 Radu Cernuta 
+Copyright 2012 Radu Cernuta 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@ limitations under the License.
 
 package serene.internal;
 
+import serene.bind.util.Queue;
+
 import javax.xml.validation.Validator;
 import javax.xml.validation.ValidatorHandler;
 
 import serene.BaseSchema;
 import serene.SchemaModel;
-
-import serene.parser.RNGParseBindingPool;
 
 import sereneWrite.MessageWriter;
 
@@ -59,7 +59,7 @@ public class InternalRNGSchema extends BaseSchema{
     
 	
 	public ValidatorHandler newValidatorHandler(){
-		return new BoundValidatorHandlerImpl(contentHandlerPool.getValidatorEventHandlerPool(),
+		return new InternalValidatorHandler(contentHandlerPool.getValidatorEventHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										schemaModel,
 										bindingPool,

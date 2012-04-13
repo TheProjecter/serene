@@ -19,15 +19,18 @@ package serene.validation.schema.active.components;
 import serene.validation.schema.active.components.AExceptNameClass;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
-import serene.validation.schema.simplified.SimplifiedComponent;
+
+import serene.validation.schema.simplified.components.SAnyName;
 
 import sereneWrite.MessageWriter;
 
 public class AAnyName extends AbstractWildCard{		
+    SAnyName sanyName;
 	public AAnyName(AExceptNameClass child,
-			SimplifiedComponent simplifiedComponent, 
+			SAnyName sanyName, 
 			MessageWriter debugWriter){
-		super(child, simplifiedComponent, debugWriter);
+		super(child, debugWriter);
+		this.sanyName = sanyName;
 	}
 	
 	public boolean matches(String namespace, String name){
@@ -35,6 +38,22 @@ public class AAnyName extends AbstractWildCard{
 		return true;
 	}	
 	
+	public String getQName(){
+		return sanyName.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return sanyName.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return sanyName.hashCode();
+    }   
+    
+    public SAnyName getCorrespondingSimplifiedComponent(){
+        return sanyName;
+    }
+    
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);
 	}	

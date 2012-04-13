@@ -34,8 +34,7 @@ import serene.validation.schema.active.components.ActiveTypeItem;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 
-import serene.bind.Queue;
-import serene.bind.AttributeBinder;
+import serene.bind.util.Queue;
 import serene.bind.BindingModel;
 
 
@@ -540,7 +539,8 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	public BoundAmbiguousElementConflictResolver getBoundAmbiguousElementConflictResolver(ConflictMessageReporter conflictMessageReporter,
 	                                                                    BindingModel bindingModel,
 	                                                                    Queue targetQueue,
-																		int targetEntry,
+																		int reservationStartEntry,
+																		int reservationEndEntry,
 																		Map<AElement, Queue> candidateQueues){				
 		if(boundAmbiguousElementConflictResolverFree == 0){
 			// boundAmbiguousElementConflictResolverCreated++;
@@ -549,7 +549,8 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			icr.init(conflictMessageReporter,
 			        bindingModel,
 			        targetQueue,
-					targetEntry,
+					reservationStartEntry,
+					reservationEndEntry,
 					candidateQueues);			
 			return icr;			
 		}else{
@@ -557,7 +558,8 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			icr.init(conflictMessageReporter,
 			        bindingModel,
 			        targetQueue,
-					targetEntry,
+					reservationStartEntry,
+					reservationEndEntry,
 					candidateQueues);
 			if(boundAmbiguousElementConflictResolverFree < boundAmbiguousElementConflictResolverMinFree) boundAmbiguousElementConflictResolverMinFree = boundAmbiguousElementConflictResolverFree;
 			return icr;
@@ -577,7 +579,8 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	public BoundUnresolvedElementConflictResolver getBoundUnresolvedElementConflictResolver(ConflictMessageReporter conflictMessageReporter,
 	                                                                    BindingModel bindingModel,
 	                                                                    Queue targetQueue,
-																		int targetEntry,
+																		int reservationStartEntry,
+																		int reservationEndEntry,
 																		Map<AElement, Queue> candidateQueues){				
 		if(boundUnresolvedElementConflictResolverFree == 0){
 			// boundUnresolvedElementConflictResolverCreated++;
@@ -586,7 +589,8 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			icr.init(conflictMessageReporter,
 			        bindingModel,
 			        targetQueue,
-					targetEntry,
+					reservationStartEntry,
+					reservationEndEntry,
 					candidateQueues);			
 			return icr;			
 		}else{
@@ -594,7 +598,8 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 			icr.init(conflictMessageReporter,
 			        bindingModel,
 			        targetQueue,
-					targetEntry,
+					reservationStartEntry,
+					reservationEndEntry,
 					candidateQueues);
 			if(boundUnresolvedElementConflictResolverFree < boundUnresolvedElementConflictResolverMinFree) boundUnresolvedElementConflictResolverMinFree = boundUnresolvedElementConflictResolverFree; 
 			return icr;
@@ -619,7 +624,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
                                                                                             String value, 
                                                                                             Queue queue, 
                                                                                             int entry, 
-                                                                                            Map<AAttribute, AttributeBinder> attributeBinders){				
+                                                                                            BindingModel bindingModel){				
 		if(boundAmbiguousAttributeConflictResolverFree == 0){
 			// boundAmbiguousAttributeConflictResolverCreated++;
 			BoundAmbiguousAttributeConflictResolver icr = new BoundAmbiguousAttributeConflictResolver(debugWriter);
@@ -629,7 +634,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
                     value, 
 					queue, 
 					entry, 
-					attributeBinders);			
+					bindingModel);			
 			return icr;			
 		}else{
 			BoundAmbiguousAttributeConflictResolver icr = boundAmbiguousAttributeConflictResolver[--boundAmbiguousAttributeConflictResolverFree];
@@ -638,7 +643,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
                     value, 
 					queue, 
 					entry, 
-					attributeBinders);
+					bindingModel);
             if(boundAmbiguousAttributeConflictResolverFree < boundAmbiguousAttributeConflictResolverMinFree) boundAmbiguousAttributeConflictResolverMinFree = boundAmbiguousAttributeConflictResolverFree;			
 			return icr;
 		}		
@@ -661,7 +666,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
                                                                                             String value, 
                                                                                             Queue queue, 
                                                                                             int entry, 
-                                                                                            Map<AAttribute, AttributeBinder> attributeBinders){				
+                                                                                            BindingModel bindingModel){				
 		if(boundUnresolvedAttributeConflictResolverFree == 0){
 			// boundUnresolvedAttributeConflictResolverCreated++;
 			BoundUnresolvedAttributeConflictResolver icr = new BoundUnresolvedAttributeConflictResolver(debugWriter);
@@ -670,7 +675,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
                     value, 
 					queue, 
 					entry, 
-					attributeBinders);			
+					bindingModel);			
 			return icr;			
 		}else{
 			BoundUnresolvedAttributeConflictResolver icr = boundUnresolvedAttributeConflictResolver[--boundUnresolvedAttributeConflictResolverFree];
@@ -678,7 +683,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
                     value, 
 					queue, 
 					entry, 
-					attributeBinders);
+					bindingModel);
             if(boundUnresolvedAttributeConflictResolverFree < boundUnresolvedAttributeConflictResolverMinFree) boundUnresolvedAttributeConflictResolverMinFree = boundUnresolvedAttributeConflictResolverFree;			
 			return icr;
 		}		

@@ -54,7 +54,7 @@ public class CharsBuffer{
 		return new String(content, 0, count);
 	}
 	
-	public char[] removeCharsArray(){
+	/*public char[] removeCharsArray(){
 		char[] result = new char[count];
 		System.arraycopy(content, 0, result, 0, count);
 		count = 0;
@@ -65,7 +65,9 @@ public class CharsBuffer{
 		String result = new String(content, 0, count); 
 		count = 0;		
 		return result;
-	}
+	}*/
+	
+	
 	public void clear(){
 		count = 0;
 	}

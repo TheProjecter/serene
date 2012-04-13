@@ -21,12 +21,18 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class SEmpty extends AbstractNoChildrenPattern{
-	
-	public SEmpty(String qName, String location, MessageWriter debugWriter){
-		super(qName, location, debugWriter);
+	boolean addedBySimplification;
+	public SEmpty(int recordIndex, 
+				DocumentIndexedData documentIndexedData,  
+				boolean addedBySimplification,
+				MessageWriter debugWriter){
+		super(recordIndex, documentIndexedData, debugWriter);
+		this.addedBySimplification = addedBySimplification;
 	}	
 			
 	public void accept(SimplifiedComponentVisitor v){

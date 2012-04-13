@@ -21,14 +21,17 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class SExceptPattern extends SExcept{
 	SPattern child;
 	public SExceptPattern(SPattern child,
-			String qName, String location, 
+			int recordIndex, 
+			DocumentIndexedData documentIndexedData,
 			MessageWriter debugWriter){
-		super(qName, location, debugWriter);
+		super(recordIndex, documentIndexedData, debugWriter);
 		asParent(child);
 	}	
 	

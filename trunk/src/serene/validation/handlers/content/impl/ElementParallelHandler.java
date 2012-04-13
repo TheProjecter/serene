@@ -24,7 +24,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
 
 import serene.validation.handlers.content.ElementEventHandler;
+
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
@@ -92,8 +95,8 @@ class ElementParallelHandler extends CandidatesEEH{
 	public ValidatingEEH getParentHandler(){
 		return parent;			
 	}
-	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{		 
-		ComparableEEH next = state.handleStartElement(qName, namespace, name, this, restrictToFileName);
+	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{		
+	    ComparableEEH next = state.handleStartElement(qName, namespace, name, this, restrictToFileName);
 		return next;
 	}
 	
@@ -134,11 +137,11 @@ class ElementParallelHandler extends CandidatesEEH{
 	void validateInContext(){
 		state.validateInContext();
 	}		
-	public void handleInnerCharacters(char[] chars) throws SAXException{	
-		state.handleInnerCharacters(chars);
+	public void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{	
+		state.handleInnerCharacters(characterContentDescriptor, characterContentDescriptorPool);
 	}
-    public void handleLastCharacters(char[] chars) throws SAXException{	
-		state.handleLastCharacters(chars);
+    public void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException{	
+		state.handleLastCharacters(characterContentDescriptor);
 	}
 
 	boolean functionalEquivalent(ComparableEEH other){
@@ -202,8 +205,8 @@ class ElementParallelHandler extends CandidatesEEH{
 		abstract void validateContext() throws SAXException;	
 		abstract void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException;
 		abstract void validateInContext();
-		abstract void handleInnerCharacters(char[] chars) throws SAXException;
-        abstract void handleLastCharacters(char[] chars) throws SAXException;
+		abstract void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException;
+        abstract void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException;
 	}
 	
 	class Common extends State{
@@ -239,6 +242,7 @@ class ElementParallelHandler extends CandidatesEEH{
 					
 			individualHandlers.add(individualHandler);	
 		}
+		
 		ElementCommonHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance, boolean restrictToFileName) throws SAXException{			
 			ElementCommonHandler next = pool.getElementCommonHandler(candidatesConflictHandler, individualHandlers.size(), instance);
 			next.add(uniqueSample.handleStartElement(qName, namespace, name, restrictToFileName));
@@ -278,7 +282,22 @@ class ElementParallelHandler extends CandidatesEEH{
                         individualHandlers.get(i).discardContextErrors();
                     }
                 }
-            }            
+            }  
+            
+            
+            // if uniqueSample instanceof ElementConcurrentHandler
+            // copy it's conflict handler to all individual handlers
+            if(uniqueSample instanceof ElementConcurrentHandler){
+                ElementConcurrentHandler sample = (ElementConcurrentHandler)uniqueSample;
+                ExternalConflictHandler sampleConflictHandler = sample.getConflictHandler();
+                for(int i = 0; i < individualHandlers.size(); i++){
+                    ComparableEEH e = individualHandlers.get(i);
+                    if(e != uniqueSample){
+                        ElementConcurrentHandler ech = (ElementConcurrentHandler)e;
+                        ech.copyDisqualifiedCandidates(sampleConflictHandler);
+                    }
+                }
+            }  
 		}
 		
 		void validateInContext(){
@@ -290,6 +309,15 @@ class ElementParallelHandler extends CandidatesEEH{
                     uniqueSample.validateInContext();
                     evhParent.restorePreviousHandler();
                 }
+			}else if(uniqueSample instanceof ElementConcurrentHandler){
+			    ElementConcurrentHandler sample = (ElementConcurrentHandler)uniqueSample;			    
+			    for(int i = 0; i < individualHandlers.size(); i++){
+					if(individualHandlers.get(i) != uniqueSample){
+						((ElementConcurrentHandler)individualHandlers.get(i)).validateInContext(sample);
+					}else{
+					    uniqueSample.validateInContext();
+					}
+				}
 			}else if(uniqueSample instanceof ValidatingEEH){
 				for(int i = 0; i < individualHandlers.size(); i++){
 					//if(!candidatesConflictHandler.isDisqualified(i)){
@@ -298,11 +326,11 @@ class ElementParallelHandler extends CandidatesEEH{
 				}
 			}
 		}
-		void handleInnerCharacters(char[] chars) throws SAXException{
-			uniqueSample.handleInnerCharacters(chars);
+		void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{
+			uniqueSample.handleInnerCharacters(characterContentDescriptor, characterContentDescriptorPool);
 		}
-		void handleLastCharacters(char[] chars) throws SAXException{
-			uniqueSample.handleLastCharacters(chars);
+		void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException{
+			uniqueSample.handleLastCharacters(characterContentDescriptor);
 		}
 		
 		public String toString(){
@@ -330,9 +358,17 @@ class ElementParallelHandler extends CandidatesEEH{
                 String attributeQName = attributes.getQName(i);
                 String attributeNamespace = attributes.getURI(i); 
                 String attributeName = attributes.getLocalName(i);
-                String attributeValue = attributes.getValue(i);
-                
-                inputStackDescriptor.pushAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);			           
+                String attributeType = attributes.getType(i);
+                String attributeValue = attributes.getValue(i);                
+                inputStackDescriptor.pushAttribute(attributeQName,
+			                                    attributeNamespace, 
+			                                    attributeName,
+			                                    attributeType,
+			                                    attributeValue,
+			                                    locator.getSystemId(), 
+			                                    locator.getPublicId(), 
+			                                    locator.getLineNumber(), 
+			                                    locator.getColumnNumber());			           
                 AttributeParallelHandler aph = getAttributeHandler(attributeQName, attributeNamespace, attributeName);                
                 aph.handleAttribute(attributeValue);
                 aph.recycle();
@@ -376,16 +412,16 @@ class ElementParallelHandler extends CandidatesEEH{
                 individualHandlers.get(i).validateInContext();
 			}
 		}	
-		void handleInnerCharacters(char[] chars) throws SAXException{
+		void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{
 			for(int i = 0; i < individualHandlers.size(); i++){				
 				//if(!candidatesConflictHandler.isDisqualified(i)) 
-                individualHandlers.get(i).handleInnerCharacters(chars);
+                individualHandlers.get(i).handleInnerCharacters(characterContentDescriptor, characterContentDescriptorPool);
 			}
 		}
-		void handleLastCharacters(char[] chars) throws SAXException{
+		void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException{
 			for(int i = 0; i < individualHandlers.size(); i++){				
 				//if(!candidatesConflictHandler.isDisqualified(i)) 
-                individualHandlers.get(i).handleLastCharacters(chars);
+                individualHandlers.get(i).handleLastCharacters(characterContentDescriptor);
 			}
 		}
 		

@@ -2586,6 +2586,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 	    
     // {15}
 	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	    
         /*
 		if(datatypeSizeCC == 0){
 			datatypeSizeCC = 1;
@@ -3867,11 +3868,12 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
         this.commonMessages = commonMessages;
         this.disqualified = disqualified;
         this.candidateMessages = candidateMessages;
+        
     }
     public void clearConflict(){
         candidatesCount = -1;
         if(commonMessages != null){
-            if(isDiscarded)commonMessages.clear(); // It can be only one because it is about this context.
+            if(isDiscarded)commonMessages.clear(this); // It can be only one because it is about this context.
             commonMessages = null;
         }
         
@@ -3881,7 +3883,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
             if(isDiscarded){
                 for(MessageReporter cm : candidateMessages){                    
                     if(cm != null){
-                        cm.clear();
+                        cm.clear(this);
                     }
                 }
             }
@@ -3896,7 +3898,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 	}
 	void clearInternalConflict(){	    
 	    if(conflictMessageReporter != null) {
-	        conflictMessageReporter.clear();
+	        conflictMessageReporter.clear(this);
 	        conflictMessageReporter = null;
 	    }
 	    internalConflict = false;
@@ -4261,7 +4263,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
 	    }
 	}
 	
-	public void setDiscarded(boolean isDiscarded){
+	/*public void setDiscarded(boolean isDiscarded){
 	    this.isDiscarded = isDiscarded;
 	    
 	    if(commonMessages != null)commonMessages.setDiscarded(isDiscarded);
@@ -4273,7 +4275,7 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
         }
         
         if(internalConflict && conflictMessageReporter != null) conflictMessageReporter.setDiscarded(isDiscarded);
-	}
+	}*/
 	
 	public void clear(){
 	    if(isClear) return;

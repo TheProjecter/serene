@@ -18,11 +18,15 @@ package serene.validation.schema.simplified.components;
 
 import serene.validation.schema.simplified.components.SPattern;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 abstract class AbstractNoChildrenPattern extends SPattern{ 	 
-	AbstractNoChildrenPattern(String qName, String location, MessageWriter debugWriter){		
-		super(qName, location, debugWriter);
+	AbstractNoChildrenPattern(int recordIndex, 
+				DocumentIndexedData documentIndexedData,
+				MessageWriter debugWriter){		
+		super(recordIndex, documentIndexedData, debugWriter);
 	}
 		
 	public String toString(){

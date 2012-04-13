@@ -85,7 +85,7 @@ public class RNGSimplifier extends Simplifier{
 		definitionEmptyChild = new BooleanList();
 		definitionNotAllowedChild = new BooleanList();
 		
-		pcw = new ParsedComponentWriter();
+		//pcw = new ParsedComponentWriter();
 		
 		
 		inclusionPath = new Stack<URI>();		
@@ -153,10 +153,10 @@ public class RNGSimplifier extends Simplifier{
             if(emptyChild){
                 // for the 7.1.5 restrictions on start
                 // TODO make sure it is correct to treat notAllowed like this
-                builder.buildEmpty(topPattern.getQName(), topPattern.getLocation());
+                builder.buildEmpty(topPattern.getRecordIndex(), topPattern.getDocumentIndexedData(), true);
                 simplifiedTopPattern = builder.getAllCurrentPatterns();
             }else if(notAllowedElement || notAllowedChild){
-                builder.buildNotAllowed(topPattern.getQName(), topPattern.getLocation());
+                builder.buildNotAllowed(topPattern.getRecordIndex(), topPattern.getDocumentIndexedData(), true);
                 simplifiedTopPattern = builder.getAllCurrentPatterns();
             }
             
@@ -169,7 +169,7 @@ public class RNGSimplifier extends Simplifier{
 		return simplifiedModel;
 	}
 		
-	private void simplify()  throws SAXException{	
+	private void simplify()  throws SAXException{
 		emptyChild = false;
         emptyComponent = null;
 		notAllowedChild = false;

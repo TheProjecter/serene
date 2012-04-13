@@ -23,15 +23,24 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.validation.schema.simplified.components.SNameClass;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class SName extends SNameClass{	
 	String localPart;
 	String ns;
-	public SName(String ns, String localPart, String qName, String location, MessageWriter debugWriter){
-		super(qName, location, debugWriter);		
+	boolean addedBySimplification;
+	public SName(String ns, 
+	        String localPart, 
+	        int recordIndex, 
+			DocumentIndexedData documentIndexedData, 
+			boolean addedBySimplification,
+			MessageWriter debugWriter){
+		super(recordIndex, documentIndexedData, debugWriter);		
 		this.ns = ns;
 		this.localPart = localPart;	
+		this.addedBySimplification = addedBySimplification;
 	}
 		
 	public void accept(SimplifiedComponentVisitor v){

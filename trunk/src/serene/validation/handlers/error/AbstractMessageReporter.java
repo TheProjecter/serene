@@ -80,6 +80,8 @@ public abstract class AbstractMessageReporter implements MessageReporter{
         if(this.parent != null) throw new IllegalStateException();
         
         this.parent = parent;
+        
+        parent.registerClient(this);
     }    
     
 }

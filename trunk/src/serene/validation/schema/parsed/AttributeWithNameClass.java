@@ -21,20 +21,20 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 import sereneWrite.MessageWriter;
 
 public class AttributeWithNameClass extends Attribute{
-	AttributeWithNameClass(Map<String, String> prefixMapping, 
-								String xmlBase, 
-								String ns, 
-								String datatypeLibrary,
-                                AttributeInfo[] foreignAttributes,
+	AttributeWithNameClass(/*Map<String, String> prefixMapping,*/
+	                            int xmlBase,
+								int ns, 
+								int datatypeLibrary,
+								int defaultValue,
 								ParsedComponent[] children,
-								String qName, 
-								String location, 
+								int recordIndex,
+                                DocumentIndexedData documentIndexedData,
 								MessageWriter debugWriter){		
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, children, qName, location, debugWriter);
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, defaultValue, children, recordIndex, documentIndexedData, debugWriter);
 	}	
 	public void accept(ParsedComponentVisitor v){
 		v.visit(this);

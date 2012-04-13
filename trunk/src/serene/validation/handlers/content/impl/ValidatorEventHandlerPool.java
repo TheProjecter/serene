@@ -47,8 +47,8 @@ import serene.validation.handlers.error.ContextErrorHandler;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.bind.BindingModel;
-import serene.bind.ValidatorQueuePool;
-import serene.bind.Queue;
+import serene.bind.util.QueuePool;
+import serene.bind.util.Queue;
 
 import serene.Reusable;
 
@@ -228,6 +228,12 @@ public class ValidatorEventHandlerPool implements Reusable{
 	int boundElementParallelHMinFree;
 	BoundElementParallelHandler[] boundElementParallelH;
 	
+	int boundElementCommonHMaxSize;
+	int boundElementCommonHFree;
+	int boundElementCommonHMinFree;
+	BoundElementCommonHandler[] boundElementCommonH;
+	
+	
 	int boundAttributeVHMaxSize;
 	int boundAttributeVHFree;	
 	int boundAttributeVHMinFree;	
@@ -289,10 +295,13 @@ public class ValidatorEventHandlerPool implements Reusable{
         boundStartVHMaxSize = 5;
         boundElementConcurrentHMaxSize = 20;
         boundElementParallelHMaxSize = 20;
+        boundElementCommonHMaxSize = 20;
+        
         boundAttributeVHMaxSize = 20;
         boundCandidateAttributeVHMaxSize = 20;
         boundAttributeConcurrentHMaxSize = 20;
         boundAttributeParallelHMaxSize = 20;
+        
 	}
 	
 	public void recycle(){
@@ -347,6 +356,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 						boundStartVH,						
 						boundElementConcurrentH,
 						boundElementParallelH,
+						boundElementCommonH,
 						boundAttributeVH,
 						boundCandidateAttributeVH,
 						boundAttributeConcurrentH,
@@ -397,6 +407,8 @@ public class ValidatorEventHandlerPool implements Reusable{
             boundStartVH = new BoundStartValidationHandler[10];
             boundElementConcurrentH = new BoundElementConcurrentHandler[10];
             boundElementParallelH = new BoundElementParallelHandler[10];
+            boundElementCommonH = new BoundElementCommonHandler[10];		
+            
             boundAttributeVH = new BoundAttributeValidationHandler[10];
             boundCandidateAttributeVH = new BoundCandidateAttributeValidationHandler[10];
             boundAttributeConcurrentH = new BoundAttributeConcurrentHandler[10];
@@ -437,6 +449,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 					int boundStartVHFillCount,	
 					int boundElementConcurrentHFillCount,
 					int boundElementParallelHFillCount,
+					int boundElementCommonHFillCount,
 					int boundAttributeVHFillCount,	
                     int boundCandidateAttributeVHFillCount,
 					int boundAttributeConcurrentHFillCount,
@@ -662,6 +675,14 @@ public class ValidatorEventHandlerPool implements Reusable{
 		for(int i = 0; i < boundElementParallelHFree; i++){	
 			boundElementParallelH[i].init(this, activeInputDescriptor, inputStackDescriptor, errorHandlerPool);
 		}
+				
+		
+		boundElementCommonHFree = boundElementCommonHFillCount;
+		boundElementCommonHMinFree = boundElementCommonHFree;
+		for(int i = 0; i < boundElementCommonHFree; i++){	
+			boundElementCommonH[i].init(this, activeInputDescriptor, inputStackDescriptor);
+		}
+		
 		
 		
 		boundAttributeVHFree = boundAttributeVHFillCount;
@@ -788,6 +809,9 @@ public class ValidatorEventHandlerPool implements Reusable{
 									boundElementParallelHFree,
 									boundElementParallelHFree - boundElementParallelHMinFree,
 									boundElementParallelH,
+									boundElementCommonHFree,
+									boundElementCommonHFree - boundElementCommonHMinFree,
+									boundElementCommonH,
 									boundAttributeVHFree,
 									boundAttributeVHFree - boundAttributeVHMinFree,
 									boundAttributeVH,
@@ -832,6 +856,7 @@ public class ValidatorEventHandlerPool implements Reusable{
         boundStartVHFree = 0;
         boundElementConcurrentHFree = 0;
         boundElementParallelHFree = 0;
+        boundElementCommonHFree = 0;
         boundAttributeVHFree = 0;
         boundCandidateAttributeVHFree = 0;
         boundAttributeConcurrentHFree = 0;
@@ -1532,7 +1557,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 
 	
-	public BoundElementValidationHandler getElementValidationHandler(AElement element, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){		
+	public BoundElementValidationHandler getElementValidationHandler(AElement element, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
 		if(boundElementVHFree == 0){
 			BoundElementValidationHandler bevh = new BoundElementValidationHandler(debugWriter);
 			bevh.init(this, activeInputDescriptor, inputStackDescriptor, spaceHandler, matchHandler, errorHandlerPool);			
@@ -1557,7 +1582,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 		boundElementVH[boundElementVHFree++] = bevh; 
 	}
 	
-	public BoundStartValidationHandler getBoundStartValidationHandler(AElement element, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){		
+	public BoundStartValidationHandler getBoundStartValidationHandler(AElement element, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
 		if(boundStartVHFree == 0){
 			BoundStartValidationHandler bevh = new BoundStartValidationHandler(debugWriter);
 			bevh.init(this, activeInputDescriptor, inputStackDescriptor, spaceHandler, matchHandler, errorHandlerPool);			
@@ -1582,7 +1607,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 		boundStartVH[boundStartVHFree++] = bevh; 
 	}
 
-	BoundElementConcurrentHandler getElementConcurrentHandler(List<AElement> candidateDefinitions, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){		
+	BoundElementConcurrentHandler getElementConcurrentHandler(List<AElement> candidateDefinitions, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
 		if(boundElementConcurrentHFree == 0){
 			BoundElementConcurrentHandler ech = new BoundElementConcurrentHandler(debugWriter);
 			ech.init(this, activeInputDescriptor, inputStackDescriptor, errorHandlerPool);			
@@ -1608,7 +1633,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	}		
 	
 	
-	BoundElementParallelHandler getElementParallelHandler(ExternalConflictHandler conflictHandler, CandidatesConflictErrorHandler candidatesConflictErrorHandler, CandidatesEEH parent, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){		
+	BoundElementParallelHandler getElementParallelHandler(ExternalConflictHandler conflictHandler, CandidatesConflictErrorHandler candidatesConflictErrorHandler, CandidatesEEH parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
 		if(boundElementParallelHFree == 0){			
 			BoundElementParallelHandler eph = new BoundElementParallelHandler(debugWriter);
 			eph.init(this, activeInputDescriptor, inputStackDescriptor, errorHandlerPool);
@@ -1632,6 +1657,35 @@ public class ValidatorEventHandlerPool implements Reusable{
 		}
 		boundElementParallelH[boundElementParallelHFree++] = eph;
 	}
+	
+	
+	BoundElementCommonHandler getBoundElementCommonHandler(ExternalConflictHandler conflictHandler, int candidateCount, ValidatingEEH parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
+		if(boundElementCommonHFree == 0){			
+			BoundElementCommonHandler eph = new BoundElementCommonHandler(debugWriter);
+			eph.init(this, activeInputDescriptor, inputStackDescriptor);
+			eph.init(conflictHandler, candidateCount, parent, bindingModel, queue, queuePool);
+			return eph;
+		}
+		else{
+			BoundElementCommonHandler eph = boundElementCommonH[--boundElementCommonHFree];
+			eph.init(conflictHandler, candidateCount, parent, bindingModel, queue, queuePool);
+			if(boundElementCommonHFree < boundElementCommonHMinFree) boundElementCommonHMinFree = boundElementCommonHFree;
+			return eph; 
+		}		
+	}	
+	
+	void recycle(BoundElementCommonHandler eph){	
+		if(boundElementCommonHFree == boundElementCommonH.length){			
+		    if(boundElementCommonHFree == boundElementCommonHMaxSize) return;
+			BoundElementCommonHandler[] increased = new BoundElementCommonHandler[10+boundElementCommonH.length];
+			System.arraycopy(boundElementCommonH, 0, increased, 0, boundElementCommonHFree);
+			boundElementCommonH = increased;
+		}
+		boundElementCommonH[boundElementCommonHFree++] = eph;
+	}
+
+	
+	
 	
 	
 	public BoundAttributeValidationHandler getAttributeValidationHandler(AAttribute boundAttribute, ElementValidationHandler parent, ContextErrorHandlerManager contextErrorHandlerManager, BindingModel bindingModel, Queue queue, int entry){		

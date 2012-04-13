@@ -21,16 +21,25 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class Param extends ParsedComponent{
-	String name;
-	String charContent;		
-	Param(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, AttributeInfo[] foreignAttributes, String charContent, String qName, String location, MessageWriter debugWriter){
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, qName, location, debugWriter);
-		this.charContent = charContent;
-		this.name = name; 
+	int nameRecordIndex;
+	String characterContent;		
+	Param(/*Map<String, String> prefixMapping,*/ 
+	            int xmlBase,
+                int ns, 
+                int datatypeLibrary,
+                int name,  
+                String characterContent, 
+                int recordIndex,
+                DocumentIndexedData documentIndexedData,
+                MessageWriter debugWriter){
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
+		this.characterContent = characterContent;
+		this.nameRecordIndex = name;
 	}
 	
 	public void accept(ParsedComponentVisitor v){
@@ -40,16 +49,20 @@ public class Param extends ParsedComponent{
 	public void accept(SimplifyingVisitor v)throws SAXException{
         v.visit(this);
     }
+    
+    public int getNameRecordIndex(){
+		return nameRecordIndex;	
+	}	
 	
 	public String getName(){
-		return name;
+		if(nameRecordIndex == DocumentIndexedData.NO_RECORD) return null;
+		return documentIndexedData.getStringValue(nameRecordIndex);	
 	}	
 	public String getCharacterContent(){
-		return charContent;
-	}
-	
+		return characterContent;	
+	}	
 	public String toString(){
-		String s = "Param name " +name+", charContent "+charContent ;
+		String s = "Param name " +getName()+", charContent "+getCharacterContent();
 		return s;
 	}
 }

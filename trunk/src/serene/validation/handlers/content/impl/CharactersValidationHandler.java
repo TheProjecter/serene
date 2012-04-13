@@ -105,7 +105,7 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
                 return;
             }
         }
-        	    
+                
 	    int dataOffset = -1;    
         int valueOffset = -1; 	    
         int listOffset = -1;    
@@ -214,7 +214,7 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	        if(temporaryMessageStorage != null) {	            
                 for(int i = 0; i < temporaryMessageStorage.length; i++){                    
                     if(temporaryMessageStorage[i] != null){
-                        temporaryMessageStorage[i].setDiscarded(true);
+                        /*temporaryMessageStorage[i].setDiscarded(true);*/
                         temporaryMessageStorage[i].clear();
                     }
                 }
@@ -239,8 +239,14 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
             return true;
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
             return true;
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ELEMENT){
+		    // The characterContentDescriptor was empty, so it was not set in 
+		    // the stack, the itemId is that of the element
+		    if(chars.length != 0) throw new IllegalStateException();		    
+		    if(pattern.isRequiredBranch())return true;
+		    return false;
 		}else{
-			throw new IllegalStateException();
+		    throw new IllegalStateException();
 		}
 	}
 	
@@ -253,6 +259,8 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 			currentErrorCatcher.characterContentDatatypeError(inputStackDescriptor.getCurrentItemInputRecordIndex(), item, datatypeErrorMessage); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){		   
 			currentErrorCatcher.attributeValueDatatypeError(inputStackDescriptor.getCurrentItemInputRecordIndex(), item, datatypeErrorMessage);
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ELEMENT){			
+			currentErrorCatcher.characterContentDatatypeError(inputStackDescriptor.getCurrentItemInputRecordIndex(), item, datatypeErrorMessage); 
 		}else{
 			throw new IllegalStateException();
 		}		
@@ -267,6 +275,8 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 			currentErrorCatcher.characterContentValueError(inputStackDescriptor.getCurrentItemInputRecordIndex(), value); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){		    
 			currentErrorCatcher.attributeValueValueError(inputStackDescriptor.getCurrentItemInputRecordIndex(), value);
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ELEMENT){			
+			currentErrorCatcher.characterContentValueError(inputStackDescriptor.getCurrentItemInputRecordIndex(), value); 
 		}else{
 			throw new IllegalStateException();
 		}

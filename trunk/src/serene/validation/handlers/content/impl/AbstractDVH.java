@@ -62,7 +62,7 @@ abstract class AbstractDVH extends AbstractCH implements ErrorCatcher{
         this.spaceHandler = spaceHandler;
 	}
 	
-	void validateData(char[] chars, DataActiveType type, AData dataPattern) throws SAXException{		
+	void validateData(char[] chars, DataActiveType type, AData dataPattern) throws SAXException{	
         try{
             dataPattern.datatypeMatches(chars, validationContext);
             AExceptPattern exceptPattern = dataPattern.getExceptPattern();

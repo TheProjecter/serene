@@ -35,9 +35,10 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 import sereneWrite.MessageWriter;
 
 public class AEmpty extends NoChildrenAPattern{
-	
-	public AEmpty(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){
-		super(ruleHandlerPool, simplifiedComponent, debugWriter);
+	SimplifiedComponent sempty;
+	public AEmpty(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent sempty, MessageWriter debugWriter){
+		super(ruleHandlerPool, debugWriter);
+		this.sempty = sempty;
 	}	
 		
 	public boolean isRequiredContent(){
@@ -47,6 +48,22 @@ public class AEmpty extends NoChildrenAPattern{
     public boolean isRequiredBranch(){
 		return false;
 	}
+    
+	public String getQName(){
+		return sempty.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return sempty.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return sempty.hashCode();
+    }   
+    
+    public SimplifiedComponent getCorrespondingSimplifiedComponent(){
+        return sempty;
+    }
     
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);

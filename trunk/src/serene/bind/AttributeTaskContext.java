@@ -26,6 +26,7 @@ import serene.util.AttributeInfo;
 * use wild cards) in the order they have been queued, may differ from the order
 * they appeared in the document.
 */
-public interface AttributeTaskContext{
-    AttributeInfo[] getAttributeInfo();
+public interface AttributeTaskContext extends TaskContext{
+    /*AttributeInfo[] getAttributeInfo();*/    
+    int getAttributeInputRecordIndex();
 }

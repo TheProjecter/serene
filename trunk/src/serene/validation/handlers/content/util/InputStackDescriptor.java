@@ -1,6 +1,26 @@
+/*
+Copyright 2012 Radu Cernuta 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
+
 package serene.validation.handlers.content.util;
 
-import org.xml.sax.Locator;
+import java.util.Map;
+
+import serene.util.InputDescriptor;
 
 import sereneWrite.MessageWriter;
 
@@ -9,19 +29,15 @@ import sereneWrite.MessageWriter;
 * Stores location and item identification data for the stack of document items 
 * involved in validation. 
 */
-public class InputStackDescriptor implements Locator{
-    public static final int NONE = -1;
-	public static final int ROOT = 0;
-	public static final int ELEMENT = 1;
-	public static final int ATTRIBUTE = 2;
-	public static final int CHARACTER_CONTENT = 3;
-	public static final int LIST_TOKEN = 4;
-		
+public class InputStackDescriptor implements InputDescriptor{  
+	
+    final String CHARACTER_CONTENT_DESCRIPTION = "character content";
+    final String TOKEN_DESCRIPTION = "list token";
 	ActiveInputDescriptor activeInputDescriptor;
 	int[] inputRecordIndexes;
 	int currentRecordIndexIndex;
 	
-	boolean currentCharsContent;
+	//boolean currentCharsContent;
 	
 	MessageWriter debugWriter;
 	public InputStackDescriptor(ActiveInputDescriptor activeInputDescriptor, MessageWriter debugWriter){
@@ -36,20 +52,69 @@ public class InputStackDescriptor implements Locator{
 	    currentRecordIndexIndex = -1;
 	}
 	
-	public void pushElement(String systemId, String publicId, int lineNumber, int columnNumber, String namespaceURI, String localName, String itemDescription){			
+	public void push(int recordIndex){
+	    if(++currentRecordIndexIndex == inputRecordIndexes.length){
+            int[] increased = new int[inputRecordIndexes.length+10];
+            System.arraycopy(inputRecordIndexes, 0, increased, 0, currentRecordIndexIndex);
+            inputRecordIndexes = increased;
+        }
+        inputRecordIndexes[currentRecordIndexIndex] = recordIndex;
+        activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
+	}	
+	public void pop(){
+		activeInputDescriptor.unregisterClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
+		currentRecordIndexIndex--;
+	}
+	// TODO 
+	// Review specific pops, they only exist because of the special treatment 
+	// for charatcer content and maybe also remove entirely the pushCharacterContent.
+	
+	public void pushElement(Map<String, String> declaredXmlns,
+	                            String qName,
+	                            String namespaceURI, 
+                                String localName,
+	                            String systemId, 
+                                String publicId, 
+                                int lineNumber, 
+                                int columnNumber){			
         if(++currentRecordIndexIndex == inputRecordIndexes.length){
             int[] increased = new int[inputRecordIndexes.length+10];
             System.arraycopy(inputRecordIndexes, 0, increased, 0, currentRecordIndexIndex);
             inputRecordIndexes = increased;
         }
         inputRecordIndexes[currentRecordIndexIndex] = activeInputDescriptor.recordItem(ELEMENT,
-                                                        itemDescription,
-                                                        localName,
-                                                        namespaceURI,
-                                                        systemId,
-                                                        publicId, 	
-                                                        lineNumber,
-                                                        columnNumber);
+                                                                                    declaredXmlns,
+                                                                                    qName,                                                                                    
+                                                                                    namespaceURI,
+                                                                                    localName,
+                                                                                    systemId,
+                                                                                    publicId, 	
+                                                                                    lineNumber,
+                                                                                    columnNumber);
+        //System.out.println("ELEMENT "+itemDescription);
+        activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
+	}
+	
+	public void pushElement(String qName,
+	                            String namespaceURI, 
+                                String localName,
+	                            String systemId, 
+                                String publicId, 
+                                int lineNumber, 
+                                int columnNumber){			
+        if(++currentRecordIndexIndex == inputRecordIndexes.length){
+            int[] increased = new int[inputRecordIndexes.length+10];
+            System.arraycopy(inputRecordIndexes, 0, increased, 0, currentRecordIndexIndex);
+            inputRecordIndexes = increased;
+        }
+        inputRecordIndexes[currentRecordIndexIndex] = activeInputDescriptor.recordItem(ELEMENT,
+                                                                                    qName,                                                                                    
+                                                                                    namespaceURI,
+                                                                                    localName,
+                                                                                    systemId,
+                                                                                    publicId, 	
+                                                                                    lineNumber,
+                                                                                    columnNumber);
         //System.out.println("ELEMENT "+itemDescription);
         activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
 	}
@@ -59,20 +124,61 @@ public class InputStackDescriptor implements Locator{
 		currentRecordIndexIndex--;
 	}
 	
-	public void pushAttribute(String systemId, String publicId, int lineNumber, int columnNumber, String namespaceURI, String localName, String itemDescription){
+	// Bound.
+	public void pushAttribute(String qName,
+	                            String namespaceURI, 
+                                String localName,
+                                String type,
+                                String value,
+	                            String systemId, 
+                                String publicId, 
+                                int lineNumber, 
+                                int columnNumber){
 		 if(++currentRecordIndexIndex == inputRecordIndexes.length){
             int[] increased = new int[inputRecordIndexes.length+10];
             System.arraycopy(inputRecordIndexes, 0, increased, 0, currentRecordIndexIndex);
             inputRecordIndexes = increased;
         }
         inputRecordIndexes[currentRecordIndexIndex] = activeInputDescriptor.recordItem(ATTRIBUTE,
-                                                        itemDescription,
-                                                        localName,
-                                                        namespaceURI,
-                                                        systemId,
-                                                        publicId, 	
-                                                        lineNumber,
-                                                        columnNumber);
+                                                                                        qName,
+                                                                                        namespaceURI, 
+                                                                                        localName,
+                                                                                        type,
+                                                                                        value,
+                                                                                        systemId, 
+                                                                                        publicId, 
+                                                                                        lineNumber, 
+                                                                                        columnNumber);
+        //System.out.println("ATTIRBUTE "+itemDescription);
+        activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
+	}
+	
+	
+	// Not bound.
+	public void pushAttribute(String qName,
+	                            String namespaceURI, 
+                                String localName,
+                                String type,
+                                //String value,
+	                            String systemId, 
+                                String publicId, 
+                                int lineNumber, 
+                                int columnNumber){
+		 if(++currentRecordIndexIndex == inputRecordIndexes.length){
+            int[] increased = new int[inputRecordIndexes.length+10];
+            System.arraycopy(inputRecordIndexes, 0, increased, 0, currentRecordIndexIndex);
+            inputRecordIndexes = increased;
+        }
+        inputRecordIndexes[currentRecordIndexIndex] = activeInputDescriptor.recordItem(ATTRIBUTE,
+                                                                                        qName,
+                                                                                        namespaceURI, 
+                                                                                        localName,
+                                                                                        type,
+                                                                                        //value,
+                                                                                        systemId, 
+                                                                                        publicId, 
+                                                                                        lineNumber, 
+                                                                                        columnNumber);
         //System.out.println("ATTIRBUTE "+itemDescription);
         activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
 	}
@@ -82,9 +188,14 @@ public class InputStackDescriptor implements Locator{
 		currentRecordIndexIndex--;
 	}
 	
-	public void pushCharsContent (String systemId, String publicId, int lineNumber, int columnNumber){
-		if(currentCharsContent)return;
-		currentCharsContent = true;
+	// Bound.
+	/*public void pushCharsContent (String value,
+	                            String systemId, 
+                                String publicId, 
+                                int lineNumber, 
+                                int columnNumber){
+		//if(currentCharsContent)return;
+		//currentCharsContent = true;
 		
 		if(++currentRecordIndexIndex == inputRecordIndexes.length){
             int[] increased = new int[inputRecordIndexes.length+10];
@@ -92,34 +203,59 @@ public class InputStackDescriptor implements Locator{
             inputRecordIndexes = increased;
         }
         inputRecordIndexes[currentRecordIndexIndex] = activeInputDescriptor.recordItem(CHARACTER_CONTENT,
-                                                        "character content",
-                                                        null,
-                                                        null,
+                                                        CHARACTER_CONTENT_DESCRIPTION,
+                                                        value,
                                                         systemId,
                                                         publicId, 	
                                                         lineNumber,
                                                         columnNumber);
         //System.out.println("CHARS CONTENT ");
         activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
-	}
+	}*/
+	
+	// Not bound.
+	/*public void pushCharsContent (String systemId, 
+                                String publicId, 
+                                int lineNumber, 
+                                int columnNumber){
+		//if(currentCharsContent)return;
+		//currentCharsContent = true;
 		
-	public void popCharsContent(){	
-		if(!currentCharsContent)return;
+		if(++currentRecordIndexIndex == inputRecordIndexes.length){
+            int[] increased = new int[inputRecordIndexes.length+10];
+            System.arraycopy(inputRecordIndexes, 0, increased, 0, currentRecordIndexIndex);
+            inputRecordIndexes = increased;
+        }
+        inputRecordIndexes[currentRecordIndexIndex] = activeInputDescriptor.recordItem(CHARACTER_CONTENT,
+                                                        CHARACTER_CONTENT_DESCRIPTION,
+                                                        systemId,
+                                                        publicId, 	
+                                                        lineNumber,
+                                                        columnNumber);
+        //System.out.println("CHARS CONTENT ");
+        activeInputDescriptor.registerClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
+	}*/
+		
+	/*public void popCharsContent(){	
+		//if(!currentCharsContent)return;
 		activeInputDescriptor.unregisterClientForRecord(inputRecordIndexes[currentRecordIndexIndex], this);
 		currentRecordIndexIndex--;
-		currentCharsContent = false;
-	}
+		//currentCharsContent = false;
+	}*/
 	
-    public void pushListToken(String token, String systemId, String publicId, int lineNumber, int columnNumber){
+    public void pushListToken(String token,
+	                            String systemId, 
+                                String publicId, 
+                                int lineNumber, 
+                                int columnNumber){
 		if(++currentRecordIndexIndex == inputRecordIndexes.length){
             int[] increased = new int[inputRecordIndexes.length+10];
             System.arraycopy(inputRecordIndexes, 0, increased, 0, currentRecordIndexIndex);
             inputRecordIndexes = increased;
         }
         inputRecordIndexes[currentRecordIndexIndex] = activeInputDescriptor.recordItem(LIST_TOKEN,
+                                                        TOKEN_DESCRIPTION,
                                                         token,
-                                                        null,
-                                                        null,
                                                         systemId,
                                                         publicId, 	
                                                         lineNumber,
@@ -133,16 +269,40 @@ public class InputStackDescriptor implements Locator{
 		currentRecordIndexIndex--;
 	}
 	
+	
+	public int getItemId(){
+	    return activeInputDescriptor.getItemId(inputRecordIndexes[currentRecordIndexIndex]);
+	}
+	
 	public String getItemDescription(){
 		return activeInputDescriptor.getItemDescription(inputRecordIndexes[currentRecordIndexIndex]);
 	}
     
     public String getNamespaceURI(){
+        int itemId = getItemId(); 
+        if(itemId != ATTRIBUTE || itemId != ELEMENT) throw new IllegalStateException();
 		return activeInputDescriptor.getNamespaceURI(inputRecordIndexes[currentRecordIndexIndex]);
 	}
     
     public String getLocalName(){
+        int itemId = getItemId(); 
+        if(itemId != ATTRIBUTE || itemId != ELEMENT) throw new IllegalStateException();
 		return activeInputDescriptor.getLocalName(inputRecordIndexes[currentRecordIndexIndex]);
+	}
+	
+	public String getAttributeType(){
+	    if(getItemId() != ATTRIBUTE) throw new IllegalStateException();
+		return activeInputDescriptor.getAttributeType(inputRecordIndexes[currentRecordIndexIndex]);
+	}
+	
+	public String getStringValue(){
+	    if(getItemId() == ELEMENT) throw new IllegalStateException();
+		return activeInputDescriptor.getStringValue(inputRecordIndexes[currentRecordIndexIndex]);
+	}
+	
+	public char[] getCharArrayValue(){
+	    if(getItemId() == ELEMENT) throw new IllegalStateException();
+		return activeInputDescriptor.getCharArrayValue(inputRecordIndexes[currentRecordIndexIndex]);
 	}
 	
 	public String getSystemId(){
@@ -161,9 +321,6 @@ public class InputStackDescriptor implements Locator{
 		return activeInputDescriptor.getColumnNumber(inputRecordIndexes[currentRecordIndexIndex]);
 	}
 
-	public int getItemId(){
-	    return activeInputDescriptor.getItemId(inputRecordIndexes[currentRecordIndexIndex]);
-	}
 	
 	/**
 	* Returns the index corresponding to the record of the current item in the 

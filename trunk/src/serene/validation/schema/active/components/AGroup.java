@@ -38,7 +38,7 @@ import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 import serene.validation.handlers.stack.impl.MinimalReduceStackHandler;
 import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SGroup;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
@@ -53,13 +53,15 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 	
 	ActiveModelStackHandlerPool stackHandlerPool;
 	
+	SGroup sgroup;
 	public AGroup(APattern[] children,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SimplifiedComponent simplifiedComponent, 
+				SGroup sgroup, 
 				MessageWriter debugWriter){	
-		super(children, ruleHandlerPool, simplifiedComponent, debugWriter);
+		super(children, ruleHandlerPool, debugWriter);
 		this.stackHandlerPool = stackHandlerPool;
+		this.sgroup = sgroup;
 	}
 		
 	protected void asParent(APattern[] children){
@@ -85,6 +87,23 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 		return saturationIndicator;
 	}
 	
+	
+	public String getQName(){
+		return sgroup.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return sgroup.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return sgroup.hashCode();
+    }   
+    
+    public SGroup getCorrespondingSimplifiedComponent(){
+        return sgroup;
+    }
+    
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);
 	}

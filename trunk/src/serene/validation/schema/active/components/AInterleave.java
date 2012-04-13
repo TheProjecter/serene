@@ -23,8 +23,6 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.RuleVisitor;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
-
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
@@ -46,7 +44,7 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import sereneWrite.MessageWriter;
 
-public class AInterleave extends MultipleChildrenAPattern implements ACompositor{	
+public abstract class AInterleave extends MultipleChildrenAPattern implements ACompositor{	
 	
 	int satisfactionIndicator;
 	int saturationIndicator;
@@ -55,10 +53,9 @@ public class AInterleave extends MultipleChildrenAPattern implements ACompositor
 	
 	public AInterleave(APattern[] children,
 				ActiveModelStackHandlerPool stackHandlerPool,
-				ActiveModelRuleHandlerPool ruleHandlerPool, 
-				SimplifiedComponent simplifiedComponent, 
+				ActiveModelRuleHandlerPool ruleHandlerPool,
 				MessageWriter debugWriter){		
-		super(children, ruleHandlerPool, simplifiedComponent, debugWriter);
+		super(children, ruleHandlerPool, debugWriter);
 		this.stackHandlerPool = stackHandlerPool;
 	}		
 	
@@ -85,6 +82,7 @@ public class AInterleave extends MultipleChildrenAPattern implements ACompositor
 		return saturationIndicator;
 	}
 	
+    
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);
 	}

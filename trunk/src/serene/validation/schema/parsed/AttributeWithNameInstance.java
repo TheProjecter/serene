@@ -21,23 +21,23 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 import sereneWrite.MessageWriter;
 
 public class AttributeWithNameInstance extends Attribute{
-	String name;
-		
-	AttributeWithNameInstance(Map<String, String> prefixMapping, 
-								String xmlBase,
-								String ns, String datatypeLibrary, 
-								String name, 
-                                AttributeInfo[] foreignAttributes,
+	int nameRecordIndex;
+	AttributeWithNameInstance(/*Map<String, String> prefixMapping,*/ 
+	                            int xmlBase,
+								int ns, 
+								int datatypeLibrary, 
+								int name,
+								int defaultValue,
 								ParsedComponent[] children,
-								String qName, 
-								String location, 
+								int recordIndex,
+                                DocumentIndexedData documentIndexedData, 
 								MessageWriter debugWriter){		
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, children, qName, location, debugWriter);
-		this.name = name;
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, defaultValue, children, recordIndex, documentIndexedData, debugWriter);
+		this.nameRecordIndex = name;
 	}	
 
 	public void accept(ParsedComponentVisitor v){
@@ -48,10 +48,16 @@ public class AttributeWithNameInstance extends Attribute{
 	}
 	
 	public String getName(){
-		return name;
+		if(nameRecordIndex == DocumentIndexedData.NO_RECORD) return null;
+		return documentIndexedData.getStringValue(nameRecordIndex);
 	}
+	
+	public int getNameRecordIndex(){
+	    return nameRecordIndex;
+	}
+	
 	public String toString(){
-		String s = "AttributeWithNameInstance "+name;		
+		String s = "AttributeWithNameInstance "+getName();		
 		return s;
 	}
 }

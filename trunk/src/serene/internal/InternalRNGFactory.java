@@ -35,9 +35,6 @@ import serene.validation.schema.ValidationModelImpl;
 import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.SimplifiedModel;
 
-import serene.parser.RNGParseBindingPool;
-
-
 import sereneWrite.MessageWriter;
 
 

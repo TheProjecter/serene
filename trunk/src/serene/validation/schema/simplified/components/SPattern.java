@@ -16,10 +16,14 @@ limitations under the License.
 
 package serene.validation.schema.simplified.components;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public abstract class SPattern extends AbstractSimplifiedComponent{	
-	public SPattern(String qName, String location, MessageWriter debugWriter){		
-		super(qName, location, debugWriter);
+	public SPattern(int recordIndex, 
+			DocumentIndexedData documentIndexedData, 
+			MessageWriter debugWriter){		
+		super(recordIndex, documentIndexedData, debugWriter);
 	}
 }	

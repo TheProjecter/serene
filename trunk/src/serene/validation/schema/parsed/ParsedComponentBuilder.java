@@ -19,13 +19,15 @@ package serene.validation.schema.parsed;
 
 import java.util.Map;
 
-import serene.util.AttributeInfo;
 
 import serene.validation.schema.ComponentBuilder;
+import serene.validation.schema.parsed.util.Level;
+
+import serene.bind.util.DocumentIndexedData;
 
 import sereneWrite.MessageWriter;
 
-import serene.validation.schema.parsed.util.Level;
+
 
 public class ParsedComponentBuilder implements ComponentBuilder{	
 	
@@ -34,14 +36,72 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 	Level topLevel;	
 	MessageWriter debugWriter;
 	
+	int xmlBaseRecordIndex;
+	int nsRecordIndex;
+	int datatypeLibraryRecordIndex;
+	int combineRecordIndex;
+	int hrefRecordIndex;
+	int nameRecordIndex;
+	int typeRecordIndex;
+	int defaultValueRecordIndex;
+	
+	DocumentIndexedData schemaDocumentIndexedData;
+		
+	
 	public ParsedComponentBuilder(MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		level = Level.getTopInstance(debugWriter);
 		topLevel = level;
+		
+		
+		xmlBaseRecordIndex = DocumentIndexedData.NO_RECORD;
+        nsRecordIndex = DocumentIndexedData.NO_RECORD;
+        datatypeLibraryRecordIndex = DocumentIndexedData.NO_RECORD;
+        combineRecordIndex = DocumentIndexedData.NO_RECORD;
+        hrefRecordIndex = DocumentIndexedData.NO_RECORD;
+        nameRecordIndex = DocumentIndexedData.NO_RECORD;
+        typeRecordIndex = DocumentIndexedData.NO_RECORD;
+        defaultValueRecordIndex = DocumentIndexedData.NO_RECORD;;
+	}
+
+	public void setDocumentIndexedData(DocumentIndexedData schemaDocumentIndexedData){
+	    this.schemaDocumentIndexedData = schemaDocumentIndexedData;
+	}
+	
+	public void setXMLBase(int xmlBase){
+	    this.xmlBaseRecordIndex = xmlBase;
+	}
+	
+	public void setNs(int ns){
+	    this.nsRecordIndex = ns;
+	}
+	
+	public void setDatatypeLibrary(int datatypeLibrary){
+	    this.datatypeLibraryRecordIndex = datatypeLibrary;
+	}
+	
+	public void setCombine(int combine){
+	    this.combineRecordIndex = combine;
+	}
+	
+	public void setHref(int href){
+	    this.hrefRecordIndex = href;
+	}
+	
+	public void setType(int type){
+	    this.typeRecordIndex = type;
+	}
+	
+	public void setName(int name){    
+	    this.nameRecordIndex = name;
+	}
+		
+	public void setDefaultValue(int defaultValue){
+	    this.defaultValueRecordIndex = defaultValue;
 	}
 	
 	public void startLevel(){
-		level = level.getLevelDown();		
+		level = level.getLevelDown();
 	}	
 	public void endLevel(){		
 		level = level.getLevelUp();
@@ -90,154 +150,361 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 	void writeLevels(){
 	}
 	
+	void resetCommonAttributtes(){
+	    if(xmlBaseRecordIndex != DocumentIndexedData.NO_RECORD) xmlBaseRecordIndex = DocumentIndexedData.NO_RECORD;
+	    if(nsRecordIndex != DocumentIndexedData.NO_RECORD)nsRecordIndex = DocumentIndexedData.NO_RECORD;
+        if(datatypeLibraryRecordIndex != DocumentIndexedData.NO_RECORD)datatypeLibraryRecordIndex = DocumentIndexedData.NO_RECORD;
+        if(defaultValueRecordIndex != DocumentIndexedData.NO_RECORD) defaultValueRecordIndex = DocumentIndexedData.NO_RECORD;
+	}
+	
 	//**************************************************************************
 	//START PATTERN BUILDING ***************************************************
 	//**************************************************************************
-	public void buildElementWithNameClass(Map<String, String> prefixMapping, 
-                                            String xmlBase, 
-                                            String ns,
-                                            String datatypeLibrary,
-                                            AttributeInfo[] foreignAttributes,
-                                            String qName, 
-                                            String location){
-		writeLevels();	
-		ElementWithNameClass ewnc = new ElementWithNameClass(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildElementWithNameClass(/*Map<String, String> declaredXmlns, */
+                                            int recordIndex){
+		/*/*writeLevels();*/
+		ElementWithNameClass ewnc = new ElementWithNameClass(/*declaredXmlns,*/ 
+		                                                        xmlBaseRecordIndex, 
+		                                                        nsRecordIndex, 
+		                                                        datatypeLibraryRecordIndex,		                                                        
+		                                                        getContentParsedComponents(), 
+		                                                        recordIndex,
+		                                                        schemaDocumentIndexedData,
+		                                                        debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(ewnc);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildElementWithNameInstance(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		ElementWithNameInstance ewni = new ElementWithNameInstance(prefixMapping, xmlBase, ns, datatypeLibrary, name, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildElementWithNameInstance(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		ElementWithNameInstance ewni = new ElementWithNameInstance(/*declaredXmlns, */
+		                                                        xmlBaseRecordIndex, 
+		                                                        nsRecordIndex, 
+		                                                        datatypeLibraryRecordIndex,
+                                                                nameRecordIndex,		                                                        
+		                                                        getContentParsedComponents(), 
+		                                                        recordIndex,
+		                                                        schemaDocumentIndexedData,
+		                                                        debugWriter);
+		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(ewni);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildAttributeWithNameClass(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		AttributeWithNameClass awnc = new AttributeWithNameClass(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildAttributeWithNameClass(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		AttributeWithNameClass awnc = new AttributeWithNameClass(/*declaredXmlns, */
+		                                                        xmlBaseRecordIndex, 
+		                                                        nsRecordIndex,
+		                                                        datatypeLibraryRecordIndex,
+		                                                        defaultValueRecordIndex,
+		                                                        getContentParsedComponents(), 
+		                                                        recordIndex,
+		                                                        schemaDocumentIndexedData,
+		                                                        debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(awnc);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildAttributeWithNameInstance(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		AttributeWithNameInstance awni = new AttributeWithNameInstance(prefixMapping, xmlBase, ns, datatypeLibrary, name, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildAttributeWithNameInstance(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		AttributeWithNameInstance awni = new AttributeWithNameInstance(/*declaredXmlns,*/ 
+		                                                        xmlBaseRecordIndex, 
+		                                                        nsRecordIndex, 
+		                                                        datatypeLibraryRecordIndex, 
+		                                                        nameRecordIndex, 
+		                                                        defaultValueRecordIndex,
+		                                                        getContentParsedComponents(), 
+		                                                        recordIndex,
+		                                                        schemaDocumentIndexedData,
+		                                                        debugWriter);
+		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(awni);
-		writeLevels();
+		/*writeLevels();*/
 	}	
-	public void buildGroup(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		Group g = new Group(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildGroup(/*Map<String, String> declaredXmlns, */
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		Group g = new Group(/*declaredXmlns,*/ 
+		                        xmlBaseRecordIndex, 
+		                        nsRecordIndex, 
+		                        datatypeLibraryRecordIndex, 
+		                        getContentParsedComponents(), 
+		                        recordIndex,
+                                schemaDocumentIndexedData,
+                                debugWriter);
+        resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(g);
-		writeLevels();	
+		/*/*writeLevels();*/
 	}		
-	public void buildInterleave(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();
-		Interleave i = new Interleave(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildInterleave(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*writeLevels();*/
+		Interleave i = new Interleave(/*declaredXmlns,*/
+		                            xmlBaseRecordIndex, 
+		                            nsRecordIndex, 
+		                            datatypeLibraryRecordIndex, 
+		                            getContentParsedComponents(), 
+		                            recordIndex,
+		                            schemaDocumentIndexedData, 
+		                            debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(i);
-		writeLevels();	
+		/*/*writeLevels();*/
 	}
-	public void buildChoicePattern(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		ChoicePattern cp = new ChoicePattern(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildChoicePattern(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		ChoicePattern cp = new ChoicePattern(/*declaredXmlns, */
+		                            xmlBaseRecordIndex, 
+		                            nsRecordIndex, 
+		                            datatypeLibraryRecordIndex, 
+		                            getContentParsedComponents(), 
+		                            recordIndex,
+                                    schemaDocumentIndexedData,
+                                    debugWriter);
+        resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(cp);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildOptional(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		Optional o = new Optional(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildOptional(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		Optional o = new Optional(/*declaredXmlns, */
+		                                xmlBaseRecordIndex, 
+		                                nsRecordIndex, 
+		                                datatypeLibraryRecordIndex, 
+		                                getContentParsedComponents(), 
+		                                recordIndex,
+		                                schemaDocumentIndexedData, 
+		                                debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(o);
-		writeLevels();	
+		/*/*writeLevels();*/
 	}
-	public void buildZeroOrMore(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		ZeroOrMore zom = new ZeroOrMore(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildZeroOrMore(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		ZeroOrMore zom = new ZeroOrMore(/*declaredXmlns, */
+		                                    xmlBaseRecordIndex, 
+		                                    nsRecordIndex, 
+		                                    datatypeLibraryRecordIndex, 
+		                                    getContentParsedComponents(), 
+		                                    recordIndex,
+		                                    schemaDocumentIndexedData, 
+		                                    debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(zom);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildOneOrMore(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		OneOrMore oom = new OneOrMore(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildOneOrMore(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		OneOrMore oom = new OneOrMore(/*declaredXmlns, */
+		                                    xmlBaseRecordIndex, 
+		                                    nsRecordIndex, 
+		                                    datatypeLibraryRecordIndex, 
+		                                    getContentParsedComponents(), 
+		                                    recordIndex,
+		                                    schemaDocumentIndexedData,
+		                                    debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(oom);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildListPattern(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		ListPattern lp = new ListPattern(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildListPattern(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		ListPattern lp = new ListPattern(/*declaredXmlns, */
+                                                xmlBaseRecordIndex, 
+                                                nsRecordIndex, 
+                                                datatypeLibraryRecordIndex, 
+                                                getContentParsedComponents(), 
+                                                recordIndex,
+                                                schemaDocumentIndexedData, 
+                                                debugWriter);
+        resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(lp);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildMixed(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		Mixed m = new Mixed(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildMixed(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		Mixed m = new Mixed(/*declaredXmlns, */
+		                        xmlBaseRecordIndex, 
+		                        nsRecordIndex, 
+		                        datatypeLibraryRecordIndex, 
+		                        getContentParsedComponents(), 
+		                        recordIndex,
+		                        schemaDocumentIndexedData, 
+		                        debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(m);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildRef(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		Ref r = new Ref(prefixMapping, xmlBase, ns, datatypeLibrary, name, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildRef(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		Ref r = new Ref(/*declaredXmlns, */
+		                        xmlBaseRecordIndex, 
+		                        nsRecordIndex, 
+		                        datatypeLibraryRecordIndex, 
+		                        nameRecordIndex, 
+		                        getContentParsedComponents(), 
+		                        recordIndex,
+		                        schemaDocumentIndexedData, 
+		                        debugWriter);
+		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
+		resetCommonAttributtes();
 		addToCurrentLevel(r);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildParentRef(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		ParentRef r = new ParentRef(prefixMapping, xmlBase, ns, datatypeLibrary, name, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildParentRef(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		ParentRef r = new ParentRef(/*declaredXmlns, */
+		                                xmlBaseRecordIndex, 
+		                                nsRecordIndex, 
+		                                datatypeLibraryRecordIndex, 
+		                                nameRecordIndex, 
+		                                getContentParsedComponents(), 
+		                                recordIndex,
+		                                schemaDocumentIndexedData,
+		                                debugWriter);
+		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
+		resetCommonAttributtes();
 		addToCurrentLevel(r);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildEmpty(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		Empty e = new Empty(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildEmpty(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		Empty e = new Empty(/*declaredXmlns, */
+		                                xmlBaseRecordIndex, 
+		                                nsRecordIndex, 
+		                                datatypeLibraryRecordIndex, 
+		                                getContentParsedComponents(), 
+		                                recordIndex,
+		                                schemaDocumentIndexedData,
+		                                debugWriter);
+		resetCommonAttributtes();
 		addToCurrentLevel(e);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildText(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		Text t = new Text(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildText(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		Text t = new Text(/*declaredXmlns, */
+		                        xmlBaseRecordIndex, 
+		                        nsRecordIndex, 
+		                        datatypeLibraryRecordIndex, 
+		                        getContentParsedComponents(), 
+		                        recordIndex,
+		                        schemaDocumentIndexedData,
+		                        debugWriter);
+		resetCommonAttributtes();
 		addToCurrentLevel(t);
-		writeLevels();
+		/*writeLevels();*/
 	}	
-	public void buildValue(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String type, AttributeInfo[] foreignAttributes, String charContent, String qName, String location){
-		writeLevels();		
-		Value v = new Value(prefixMapping, xmlBase, ns, datatypeLibrary, type, foreignAttributes, charContent, qName, location, debugWriter);
+	public void buildValue(/*Map<String, String> declaredXmlns,*/ 
+	                                            String characterContent,
+	                                            int recordIndex){
+		/*/*writeLevels();*/
+		Value v = new Value(/*declaredXmlns, */
+		                            xmlBaseRecordIndex, 
+		                            nsRecordIndex, 
+		                            datatypeLibraryRecordIndex, 
+		                            typeRecordIndex,
+		                            characterContent,
+		                            recordIndex,
+		                            schemaDocumentIndexedData,
+		                            debugWriter);
+		if(typeRecordIndex != DocumentIndexedData.NO_RECORD)typeRecordIndex = DocumentIndexedData.NO_RECORD;
+		resetCommonAttributtes();
 		addToCurrentLevel(v);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildData(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String type, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		Data d = new Data(prefixMapping, xmlBase, ns, datatypeLibrary, type, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);		
+	public void buildData(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		Data d = new Data(/*declaredXmlns, */
+		                            xmlBaseRecordIndex, 
+		                            nsRecordIndex, 
+		                            datatypeLibraryRecordIndex, 
+		                            typeRecordIndex, 
+		                            getContentParsedComponents(), 
+		                            recordIndex,
+		                            schemaDocumentIndexedData,
+		                            debugWriter);
+		if(typeRecordIndex != DocumentIndexedData.NO_RECORD)typeRecordIndex = DocumentIndexedData.NO_RECORD;
+        resetCommonAttributtes();		
 		clearContent();
 		addToCurrentLevel(d);
-		writeLevels();
+		/*writeLevels();*/
 	}		
-	public void buildNotAllowed(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		NotAllowed na = new NotAllowed(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildNotAllowed(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		NotAllowed na = new NotAllowed(/*declaredXmlns, */
+		                                xmlBaseRecordIndex, 
+		                                nsRecordIndex, 
+		                                datatypeLibraryRecordIndex, 
+		                                getContentParsedComponents(), 
+		                                recordIndex,
+		                                schemaDocumentIndexedData,
+		                                debugWriter);
+		resetCommonAttributtes();
 		addToCurrentLevel(na);
-		writeLevels();
+		/*writeLevels();*/
 	}			
-	public void buildExternalRef(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String href, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		ExternalRef er = new ExternalRef(prefixMapping, xmlBase, ns, datatypeLibrary, href, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildExternalRef(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		ExternalRef er = new ExternalRef(/*declaredXmlns, */
+		                                   xmlBaseRecordIndex, 
+		                                   nsRecordIndex, 
+		                                   datatypeLibraryRecordIndex, 
+		                                   hrefRecordIndex, 
+		                                   getContentParsedComponents(), 
+		                                   recordIndex,
+		                                   schemaDocumentIndexedData,
+		                                   debugWriter);
+		if(hrefRecordIndex != DocumentIndexedData.NO_RECORD)hrefRecordIndex = DocumentIndexedData.NO_RECORD;
+		resetCommonAttributtes();
 		addToCurrentLevel(er);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildGrammar(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		Grammar g = new Grammar(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildGrammar(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		Grammar g = new Grammar(/*declaredXmlns, */
+		                                    xmlBaseRecordIndex, 
+		                                    nsRecordIndex, 
+		                                    datatypeLibraryRecordIndex, 
+		                                    getContentParsedComponents(), 
+		                                    recordIndex,
+		                                    schemaDocumentIndexedData,
+		                                    debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(g);
-		writeLevels();
+		/*writeLevels();*/
 	}
 	//**************************************************************************
 	//END PATTERN BUILDING *****************************************************
@@ -247,32 +514,69 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	//START NAME CLASS BUILDING ************************************************
 	//**************************************************************************	
-	public void buildName(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String characterContent, String qName, String location){
-		writeLevels();		
-		Name n = new Name(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, characterContent, qName, location, debugWriter);
+	public void buildName(/*Map<String, String> declaredXmlns,*/ 
+	                                            String characterContent,
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		Name n = new Name(/*declaredXmlns, */
+		                        xmlBaseRecordIndex, 
+		                        nsRecordIndex, 
+		                        datatypeLibraryRecordIndex,
+		                        characterContent, 
+		                        recordIndex,
+		                        schemaDocumentIndexedData,
+		                        debugWriter);
+		resetCommonAttributtes();
 		addToCurrentLevel(n);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildAnyName(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		AnyName an = new AnyName(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildAnyName(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		AnyName an = new AnyName(/*declaredXmlns, */
+		                            xmlBaseRecordIndex, 
+		                            nsRecordIndex, 
+		                            datatypeLibraryRecordIndex,
+		                            getContentParsedComponents(), 
+		                            recordIndex,
+                                    schemaDocumentIndexedData,
+                                    debugWriter);
+        resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(an);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildNsName(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		NsName nn = new NsName(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);		
+	public void buildNsName(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		NsName nn = new NsName(/*declaredXmlns, */
+		                                xmlBaseRecordIndex, 
+		                                nsRecordIndex, 
+		                                datatypeLibraryRecordIndex,
+		                                getContentParsedComponents(), 
+		                                recordIndex,
+                                        schemaDocumentIndexedData,
+                                        debugWriter);
+        resetCommonAttributtes();		
 		clearContent();
 		addToCurrentLevel(nn);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildChoiceNameClass(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		ChoiceNameClass cnc = new ChoiceNameClass(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildChoiceNameClass(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		ChoiceNameClass cnc = new ChoiceNameClass(/*declaredXmlns, */
+		                                                xmlBaseRecordIndex, 
+		                                                nsRecordIndex, 
+		                                                datatypeLibraryRecordIndex,
+		                                                getContentParsedComponents(), 
+		                                                recordIndex,
+		                                                schemaDocumentIndexedData, 
+		                                                debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(cnc);
-		writeLevels();
+		/*writeLevels();*/
 	}	
 	//**************************************************************************
 	//END NAME CLASS BUILDING **************************************************
@@ -282,97 +586,181 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	//START DEFINITION BUILDING ************************************************
 	//**************************************************************************	
-	public void buildDefine(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, String combine, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		Define d = new Define(prefixMapping, xmlBase, ns, datatypeLibrary, name, combine, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildDefine(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		Define d = new Define(/*declaredXmlns, */
+		                            xmlBaseRecordIndex, 
+		                            nsRecordIndex, 
+		                            datatypeLibraryRecordIndex, 
+		                            nameRecordIndex, 
+		                            combineRecordIndex,
+		                            getContentParsedComponents(), 
+		                            recordIndex,
+		                            schemaDocumentIndexedData,
+		                            debugWriter);
+		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
+		if(combineRecordIndex != DocumentIndexedData.NO_RECORD)combineRecordIndex = DocumentIndexedData.NO_RECORD;
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(d);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildStart(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String combine, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();	
-		Start s = new Start(prefixMapping, xmlBase, ns, datatypeLibrary, combine, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildStart(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/
+		Start s = new Start(/*declaredXmlns, */
+		                            xmlBaseRecordIndex, 
+		                            nsRecordIndex, 
+		                            datatypeLibraryRecordIndex, 
+		                            combineRecordIndex, 
+		                            getContentParsedComponents(),
+		                            recordIndex,
+		                            schemaDocumentIndexedData,
+		                            debugWriter);
+		if(combineRecordIndex != DocumentIndexedData.NO_RECORD)combineRecordIndex = DocumentIndexedData.NO_RECORD;
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(s);
-		writeLevels();
+		/*writeLevels();*/
 	}
 	//**************************************************************************
 	//END DEFINITION BUILDING **************************************************
 	//**************************************************************************
 
-	public void buildDivIncludeContent(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		DivIncludeContent dic = new DivIncludeContent(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildDivIncludeContent(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		DivIncludeContent dic = new DivIncludeContent(/*declaredXmlns, */
+		                                                    xmlBaseRecordIndex, 
+		                                                    nsRecordIndex, 
+		                                                    datatypeLibraryRecordIndex, 
+		                                                    getContentParsedComponents(), 
+		                                                    recordIndex,
+		                                                    schemaDocumentIndexedData,
+		                                                    debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(dic);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildDivGrammarContent(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		DivGrammarContent dgc = new DivGrammarContent(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildDivGrammarContent(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		DivGrammarContent dgc = new DivGrammarContent(/*declaredXmlns, */
+		                                                        xmlBaseRecordIndex, 
+		                                                        nsRecordIndex, 
+		                                                        datatypeLibraryRecordIndex,
+		                                                        getContentParsedComponents(), 
+		                                                        recordIndex,
+		                                                        schemaDocumentIndexedData,
+		                                                        debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(dgc);
-		writeLevels();
+		/*writeLevels();*/
 	}
 
-	public void buildParam(Map<String, String> prefixMapping, 
-                            String xmlBase, 
-                            String ns, 
-                            String datatypeLibrary, 
-                            String name,
-                            AttributeInfo[] foreignAttributes,
-                            String charContent, 
-                            String qName, 
-                            String location){
-		writeLevels();		
-		Param p = new Param(prefixMapping, xmlBase, ns, datatypeLibrary, name, foreignAttributes, charContent, qName, location, debugWriter);
+	public void buildParam(/*Map<String, String> declaredXmlns,*/ 
+	                                            String characterContent,
+                                                int recordIndex){
+		/*/*writeLevels();*/	
+		Param p = new Param(/*declaredXmlns,*/ 
+		                            xmlBaseRecordIndex, 
+		                            nsRecordIndex, 
+		                            datatypeLibraryRecordIndex, 
+		                            nameRecordIndex,
+		                            characterContent, 
+		                            recordIndex,
+		                            schemaDocumentIndexedData,
+		                            debugWriter);
+		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
+		resetCommonAttributtes();
 		addToCurrentLevel(p);
-		writeLevels();
+		/*writeLevels();*/
 	}
 
-	public void buildExceptNameClass(Map<String, String> prefixMapping, String xmlBase,  String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		ExceptNameClass enc = new ExceptNameClass(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildExceptNameClass(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		ExceptNameClass enc = new ExceptNameClass(/*declaredXmlns, */
+		                                                xmlBaseRecordIndex, 
+		                                                nsRecordIndex, 
+		                                                datatypeLibraryRecordIndex,
+		                                                getContentParsedComponents(), 
+		                                                recordIndex,
+		                                                schemaDocumentIndexedData,
+		                                                debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(enc);
-		writeLevels();
+		/*writeLevels();*/
 	}
-	public void buildExceptPattern(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		ExceptPattern ep = new ExceptPattern(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildExceptPattern(/*Map<String, String> declaredXmlns,*/     
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		ExceptPattern ep = new ExceptPattern(/*declaredXmlns, */
+		                                            xmlBaseRecordIndex, 
+		                                            nsRecordIndex, 
+		                                            datatypeLibraryRecordIndex, 
+		                                            getContentParsedComponents(), 
+		                                            recordIndex,
+		                                            schemaDocumentIndexedData,
+		                                            debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(ep);
-		writeLevels();
+		/*writeLevels();*/
 	}
 	
-	public void buildInclude(Map<String, String> prefixMapping, 
-                                String xmlBase, 
-                                String ns, 
-                                String datatypeLibrary, 
-                                String href,
-                                AttributeInfo[] foreignAttributes,
-                                String qName, 
-                                String location){
-		writeLevels();		
-		Include i = new Include(prefixMapping, xmlBase, ns, datatypeLibrary, href, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildInclude(/*Map<String, String> declaredXmlns,*/ 
+                                                int recordIndex){
+		/*/*writeLevels();*/	
+		Include i = new Include(/*declaredXmlns, */
+		                                xmlBaseRecordIndex, 
+		                                nsRecordIndex, 
+		                                datatypeLibraryRecordIndex, 
+		                                hrefRecordIndex,
+		                                getContentParsedComponents(), 
+		                                recordIndex,
+		                                schemaDocumentIndexedData,
+		                                debugWriter);
+		if(hrefRecordIndex != DocumentIndexedData.NO_RECORD)hrefRecordIndex = DocumentIndexedData.NO_RECORD;
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(i);
-		writeLevels();
+		/*writeLevels();*/
 	}
 	
-	public void buildDummy(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		Dummy dd = new Dummy(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+	public void buildDummy(/*Map<String, String> declaredXmlns,*/ 
+	                                            int recordIndex){
+		/*/*writeLevels();*/	
+		Dummy dd = new Dummy(/*declaredXmlns, */
+		                        xmlBaseRecordIndex, 
+		                        nsRecordIndex, 
+		                        datatypeLibraryRecordIndex, 
+		                        getContentParsedComponents(), 
+		                        recordIndex,
+		                        schemaDocumentIndexedData,
+		                        debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(dd);
-		writeLevels();
+		/*writeLevels();*/
 	}
     
-    public void buildForeignComponent(String namespaceURI, String localName, Map<String, String> prefixMapping, String xmlBase, AttributeInfo[] foreignAttributes, String qName, String location){
-		writeLevels();		
-		ForeignComponent fc = new ForeignComponent(namespaceURI, localName, prefixMapping, xmlBase, foreignAttributes, getContentParsedComponents(), qName, location, debugWriter);
+    public void buildForeignComponent(/*Map<String, String> declaredXmlns,*/ 
+                                                int recordIndex){
+		/*/*writeLevels();*/	
+		ForeignComponent fc = new ForeignComponent(/*declaredXmlns, */
+		                                                xmlBaseRecordIndex, 
+		                                                getContentParsedComponents(), 
+		                                                recordIndex,
+		                                                schemaDocumentIndexedData,
+		                                                debugWriter);
+		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(fc);
-		writeLevels();
+		/*writeLevels();*/
 	}
 }

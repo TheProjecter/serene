@@ -21,20 +21,22 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class SAttribute extends AbstractMultipleChildrenPattern{
 	SNameClass nameClass;
-	String defaultValue;
+	int defaultValueRecordIndex;
 	public SAttribute(SNameClass nameClass, 
 								SPattern[] children,
-                                String defaultValue,
-								String qName, 
-								String location, 
+                                int defaultValue,
+								int recordIndex, 
+								DocumentIndexedData documentIndexedData,
 								MessageWriter debugWriter){		
-		super(children, qName, location, debugWriter);
+		super(children, recordIndex, documentIndexedData, debugWriter);
 		this.nameClass = nameClass;
-        this.defaultValue = defaultValue;
+        this.defaultValueRecordIndex = defaultValue;
 	}	
 	
 	public SNameClass getNameClass(){
@@ -48,10 +50,11 @@ public class SAttribute extends AbstractMultipleChildrenPattern{
 		v.visit(this);
 	}
     public String getDefaultValue(){
-        return defaultValue;
+        if(defaultValueRecordIndex == DocumentIndexedData.NO_RECORD) return null;
+		return documentIndexedData.getStringValue(defaultValueRecordIndex);
     }    
 	public String toString(){
-		String s = "SAttribute "+nameClass.toString()+" defaultValue "+defaultValue;		
+		String s = "SAttribute "+nameClass.toString()+" defaultValue "+getDefaultValue();		
 		return s;
 	}
 }

@@ -23,7 +23,7 @@ import java.io.File;
 
 import org.xml.sax.SAXException;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 
 import serene.validation.schema.Component;
 
@@ -33,35 +33,41 @@ public abstract class ParsedComponent implements Component{
 	int childIndex;	
 	ParsedComponent parent;
 			
-	String ns;
-	String datatypeLibrary;
+	int nsRecordIndex;
+	int datatypeLibraryRecordIndex;
 	
-	Map<String, String> prefixMapping; 
-	String xmlBase;
-									
+	/*Map<String, String> prefixMapping;*/ 
+	int xmlBaseRecordIndex;
+	/*								
 	String qName;
 	String location;
 	
-    AttributeInfo[] foreignAttributes;
+    AttributeInfo[] foreignAttributes;*/    
+    int recordIndex;
+    DocumentIndexedData documentIndexedData;
+    
 	MessageWriter debugWriter;	
 	
-	ParsedComponent(Map<String, String> prefixMapping, 
-									String xmlBase, 
-									String ns, 
-									String datatypeLibrary,
-                                    AttributeInfo[] foreignAttributes,
-									String qName,
-									String location,
-									MessageWriter debugWriter){		
+	ParsedComponent(/*Map<String, String> prefixMapping,*/ 
+                            int xmlBase,
+                            int ns, 
+                            int datatypeLibrary,
+                            /*AttributeInfo[] foreignAttributes,
+                            String qName,
+                            String location,*/
+                            int recordIndex,
+                            DocumentIndexedData documentIndexedData, 
+                            MessageWriter debugWriter){		
 		this.debugWriter = debugWriter;
-		this.prefixMapping = prefixMapping; 
-		this.xmlBase = xmlBase;		
-		this.ns = ns;
-		this.datatypeLibrary = datatypeLibrary;
-        this.foreignAttributes = foreignAttributes;
+		/*this.prefixMapping = prefixMapping;*/ 
+		this.xmlBaseRecordIndex = xmlBase;
+		this.nsRecordIndex = ns;
+		this.datatypeLibraryRecordIndex = datatypeLibrary;
+        /*this.foreignAttributes = foreignAttributes;
 		this.qName = qName;
-		this.location = location;
-		
+		this.location = location;*/
+	    this.recordIndex = recordIndex;
+	    this.documentIndexedData = documentIndexedData;	
 		childIndex = -1;
 	}
     
@@ -79,23 +85,26 @@ public abstract class ParsedComponent implements Component{
 	abstract public void accept(SimplifyingVisitor v) throws SAXException;
 	
 	public String getNs(){
-		if(ns == null && parent != null) return parent.getNs();
-		return ns;
+		if(nsRecordIndex == DocumentIndexedData.NO_RECORD && parent != null) return parent.getNs();
+		return documentIndexedData.getStringValue(nsRecordIndex);
 	}
 	public String getNsAttribute(){		
-		return ns;
+		if(nsRecordIndex == DocumentIndexedData.NO_RECORD) return null;
+		return documentIndexedData.getStringValue(nsRecordIndex);
 	}
 	
 	public String getDatatypeLibrary(){
-		if(datatypeLibrary == null && parent != null) return parent.getDatatypeLibrary();
-		if(datatypeLibrary == null) return "";
-		return datatypeLibrary;
+		if(datatypeLibraryRecordIndex == DocumentIndexedData.NO_RECORD && parent != null) return parent.getDatatypeLibrary();
+		if(datatypeLibraryRecordIndex == DocumentIndexedData.NO_RECORD) return "";
+		return documentIndexedData.getStringValue(datatypeLibraryRecordIndex);
 	}
 	public String getDatatypeLibraryAttribute(){
-		return datatypeLibrary;
+		if(datatypeLibraryRecordIndex == DocumentIndexedData.NO_RECORD) return null;
+		return documentIndexedData.getStringValue(datatypeLibraryRecordIndex);
 	}
 	
 	public String getNamespaceURI(String prefix){
+	    Map<String, String> prefixMapping = documentIndexedData.getDeclaredXmlns(recordIndex);
 		String uri = null;
 		if(prefixMapping != null){
 			uri = prefixMapping.get(prefix);
@@ -105,21 +114,25 @@ public abstract class ParsedComponent implements Component{
 		return null;
 	}
 	public String getNamespaceURIAttribute(String prefix){
+	    Map<String, String> prefixMapping = documentIndexedData.getDeclaredXmlns(recordIndex);
 		if(prefixMapping != null) return prefixMapping.get(prefix);
 		return null;
 	}
 	public Map<String, String> getXmlns(){
-		return prefixMapping;
+		return documentIndexedData.getDeclaredXmlns(recordIndex);
 	}
+	
 	
 	/**
 	* Returns the value of the xml:base attribute if any was present in the
 	* corresponding element.
 	*/
-	public String getXmlBaseAttribute(){
-		return xmlBase;
+	public String getXmlBaseAttribute(){		
+		if(xmlBaseRecordIndex == DocumentIndexedData.NO_RECORD) return null;
+		return documentIndexedData.getStringValue(xmlBaseRecordIndex);
 	}
 	
+	/*
     public AttributeInfo[] getForeignAttributes(){
         return foreignAttributes;
     }
@@ -136,7 +149,7 @@ public abstract class ParsedComponent implements Component{
         int nameIndex = location.lastIndexOf(File.separatorChar)+1;
         if(nameIndex == 0) nameIndex = location.lastIndexOf('/')+1;
         return location.substring(nameIndex);
-	}
+	}*/
     
 	void setParent(ParsedComponent parent){		 
 		this.parent = parent;				
@@ -145,5 +158,48 @@ public abstract class ParsedComponent implements Component{
 	
 	void setChildIndex(int childIndex){			
 		this.childIndex = childIndex;			
+	}
+	
+	public int getRecordIndex(){
+	    return recordIndex;
+	}
+	
+	public DocumentIndexedData getDocumentIndexedData(){
+	    return documentIndexedData;
+	}
+	
+	public String getQName(){
+		return documentIndexedData.getItemDescription(recordIndex);
+	}
+	public String getLocation(boolean restrictToFileName){
+	    String si = documentIndexedData.getSystemId(recordIndex);
+	    int ln = documentIndexedData.getLineNumber(recordIndex);	    
+	    if(ln == DocumentIndexedData.UNKNOWN){
+	        if(si == null || !restrictToFileName)return si;
+	        return getRestrictedSystemId(si);
+	    }
+	    
+	    int cn = documentIndexedData.getColumnNumber(recordIndex);
+	    
+        if(si == null || !restrictToFileName){
+            return si+":"+ln+":"+cn;
+        }
+        return getRestrictedSystemId(si)+":"+ln+":"+cn;
+	}
+	String getRestrictedSystemId(String si){
+	    int nameIndex = si.lastIndexOf(File.separatorChar)+1;
+        if(nameIndex == 0) nameIndex = si.lastIndexOf('/')+1;
+        return si.substring(nameIndex);
+	}
+	public int getNsRecordIndex(){
+	    return nsRecordIndex;
+	}
+	
+	public int getDatatypeLibraryRecordIndex(){
+	    return datatypeLibraryRecordIndex;
+	}
+	
+	public int getXmlBaseRecordIndex(){
+	    return xmlBaseRecordIndex;
 	}
 }	

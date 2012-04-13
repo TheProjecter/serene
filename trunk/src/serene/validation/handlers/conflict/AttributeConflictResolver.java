@@ -53,7 +53,7 @@ public abstract class AttributeConflictResolver extends InternalConflictResolver
         if(temporaryMessageStorage != null) {
             for(int i = 0; i < temporaryMessageStorage.length; i++){
                 if(temporaryMessageStorage[i] != null){
-                    temporaryMessageStorage[i].setDiscarded(true);
+                    /*temporaryMessageStorage[i].setDiscarded(true);*/
                     temporaryMessageStorage[i].clear();
                 }
             }

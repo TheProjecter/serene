@@ -33,8 +33,7 @@ public class ParsedModel{
         this.dtdMapping = dtdMapping;
         this.topPattern = topPattern;
         
-        /*ParsedComponentWriter pcw = new ParsedComponentWriter();
-        pcw.write(topPattern);*/
+        //write();
 	}
     
     public Pattern getTopPattern(){

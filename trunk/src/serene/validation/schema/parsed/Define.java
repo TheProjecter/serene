@@ -21,28 +21,34 @@ import java.util.Map;
 
 import org.xml.sax.SAXException; 
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class Define extends Definition{	
-	String name;	
-	Define(Map<String, String> prefixMapping, 
-				String xmlBase, 
-				String ns,
-				String datatypeLibrary, 
-				String name,
-				String combine,
-                AttributeInfo[] foreignAttributes,
+	int nameRecordIndex;	
+	Define(/*Map<String, String> prefixMapping,*/ 
+	            int xmlBase,
+				int ns,
+				int datatypeLibrary, 
+				int name,
+				int combine,
 				ParsedComponent[] children,
-				String qName, 
-				String location, 
+                int recordIndex,
+                DocumentIndexedData documentIndexedData,
 				MessageWriter debugWriter){		
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, combine, foreignAttributes, children, qName, location, debugWriter);
-		this.name = name;
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, combine, children, recordIndex, documentIndexedData, debugWriter);
+		this.nameRecordIndex = name;
 	}
 	public String getName(){
-		return name;
+		if(nameRecordIndex == DocumentIndexedData.NO_RECORD) return null;
+		return documentIndexedData.getStringValue(nameRecordIndex);
 	}
+		
+	public int getNameRecordIndex(){
+	    return nameRecordIndex;
+	}
+	
 	public void accept(ParsedComponentVisitor v){
 		v.visit(this);
 	}	
@@ -53,8 +59,8 @@ public class Define extends Definition{
 	
 	public String toString(){
 		String s = "Define";
-		s = s + ": "+ name;
-		s = s +" combine = "+combine;
+		s = s + ": "+ getName();
+		s = s +" combine = "+getCombine();
 		return s;
 	}
 }

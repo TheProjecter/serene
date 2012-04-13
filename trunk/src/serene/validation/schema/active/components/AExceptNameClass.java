@@ -18,7 +18,7 @@ package serene.validation.schema.active.components;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SExceptNameClass;
 
 import serene.validation.schema.active.Identifier;
 
@@ -26,10 +26,12 @@ import sereneWrite.MessageWriter;
 
 public class AExceptNameClass extends AbstractIdentifier{		
 	ANameClass child;
+	SExceptNameClass sexceptNameClass;
 	public AExceptNameClass(ANameClass child,
-			SimplifiedComponent simplifiedComponent, 
+			SExceptNameClass sexceptNameClass, 
 			MessageWriter debugWriter){
-		super(simplifiedComponent, debugWriter);
+		super( debugWriter);
+		this.sexceptNameClass = sexceptNameClass;
 		asParent(child);
 	}	
 	
@@ -52,6 +54,24 @@ public class AExceptNameClass extends AbstractIdentifier{
 		return true;
 	}	
 		
+	
+	public String getQName(){
+		return sexceptNameClass.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return sexceptNameClass.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return sexceptNameClass.hashCode();
+    }   
+    
+    public SExceptNameClass getCorrespondingSimplifiedComponent(){
+        return sexceptNameClass;
+    }
+    
+    
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);
 	}

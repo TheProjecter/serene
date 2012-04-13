@@ -23,12 +23,17 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.validation.schema.simplified.components.SPattern;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class SMixed extends AbstractUniqueChildPattern{
 	
-	public SMixed(SPattern child, String qName, String location, MessageWriter debugWriter){
-		super(child, qName, location, debugWriter);
+	public SMixed(SPattern child, 
+	            int recordIndex, 
+				DocumentIndexedData documentIndexedData,  
+				MessageWriter debugWriter){
+		super(child, recordIndex, documentIndexedData, debugWriter);
 	}	
 
 	public void accept(SimplifiedComponentVisitor v){

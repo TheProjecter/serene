@@ -19,9 +19,10 @@ package serene.validation.schema.parsed;
 
 import java.util.Map;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
-import serene.util.AttributeInfo;
 public class DefinitionCopier implements ParsedComponentVisitor{
 	Definition copy;
 	
@@ -38,49 +39,57 @@ public class DefinitionCopier implements ParsedComponentVisitor{
 	}
 	
 	public void visit(Define define){
-		Map<String, String> prefixMapping = define.getXmlns();
-		String xmlBase = define.getXmlBaseAttribute();
-		String ns = define.getNsAttribute();
-		String datatypeLibrary = define.getDatatypeLibrary();
-		String name = define.getName();
-		String combine = define.getCombine();
-        AttributeInfo[] foreignAttributes = define.getForeignAttributes();
+		/*Map<String, String> prefixMapping = define.getXmlns();*/
+		int xmlBase = define.getXmlBaseRecordIndex();
+		int ns = define.getNsRecordIndex();
+		int datatypeLibrary = define.getDatatypeLibraryRecordIndex();
+		int name = define.getNameRecordIndex();
+		int combine = define.getCombineRecordIndex();
+        /*AttributeInfo[] foreignAttributes = define.getForeignAttributes();*/
 		ParsedComponent[] children = define.getChildren();
-		String qName = define.getQName();
-		String location = define.getLocation();
+		/*String qName = define.getQName();
+		String location = define.getLocation();*/
+		int recordIndex = define.getRecordIndex();
+		DocumentIndexedData did = define.getDocumentIndexedData();
 		
-		copy = new Define(prefixMapping,
+		copy = new Define(/*prefixMapping,*/
 							xmlBase,
 							ns,
 							datatypeLibrary,
 							name,
 							combine,
-                            foreignAttributes,
+                            /*foreignAttributes,*/
 							children,
-							qName,
-							location,
+							/*qName,
+							location,*/
+							recordIndex,
+							did,
 							debugWriter);	 		
 	}
 	public void visit(Start start){
-		Map<String, String> prefixMapping = start.getXmlns();
-		String xmlBase = start.getXmlBaseAttribute();
-		String ns = start.getNsAttribute();
-		String datatypeLibrary = start.getDatatypeLibrary();
-		String combine = start.getCombine();
-        AttributeInfo[] foreignAttributes = start.getForeignAttributes();
+		/*Map<String, String> prefixMapping = start.getXmlns();*/
+		int xmlBase = start.getXmlBaseRecordIndex();
+		int ns = start.getNsRecordIndex();
+		int datatypeLibrary = start.getDatatypeLibraryRecordIndex();
+		int combine = start.getCombineRecordIndex();
+        /*AttributeInfo[] foreignAttributes = start.getForeignAttributes();*/
 		ParsedComponent[] children = start.getChildren();
-		String qName = start.getQName();
-		String location = start.getLocation();
+		/*String qName = start.getQName();
+		String location = start.getLocation();*/
+		int recordIndex = start.getRecordIndex();
+		DocumentIndexedData did = start.getDocumentIndexedData();
 		
-		copy = new Start(prefixMapping,
+		copy = new Start(/*prefixMapping,*/
 							xmlBase,
 							ns,
 							datatypeLibrary,
 							combine,
-                            foreignAttributes,
+                            /*foreignAttributes,*/
 							children,
-							qName,
-							location,
+							/*qName,
+							location,*/
+							recordIndex,
+							did,
 							debugWriter);		
 	}
 	

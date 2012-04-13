@@ -49,9 +49,10 @@ public abstract class ElementConflictResolver extends InternalConflictResolver{
         candidateDefinitions.clear();
         if(!isResolved && conflictMessageReporter != null) {
             conflictMessageReporter.setDiscarded(true);
-            conflictMessageReporter.clear();
-        }
-        isResolved = false;
+            conflictMessageReporter.clear(this);
+            conflictMessageReporter = null;
+            isResolved = false;
+        }        
     }
     
     public void addCandidate(AElement candidate){

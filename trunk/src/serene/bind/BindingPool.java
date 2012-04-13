@@ -16,66 +16,52 @@ limitations under the License.
 
 package serene.bind;
 
-import java.util.Map;
+import serene.validation.handlers.content.util.ActiveInputDescriptor;
+
+/*import java.util.Map;
 
 import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SAttribute;
 
 import serene.util.ObjectIntHashMap;
 
-import sereneWrite.MessageWriter;
+import sereneWrite.MessageWriter;*/
 
-public abstract class BindingPool{
-    protected ElementTaskPool startDocumentElementTaskPool;
-    protected AttributeTaskPool[] documentElementTaskPool;
-    protected ElementTaskPool endDocumentElementTaskPool;
+public interface BindingPool{
     
-    protected Map<SElement, ElementTaskPool> startElementTaskPools;
-    protected ElementTaskPool genericStartElementTaskPool;
-	protected Map<SElement, ElementTaskPool> endElementTaskPools;
-	protected ElementTaskPool genericEndElementTaskPool;
-	protected Map<SAttribute, AttributeTaskPool> attributeTaskPools;
-	protected AttributeTaskPool genericAttributeTaskPool;
-    
-	protected ValidatorQueuePool[] queuePool;
-	protected int queuePoolFree, queuePoolMaxSize;
 	
-	protected MessageWriter debugWriter;
-	
-	public BindingPool(ElementTaskPool startDocumentElementTaskPool,
-	                                AttributeTaskPool[] documentElementTaskPool,
-	                                ElementTaskPool endDocumentElementTaskPool,
-	                                Map<SElement, ElementTaskPool> startElementTaskPools,
-	                                ElementTaskPool genericStartElementTaskPool,
-									Map<SAttribute, AttributeTaskPool> attributeTaskPools,
-									AttributeTaskPool genericAttributeTaskPool,
-									Map<SElement, ElementTaskPool> endElementTaskPools,
-                                    ElementTaskPool genericEndElementTaskPool,									
+	/*public BindingPool(ElementTaskFactory startDocumentTaskFactory,
+                                    ElementTaskFactory endDocumentTaskFactory,    
+                                    
+                                    Map<SElement, ElementTaskFactory> startElementTaskFactory,
+                                    Map<SElement, ElementTaskFactory> endElementTaskFactory,
+                                    Map<SAttribute, AttributeTaskFactory> attributeTaskFactory,
+                                        
+                                    ElementTaskFactory genericStartElementTaskFactory,
+                                    ElementTaskFactory genericEndElementTaskFactory,
+                                    AttributeTaskFactory genericAttributeTaskFactory,
+                                    
 									MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
 		
-		this.startDocumentElementTaskPool = startDocumentElementTaskPool;
-	    this.documentElementTaskPool = documentElementTaskPool;
-	    this.endDocumentElementTaskPool = endDocumentElementTaskPool;
-	    
-		this.startElementTaskPools = startElementTaskPools;
-		this.genericStartElementTaskPool = genericStartElementTaskPool;
-		this.endElementTaskPools = endElementTaskPools;
-		this.genericEndElementTaskPool = genericEndElementTaskPool;
-		this.attributeTaskPools = attributeTaskPools;
-		this.genericAttributeTaskPool = genericAttributeTaskPool;
-		
+		this.startDocumentTaskFactory = startDocumentTaskFactory;
+        this.endDocumentTaskFactory = endDocumentTaskFactory;    
+        
+        this.startElementTaskFactory = startElementTaskFactory;
+        this.endElementTaskFactory = endElementTaskFactory;
+        this.attributeTaskFactory = attributeTaskFactory;
+            
+        this.genericStartElementTaskFactory = genericStartElementTaskFactory;
+        this.genericEndElementTaskFactory = genericEndElementTaskFactory;
+        this.genericAttributeTaskFactory = genericAttributeTaskFactory;
+        
 		
 		queuePoolFree = 0;
 		queuePoolMaxSize = 3;	
 		queuePool = new ValidatorQueuePool[5];					
-	}	
+	}	*/
 	
-	public abstract BindingModel getBindingModel();
+	BindingModel getBindingModel();
 		
-	public abstract void recycle(BindingModel bm);
-		
-	public abstract ValidatorQueuePool getValidatorQueuePool();
-	
-	public abstract void recycle(ValidatorQueuePool qp);	
+	void recycle(BindingModel bm);	
 }

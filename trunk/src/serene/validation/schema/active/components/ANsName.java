@@ -16,7 +16,7 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SNsName;
 
 import serene.validation.schema.active.components.AExceptNameClass;
 
@@ -26,11 +26,13 @@ import sereneWrite.MessageWriter;
 
 public class ANsName extends AbstractWildCard{		
 	String ns;
+	SNsName snsName;
 	public ANsName(String ns, AExceptNameClass child,
-			SimplifiedComponent simplifiedComponent, 
+			SNsName snsName, 
 			MessageWriter debugWriter){	
-		super(child, simplifiedComponent, debugWriter);
+		super(child, debugWriter);
 		this.ns = ns;
+		this.snsName = snsName;
 	}
 	
 	public boolean matches(String namespace, String name){
@@ -38,6 +40,23 @@ public class ANsName extends AbstractWildCard{
 		return ns.equals(namespace);
 	}
 
+	public String getQName(){
+		return snsName.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return snsName.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return snsName.hashCode();
+    }   
+    
+    public SNsName getCorrespondingSimplifiedComponent(){
+        return snsName;
+    }
+    
+    
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);
 	}	

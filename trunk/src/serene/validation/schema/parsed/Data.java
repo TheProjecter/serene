@@ -21,20 +21,31 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 import sereneWrite.MessageWriter;
 
 public class Data extends MultipleChildrenPattern{
-	String type;	
-	ParsedComponent[] children; 	
-		
-	Data(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String type, AttributeInfo[] foreignAttributes, ParsedComponent[] children, String qName, String location, MessageWriter debugWriter){
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, children, qName, location, debugWriter);
-		this.type = type; 
+	int typeRecordIndex;		
+	Data(/*Map<String, String> prefixMapping,*/ 
+	                int xmlBase,
+                    int ns, 
+                    int datatypeLibrary, 
+                    int type,
+                    ParsedComponent[] children, 
+                    int recordIndex,
+                    DocumentIndexedData documentIndexedData,
+                    MessageWriter debugWriter){		
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData, debugWriter);
+		this.typeRecordIndex = type; 
 	}
 	public String getType(){
-		return type;	
+		if(typeRecordIndex == DocumentIndexedData.NO_RECORD) return null;
+		return documentIndexedData.getStringValue(typeRecordIndex);	
 	}
+	
+    public int getTypeRecordIndex(){
+        return typeRecordIndex;
+    }    
     
 	public void accept(ParsedComponentVisitor v){
 		v.visit(this);
@@ -44,6 +55,6 @@ public class Data extends MultipleChildrenPattern{
 	}
 	
 	public String toString(){
-		return "Data type "+type;
+		return "Data type "+getType();
 	}
 }

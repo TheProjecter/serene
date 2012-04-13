@@ -172,7 +172,7 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	        if(temporaryMessageStorage != null) {	            
                 for(int i = 0; i < temporaryMessageStorage.length; i++){                    
                     if(temporaryMessageStorage[i] != null){
-                        temporaryMessageStorage[i].setDiscarded(true);
+                        /*temporaryMessageStorage[i].setDiscarded(true);*/
                         temporaryMessageStorage[i].clear();
                     }
                 }
@@ -188,7 +188,7 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
                 if(temporaryMessageStorage != null) {	            
                     for(int i = 0; i < temporaryMessageStorage.length; i++){                    
                         if(temporaryMessageStorage[i] != null){
-                            temporaryMessageStorage[i].setDiscarded(true);
+                            /*temporaryMessageStorage[i].setDiscarded(true);*/
                             temporaryMessageStorage[i].clear();
                         }
                     }

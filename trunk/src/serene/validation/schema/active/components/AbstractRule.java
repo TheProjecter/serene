@@ -40,8 +40,8 @@ abstract class AbstractRule extends AbstractActiveComponent implements Rule{
 	
 	protected ActiveModelRuleHandlerPool ruleHandlerPool;
 	
-	AbstractRule(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){
-		super(simplifiedComponent, debugWriter);
+	AbstractRule(ActiveModelRuleHandlerPool ruleHandlerPool, MessageWriter debugWriter){
+		super(debugWriter);
 		this.ruleHandlerPool = ruleHandlerPool; 
 	}
 

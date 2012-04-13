@@ -1169,8 +1169,8 @@ public class RController implements RestrictingVisitor{
 		if(attributeContext){
 			// Serene limitation
 			String message = "Unsupported schema configuration. For the moment serene does not support <empty> in the context of <attribute>, path: "				
-				+"\n"+attributesPath.peek().getQName()+" at "+attributesPath.peek().getLocation(restrictToFileName)
-				+"\n"+empty.getQName()+" at "+empty.getLocation(restrictToFileName)+".";		
+				+"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation(restrictToFileName)
+				+"\n<"+empty.getQName()+"> at "+empty.getLocation(restrictToFileName)+".";		
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));			
 		}

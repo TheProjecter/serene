@@ -16,8 +16,15 @@ limitations under the License.
 
 package serene.bind;
 
-import serene.Reusable;
-public interface Task extends Reusable{
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+
+public interface Task{
 	void execute();	
-	void setExecutant(Object executant);
+	
+	void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException;	
+	Object getProperty(String name)  throws SAXNotRecognizedException, SAXNotSupportedException;
+
+	void setFeature(String name, boolean value)  throws SAXNotRecognizedException, SAXNotSupportedException;
+	boolean getFeature(String name)  throws SAXNotRecognizedException, SAXNotSupportedException;	
 }

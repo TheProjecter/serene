@@ -18,14 +18,21 @@ package serene.validation.schema.parsed;
 
 import java.util.Map;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 abstract class Element extends MultipleChildrenPattern{
 	
-	Element(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, ParsedComponent[] children,String qName, String location, 
+	Element(/*Map<String, String> prefixMapping,*/ 
+	            int xmlBase,
+	            int ns, 
+	            int datatypeLibrary, 
+	            ParsedComponent[] children,
+	            int recordIndex,
+                DocumentIndexedData documentIndexedData,
 				MessageWriter debugWriter){		
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, children, qName, location, debugWriter);
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData, debugWriter);
 	}		
 		
 	public String toString(){

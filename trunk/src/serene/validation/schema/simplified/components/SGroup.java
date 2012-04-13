@@ -23,16 +23,27 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.validation.schema.simplified.components.SPattern;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class SGroup extends AbstractMultipleChildrenPattern{	
+    boolean addedBySimplification;
 	public SGroup(SPattern[] children,
-				String qName, 
-				String location, 
+				int recordIndex, 
+				DocumentIndexedData documentIndexedData,
+				boolean addedBySimplification,
 				MessageWriter debugWriter){	
-		super(children, qName, location, debugWriter);
+		super(children, recordIndex, documentIndexedData, debugWriter);
+		this.addedBySimplification = addedBySimplification;
 	}
 		
+	
+	public String getQName(){
+	    if(addedBySimplification) return "group added by "+documentIndexedData.getLocalName(recordIndex)+" simplification";
+        return documentIndexedData.getItemDescription(recordIndex);   
+	}
+	
 	public void accept(SimplifiedComponentVisitor v){
 		v.visit(this);
 	}	

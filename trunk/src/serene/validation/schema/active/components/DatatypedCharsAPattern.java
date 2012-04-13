@@ -16,8 +16,6 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
-
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
@@ -37,9 +35,8 @@ public abstract class DatatypedCharsAPattern extends CharsAPattern implements Da
 	DatatypedCharsAPattern(Datatype datatype,
 				ActiveGrammarModel grammarModel,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SimplifiedComponent simplifiedComponent, 
 				MessageWriter debugWriter){		
-		super(ruleHandlerPool, simplifiedComponent, debugWriter);
+		super(ruleHandlerPool, debugWriter);
 		this.datatype = datatype;
 		this.grammarModel = grammarModel;
 	}

@@ -19,5 +19,5 @@ package serene.validation.handlers.content;
 import serene.validation.handlers.content.AttributeEventHandler;
 
 public interface BoundAttributeHandler extends AttributeEventHandler{
-	void attributeBinding(String value);
+	void attributeBinding();
 }

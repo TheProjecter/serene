@@ -33,6 +33,7 @@ import serene.util.ObjectIntHashMap;
 import serene.util.IntList;
 import serene.util.IntStack;
 import serene.util.BooleanList;
+import serene.bind.util.DocumentIndexedData;
 
 import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.parsed.ParsedComponent;
@@ -70,7 +71,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		this.pool = pool;
 		
 		nullCombine = new IntList();		
-		pcw = new ParsedComponentWriter();
+		//pcw = new ParsedComponentWriter();
         
         currentDefinitionTopPatterns = new ArrayList<SPattern>();
 	}
@@ -156,7 +157,8 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
         
         currentDefinitionTopPatterns.clear();		
         //String location = "";
-        ArrayList<String> allLocations = new ArrayList<String>();
+        IntList allRecordIndexes = new IntList(); 
+        ArrayList<DocumentIndexedData> allDocumentIndexedData = new ArrayList<DocumentIndexedData>();
 		for(int i = 0; i < definitions.size(); i++){
 			Definition d = definitions.get(i);
 			String c = d.getCombine();
@@ -172,7 +174,8 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
                     }
                 }
             }
-            allLocations.add(d.getLocation());
+            allRecordIndexes.add(d.getRecordIndex()); 
+            allDocumentIndexedData.add(d.getDocumentIndexedData());
 			d.accept(this);
 		}
 		if(nullCombine.size() > 1){
@@ -220,9 +223,9 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		// they were not built, so combine can be handled directly
 		if(combine != null){
 			if(combine.equals("choice")){
-				builder.buildChoicePattern("combine choice", allLocations, currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]));
+				builder.buildChoicePattern(currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]), allRecordIndexes, allDocumentIndexedData, true);
 			}else if(combine.equals("interleave")){
-				builder.buildInterleave("combine interleave", allLocations, currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]));
+				builder.buildInterleave(currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]), allRecordIndexes, allDocumentIndexedData, true);
 			}
 		}else{
 			SPattern[] p = currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]);

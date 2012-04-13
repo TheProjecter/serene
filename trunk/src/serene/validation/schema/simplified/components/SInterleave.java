@@ -27,23 +27,32 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.validation.schema.simplified.components.SPattern;
 
+import serene.bind.util.DocumentIndexedData;
+import serene.util.IntList;
+
 import sereneWrite.MessageWriter;
 
 public class SInterleave extends AbstractMultipleChildrenPattern{
-    ArrayList<String> allLocations;	
+    IntList allRecordIndexes;	
+    ArrayList<DocumentIndexedData> allDocumentIndexedData;
+    boolean addedBySimplification;
 	public SInterleave(SPattern[] children,
-				String qName, 
-				ArrayList<String> allLocations, 
+				IntList allRecordIndexes, 
+				ArrayList<DocumentIndexedData> allDocumentIndexedData,
+				boolean addedBySimplification,
 				MessageWriter debugWriter){		
-		super(children, qName, null, debugWriter);
-        this.allLocations = allLocations; 
+		super(children, DocumentIndexedData.NO_RECORD, null, debugWriter);
+        this.allRecordIndexes = allRecordIndexes; 
+        this.allDocumentIndexedData = allDocumentIndexedData;
+        this.addedBySimplification = addedBySimplification;
 	}		
 	
     public SInterleave(SPattern[] children,
-				String qName, 
-				String location, 
+				int recordIndex, 
+				DocumentIndexedData documentIndexedData,  
 				MessageWriter debugWriter){		
-		super(children, qName, location, debugWriter);
+		super(children, recordIndex, documentIndexedData, debugWriter);
+		addedBySimplification = false;
 	}
     
 	public void accept(SimplifiedComponentVisitor v){
@@ -53,34 +62,77 @@ public class SInterleave extends AbstractMultipleChildrenPattern{
 		v.visit(this);
 	}
     
-    public ArrayList<String> getAllLocations(){
-        return allLocations;
-    }
+    public IntList getAllRecordIndexes(){
+        return allRecordIndexes;
+    } 
+    
+    public String getQName(){
+        if(addedBySimplification){
+            if(documentIndexedData != null) return "interleave added by "+documentIndexedData.getLocalName(recordIndex)+" simplification";
+            return "interleave added by "+allDocumentIndexedData.get(0).getLocalName(allRecordIndexes.get(0))+" simplification";
+        }
+        if(documentIndexedData != null)return documentIndexedData.getItemDescription(recordIndex);        
+        return allDocumentIndexedData.get(0).getItemDescription(allRecordIndexes.get(0));
+	}
+	
     public String getLocation(boolean restrictToFileName){
-        if(location == null)return getAllLocations(restrictToFileName);
-        if(!restrictToFileName)return location;
-        int nameIndex = location.lastIndexOf(File.separatorChar)+1;
-        if(nameIndex == 0) nameIndex = location.lastIndexOf('/')+1;
-        return location.substring(nameIndex);
-	}    
+        if(recordIndex == DocumentIndexedData.NO_RECORD || documentIndexedData == null)return getAllLocations(restrictToFileName);
+                
+        String si = documentIndexedData.getSystemId(recordIndex);
+	    int ln = documentIndexedData.getLineNumber(recordIndex);
+	    if(ln == DocumentIndexedData.UNKNOWN){
+	        if(si == null || !restrictToFileName)return si;
+	        return getRestrictedSystemId(si);
+	    }
+	    int cn = documentIndexedData.getColumnNumber(recordIndex);
+	    
+        if(si == null || !restrictToFileName){
+            return si+":"+ln+":"+cn;
+        }
+        return getRestrictedSystemId(si)+":"+ln+":"+cn;
+	}
+	String getRestrictedSystemId(String si){
+	    int nameIndex = si.lastIndexOf(File.separatorChar)+1;
+        if(nameIndex == 0) nameIndex = si.lastIndexOf('/')+1;
+        return si.substring(nameIndex);
+	}
+    
     private String getAllLocations(boolean restrictToFileName){
-        if(allLocations == null || allLocations.isEmpty())return null;
-        if(!restrictToFileName)return allLocations.toString();
+                
+        if(allRecordIndexes == null || allRecordIndexes.size() == 0)return null;
+        
         boolean first = true;
         String loc = "";
-        for(String l : allLocations){
-            int nameIndex = l.lastIndexOf(File.separatorChar)+1;
-            if(nameIndex == 0) nameIndex = l.lastIndexOf('/')+1;
-            l = l.substring(nameIndex);
-            if(first){
-                first = false;
-                loc += "["+l;
+        for(int j = 0; j < allDocumentIndexedData.size(); j++){
+            DocumentIndexedData documentIndexedData = allDocumentIndexedData.get(j); 
+            int index = allRecordIndexes.get(j);
+            
+            String si = documentIndexedData.getSystemId(index);
+            int ln = documentIndexedData.getLineNumber(index);
+            if(ln == DocumentIndexedData.UNKNOWN){
+                if(!(si == null || !restrictToFileName))si = getRestrictedSystemId(si);
+                
+                if(first){
+                    first = false;
+                    loc += "["+si;
+                }else{
+                    loc += ", "+si;
+                }
             }else{
-                loc += ", "+l;
+                int cn = documentIndexedData.getColumnNumber(index);
+                
+                if(!(si == null || !restrictToFileName))si = getRestrictedSystemId(si);
+                if(first){
+                    first = false;
+                    loc += "["+si+":"+ln+":"+cn;
+                }else{
+                    loc += ", "+si+":"+ln+":"+cn;
+                }
             }
         }
         return loc+"]";
     }
+    
 	public String toString(){
 		String s = "SInterleave ";		
 		return s;

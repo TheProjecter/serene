@@ -22,6 +22,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import serene.validation.handlers.conflict.ElementConflictResolver;
 
 import serene.validation.schema.active.components.AElement;
 
@@ -45,6 +46,8 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     
     boolean isMessageRetrieved;
     boolean isDiscarded;
+    
+    int clientCount;
     
     public ConflictMessageReporter(MessageReporter parent,
                                     int reportingContextType,
@@ -89,6 +92,15 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
         isMessageRetrieved = false;
         isDiscarded = false;
         
+        clientCount = 0;
+        
+        if(commonMessages != null)commonMessages.registerClient(this);
+        if(candidateMessages != null){
+            for(int i = 0; i < candidateMessages.length; i++){
+                if(candidateMessages[i] != null)candidateMessages[i].registerClient(this);
+            }
+        }
+        
     }
         
     public ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher){
@@ -113,7 +125,7 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     public void setDiscarded(boolean isDiscarded){
         this.isDiscarded = isDiscarded;    
         
-        if(commonMessages != null)commonMessages.setDiscarded(isDiscarded);
+        /*if(commonMessages != null)commonMessages.setDiscarded(isDiscarded);
         
         if(candidateMessages!= null){
             for(int i = 0; i < candidateMessages.length; i++){
@@ -124,7 +136,7 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
         }
         if(parent != null){
             parent.setDiscarded(isDiscarded);
-        }
+        }*/
     }
     
     public boolean containsErrorMessage(){
@@ -192,8 +204,8 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
             if(candidateMessages != null){
                 for(int i = 0; i < candidateMessages.length; i++){
                     if(!qualified.get(i) && candidateMessages[i] != null){
-                        candidateMessages[i].setDiscarded(true);
-                        candidateMessages[i].clear();
+                        /*candidateMessages[i].setDiscarded(true);*/
+                        candidateMessages[i].unregisterClient(this);
                         candidateMessages[i] = null;
                     }
                 }
@@ -255,7 +267,9 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     private void reportUnresolved(int reportingContextType, String reportingContextQName, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         String message = ""; 
         for(int i = 0; i < candidatesCount; i++){
-            if(candidateMessages[i] != null)message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
+            if(candidateMessages[i] != null){
+                message += candidateMessages[i].getCandidateErrorMessage(prefix, restrictToFileName);
+            }
         }
         if(!message.equals("")){
             if(locator != null) errorDispatcher.error(new SAXParseException(prefix+"Syntax error. Element <"+reportingContextQName+"> is unresolved by content validation, all candidate definitions resulted in errors:"+message, locator));
@@ -292,10 +306,36 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     public void report(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
         report();
     }
-
-    public void clear(){
+    
+    public void registerClient(MessageReporter mr){
+        clientCount++;
+    }
+    public void unregisterClient(MessageReporter mr){
+        clientCount--;
+        if(clientCount == 0){
+            isDiscarded = true;// just in case
+            clear();
+        }
+    }
+    public void clear(ContextErrorHandler ec){
+        if(clientCount > 0) return;
+        clear();
+    }
+    public void clear(CandidatesConflictErrorHandler cceh){
+        if(clientCount > 0) return;
+        clear();
+    }
+    public void clear(TemporaryMessageStorage tms){
+        if(clientCount > 0) return;
+        clear();
+    }
+    public void clear(ElementConflictResolver ecr){
+        if(clientCount > 0) return;
+        clear();
+    }
+    private void clear(){
         if(commonMessages != null){
-            if(isMessageRetrieved || isDiscarded)commonMessages.clear(); // It can be only one because it is about this context.
+            /*if(isMessageRetrieved || isDiscarded)*/commonMessages.unregisterClient(this); // It can be only one because it is about this context.
             commonMessages = null;
         }
         
@@ -304,18 +344,18 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
         disqualified = null;
         
         if(candidateMessages != null){
-            if(isMessageRetrieved || isDiscarded){
+            /*if(isMessageRetrieved || isDiscarded){*/
                 for(MessageReporter cm : candidateMessages){                    
                     if(cm != null){
-                        cm.clear();
+                        cm.unregisterClient(this);
                     }
                 }
-            }
+            /*}*/
             candidateMessages = null;
         }
              
-        if(parent != null) {
-            parent.clear();
+        if(/*(isMessageRetrieved || isDiscarded) &&*/ parent != null) {
+            parent.unregisterClient(this);
             parent = null;
         }
         

@@ -131,6 +131,8 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	    if(hasError)return;		
 		if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
 			errorCatcher.characterContentExceptedError(inputStackDescriptor.getCurrentItemInputRecordIndex(), data); 
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ELEMENT){			
+			errorCatcher.characterContentExceptedError(inputStackDescriptor.getCurrentItemInputRecordIndex(), data); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
 			errorCatcher.attributeValueExceptedError(inputStackDescriptor.getCurrentItemInputRecordIndex(), data);
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.LIST_TOKEN){ 

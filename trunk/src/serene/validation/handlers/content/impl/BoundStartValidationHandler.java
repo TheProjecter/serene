@@ -27,10 +27,10 @@ import sereneWrite.MessageWriter;
 
 import serene.validation.schema.active.components.AElement;
 
-import serene.bind.DocumentBinder;
-import serene.bind.Queue;
+import serene.bind.util.Queue;
 import serene.bind.BindingModel;
-import serene.bind.ValidatorQueuePool;
+import serene.bind.util.QueuePool;
+import serene.bind.DocumentTask;
 
 import serene.validation.schema.active.components.AElement;
 
@@ -53,12 +53,11 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 		pool.recycle(this);
 	}
 	
-	void init(AElement element, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){
+	/*void init(AElement element, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){
 		super.init(element, parent, bindingModel, queue, queuePool);
-		// TODO
-		// here should bind attributes, but there are none
-	}
-	public void qNameBinding(){
+		startElementBinding();
+	}*/
+	/*public void qNameBinding(){
 		int definitionIndex = element.getDefinitionIndex();
 		DocumentBinder binder = bindingModel.getDocumentBinder();
 		if(binder != null)binder.bindName(queue, queueStartEntry, inputStackDescriptor.getNamespaceURI(), inputStackDescriptor.getLocalName(),inputStackDescriptor.getItemDescription());
@@ -81,7 +80,42 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 		int definitionIndex = element.getDefinitionIndex();
 		DocumentBinder binder = bindingModel.getDocumentBinder();
 		if(binder != null)binder.bindElementTasks(queue, queueEndEntry);
+	}*/
+	
+	
+	public void startElementBinding(){
+	    DocumentTask startTask = bindingModel.getStartDocumentTask();	    
+	    int recordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();
+	    // TODO 
+	    // Here needsStartElementInputData should be checked, but it should be 
+	    // done for both tasks and might be more expensive than just recording. 
+	    // Anyway, for now, I know it is needed, so I just record it.
+	    	    
+	    queue.addStartDocument(recordIndex, startTask);
 	}
+		
+	public void characterContentBinding(String cc){
+	    throw new IllegalStateException(); 
+	}
+	
+	public void endElementBinding(){
+	    DocumentTask endTask = bindingModel.getEndDocumentTask();
+	    // TODO 
+	    // Here needsStartElementInputData should be checked, but it should be 
+	    // done for both tasks and might be more expensive than just recording. 
+	    // Anyway, for now, I know it is needed, so I just record it.	    
+	    
+	    queue.addEndDocument(endTask);
+	}
+	
+	public int getQueueStartEntryIndex(){
+        return queueStartEntry;
+    }
+    public int getQueueEndEntryIndex(){
+        return queueEndEntry;
+    }
+    
+    
 	
     protected void setContextErrorHandler(){
 		if(contextErrorHandlerIndex == NONE){
@@ -131,7 +165,8 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{		
 		validateContext();
 		reportContextErrors(restrictToFileName, locator);
-		elementTasksBinding();
+		/*elementTasksBinding();*/
+		endElementBinding();
 	}
 
     void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{

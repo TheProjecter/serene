@@ -20,17 +20,19 @@ import serene.validation.schema.active.components.ANameClass;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SName;
 
 import sereneWrite.MessageWriter;
 
 public class AName extends ANameClass{	
 	String localPart;
 	String ns;
-	public AName(String ns, String localPart, SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){
-		super(simplifiedComponent, debugWriter);		
+	SName sname;
+	public AName(String ns, String localPart, SName sname, MessageWriter debugWriter){
+		super(debugWriter);		
 		this.ns = ns;
-		this.localPart = localPart;		
+		this.localPart = localPart;
+        this.sname = sname;		
 	}
 	
 	public boolean matches(String namespace, String name){		
@@ -40,6 +42,22 @@ public class AName extends ANameClass{
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);
 	}	
+	
+	public String getQName(){
+		return sname.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return sname.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return sname.hashCode();
+    }   
+    
+    public SName getCorrespondingSimplifiedComponent(){
+        return sname;
+    }
 	
 	public String toString(){
 		return "AName "+ns+":"+localPart;

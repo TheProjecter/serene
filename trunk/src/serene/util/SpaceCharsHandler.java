@@ -37,7 +37,7 @@ public class SpaceCharsHandler{
         return true;
     }
     
-	public char[] trimSpace(char[] chars){		
+	public char[] trimSpace(char[] chars){	    
 		int count = chars.length;		
 		if(count == 0) return chars;
 		int start = 0;
@@ -61,6 +61,76 @@ public class SpaceCharsHandler{
 		System.arraycopy(chars, start, trimed, 0, count-start);
 		return trimed;		
 	}
+	
+	public char[] trimHeadSpace(char[] chars){	    
+		int count = chars.length;		
+		if(count == 0) return chars;
+		int start = 0;
+		char c = chars[start];
+		while ((c== '\r' 
+			|| c == '\n'
+      		|| c == '\t'
+			|| c == ' ')) {			
+			if(++start == count) return new char[0];
+			c = chars[start];
+		}		
+		char[] trimed = new char[count-start];
+		System.arraycopy(chars, start, trimed, 0, count-start);
+		return trimed;		
+	}
+	
+	public char[] trimTailSpace(char[] chars){	    
+		int count = chars.length;		
+		if(count == 0) return chars;
+		char c = chars[count-1];
+		while ((c== '\r' 
+			|| c == '\n'
+      		|| c == '\t'
+			|| c == ' ')) {			
+			if(0 == --count) return new char[0];
+			c = chars[count-1];
+		}		
+		char[] trimed = new char[count];
+		System.arraycopy(chars, 0, trimed, 0, count);
+		return trimed;		
+	}
+	
+	/**
+	* Return the index of the first non space character.
+	*/
+	public int getHeadSpaceEnd(char[] chars){
+	    int count = chars.length;		
+		if(count == 0) return -1;
+		int start = 0;
+		char c = chars[start];
+		while ((c== '\r' 
+			|| c == '\n'
+      		|| c == '\t'
+			|| c == ' ')) {			
+			if(++start == count) return start;
+			c = chars[start];
+		}		
+		return start;	
+	}
+	
+	/**
+	* Return the index of the first space character of the end whitespace, or 
+	* length if there is no whitespace at the end.  
+	*/
+	public int getTailSpaceStart(char[] chars){	    
+		int count = chars.length;		
+		if(count == 0) return 0;
+		char c = chars[count-1];
+		while ((c== '\r' 
+			|| c == '\n'
+      		|| c == '\t'
+			|| c == ' ')) {			
+			if(0 == --count) return count;
+			c = chars[count-1];
+		}		
+		return count;		
+	}
+	
 	
 	public char[] collapseSpace(char[] chars){
 		int count = chars.length;

@@ -30,9 +30,6 @@ import serene.validation.handlers.conflict.ExternalConflictHandler;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 
-import serene.bind.Queue;
-import serene.bind.AttributeBinder;
-
 public interface ActiveType extends Rule{
 	
 	StructureHandler getStructureHandler(ErrorCatcher errorCatcher, StackHandler stackHandler);

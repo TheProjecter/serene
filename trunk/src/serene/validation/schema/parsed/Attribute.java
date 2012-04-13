@@ -19,16 +19,29 @@ package serene.validation.schema.parsed;
 
 import java.util.Map;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 import sereneWrite.MessageWriter;
 
 public abstract class Attribute extends MultipleChildrenPattern{	
-	Attribute(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, ParsedComponent[] children, String qName, String location, 
-				MessageWriter debugWriter){		
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, children, qName, location, debugWriter);
+    
+	int defaultValueRecordIndex;
+	Attribute(/*Map<String, String> prefixMapping,*/ 
+	                int xmlBase,
+                    int ns, 
+                    int datatypeLibrary,
+                    int defaultValue,
+                    ParsedComponent[] children, 
+                    int recordIndex,
+                    DocumentIndexedData documentIndexedData,
+                    MessageWriter debugWriter){		
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData, debugWriter);
+		this.defaultValueRecordIndex = defaultValue;
 	}
 		
 			
+	public int getDefaultValueRecordIndex(){
+	    return defaultValueRecordIndex;
+	}
 	public String toString(){
 		String s = "Attribute";		
 		return s;

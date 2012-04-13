@@ -31,89 +31,22 @@ import serene.Reusable;
 
 import sereneWrite.MessageWriter;
 
-public abstract class BindingModel implements Reusable{
-    DocumentBinder documentBinder;    
-	Map<SElement, ElementBinder> selementBinder;
-	Map<SAttribute, AttributeBinder> sattributeBinder;
-	
-	ElementBinder[] elementBinder;
-	ElementBinder genericElementBinder;
-	AttributeBinder[] attributeBinder;
-	AttributeBinder genericAttributeBinder;
-	CharacterContentBinder characterContentBinder;
-	
-	MessageWriter debugWriter;	
-	
-	public BindingModel(DocumentBinder documentBinder,
-	                    Map<SElement, ElementBinder> selementBinder,
-	                    ElementBinder genericElementBinder,
-						Map<SAttribute, AttributeBinder> sattributeBinder,
-						AttributeBinder genericAttributeBinder,
-						MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		this.documentBinder = documentBinder;
-		this.selementBinder = selementBinder;
-		this.genericElementBinder = genericElementBinder;
-		this.sattributeBinder = sattributeBinder;
-		this.genericAttributeBinder = genericAttributeBinder;
-		characterContentBinder = new CharacterContentBinder(debugWriter);
-	}
-	
-	public abstract void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException;
-	
-	public abstract Object getProperty(String name)  throws SAXNotRecognizedException, SAXNotSupportedException;
+public interface BindingModel extends Reusable{
+    
+	void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException;	
+	Object getProperty(String name)  throws SAXNotRecognizedException, SAXNotSupportedException;
 
-	public abstract void setFeature(String name, boolean value)  throws SAXNotRecognizedException, SAXNotSupportedException;
-
-	public abstract boolean getFeature(String name)  throws SAXNotRecognizedException, SAXNotSupportedException;
+	void setFeature(String name, boolean value)  throws SAXNotRecognizedException, SAXNotSupportedException;
+	boolean getFeature(String name)  throws SAXNotRecognizedException, SAXNotSupportedException;
 	
-	public void index(ObjectIntHashMap selementIndexMap, ObjectIntHashMap sattributeIndexMap){
-		int elementCount = selementIndexMap.size();		
-		if(elementBinder == null){
-			elementBinder = new ElementBinder[elementCount];
-		}else if(elementBinder.length != elementCount){
-			elementBinder = new ElementBinder[elementCount];
-		}
-		Set<SElement> boundElement = selementBinder.keySet();
-		for(SElement elem : boundElement){
-			elementBinder[selementIndexMap.get(elem)] = selementBinder.get(elem);
-		}
-		
-		int attributeCount = sattributeIndexMap.size();
-		if(attributeBinder == null){
-			attributeBinder = new AttributeBinder[attributeCount];
-		}else if(attributeBinder.length != attributeCount){
-			attributeBinder = new AttributeBinder[attributeCount];
-		}
-		Set<SAttribute> boundAttribute = sattributeBinder.keySet();
-		for(SAttribute attr : boundAttribute){			
-			AttributeBinder ab = sattributeBinder.get(attr);
-			if(ab == null){
-				ab = new AttributeBinder(debugWriter);
-				sattributeBinder.put(attr, ab);
-			}
-			attributeBinder[sattributeIndexMap.get(attr)] = ab;
-		}		
-	}
+	DocumentTask getStartDocumentTask();
+	DocumentTask getEndDocumentTask();
+    	
+	ElementTask getStartElementTask(SElement element);
+	ElementTask getEndElementTask(SElement element);	
+	AttributeTask getAttributeTask(SAttribute attribute);
 	
-	public DocumentBinder getDocumentBinder(){
-	    return documentBinder;
-	}	
-	public ElementBinder getElementBinder(int elementDefinitionIndex){
-		if(elementDefinitionIndex >= elementBinder.length) return null;
-		return elementBinder[elementDefinitionIndex];
-	}
-	public ElementBinder getElementBinder(){		
-		return genericElementBinder;
-	}
-	public AttributeBinder getAttributeBinder(int attributeDefinitionIndex){
-		if(attributeDefinitionIndex >= attributeBinder.length) return null;
-		return attributeBinder[attributeDefinitionIndex];
-	}
-	public AttributeBinder getAttributeBinder(){		
-		return genericAttributeBinder;
-	}
-	public CharacterContentBinder getCharacterContentBinder(){
-		return characterContentBinder;
-	}	
+	ElementTask getGenericStartElementTask();
+	ElementTask getGenericEndElementTask();	
+	AttributeTask getGenericAttributeTask();
 }

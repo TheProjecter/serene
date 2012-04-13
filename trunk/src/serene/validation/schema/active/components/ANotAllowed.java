@@ -21,7 +21,7 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.RuleVisitor;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SNotAllowed;
 
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
@@ -35,10 +35,27 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 import sereneWrite.MessageWriter;
 
 public class ANotAllowed extends NoChildrenAPattern{
-	
-	public ANotAllowed(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){
-		super(ruleHandlerPool, simplifiedComponent, debugWriter);
+	SNotAllowed snotAllowed;
+	public ANotAllowed(ActiveModelRuleHandlerPool ruleHandlerPool, SNotAllowed snotAllowed, MessageWriter debugWriter){
+		super(ruleHandlerPool, debugWriter);
+		this.snotAllowed = snotAllowed;
 	}	
+	
+	public String getQName(){
+		return snotAllowed.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return snotAllowed.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return snotAllowed.hashCode();
+    }   
+    
+    public SNotAllowed getCorrespondingSimplifiedComponent(){
+        return snotAllowed;
+    }
 			
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);

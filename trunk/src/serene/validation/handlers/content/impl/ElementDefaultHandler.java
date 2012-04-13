@@ -27,7 +27,10 @@ import serene.util.CharsBuffer;
 import serene.validation.handlers.content.ElementEventHandler;
 
 import serene.validation.handlers.error.ContextErrorHandler;
+
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
 import sereneWrite.MessageWriter;
 
@@ -68,9 +71,9 @@ class ElementDefaultHandler extends ComparableEEH{
 	void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{}
 	void discardContextErrors(){}
 	void validateInContext(){}
-	public void handleInnerCharacters(char[] chars){
+	public void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool){
 	}
-    public void handleLastCharacters(char[] chars){
+    public void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor){
 	}
 	
 	boolean functionalEquivalent(ComparableEEH other){

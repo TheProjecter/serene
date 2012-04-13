@@ -33,10 +33,15 @@ public class ExternalConflictHandler extends ConflictHandler{
 		super(debugWriter);
 	}
 	
-	
-	public void reset(){
-		disqualified.clear();		
+	public void copyDisqualified(ExternalConflictHandler other){
+	    disqualified.clear();
+	    disqualified.or(other.disqualified);
 	}
+	
+	/*public void reset(){
+	    // TODO how about count?
+		disqualified.clear();		
+	}*/
     
     public void disqualify(BitSet candidates){
 		disqualified.or(candidates);

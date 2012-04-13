@@ -21,19 +21,19 @@ import java.util.Map;
 
 import sereneWrite.MessageWriter;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
+
 abstract class Div extends ParsedComponent{
     ParsedComponent[] children;	
-	Div(Map<String, String> prefixMapping, 
-            String xmlBase, 
-            String ns, 
-            String datatypeLibrary, 
-            AttributeInfo[] foreignAttributes,
+	Div(/*Map<String, String> prefixMapping,*/ 
+	        int xmlBase,
+            int ns, 
+            int datatypeLibrary,
             ParsedComponent[] children, 
-            String qName, 
-            String location, 
+            int recordIndex,
+            DocumentIndexedData documentIndexedData,
             MessageWriter debugWriter){
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, qName, location, debugWriter);
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
         asParent(children);
 	}
     

@@ -33,9 +33,8 @@ public abstract class UniqueChildAPattern extends AbstractAPattern{
 	
 	public UniqueChildAPattern(APattern child,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SimplifiedComponent simplifiedComponent, 
 				MessageWriter debugWriter){		
-		super(ruleHandlerPool, simplifiedComponent, debugWriter);
+		super(ruleHandlerPool, debugWriter);
 		asParent(child);
 	}
 		

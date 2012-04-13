@@ -192,7 +192,7 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	        if(temporaryMessageStorage != null) {	            
                 for(int i = 0; i < temporaryMessageStorage.length; i++){                    
                     if(temporaryMessageStorage[i] != null){
-                        temporaryMessageStorage[i].setDiscarded(true);
+                        /*temporaryMessageStorage[i].setDiscarded(true);*/
                         temporaryMessageStorage[i].clear();
                     }
                 }
@@ -206,7 +206,7 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	            if(temporaryMessageStorage != null) {	            
                     for(int i = 0; i < temporaryMessageStorage.length; i++){                    
                         if(temporaryMessageStorage[i] != null){
-                            temporaryMessageStorage[i].setDiscarded(true);
+                            /*temporaryMessageStorage[i].setDiscarded(true);*/
                             temporaryMessageStorage[i].clear();
                         }
                     }
@@ -240,6 +240,8 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	    
 	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
 			currentErrorCatcher.characterContentDatatypeError(inputStackDescriptor.getCurrentItemInputRecordIndex(), item, datatypeErrorMessage); 
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ELEMENT){			
+			currentErrorCatcher.characterContentDatatypeError(inputStackDescriptor.getCurrentItemInputRecordIndex(), item, datatypeErrorMessage); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
 			currentErrorCatcher.attributeValueDatatypeError(inputStackDescriptor.getCurrentItemInputRecordIndex(), item, datatypeErrorMessage);
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.LIST_TOKEN){
@@ -255,6 +257,8 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	    setCurrentErrorCatcher();
 	    
 	    if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){			
+			currentErrorCatcher.characterContentValueError(inputStackDescriptor.getCurrentItemInputRecordIndex(), value); 
+		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ELEMENT){			
 			currentErrorCatcher.characterContentValueError(inputStackDescriptor.getCurrentItemInputRecordIndex(), value); 
 		}else if(inputStackDescriptor.getItemId() == InputStackDescriptor.ATTRIBUTE){
 			currentErrorCatcher.attributeValueValueError(inputStackDescriptor.getCurrentItemInputRecordIndex(), value);

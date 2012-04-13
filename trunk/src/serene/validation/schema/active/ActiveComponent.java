@@ -18,6 +18,8 @@ package serene.validation.schema.active;
 
 import serene.validation.schema.Component;
 
+import serene.validation.schema.simplified.SimplifiedComponent;
+
 public interface ActiveComponent extends Component{
 	ActiveComponent getParent();	
 	void accept(ActiveComponentVisitor v);	
@@ -29,4 +31,6 @@ public interface ActiveComponent extends Component{
     * the code will be the same.
     */
 	int functionalEquivalenceCode();
+	
+	SimplifiedComponent getCorrespondingSimplifiedComponent();
 }

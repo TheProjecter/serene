@@ -24,8 +24,8 @@ import sereneWrite.MessageWriter;
 
 public abstract class ANameClass extends AbstractIdentifier{	
 		
-	public ANameClass(SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){
-		super(simplifiedComponent, debugWriter);
+	public ANameClass(MessageWriter debugWriter){
+		super(debugWriter);
 	}	
 		
 	public String toString(){

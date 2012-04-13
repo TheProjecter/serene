@@ -21,14 +21,24 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class SText extends AbstractNoChildrenPattern{
-	
-	public SText(String qName, String location, MessageWriter debugWriter){
-		super(qName, location, debugWriter);
+	boolean addedBySimplification;
+	public SText(int recordIndex, 
+				DocumentIndexedData documentIndexedData,
+				boolean addedBySimplification,
+				MessageWriter debugWriter){
+		super(recordIndex, documentIndexedData, debugWriter);
+		this.addedBySimplification = addedBySimplification;
 	}	
-			
+		
+	public String getQName(){
+	    if(addedBySimplification) return "text added by "+documentIndexedData.getLocalName(recordIndex)+" simplification";
+        return documentIndexedData.getItemDescription(recordIndex);   
+	}	
 	public void accept(SimplifiedComponentVisitor v){
 		v.visit(this);
 	}	

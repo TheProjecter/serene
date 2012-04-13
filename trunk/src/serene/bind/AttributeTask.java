@@ -17,6 +17,14 @@ limitations under the License.
 package serene.bind;
 
 public interface AttributeTask extends Task{
+    boolean executeBeforeStartElementTask();
+    boolean executeAfterStartElementTask();
+    boolean executeBeforeEndElementTask();
+    boolean executeAfterEndElementTask();
+    boolean needsDocumentInputData();    
+    // TODO
+    // Consider needsElementInputData and corresponding getter in the context. 
+    // But then the SAttribute definition should be able to get corresponding 
+    // SElement. Or is it the other way arround? ... 
 	void setContext(AttributeTaskContext context);
-	void setExecutant(Object executant);
 }
