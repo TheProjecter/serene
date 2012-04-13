@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Arrays;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SRef;
 
 import serene.validation.schema.active.RuleVisitor;
 import serene.validation.schema.active.ActiveComponentVisitor;
@@ -30,10 +31,6 @@ import serene.validation.schema.active.ActiveGrammarModel;
 import serene.validation.schema.active.ElementContentType;
 import serene.validation.schema.active.AttributesType;
 import serene.validation.schema.active.CharsActiveType;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ANameClass;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
 
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
@@ -49,9 +46,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import org.relaxng.datatype.ValidationContext;
-
-import serene.bind.Queue;
-import serene.bind.AttributeBinder;
 
 import sereneWrite.MessageWriter;
 
@@ -86,14 +80,17 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 	ActiveGrammarModel grammarModel;	
 	ActiveDefinition definition;
 	
+	SRef sref;
+	
 	public ARef(int index, 
 					ActiveGrammarModel grammarModel,
 					ActiveModelRuleHandlerPool ruleHandlerPool,
-					SimplifiedComponent simplifiedComponent, 
+					SRef sref, 
 					MessageWriter debugWriter){
-		super(null, ruleHandlerPool, simplifiedComponent, debugWriter);
+		super(null, ruleHandlerPool, debugWriter);
 		this.index = index;
 		this.grammarModel = grammarModel;
+		this.sref = sref;
 	}
 
 	/**
@@ -105,11 +102,7 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 		return child.isRequiredContent();
 	}
 	
-    public int functionalEquivalenceCode(){
-        //return simplifiedComponent.hashCode();
-        return definition.getTopPattern().functionalEquivalenceCode();
-    }
-    
+        
 	//ActiveDefinitionPointer
 	//--------------------------------------------------------------------------
 	public int getDefinitionIndex(){
@@ -368,6 +361,23 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 
 	
 	
+	public String getQName(){
+		return sref.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return sref.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        //return simplifiedComponent.hashCode();
+        return definition.getTopPattern().functionalEquivalenceCode();
+    }  
+    
+    public SRef getCorrespondingSimplifiedComponent(){
+        return sref;
+    }
+    
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);
 	}

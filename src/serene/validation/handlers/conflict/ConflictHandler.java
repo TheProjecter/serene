@@ -67,10 +67,10 @@ public abstract class ConflictHandler{
 	public int getDisqualifiedCount(){
 		return disqualified.cardinality();
 	}
-	public int getLength(){
+	/*public int getLength(){
 	    return disqualified.length();
-	}
-	public int getNextQualified(int fromIndex){
+	}*/
+	public int getNextQualified(int fromIndex){	    
 	    if(candidatesCount < 0)throw new IllegalStateException();
 		int nextQ = disqualified.nextClearBit(fromIndex);
         if(nextQ >= candidatesCount) return -1;
@@ -78,6 +78,7 @@ public abstract class ConflictHandler{
 	}
 	
 	public int getPreviousQualified(int fromIndex){
+	    if(candidatesCount < 0)throw new IllegalStateException();
 		for(int i = fromIndex-1; i >=0; i--){
 			if(!disqualified.get(i))return i;
 		}

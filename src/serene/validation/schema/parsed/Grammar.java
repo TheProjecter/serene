@@ -21,22 +21,21 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 import sereneWrite.MessageWriter;
 
 public class Grammar extends Pattern{	
 	ParsedComponent[] children;
 	
-	Grammar(Map<String, String> prefixMapping, 
-                String xmlBase, 
-                String ns, 
-                String datatypeLibrary,
-                AttributeInfo[] foreignAttributes,
+	Grammar(/*Map<String, String> prefixMapping,*/ 
+                int xmlBase, 
+                int ns, 
+                int datatypeLibrary,
                 ParsedComponent[] children, 
-                String qName, 
-                String location, 
-                MessageWriter debugWriter){
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, qName, location, debugWriter);
+                int recordIndex,
+	            DocumentIndexedData documentIndexedData,
+	            MessageWriter debugWriter){
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
 		asParent(children);		
 	}
 		

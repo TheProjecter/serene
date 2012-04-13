@@ -47,7 +47,7 @@ import sereneWrite.MessageWriter;
 */
 public class ValidationErrorHandler extends AbstractContextErrorHandler{
     ContextMessageHandler messageHandler;
-    
+    boolean isHandled;
 	public ValidationErrorHandler(MessageWriter debugWriter){
 		super(debugWriter);
 		id = ContextErrorHandlerManager.VALIDATION;
@@ -61,8 +61,12 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.init(activeInputDescriptor);
 	}
 	public void recycle(){
-        messageHandler.clear();
+        if(!isHandled){
+            /*messageHandler.setDiscarded(true);*/
+            messageHandler.clear(this);            
+        }
 		pool.recycle(this);        
+		isHandled = false;
 	}
 	
     public boolean isCandidate(){
@@ -208,7 +212,7 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
     
 	public void internalConflict(ConflictMessageReporter conflictMessageReporter) throws SAXException{
         conflictMessageReporter.report();
-        conflictMessageReporter.clear();
+        conflictMessageReporter.clear(this);
     }
     
     public  void conflict(int conflictResolutionId, MessageReporter commonMessages, int candidatesCount, BitSet disqualified, MessageReporter [] candidateMessages){        
@@ -218,18 +222,20 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
 	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 				throws SAXException{
         messageHandler.report(contextType, qName, definition, restrictToFileName, locator, errorDispatcher/*, ""*/);
-		messageHandler.clear();
+		messageHandler.clear(this);
+		isHandled = true;
 	}
 	
 	public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator)
 				throws SAXException{
         messageHandler.report(contextType, qName, null, restrictToFileName, locator, errorDispatcher/*, ""*/);
-		messageHandler.clear();
+		messageHandler.clear(this);
+		isHandled = true;
 	}
 
 	public void discard(){
-	    messageHandler.setDiscarded(true);
-	    messageHandler.clear();
+	    /*messageHandler.setDiscarded(true);*/
+	    messageHandler.clear(this);
 	}
 	
 	public void record(int contextType, String qName, boolean restrictToFileName, Locator locator){

@@ -19,7 +19,7 @@ package serene.validation.schema.active.components;
 import java.util.Map;
 import java.util.List;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SExceptPattern;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.RuleVisitor;
@@ -43,9 +43,6 @@ import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 import serene.validation.handlers.error.ErrorCatcher;
 
 import org.relaxng.datatype.ValidationContext;
-
-import serene.bind.Queue;
-import serene.bind.AttributeBinder;
 
 import sereneWrite.MessageWriter;
 
@@ -71,16 +68,18 @@ public class AExceptPattern extends AbstractRule
 	
 	ARef[] contextRefs;
 	
+	SExceptPattern sexceptPattern;
 	public AExceptPattern(int index,
 			ActiveGrammarModel grammarModel,
 			ActiveModelStackHandlerPool stackHandlerPool,
 			ActiveModelRuleHandlerPool ruleHandlerPool,
-			SimplifiedComponent simplifiedComponent, 
+			SExceptPattern sexceptPattern, 
 			MessageWriter debugWriter){
-		super(ruleHandlerPool, simplifiedComponent, debugWriter);
+		super(ruleHandlerPool, debugWriter);
 		this.index = index;
 		this.grammarModel = grammarModel;
-		this.stackHandlerPool = stackHandlerPool;		
+		this.stackHandlerPool = stackHandlerPool;
+		this.sexceptPattern = sexceptPattern;		
 	}	
 	
 	protected void asParent(APattern child){
@@ -94,6 +93,22 @@ public class AExceptPattern extends AbstractRule
 	public APattern getChild(){
 		return child;
 	}
+	
+	public String getQName(){
+		return sexceptPattern.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return sexceptPattern.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return sexceptPattern.hashCode();
+    }   
+    
+    public SExceptPattern getCorrespondingSimplifiedComponent(){
+        return sexceptPattern;
+    }
 	
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);

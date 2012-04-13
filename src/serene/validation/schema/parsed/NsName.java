@@ -21,13 +21,19 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 import sereneWrite.MessageWriter;
 
 public class NsName extends MultipleChildrenNameClass{		
-	NsName(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, ParsedComponent[] children, String qName, String location,  
-			MessageWriter debugWriter){
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, children, qName, location, debugWriter);
+	NsName(/*Map<String, String> prefixMapping,*/
+	        int xmlBase,
+            int ns, 
+            int datatypeLibrary, 
+            ParsedComponent[] children,
+            int recordIndex,
+            DocumentIndexedData documentIndexedData,   
+            MessageWriter debugWriter){
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData, debugWriter);
 	}		
 	public void accept(ParsedComponentVisitor v){
 		v.visit(this);
@@ -36,7 +42,7 @@ public class NsName extends MultipleChildrenNameClass{
 		v.visit(this);
 	}
 	public String toString(){
-		String s = "NsName "+ns+" ";//TODO Except		
+		String s = "NsName "+getNsAttribute();//TODO Except		
 		return s;
 	}
 }

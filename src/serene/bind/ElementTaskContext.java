@@ -19,22 +19,19 @@ package serene.bind;
 
 import java.util.Map;
 
-import serene.validation.schema.simplified.components.SAttribute;
-
-import serene.util.NameInfo;
-import serene.util.AttributeInfo;
-
 /**
 * The context of the current element task. Used when executing the queued 
 * tasks, so it assumes that the order is known and no arguments are passed to 
 * the getter methods.
 */
-public interface ElementTaskContext{
-	String getStartLocation();
+public interface ElementTaskContext extends TaskContext{
+	/*String getStartLocation();
 	String getEndLocation();
-    NameInfo getElementNameInfo();
-    AttributeInfo[] getAttributeInfo(SAttribute attribute);
-	String getCharacterContent();
-	Map<String, String> getPrefixMapping();
-	String getXmlBase();	
+    NameInfo getElementNameInfo();// TODO Consider replacing with getElementRecordIndex 
+    AttributeInfo[] getAttributeInfo(SAttribute attribute);// TODO Consider replacing with getAttributeRecordIndex
+	String getCharacterContent();*/
+	
+	int getElementInputRecordIndex();
+	String getCharacterContent();	
+	/*Map<String, String> getDeclaredXmlns();*/
 }

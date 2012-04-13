@@ -108,10 +108,12 @@ import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import serene.SchemaModel;
 
+
 import serene.validation.schema.ValidationModel;
 
 import serene.util.AttributeInfo;
 import serene.util.NameInfo;
+import serene.bind.util.DocumentIndexedData;
 
 import sereneWrite.MessageWriter;
 
@@ -426,6 +428,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             idTypeAttributeContent = false;
         }
             
+       
         child.accept(this);
         //see about this: only necessary when compatibility
                 
@@ -461,8 +464,10 @@ public class CompatibilityHandler implements RestrictingVisitor{
                                     +attributes+".";
                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                 }
+                
                 attributeDefaultValueModel.addAttributeInfo(nameClass, activeModel.getActiveNameClass(element), 
                                                     currentAttributesDVList.toArray(new AttributeInfo[currentAttributesDVList.size()]));
+                    
             }            
             currentAttributesDVList = attributesDVListsStack.pop();
             
@@ -543,7 +548,8 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 needsOptionalChoice.add(true);
                 
                 ccAttribute.init(grammarModel.getIndex(attribute), attribute);
-                inputStackDescriptor.pushAttribute(null, null, -1, -1, null, null, attribute.getQName());                
+                //inputStackDescriptor.pushAttribute(null, null, -1, -1, null, null, attribute.getQName());
+                simulateInput(attribute);                
                 defaultValueErrorHandler.setAttribute(attribute.getQName(), attribute.getLocation(restrictToFileName));                
                 defaultValueHandler.init(ccAttribute, defaultValueErrorHandler);
                 defaultValueHandler.handleAttribute(defaultValue);
@@ -643,6 +649,20 @@ public class CompatibilityHandler implements RestrictingVisitor{
             }
         }
 	}
+	private void simulateInput(SAttribute attribute){
+	    DocumentIndexedData did = attribute.getDocumentIndexedData();
+	    int recordIndex = attribute.getRecordIndex();
+	    
+	    inputStackDescriptor.pushAttribute(did.getItemDescription(recordIndex),
+	                                    did.getNamespaceURI(recordIndex),
+	                                    did.getLocalName(recordIndex),
+	                                    did.getAttributeType(recordIndex),
+	                                    did.getSystemId(recordIndex),
+	                                    did.getPublicId(recordIndex),
+	                                    did.getLineNumber(recordIndex),
+	                                    did.getColumnNumber(recordIndex));
+	}
+	
     
 	public void visit(SChoicePattern choice)throws SAXException{
 		SimplifiedComponent[] children = choice.getChildren();

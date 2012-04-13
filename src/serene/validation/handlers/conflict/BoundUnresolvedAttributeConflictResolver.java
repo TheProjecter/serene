@@ -32,8 +32,9 @@ import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.bind.Queue;
-import serene.bind.AttributeBinder;
+import serene.bind.util.Queue;
+import serene.bind.BindingModel;
+import serene.bind.AttributeTask;
 
 import sereneWrite.MessageWriter;
 
@@ -61,9 +62,9 @@ public class BoundUnresolvedAttributeConflictResolver extends BoundAttributeConf
             
             AAttribute attribute = candidateDefinitions.get(qual);
             int definitionIndex = attribute.getDefinitionIndex();
-            AttributeBinder binder = attributeBinders.get(attribute);
-            if(binder != null){
-                binder.bindAttribute(targetQueue, targetEntry, definitionIndex, activeInputDescriptor.getNamespaceURI(inputRecordIndex), activeInputDescriptor.getLocalName(inputRecordIndex), activeInputDescriptor.getItemDescription(inputRecordIndex), Datatype.ID_TYPE_NULL, value);
+            AttributeTask task = bindingModel.getAttributeTask(attribute.getCorrespondingSimplifiedComponent());
+            if(task != null){
+                targetQueue.addAttribute(targetEntry, inputRecordIndex, task);
             }
         }else{		
             int j = 0;

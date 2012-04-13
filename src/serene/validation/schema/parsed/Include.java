@@ -21,15 +21,23 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 import sereneWrite.MessageWriter;
 
 public class Include extends ParsedComponent implements GrammarContent{
-	String href;
+	int hrefRecordIndex;
 	ParsedComponent[] children;	
-	Include(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String href, AttributeInfo[] foreignAttributes, ParsedComponent[] children, String qName, String location, MessageWriter debugWriter){
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, qName, location, debugWriter);
-		this.href = href;
+	Include(/*Map<String, String> prefixMapping,*/ 
+	            int xmlBase, 
+	            int ns, 
+	            int datatypeLibrary,	            
+	            int href, 
+	            ParsedComponent[] children, 
+	            int recordIndex,
+	            DocumentIndexedData documentIndexedData,
+	            MessageWriter debugWriter){
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
+		this.hrefRecordIndex = href;
 		asParent(children);
 	}
 	
@@ -43,6 +51,10 @@ public class Include extends ParsedComponent implements GrammarContent{
 		}
 	}
 	
+	public int getHrefRecordIndex(){
+	    return hrefRecordIndex;
+	}
+	
 	public ParsedComponent[] getChildren(){
 		return children;
 	}
@@ -53,7 +65,8 @@ public class Include extends ParsedComponent implements GrammarContent{
 	}		
 	
 	public String getHref(){
-		return href;
+		if(hrefRecordIndex == DocumentIndexedData.NO_RECORD) return null;
+		return documentIndexedData.getStringValue(hrefRecordIndex);
 	}
 	
 	public void accept(ParsedComponentVisitor v){
@@ -65,7 +78,7 @@ public class Include extends ParsedComponent implements GrammarContent{
 	}
 		
 	public String toString(){
-		String s = "Include href "+href;		
+		String s = "Include href "+getHref();		
 		return s;
 	}
 }

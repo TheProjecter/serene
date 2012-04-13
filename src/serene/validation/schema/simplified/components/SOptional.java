@@ -23,12 +23,17 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.validation.schema.simplified.components.SPattern;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class SOptional extends AbstractUniqueChildPattern{
 	
-	public SOptional(SPattern child, String qName, String location, MessageWriter debugWriter){
-		super(child, qName, location, debugWriter);
+	public SOptional(SPattern child, 
+	            int recordIndex, 
+				DocumentIndexedData documentIndexedData,  
+				MessageWriter debugWriter){
+		super(child, recordIndex, documentIndexedData, debugWriter);
 	}	
 
 	public void accept(SimplifiedComponentVisitor v){

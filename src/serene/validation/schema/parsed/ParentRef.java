@@ -21,13 +21,20 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 import sereneWrite.MessageWriter;
 
 public class ParentRef extends InternalRefPattern{
-	ParentRef(Map<String, String> prefixMapping, String xmlBase, String ns, String datatypeLibrary, String name, AttributeInfo[] foreignAttributes, ParsedComponent[] children, String qName, String location,  
-						MessageWriter debugWriter){
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, name, foreignAttributes, children, qName, location, debugWriter);		
+	ParentRef(/*Map<String, String> prefixMapping,*/ 
+	            int xmlBase,
+                int ns, 
+                int datatypeLibrary,
+                int name,
+                ParsedComponent[] children, 
+                int recordIndex,
+                DocumentIndexedData documentIndexedData,
+                MessageWriter debugWriter){		
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, name, children, recordIndex, documentIndexedData, debugWriter);		
 	}
 		
 	public void accept(ParsedComponentVisitor v){
@@ -38,7 +45,7 @@ public class ParentRef extends InternalRefPattern{
 	}
 	
 	public String toString(){
-		String s = "ParentRef \""+name+"\"";
+		String s = "ParentRef \""+getName()+"\"";
 		return s;
 	}
 }

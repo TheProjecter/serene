@@ -47,9 +47,6 @@ import serene.validation.handlers.conflict.StackConflictsHandler;
 
 import serene.Reusable;
 
-import serene.bind.Queue;
-import serene.bind.AttributeBinder;
-
 import sereneWrite.MessageWriter;
 
 public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycler{

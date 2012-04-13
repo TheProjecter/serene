@@ -528,9 +528,10 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     
     int messageTotalCount;
 		
-    boolean isMessageRetrieved;
-    boolean isDiscarded;
+    /*boolean isMessageRetrieved;
+    boolean isDiscarded;*/
    
+    int clientCount;
 	public AbstractMessageHandler(MessageWriter debugWriter){
 		super(debugWriter);
 			
@@ -659,34 +660,34 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         
         // {30}     
         
-        isMessageRetrieved = false;
-        isDiscarded = false;
+        /*isMessageRetrieved = false;
+        isDiscarded = false;*/
 
+        clientCount = 0;
 	}  
     
 	void init(ActiveInputDescriptor activeInputDescriptor){
-	    isMessageRetrieved = false;
-        isDiscarded = false;
+	    /*isMessageRetrieved = false;
+        isDiscarded = false;*/
 	    this.activeInputDescriptor = activeInputDescriptor;
 	}
 	
-	public void setDiscarded(boolean isDiscarded){
+	/*public void setDiscarded(boolean isDiscarded){
         this.isDiscarded = isDiscarded;
         
-        if(commonMessages != null)commonMessages.setDiscarded(isDiscarded);
+        /*if(commonMessages != null)commonMessages.setDiscarded(isDiscarded);
         
         if(candidateMessages!= null){
             for(int i = 0; i < candidateMessages.length; i++){
                 if(candidateMessages[i] != null)candidateMessages[i].setDiscarded(isDiscarded);;
             }
         }
-        if(parent != null)parent.setDiscarded(isDiscarded);
-    }
+        if(parent != null)parent.setDiscarded(isDiscarded);*/
+   /* }*/
     
-	protected void finalize(){
-	   clear();
+	public void registerClient(MessageReporter mr){
+	    clientCount++;
 	}
-	
 	
 	public boolean containsErrorMessage(){
 	    if(unknownElementIndex >= 0
@@ -738,7 +739,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     }
     
     public void report(int reportingContextType, String reportingContextQName, AElement reportingContextDefinition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
-        isMessageRetrieved = true;
+        /*isMessageRetrieved = true;*/
         
         this.reportingContextType = reportingContextType;
         this.reportingContextQName = reportingContextQName;
@@ -819,7 +820,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     }
         
     public void report(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
-        isMessageRetrieved = true;
+        /*isMessageRetrieved = true;*/
         
         if(parent != null){
             parent.report(restrictToFileName, locator, errorDispatcher, prefix);//parent should have been located, else illegal state            
@@ -1057,7 +1058,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 				+"\n"+prefix+"Misplaced content in the document structure starting at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(misplacedStartInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(misplacedStartInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(misplacedStartInputRecordIndex[i])+", corresponding to definition <"+misplacedContext[i].getQName()+"> at "+misplacedContext[i].getLocation(restrictToFileName)+ ":";
 				for(int j = 0; j < misplacedDefinition[i].length; j++){
 					for(int k = 0; k < misplacedInputRecordIndex[i][j].length; k++){
-						message += "\n"+prefix+getItemDescription( activeInputDescriptor.getItemId(misplacedInputRecordIndex[i][j][k]),  activeInputDescriptor.getItemDescription(misplacedInputRecordIndex[i][j][k]))+" at "+getLocation(restrictToFileName,  activeInputDescriptor.getSystemId(misplacedInputRecordIndex[i][j][k]))+":"+ activeInputDescriptor.getLineNumber(misplacedInputRecordIndex[i][j][k])+":"+ activeInputDescriptor.getColumnNumber(misplacedInputRecordIndex[i][j][k]);
+						message += "\n"+prefix+getItemDescription( misplacedInputRecordIndex[i][j][k])+" at "+getLocation(restrictToFileName,  activeInputDescriptor.getSystemId(misplacedInputRecordIndex[i][j][k]))+":"+ activeInputDescriptor.getLineNumber(misplacedInputRecordIndex[i][j][k])+":"+ activeInputDescriptor.getColumnNumber(misplacedInputRecordIndex[i][j][k]);
 					}
 					message += ", corresponding to definition <"+misplacedDefinition[i][j].getQName()+"> at "+misplacedDefinition[i][j].getLocation(restrictToFileName);
 				}
@@ -1071,7 +1072,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 						+"\n"+prefix+"In the document structure starting at "+getLocation(restrictToFileName,  activeInputDescriptor.getSystemId(excessiveStartInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(excessiveStartInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(excessiveStartInputRecordIndex[i])+", corresponding to definition <"+excessiveContext[i].getQName()+"> at "+excessiveContext[i].getLocation(restrictToFileName)+", "
 						+" expected "+getExpectedCardinality(excessiveDefinition[i].getMinOccurs(), excessiveDefinition[i].getMaxOccurs())+" corresponding to definition <"+excessiveDefinition[i].getQName()+"> at "+excessiveDefinition[i].getLocation(restrictToFileName)+", found "+excessiveInputRecordIndex[i].length+" starting at: ";
 				for(int j = 0; j < excessiveInputRecordIndex[i].length; j++){
-					message += "\n"+prefix+getItemDescription(activeInputDescriptor.getItemId(excessiveInputRecordIndex[i][j]), activeInputDescriptor.getItemDescription(excessiveInputRecordIndex[i][j]))+" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(excessiveInputRecordIndex[i][j]))+":"+activeInputDescriptor.getLineNumber(excessiveInputRecordIndex[i][j])+":"+activeInputDescriptor.getColumnNumber(excessiveInputRecordIndex[i][j]);
+					message += "\n"+prefix+getItemDescription(excessiveInputRecordIndex[i][j])+" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(excessiveInputRecordIndex[i][j]))+":"+activeInputDescriptor.getLineNumber(excessiveInputRecordIndex[i][j])+":"+activeInputDescriptor.getColumnNumber(excessiveInputRecordIndex[i][j]);
 				}
 				message += ".";
 			}
@@ -1099,7 +1100,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(illegalIndex >= 0){
 			for(int i = 0; i <= illegalIndex; i++){
 				message += "\n"+prefix+"Illegal content."
-							+"\n"+prefix+"The document structure starting with "+getItemDescription(activeInputDescriptor.getItemId(illegalStartInputRecordIndex[i]), activeInputDescriptor.getItemDescription(illegalStartInputRecordIndex[i]))+" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(illegalStartInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(illegalStartInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(illegalStartInputRecordIndex[i])+" does not match schema definition <"+illegalContext[i].getQName()+"> at "+illegalContext[i].getLocation(restrictToFileName)+".";
+							+"\n"+prefix+"The document structure starting with "+getItemDescription(illegalStartInputRecordIndex[i])+" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(illegalStartInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(illegalStartInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(illegalStartInputRecordIndex[i])+" does not match schema definition <"+illegalContext[i].getQName()+"> at "+illegalContext[i].getLocation(restrictToFileName)+".";
 			}			
 		}
 		// {12 A}
@@ -1233,7 +1234,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(datatypeTokenIndex >= 0){
 			for(int i = 0; i <= datatypeTokenIndex; i++){
 				message += "\n"+prefix+"Illegal datatype."
-				+"\n"+prefix+ "List token \""+activeInputDescriptor.getItemDescription(datatypeTokenInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(datatypeTokenInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(datatypeTokenInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(datatypeTokenInputRecordIndex[i])
+				+"\n"+prefix+ "List token \""+activeInputDescriptor.getStringValue(datatypeTokenInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(datatypeTokenInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(datatypeTokenInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(datatypeTokenInputRecordIndex[i])
 				+ " does not match the datatype required by schema definition <" +datatypeTokenDefinition[i].getQName()+"> at "+datatypeTokenDefinition[i].getLocation(restrictToFileName)+". "
 				+ datatypeTokenErrorMessage[i];
 			}
@@ -1242,7 +1243,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(valueTokenIndex >= 0){
 			for(int i = 0; i <= valueTokenIndex; i++){
 				message += "\n"+prefix+"Illegal value."
-				+"\n"+prefix+ "List token \""+activeInputDescriptor.getItemDescription(valueTokenInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(valueTokenInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(valueTokenInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(valueTokenInputRecordIndex[i])
+				+"\n"+prefix+ "List token \""+activeInputDescriptor.getStringValue(valueTokenInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(valueTokenInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(valueTokenInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(valueTokenInputRecordIndex[i])
 				+ " does not match the value required by schema definition <"+valueTokenDefinition[i].getQName()+"> at "+valueTokenDefinition[i].getLocation(restrictToFileName)+".";
 			}
 		}
@@ -1250,7 +1251,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 		if(exceptTokenIndex >= 0){
 			for(int i = 0; i <= exceptTokenIndex; i++){
 				message += "\n"+prefix+"Excepted token."
-				+"\n"+prefix+ "List token \""+activeInputDescriptor.getItemDescription(exceptTokenInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(exceptTokenInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(exceptTokenInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(exceptTokenInputRecordIndex[i])
+				+"\n"+prefix+ "List token \""+activeInputDescriptor.getStringValue(exceptTokenInputRecordIndex[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(exceptTokenInputRecordIndex[i]))+":"+activeInputDescriptor.getLineNumber(exceptTokenInputRecordIndex[i])+":"+activeInputDescriptor.getColumnNumber(exceptTokenInputRecordIndex[i])
 				+ " matches a value excepted by schema definition <"+exceptTokenDefinition[i].getQName()+"> at "+exceptTokenDefinition[i].getLocation(restrictToFileName)+".";
 			}
 		}
@@ -1260,7 +1261,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         if(unresolvedTokenIndexLPICE >= 0){
 			for(int i = 0; i <= unresolvedTokenIndexLPICE; i++){
 				message += "\n"+prefix+"Unresolved list token."
-				+"\n"+prefix+ "List token \""+ activeInputDescriptor.getItemDescription(unresolvedTokenInputRecordIndexLPICE[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unresolvedTokenInputRecordIndexLPICE[i]))+":"+activeInputDescriptor.getLineNumber(unresolvedTokenInputRecordIndexLPICE[i])+":"+activeInputDescriptor.getColumnNumber(unresolvedTokenInputRecordIndexLPICE[i])
+				+"\n"+prefix+ "List token \""+ activeInputDescriptor.getStringValue(unresolvedTokenInputRecordIndexLPICE[i])+"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(unresolvedTokenInputRecordIndexLPICE[i]))+":"+activeInputDescriptor.getLineNumber(unresolvedTokenInputRecordIndexLPICE[i])+":"+activeInputDescriptor.getColumnNumber(unresolvedTokenInputRecordIndexLPICE[i])
 				+ " cannot be resolved to a single schema definition, all candidates resulted in errors."
 				+ " Available definitions: ";
 				for(int j = 0; j < unresolvedTokenDefinitionLPICE[i].length; j++){
@@ -1283,7 +1284,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         if(!message.equals("")){            
             message = getErrorIntro(prefix, restrictToFileName) + message;
         }
-		isMessageRetrieved = true;
+		/*isMessageRetrieved = true;*/
 		return message;
 	} 
     
@@ -1435,7 +1436,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         if(ambiguousTokenIndexLPICW >= 0){
 			for(int i = 0; i <= ambiguousTokenIndexLPICW; i++){
 				message += "\n"+prefix+"Ambiguous list token."
-				+"\n"+prefix+ "List token \""+ activeInputDescriptor.getItemDescription(ambiguousTokenInputRecordIndexLPICW[i]) +"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(ambiguousTokenInputRecordIndexLPICW[i]))+":"+activeInputDescriptor.getLineNumber(ambiguousTokenInputRecordIndexLPICW[i])+":"+activeInputDescriptor.getColumnNumber(ambiguousTokenInputRecordIndexLPICW[i])
+				+"\n"+prefix+ "List token \""+ activeInputDescriptor.getStringValue(ambiguousTokenInputRecordIndexLPICW[i]) +"\" at "+getLocation(restrictToFileName, activeInputDescriptor.getSystemId(ambiguousTokenInputRecordIndexLPICW[i]))+":"+activeInputDescriptor.getLineNumber(ambiguousTokenInputRecordIndexLPICW[i])+":"+activeInputDescriptor.getColumnNumber(ambiguousTokenInputRecordIndexLPICW[i])
 				+ " cannot be resolved to a single schema definition, several candidates could be correct."
 				+ " Possible definitions: ";
 				for(int j = 0; j < ambiguousTokenDefinitionLPICW[i].length; j++){
@@ -1463,7 +1464,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         return systemId.substring(nameIndex);	
     }
     
-    private String getItemDescription(int itemId, String qName){
+    /*private String getItemDescription(int itemId, String qName){
         String description = null;
         if(itemId == InputStackDescriptor.ELEMENT){
             description = "element <"+qName+">";
@@ -1473,6 +1474,22 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
             description = "character content";
         }else if(itemId == InputStackDescriptor.LIST_TOKEN){
             description = "list token \""+qName+"\"";
+        }
+        return description;
+    }*/
+    
+    
+    private String getItemDescription(int recordIndex){
+        String description = null;
+        int itemId = activeInputDescriptor.getItemId(recordIndex);
+        if(itemId == InputStackDescriptor.ELEMENT){
+            description = "element <"+activeInputDescriptor.getItemDescription(recordIndex)+">";
+        }else if(itemId == InputStackDescriptor.ATTRIBUTE){
+            description = "attribute \""+activeInputDescriptor.getItemDescription(recordIndex)+"\"";
+        }else if(itemId == InputStackDescriptor.CHARACTER_CONTENT){
+            description = "character content";
+        }else if(itemId == InputStackDescriptor.LIST_TOKEN){
+            description = "list token \""+activeInputDescriptor.getStringValue(recordIndex)+"\"";
         }
         return description;
     }

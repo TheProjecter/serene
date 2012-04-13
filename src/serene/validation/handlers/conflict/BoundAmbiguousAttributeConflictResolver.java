@@ -30,8 +30,9 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
-import serene.bind.Queue;
-import serene.bind.AttributeBinder;
+import serene.bind.util.Queue;
+import serene.bind.BindingModel;
+import serene.bind.AttributeTask;
 
 import sereneWrite.MessageWriter;
 
@@ -60,7 +61,7 @@ public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConfl
             String value, 
 			Queue queue, 
 			int entry, 
-			Map<AAttribute, AttributeBinder> attributeBinders){		
+			BindingModel bindingModel){		
 		super.init(temporaryMessageStorage,
 		            /*namespaceURI, 
                     localName,
@@ -68,7 +69,7 @@ public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConfl
                     value, 
                     queue, 
                     entry, 
-                    attributeBinders);			
+                    bindingModel);			
 		this.disqualified = disqualified;		
 	}
 		
@@ -86,9 +87,9 @@ public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConfl
             
             AAttribute attribute = candidateDefinitions.get(qual);
             int definitionIndex = attribute.getDefinitionIndex();
-            AttributeBinder binder = attributeBinders.get(attribute);
-            if(binder != null){
-                binder.bindAttribute(targetQueue, targetEntry, definitionIndex, activeInputDescriptor.getNamespaceURI(inputRecordIndex), activeInputDescriptor.getLocalName(inputRecordIndex), activeInputDescriptor.getItemDescription(inputRecordIndex), Datatype.ID_TYPE_NULL, value);
+            AttributeTask task = bindingModel.getAttributeTask(attribute.getCorrespondingSimplifiedComponent());
+            if(task != null){
+                targetQueue.addAttribute(targetEntry, inputRecordIndex, task);
             }
         }else{
             for(int i = 0; i < disqualified.length(); i++){

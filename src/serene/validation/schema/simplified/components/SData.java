@@ -23,14 +23,20 @@ import org.relaxng.datatype.Datatype;
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class SData extends SPattern{
     Datatype datatype;
 	SExceptPattern[] exceptPattern; 	
 		
-	public SData(Datatype datatype, SExceptPattern[] exceptPattern, String qName, String location, MessageWriter debugWriter){
-		super(qName, location, debugWriter);
+	public SData(Datatype datatype, 
+	            SExceptPattern[] exceptPattern, 
+	            int recordIndex, 
+				DocumentIndexedData documentIndexedData,
+				MessageWriter debugWriter){
+		super(recordIndex, documentIndexedData, debugWriter);
 		this.datatype = datatype;
 		asParent(exceptPattern);
 	}

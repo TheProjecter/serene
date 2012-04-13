@@ -266,8 +266,8 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             if(candidateMessagesStack[winnerIndex] != null) hasDelayedMessages = true;
             for(int i = 0; i < candidateMessagesStack.length; i++){ 
                 if(i != winnerIndex && candidateMessagesStack[i] != null){
-                    candidateMessagesStack[i].setDiscarded(true);
-                    candidateMessagesStack[i].clear();
+                    /*candidateMessagesStack[i].setDiscarded(true);*/
+                    candidateMessagesStack[i].clear(this);
                     candidateMessagesStack[i] = null;
                 }
             }
@@ -286,8 +286,8 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
                         if(!hasDelayedMessages)  hasDelayedMessages = true;
                     }
                 }else{
-                    candidateMessagesStack[i].setDiscarded(true);
-                    candidateMessagesStack[i].clear();
+                    /*candidateMessagesStack[i].setDiscarded(true);*/
+                    candidateMessagesStack[i].clear(this);
                     candidateMessagesStack[i] = null;
                 }
             }
@@ -310,8 +310,8 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         
         for(int i = 0; i < candidatesCount; i++){            
             if(disqualified.get(i)){
-                candidateMessagesStack[i].setDiscarded(true);
-                candidateMessagesStack[i].clear();
+                /*candidateMessagesStack[i].setDiscarded(true);*/
+                candidateMessagesStack[i].clear(this);
                 candidateMessagesStack[i] = null; 
             }
             else if(!hasDelayedMessages && candidateMessagesStack[i] != null) hasDelayedMessages = true;
@@ -375,7 +375,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         return false;
     }
 
-    public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator, ContextErrorHandler contextErrorHandler) throws SAXException{
+    public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator, ContextErrorHandler contextErrorHandler) throws SAXException{        
         isHandled = true;
         if(localMessageHandler.getMessageTotalCount() > 0){
             delayMessageReporter(contextType, qName, locator, localMessageHandler, false);
@@ -525,8 +525,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     
     // from direct candidates and subtree through ExternalConflictErrorHandler    
     public void delayMessageReporter(int contextType, String qName, AElement definition, Locator locator, MessageReporter messageHandler, int candidateIndex){
-        
-        
         messageHandler.setReportingContextType(contextType);
         messageHandler.setReportingContextQName(qName);
 		messageHandler.setReportingContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
@@ -541,7 +539,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         }
     }
     public void delayMessageReporter(int contextType, String qName, Locator locator, MessageReporter messageHandler, int candidateIndex){
-
         messageHandler.setReportingContextType(contextType);
         messageHandler.setReportingContextQName(qName);
 		messageHandler.setReportingContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
@@ -569,7 +566,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     
     // from direct candidates and subtree through CommonErrorHandler or localMessageHandler
     public void delayMessageReporter(int contextType, String qName, AElement definition, Locator locator, MessageReporter messageHandler, boolean isCandidate){
-        
         messageHandler.setReportingContextType(contextType);
         messageHandler.setReportingContextQName(qName);
 		messageHandler.setReportingContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
@@ -815,27 +811,27 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     public void clear(boolean deep){
         if(deep || !isHandled){
             if(localMessageHandler !=null ){
-                localMessageHandler.setDiscarded(true);
-                localMessageHandler.clear();
+                /*localMessageHandler.setDiscarded(true);*/
+                localMessageHandler.clear(this);
             }
             if(candidateMessagesStack != null){
                 for(int i = 0; i< candidateMessagesStack.length; i++){
                     if(candidateMessagesStack[i] != null){
-                        candidateMessageHandlers[i].setDiscarded(true);
-                        candidateMessageHandlers[i].clear();
+                        /*candidateMessageHandlers[i].setDiscarded(true);*/
+                        candidateMessageHandlers[i].clear(this);
                     }
                 }
             } 
             if(commonMessagesStack !=null ){
-                commonMessagesStack.setDiscarded(true);
-                commonMessagesStack.clear();
+                /*commonMessagesStack.setDiscarded(true);*/
+                commonMessagesStack.clear(this);
             }
         }
         
         Arrays.fill(errorCodes, null);
         Arrays.fill(errorCandidates, null);
         
-        conflictHandler.clear();
+        
         candidateMessageHandlers = null;
         candidatesCount = -1;
         candidateMessagesStack = null;

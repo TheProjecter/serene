@@ -25,15 +25,11 @@ import sereneWrite.MessageWriter;
 
 abstract class AbstractActiveComponent implements ActiveComponent{
 	protected int childIndex;	
-	
-	protected SimplifiedComponent simplifiedComponent;
-	
+		
 	protected MessageWriter debugWriter;	
 	
-	AbstractActiveComponent(SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){		
-		this.debugWriter = debugWriter;	
-		this.simplifiedComponent = simplifiedComponent;
-		
+	AbstractActiveComponent(MessageWriter debugWriter){		
+		this.debugWriter = debugWriter;		
 		childIndex = -1;
 	}
 	
@@ -42,17 +38,5 @@ abstract class AbstractActiveComponent implements ActiveComponent{
 	}	
 	public int getChildIndex(){
 		return childIndex;
-	}
-	
-	public String getQName(){
-		return simplifiedComponent.getQName();
-	}
-	
-	public String getLocation(boolean restrictToFileName){
-		return simplifiedComponent.getLocation(restrictToFileName);
-	}	
-    
-    public int functionalEquivalenceCode(){
-        return simplifiedComponent.hashCode();
-    }
+	} 
 }	

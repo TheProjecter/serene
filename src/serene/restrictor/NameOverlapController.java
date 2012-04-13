@@ -51,7 +51,7 @@ class NameOverlapController extends NameClassOverlapController{
 		nsNameOverlapController.init(nsName);
 		overlap = nsNameOverlapController.overlap(name); 
 	}
-	public void visit(SName name){		
+	public void visit(SName name){
 		overlap = this.name.getLocalPart().equals(name.getLocalPart())
 			&& this.name.getNamespaceURI().equals(name.getNamespaceURI());
 	}

@@ -23,8 +23,7 @@ import java.util.BitSet;
 
 import org.xml.sax.SAXException;
 
-import serene.bind.Queue;
-import serene.bind.AttributeBinder;
+import serene.bind.util.Queue;
 import serene.bind.BindingModel;
 
 import serene.validation.schema.active.Rule;
@@ -317,7 +316,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
+	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<AElement, Queue> candidateQueues){
 			
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -331,7 +330,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 				
-		BoundElementConflictResolver resolver = conflictHandlerPool.getBoundUnresolvedElementConflictResolver(conflictMessageReporter, bindingModel, targetQueue, targetEntry, candidateQueues);		
+		BoundElementConflictResolver resolver = conflictHandlerPool.getBoundUnresolvedElementConflictResolver(conflictMessageReporter, bindingModel, targetQueue, reservationStartEntry, reservationEndEntry, candidateQueues);		
 		resolvers.add(resolver);		
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
@@ -508,7 +507,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		    resolver.addCandidate(elementDefinitions.get(lastQualifiedIndex));
 		}
 	}
-	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int targetEntry, Map<AElement, Queue> candidateQueues){
+	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<AElement, Queue> candidateQueues){
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
 		reportCurrentMisplaced = true;
@@ -521,7 +520,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.addAll(candidates);
 		candidates.clear();
 				
-		BoundElementConflictResolver resolver = conflictHandlerPool.getBoundAmbiguousElementConflictResolver(conflictMessageReporter, bindingModel, targetQueue, targetEntry, candidateQueues);
+		BoundElementConflictResolver resolver = conflictHandlerPool.getBoundAmbiguousElementConflictResolver(conflictMessageReporter, bindingModel, targetQueue, reservationStartEntry, reservationEndEntry, candidateQueues);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
@@ -717,7 +716,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders){
+	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, BindingModel bindingModel){
 		
 		reportExcessive = true;
 		reportMissing = true;
@@ -736,7 +735,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
                                                                                      value, 
                                                                                      targetQueue, 
                                                                                      targetEntry, 
-                                                                                     attributeBinders);
+                                                                                     bindingModel);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
@@ -900,7 +899,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		}
 	}
 	
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, Map<AAttribute, AttributeBinder> attributeBinders){		
+	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, BindingModel bindingModel){		
 		reportExcessive = true;
 		reportMissing = true;
 		reportIllegal = true;
@@ -919,7 +918,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
                                                                                             value, 
                                                                                             targetQueue, 
                                                                                             targetEntry, 
-                                                                                            attributeBinders);
+                                                                                            bindingModel);
 		resolvers.add(resolver);
 		
 		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);

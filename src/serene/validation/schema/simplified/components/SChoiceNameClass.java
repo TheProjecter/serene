@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
-import serene.validation.schema.simplified.components.SNameClass;
+import serene.bind.util.DocumentIndexedData;
 
 import sereneWrite.MessageWriter;
 
@@ -29,10 +29,10 @@ public class SChoiceNameClass extends SNameClass{
 	SNameClass[] children;
 	
 	public SChoiceNameClass(SNameClass[] children,
-						String qName, 
-						String location, 
+						int recordIndex, 
+						DocumentIndexedData documentIndexedData,  
 						MessageWriter debugWriter){
-		super(qName, location, debugWriter);
+		super(recordIndex, documentIndexedData, debugWriter);
 		asParent(children);
 	}
 	

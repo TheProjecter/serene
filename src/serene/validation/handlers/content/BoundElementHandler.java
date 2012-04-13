@@ -16,13 +16,28 @@ limitations under the License.
 
 package serene.validation.handlers.content;
 
+import serene.bind.util.Queue;
+
 import serene.validation.handlers.content.ElementEventHandler;
 
 public interface BoundElementHandler extends ElementEventHandler{
-	void qNameBinding();
+	/*void qNameBinding();
 	void startLocationBinding();
 	void endLocationBinding();
 	void characterContentBinding(char[] chars);
-	void elementTasksBinding();
+	void elementTasksBinding();*/
 	
+    void startElementBinding();	
+    void characterContentBinding(String cc);
+    void endElementBinding();	
+    
+    Queue getQueue();
+    int getQueueStartEntryIndex();
+    int getQueueEndEntryIndex();
+    /**
+    * Copy from the argument queue into the local queue all entries between
+    * otherStartEntryIndex, and otherEndEntryIndex, both included starting from
+    * the local startEntryIndex.
+    */
+    void queuecoppy(Queue otherQueue, int otherStartEntryIndex, int otherEndEntryIndex);
 }

@@ -65,6 +65,8 @@ import serene.validation.handlers.content.AttributeEventHandler;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
  
 import sereneWrite.MessageWriter;
 
@@ -74,14 +76,15 @@ class ElementValidationHandler extends ValidatingEEH
 							AttributeContentTypeHandler,
 							CharsContentTypeHandler{
 								
-	CharsBuffer charContentBuffer;
+	/*CharsBuffer charContentBuffer;
     String charContentSystemId;
     String charContentPublicId;
     int charContentLineNumber;
-    int charContentColumnNumber;
+    int charContentColumnNumber;*/
     boolean hasComplexContent; 
     // set to true when allowed text content(not data!), or allowed element 
-    // content (not unexpected!) is encountered   
+    // content (not unexpected!) is encountered
+    CharacterContentDescriptor localCharacterContentDescriptor;
 	
 	MatchHandler matchHandler;	
 	boolean recognizeOutOfContext;
@@ -95,20 +98,20 @@ class ElementValidationHandler extends ValidatingEEH
 	
 	ElementValidationHandler(MessageWriter debugWriter){
 		super(debugWriter);
-        charContentLineNumber = -1;
+        /*charContentLineNumber = -1;
         charContentColumnNumber = -1;
-        charContentBuffer = new CharsBuffer(debugWriter);
+        charContentBuffer = new CharsBuffer(debugWriter);*/
         hasComplexContent = false;		
 	}
 		
 	public void recycle(){		
-        charContentBuffer.clear();
+        /*charContentBuffer.clear();
         charContentSystemId = null;
         charContentPublicId = null;
         charContentLineNumber = -1;
-        charContentColumnNumber = -1;
+        charContentColumnNumber = -1;*/
         hasComplexContent = false;
-        
+                
 		if(stackHandler != null){
 			stackHandler.recycle();
 			stackHandler = null;
@@ -183,8 +186,17 @@ class ElementValidationHandler extends ValidatingEEH
 			String attributeQName = attributes.getQName(i);
 			String attributeNamespace = attributes.getURI(i); 
 			String attributeName = attributes.getLocalName(i);
+			String attributeType = attributes.getType(i);
 			String attributeValue = attributes.getValue(i);
-			inputStackDescriptor.pushAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);			
+			inputStackDescriptor.pushAttribute(attributeQName,
+			                                    attributeNamespace, 
+			                                    attributeName,
+			                                    attributeType,
+			                                    attributeValue,
+			                                    locator.getSystemId(), 
+			                                    locator.getPublicId(), 
+			                                    locator.getLineNumber(), 
+			                                    locator.getColumnNumber());			
             ComparableAEH aeh = getAttributeHandler(attributeQName, attributeNamespace, attributeName);
             aeh.handleAttribute(attributeValue);
             aeh.recycle();
@@ -255,7 +267,8 @@ class ElementValidationHandler extends ValidatingEEH
 		parent.addChildElement(element);
 	}
 	
-	public void handleInnerCharacters(char[] chars) throws SAXException{
+	public void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{
+        /*
         boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
         if(!isIgnorable && element.allowsTextContent()){
             hasComplexContent = true;
@@ -279,10 +292,33 @@ class ElementValidationHandler extends ValidatingEEH
                     charContentColumnNumber = inputStackDescriptor.getColumnNumber();
                 }
             }
-        }        
+        } */
+        boolean isIgnorable = characterContentDescriptor.isEmpty() || characterContentDescriptor.isSpaceOnly();
+        if(!isIgnorable && element.allowsTextContent()){
+            hasComplexContent = true;
+            CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+            inputStackDescriptor.push(characterContentDescriptor.getStartIndex());
+            cvh.handleChars(characterContentDescriptor.getCharArrayContent(), (CharsActiveType)element, hasComplexContent);
+            inputStackDescriptor.pop();
+            cvh.recycle();
+        }else if(!isIgnorable && !element.allowsChars()){
+            unexpectedCharacterContent(characterContentDescriptor.getStartIndex(), element);            
+        }else if(!characterContentDescriptor.isEmpty() && element.allowsChars()){
+            // Content is space or more.
+            // Element allowsDataContent()
+            //          || allowsValueContent()
+            //          || allowsListPatternContent()          
+            
+            // append the content, it could be that the element following is an error
+            
+            if(localCharacterContentDescriptor == null){
+                localCharacterContentDescriptor = characterContentDescriptorPool.getCharacterContentDescriptor();
+            }
+            localCharacterContentDescriptor.add(characterContentDescriptor.getAllIndexes());
+        }
 	}
-	public void handleLastCharacters(char[] chars) throws SAXException {	
-        boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);            
+	public void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException {	
+        /*boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);            
         char[] bufferedContent = charContentBuffer.getCharsArray();
         boolean isBufferIgnorable = bufferedContent.length == 0 || spaceHandler.isSpace(bufferedContent);
 		if(hasComplexContent){            
@@ -300,7 +336,11 @@ class ElementValidationHandler extends ValidatingEEH
                 // see that the right location is used in the messages
                 if(charContentLineNumber != -1){
                     inputStackDescriptor.popCharsContent();
-                    inputStackDescriptor.pushCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
+                    inputStackDescriptor.pushCharsContent(new String(chars),// TODO review!!!
+                                                            charContentSystemId, 
+                                                            charContentPublicId, 
+                                                            charContentLineNumber, 
+                                                            charContentColumnNumber);
                 }
                 
                 CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
@@ -323,13 +363,81 @@ class ElementValidationHandler extends ValidatingEEH
             // see that the right location is used in the messages
             if(charContentLineNumber != -1){
                 inputStackDescriptor.popCharsContent();
-                inputStackDescriptor.pushCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
+                inputStackDescriptor.pushCharsContent(new String(chars),// TODO review!!!
+                                                            charContentSystemId, 
+                                                            charContentPublicId, 
+                                                            charContentLineNumber, 
+                                                            charContentColumnNumber);
             }
             
             CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
             cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
             cvh.recycle();            
-        }				
+        }*/
+        
+        
+        boolean isIgnorable = characterContentDescriptor.isEmpty() || characterContentDescriptor.isSpaceOnly();
+        if(hasComplexContent){ 
+            // No previous text buffered, either has been processed, or there was none and the complex content was established based on elemetn content.
+            if(element.allowsTextContent()){
+                if(!isIgnorable){
+                    CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                    inputStackDescriptor.push(characterContentDescriptor.getStartIndex());
+                    cvh.handleChars(characterContentDescriptor.getCharArrayContent(), (CharsActiveType)element, hasComplexContent);
+                    inputStackDescriptor.pop();
+                    cvh.recycle();
+                }
+            }else if(element.allowsChars()){
+                // Since 
+                //      - hasComplexContent is set to "true" only for ALLOWED elements 
+                //      - restrictions don't allow data and elements in the same context
+                // this only occurs when there is a choice and there might be excessive 
+                // content, so only shift characters if not ignorable. 
+                if(localCharacterContentDescriptor != null){
+                    boolean localIsIgnorable = localCharacterContentDescriptor.isEmpty() || localCharacterContentDescriptor.isSpaceOnly();
+                    if(!isIgnorable || !localIsIgnorable){                    
+                        localCharacterContentDescriptor.add(characterContentDescriptor.getAllIndexes());
+                        
+                        CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                        inputStackDescriptor.push(localCharacterContentDescriptor.getStartIndex());
+                        cvh.handleChars(localCharacterContentDescriptor.getCharArrayContent(), (CharsActiveType)element, hasComplexContent);
+                        inputStackDescriptor.pop();
+                        cvh.recycle();
+                    }
+                }else if(!isIgnorable){
+                    CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                    if(!characterContentDescriptor.isEmpty()) inputStackDescriptor.push(characterContentDescriptor.getStartIndex());
+                    cvh.handleChars(characterContentDescriptor.getCharArrayContent(), (CharsActiveType)element, hasComplexContent);
+                    if(!characterContentDescriptor.isEmpty()) inputStackDescriptor.pop();
+                    cvh.recycle();
+                }
+            }else{
+                if(!isIgnorable) unexpectedCharacterContent(characterContentDescriptor.getStartIndex(), element);
+            }
+        }else if(!isIgnorable && !element.allowsChars()){
+            unexpectedCharacterContent(characterContentDescriptor.getStartIndex(), element);
+        }else if(element.allowsChars()){
+            if(localCharacterContentDescriptor != null){
+                localCharacterContentDescriptor.add(characterContentDescriptor.getAllIndexes());
+                
+                CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                inputStackDescriptor.push(localCharacterContentDescriptor.getStartIndex());
+                cvh.handleChars(localCharacterContentDescriptor.getCharArrayContent(), (CharsActiveType)element, hasComplexContent);
+                inputStackDescriptor.pop();
+                cvh.recycle();                
+            }else{
+                CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                if(!characterContentDescriptor.isEmpty()) inputStackDescriptor.push(characterContentDescriptor.getStartIndex());
+                cvh.handleChars(characterContentDescriptor.getCharArrayContent(), (CharsActiveType)element, hasComplexContent);
+                if(!characterContentDescriptor.isEmpty()) inputStackDescriptor.pop();
+                cvh.recycle();
+            }            
+        }        
+        
+        if(localCharacterContentDescriptor != null){
+             localCharacterContentDescriptor.recycle();
+             localCharacterContentDescriptor = null;
+        }
 	}
 	
 //ElementContentTypeHandler

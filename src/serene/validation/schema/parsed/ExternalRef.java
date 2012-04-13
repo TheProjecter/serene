@@ -20,26 +20,29 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 import sereneWrite.MessageWriter;
 
 public class ExternalRef extends MultipleChildrenPattern{
-	String href;
+	int hrefRecordIndex;
 	
-	public ExternalRef(Map<String, String> prefixMapping, 
-                        String xmlBase, 
-                        String ns, 
-                        String datatypeLibrary, 
-                        String href, 
-                        AttributeInfo[] foreignAttributes,
-                        ParsedComponent[] children,
-                        String qName, 
-                        String location, 
-                        MessageWriter debugWriter){
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, children, qName, location, debugWriter);
-		this.href = href;
+	public ExternalRef(/*Map<String, String> prefixMapping,*/ 
+	                int xmlBase,
+                    int ns, 
+                    int datatypeLibrary,
+                    int href,
+                    ParsedComponent[] children, 
+                    int recordIndex,
+                    DocumentIndexedData documentIndexedData,
+                    MessageWriter debugWriter){		
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData, debugWriter);
+		this.hrefRecordIndex = href;
 	}	
 			
+	public int getHrefRecordIndex(){
+	    return hrefRecordIndex;
+	}
+	
 	public void accept(ParsedComponentVisitor v){
 		v.visit(this);
 	}	
@@ -48,10 +51,12 @@ public class ExternalRef extends MultipleChildrenPattern{
 	}
 	
 	public String getHref(){
-		return href;
+		if(hrefRecordIndex == DocumentIndexedData.NO_RECORD) return null;
+		return documentIndexedData.getStringValue(hrefRecordIndex);
 	}
+	
 	public String toString(){
-		String s = "ExternalRef base "+xmlBase+" href "+href;		
+		String s = "ExternalRef href "+getHref();		
 		return s;
 	}
 }

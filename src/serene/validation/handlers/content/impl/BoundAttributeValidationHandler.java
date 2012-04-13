@@ -26,9 +26,10 @@ import serene.validation.handlers.content.BoundAttributeHandler;
 
 import serene.validation.handlers.error.ContextErrorHandlerManager;
 
-import serene.bind.AttributeBinder;
+
 import serene.bind.BindingModel;
-import serene.bind.Queue;
+import serene.bind.util.Queue;
+import serene.bind.AttributeTask;
 
 import serene.Reusable;
 
@@ -63,22 +64,20 @@ class BoundAttributeValidationHandler extends AttributeValidationHandler impleme
 	
 	public void handleAttribute(String value) throws SAXException{
 		validateValue(value);
-		attributeBinding(value);
+		attributeBinding();
 		validateInContext();
 	}	
 	
-	public void attributeBinding(String value){		
-		int definitionIndex = attribute.getDefinitionIndex();
-		AttributeBinder binder = bindingModel.getAttributeBinder(definitionIndex);
-		if(binder != null){
-			binder.bindAttribute(queue, entry, definitionIndex, inputStackDescriptor.getNamespaceURI(), inputStackDescriptor.getLocalName(), inputStackDescriptor.getItemDescription(), Datatype.ID_TYPE_NULL, value);
+	public void attributeBinding(){		
+		AttributeTask task = bindingModel.getAttributeTask(attribute.getCorrespondingSimplifiedComponent());
+		// TODO 
+		// Implement checks for if record index is needed. For now, it's ok though,
+		// I know it's needed.
+		if(task != null){
+			queue.addAttribute(entry, inputStackDescriptor.getCurrentItemInputRecordIndex(), task);
 		}
 	}
 	
-	AttributeBinder getBinder(){
-		int definitionIndex = attribute.getDefinitionIndex();
-		return bindingModel.getAttributeBinder(definitionIndex);
-	}
 	
 	public String toString(){
 		return "BoundAttributeValidationHandler "+attribute;

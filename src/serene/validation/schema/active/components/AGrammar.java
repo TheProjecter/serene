@@ -22,6 +22,7 @@ import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.RuleVisitor;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SGrammar;
 
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
@@ -38,12 +39,13 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 import sereneWrite.MessageWriter;
 
 public class AGrammar extends UniqueChildAPattern implements AInnerPattern{	
-	
+	SGrammar sgrammar;
 	public AGrammar(APattern child,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SimplifiedComponent simplifiedComponent, 
+				SGrammar sgrammar, 
 				MessageWriter debugWriter){
-		super(child, ruleHandlerPool, simplifiedComponent, debugWriter);
+		super(child, ruleHandlerPool, debugWriter);
+		this.sgrammar = sgrammar;
 	}
 		
 	public boolean isRequiredContent(){
@@ -52,6 +54,22 @@ public class AGrammar extends UniqueChildAPattern implements AInnerPattern{
 			return child.isRequiredContent();
 		return false;		
 	}
+	
+	public String getQName(){
+		return sgrammar.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return sgrammar.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return sgrammar.hashCode();
+    }   
+    
+    public SGrammar getCorrespondingSimplifiedComponent(){
+        return sgrammar;
+    }
 	
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);

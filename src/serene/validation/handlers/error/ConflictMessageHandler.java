@@ -24,6 +24,8 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXException;
 
+import serene.validation.handlers.conflict.ElementConflictResolver;
+
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ActiveTypeItem;
@@ -195,7 +197,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		    unknownElementIndex = 0;
 		    unknownElementInputRecordIndex = new int[initialSize];
 		    unknownElementFEC = new int[initialSize];
-		}else if(++unknownElementIndex == unknownElementInputRecordIndex.length){
+		}else if(++unknownElementIndex == unknownElementInputRecordIndex.length){			
 		    int[] increasedEIRI = new int[unknownElementInputRecordIndex.length+increaseSizeAmount];
 			System.arraycopy(unknownElementInputRecordIndex, 0, increasedEIRI, 0, unknownElementIndex);
 			unknownElementInputRecordIndex = increasedEIRI;		
@@ -1233,8 +1235,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		illegalStartInputRecordIndex[illegalIndex] = startInputRecordIndex;
 		activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
 		
-		illegalFEC[illegalIndex] = functionalEquivalenceCode;
-		
+		illegalFEC[illegalIndex] = functionalEquivalenceCode;		
 	}
     public void clearIllegalContent(){
         
@@ -2193,6 +2194,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		    AValue[] increasedDef = new AValue[size];
 			System.arraycopy(valueCharsDefinition, 0, increasedDef, 0, valueCharsIndex);
 			valueCharsDefinition = increasedDef;
+			
+			int[] increasedFEC = new int[size];
+			System.arraycopy(valueCharsFEC, 0, increasedFEC, 0, valueCharsIndex);
+			valueCharsFEC = increasedFEC;
 		}
 		
 		valueCharsInputRecordIndex[valueCharsIndex] = inputRecordIndex;
@@ -2273,6 +2278,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		    AValue[] increasedDef = new AValue[size];
 			System.arraycopy(valueAVDefinition, 0, increasedDef, 0, valueAVIndex);
 			valueAVDefinition = increasedDef;
+			
+			int[] increasedFEC = new int[size];
+			System.arraycopy(valueAVFEC, 0, increasedFEC, 0, valueAVIndex);
+			valueAVFEC = increasedFEC;
 		}
 		
 		valueAVInputRecordIndex[valueAVIndex] = inputRecordIndex;
@@ -2354,6 +2363,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		    AData[] increasedDef = new AData[size];
 			System.arraycopy(exceptCharsDefinition, 0, increasedDef, 0, exceptCharsIndex);
 			exceptCharsDefinition = increasedDef;
+			
+			int[] increasedFEC = new int[size];
+			System.arraycopy(exceptCharsFEC, 0, increasedFEC, 0, exceptCharsIndex);
+			exceptCharsFEC = increasedFEC;
 		}
 		
 		exceptCharsInputRecordIndex[exceptCharsIndex] = inputRecordIndex;
@@ -2436,6 +2449,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		    AData[] increasedDef = new AData[size];
 			System.arraycopy(exceptAVDefinition, 0, increasedDef, 0, exceptAVIndex);
 			exceptAVDefinition = increasedDef;
+			
+			int[] increasedFEC = new int[size];
+			System.arraycopy(exceptAVFEC, 0, increasedFEC, 0, exceptAVIndex);
+			exceptAVFEC = increasedFEC;
 		}
 		
 		exceptAVInputRecordIndex[exceptAVIndex] = inputRecordIndex;
@@ -2518,6 +2535,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		    AElement[] increasedDef = new AElement[size];
 			System.arraycopy(unexpectedCharsDefinition, 0, increasedDef, 0, unexpectedCharsIndex);
 			unexpectedCharsDefinition = increasedDef;
+			
+		    int[] increasedFEC = new int[size];
+		    System.arraycopy(unexpectedCharsFEC, 0, increasedFEC, 0, unexpectedCharsIndex);
+			unexpectedCharsFEC = increasedFEC;
 		}
 		
 		unexpectedCharsInputRecordIndex[unexpectedCharsIndex] = inputRecordIndex;
@@ -2599,6 +2620,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		    AAttribute[] increasedDef = new AAttribute[size];
 			System.arraycopy(unexpectedAVDefinition, 0, increasedDef, 0, unexpectedAVIndex);
 			unexpectedAVDefinition = increasedDef;
+			
+			int[] increasedFEC = new int[size];
+			System.arraycopy(unexpectedAVFEC, 0, increasedFEC, 0, unexpectedAVIndex);
+			unexpectedAVFEC = increasedFEC;
 		}
 		
 		unexpectedAVInputRecordIndex[unexpectedAVIndex] = inputRecordIndex;
@@ -2948,6 +2973,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		    AValue[] increasedDef = new AValue[size];
 			System.arraycopy(valueTokenDefinition, 0, increasedDef, 0, valueTokenIndex);
 			valueTokenDefinition = increasedDef;
+			
+			int[] increasedFEC = new int[size];
+			System.arraycopy(valueTokenFEC, 0, increasedFEC, 0, valueTokenIndex);
+			valueTokenFEC = increasedFEC;		    
 		}
 		
 		valueTokenInputRecordIndex[valueTokenIndex] = inputRecordIndex;
@@ -3031,6 +3060,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		    AData[] increasedDef = new AData[size];
 			System.arraycopy(exceptTokenDefinition, 0, increasedDef, 0, exceptTokenIndex);
 			exceptTokenDefinition = increasedDef;
+			
+			int[] increasedFEC = new int[size];
+			System.arraycopy(exceptTokenFEC, 0, increasedFEC, 0, exceptTokenIndex);
+			exceptTokenFEC = increasedFEC;		    
 		}
 		
 		exceptTokenInputRecordIndex[exceptTokenIndex] = inputRecordIndex;
@@ -3404,25 +3437,32 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         this.commonMessages = commonMessages;
         this.disqualified = disqualified;
         this.candidateMessages = candidateMessages;  
-        conflictFEC = functionalEquivalenceCode;        
+        conflictFEC = functionalEquivalenceCode;     
+        
+        if(commonMessages != null)commonMessages.registerClient(this);
+        if(candidateMessages != null){
+            for(int i = 0; i < candidateMessages.length; i++){
+                if(candidateMessages[i] != null)candidateMessages[i].registerClient(this);
+            }
+        }
     }
     public void clearConflict(){
         messageTotalCount--;
         conflictResolutionId = RESOLVED;
         candidatesCount = -1;
         if(commonMessages != null){
-            if(isMessageRetrieved || isDiscarded)commonMessages.clear(); // It can be only one because it is about this context.
+            /*if(isMessageRetrieved || isDiscarded)*/commonMessages.unregisterClient(this); // It can be only one because it is about this context.
             commonMessages = null;
         }
         
         disqualified = null;
         
         if(candidateMessages != null){
-            if(isMessageRetrieved || isDiscarded){
+            /*if(isMessageRetrieved || isDiscarded){*/
                 for(MessageReporter cm : candidateMessages){
-                    if(cm != null)cm.clear();
+                    if(cm != null)cm.unregisterClient(this);
                 }
-            }
+            /*}*/
             candidateMessages = null;
         }
         
@@ -3811,7 +3851,30 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }
     
-    public void clear(){
+    public void unregisterClient(MessageReporter mr){
+        clientCount--;
+        if(clientCount == 0){
+            /*isDiscarded = true;// just in case*/
+            clear();
+        }
+    }    
+    public void clear(ContextErrorHandler ec){
+        if(clientCount > 0) return;
+        clear();
+    }
+    public void clear(CandidatesConflictErrorHandler cceh){
+        if(clientCount > 0) return;
+        clear();
+    } 
+    public void clear(TemporaryMessageStorage tms){
+        if(clientCount > 0) return;
+        clear();
+    }   
+    public void clear(ElementConflictResolver ecr){
+        if(clientCount > 0) return;
+        clear();
+    }   
+    private void clear(){
         // TODO check sizes to only clear when full
         // and refactor the creation of new instances in the ErrorHandlers
         if( unknownElementIndex >= 0 ) clearUnknownElement();
@@ -3854,8 +3917,8 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         
         messageTotalCount = 0;
         
-        if(parent != null){
-            parent.clear();
+        if(/*(isMessageRetrieved || isDiscarded) &&*/ parent != null){
+            parent.unregisterClient(this);
             parent = null;
         }
     
@@ -3868,9 +3931,10 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         reportingContextColumnNumber = -1;
         conflictResolutionId = UNRESOLVED;
         
-        isMessageRetrieved = false;
-        isDiscarded = false;
-    }   
+        /*isMessageRetrieved = false;
+        isDiscarded = false;*/
+        
+    }
     
     public boolean containsOtherErrorMessage(IntList exceptedErrorIds, IntList exceptedErrorCodes){
         

@@ -24,6 +24,8 @@ import org.xml.sax.Locator;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
+import serene.validation.handlers.conflict.ElementConflictResolver;
+
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.AElement;
 
@@ -84,8 +86,25 @@ class StartMessageHandler implements MessageReporter{
 	public void setDiscarded(boolean isDiscarded){
         throw new IllegalStateException();        
     }
-    
-    public void clear(){
+    public void registerClient(MessageReporter mr){
+        throw new IllegalStateException();
+    }
+    public void unregisterClient(MessageReporter mr){
+        throw new IllegalStateException();
+    }
+    public void clear(ContextErrorHandler ec){
+        clear();
+    }
+    public void clear(CandidatesConflictErrorHandler cceh){
+        clear();
+    }
+    public void clear(TemporaryMessageStorage tms){
+        clear();
+    }
+    public void clear(ElementConflictResolver ecr){
+        clear();
+    }
+    private void clear(){
         clearUnknownElement();
         clearUnexpectedElement();
         clearUnexpectedAmbiguousElement();

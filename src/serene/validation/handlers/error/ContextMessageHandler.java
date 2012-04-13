@@ -8,6 +8,8 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXException;
 
+import serene.validation.handlers.conflict.ElementConflictResolver;
+
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ActiveTypeItem;
@@ -31,6 +33,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
 	
 	public ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher){
+	    
         ConflictMessageReporter result = new ConflictMessageReporter(parent,
                                     reportingContextType,
                                     reportingContextQName,
@@ -47,7 +50,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
                                     candidateMessages,
                                     errorDispatcher,                                    
                                     debugWriter);
-                
+              
         return result;
     }
     
@@ -520,9 +523,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 								APattern definition, 
 								int expected, 
 								int found, 
-								int[] inputRecordIndex){	    
-        
-		messageTotalCount++;
+								int[] inputRecordIndex){
+        messageTotalCount++;
 		if(missingIndex < 0){
 			missingIndex = 0;
 			missingContext = new APattern[initialSize];			
@@ -927,8 +929,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 	
     // {15}
 	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-        
-		messageTotalCount++;
+        messageTotalCount++;
 		if(datatypeCharsIndex < 0){
 			datatypeCharsIndex = 0;	
 			datatypeCharsInputRecordIndex =new int[initialSize];
@@ -1571,6 +1572,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         this.commonMessages = commonMessages;
         this.disqualified = disqualified;
         this.candidateMessages = candidateMessages;
+        
+        if(commonMessages != null)commonMessages.registerClient(this);
+        if(candidateMessages != null){
+            for(int i = 0; i < candidateMessages.length; i++){
+                if(candidateMessages[i] != null)candidateMessages[i].registerClient(this);
+            }
+        }
     }
     
     public void clearConflict(){
@@ -1578,20 +1586,20 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         conflictResolutionId = RESOLVED;
         candidatesCount = -1;
         if(commonMessages != null){
-            if(isMessageRetrieved || isDiscarded)commonMessages.clear(); // It can be only one because it is about this context.
+            /*if(isMessageRetrieved || isDiscarded)*/commonMessages.unregisterClient(this); // It can be only one because it is about this context.
             commonMessages = null;
         }
         
         disqualified = null;
         
         if(candidateMessages != null){
-            if(isMessageRetrieved || isDiscarded){
+            /*if(isMessageRetrieved || isDiscarded){*/
                 for(MessageReporter cm : candidateMessages){                    
                     if(cm != null){
-                        cm.clear();
+                        cm.unregisterClient(this);
                     }
                 }
-            }
+            /*}*/
             candidateMessages = null;
         }
     }
@@ -1727,8 +1735,31 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         }
     }
     
+    public void unregisterClient(MessageReporter mr){
+        clientCount--;
+        if(clientCount == 0){
+            /*isDiscarded = true;// just in case*/
+            clear();
+        }
+    }
     
-    public void clear(){
+    public void clear(ContextErrorHandler ec){
+        if(clientCount > 0) return;
+        clear();
+    }
+    public void clear(CandidatesConflictErrorHandler cceh){
+        if(clientCount > 0) return;
+        clear();
+    }
+    public void clear(TemporaryMessageStorage tms){
+        if(clientCount > 0) return;
+        clear();
+    }
+    public void clear(ElementConflictResolver ecr){
+        if(clientCount > 0) return;
+        clear();
+    }
+    private void clear(){
         // TODO check sizes to only clear when full
         // and refactor the creation of new instances in the ErrorHandlers
         if( unknownElementIndex >= 0 ) clearUnknownElement();
@@ -1771,8 +1802,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         
         messageTotalCount = 0;
         
-        if(parent != null){
-            parent.clear();
+        if(/*(isMessageRetrieved || isDiscarded) &&*/ parent != null){
+            parent.unregisterClient(this);
             parent = null;
         }
     
@@ -1785,8 +1816,8 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         reportingContextColumnNumber = -1;
         conflictResolutionId = RESOLVED;
         
-        isMessageRetrieved = false;
-        isDiscarded = false;
+        /*isMessageRetrieved = false;
+        isDiscarded = false;*/
     }
     
     public void internalConflict(ConflictMessageReporter conflictMessageReporter){

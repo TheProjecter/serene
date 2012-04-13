@@ -20,17 +20,18 @@ import serene.validation.schema.active.components.ANameClass;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SChoiceNameClass;
 
 import sereneWrite.MessageWriter;
 
 public class AChoiceNameClass extends ANameClass{	
 	ANameClass[] children;
-	
+	SChoiceNameClass schoiceNameClass;
 	public AChoiceNameClass(ANameClass[] children,
-						SimplifiedComponent simplifiedComponent, 
+	                    SChoiceNameClass schoiceNameClass,
 						MessageWriter debugWriter){
-		super(simplifiedComponent, debugWriter);
+		super(debugWriter);
+		this.schoiceNameClass = schoiceNameClass;
 		asParent(children);
 	}
 	
@@ -61,6 +62,22 @@ public class AChoiceNameClass extends ANameClass{
 		}
 		return false;
 	}		
+	
+	public String getQName(){
+		return schoiceNameClass.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return schoiceNameClass.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return schoiceNameClass.hashCode();
+    }   
+    
+    public SChoiceNameClass getCorrespondingSimplifiedComponent(){
+        return schoiceNameClass;
+    }
 	
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);

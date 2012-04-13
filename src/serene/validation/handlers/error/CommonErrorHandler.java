@@ -48,6 +48,7 @@ import sereneWrite.MessageWriter;
 * of ErrorEEH. Errors are reported and are not disqualifying.
 */
 public class CommonErrorHandler extends AbstractContextErrorHandler{
+    boolean isHandled;
     ContextMessageHandler messageHandler;	
     CandidatesConflictErrorHandler candidatesConflictErrorHandler;
     boolean isCandidate;
@@ -59,9 +60,14 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 	
 	public void recycle(){
         isCandidate = false;
+        if(!isHandled && messageHandler != null){
+            /*messageHandler.setDiscarded(true);*/
+            messageHandler.clear(this);
+        }        
         messageHandler = null;
         candidatesConflictErrorHandler = null;
 		pool.recycle(this);
+		isHandled = false;
 	}
 	public void init(CandidatesConflictErrorHandler candidatesConflictErrorHandler, boolean isCandidate){        
         this.candidatesConflictErrorHandler = candidatesConflictErrorHandler;
@@ -223,17 +229,19 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
     
 	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 				throws SAXException{
+		isHandled = true;
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, definition, locator, messageHandler, isCandidate);
 	}
 	
 	public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator) 
 					throws SAXException{
+		isHandled = true;
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, locator, messageHandler, isCandidate);
 	}
     
 	public void discard(){
-	    messageHandler.setDiscarded(true);
-	    messageHandler.clear();
+	    /*messageHandler.setDiscarded(true);*/
+	    messageHandler.clear(this);
 	}
 	
     public void record(int contextType, String qName, boolean restrictToFileName, Locator locator){

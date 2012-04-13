@@ -41,6 +41,8 @@ import serene.validation.handlers.error.MessageReporter;
 import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
 import sereneWrite.MessageWriter;
 
@@ -82,7 +84,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
 		}
 		candidates.clear();	
 		candidateDefinitions.clear();		
-		candidatesConflictHandler.reset();
+		candidatesConflictHandler.clear();
         localCandidatesConflictErrorHandler.clear(false);
 		resetContextErrorHandlerManager();
 		
@@ -92,6 +94,13 @@ class ElementConcurrentHandler extends CandidatesEEH{
 	}
     
     
+	ExternalConflictHandler getConflictHandler(){
+	    return candidatesConflictHandler;
+	}
+	
+	void copyDisqualifiedCandidates(ExternalConflictHandler otherHandler){
+	    candidatesConflictHandler.copyDisqualified(otherHandler);
+	}
 	//elementHandler	
 	//--------------------------------------------------------------------------
 	public ElementEventHandler getParentHandler(){
@@ -112,10 +121,18 @@ class ElementConcurrentHandler extends CandidatesEEH{
 			String attributeQName = attributes.getQName(i);
 			String attributeNamespace = attributes.getURI(i); 
 			String attributeName = attributes.getLocalName(i);
-			String attributeValue = attributes.getValue(i);
-			
-			inputStackDescriptor.pushAttribute(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), attributeNamespace, attributeName, attributeQName);
-			
+			String attributeType = attributes.getType(i);
+            String attributeValue = attributes.getValue(i);                
+            inputStackDescriptor.pushAttribute(attributeQName,
+                                            attributeNamespace, 
+                                            attributeName,
+                                            attributeType,
+                                            attributeValue,
+                                            locator.getSystemId(), 
+                                            locator.getPublicId(), 
+                                            locator.getLineNumber(), 
+                                            locator.getColumnNumber());	
+            
             AttributeParallelHandler aph = getAttributeHandler(attributeQName, attributeNamespace, attributeName);
             aph.handleAttribute(attributeValue);
             
@@ -177,8 +194,8 @@ class ElementConcurrentHandler extends CandidatesEEH{
 	}
 	
 	
-	void validateInContext(){				
-	    int conflictResolutionIndex = contextErrorHandler[contextErrorHandlerIndex] == null ? getConflictResolutionId() : contextErrorHandler[contextErrorHandlerIndex].getConflictResolutionId();
+	void validateInContext(){	
+	    int conflictResolutionIndex = getConflictResolutionId();
 	    	    
 		if(conflictResolutionIndex == MessageReporter.UNRESOLVED){						
 			// Shift all with errors, hope the parent context disqualifies all but 1
@@ -197,6 +214,31 @@ class ElementConcurrentHandler extends CandidatesEEH{
 		}
 	}	
 	
+	void validateInContext(ElementConcurrentHandler reper){	
+	    int conflictResolutionIndex = getConflictResolutionId();
+	    	    
+		if(conflictResolutionIndex == MessageReporter.UNRESOLVED){						
+			// Shift all with errors, hope the parent context disqualifies all but 1
+			// Why shift, they all have errors already??? 
+			// Maybe the parent actually expects one of them and not shifting 
+			// results in a fake error.		
+			parent.addChildElement(candidateDefinitions, reper.getConflictMessageReporter());
+		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
+			AElement qElement = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
+			parent.addChildElement(qElement);
+		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
+			// Shift all without errors, hope the parent conflict disqualifies all but one
+			ConflictMessageReporter cmr = null;
+			/*if(contextErrorHandler[contextErrorHandlerIndex] != null) cmr = contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();*/
+			cmr = reper.getConflictMessageReporter(); 			
+			parent.addChildElement(candidateDefinitions, candidatesConflictHandler, cmr);
+		}
+	}	
+	
+	ConflictMessageReporter getConflictMessageReporter(){
+	    return contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();
+	}
+	
 	int getConflictResolutionId(){
 		int candidatesCount = candidates.size();		
 		int qualifiedCount = candidatesCount - candidatesConflictHandler.getDisqualifiedCount();		
@@ -210,19 +252,19 @@ class ElementConcurrentHandler extends CandidatesEEH{
 		throw new IllegalStateException();
 	}
 	
-	public void handleInnerCharacters(char[] chars) throws SAXException{		
+	public void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{		
 		int candidatesCount = candidates.size();
 		for(int i = 0; i < candidatesCount; i++){
 			//if(!candidatesConflictHandler.isDisqualified(i)) 
-            candidates.get(i).handleInnerCharacters(chars);
+            candidates.get(i).handleInnerCharacters(characterContentDescriptor, characterContentDescriptorPool);
 		}
         localCandidatesConflictErrorHandler.endValidationStage();
 	}
-    public void handleLastCharacters(char[] chars) throws SAXException{		
+    public void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException{		
 		int candidatesCount = candidates.size();
 		for(int i = 0; i < candidatesCount; i++){
 			//if(!candidatesConflictHandler.isDisqualified(i))
-            candidates.get(i).handleLastCharacters(chars);
+            candidates.get(i).handleLastCharacters(characterContentDescriptor);
 		}
         localCandidatesConflictErrorHandler.endValidationStage();
 	}
@@ -247,8 +289,8 @@ class ElementConcurrentHandler extends CandidatesEEH{
 		return false;
 	}
 	boolean functionalEquivalent(ElementConcurrentHandler other){		
-		//return other.functionalEquivalent(candidates);
-        return false;		
+		return other.functionalEquivalent(candidates);
+        //return false;		
 	}
 	private boolean functionalEquivalent(List<ElementValidationHandler> otherCandidates){
 		int candidatesCount = candidates.size();

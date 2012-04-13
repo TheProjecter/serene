@@ -21,7 +21,7 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.RuleVisitor;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SChoicePattern;
 
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
@@ -37,12 +37,14 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import sereneWrite.MessageWriter;
 
-public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerPattern{		
+public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerPattern{
+    SChoicePattern schoicePattern;
 	public AChoicePattern(APattern[] children,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SimplifiedComponent simplifiedComponent, 
+				SChoicePattern schoicePattern, 
 				MessageWriter debugWriter){		
-		super(children, ruleHandlerPool, simplifiedComponent, debugWriter);
+		super(children, ruleHandlerPool, debugWriter);
+		this.schoicePattern = schoicePattern;
 	}
 
 	public boolean isRequiredContent(){
@@ -53,9 +55,30 @@ public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerP
 		return true;
 	}
 	
-    boolean isChildBranchRequired(){
-        return false;
+    boolean isChildBranchRequired(AbstractAPattern child){
+        for(int i = 0; i < children.length; i++){
+            if(children[i] != child && !children[i].isRequiredContent())return false;
+        }
+        return true;
     }
+    
+    
+    public String getQName(){
+		return schoicePattern.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return schoicePattern.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return schoicePattern.hashCode();
+    }   
+    
+    public SChoicePattern getCorrespondingSimplifiedComponent(){
+        return schoicePattern;
+    }
+    
     
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);

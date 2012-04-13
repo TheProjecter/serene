@@ -53,6 +53,8 @@ import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
 
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 
@@ -65,7 +67,6 @@ import serene.dtdcompatibility.AttributeIdTypeModel;
 
 import serene.DocumentContext;
 
-import serene.util.CharsBuffer;
 import serene.util.SpaceCharsHandler;
 
 import sereneWrite.MessageWriter;
@@ -89,7 +90,8 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 	ErrorDispatcher errorDispatcher;
 	ActiveInputDescriptor activeInputDescriptor;
 	InputStackDescriptor inputStackDescriptor;
-	CharsBuffer charsBuffer;
+	CharacterContentDescriptorPool characterContentDescriptorPool;
+	CharacterContentDescriptor characterContentDescriptor;
 		
 	ElementEventHandler elementHandler;	
 	ActiveModel activeModel;
@@ -142,16 +144,18 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		this.errorHandlerPool = errorHandlerPool;				
 		
 		this.schemaModel = schemaModel;
-		                
-		errorDispatcher = new ErrorDispatcher(debugWriter);
-        activeInputDescriptor = new ActiveInputDescriptor();		
-		inputStackDescriptor = new InputStackDescriptor(activeInputDescriptor, debugWriter);
-		matchHandler  = new MatchHandler(debugWriter);		
-		charsBuffer = new CharsBuffer(debugWriter);		
+		
+		matchHandler  = new MatchHandler(debugWriter);
 		spaceHandler = new SpaceCharsHandler(debugWriter);					
         documentContext = new DocumentContext(debugWriter);
         prefixNamespaces = new HashMap<String, String>();
         
+		errorDispatcher = new ErrorDispatcher(debugWriter);
+        activeInputDescriptor = new ActiveInputDescriptor();		
+		inputStackDescriptor = new InputStackDescriptor(activeInputDescriptor, debugWriter);
+		characterContentDescriptorPool = new CharacterContentDescriptorPool(activeInputDescriptor, spaceHandler); 
+		characterContentDescriptor = characterContentDescriptorPool.getCharacterContentDescriptor();
+		        
         errorHandlerPool.init(errorDispatcher, activeInputDescriptor);        
         eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, errorHandlerPool);
         
@@ -255,7 +259,13 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         }
         // TODO see about this, according to SAX spec the functioning of the Locator 
         // is not guaranteed here. It seems to work though.
-        inputStackDescriptor.pushElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), "", "document root", "document root");
+        inputStackDescriptor.pushElement("document root",
+            "",
+            "document root",
+            locator.getSystemId(), 
+            locator.getPublicId(), 
+            locator.getLineNumber(), 
+            locator.getColumnNumber());
 		elementHandler = eventHandlerPool.getStartValidationHandler(activeModel.getStartElement());
                         
         defaultNamespace = null;
@@ -278,7 +288,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 	}	
 	public void endPrefixMapping(String prefix)  throws SAXException{
 		documentContext.endPrefixMapping(prefix);
-        if(namespacePrefixes){
+        if(namespacePrefixes){// TODO see if it isn't cheaper to check features before doing this
 			if(prefix.equals("")){
 				defaultNamespace = null;
 			}else{
@@ -295,8 +305,8 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 	public void characters(char[] chars, int start, int length)throws SAXException{
 		//TODO make sure this is correct for all circumstances
 		String chunk = new String(chars, start, length);	
-		charsBuffer.append(chars, start, length);
-		inputStackDescriptor.pushCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
+		characterContentDescriptor.add(chars, start, length, locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
+		/*inputStackDescriptor.pushCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());*/
         if(contentHandler != null) contentHandler.characters(chars, start, length);		
 	}
 	
@@ -305,12 +315,23 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 							String localName, 
 							String qName, 
 							Attributes attributes) throws SAXException{
-		char[] charContent = charsBuffer.removeCharsArray();
+		/*char[] charContent = charsBuffer.removeCharsArray();
 		if(charContent.length > 0){			
 			elementHandler.handleInnerCharacters(charContent);		
 			inputStackDescriptor.popCharsContent();
+		}*/
+		if(!characterContentDescriptor.isEmpty()){
+		    elementHandler.handleInnerCharacters(characterContentDescriptor, characterContentDescriptorPool);
+		    characterContentDescriptor.clear(); 
 		}
-		inputStackDescriptor.pushElement(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber(), namespaceURI, localName, qName);
+		
+		inputStackDescriptor.pushElement(qName,
+            namespaceURI,
+            localName,
+            locator.getSystemId(), 
+            locator.getPublicId(), 
+            locator.getLineNumber(), 
+            locator.getColumnNumber());
 		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName, restrictToFileName);
 		elementHandler.handleAttributes(attributes, locator);
         
@@ -360,10 +381,12 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 	public void endElement(String namespaceURI, 
 							String localName, 
 							String qName) throws SAXException{
-		char[] charContent = charsBuffer.removeCharsArray();
+		/*char[] charContent = charsBuffer.removeCharsArray();
 		if(charContent.length == 0)inputStackDescriptor.pushCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
 		elementHandler.handleLastCharacters(charContent);
-        inputStackDescriptor.popCharsContent();
+        inputStackDescriptor.popCharsContent();*/        
+        elementHandler.handleLastCharacters(characterContentDescriptor);
+		characterContentDescriptor.clear(); 
 		
 		elementHandler.handleEndElement(restrictToFileName, locator);
 		ElementEventHandler parent = elementHandler.getParentHandler(); 
@@ -384,14 +407,15 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
             attributeIdTypeHandler.handleRefs(locator);
         }        
         if(contentHandler != null) contentHandler.endDocument();
-                
-        // activeInputDescriptor.printLeftOvers();
         
         //just in case        
 		inputStackDescriptor.clear();
 		documentContext.reset();
 				
 		if(optimizedForResourceSharing)releaseResources();
+		
+		//activeInputDescriptor.printLeftOvers();
+		activeInputDescriptor.clear();// shouldn't be necessary, but just in case
 	}
 	
 	void xmlVersion(String version){}

@@ -32,13 +32,6 @@ import org.xml.sax.SAXNotSupportedException;
 import serene.internal.InternalRNGFactory;
 import serene.internal.InternalRNGSchema;
 
-import serene.bind.ValidatorQueuePool;
-import serene.bind.Queue;
-import serene.bind.ElementTaskPool;
-import serene.bind.ElementTask;
-import serene.bind.BindingPool;
-import serene.bind.BindingModel;
-
 import serene.DTDMapping;
 
 import serene.validation.schema.parsed.ParsedComponentBuilder;

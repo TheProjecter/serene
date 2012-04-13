@@ -19,7 +19,7 @@ package serene.validation.handlers.content.impl;
 import org.xml.sax.SAXException;
 import org.xml.sax.Locator;
 
-import serene.bind.Queue;
+import serene.bind.util.Queue;
 
 import serene.validation.handlers.content.BoundElementHandler;
 
@@ -30,6 +30,8 @@ import sereneWrite.MessageWriter;
 class BoundUnknownElementHandler extends UnknownElementHandler implements BoundElementHandler{
     Queue queue;
     int queueStartEntry;
+    int queueEndEntry;
+    
     BoundUnknownElementHandler(MessageWriter debugWriter){
         super(debugWriter);
     }
@@ -37,7 +39,8 @@ class BoundUnknownElementHandler extends UnknownElementHandler implements BoundE
     void init(ElementValidationHandler parent, Queue queue){
         super.init(parent);
         this.queue = queue;
-        queueStartEntry = queue.newRecord();
+        /*queueStartEntry = queue.newRecord();*/
+        startElementBinding();
     }
     
     public void recycle(){
@@ -54,15 +57,40 @@ class BoundUnknownElementHandler extends UnknownElementHandler implements BoundE
 	
 	public void handleEndElement(boolean restrictToFileName, Locator locator){		
 		super.handleEndElement(restrictToFileName, locator);
-		elementTasksBinding();
+		/*elementTasksBinding();*/
+		endElementBinding();
 	}	
 	
-    public void qNameBinding(){}
+    /*public void qNameBinding(){}
 	public void startLocationBinding(){}
 	public void endLocationBinding(){}
 	public void characterContentBinding(char[] chars){}
 	public void elementTasksBinding(){
         int queueEndEntry = queue.newRecord();
 		queue.addIndexCorrespondence(queueEndEntry, queueStartEntry);
+    }*/
+    
+    public void startElementBinding(){
+        queueStartEntry = queue.addStartElement(null);
+    }
+    public void characterContentBinding(String cc){}
+    public void endElementBinding(){
+        queueEndEntry = queue.addEndElement(queueStartEntry, null);
+    }
+    
+    
+    public Queue getQueue(){
+	    return queue;
+	}
+    public int getQueueStartEntryIndex(){
+        return queueStartEntry;
+    }
+    public int getQueueEndEntryIndex(){
+        return queueEndEntry;
+    }
+    public void queuecoppy(Queue qq, int sei, int eei){
+        queue.registerReservation(queueStartEntry, eei-sei+1);
+        queueEndEntry = queueStartEntry + eei - sei;
+        queue.useReservation(queueStartEntry, qq, sei, eei);
     }
 }	

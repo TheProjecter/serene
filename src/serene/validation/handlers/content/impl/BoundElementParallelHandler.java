@@ -26,18 +26,21 @@ import serene.validation.handlers.content.BoundElementHandler;
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 import serene.validation.handlers.error.CandidatesConflictErrorHandler;
 
+import serene.validation.handlers.content.util.CharacterContentDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
+
 import serene.bind.BindingModel;
-import serene.bind.ValidatorQueuePool;
-import serene.bind.Queue;
+import serene.bind.util.QueuePool;
+import serene.bind.util.Queue;
 
 import sereneWrite.MessageWriter;
 
 class BoundElementParallelHandler extends ElementParallelHandler implements BoundElementHandler{
-	//TODO you might not need this???
+	// TODO you might not need this???
 	// See about the queue in the common states.
 	BindingModel bindingModel;
 	Queue queue;
-	ValidatorQueuePool queuePool;
+	QueuePool queuePool;
 	
 	BoundCommon boundCommon;
 	BoundConflict boundConflict;
@@ -53,7 +56,7 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
         state = boundCommon;
     }
     
-	void init(ExternalConflictHandler candidatesConflictHandler, CandidatesConflictErrorHandler candidatesConflictErrorHandler, CandidatesEEH parent, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){
+	void init(ExternalConflictHandler candidatesConflictHandler, CandidatesConflictErrorHandler candidatesConflictErrorHandler, CandidatesEEH parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){
 		super.init(candidatesConflictHandler, candidatesConflictErrorHandler, parent);
 		this.bindingModel = bindingModel;
 		this.queue = queue;
@@ -86,7 +89,7 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 		state.add(individualHandler);			
 	}
 	
-	public void qNameBinding(){
+	/*public void qNameBinding(){
 		throw new UnsupportedOperationException();
 	}	
 	public void startLocationBinding(){
@@ -107,7 +110,41 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 			((BoundElementHandler)ih).elementTasksBinding();
 			}
 		}
+	}*/
+	
+	public void startElementBinding(){
+	    throw new IllegalStateException();
 	}
+	
+	public void characterContentBinding(String cc){
+	    throw new IllegalStateException();
+	}
+	
+	public void endElementBinding(){
+	    ((BoundState)state).endElementBinding();
+		/*int individualHandlersCount = individualHandlers.size();
+		for(int i = 0; i < individualHandlersCount; i++){
+			ComparableEEH ih = individualHandlers.get(i);
+			if(//!candidatesConflictHandler.isDisqualified(i) &&
+				ih instanceof BoundElementHandler){
+			((BoundElementHandler)ih).endElementBinding();
+			}
+		}*/
+	}
+	
+	public Queue getQueue(){
+	    return queue;
+	}
+    public int getQueueStartEntryIndex(){
+        throw new IllegalStateException();
+    }
+    public int getQueueEndEntryIndex(){
+        throw new IllegalStateException();
+    }
+    public void queuecoppy(Queue qq, int sei, int eei){
+        throw new IllegalStateException();
+    }
+    
 	
 	String contextToString(){
 		String s = "[";
@@ -120,7 +157,11 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 		return "BoundElementParallelHandler individualHandlers"+s+" "+candidatesConflictHandler.toString()+" state";
 	}
 	
-	class BoundCommon extends State{
+	abstract class BoundState extends State{
+	    abstract void endElementBinding();
+	}
+	
+	class BoundCommon extends BoundState{
         ComparableEEH uniqueSample;
         boolean isQualifiedSample;
         
@@ -133,7 +174,9 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 			if(uniqueSample == null ){
                 isQualifiedSample = !candidatesConflictHandler.isDisqualified(0);
                 uniqueSample = individualHandler;
-                if(uniqueSample instanceof ValidatingEEH)((ValidatingEEH)uniqueSample).setContextErrorHandlerIndex(COMMON);
+                if(uniqueSample instanceof ValidatingEEH){
+                    ((ValidatingEEH)uniqueSample).setContextErrorHandlerIndex(COMMON);
+                }
             }else{
                 if(!individualHandler.functionalEquivalent(uniqueSample)){
                     state = boundConflict;
@@ -149,16 +192,20 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
             }
 			individualHandlers.add(individualHandler);				
 		}
-		ElementParallelHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance, boolean restrictToFileName) throws SAXException{			
-			ElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, candidatesConflictErrorHandler, instance, bindingModel, queue, queuePool);
+		
+		BoundElementCommonHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance, boolean restrictToFileName) throws SAXException{			
+			/*ElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, candidatesConflictErrorHandler, instance, bindingModel, queue, queuePool);
 			for(int i = 0; i < individualHandlers.size(); i++){	
 				next.add(individualHandlers.get(i).handleStartElement(qName, namespace, name, restrictToFileName));			
 			}	
+			return next;*/
+			BoundElementCommonHandler next = pool.getBoundElementCommonHandler(candidatesConflictHandler, individualHandlers.size(), instance, bindingModel, queue, queuePool);
+			next.add(uniqueSample.handleStartElement(qName, namespace, name, restrictToFileName));
 			return next;
 		}
         void handleAttributes(Attributes attributes, Locator locator) throws SAXException{
             uniqueSample.handleAttributes(attributes, locator);
-            if(uniqueSample instanceof ValidatingEEH){
+            /*if(uniqueSample instanceof ValidatingEEH){
                 for(int i = 0; i < individualHandlers.size(); i++){
                     if(!candidatesConflictHandler.isDisqualified(i)
                         && !individualHandlers.get(i).equals(uniqueSample)){
@@ -168,9 +215,13 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
                         handler.restorePreviousHandler();
                     }
                 }			
-            }
+            }*/
 		}
         
+		// Used by: 
+        //  - ElementParallelHandler state Conflict,
+        //  - BoundElementParallelHandler state BoundConflict
+        // to build up the AttributeParallelHandler.
         ComparableAEH getAttributeHandler(String qName, String namespace, String name){
             return uniqueSample.getAttributeHandler(qName, namespace, name);
         }
@@ -178,7 +229,8 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 		void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{
 			validateContext();
 			reportContextErrors(restrictToFileName, locator);
-			elementTasksBinding();		
+			/*elementTasksBinding();*/
+			endElementBinding();			
 			validateInContext();
 		}
 		void validateContext() throws SAXException{			
@@ -198,6 +250,20 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
                     }
                 }
             }
+            
+            // if uniqueSample instanceof ElementConcurrentHandler
+            // copy it's conflict handler to all individual handlers
+            if(uniqueSample instanceof ElementConcurrentHandler){
+                ElementConcurrentHandler sample = (ElementConcurrentHandler)uniqueSample;
+                ExternalConflictHandler sampleConflictHandler = sample.getConflictHandler();
+                for(int i = 0; i < individualHandlers.size(); i++){
+                    ComparableEEH e = individualHandlers.get(i);
+                    if(e != uniqueSample){
+                        ElementConcurrentHandler ech = (ElementConcurrentHandler)e;
+                        ech.copyDisqualifiedCandidates(sampleConflictHandler);
+                    }
+                }
+            }            
 		}
 				
 		void validateInContext(){
@@ -209,6 +275,16 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
                     uniqueSample.validateInContext();
                     evhParent.restorePreviousHandler();
                 }
+			}else if(uniqueSample instanceof BoundElementConcurrentHandler){
+			    BoundElementConcurrentHandler sample = (BoundElementConcurrentHandler)uniqueSample;
+                uniqueSample.validateInContext();			    
+			    for(int i = 0; i < individualHandlers.size(); i++){ 
+					if(individualHandlers.get(i) != uniqueSample){
+						((BoundElementConcurrentHandler)individualHandlers.get(i)).validateInContext(sample);
+					}else{
+					    
+					}
+				}
 			}else if(uniqueSample instanceof ValidatingEEH){			    
 				for(int i = 0; i < individualHandlers.size(); i++){				    
 					//if(!candidatesConflictHandler.isDisqualified(i)){
@@ -217,35 +293,58 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 				}
 			}
 		}
-		void handleInnerCharacters(char[] chars) throws SAXException{
-			uniqueSample.handleInnerCharacters(chars);
-            if(uniqueSample instanceof BoundElementHandler){
+		void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{
+			uniqueSample.handleInnerCharacters(characterContentDescriptor, characterContentDescriptorPool);
+            /*if(uniqueSample instanceof BoundElementHandler){
                 for(int i = 0; i < individualHandlers.size(); i++){
                     if(!candidatesConflictHandler.isDisqualified(i)
                         && !individualHandlers.get(i).equals(uniqueSample)){
-                        ((BoundElementHandler)individualHandlers.get(i)).characterContentBinding(chars);
+                        ((BoundElementHandler)individualHandlers.get(i)).characterContentBinding();
                     }
                 }			
-            }
+            }*/
 		}
-        void handleLastCharacters(char[] chars) throws SAXException{
-			uniqueSample.handleLastCharacters(chars);
-            if(uniqueSample instanceof BoundElementHandler){
+        void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException{
+			uniqueSample.handleLastCharacters(characterContentDescriptor);
+            /*if(uniqueSample instanceof BoundElementHandler){
                 for(int i = 0; i < individualHandlers.size(); i++){
                     if(!candidatesConflictHandler.isDisqualified(i)
                         && !individualHandlers.get(i).equals(uniqueSample)){
-                        ((BoundElementHandler)individualHandlers.get(i)).characterContentBinding(chars);
+                        ((BoundElementHandler)individualHandlers.get(i)).characterContentBinding();
                     }
                 }			
-            }			
+            }*/			
+		}
+		
+		void endElementBinding(){
+		    //if(uniqueSample instanceof BoundElementHandler){// which it should always be		        
+		        BoundElementHandler sample = (BoundElementHandler)uniqueSample;
+		        		        
+		        sample.endElementBinding();
+		        		        
+		        int endEntryIndex = sample.getQueueEndEntryIndex();
+		        if(endEntryIndex == -1) return;// it means sample hasn't done any binding, happens for Concurrent when ambiguous or unresolved and it's ok, it will be handled in conflict handling
+		        int startEntryIndex = sample.getQueueStartEntryIndex();
+		        Queue qq = sample.getQueue();
+		        
+		        for(int i = 0; i < individualHandlers.size(); i++){
+                    if(//!candidatesConflictHandler.isDisqualified(i) && 
+                        individualHandlers.get(i) != uniqueSample){
+                        ((BoundElementHandler)individualHandlers.get(i)).queuecoppy(qq, startEntryIndex, endEntryIndex);
+                    }
+                }
+		    //}
 		}
 		
 		public String toString(){
 			return contextToString()+ " BOUND COMMON";
-		}
+		}		
 	}
 	
-	class BoundConflict extends Conflict{		
+	class BoundConflict extends BoundState{	
+	    void add(ComparableEEH individualHandler){					
+			individualHandlers.add(individualHandler);	
+		}
 		ElementParallelHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance, boolean restrictToFileName) throws SAXException{			
 			ElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, candidatesConflictErrorHandler, instance, bindingModel, queue, queuePool);
 			for(int i = 0; i < individualHandlers.size(); i++){	
@@ -253,13 +352,92 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 			}	
 			return next;
 		}
+		void handleAttributes(Attributes attributes, Locator locator) throws SAXException{
+            for(int i = 0; i < attributes.getLength(); i++){
+                String attributeQName = attributes.getQName(i);
+                String attributeNamespace = attributes.getURI(i); 
+                String attributeName = attributes.getLocalName(i);
+                String attributeType = attributes.getType(i);
+                String attributeValue = attributes.getValue(i);                
+                inputStackDescriptor.pushAttribute(attributeQName,
+			                                    attributeNamespace, 
+			                                    attributeName,
+			                                    attributeType,
+			                                    attributeValue,
+			                                    locator.getSystemId(), 
+			                                    locator.getPublicId(), 
+			                                    locator.getLineNumber(), 
+			                                    locator.getColumnNumber());			           
+                AttributeParallelHandler aph = getAttributeHandler(attributeQName, attributeNamespace, attributeName);                
+                aph.handleAttribute(attributeValue);
+                aph.recycle();
+                inputStackDescriptor.popAttribute();            
+            }	
+		}
+        
+        // Used by: 
+        //  - ElementParallelHandler state Conflict,
+        //  - BoundElementParallelHandler state BoundConflict
+        // to build up the AttributeParallelHandler.
+        AttributeParallelHandler getAttributeHandler(String qName, String namespace, String name){            
+            AttributeParallelHandler aph = getAttributeParallelHandler();            
+            for(ComparableEEH individualHandler : individualHandlers){
+                aph.add(individualHandler.getAttributeHandler(qName, namespace, name));
+            }
+            return aph;
+        }
+        
 		void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{
 			validateContext();
 			reportContextErrors(restrictToFileName, locator);
-			elementTasksBinding();		
+			/*elementTasksBinding();*/
+			endElementBinding();
 			validateInContext();
 		}
 		
+		
+		void validateContext() throws SAXException{
+			for(int i = 0; i < individualHandlers.size(); i++){
+				//if(!candidatesConflictHandler.isDisqualified(i))
+                individualHandlers.get(i).validateContext();				
+			}
+		}				
+		void reportContextErrors(boolean restrictToFileName, Locator locator) throws SAXException{			
+			for(int i = 0; i < individualHandlers.size(); i++){
+				individualHandlers.get(i).reportContextErrors(restrictToFileName, locator);
+			}
+		}		
+		
+		void validateInContext(){
+			for(int i = 0; i < individualHandlers.size(); i++){
+				//if(!candidatesConflictHandler.isDisqualified(i))
+                individualHandlers.get(i).validateInContext();
+			}
+		}	
+		void endElementBinding(){
+            int individualHandlersCount = individualHandlers.size();
+            for(int i = 0; i < individualHandlersCount; i++){
+                ComparableEEH ih = individualHandlers.get(i);
+                if(//!candidatesConflictHandler.isDisqualified(i) &&
+                    ih instanceof BoundElementHandler){
+                ((BoundElementHandler)ih).endElementBinding();
+                }
+            }
+        }
+        
+        void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{
+			for(int i = 0; i < individualHandlers.size(); i++){				
+				//if(!candidatesConflictHandler.isDisqualified(i)) 
+                individualHandlers.get(i).handleInnerCharacters(characterContentDescriptor, characterContentDescriptorPool);
+			}
+		}
+		void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException{
+			for(int i = 0; i < individualHandlers.size(); i++){				
+				//if(!candidatesConflictHandler.isDisqualified(i)) 
+                individualHandlers.get(i).handleLastCharacters(characterContentDescriptor);
+			}
+		}
+        
 		public String toString(){
 			return contextToString()+" BOUND CONFLICT";
 		}

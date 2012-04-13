@@ -20,33 +20,35 @@ import java.util.Map;
 
 import org.xml.sax.SAXException;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 import sereneWrite.MessageWriter;
 
 public class Value extends NoChildrenPattern{
-	String type;
-	String charContent;
-		
-	Value(Map<String, String> prefixMapping, 
-					String xmlBase, 
-					String ns,					 
-					String datatypeLibrary, 
-					String type,
-                    AttributeInfo[] foreignAttributes,
-					String charContent,
-					String qName, 
-					String location, 
-					MessageWriter debugWriter){
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, qName, location, debugWriter);
-		this.charContent = charContent;
-		this.type = type; 
+	int typeRecordIndex;
+	String characterContent;		
+	Value(/*Map<String, String> prefixMapping,*/
+	        int xmlBase,
+            int ns,					 
+            int datatypeLibrary, 
+            int type,
+            String characterContent,
+            int recordIndex,
+            DocumentIndexedData documentIndexedData,  
+            MessageWriter debugWriter){		
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
+		this.characterContent = characterContent;
+		this.typeRecordIndex = type; 
+	}
+	public int getTypeRecordIndex(){
+		return typeRecordIndex;
 	}
 	public String getType(){
-		return type;	
+		if(typeRecordIndex == DocumentIndexedData.NO_RECORD) return null;
+		return documentIndexedData.getStringValue(typeRecordIndex);
 	}
 	public String getCharacterContent(){
-		return charContent;
-	}
+		return characterContent;
+	}	
 	public void accept(ParsedComponentVisitor v){
 		v.visit(this);
 	}
@@ -55,6 +57,6 @@ public class Value extends NoChildrenPattern{
 	}
 	
 	public String toString(){
-		return "Value type "+type+" charContent "+charContent;
+		return "Value type "+getType()+" charContent "+getCharacterContent();
 	}
 }

@@ -39,46 +39,59 @@ import serene.validation.handlers.content.AttributeEventHandler;
 import serene.validation.handlers.content.CharactersEventHandler;
 import serene.validation.handlers.content.BoundElementHandler;
 
+import serene.validation.handlers.content.util.CharacterContentDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
+
 import serene.validation.handlers.error.TemporaryMessageStorage;
 import serene.validation.handlers.error.ConflictMessageReporter; 
 
 import serene.validation.handlers.stack.StackHandler; 
 
 import serene.bind.BindingModel;
-import serene.bind.ValidatorQueuePool;
-import serene.bind.Queue;
-import serene.bind.CharacterContentBinder;
-import serene.bind.ElementBinder;
-import serene.bind.AttributeBinder;
+import serene.bind.ElementTask;
+import serene.bind.util.QueuePool;
+import serene.bind.util.Queue;
+
+import serene.util.CharsBuffer;
 
 import sereneWrite.MessageWriter;
 
 class BoundElementValidationHandler extends ElementValidationHandler implements BoundElementHandler{
 	BindingModel bindingModel;
 	Queue queue;
-	ValidatorQueuePool queuePool;
+	QueuePool queuePool;
 	int queueStartEntry;
+	int queueEndEntry;
+	
+	CharsBuffer bindCharsBuffer;
 	
 	BoundElementValidationHandler(MessageWriter debugWriter){
 		super(debugWriter);		
+		
+		bindCharsBuffer = new CharsBuffer(debugWriter);
+		
+		queueStartEntry = -1;
+	    queueEndEntry = -1;
 	}
 	
-	void init(AElement element, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){
+	void init(AElement element, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){
 		super.init(element, parent);
 		this.bindingModel = bindingModel;
 		this.queue = queue;
 		this.queuePool = queuePool;
-		queueStartEntry = queue.newRecord();
+		
+		startElementBinding();
+		/*queueStartEntry = queue.newRecord();
 		qNameBinding();
-		startLocationBinding();
+		startLocationBinding();*/
 	}
 	
 	public void recycle(){	
-        charContentBuffer.clear();
+        /*charContentBuffer.clear();
         charContentSystemId = null;
         charContentPublicId = null;
         charContentLineNumber = -1;
-        charContentColumnNumber = -1;
+        charContentColumnNumber = -1;*/
         hasComplexContent = false;
         
 		if(stackHandler != null){
@@ -89,17 +102,29 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		element.releaseDefinition();
 				
 		bindingModel = null;
+		//queue.recycle();
 		queue = null;
 		queuePool = null;
+		
+		queueStartEntry = -1;
+	    queueEndEntry = -1;
 		
 		pool.recycle(this);
 	}
 	
-	Queue getQueue(){
-		return queue;
+	public void startElementBinding(){
+	    ElementTask startTask = bindingModel.getStartElementTask(element.getCorrespondingSimplifiedComponent());	    
+	    int recordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();
+	    // TODO 
+	    // Here needsStartElementInputData should be checked, but it should be 
+	    // done for both tasks and might be more expensive than just recording. 
+	    // Anyway, for now, I know it is needed, so I just record it.
+	    
+	    
+	    queueStartEntry = queue.addStartElement(recordIndex, startTask);
 	}
 	
-	public void qNameBinding(){
+	/*public void qNameBinding(){
 		int definitionIndex = element.getDefinitionIndex();
 		ElementBinder binder = bindingModel.getElementBinder(definitionIndex);
 		if(binder != null)binder.bindName(queue, queueStartEntry, inputStackDescriptor.getNamespaceURI(), inputStackDescriptor.getLocalName(),inputStackDescriptor.getItemDescription());
@@ -118,16 +143,41 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	public void characterContentBinding(char[] chars){
 		CharacterContentBinder binder = bindingModel.getCharacterContentBinder();		
 		if(binder != null)binder.bind(queue, queueStartEntry, new String(chars));		
+	}*/
+	
+	public void characterContentBinding(String cc){
+	    // TODO needsCharacterContent from tasks should be checked.
+	    queue.addCharacterContent(queueStartEntry, cc);
 	}
 	
-	public void elementTasksBinding(){
+	public void endElementBinding(){
+	    ElementTask endTask = bindingModel.getEndElementTask(element.getCorrespondingSimplifiedComponent());
+	    queueEndEntry = queue.addEndElement(queueStartEntry, endTask);
+	}
+	
+	/*public void elementTasksBinding(){
 		int queueEndEntry = queue.newRecord();
 		queue.addIndexCorrespondence(queueEndEntry, queueStartEntry);
 		
 		int definitionIndex = element.getDefinitionIndex();
 		ElementBinder binder = bindingModel.getElementBinder(definitionIndex);
 		if(binder != null)binder.bindTasks(queue, queueEndEntry);
+	}*/
+	
+	public Queue getQueue(){
+	    return queue;
 	}
+    public int getQueueStartEntryIndex(){
+        return queueStartEntry;
+    }
+    public int getQueueEndEntryIndex(){
+        return queueEndEntry;
+    }
+    public void queuecoppy(Queue qq, int sei, int eei){
+        queue.registerReservation(queueStartEntry, eei-sei+1);
+        queueEndEntry = queueStartEntry + eei - sei;
+        queue.useReservation(queueStartEntry, qq, sei, eei);
+    }
 	
 	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
 		
@@ -139,7 +189,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		if(matchCount == 0){
 			return getUnexpectedElementHandler(namespace, name);
 		}else if(matchCount == 1){			
-			BoundElementValidationHandler next = pool.getElementValidationHandler(elementMatches.get(0), this, bindingModel, queue, queuePool);				
+			BoundElementValidationHandler next = pool.getElementValidationHandler(elementMatches.get(0), this, bindingModel, queue, queuePool);
 			return next;
 		}else{
 			BoundElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList<AElement>(elementMatches), this, bindingModel, queue, queuePool);
@@ -179,13 +229,22 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		}		
 	}	
 
-	public void handleInnerCharacters(char[] chars) throws SAXException{		
-		boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
+	public void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{		
+		/*boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
         if(!isIgnorable && element.allowsTextContent()){
             hasComplexContent = true;
             CharactersValidationHandler ceh = pool.getCharactersValidationHandler(this, this, this);
             ceh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
             ceh.recycle();
+            
+            // Character content binding is not done by the InternalConflictResolver 
+            // because there are no differences between different internal pattern
+            // configurations, the text is added anyway.
+            // Still it would be better to have the "normalized" version resulted 
+            // from the processing done for the validation.
+            // TODO see about what to do if chars validation results in errors
+            characterContentBinding();	
+            
         }else if(!isIgnorable && ! element.allowsChars()){
             unexpectedCharacterContent(inputStackDescriptor.getCurrentItemInputRecordIndex(), element);
         }else{
@@ -203,19 +262,62 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
                     charContentColumnNumber = inputStackDescriptor.getColumnNumber();
                 }
             }
-        }    
-		// Character content binding is not done by the InternalConflictResolver 
+            
+            // Character content binding is not done by the InternalConflictResolver 
+            // because there are no differences between different internal pattern
+            // configurations, the text is added anyway.
+            // Still it would be better to have the "normalized" version resulted 
+            // from the processing done for the validation.
+            // TODO see about what to do if chars validation results in errors
+            characterContentBinding();	
+        } */   
+		/*// Character content binding is not done by the InternalConflictResolver 
 		// because there are no differences between different internal pattern
 		// configurations, the text is added anyway.
 		// Still it would be better to have the "normalized" version resulted 
 		// from the processing done for the validation.
 		// TODO see about what to do if chars validation results in errors
-		characterContentBinding(chars);	
-				
+		characterContentBinding(chars);	*/
+		
+		boolean isIgnorable = characterContentDescriptor.isEmpty() || characterContentDescriptor.isSpaceOnly();
+        if(!isIgnorable && element.allowsTextContent()){            
+            char[] cc = characterContentDescriptor.getCharArrayContent();
+            setBindText(cc);
+            
+            hasComplexContent = true;
+            inputStackDescriptor.push(characterContentDescriptor.getStartIndex());
+            CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+            cvh.handleChars(cc, (CharsActiveType)element, hasComplexContent);
+            inputStackDescriptor.pop();
+            cvh.recycle();
+        }else if(!isIgnorable && !element.allowsChars()){
+            unexpectedCharacterContent(characterContentDescriptor.getStartIndex(), element);            
+        }else if(!characterContentDescriptor.isEmpty() && element.allowsChars()){
+            // Content is space or more.
+            // Element allowsDataContent()
+            //          || allowsValueContent()
+            //          || allowsListPatternContent()          
+            
+            // append the content, it could be that the element following is an error
+            
+            if(localCharacterContentDescriptor == null){
+                localCharacterContentDescriptor = characterContentDescriptorPool.getCharacterContentDescriptor();
+            }
+            localCharacterContentDescriptor.add(characterContentDescriptor.getAllIndexes());
+        }		
 	}
 
-    public void handleLastCharacters(char[] chars) throws SAXException{
-        boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
+	private void setBindText(char[] cc){
+	    int start = spaceHandler.getHeadSpaceEnd(cc);
+	    if(start > 0) start -= 1;
+	    int length = spaceHandler.getTailSpaceStart(cc) - start;
+	    
+	    bindCharsBuffer.append(cc, start, length);
+	}
+	
+	
+    public void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException{
+        /*boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
         char[] bufferedContent = charContentBuffer.getCharsArray();
         boolean isBufferIgnorable = bufferedContent.length == 0 || spaceHandler.isSpace(bufferedContent);
 		if(hasComplexContent){
@@ -260,6 +362,85 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
             CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
             cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
             cvh.recycle();
+        }*/
+        
+        boolean isIgnorable = characterContentDescriptor.isEmpty() || characterContentDescriptor.isSpaceOnly();
+        if(hasComplexContent){    
+            // No previous text buffered, either has been processed, or there was none and the complex content was established based on elemetn content.
+            if(element.allowsTextContent()){
+                if(!isIgnorable){
+                    char[] cc = characterContentDescriptor.getCharArrayContent();
+                    setBindText(cc);  
+                    characterContentBinding(bindCharsBuffer.getString());  
+                    bindCharsBuffer.clear();
+                    
+                    inputStackDescriptor.push(characterContentDescriptor.getStartIndex());
+                    CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                    cvh.handleChars(cc, (CharsActiveType)element, hasComplexContent);
+                    inputStackDescriptor.pop();
+                    cvh.recycle();
+                }
+            }else if(element.allowsChars()){
+                // Since 
+                //      - hasComplexContent is set to "true" only for ALLOWED elements 
+                //      - restrictions don't allow data and elements in the same context
+                // this only occurs when there is a choice and there might be excessive 
+                // content, so only shift characters if not ignorable.
+                // TODO Consider bindign after desambiguation.
+                if(localCharacterContentDescriptor != null){
+                    boolean localIsIgnorable = localCharacterContentDescriptor.isEmpty() || localCharacterContentDescriptor.isSpaceOnly();
+                    if(!isIgnorable || !localIsIgnorable){                    
+                        localCharacterContentDescriptor.add(characterContentDescriptor.getAllIndexes());
+                        char[] cc = localCharacterContentDescriptor.getCharArrayContent();
+                        characterContentBinding(new String(cc));    
+                
+                        CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                        inputStackDescriptor.push(localCharacterContentDescriptor.getStartIndex());
+                        cvh.handleChars(localCharacterContentDescriptor.getCharArrayContent(), (CharsActiveType)element, hasComplexContent);
+                        inputStackDescriptor.pop();
+                        cvh.recycle();
+                    }
+                }else if(!isIgnorable){
+                    char[] cc = characterContentDescriptor.getCharArrayContent();
+                    characterContentBinding(new String(cc)); 
+                
+                    CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                    if(!characterContentDescriptor.isEmpty()) inputStackDescriptor.push(characterContentDescriptor.getStartIndex());
+                    cvh.handleChars(characterContentDescriptor.getCharArrayContent(), (CharsActiveType)element, hasComplexContent);
+                    if(!characterContentDescriptor.isEmpty()) inputStackDescriptor.pop();
+                    cvh.recycle();
+                }
+            }else{
+                if(!isIgnorable) unexpectedCharacterContent(characterContentDescriptor.getStartIndex(), element);
+            }
+        }else if(!isIgnorable && !element.allowsChars()){
+            unexpectedCharacterContent(characterContentDescriptor.getStartIndex(), element);
+        }else if(element.allowsChars()){
+            if(localCharacterContentDescriptor != null){
+                localCharacterContentDescriptor.add(characterContentDescriptor.getAllIndexes());
+                char[] cc = localCharacterContentDescriptor.getCharArrayContent();
+                characterContentBinding(new String(cc));                
+                
+                inputStackDescriptor.push(localCharacterContentDescriptor.getStartIndex());
+                CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
+                cvh.handleChars(cc, (CharsActiveType)element, hasComplexContent);
+                inputStackDescriptor.pop();
+                cvh.recycle();
+            }else{
+                char[] cc = characterContentDescriptor.getCharArrayContent();
+                characterContentBinding(new String(cc));  
+                
+                if(!characterContentDescriptor.isEmpty())inputStackDescriptor.push(characterContentDescriptor.getStartIndex());
+                CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);                
+                cvh.handleChars(cc, (CharsActiveType)element, hasComplexContent);
+                if(!characterContentDescriptor.isEmpty())inputStackDescriptor.pop();
+                cvh.recycle();
+            }            
+        } 
+        
+        if(localCharacterContentDescriptor != null){
+             localCharacterContentDescriptor.recycle();
+             localCharacterContentDescriptor = null;
         }
 		// Character content binding is not done by the InternalConflictResolver 
 		// because there are no differences between different internal pattern
@@ -267,13 +448,13 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 		// Still it would be better to have the "normalized" version resulted 
 		// from the processing done for the validation.
 		// TODO see about what to do if chars validation results in errors
-		characterContentBinding(chars);
+		//characterContentBinding();
 	}	
 	
 	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{		
 		validateContext();
 		reportContextErrors(restrictToFileName, locator);
-		elementTasksBinding();
+		endElementBinding();
 		validateInContext();
 	}
 	
@@ -283,37 +464,37 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	// Only used when conflict exists and is unsolved and it is possible that
 	// in context validation would lead to the resolution of the conflict and 
 	// the binding can happen.
-	void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
+	void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<AElement, Queue> candidateQueues){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = element.getStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter, bindingModel, targetQueue, targetEntry, candidateQueues);
+		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter, bindingModel, targetQueue, reservationStartEntry, reservationEndEntry, candidateQueues);
 	}
-	void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
+	void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, BindingModel bindingModel){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = element.getStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllAttributes(candidateDefinitions, temporaryMessageStorage, value, queue, entry, attributeBinders);
+		stackHandler.shiftAllAttributes(candidateDefinitions, temporaryMessageStorage, value, queue, entry, bindingModel);
 	}
-	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues){
+	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry,  Map<AElement, Queue> candidateQueues){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = element.getStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter, bindingModel, targetQueue, targetEntry, candidateQueues);
+		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter, bindingModel, targetQueue, reservationStartEntry, reservationEndEntry, candidateQueues);
 	}
-	void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders){
+	void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, BindingModel bindingModel){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = element.getStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllAttributes(candidateDefinitions, disqualified, temporaryMessageStorage, value, queue, entry, attributeBinders);
+		stackHandler.shiftAllAttributes(candidateDefinitions, disqualified, temporaryMessageStorage, value, queue, entry, bindingModel);
 	}
 	
 	public String toString(){

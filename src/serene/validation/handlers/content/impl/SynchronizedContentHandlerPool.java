@@ -194,6 +194,13 @@ public class SynchronizedContentHandlerPool extends ContentHandlerPool{
 	int boundElementParallelHFree;
 	BoundElementParallelHandler[] boundElementParallelH;
 	
+	int boundElementCommonHAverageUse;
+	int boundElementCommonHMaxSize;
+	int boundElementCommonHFree;
+	BoundElementCommonHandler[] boundElementCommonH;
+	
+	
+	
 	int boundAttributeVHAverageUse;
 	int boundAttributeVHMaxSize;
 	int boundAttributeVHFree;	
@@ -355,6 +362,11 @@ public class SynchronizedContentHandlerPool extends ContentHandlerPool{
 		boundElementParallelHFree = 0;
 		boundElementParallelH = new BoundElementParallelHandler[10];
 		
+		boundElementCommonHAverageUse = 0;
+		boundElementCommonHFree = 0;
+		boundElementCommonH = new BoundElementCommonHandler[10];		
+		
+		
 		boundAttributeVHAverageUse = 0;
 		boundAttributeVHFree = 0;
 		boundAttributeVH = new BoundAttributeValidationHandler[10];
@@ -405,7 +417,9 @@ public class SynchronizedContentHandlerPool extends ContentHandlerPool{
         boundElementVHMaxSize = 40;
         boundStartVHMaxSize = 10;
         boundElementConcurrentHMaxSize = 20;
-        boundElementParallelHMaxSize = 20;
+        boundElementParallelHMaxSize = 20;        
+        boundElementCommonHMaxSize = 20;
+        
         boundAttributeVHMaxSize = 20;
         boundCandidateAttributeVHMaxSize = 20;
         boundAttributeConcurrentHMaxSize = 20;
@@ -475,6 +489,7 @@ public class SynchronizedContentHandlerPool extends ContentHandlerPool{
 					BoundStartValidationHandler[] boundStartVHToFill,
 					BoundElementConcurrentHandler[] boundElementConcurrentHToFill,
 					BoundElementParallelHandler[] boundElementParallelHToFill,
+					BoundElementCommonHandler[] boundElementCommonHToFill,
 					BoundAttributeValidationHandler[] boundAttributeVHToFill,
 					BoundCandidateAttributeValidationHandler[] boundCandidateAttributeVHToFill,
 					BoundAttributeConcurrentHandler[] boundAttributeConcurrentHToFill,
@@ -955,6 +970,24 @@ public class SynchronizedContentHandlerPool extends ContentHandlerPool{
 		}		
 		System.arraycopy(boundElementParallelH, boundElementParallelHFree, 
 							boundElementParallelHToFill, 0, boundElementParallelHFillCount);
+			
+				
+		int boundElementCommonHFillCount;
+		if(boundElementCommonHToFill == null || boundElementCommonHToFill.length < boundElementCommonHAverageUse){
+			boundElementCommonHToFill = new BoundElementCommonHandler[boundElementCommonHAverageUse];		
+			eventHandlerPool.boundElementCommonH = boundElementCommonHToFill;
+		}
+		if(boundElementCommonHFree > boundElementCommonHAverageUse){
+			boundElementCommonHFillCount = boundElementCommonHAverageUse;
+			boundElementCommonHFree = boundElementCommonHFree - boundElementCommonHAverageUse;
+		}else{
+			boundElementCommonHFillCount = boundElementCommonHFree;
+			boundElementCommonHFree = 0;
+		}		
+		System.arraycopy(boundElementCommonH, boundElementCommonHFree, 
+							boundElementCommonHToFill, 0, boundElementCommonHFillCount);
+		
+		
 		
 		
 		int boundAttributeVHFillCount;
@@ -1050,6 +1083,7 @@ public class SynchronizedContentHandlerPool extends ContentHandlerPool{
 										boundStartVHFillCount,	
 										boundElementConcurrentHFillCount,
 										boundElementParallelHFillCount,
+										boundElementCommonHFillCount,
 										boundAttributeVHFillCount,	
 										boundCandidateAttributeVHFillCount,
 										boundAttributeConcurrentHFillCount,
@@ -1149,8 +1183,11 @@ public class SynchronizedContentHandlerPool extends ContentHandlerPool{
 							int boundElementParallelHRecycledCount,
 							int boundElementParallelHEffectivellyUsed,
 							BoundElementParallelHandler[] boundElementParallelHRecycled,
+							int boundElementCommonHRecycledCount,
+							int boundElementCommonHEffectivellyUsed,
+							BoundElementCommonHandler[] boundElementCommonHRecycled,
 							int boundAttributeVHRecycledCount,	
-							int boundAttributeVHEffectivellyUsed,	
+							int boundAttributeVHEffectivellyUsed,							
 							BoundAttributeValidationHandler[] boundAttributeVHRecycled,
                             int boundCandidateAttributeVHRecycledCount,
                             int boundCandidateAttributeVHEffectivellyUsed,
@@ -2070,7 +2107,39 @@ public class SynchronizedContentHandlerPool extends ContentHandlerPool{
         for(int i = 0; i < boundElementParallelHRecycled.length; i++){
             boundElementParallelHRecycled[i] = null;
         }
-			
+		
+        
+        neededLength = boundElementCommonHFree + boundElementCommonHRecycledCount; 
+        if(neededLength > boundElementCommonH.length){
+            if(neededLength > boundElementCommonHMaxSize){
+                neededLength = boundElementCommonHMaxSize;
+                BoundElementCommonHandler[] increased = new BoundElementCommonHandler[neededLength];
+                System.arraycopy(boundElementCommonH, 0, increased, 0, boundElementCommonH.length);
+                boundElementCommonH = increased;		        
+                System.arraycopy(boundElementCommonHRecycled, 0, boundElementCommonH, boundElementCommonHFree, boundElementCommonHMaxSize - boundElementCommonHFree);
+                boundElementCommonHFree = boundElementCommonHMaxSize; 
+            }else{
+                BoundElementCommonHandler[] increased = new BoundElementCommonHandler[neededLength];
+                System.arraycopy(boundElementCommonH, 0, increased, 0, boundElementCommonH.length);
+                boundElementCommonH = increased;
+                System.arraycopy(boundElementCommonHRecycled, 0, boundElementCommonH, boundElementCommonHFree, boundElementCommonHRecycledCount);
+                boundElementCommonHFree += boundElementCommonHRecycledCount;
+            }
+        }else{
+            System.arraycopy(boundElementCommonHRecycled, 0, boundElementCommonH, boundElementCommonHFree, boundElementCommonHRecycledCount);
+            boundElementCommonHFree += boundElementCommonHRecycledCount;
+        }
+        
+        if(boundElementCommonHAverageUse != 0)boundElementCommonHAverageUse = (boundElementCommonHAverageUse + boundElementCommonHEffectivellyUsed)/2;
+        else boundElementCommonHAverageUse = boundElementCommonHEffectivellyUsed;// this relies on the fact that the individual pools are smaller or equal to the common pool
+        
+        for(int i = 0; i < boundElementCommonHRecycled.length; i++){
+            boundElementCommonHRecycled[i] = null;
+        }
+		
+        
+        
+        
 		
 		neededLength = boundAttributeVHFree + boundAttributeVHRecycledCount; 
         if(neededLength > boundAttributeVH.length){

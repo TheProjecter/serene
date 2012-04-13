@@ -34,8 +34,8 @@ public abstract class AbstractAPattern extends AbstractRule implements APattern{
 	protected int minOccurs;
 	protected int maxOccurs;
 	
-	public AbstractAPattern(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){		
-		super(ruleHandlerPool, simplifiedComponent, debugWriter);
+	public AbstractAPattern(ActiveModelRuleHandlerPool ruleHandlerPool, MessageWriter debugWriter){		
+		super(ruleHandlerPool, debugWriter);
 		minOccurs = 1;
 		maxOccurs = 1;
 	}
@@ -67,14 +67,14 @@ public abstract class AbstractAPattern extends AbstractRule implements APattern{
         if( minOccurs == 0) return false;
         if(parent == null) return true;
         if(!(parent instanceof AbstractAPattern)) return true;
-        return ((AbstractAPattern)parent).isChildBranchRequired();
+        return ((AbstractAPattern)parent).isChildBranchRequired(this);
     }
     
-    boolean isChildBranchRequired(){
+    boolean isChildBranchRequired(AbstractAPattern child){
         if( minOccurs == 0) return false;
         if(parent == null) return true;
         if(!(parent instanceof AbstractAPattern)) return true;
-        return ((AbstractAPattern)parent).isChildBranchRequired();
+        return ((AbstractAPattern)parent).isChildBranchRequired(this);
     }
     
 	boolean transmitsMultipleCardinality(){

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SListPattern;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.RuleVisitor;
@@ -48,8 +49,6 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import org.relaxng.datatype.ValidationContext;
 
-import serene.bind.Queue;
-import serene.bind.AttributeBinder;
 
 import sereneWrite.MessageWriter;
 
@@ -66,13 +65,16 @@ public class AListPattern extends UniqueChildAPattern
 	
 	ARef[] contextRefs;
 	
+	SListPattern slist;
+	
 	public AListPattern(APattern child,
 					ActiveModelStackHandlerPool stackHandlerPool,
 					ActiveModelRuleHandlerPool ruleHandlerPool,
-					SimplifiedComponent simplifiedComponent, 
+					SListPattern slist, 
 					MessageWriter debugWriter){
-		super(child, ruleHandlerPool, simplifiedComponent, debugWriter);
+		super(child, ruleHandlerPool, debugWriter);
 		this.stackHandlerPool = stackHandlerPool;
+		this.slist = slist;
 	}	
 	
 	public void setContextCache(AData[] contextDatas, AValue[] contextValues, ARef[] contextRefs){
@@ -156,6 +158,22 @@ public class AListPattern extends UniqueChildAPattern
 	//--------------------------------------------------------------------------
 	
 	
+	public String getQName(){
+		return slist.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return slist.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return slist.hashCode();
+    }   
+    
+    public SListPattern getCorrespondingSimplifiedComponent(){
+        return slist;
+    }
+    
 	
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);

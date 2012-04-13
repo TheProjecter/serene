@@ -16,7 +16,6 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.schema.active.components.APattern;
 
@@ -34,14 +33,16 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import sereneWrite.MessageWriter;
 
-public class AText extends CharsAPattern{
-	
-	public AText(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent simplifiedComponent, MessageWriter debugWriter){
-		super(ruleHandlerPool, simplifiedComponent, debugWriter);
+public abstract class AText extends CharsAPattern{
+	public AText(ActiveModelRuleHandlerPool ruleHandlerPool, 
+	            MessageWriter debugWriter){
+		super(ruleHandlerPool, debugWriter);
 		minOccurs = 0;
 		maxOccurs = UNBOUNDED;
+		
 	}	
-			
+	
+    
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);
 	}

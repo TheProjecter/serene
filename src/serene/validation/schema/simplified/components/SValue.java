@@ -23,6 +23,8 @@ import org.relaxng.datatype.Datatype;
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class SValue extends AbstractNoChildrenPattern{
@@ -33,10 +35,10 @@ public class SValue extends AbstractNoChildrenPattern{
 	public SValue(String ns, 
 				Datatype datatype,
 				String charContent,
-				String qName, 
-				String location, 
+				int recordIndex, 
+				DocumentIndexedData documentIndexedData,   
 				MessageWriter debugWriter){
-		super(qName, location, debugWriter);
+		super(recordIndex, documentIndexedData, debugWriter);
 		this.ns = ns;		
 		this.datatype = datatype;
 		this.charContent = charContent;

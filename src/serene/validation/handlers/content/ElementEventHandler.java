@@ -20,7 +20,11 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
 
+import serene.validation.handlers.content.util.CharacterContentDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
+
 import sereneWrite.MessageWriter;
+
 
 public interface ElementEventHandler extends MarkupEventHandler{
 	ElementEventHandler getParentHandler();	
@@ -32,7 +36,7 @@ public interface ElementEventHandler extends MarkupEventHandler{
 	*/
 	void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException;
 	 
-	void handleInnerCharacters(char[] chars) throws SAXException;
-    void handleLastCharacters(char[] chars) throws SAXException;
+	void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException;
+    void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException;
     
 }

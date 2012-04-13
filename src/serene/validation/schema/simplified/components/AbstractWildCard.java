@@ -19,6 +19,8 @@ package serene.validation.schema.simplified.components;
 import serene.validation.schema.simplified.components.SNameClass;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 abstract class AbstractWildCard extends SNameClass{
@@ -26,9 +28,10 @@ abstract class AbstractWildCard extends SNameClass{
 	protected SExceptNameClass child;	
 	
 	AbstractWildCard(SExceptNameClass child,
-			String qName, String location, 
+			int recordIndex, 
+			DocumentIndexedData documentIndexedData,   
 			MessageWriter debugWriter){
-		super(qName, location, debugWriter);		
+		super(recordIndex, documentIndexedData, debugWriter);		
 		asParent(child);
 	}	
 	

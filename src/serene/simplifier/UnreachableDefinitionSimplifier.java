@@ -80,7 +80,7 @@ class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
 		builder.startBuild();		
         
         currentDefinitionTopPatterns.clear();		
-        String location = "";
+        /*String location = "";*/
 		for(int i = 0; i < definitions.size(); i++){
 			Definition d = definitions.get(i);
 			String c = d.getCombine();
@@ -96,8 +96,8 @@ class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
                     }
                 }
             }
-            if(i > 0)location += ", "+d.getLocation();
-            else location += d.getLocation();
+            /*if(i > 0)location += ", "+d.getLocation();
+            else location += d.getLocation();*/
 			d.accept(this);
 		}
 		if(nullCombine.size() > 1){
@@ -159,7 +159,7 @@ class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
 			return;
 		}
 		
-        builder.buildRef(-1, ref.getQName(), ref.getLocation());
+        builder.buildRef(-1, ref.getRecordIndex(), ref.getDocumentIndexedData());
         patternChild = true;
 	}
     
@@ -176,7 +176,7 @@ class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
 			return;
 		}
         
-        builder.buildRef(-1, parentRef.getQName(), parentRef.getLocation());
+        builder.buildRef(-1, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
         patternChild = true;        		
 	}
 }

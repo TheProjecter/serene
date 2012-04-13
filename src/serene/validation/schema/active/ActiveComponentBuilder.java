@@ -22,6 +22,30 @@ import serene.validation.schema.ComponentBuilder;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
+import serene.validation.schema.simplified.components.SElement;
+import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.components.SChoicePattern;
+import serene.validation.schema.simplified.components.SInterleave;
+import serene.validation.schema.simplified.components.SGroup;
+import serene.validation.schema.simplified.components.SListPattern;
+import serene.validation.schema.simplified.components.SEmpty;
+import serene.validation.schema.simplified.components.SText;
+import serene.validation.schema.simplified.components.SNotAllowed;
+import serene.validation.schema.simplified.components.SRef;
+import serene.validation.schema.simplified.components.SData;
+import serene.validation.schema.simplified.components.SValue;
+import serene.validation.schema.simplified.components.SGrammar;
+import serene.validation.schema.simplified.components.SMixed;
+
+import serene.validation.schema.simplified.components.SName;
+import serene.validation.schema.simplified.components.SAnyName;
+import serene.validation.schema.simplified.components.SNsName;
+import serene.validation.schema.simplified.components.SChoiceNameClass;
+
+import serene.validation.schema.simplified.components.SExceptNameClass;
+import serene.validation.schema.simplified.components.SExceptPattern;
+
+
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ANameClass;
 import serene.validation.schema.active.components.AExceptPattern;
@@ -31,16 +55,19 @@ import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.AChoicePattern;
 import serene.validation.schema.active.components.AInterleave;
+import serene.validation.schema.active.components.AInterleaveI;
+import serene.validation.schema.active.components.AInterleaveM;
 import serene.validation.schema.active.components.AGroup;
 import serene.validation.schema.active.components.AListPattern;
 import serene.validation.schema.active.components.AEmpty;
 import serene.validation.schema.active.components.AText;
+import serene.validation.schema.active.components.ATextM;
+import serene.validation.schema.active.components.ATextT;
 import serene.validation.schema.active.components.ANotAllowed;
 import serene.validation.schema.active.components.ARef;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AGrammar;
-
 
 import serene.validation.schema.active.components.AName;
 import serene.validation.schema.active.components.AAnyName;
@@ -187,35 +214,40 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	//START PATTERN BUILDING ***************************************************
 	//**************************************************************************
-	public void buildElement(int index, ActiveGrammarModel model, SimplifiedComponent simplifiedComponent){
+	public void buildElement(int index, ActiveGrammarModel model, SElement simplifiedComponent){
 		AElement e = new AElement(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(e);
 	}
-	public void buildAttribute(int index, ActiveGrammarModel model, SimplifiedComponent simplifiedComponent){
+	public void buildAttribute(int index, ActiveGrammarModel model, SAttribute simplifiedComponent){
 		AAttribute a = new AAttribute(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(a);
 	}
-	public void buildGroup(SimplifiedComponent simplifiedComponent){
+	public void buildGroup(SGroup simplifiedComponent){
 		AGroup g = new AGroup(getContentPatterns(), stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(g);	
 	}		
-	public void buildInterleave(SimplifiedComponent simplifiedComponent){
-		AInterleave i = new AInterleave(getContentPatterns(), stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
+	public void buildInterleave(SInterleave simplifiedComponent){
+		AInterleave i = new AInterleaveI(getContentPatterns(), stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(i);	
 	}
-	public void buildChoicePattern(SimplifiedComponent simplifiedComponent){
+	public void buildInterleave(SMixed simplifiedComponent){
+		AInterleave i = new AInterleaveM(getContentPatterns(), stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
+		clearContent();
+		addToCurrentLevel(i);	
+	}
+	public void buildChoicePattern(SChoicePattern simplifiedComponent){
 		AChoicePattern cp = new AChoicePattern(getContentPatterns(), ruleHandlerPool, simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(cp);
 	}	
-	public void buildListPattern(SimplifiedComponent simplifiedComponent){
+	public void buildListPattern(SListPattern simplifiedComponent){
 		AListPattern lp = new AListPattern(getLastContentPattern(), stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(lp);
 	}
-	public void buildRef(int definitionIndex, ActiveGrammarModel model, SimplifiedComponent simplifiedComponent){
+	public void buildRef(int definitionIndex, ActiveGrammarModel model, SRef simplifiedComponent){
 		ARef r = new ARef(definitionIndex, model, ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(r);
 	}
@@ -223,24 +255,28 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 		AEmpty e = new AEmpty(ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(e);
 	}
-	public void buildText(SimplifiedComponent simplifiedComponent){
-		AText t = new AText(ruleHandlerPool, simplifiedComponent, debugWriter);
+	public void buildText(SText simplifiedComponent){
+		AText t = new ATextT(ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(t);
 	}
-	public void buildValue(String ns, Datatype datatype, String charContent, ActiveGrammarModel model, SimplifiedComponent simplifiedComponent){
+	public void buildText(SMixed simplifiedComponent){
+		AText t = new ATextM(ruleHandlerPool, simplifiedComponent, debugWriter);
+		addToCurrentLevel(t);
+	}
+	public void buildValue(String ns, Datatype datatype, String charContent, ActiveGrammarModel model, SValue simplifiedComponent){
 		AValue v = new AValue(ns, datatype, charContent, model, ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(v);
 	}
-	public void buildData(Datatype datatype, ActiveGrammarModel model, SimplifiedComponent simplifiedComponent){
+	public void buildData(Datatype datatype, ActiveGrammarModel model, SData simplifiedComponent){
 		AData d = new AData(datatype, getContentExceptPattern(),  model, ruleHandlerPool, simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(d);
 	}		
-	public void buildNotAllowed(SimplifiedComponent simplifiedComponent){
+	public void buildNotAllowed(SNotAllowed simplifiedComponent){
 		ANotAllowed na = new ANotAllowed(ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(na);
 	}	
-	public void buildGrammar(SimplifiedComponent simplifiedComponent){
+	public void buildGrammar(SGrammar simplifiedComponent){
 		AGrammar g = new AGrammar(getLastContentPattern(), ruleHandlerPool, simplifiedComponent, debugWriter);		
 		clearContent();
 		addToCurrentLevel(g);
@@ -253,21 +289,21 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	//START NAME CLASS BUILDING ************************************************
 	//**************************************************************************	
-	public void buildName(String ns, String localPart, SimplifiedComponent simplifiedComponent){
+	public void buildName(String ns, String localPart, SName simplifiedComponent){
 		AName n = new AName(ns, localPart, simplifiedComponent, debugWriter);
 		addToCurrentLevel(n);
 	}
-	public void buildAnyName(SimplifiedComponent simplifiedComponent){
+	public void buildAnyName(SAnyName simplifiedComponent){
 		AAnyName an = new AAnyName(getContentExceptNameClass(), simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(an);
 	}
-	public void buildNsName(String ns, SimplifiedComponent simplifiedComponent){
+	public void buildNsName(String ns, SNsName simplifiedComponent){
 		ANsName nn = new ANsName(ns, getContentExceptNameClass(), simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(nn);
 	}
-	public void buildChoiceNameClass(SimplifiedComponent simplifiedComponent){
+	public void buildChoiceNameClass(SChoiceNameClass simplifiedComponent){
 		AChoiceNameClass cnc = new AChoiceNameClass(getContentNameClasses(), simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(cnc);
@@ -276,12 +312,12 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 	//END NAME CLASS BUILDING **************************************************
 	//**************************************************************************
 
-	public void buildExceptNameClass(SimplifiedComponent simplifiedComponent){
+	public void buildExceptNameClass(SExceptNameClass simplifiedComponent){
 		AExceptNameClass enc = new AExceptNameClass(getLastContentNameClass(), simplifiedComponent, debugWriter);
 		clearContent();
 		addToCurrentLevel(enc);
 	}
-	public void buildExceptPattern(int index, ActiveGrammarModel model, SimplifiedComponent simplifiedComponent){
+	public void buildExceptPattern(int index, ActiveGrammarModel model, SExceptPattern simplifiedComponent){
 		AExceptPattern ep = new AExceptPattern(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
 		addToCurrentLevel(ep);
 	}	

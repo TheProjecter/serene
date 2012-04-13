@@ -19,31 +19,35 @@ package serene.validation.schema.parsed;
 
 import java.util.Map;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public abstract class Definition extends ParsedComponent implements GrammarContent, IncludeContent{
-	String combine;
+	int combineRecordIndex;
     ParsedComponent[] children;	
-	Definition(Map<String, String> prefixMapping, 
-                    String xmlBase, 
-                    String ns, 
-                    String datatypeLibrary, 
-                    String combine, 
-                    AttributeInfo[] foreignAttributes,
+	Definition(/*Map<String, String> prefixMapping,*/ 
+	                int xmlBase,
+                    int ns, 
+                    int datatypeLibrary, 
+                    int combine,
                     ParsedComponent[] children,
+                    /*AttributeInfo[] foreignAttributes,                    
                     String qName, 
-                    String location, 
+                    String location,*/
+                    int recordIndex,
+                    DocumentIndexedData documentIndexedData,                    
                     MessageWriter debugWriter){
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, qName, location, debugWriter);
-		this.combine = combine;
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
+		this.combineRecordIndex = combine;
 		asParent(children);		
 	}	
 	
 	public String getCombine(){
-		return combine;
+		if(combineRecordIndex == DocumentIndexedData.NO_RECORD) return null;
+		return documentIndexedData.getStringValue(combineRecordIndex);
 	}    
-    	
+	
 	void asParent(ParsedComponent[] children){
 		this.children = children;
 		if(children != null){		
@@ -61,5 +65,9 @@ public abstract class Definition extends ParsedComponent implements GrammarConte
 	public ParsedComponent getChild(int childIndex){
 		if(children == null)return null;
 		return children[childIndex];
+	}
+	
+	public int getCombineRecordIndex(){
+	    return combineRecordIndex;
 	}
 }

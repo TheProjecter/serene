@@ -53,7 +53,7 @@ public class StartErrorHandler extends AbstractContextErrorHandler{
 	}
 	
 	public void recycle(){
-        messageHandler.clear();
+        messageHandler.clear(this);
 		pool.recycle(this);        
 	}
     
@@ -203,19 +203,19 @@ public class StartErrorHandler extends AbstractContextErrorHandler{
     
     public void internalConflict(ConflictMessageReporter conflictMessageReporter) throws SAXException{
 	    conflictMessageReporter.report();
-	    conflictMessageReporter.clear();
+	    conflictMessageReporter.clear(this);
     }
     
 	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 				throws SAXException{
         messageHandler.report(contextType, qName, definition, restrictToFileName, locator, errorDispatcher/*, ""*/);
-		messageHandler.clear();
+		messageHandler.clear(this);
 	}
 	
 	public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator)
 				throws SAXException{
         messageHandler.report(contextType, qName, null, restrictToFileName, locator, errorDispatcher/*, ""*/);
-		messageHandler.clear();
+		messageHandler.clear(this);
 	}
 	
 	public void discard(){

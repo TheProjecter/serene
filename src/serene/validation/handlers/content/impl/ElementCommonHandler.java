@@ -28,7 +28,10 @@ import serene.util.CharsBuffer;
 import serene.validation.handlers.content.ElementEventHandler;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
+
 import serene.validation.handlers.content.util.InputStackDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptor;
+import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
 import serene.validation.handlers.error.ContextErrorHandlerManager;
 
@@ -116,11 +119,11 @@ class ElementCommonHandler extends UndeterminedEEH{
 		uniqueHandler.validateInContext();		
 	}
 	
-	public void handleInnerCharacters(char[] chars) throws SAXException{		
-		uniqueHandler.handleInnerCharacters(chars);
+	public void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{		
+		uniqueHandler.handleInnerCharacters(characterContentDescriptor, characterContentDescriptorPool);
 	}
-	public void handleLastCharacters(char[] chars) throws SAXException{		
-		uniqueHandler.handleLastCharacters(chars);
+	public void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException{		
+		uniqueHandler.handleLastCharacters(characterContentDescriptor);
 	}
 	
 	boolean functionalEquivalent(ComparableEEH other){

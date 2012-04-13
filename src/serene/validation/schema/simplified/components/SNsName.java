@@ -23,15 +23,18 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public class SNsName extends AbstractWildCard{		
 	String ns;
-	public SNsName(String ns, SExceptNameClass child,
-			String qName, 
-			String location, 
+	public SNsName(String ns, 
+	        SExceptNameClass child,
+			int recordIndex, 
+			DocumentIndexedData documentIndexedData,  
 			MessageWriter debugWriter){	
-		super(child, qName, location, debugWriter);
+		super(child, recordIndex, documentIndexedData, debugWriter);
 		this.ns = ns;
 	}
 	

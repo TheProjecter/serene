@@ -29,7 +29,7 @@ import serene.validation.handlers.conflict.ExternalConflictHandler;
 import serene.validation.handlers.error.CandidatesConflictErrorHandler;
 
 import serene.bind.BindingModel;
-import serene.bind.Queue;
+import serene.bind.util.Queue;
 
 import sereneWrite.MessageWriter;
 
@@ -146,7 +146,7 @@ class BoundAttributeParallelHandler extends AttributeParallelHandler{
                     // If you knew the candidate number of the corresponding element
                     // you could avoid binding for disqualified candidates.
                     if(!individualHandlers.get(i).equals(uniqueSample)){
-                        ((BoundAttributeHandler)individualHandlers.get(i)).attributeBinding(value);
+                        ((BoundAttributeHandler)individualHandlers.get(i)).attributeBinding();
                     }
                 }			
             }

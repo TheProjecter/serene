@@ -19,12 +19,18 @@ package serene.validation.schema.parsed;
 
 import java.util.Map;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 import sereneWrite.MessageWriter;
 
 public abstract class NameClass extends ParsedComponent{
-	 NameClass(Map<String, String> prefixMapping,	String xmlBase, String ns, String datatypeLibrary, AttributeInfo[] foreignAttributes, String qName, String location, MessageWriter debugWriter){
-		super(prefixMapping, xmlBase, ns, datatypeLibrary, foreignAttributes, qName, location, debugWriter);
+	 NameClass(/*Map<String, String> prefixMapping,*/
+	            int xmlBase,
+                int ns, 
+                int datatypeLibrary,
+                int recordIndex,
+                DocumentIndexedData documentIndexedData,
+                MessageWriter debugWriter){
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
 	}	
 	
 	public String toString(){

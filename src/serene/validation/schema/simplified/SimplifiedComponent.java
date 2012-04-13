@@ -20,11 +20,18 @@ import org.xml.sax.SAXException;
 
 import serene.validation.schema.Component;
 
+import serene.bind.util.DocumentIndexedData;
+
 public interface SimplifiedComponent extends Component{
 	SimplifiedComponent getParent();				
 	void accept(SimplifiedComponentVisitor v);
 	void accept(RestrictingVisitor v) throws SAXException;
 	
 	String getQName();
-	String getLocation(boolean restrictToFileName);
+	String getLocation(boolean restrictToFileName);	
+	
+	//TODO 
+	// Consider moving to Component. 
+	int getRecordIndex();	
+	DocumentIndexedData getDocumentIndexedData();
 }

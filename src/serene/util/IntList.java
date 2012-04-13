@@ -91,7 +91,7 @@ public class IntList{
 		return true;
     }
 
-    public void add(int index, int element) {
+    /*public void add(int index, int element) {
 		if (index > ++lastIndex || index < 0)
 			throw new IndexOutOfBoundsException(
 			"Index: "+index+", Size: "+(lastIndex+1));
@@ -100,7 +100,7 @@ public class IntList{
 		System.arraycopy(list, index, list, index + 1,
 				 lastIndex - index);
 		list[index] = element;
-    }
+    }*/
 	
     public boolean remove(int i) {
 		int index = -1;

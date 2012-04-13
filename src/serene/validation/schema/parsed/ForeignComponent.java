@@ -19,27 +19,20 @@ package serene.validation.schema.parsed;
 import java.util.Map;
 import org.xml.sax.SAXException;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 import sereneWrite.MessageWriter;
 
 public class ForeignComponent extends ParsedComponent{
-    String namespaceURI;
-    String localName;
+    
     ParsedComponent children[];
-    String[][] attributes;
-	ForeignComponent(String namespaceURI, 
-                    String localName, 
-                    Map<String, String> prefixMapping, 
-                    String xmlBase, 
-                    AttributeInfo[] foreignAttributes, 
+	ForeignComponent(/*Map<String, String> prefixMapping,*/ 
+                    int xmlBase, 
                     ParsedComponent[] children, 
-                    String qName, 
-                    String location, 
-                    MessageWriter debugWriter){
-		super(prefixMapping, xmlBase, null, null, foreignAttributes, qName, location, debugWriter);
+                    int recordIndex,
+                    DocumentIndexedData documentIndexedData,
+                    MessageWriter debugWriter){    
+		super(/*prefixMapping,*/ xmlBase, DocumentIndexedData.NO_RECORD, DocumentIndexedData.NO_RECORD, recordIndex, documentIndexedData, debugWriter);
         asParent(children);
-        this.namespaceURI = namespaceURI;
-        this.localName = localName;
 	}
     
     void asParent(ParsedComponent[] children){
@@ -70,6 +63,6 @@ public class ForeignComponent extends ParsedComponent{
     }
     
     public String toString(){
-        return "ForeignComponent "+namespaceURI+":"+localName;
+        return "ForeignComponent "+getQName();
     }
 }

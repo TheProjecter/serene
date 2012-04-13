@@ -19,6 +19,9 @@ package serene.validation.handlers.error;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+
+import serene.validation.handlers.conflict.ElementConflictResolver;
+
 import serene.validation.schema.active.components.AElement;
 
 import serene.util.IntList;
@@ -50,6 +53,13 @@ public interface MessageReporter{
     
     boolean containsOtherErrorMessage(IntList exceptedErrorIds, IntList exceptedErrorCodes);
     
-    void clear();
-    void setDiscarded(boolean isDiscarded);
+    void clear(ContextErrorHandler ceh);
+    void clear(CandidatesConflictErrorHandler cceh);
+    void clear(TemporaryMessageStorage tms);
+    void clear(ElementConflictResolver ecr);
+        
+    /*void setDiscarded(boolean isDiscarded);*/
+    
+    void registerClient(MessageReporter mr);
+    void unregisterClient(MessageReporter mr);
 }

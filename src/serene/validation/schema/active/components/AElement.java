@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Arrays;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SElement;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.APattern;
@@ -55,23 +56,26 @@ public class AElement extends MarkupAPattern
 	boolean allowsAttributes;
 	AAttribute[] contextAttributes;
 	 
-	ActiveComponentWriter acw;
+	//ActiveComponentWriter acw;
+	
+	SElement selement;
 	
 	public AElement(int index,
 				ActiveGrammarModel grammarModel,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SimplifiedComponent simplifiedComponent, 
+				SElement selement, 
 				MessageWriter debugWriter){		
 		super(index,
 				null, 
 				grammarModel, 
 				stackHandlerPool, 
-				ruleHandlerPool, 
-				simplifiedComponent, 
+				ruleHandlerPool,  
 				debugWriter);		
 		this.index = index;
-		acw = new ActiveComponentWriter();
+		this.selement = selement;
+		//acw = new ActiveComponentWriter();
+		
 	}
 		
 	
@@ -236,6 +240,23 @@ public class AElement extends MarkupAPattern
 		return grammarModel.getElementNameClass(index).matches(namespace, name);
 	} 
 	//--------------------------------------------------------------------------
+	
+	
+	public String getQName(){
+		return selement.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return selement.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return selement.hashCode();
+    }   
+    
+    public SElement getCorrespondingSimplifiedComponent(){
+        return selement;
+    }
 	
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);

@@ -17,5 +17,6 @@ limitations under the License.
 package serene.bind;
 
 public interface ElementTask extends Task{
+    boolean needsStartElementInputData();
 	void setContext(ElementTaskContext context);	
 }

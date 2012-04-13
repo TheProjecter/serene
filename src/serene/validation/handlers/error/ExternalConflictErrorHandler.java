@@ -56,6 +56,8 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	int candidateIndex;    
     CandidatesConflictErrorHandler candidatesConflictErrorHandler;
     boolean isCandidate;
+    
+    boolean isHandled;
 
 	public ExternalConflictErrorHandler(MessageWriter debugWriter){
 		super(debugWriter);
@@ -65,8 +67,13 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	public void recycle(){
         candidateIndex = -1;
         candidatesConflictErrorHandler = null;
-        isCandidate = false;        
+        isCandidate = false;
+        if(!isHandled && messageHandler != null){
+            /*messageHandler.setDiscarded(true);*/
+            messageHandler.clear(this);
+        }        
 		messageHandler = null;
+        isHandled = false;
         
 		pool.recycle(this);
 	}	
@@ -530,16 +537,18 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 					throws SAXException{
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, definition, locator, messageHandler, candidateIndex);
+		isHandled = true;	
 	}
 	
 	public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator)
 					throws SAXException{
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, locator, messageHandler, candidateIndex);
+		isHandled = true;	
 	}
 	
 	public void discard(){
-	    messageHandler.setDiscarded(true);
-	    messageHandler.clear();
+	    /*messageHandler.setDiscarded(true);*/
+	    messageHandler.clear(this);
 	}
 	
 	public void record(int contextType, String qName, boolean restrictToFileName, Locator locator){

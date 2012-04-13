@@ -19,7 +19,7 @@ package serene.validation.schema.active.components;
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.ValidationContext;
 
-import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SValue;
 
 import serene.validation.schema.active.ActiveGrammarModel;
 
@@ -44,16 +44,18 @@ public class AValue extends DatatypedCharsAPattern{
     boolean isSpace;
     boolean isSpaceAssessed;
         
+    SValue svalue;
 	public AValue(String ns, 		
                     Datatype datatype, 
 					String charContent,
 					ActiveGrammarModel grammarModel, 					
 					ActiveModelRuleHandlerPool ruleHandlerPool,
-					SimplifiedComponent simplifiedComponent, 
+					SValue svalue, 
 					MessageWriter debugWriter){
-		super(datatype, grammarModel, ruleHandlerPool, simplifiedComponent, debugWriter);
+		super(datatype, grammarModel, ruleHandlerPool, debugWriter);
 		this.ns = ns;
 		this.charContent = charContent;
+		this.svalue = svalue;
 	}
 
 	public boolean valueMatches(char[] chars, ValidationContext validationContext){
@@ -61,7 +63,7 @@ public class AValue extends DatatypedCharsAPattern{
         Object o2 = datatype.createValue(new String(chars), validationContext);
 		return datatype.sameValue(o1, o2);
 	}
-	public boolean valueMatches(String value, ValidationContext validationContext){        
+	public boolean valueMatches(String value, ValidationContext validationContext){ 
         Object o1 = datatype.createValue(charContent, validationContext);
         Object o2 = datatype.createValue(value, validationContext);
 		return datatype.sameValue(o1, o2);
@@ -73,6 +75,24 @@ public class AValue extends DatatypedCharsAPattern{
         isSpace = v.equals("");
         return isSpace;
     }
+    
+    public String getQName(){
+		return svalue.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return svalue.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return svalue.hashCode();
+    }   
+    
+    public SValue getCorrespondingSimplifiedComponent(){
+        return svalue;
+    }
+    
+    
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);
 	}

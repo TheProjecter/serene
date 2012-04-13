@@ -19,6 +19,7 @@ package serene.validation.schema.active.components;
 import java.util.Map;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.components.SAttribute;
 
 import serene.validation.schema.active.ActiveComponent;
 import serene.validation.schema.active.RuleVisitor;
@@ -42,24 +43,25 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
-import serene.bind.Queue;
+import serene.bind.util.Queue;
 
 import sereneWrite.MessageWriter;
 
-public class AAttribute extends MarkupAPattern  implements NamedActiveTypeItem{	
+public class AAttribute extends MarkupAPattern  implements NamedActiveTypeItem{
+    protected SAttribute sattribute;	
 	public AAttribute(int index,
 				ActiveGrammarModel grammarModel,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SimplifiedComponent simplifiedComponent, 
+				SAttribute sattribute, 
 				MessageWriter debugWriter){		
 		super(index,
 				null, 
 				grammarModel,  
 				stackHandlerPool, 
 				ruleHandlerPool, 
-				simplifiedComponent, 
 				debugWriter);		
+		this.sattribute = sattribute;
 	}	
 	
 	
@@ -150,6 +152,23 @@ public class AAttribute extends MarkupAPattern  implements NamedActiveTypeItem{
 	//--------------------------------------------------------------------------
 	
 	
+	public String getQName(){
+		return sattribute.getQName();
+	}
+	
+	public String getLocation(boolean restrictToFileName){
+		return sattribute.getLocation(restrictToFileName);
+	}	
+    
+    public int functionalEquivalenceCode(){
+        return sattribute.hashCode();
+    }   
+    
+    public SAttribute getCorrespondingSimplifiedComponent(){
+        return sattribute;
+    }
+	
+    
 	
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);

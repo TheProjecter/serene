@@ -16,12 +16,20 @@ limitations under the License.
 
 package serene.validation.schema.simplified.components;
 
+import serene.bind.util.DocumentIndexedData;
+
 import sereneWrite.MessageWriter;
 
 public abstract class SNameClass extends AbstractSimplifiedComponent{	
 		
-	public SNameClass(String qName, String location, MessageWriter debugWriter){
-		super(qName, location, debugWriter);
+	public SNameClass(int recordIndex, 
+			DocumentIndexedData documentIndexedData, 
+			MessageWriter debugWriter){
+	    // TODO 
+	    // Consider null the location data, if it is never needed (restrictions 
+	    // control?). Changes should be made in the constructors of the 
+	    // subclasses. 
+		super(recordIndex, documentIndexedData, debugWriter);
 	}	
 		
 	public String toString(){

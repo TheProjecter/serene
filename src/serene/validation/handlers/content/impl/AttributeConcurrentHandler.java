@@ -53,7 +53,7 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 		for(CandidateAttributeValidationHandler candidate: candidates){
 			candidate.recycle();
 		}
-		localCandidatesConflictHandler.reset();
+		localCandidatesConflictHandler.clear();
 		candidates.clear();
 		temporaryMessageStorage = null;
 		pool.recycle(this);
@@ -102,7 +102,7 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 			if(temporaryMessageStorage != null){
                 for(int i = 0;  i < temporaryMessageStorage.length; i++){
                     if(temporaryMessageStorage[i] != null){
-                        temporaryMessageStorage[i].setDiscarded(true);
+                        /*temporaryMessageStorage[i].setDiscarded(true);*/
                         temporaryMessageStorage[i].clear();
                     }
                 }

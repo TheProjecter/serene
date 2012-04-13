@@ -28,9 +28,8 @@ abstract class AbstractWildCard extends ANameClass{
 	protected AExceptNameClass child;	
 	
 	AbstractWildCard(AExceptNameClass child,
-			SimplifiedComponent simplifiedComponent, 
 			MessageWriter debugWriter){
-		super(simplifiedComponent, debugWriter);		
+		super(debugWriter);		
 		asParent(child);
 	}	
 	

@@ -105,7 +105,7 @@ import serene.internal.InternalRNGFactory;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import serene.util.AttributeInfo;
+import serene.bind.util.DocumentIndexedData;
 
 import sereneWrite.MessageWriter;
 import sereneWrite.ParsedComponentWriter;
@@ -168,14 +168,14 @@ abstract class Simplifier implements SimplifyingVisitor{
     boolean restrictToFileName;
     
 	MessageWriter debugWriter;
-	ParsedComponentWriter pcw;
+	//ParsedComponentWriter pcw;
 	
 	Simplifier(ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;				
 		this.errorDispatcher = errorDispatcher;
 
 		builder = new SimplifiedComponentBuilder(debugWriter);		
-		pcw = new ParsedComponentWriter();
+		//pcw = new ParsedComponentWriter();
 		
 		replaceMissingDatatypeLibrary =  true;
         level1AttributeDefaultValue  = false;
@@ -202,7 +202,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 	public void visit(ExceptPattern exceptPattern) throws SAXException{        
 		ParsedComponent[] children = exceptPattern.getChildren();
 		if(children == null) {
-			builder.buildExceptPattern(exceptPattern.getQName(), exceptPattern.getLocation());
+			builder.buildExceptPattern(exceptPattern.getRecordIndex(), exceptPattern.getDocumentIndexedData());
             patternChild = true;
 			return;
 		}
@@ -243,13 +243,15 @@ abstract class Simplifier implements SimplifyingVisitor{
 			return;
 		}
 		if(emptyCount > 0){
-			builder.buildEmpty("empty", emptyComponent.getLocation());					
+		    // TODO 
+		    // Possible problem here!!!!!
+			builder.buildEmpty(emptyComponent.getRecordIndex(), /*exceptPattern.getRecordIndex(),*/ exceptPattern.getDocumentIndexedData(), true);					
 		}
         if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementChoicePattern("choice added by except simplification", exceptPattern.getLocation());
+			builder.buildReplacementChoicePattern(exceptPattern.getRecordIndex(), exceptPattern.getDocumentIndexedData(), true);
 		}
 		builder.endLevel();
-		builder.buildExceptPattern( exceptPattern.getQName(), exceptPattern.getLocation());
+		builder.buildExceptPattern( exceptPattern.getRecordIndex(), exceptPattern.getDocumentIndexedData());
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
         attributeContext = oldAttributeContext;
@@ -257,7 +259,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 	public void visit(ExceptNameClass exceptNameClass) throws SAXException{
         ParsedComponent[] children = exceptNameClass.getChildren();
         if(children == null) {
-			builder.buildExceptNameClass(exceptNameClass.getQName(), exceptNameClass.getLocation());
+			builder.buildExceptNameClass(exceptNameClass.getRecordIndex(), exceptNameClass.getDocumentIndexedData());
             patternChild = false;
 			return;
 		}
@@ -278,10 +280,10 @@ abstract class Simplifier implements SimplifyingVisitor{
         builder.startLevel();
 		next(children);		
         if(builder.getCurrentNameClassesCount() > 1){
-			builder.buildReplacementChoiceNameClass("choice added by except simplification", exceptNameClass.getLocation());
+			builder.buildReplacementChoiceNameClass(exceptNameClass.getRecordIndex(), exceptNameClass.getDocumentIndexedData());
 		}
         builder.endLevel();
-		builder.buildExceptNameClass(exceptNameClass.getQName(), exceptNameClass.getLocation());
+		builder.buildExceptNameClass(exceptNameClass.getRecordIndex(), exceptNameClass.getDocumentIndexedData());
 		
 		anyNameExceptContext = false;	
 		nsNameExceptContext = false;
@@ -328,7 +330,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 				errorDispatcher.error(new SAXParseException(message, null));
 			}
 		}
-		builder.buildName(ns, localPart, name.getQName(), name.getLocation());
+		builder.buildName(ns, localPart, name.getRecordIndex(), name.getDocumentIndexedData(), false);
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = false;
@@ -362,7 +364,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(children != null) nextLevel(children);
 		anyNameContext = false;
 		
-		builder.buildAnyName(anyName.getQName(), anyName.getLocation());
+		builder.buildAnyName(anyName.getRecordIndex(), anyName.getDocumentIndexedData());
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = false;
@@ -399,7 +401,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(children != null) nextLevel(children);
 		nsNameContext = false;
 				
-		builder.buildNsName(ns, nsName.getQName(), nsName.getLocation());
+		builder.buildNsName(ns, nsName.getRecordIndex(), nsName.getDocumentIndexedData());
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = false;
@@ -411,7 +413,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         
 		ParsedComponent[] children = choice.getChildren();
 		if(children != null) nextLevel(children);
-		builder.buildChoiceNameClass(choice.getQName(), choice.getLocation());
+		builder.buildChoiceNameClass(choice.getRecordIndex(), choice.getDocumentIndexedData());
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = false;
@@ -471,7 +473,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}
         
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup("group added by define simplification", define.getLocation());			
+			builder.buildReplacementGroup(define.getRecordIndex(), define.getDocumentIndexedData(), true);			
 		}		
 		builder.endLevel();
         
@@ -559,7 +561,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = element.getChildren();		
 		        		
 		if(children == null) {			
-			builder.buildElement(element.getQName(), element.getLocation());
+			builder.buildElement(element.getRecordIndex(), element.getDocumentIndexedData());
             patternChild = true;
             notAllowedElement = false;
 			return;
@@ -604,13 +606,15 @@ abstract class Simplifier implements SimplifyingVisitor{
 			return;
 		}
         if(containsPattern && nonEmptyChildrenCount == 0){
-            builder.buildEmpty("empty", emptyComponent.getLocation());
+            // TODO 
+            // Are you sure this is right? Shouldn't the "true" be set from somewhere else? 
+            builder.buildEmpty(emptyComponent.getRecordIndex(), emptyComponent.getDocumentIndexedData(), true);
         }
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup("group added by element simplification", element.getLocation());
+			builder.buildReplacementGroup(element.getRecordIndex(), element.getDocumentIndexedData(), true);
 		}
 		builder.endLevel();
-		builder.buildElement(element.getQName(), element.getLocation());
+		builder.buildElement(element.getRecordIndex(), element.getDocumentIndexedData());
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -621,7 +625,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = element.getChildren();
 		        
 		if(children == null) {
-			builder.buildElement(element.getQName(), element.getLocation());
+			builder.buildElement(element.getRecordIndex(), element.getDocumentIndexedData());
             patternChild = true;
             notAllowedElement = false;
 			return;
@@ -666,10 +670,11 @@ abstract class Simplifier implements SimplifyingVisitor{
 			return;
 		}
         if(nonEmptyChildrenCount == 0){
-            builder.buildEmpty("empty", emptyComponent.getLocation());
-        }		
+            builder.buildEmpty(emptyComponent.getRecordIndex(), emptyComponent.getDocumentIndexedData(), true);
+        }
+		
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup("group added by element simplification", element.getLocation());
+			builder.buildReplacementGroup(element.getRecordIndex(), element.getDocumentIndexedData(), true);
 		}
         
 		String name = element.getName();
@@ -685,10 +690,10 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(prefix != null) ns = simplificationContext.resolveNamespacePrefix(prefix);
         else ns = namespaceInheritanceHandler.getNsURI(element);
 		if(ns == null)ns = "";
-		builder.buildName(ns, localPart, "name", element.getLocation());
+		builder.buildName(ns, localPart, element.getRecordIndex(), element.getDocumentIndexedData(), true);
 		
 		builder.endLevel();
-		builder.buildElement(element.getQName(), element.getLocation());
+		builder.buildElement(element.getRecordIndex(), element.getDocumentIndexedData());
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -703,17 +708,18 @@ abstract class Simplifier implements SimplifyingVisitor{
                 
         if(children == null){
             builder.startLevel();
-            builder.buildText("default text", attribute.getLocation());
+            builder.buildText(attribute.getRecordIndex(), attribute.getDocumentIndexedData(), true);
 			builder.endLevel();
             if(level1AttributeDefaultValue){
-                AttributeInfo[] foreignAttributes = attribute.getForeignAttributes();
+                /*AttributeInfo[] foreignAttributes = attribute.getForeignAttributes();
                 if(foreignAttributes != null){
                     builder.buildAttribute(getDefaultValue(foreignAttributes), attribute.getQName(), attribute.getLocation());
                 }else{
                     builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
-                }                
+                } */               
+                builder.buildAttribute(attribute.getDefaultValueRecordIndex(), attribute.getRecordIndex(), attribute.getDocumentIndexedData());
             }else{
-                builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
+                builder.buildAttribute(DocumentIndexedData.NO_RECORD, attribute.getRecordIndex(), attribute.getDocumentIndexedData());
             }
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
@@ -756,7 +762,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         notAllowedChild = oldNotAllowedChild;
 		
         if(childrenCount == 0){
-            builder.buildText("default text", attribute.getLocation());            
+            builder.buildText(attribute.getRecordIndex(), attribute.getDocumentIndexedData(), true);            
         }else if(emptyCount == childrenCount){
 			/*
 			Replaced with a limitation placed in restrictions control.
@@ -769,20 +775,15 @@ abstract class Simplifier implements SimplifyingVisitor{
 			String ns  = namespaceInheritanceHandler.getNsURI(attribute);
 			if(ns == null) ns = "";
 			builder.buildValue(ns, null, null, "value", attribute.getLocation());*/
-            builder.buildEmpty("empty", emptyComponent.getLocation());
+            builder.buildEmpty(emptyComponent.getRecordIndex(), emptyComponent.getDocumentIndexedData(), true);
             emptyChild = false;
 		}
 		        
 		builder.endLevel();
 		if(level1AttributeDefaultValue){
-            AttributeInfo[] foreignAttributes = attribute.getForeignAttributes();
-            if(foreignAttributes != null){
-                builder.buildAttribute(getDefaultValue(foreignAttributes), attribute.getQName(), attribute.getLocation());
-            }else{
-                builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
-            }                
+            builder.buildAttribute(attribute.getDefaultValueRecordIndex(), attribute.getRecordIndex(), attribute.getDocumentIndexedData());                
         }else{
-            builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
+            builder.buildAttribute(DocumentIndexedData.NO_RECORD, attribute.getRecordIndex(), attribute.getDocumentIndexedData());
         }
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
@@ -798,8 +799,9 @@ abstract class Simplifier implements SimplifyingVisitor{
 		builder.startLevel();
 		if(children == null) {
 			//4.12
-			builder.buildText("default text", attribute.getLocation());
+			builder.buildText(attribute.getRecordIndex(), attribute.getDocumentIndexedData(), true);
             String name = attribute.getName();
+            
             String prefix = null;
             String localPart = null;            
             if(name != null){                
@@ -823,17 +825,12 @@ abstract class Simplifier implements SimplifyingVisitor{
 				+"Illegal ns of attribute name of element <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+".";
 				errorDispatcher.error(new SAXParseException(message, null));
 			}            
-			builder.buildName(ns, localPart, "name", attribute.getLocation());
+			builder.buildName(ns, localPart, attribute.getRecordIndex(), attribute.getDocumentIndexedData(), true);
 			builder.endLevel();
 			if(level1AttributeDefaultValue){
-                AttributeInfo[] foreignAttributes = attribute.getForeignAttributes();
-                if(foreignAttributes != null){
-                    builder.buildAttribute(getDefaultValue(foreignAttributes), attribute.getQName(), attribute.getLocation());
-                }else{
-                    builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
-                }                
+                builder.buildAttribute(attribute.getDefaultValueRecordIndex(), attribute.getRecordIndex(), attribute.getDocumentIndexedData());                
             }else{
-                builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
+                builder.buildAttribute(DocumentIndexedData.NO_RECORD, attribute.getRecordIndex(), attribute.getDocumentIndexedData());
             }
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
@@ -875,7 +872,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         notAllowedChild = oldNotAllowedChild;
         
 		if(childrenCount == 0){
-            builder.buildText("default text", attribute.getLocation());            
+            builder.buildText(attribute.getRecordIndex(), attribute.getDocumentIndexedData(), true);            
         }else if(emptyCount == childrenCount){
 			/*
 			Replaced with a limitation placed in restrictions control.
@@ -888,7 +885,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			String ns  = namespaceInheritanceHandler.getNsURI(attribute);
 			if(ns == null) ns = "";
 			builder.buildValue(ns, null, null, "value", attribute.getLocation());*/
-            builder.buildEmpty("empty", emptyComponent.getLocation());
+            builder.buildEmpty(emptyComponent.getRecordIndex(), emptyComponent.getDocumentIndexedData(), true);
             emptyChild = false;
 		}				
 		
@@ -916,18 +913,13 @@ abstract class Simplifier implements SimplifyingVisitor{
             +"Illegal ns of attribute name of element <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+".";
             errorDispatcher.error(new SAXParseException(message, null));
         } 		
-		builder.buildName(ns, localPart, "name", attribute.getLocation());
+		builder.buildName(ns, localPart, attribute.getRecordIndex(), attribute.getDocumentIndexedData(), true);
 		
 		builder.endLevel();
 		if(level1AttributeDefaultValue){
-            AttributeInfo[] foreignAttributes = attribute.getForeignAttributes();
-            if(foreignAttributes != null){
-                builder.buildAttribute(getDefaultValue(foreignAttributes), attribute.getQName(), attribute.getLocation());
-            }else{
-                builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
-            }                
+            builder.buildAttribute(attribute.getDefaultValueRecordIndex(), attribute.getRecordIndex(), attribute.getDocumentIndexedData());                
         }else{
-            builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
+            builder.buildAttribute(DocumentIndexedData.NO_RECORD, attribute.getRecordIndex(), attribute.getDocumentIndexedData());
         }
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
@@ -937,7 +929,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 	public void visit(ChoicePattern choice)  throws SAXException{
 		ParsedComponent[] children = choice.getChildren();	
 		if(children == null){
-			builder.buildChoicePattern(choice.getQName(), choice.getLocation());
+			builder.buildChoicePattern(choice.getRecordIndex(), choice.getDocumentIndexedData(), false);
             patternChild = true;
 			return;
 		}
@@ -994,10 +986,10 @@ abstract class Simplifier implements SimplifyingVisitor{
 			return;
 		}
 		if(emptyCount > 0){
-			builder.buildEmpty("empty", emptyComponent.getLocation());
+			builder.buildEmpty(emptyComponent.getRecordIndex(), emptyComponent.getDocumentIndexedData(), true);
 		}
 		builder.endLevel();
-		builder.buildChoicePattern(choice.getQName(), choice.getLocation());
+		builder.buildChoicePattern(choice.getRecordIndex(), choice.getDocumentIndexedData(), false);
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -1007,7 +999,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = interleave.getChildren();
 		
 		if(children == null) {
-			builder.buildInterleave(interleave.getQName(), interleave.getLocation());
+			builder.buildInterleave(interleave.getRecordIndex(), interleave.getDocumentIndexedData());
             patternChild = true;			
 			return;
 		}
@@ -1061,7 +1053,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}	
 		
 		builder.endLevel();
-		builder.buildInterleave(interleave.getQName(), interleave.getLocation());
+		builder.buildInterleave(interleave.getRecordIndex(), interleave.getDocumentIndexedData());
 		
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -1071,7 +1063,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = group.getChildren();
 		
 		if(children == null) {
-			builder.buildGroup(group.getQName(), group.getLocation());
+			builder.buildGroup(group.getRecordIndex(), group.getDocumentIndexedData(), false);
             patternChild = true;			
 			return;
 		}
@@ -1125,7 +1117,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}
 		
 		builder.endLevel();
-		builder.buildGroup(group.getQName(), group.getLocation());
+		builder.buildGroup(group.getRecordIndex(), group.getDocumentIndexedData(), false);
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -1135,7 +1127,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = zeroOrMore.getChildren();
 		
 		if(children == null) {
-			builder.buildZeroOrMore(zeroOrMore.getQName(), zeroOrMore.getLocation());
+			builder.buildZeroOrMore(zeroOrMore.getRecordIndex(), zeroOrMore.getDocumentIndexedData());
             patternChild = true;			
 			return;
 		}
@@ -1190,10 +1182,10 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}
 		
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup("group added by zerOrMore simplification", zeroOrMore.getLocation());
+			builder.buildReplacementGroup(zeroOrMore.getRecordIndex(), zeroOrMore.getDocumentIndexedData(), true);
 		}	
 		builder.endLevel();
-		builder.buildZeroOrMore(zeroOrMore.getQName(), zeroOrMore.getLocation());
+		builder.buildZeroOrMore(zeroOrMore.getRecordIndex(), zeroOrMore.getDocumentIndexedData());
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -1203,7 +1195,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = oneOrMore.getChildren();
 		
 		if(children == null) {
-			builder.buildOneOrMore(oneOrMore.getQName(), oneOrMore.getLocation());
+			builder.buildOneOrMore(oneOrMore.getRecordIndex(), oneOrMore.getDocumentIndexedData());
             patternChild = true;			
 			return;
 		}
@@ -1257,10 +1249,10 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}
 		
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup("group added by oneOrMore simplification", oneOrMore.getLocation());
+			builder.buildReplacementGroup(oneOrMore.getRecordIndex(), oneOrMore.getDocumentIndexedData(), true);
 		}		
 		builder.endLevel();
-		builder.buildOneOrMore(oneOrMore.getQName(), oneOrMore.getLocation());
+		builder.buildOneOrMore(oneOrMore.getRecordIndex(), oneOrMore.getDocumentIndexedData());
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -1271,7 +1263,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = optional.getChildren();
 		
 		if(children == null) {
-			builder.buildOptional(optional.getQName(), optional.getLocation());
+			builder.buildOptional(optional.getRecordIndex(), optional.getDocumentIndexedData());
             patternChild = true;			
 			return;
 		}
@@ -1327,10 +1319,10 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}
 		
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup("group added by optional simplification", optional.getLocation());
+			builder.buildReplacementGroup(optional.getRecordIndex(), optional.getDocumentIndexedData(), true);
 		}		
 		builder.endLevel();
-		builder.buildOptional(optional.getQName(), optional.getLocation());
+		builder.buildOptional(optional.getRecordIndex(), optional.getDocumentIndexedData());
 		    
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -1340,7 +1332,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = list.getChildren();
 		
 		if(children == null) {
-			builder.buildListPattern(list.getQName(), list.getLocation());
+			builder.buildListPattern(list.getRecordIndex(), list.getDocumentIndexedData());
             patternChild = true;			
 			return;
 		}
@@ -1394,10 +1386,10 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}
 		
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup("group added by list simplification", list.getLocation());
+			builder.buildReplacementGroup(list.getRecordIndex(), list.getDocumentIndexedData(), true);
 		}		
 		builder.endLevel();
-		builder.buildListPattern(list.getQName(), list.getLocation());
+		builder.buildListPattern(list.getRecordIndex(), list.getDocumentIndexedData());
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -1407,7 +1399,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = mixed.getChildren();
 		
 		if(children == null) {
-			builder.buildMixed(mixed.getQName(), mixed.getLocation());
+			builder.buildMixed(mixed.getRecordIndex(), mixed.getDocumentIndexedData());
             patternChild = true;			
 			return;
 		}
@@ -1461,10 +1453,10 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}
 		
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup("group added by mixed simplification", mixed.getLocation());
+			builder.buildReplacementGroup(mixed.getRecordIndex(), mixed.getDocumentIndexedData(), true);
 		}		
 		builder.endLevel();
-		builder.buildMixed(mixed.getQName(), mixed.getLocation());
+		builder.buildMixed(mixed.getRecordIndex(), mixed.getDocumentIndexedData());
 		
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -1478,7 +1470,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 	}
 	
 	public void visit(Text text){		
-		builder.buildText(text.getQName(), text.getLocation());
+		builder.buildText(text.getRecordIndex(), text.getDocumentIndexedData(), false);
         patternChild = true;
 	}
 	public void visit(NotAllowed notAllowed){
@@ -1491,7 +1483,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			// ? error ?
 			// or was that reported already
 			// YES it was
-            builder.buildRef(-1, externalRef.getQName(), externalRef.getLocation());
+            builder.buildRef(-1, externalRef.getRecordIndex(), externalRef.getDocumentIndexedData());
             patternChild = true;
 			return;
 		}
@@ -1504,7 +1496,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int index = indexes.get(docTopPattern);
 		if(index != indexes.getNullValue()){			
 			if(referencePath.contains(index)){
-				builder.buildRef(index, externalRef.getQName(), externalRef.getLocation());				
+				builder.buildRef(index, externalRef.getRecordIndex(), externalRef.getDocumentIndexedData());				
 				recursionModel.add(builder.getCurrentPattern());
 				if(!recursionModel.isRecursiveDefinition(index)) recursionModel.add(index);
                 if(prefixMapping != null) endXmlnsContext(prefixMapping);
@@ -1520,7 +1512,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                 attributeContext = oldAttributeContext;
                 return;
             }
-			builder.buildRef(index, externalRef.getQName(), externalRef.getLocation());
+			builder.buildRef(index, externalRef.getRecordIndex(), externalRef.getDocumentIndexedData());
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
@@ -1553,7 +1545,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             attributeContext = oldAttributeContext;
             return;
         }
-		builder.buildRef(index, externalRef.getQName(), externalRef.getLocation());
+		builder.buildRef(index, externalRef.getRecordIndex(), externalRef.getDocumentIndexedData());
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
         attributeContext = oldAttributeContext;		
@@ -1568,7 +1560,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 				+"No correspoding definition was found for element <"+ref.getQName()+"> at "+ref.getLocation(restrictToFileName)+".";
 			
 			errorDispatcher.error(new SAXParseException(message, null));
-            builder.buildRef(-1, ref.getQName(), ref.getLocation());
+            builder.buildRef(-1, ref.getRecordIndex(), ref.getDocumentIndexedData());
             patternChild = true;
 			return;
 		}
@@ -1583,7 +1575,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		
 		if(index != indexes.getNullValue()){
 			if(referencePath.contains(index)){
-				builder.buildRef(index, ref.getQName(), ref.getLocation());
+				builder.buildRef(index, ref.getRecordIndex(), ref.getDocumentIndexedData());
 				recursionModel.add(builder.getCurrentPattern());
 				if(!recursionModel.isRecursiveDefinition(index)) recursionModel.add(index);
                 if(prefixMapping != null) endXmlnsContext(prefixMapping);
@@ -1599,7 +1591,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                 attributeContext = oldAttributeContext;
                 return;
             }
-			builder.buildRef(index, ref.getQName(), ref.getLocation());
+			builder.buildRef(index, ref.getRecordIndex(), ref.getDocumentIndexedData());
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
@@ -1657,7 +1649,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             attributeContext = oldAttributeContext;
             return;
         }
-		builder.buildRef(index, ref.getQName(), ref.getLocation());	
+		builder.buildRef(index, ref.getRecordIndex(), ref.getDocumentIndexedData());	
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
         attributeContext = oldAttributeContext;
@@ -1671,7 +1663,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			String message = "Simplification 4.18 error. "
 				+"No correspoding definition was found for element <"+parentRef.getQName()+"> at "+parentRef.getLocation(restrictToFileName)+".";
 			errorDispatcher.error(new SAXParseException(message, null));
-            builder.buildRef(-1, parentRef.getQName(), parentRef.getLocation());
+            builder.buildRef(-1, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
             patternChild = true;
 			return;
 		}
@@ -1685,7 +1677,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int index = indexes.get(definitions);
 		if(index != indexes.getNullValue()){			
 			if(referencePath.contains(index)){
-				builder.buildRef(index, parentRef.getQName(), parentRef.getLocation());
+				builder.buildRef(index, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
 				recursionModel.add(builder.getCurrentPattern());
 				if(!recursionModel.isRecursiveDefinition(index)) recursionModel.add(index);
                 if(prefixMapping != null) endXmlnsContext(prefixMapping);
@@ -1701,7 +1693,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                 attributeContext = oldAttributeContext;
                 return;
             }
-			builder.buildRef(index, parentRef.getQName(), parentRef.getLocation());
+			builder.buildRef(index, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
@@ -1758,7 +1750,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             attributeContext = oldAttributeContext;
             return;
         }
-		builder.buildRef(index, parentRef.getQName(), parentRef.getLocation());
+		builder.buildRef(index, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
         attributeContext = oldAttributeContext;		
@@ -1789,7 +1781,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                 type = Constants.TOKEN_DT;				
                 datatypeLibrary = asciiDlDatatypeLibrary.get(Constants.NATIVE_DATATYPE_LIBRARY);
 			}else{
-				builder.buildValue(ns, null, value.getCharacterContent(), value.getQName(), value.getLocation());
+				builder.buildValue(ns, null, value.getCharacterContent(), value.getRecordIndex(), value.getDocumentIndexedData());
 				return;
 			}
 		}
@@ -1809,8 +1801,8 @@ abstract class Simplifier implements SimplifyingVisitor{
 				+", datatype library \""+value.getDatatypeLibrary()+"\". "
 				+de.getMessage();
 				errorDispatcher.error(new SAXParseException(message, null));
-		}		
-		builder.buildValue(ns, datatype, value.getCharacterContent(), value.getQName(), value.getLocation());
+		}	
+		builder.buildValue(ns, datatype, value.getCharacterContent(), value.getRecordIndex(), value.getDocumentIndexedData());
 	}
 	
 	public void visit(Data data)  throws SAXException{
@@ -1865,7 +1857,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 				type = Constants.TOKEN_DT;
 				datatypeLibrary = asciiDlDatatypeLibrary.get(Constants.NATIVE_DATATYPE_LIBRARY);
 			}else{
-				builder.buildData(null, data.getQName(), data.getLocation());
+				builder.buildData(null, data.getRecordIndex(), data.getDocumentIndexedData());
 				return;
 			}
 		}		
@@ -1885,7 +1877,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 				+de.getMessage();
 				errorDispatcher.error(new SAXParseException(message, null));
 		}
-		builder.buildData(datatype, data.getQName(), data.getLocation());
+		builder.buildData(datatype, data.getRecordIndex(), data.getDocumentIndexedData());
 	}
     
     private void handleDataBuild(Data data, String asciiDL, String type, Param[] params) throws SAXException{
@@ -1897,7 +1889,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 				type = Constants.TOKEN_DT;
 				datatypeLibrary = asciiDlDatatypeLibrary.get(Constants.NATIVE_DATATYPE_LIBRARY);
 			}else{
-				builder.buildData(null, data.getQName(), data.getLocation());
+				builder.buildData(null, data.getRecordIndex(), data.getDocumentIndexedData());
 				return;
 			}
 		}       
@@ -1972,7 +1964,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                     errorDispatcher.error(new SAXParseException(message, null));
             }
         }
-		builder.buildData(datatype, data.getQName(), data.getLocation());
+		builder.buildData(datatype, data.getRecordIndex(), data.getDocumentIndexedData());
 	}
 
 	
@@ -1986,7 +1978,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			errorDispatcher.error(new SAXParseException(message, null));            
             simplifyUnreachableDefines(grammar, start);
             if(grammar.getParent() != null){
-                builder.buildGrammar(grammar.getQName(), grammar.getLocation());
+                builder.buildGrammar(grammar.getRecordIndex(), grammar.getDocumentIndexedData());
                 patternChild = true;
             }            
 			return;
@@ -2050,7 +2042,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			builder.startLevel();
 			builder.addAllToCurrentLevel(topPattern);
 			builder.endLevel();
-			builder.buildGrammar(grammar.getQName(), grammar.getLocation());
+			builder.buildGrammar(grammar.getRecordIndex(), grammar.getDocumentIndexedData());
             
             currentGrammar = previousGrammars.pop();
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
@@ -2119,7 +2111,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = dummy.getChildren();
 		
 		if(children == null) {
-			builder.buildDummy(dummy.getQName(), dummy.getLocation());
+			builder.buildDummy(dummy.getRecordIndex(), dummy.getDocumentIndexedData());
             patternChild = true;			
 			return;
 		}
@@ -2173,7 +2165,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}		
 				
 		builder.endLevel();
-		builder.buildDummy(dummy.getQName(), dummy.getLocation());
+		builder.buildDummy(dummy.getRecordIndex(), dummy.getDocumentIndexedData());
 		
 		notAllowedChild = false;
 		emptyChild = false;
@@ -2257,7 +2249,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         }
     }
 
-    String getDefaultValue(AttributeInfo[] foreignAttributes){
+    /*String getDefaultValue(AttributeInfo[] foreignAttributes){
         for(AttributeInfo attributeInfo : foreignAttributes){
             String uri = attributeInfo.getNamespaceURI(); 
             String ln = attributeInfo.getLocalName();
@@ -2267,5 +2259,5 @@ abstract class Simplifier implements SimplifyingVisitor{
         }
     
         return null;
-    }	
+    }*/	
 }

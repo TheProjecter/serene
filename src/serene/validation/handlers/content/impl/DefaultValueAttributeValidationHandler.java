@@ -75,7 +75,7 @@ class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler
         return null;
     }
     
-	public void handleAttribute(String value) throws SAXException{
+	public void handleAttribute(String value) throws SAXException{	    
 		validateValue(value);
 	}	
     

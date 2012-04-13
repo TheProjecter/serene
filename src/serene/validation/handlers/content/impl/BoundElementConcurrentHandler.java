@@ -18,6 +18,7 @@ package serene.validation.handlers.content.impl;
 
 import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -31,8 +32,8 @@ import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.content.BoundElementHandler;
 
 import serene.bind.BindingModel;
-import serene.bind.ValidatorQueuePool;
-import serene.bind.Queue;
+import serene.bind.util.QueuePool;
+import serene.bind.util.Queue;
 
 
 import sereneWrite.MessageWriter;
@@ -40,14 +41,20 @@ import sereneWrite.MessageWriter;
 class BoundElementConcurrentHandler extends ElementConcurrentHandler implements BoundElementHandler{
 	BindingModel bindingModel;
 	Queue queue;
-	ValidatorQueuePool queuePool;
+	QueuePool queuePool;
 	int queueStartEntry;
+	int queueEndEntry;
+
+	boolean mayRecycleCandidateQueues;
 	
 	BoundElementConcurrentHandler(MessageWriter debugWriter){
 		super(debugWriter);		
+		
+		queueStartEntry = -1;
+	    queueEndEntry = -1;
 	}
 	
-	void init(List<AElement> candidateDefinitions,  BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, ValidatorQueuePool queuePool){		
+	void init(List<AElement> candidateDefinitions,  BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
 		this.parent = parent;
 		this.candidateDefinitions = candidateDefinitions;
         localCandidatesConflictErrorHandler.init(activeInputDescriptor); 
@@ -55,8 +62,9 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		this.bindingModel = bindingModel;
 		this.queue = queue;
 		this.queuePool = queuePool;
-		queueStartEntry = queue.newRecord();
 		
+		startElementBinding();
+				
 		for(int i = 0; i < candidateDefinitions.size(); i++){			    
 			BoundElementValidationHandler candidate = pool.getElementValidationHandler(candidateDefinitions.get(i), parent, bindingModel, queuePool.getQueue(), queuePool);
 			candidate.setCandidateIndex(i);
@@ -66,16 +74,20 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 			candidates.add(candidate);	
 		}
         localCandidatesConflictErrorHandler.setCandidates(candidateDefinitions);
-        candidatesConflictHandler.init(candidateDefinitions.size());		
+        candidatesConflictHandler.init(candidateDefinitions.size());	
+        
+        mayRecycleCandidateQueues = true;
 	}
 	
 	public void recycle(){
+	    if(mayRecycleCandidateQueues)recycleCandidateQueues();
+	    
 		for(ElementValidationHandler candidate : candidates){
 			candidate.recycle();
 		}
 		candidates.clear();	
 		candidateDefinitions.clear();		
-		candidatesConflictHandler.reset();
+		candidatesConflictHandler.clear();
         localCandidatesConflictErrorHandler.clear(false);
 		resetContextErrorHandlerManager();
 		
@@ -85,10 +97,25 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		queue = null;
 		queuePool = null;
 		
+		queueStartEntry = -1;
+	    queueEndEntry = -1;
+	    
 		pool.recycle(this);
 	}
 	
-	public void qNameBinding(){
+	private void recycleCandidateQueues(){
+	    for(int i = 0; i < candidates.size(); i++){				
+			Queue qq = ((BoundElementValidationHandler)candidates.get(i)).getQueue();
+			qq.recycle();
+		}
+	}
+	
+	public void startElementBinding(){	    
+	    queueStartEntry = queue.addStartElement(null);	
+		// Start record with null task, just to create the entry and get the index.
+	}
+	
+	/*public void qNameBinding(){
 		throw new UnsupportedOperationException();
 	}	
 	public void startLocationBinding(){
@@ -132,10 +159,85 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 				queue.closeReservation(queueStartEntry, q);
 			}
 		}		
+	}*/
+	
+	
+	public void characterContentBinding(String cc){
+		// delegated to every qualified candidate by the fact that 
+		// the characterContentBinding is done there and so is the binding  
+		throw new UnsupportedOperationException();
 	}
 	
-	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{			
-        
+	public void endElementBinding(){
+		//delegate binding to every qualifed candidate
+		//interpret the conflict resolution:
+		//		resolved - reserve enough places and add the winner queue
+		// 		ambiguu > 0 - reserve enough places in the queue, 
+		//						validate in context will delegate the queue 
+		//						addition to the InternalConflictResolver
+		// REVIEWED
+		// every candidate perfomes binding in the candidate queue
+		// if conflict is resolved copy the winner's queue in this queue
+		// the rest of the processing will be done during validateInContext
+		
+		/*int candidatesCount = candidates.size();
+		int qualified = candidatesCount-candidatesConflictHandler.getDisqualifiedCount();
+		if(qualified == 0){
+			for(int i = 0; i < candidatesCount; i++){
+				((BoundElementValidationHandler)candidates.get(i)).endElementBinding();
+			}			
+			BoundElementValidationHandler cc = (BoundElementValidationHandler)candidates.get(0);
+			Queue q = cc.getQueue();
+			int size = q.getSize();
+			queue.registerReservation(queueStartEntry, size);
+			queueEndEntry = queueStartEntry + size -1;
+			
+		}else{
+			for(int i = 0; i < candidatesCount; i++){
+				 ((BoundElementValidationHandler)candidates.get(i)).endElementBinding();
+			}
+			int qual = candidatesConflictHandler.getNextQualified(0);
+			BoundElementValidationHandler cc = (BoundElementValidationHandler)candidates.get(qual);
+			Queue q = cc.getQueue();
+			int size = q.getSize();
+			queue.registerReservation(queueStartEntry, size);
+			queueEndEntry = queueStartEntry + size -1;
+			if(qualified == 1){
+				queue.useReservation(queueStartEntry, q, 0, size-1);
+			}			
+		}*/	
+		
+		for(int i = 0; i < candidates.size(); i++){
+            ((BoundElementValidationHandler)candidates.get(i)).endElementBinding();
+        }
+        if(getConflictResolutionId() == MessageReporter.RESOLVED){
+            int qual = candidatesConflictHandler.getNextQualified(0);
+            BoundElementValidationHandler cc = (BoundElementValidationHandler)candidates.get(qual);
+			Queue q = cc.getQueue();
+			int size = q.getSize();
+			queue.registerReservation(queueStartEntry, size);
+			queueEndEntry = queueStartEntry + size -1;
+			queue.useReservation(queueStartEntry, q, 0, size-1);
+        }
+	}
+	
+	
+	public Queue getQueue(){
+	    return queue;
+	}
+    public int getQueueStartEntryIndex(){
+        return queueStartEntry;
+    }
+    public int getQueueEndEntryIndex(){
+        return queueEndEntry;
+    }
+    public void queuecoppy(Queue qq, int sei, int eei){
+        queue.registerReservation(queueStartEntry, eei-sei+1);
+        queueEndEntry = queueStartEntry + eei - sei;
+        queue.useReservation(queueStartEntry, qq, sei, eei);
+    }
+	
+	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
 		BoundElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, localCandidatesConflictErrorHandler, this, bindingModel,queue, queuePool);					
 		for(int i = 0; i < candidates.size(); i++){			
 			ComparableEEH candidate = candidates.get(i);
@@ -157,32 +259,76 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 	public void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{	    		
 		validateContext();	
 		reportContextErrors(restrictToFileName, locator);	
-		elementTasksBinding();			
+		/*elementTasksBinding();*/
+		endElementBinding();
 		validateInContext();		
 	}	
 		
 		
 	void validateInContext(){
-	    int conflictResolutionIndex = contextErrorHandler[contextErrorHandlerIndex] == null ? getConflictResolutionId() : contextErrorHandler[contextErrorHandlerIndex].getConflictResolutionId();
+	    int conflictResolutionIndex = getConflictResolutionId();
+		if(conflictResolutionIndex == MessageReporter.UNRESOLVED){
+			// Shift all with errors, hope the parent context disqualifies all but 1
+			// Why shift, they all have errors already??? 
+			// Maybe the parent actually expects one of them and not shifting 
+			// results in a fake error.	
+			prepareQueueForConflictHandling();
+			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter(), bindingModel, queue, queueStartEntry, queueEndEntry, mapCandidateDefinitionToQueue());
+			mayRecycleCandidateQueues = false;
+		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
+			AElement qElement = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
+			parent.addChildElement(qElement);
+		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
+			// TODO Maybe a warning
+			// Shift all without errors, hope the parent conflict disqualifies all but one
+			prepareQueueForConflictHandling();
+			ConflictMessageReporter cmr = null;
+			if(contextErrorHandler[contextErrorHandlerIndex] != null) cmr = contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();
+			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, candidatesConflictHandler, cmr, bindingModel, queue, queueStartEntry, queueEndEntry, mapCandidateDefinitionToQueue());
+			mayRecycleCandidateQueues = false;
+		}
+	}
+	
+	private void prepareQueueForConflictHandling(){
+	    BoundElementValidationHandler cc = (BoundElementValidationHandler)candidates.get(0);// they must all have the same length and that's what matters here
+	    Queue q = cc.getQueue();
+        int size = q.getSize();
+        queue.registerReservation(queueStartEntry, size);
+        queueEndEntry = queueStartEntry + size -1;
+	}
+	
+	void validateInContext(BoundElementConcurrentHandler reper){
+	    int conflictResolutionIndex = getConflictResolutionId();
+	    int reperQueueEndEntry = reper.getQueueEndEntryIndex();
 		if(conflictResolutionIndex == MessageReporter.UNRESOLVED){
 			// Shift all with errors, hope the parent context disqualifies all but 1
 			// Why shift, they all have errors already??? 
 			// Maybe the parent actually expects one of them and not shifting 
 			// results in a fake error.			
-			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter(), bindingModel, queue, queueStartEntry, mapCandidateToQueue());
+			prepareQueueForConflictHandling(reperQueueEndEntry);
+			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, reper.getConflictMessageReporter(), bindingModel, queue, queueStartEntry, queueEndEntry, mapCandidateDefinitionToQueue());
+			mayRecycleCandidateQueues = false;
 		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
 			AElement qElement = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
-			parent.addChildElement(qElement);			
+			parent.addChildElement(qElement);
 		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
 			// TODO Maybe a warning
-			// Shift all without errors, hope the parent conflict disqualifies all but one	
-			ConflictMessageReporter cmr = null;
-			if(contextErrorHandler[contextErrorHandlerIndex] != null) cmr = contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();
-			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, candidatesConflictHandler, cmr, bindingModel, queue, queueStartEntry, mapCandidateToQueue());
+			// Shift all without errors, hope the parent conflict disqualifies all but one
+			prepareQueueForConflictHandling(reperQueueEndEntry);
+			ConflictMessageReporter cmr = reper.getConflictMessageReporter();
+			/*if(contextErrorHandler[contextErrorHandlerIndex] != null) cmr = contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();*/
+			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, candidatesConflictHandler, cmr, bindingModel, queue, queueStartEntry, queueEndEntry, mapCandidateDefinitionToQueue());
+			mayRecycleCandidateQueues = false;
 		}
 	}
 	
-	private HashMap<AElement, Queue> mapCandidateToQueue(){
+	private void prepareQueueForConflictHandling(int reperQueueEndEntry){
+        int size = reperQueueEndEntry - queueStartEntry + 1;
+        queue.registerReservation(queueStartEntry, size);
+        queueEndEntry = reperQueueEndEntry;
+	}
+	
+	private HashMap<AElement, Queue> mapCandidateDefinitionToQueue(){
 		HashMap<AElement, Queue> map = new HashMap<AElement, Queue>();
 		for(int i = 0; i < candidates.size(); i++){
 			//if(!candidatesConflictHandler.isDisqualified(i)){				
@@ -192,6 +338,7 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		return map;
 	}
 	
+		
 	public String toString(){
 		String s = "[";
 		for(int i = 0; i < candidates.size(); i++){
