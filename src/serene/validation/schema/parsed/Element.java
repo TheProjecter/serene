@@ -20,8 +20,6 @@ import java.util.Map;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 abstract class Element extends MultipleChildrenPattern{
 	
 	Element(/*Map<String, String> prefixMapping,*/ 
@@ -30,9 +28,8 @@ abstract class Element extends MultipleChildrenPattern{
 	            int datatypeLibrary, 
 	            ParsedComponent[] children,
 	            int recordIndex,
-                DocumentIndexedData documentIndexedData,
-				MessageWriter debugWriter){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData, debugWriter);
+                DocumentIndexedData documentIndexedData){		
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
 	}		
 		
 	public String toString(){

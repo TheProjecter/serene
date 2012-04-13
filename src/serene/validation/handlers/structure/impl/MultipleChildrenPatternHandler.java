@@ -28,8 +28,6 @@ import serene.validation.handlers.stack.StackHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import sereneWrite.MessageWriter;
-
 // TODO
 // Cosider getting rid of the AbstractSaturatedContent subclasses.
 // Replace with a on the fly computing of saturation in the isSaturated()
@@ -72,8 +70,8 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 	protected ContentHandler unsatisfiedExcessiveContent;
 	protected ContentHandler satisfiedExcessiveContent;
 	
-	public MultipleChildrenPatternHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public MultipleChildrenPatternHandler(){
+		super();
 		size  = 5;		
 		
 		childParticleHandlers = new ParticleHandler[size];

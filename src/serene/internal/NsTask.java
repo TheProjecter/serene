@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class NsTask extends RNGParseAttributeTask{
-	NsTask(MessageWriter debugWriter){
-		super(debugWriter);
+	NsTask(){
+		super();
 	}
 	public void execute(){
 		builder.setNs(context.getAttributeInputRecordIndex());		

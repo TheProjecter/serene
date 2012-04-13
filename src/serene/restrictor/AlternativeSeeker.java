@@ -55,8 +55,6 @@ import serene.validation.schema.simplified.RecursionModel;
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
-import sereneWrite.MessageWriter;
-
 class AlternativeSeeker implements SimplifiedComponentVisitor{
 	RecursionModel recursionModel;
 	ArrayList<ArrayList<SRef>> definitionBlindLoops;
@@ -69,10 +67,7 @@ class AlternativeSeeker implements SimplifiedComponentVisitor{
 	SRef testRecursion;
 	int testIndex;
 	
-	MessageWriter debugWriter;
-	
-	AlternativeSeeker(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	AlternativeSeeker(){
 	}
 	
 	void init(RecursionModel recursionModel,

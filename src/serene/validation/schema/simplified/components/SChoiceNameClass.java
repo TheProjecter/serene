@@ -23,16 +23,13 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class SChoiceNameClass extends SNameClass{	
 	SNameClass[] children;
 	
 	public SChoiceNameClass(SNameClass[] children,
 						int recordIndex, 
-						DocumentIndexedData documentIndexedData,  
-						MessageWriter debugWriter){
-		super(recordIndex, documentIndexedData, debugWriter);
+						DocumentIndexedData documentIndexedData){
+		super(recordIndex, documentIndexedData);
 		asParent(children);
 	}
 	

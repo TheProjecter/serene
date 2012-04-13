@@ -38,8 +38,6 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
-import sereneWrite.MessageWriter;
-
 /**
 * Handles errors that occur in the context of well determined elements. The error
 * data is stored in a ContextMessageHandler and is reported to the ErrorDispatcher 
@@ -48,10 +46,10 @@ import sereneWrite.MessageWriter;
 public class ValidationErrorHandler extends AbstractContextErrorHandler{
     ContextMessageHandler messageHandler;
     boolean isHandled;
-	public ValidationErrorHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public ValidationErrorHandler(){
+		super();
 		id = ContextErrorHandlerManager.VALIDATION;
-        messageHandler = new ContextMessageHandler(debugWriter);        
+        messageHandler = new ContextMessageHandler();        
 	}
 	
 	void init(ValidatorErrorHandlerPool pool, ErrorDispatcher errorDispatcher, ActiveInputDescriptor activeInputDescriptor){

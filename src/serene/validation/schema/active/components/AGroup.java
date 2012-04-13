@@ -44,8 +44,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public class AGroup extends MultipleChildrenAPattern implements ACompositor{	
 	
 	int satisfactionIndicator;
@@ -57,9 +55,8 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 	public AGroup(APattern[] children,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SGroup sgroup, 
-				MessageWriter debugWriter){	
-		super(children, ruleHandlerPool, debugWriter);
+				SGroup sgroup){	
+		super(children, ruleHandlerPool);
 		this.stackHandlerPool = stackHandlerPool;
 		this.sgroup = sgroup;
 	}

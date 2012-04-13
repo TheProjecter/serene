@@ -19,12 +19,10 @@ package serene.validation.handlers.content.impl;
 
 import serene.validation.handlers.content.AttributeEventHandler;
 
-import sereneWrite.MessageWriter;
-
 abstract class ComparableAEH extends AbstractAEH{
 
-	ComparableAEH(MessageWriter debugWriter){
-		super(debugWriter);
+	ComparableAEH(){
+		super();
 	}
 		
     abstract boolean functionalEquivalent(ComparableAEH other);

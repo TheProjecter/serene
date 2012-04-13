@@ -20,28 +20,25 @@ package serene.validation.schema.parsed.util;
 import java.util.Arrays;
 
 import serene.validation.schema.parsed.ParsedComponent;
-import sereneWrite.MessageWriter;
 
 class LevelIntermediary extends Level{
 	Level parent;	
-	LevelIntermediary(Level parent,
-		 				MessageWriter debugWriter){		
-		super(debugWriter);
+	LevelIntermediary(Level parent){		
+		super();
 		this.parent = parent;
-		child = new LevelBottom(this, debugWriter);
+		child = new LevelBottom(this);
 	}
 	
 	LevelIntermediary(int pcIndex,
 						int pcSize,
 						ParsedComponent[] parsedComponents,
-						Level parent,
-						MessageWriter debugWriter){		
-		super( debugWriter);
+						Level parent){		
+		super();
 		this.parent = parent;
 		this.pcIndex = pcIndex;
 		this.pcSize = pcSize;	
 		this.parsedComponents = parsedComponents;
-		child = new LevelBottom(this, debugWriter);
+		child = new LevelBottom(this);
 	}
 	
 	public boolean isTopLevel(){

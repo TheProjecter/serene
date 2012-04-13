@@ -35,15 +35,12 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerPattern{
     SChoicePattern schoicePattern;
 	public AChoicePattern(APattern[] children,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SChoicePattern schoicePattern, 
-				MessageWriter debugWriter){		
-		super(children, ruleHandlerPool, debugWriter);
+				SChoicePattern schoicePattern){		
+		super(children, ruleHandlerPool);
 		this.schoicePattern = schoicePattern;
 	}
 

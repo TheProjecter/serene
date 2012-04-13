@@ -46,11 +46,7 @@ import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCatcher{	
-    
-	MessageWriter debugWriter;
     
     /**
     * It contains, for every error type, a mapping of reported error functional 
@@ -101,8 +97,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     
     boolean isHandled;
     
-	public CandidatesConflictErrorHandler(ExternalConflictHandler conflictHandler, MessageWriter debugWriter){
-        this.debugWriter = debugWriter;        
+	public CandidatesConflictErrorHandler(ExternalConflictHandler conflictHandler){
         this.conflictHandler = conflictHandler;
         
         errorIds = new IntList();
@@ -125,7 +120,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 	}	       
     
     public void init(ActiveInputDescriptor activeInputDescriptor){
-        localMessageHandler = new CandidatesConflictMessageHandler(debugWriter);   
+        localMessageHandler = new CandidatesConflictMessageHandler();   
         localMessageHandler.init(activeInputDescriptor);
         isHandled = false;
     }
@@ -155,7 +150,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
                 if(errorId == MISSING_CONTENT 
                             && errorCandidates[i].length > 1 
                         && missingContentCandidateIndexes.size() == candidatesCount ){
-                    if(missingContentAnalyser == null) missingContentAnalyser = new MissingContentAnalyser(debugWriter);
+                    if(missingContentAnalyser == null) missingContentAnalyser = new MissingContentAnalyser();
                     BitSet partiallyCommon = missingContentAnalyser.getPartiallyCommon(missingContentDefinitions);
                     
                     if(partiallyCommon.isEmpty()){

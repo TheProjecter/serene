@@ -33,9 +33,6 @@ import serene.validation.handlers.conflict.InternalConflictResolver;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-
-import sereneWrite.MessageWriter;
-
 public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 	final int GOOD_ORDER = -1;	
 	final int CURRENT_MISPLACED = 0;
@@ -60,8 +57,8 @@ public class GroupMaximalReduceHandler extends MCMaximalReduceHandler{
 	
 	GroupMaximalReduceHandler original;
 	
-	GroupMaximalReduceHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	GroupMaximalReduceHandler(){
+		super();
 	
 		childRecordIndex = -1;
 		childRecordInitialSize = 10;

@@ -25,8 +25,6 @@ import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 public abstract class AbstractContextErrorHandler implements Reusable, ContextErrorHandler{
 	
 	ContextMessageHandler messageHandler;
@@ -36,10 +34,7 @@ public abstract class AbstractContextErrorHandler implements Reusable, ContextEr
 	
 	ActiveInputDescriptor activeInputDescriptor;
 	int id;
-	MessageWriter debugWriter;
-	
-	AbstractContextErrorHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;				
+	AbstractContextErrorHandler(){				
 	}
 	
 	void init(ValidatorErrorHandlerPool pool, ErrorDispatcher errorDispatcher, ActiveInputDescriptor activeInputDescriptor){

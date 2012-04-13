@@ -42,17 +42,11 @@ import serene.validation.schema.active.components.AChoiceNameClass;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
 
-import sereneWrite.MessageWriter;
-
-
 public class ChildFinder implements ActiveComponentVisitor{	
 	APattern parent;
 	APattern child;
-	
-	MessageWriter debugWriter;
 
-	public ChildFinder(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;				
+	public ChildFinder(){				
 	}
 	
 	

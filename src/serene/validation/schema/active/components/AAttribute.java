@@ -45,22 +45,18 @@ import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.bind.util.Queue;
 
-import sereneWrite.MessageWriter;
-
 public class AAttribute extends MarkupAPattern  implements NamedActiveTypeItem{
     protected SAttribute sattribute;	
 	public AAttribute(int index,
 				ActiveGrammarModel grammarModel,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SAttribute sattribute, 
-				MessageWriter debugWriter){		
+				SAttribute sattribute){		
 		super(index,
 				null, 
 				grammarModel,  
 				stackHandlerPool, 
-				ruleHandlerPool, 
-				debugWriter);		
+				ruleHandlerPool);		
 		this.sattribute = sattribute;
 	}	
 	

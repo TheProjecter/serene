@@ -22,8 +22,6 @@ import java.util.HashMap;
 
 import serene.validation.schema.parsed.Grammar;
 
-import sereneWrite.MessageWriter;
-
 public class SchemaDefinitions{	
 	private HashMap<Grammar, Map<String, CombinedDefine>> defines;
 	private HashMap<Grammar, CombinedStart> starts;

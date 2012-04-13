@@ -20,13 +20,10 @@ import serene.validation.schema.simplified.components.SPattern;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 abstract class AbstractNoChildrenPattern extends SPattern{ 	 
 	AbstractNoChildrenPattern(int recordIndex, 
-				DocumentIndexedData documentIndexedData,
-				MessageWriter debugWriter){		
-		super(recordIndex, documentIndexedData, debugWriter);
+				DocumentIndexedData documentIndexedData){		
+		super(recordIndex, documentIndexedData);
 	}
 		
 	public String toString(){

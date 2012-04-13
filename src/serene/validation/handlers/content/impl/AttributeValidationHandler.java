@@ -53,8 +53,6 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 class AttributeValidationHandler extends AttributeDefinitionHandler 
                                   implements ErrorCatcher{
 		
@@ -62,8 +60,8 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
 	
 	ContextErrorHandlerManager contextErrorHandlerManager;
 	
-	AttributeValidationHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	AttributeValidationHandler(){
+		super();
 	}
 		
 	void reset(){

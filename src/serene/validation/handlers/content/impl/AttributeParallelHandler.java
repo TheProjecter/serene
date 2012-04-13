@@ -27,8 +27,6 @@ import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.error.CandidatesConflictErrorHandler;
 
-import sereneWrite.MessageWriter;
-
 class AttributeParallelHandler extends ValidatingAEH{
 
     CandidatesEEH parent;
@@ -36,15 +34,13 @@ class AttributeParallelHandler extends ValidatingAEH{
     ArrayList<ComparableAEH> individualHandlers;
     ExternalConflictHandler candidatesConflictHandler;
     CandidatesConflictErrorHandler elementCandidatesConflictErrorHandler;
-    
-    MessageWriter debugWriter;
 
     State state;
 	Common common;
 	Conflict conflict;
     
-    AttributeParallelHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    AttributeParallelHandler(){
+        super();
         individualHandlers = new ArrayList<ComparableAEH>();
         initStates();
     }

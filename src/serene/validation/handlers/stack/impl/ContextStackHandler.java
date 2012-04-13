@@ -44,8 +44,6 @@ import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.structure.StructureHandler;
 
-import sereneWrite.MessageWriter;
-
 public class ContextStackHandler  implements  StackHandler{
 	InputStackDescriptor inputStackDescriptor;
 	StructureHandler topHandler;
@@ -64,13 +62,10 @@ public class ContextStackHandler  implements  StackHandler{
 	*/
 	boolean isCurrentHandlerReseted; 
 	
-	MessageWriter debugWriter;
-	
-	ContextStackHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	ContextStackHandler(){
 		endingValidation = false;
 		isCurrentHandlerReseted = false;
-		pathHandler = new PathHandler(debugWriter);
+		pathHandler = new PathHandler();
 	}	
 	
 	

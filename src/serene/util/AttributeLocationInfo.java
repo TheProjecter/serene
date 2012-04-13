@@ -16,14 +16,12 @@ limitations under the License.
 
 package serene.util;
 
-import sereneWrite.MessageWriter;
 
 public class AttributeLocationInfo extends AttributeInfo{
     String publicId;
     String systemId;
     int lineNumber;
     int columnNumber;
-    MessageWriter debugWriter;
     
     public AttributeLocationInfo(String namespaceURI,
                         String localName,
@@ -33,9 +31,8 @@ public class AttributeLocationInfo extends AttributeInfo{
                         String publicId,
                         String systemId,
                         int lineNumber,
-                        int columnNumber,
-                        MessageWriter debugWriter){
-        super(namespaceURI, localName, qName, value, idType, debugWriter);        
+                        int columnNumber){
+        super(namespaceURI, localName, qName, value, idType);        
         this.publicId = publicId;
         this.systemId = systemId;
         this.lineNumber = lineNumber;

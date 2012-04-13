@@ -20,7 +20,6 @@ package serene.validation.schema.parsed;
 import java.util.Map;
 
 import serene.bind.util.DocumentIndexedData;
-import sereneWrite.MessageWriter;
 
 abstract class MultipleChildrenPattern extends Pattern{
  	ParsedComponent[] children; 
@@ -30,9 +29,8 @@ abstract class MultipleChildrenPattern extends Pattern{
                                 int datatypeLibrary, 
                                 ParsedComponent[] children, 
                                 int recordIndex,
-                                DocumentIndexedData documentIndexedData,
-                                MessageWriter debugWriter){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
+                                DocumentIndexedData documentIndexedData){		
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 		asParent(children);
 	}
 		

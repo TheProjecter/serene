@@ -20,14 +20,12 @@ import serene.validation.schema.simplified.components.SAttribute;
 
 import serene.bind.ElementTask;
 
-import sereneWrite.MessageWriter;
-
 class DivIncludeContentTaskFactory extends RNGParseEndElementTaskFactory{
-	public DivIncludeContentTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	public DivIncludeContentTaskFactory(){
+		super();
 	}
 	
 	public DivIncludeContentTask getTask(){
-		return new DivIncludeContentTask(debugWriter);
+		return new DivIncludeContentTask();
 	}
 }

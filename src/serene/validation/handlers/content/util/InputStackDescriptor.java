@@ -22,9 +22,6 @@ import java.util.Map;
 
 import serene.util.InputDescriptor;
 
-import sereneWrite.MessageWriter;
-
-
 /**
 * Stores location and item identification data for the stack of document items 
 * involved in validation. 
@@ -38,11 +35,8 @@ public class InputStackDescriptor implements InputDescriptor{
 	int currentRecordIndexIndex;
 	
 	//boolean currentCharsContent;
-	
-	MessageWriter debugWriter;
-	public InputStackDescriptor(ActiveInputDescriptor activeInputDescriptor, MessageWriter debugWriter){
+	public InputStackDescriptor(ActiveInputDescriptor activeInputDescriptor){
 	    this.activeInputDescriptor = activeInputDescriptor;
-		this.debugWriter = debugWriter;
 			
         inputRecordIndexes = new int[10];
         currentRecordIndexIndex = -1;

@@ -30,11 +30,9 @@ import serene.validation.schema.parsed.ParsedComponentBuilder;
 import serene.util.NameInfo;
 import serene.util.AttributeInfo;
 
-import sereneWrite.MessageWriter;
-
 class ForeignElementTask  extends RNGParseElementTask{      
-	ForeignElementTask(MessageWriter debugWriter){
-		super(debugWriter);
+	ForeignElementTask(){
+		super();
 	}	
 	
 	public void execute(){

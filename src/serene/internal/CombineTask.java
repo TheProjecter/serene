@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class CombineTask extends RNGParseAttributeTask{
-	CombineTask(MessageWriter debugWriter){
-		super(debugWriter);
+	CombineTask(){
+		super();
 	}
 	public void execute(){
 		builder.setCombine(context.getAttributeInputRecordIndex());		

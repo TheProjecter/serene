@@ -36,14 +36,12 @@ import serene.validation.schema.active.components.AListPattern;
 	
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import sereneWrite.MessageWriter;
-
 /**
 * Does nothing. For Common state shifting. 
 */
 public class DefaultErrorHandler extends AbstractContextErrorHandler{
-	public DefaultErrorHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public DefaultErrorHandler(){
+		super();
 		id = ContextErrorHandlerManager.DEFAULT;
 	}
 	

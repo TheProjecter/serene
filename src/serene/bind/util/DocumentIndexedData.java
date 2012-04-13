@@ -19,9 +19,6 @@ package serene.bind.util;
 
 import java.util.Map;
 
-import sereneWrite.MessageWriter;
-
-
 public interface DocumentIndexedData{
             
     int NO_RECORD = -2;    

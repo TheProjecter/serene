@@ -16,10 +16,6 @@ limitations under the License.
 
 package serene.validation.handlers.structure.impl;
 
-
-
-import sereneWrite.MessageWriter;
-
 public class SynchronizedRuleHandlerPool extends RuleHandlerPool{
 	private static volatile SynchronizedRuleHandlerPool instance;
 	
@@ -174,11 +170,8 @@ public class SynchronizedRuleHandlerPool extends RuleHandlerPool{
 	int interleaveMaximalReduceHandlerFree;
 	InterleaveMaximalReduceHandler[] interleaveMaximalReduceHandler;
 	
-	
-	MessageWriter debugWriter;
-	
-	SynchronizedRuleHandlerPool(MessageWriter debugWriter){
-		super(debugWriter);
+	SynchronizedRuleHandlerPool(){
+		super();
 		
 		amrhPoolFree = 0;
 		amrhPoolMaxSize = 10;
@@ -337,11 +330,11 @@ public class SynchronizedRuleHandlerPool extends RuleHandlerPool{
         interleaveMaximalReduceHandlerMaxSize = 50;
 	}
 	
-	public static SynchronizedRuleHandlerPool getInstance(MessageWriter debugWriter){
+	public static SynchronizedRuleHandlerPool getInstance(){
 		if(instance == null){
 			synchronized(RuleHandlerPool.class){
 				if(instance == null){
-					instance = new SynchronizedRuleHandlerPool(debugWriter); 
+					instance = new SynchronizedRuleHandlerPool(); 
 				}
 			}
 		}
@@ -350,7 +343,7 @@ public class SynchronizedRuleHandlerPool extends RuleHandlerPool{
 	
 	public synchronized ActiveModelRuleHandlerPool getActiveModelRuleHandlerPool(){
 		if(amrhPoolFree == 0){
-			ActiveModelRuleHandlerPool amrhp = new ActiveModelRuleHandlerPool(this, debugWriter);
+			ActiveModelRuleHandlerPool amrhp = new ActiveModelRuleHandlerPool(this);
 			return amrhp;
 		}else{
 			ActiveModelRuleHandlerPool amrhp = amrhPools[--amrhPoolFree];

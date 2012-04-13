@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class NotAllowedTask extends RNGParseEndElementTask{
-	NotAllowedTask(MessageWriter debugWriter){
-		super(debugWriter);
+	NotAllowedTask(){
+		super();
 	}
 	
 	public void execute(){

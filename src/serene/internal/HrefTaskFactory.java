@@ -16,14 +16,12 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class HrefTaskFactory extends RNGParseAttributeTaskFactory{
-	public HrefTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	public HrefTaskFactory(){
+		super();
 	}
 	
 	public HrefTask getTask(){	
-		return new HrefTask(debugWriter);
+		return new HrefTask();
 	}
 }

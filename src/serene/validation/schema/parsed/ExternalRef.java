@@ -21,7 +21,6 @@ import java.util.Map;
 import org.xml.sax.SAXException;
 
 import serene.bind.util.DocumentIndexedData;
-import sereneWrite.MessageWriter;
 
 public class ExternalRef extends MultipleChildrenPattern{
 	int hrefRecordIndex;
@@ -33,9 +32,8 @@ public class ExternalRef extends MultipleChildrenPattern{
                     int href,
                     ParsedComponent[] children, 
                     int recordIndex,
-                    DocumentIndexedData documentIndexedData,
-                    MessageWriter debugWriter){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData, debugWriter);
+                    DocumentIndexedData documentIndexedData){		
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
 		this.hrefRecordIndex = href;
 	}	
 			

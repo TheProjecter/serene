@@ -36,8 +36,6 @@ import serene.validation.schema.active.components.AListPattern;
 	
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import sereneWrite.MessageWriter;
-
 /**
 * Handles errors that occur in the context of well determined elements. The error
 * data is stored in a ContextMessageHandler and is reported to the ErrorDispatcher 
@@ -46,10 +44,10 @@ import sereneWrite.MessageWriter;
 public class StartErrorHandler extends AbstractContextErrorHandler{
     StartMessageHandler messageHandler;
     
-	public StartErrorHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public StartErrorHandler(){
+		super();
 		id = ContextErrorHandlerManager.VALIDATION;
-        messageHandler = new StartMessageHandler(debugWriter);
+        messageHandler = new StartMessageHandler();
 	}
 	
 	public void recycle(){

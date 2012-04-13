@@ -38,8 +38,6 @@ import serene.validation.schema.simplified.components.SZeroOrMore;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
-
 abstract class NamingController extends CompositionController{
 		
 	final int ALLOW_OVERLAP_COMPOSITOR = 0;
@@ -65,8 +63,8 @@ abstract class NamingController extends CompositionController{
 	
     boolean restrictToFileName;
 	
-	NamingController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		super(pool, errorDispatcher, debugWriter);
+	NamingController(ControllerPool pool, ErrorDispatcher errorDispatcher){
+		super(pool, errorDispatcher);
 		
 		nameClasses = new ArrayList<SNameClass>();
 		namedPatterns = new ArrayList<SPattern>();

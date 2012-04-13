@@ -45,8 +45,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
-import sereneWrite.MessageWriter;
-
 class ExceptPatternValidationHandler implements StructuredDataEventHandler,
                                         StructuredDataContentTypeHandler,
                                         ErrorCatcher{
@@ -61,10 +59,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
     boolean hasError;    
     StackHandler stackHandler;
     
-    MessageWriter debugWriter;    
-    
-    ExceptPatternValidationHandler(MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+    ExceptPatternValidationHandler(){
         hasError = false;
     }
          

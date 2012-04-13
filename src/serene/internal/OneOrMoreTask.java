@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class OneOrMoreTask extends RNGParseEndElementTask{
-	OneOrMoreTask(MessageWriter debugWriter){
-		super(debugWriter);
+	OneOrMoreTask(){
+		super();
 	}
 	public void execute(){
 		builder.endLevel();

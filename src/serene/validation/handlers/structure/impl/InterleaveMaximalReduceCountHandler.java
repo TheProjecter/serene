@@ -29,16 +29,14 @@ import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import sereneWrite.MessageWriter;
-
 public class InterleaveMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	ContentHandler superSatisfiedContent; 
 	ContentHandler satisfiedNeverReduceContent;
 	
 	InterleaveMaximalReduceCountHandler original;
 	
-	InterleaveMaximalReduceCountHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	InterleaveMaximalReduceCountHandler(){
+		super();
 		satisfiedNeverReduceContent = new SatisfiedNeverReduceContent();
 		superSatisfiedContent = satisfiedContent;
 	}	

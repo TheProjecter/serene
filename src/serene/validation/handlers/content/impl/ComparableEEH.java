@@ -20,12 +20,10 @@ import org.xml.sax.SAXException;
 
 import serene.validation.handlers.content.ElementEventHandler;
 
-import sereneWrite.MessageWriter;
-
 abstract class ComparableEEH extends AbstractEEH{
 
-	ComparableEEH(MessageWriter debugWriter){
-		super(debugWriter);
+	ComparableEEH(){
+		super();
 	}
 	
 	public abstract ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException;

@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class ParamTask extends RNGParseEndElementTask{
-	ParamTask(MessageWriter debugWriter){
-		super(debugWriter);
+	ParamTask(){
+		super();
 	}
 	public void execute(){
 		builder.buildParam(/*context.getDeclaredXmlns(),*/ context.getCharacterContent(), context.getElementInputRecordIndex());

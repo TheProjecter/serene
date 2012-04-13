@@ -43,8 +43,6 @@ import serene.validation.schema.parsed.ExternalRef;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
-
 class IncludedGrammarDefinitionsMapper extends GrammarDefinitionsMapper{
 	Map<Definition, ArrayList<Grammar>> definitionGrammars;
 	
@@ -52,9 +50,8 @@ class IncludedGrammarDefinitionsMapper extends GrammarDefinitionsMapper{
 								InternalRNGFactory internalRNGFactory, 
 								ErrorDispatcher errorDispatcher, 
 								NamespaceInheritanceHandler namespaceInheritanceHandler,
-								DatatypeLibraryFactory datatypeLibraryFactory,
-								MessageWriter debugWriter){
-		super(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory, debugWriter);
+								DatatypeLibraryFactory datatypeLibraryFactory){
+		super(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory);
 	}
 	
 	void map(URI base,

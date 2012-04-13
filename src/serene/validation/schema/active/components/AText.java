@@ -31,12 +31,9 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public abstract class AText extends CharsAPattern{
-	public AText(ActiveModelRuleHandlerPool ruleHandlerPool, 
-	            MessageWriter debugWriter){
-		super(ruleHandlerPool, debugWriter);
+	public AText(ActiveModelRuleHandlerPool ruleHandlerPool){
+		super(ruleHandlerPool);
 		minOccurs = 0;
 		maxOccurs = UNBOUNDED;
 		

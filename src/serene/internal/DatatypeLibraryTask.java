@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class DatatypeLibraryTask extends RNGParseAttributeTask{
-	DatatypeLibraryTask(MessageWriter debugWriter){
-		super(debugWriter);
+	DatatypeLibraryTask(){
+		super();
 	}
 	public void execute(){
 		builder.setDatatypeLibrary(context.getAttributeInputRecordIndex());		

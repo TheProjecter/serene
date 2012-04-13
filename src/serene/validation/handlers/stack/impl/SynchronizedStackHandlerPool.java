@@ -16,8 +16,6 @@ limitations under the License.
 
 package serene.validation.handlers.stack.impl;
 
-import sereneWrite.MessageWriter;
-
 public class SynchronizedStackHandlerPool extends StackHandlerPool{
 	private static volatile SynchronizedStackHandlerPool instance;
 	
@@ -52,8 +50,8 @@ public class SynchronizedStackHandlerPool extends StackHandlerPool{
 	int concurrentStackHFree;
 	ConcurrentStackHandlerImpl[] concurrentStackH;
 			
-	SynchronizedStackHandlerPool(MessageWriter debugWriter){
-		super(debugWriter);
+	SynchronizedStackHandlerPool(){
+		super();
 		
 		amshPoolFree = 0;
 		amshPoolMaxSize = 10;
@@ -90,11 +88,11 @@ public class SynchronizedStackHandlerPool extends StackHandlerPool{
         concurrentStackHMaxSize = 20;		
 	}
 	
-	public static SynchronizedStackHandlerPool getInstance(MessageWriter debugWriter){
+	public static SynchronizedStackHandlerPool getInstance( ){
 		if(instance == null){
 			synchronized(SynchronizedStackHandlerPool.class){
 				if(instance == null){
-					instance = new SynchronizedStackHandlerPool(debugWriter); 
+					instance = new SynchronizedStackHandlerPool(); 
 				}
 			}
 		}
@@ -103,7 +101,7 @@ public class SynchronizedStackHandlerPool extends StackHandlerPool{
 	
 	public synchronized ActiveModelStackHandlerPool getActiveModelStackHandlerPool(){
 		if(amshPoolFree == 0){
-			ActiveModelStackHandlerPool amshp = new ActiveModelStackHandlerPool(this, debugWriter);
+			ActiveModelStackHandlerPool amshp = new ActiveModelStackHandlerPool(this);
 			return amshp;
 		}else{
 			ActiveModelStackHandlerPool amshp = amshPools[--amshPoolFree];

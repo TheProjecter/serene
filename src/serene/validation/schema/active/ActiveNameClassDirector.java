@@ -55,22 +55,19 @@ import serene.validation.schema.active.components.APattern;
 
 import serene.util.ObjectIntHashMap;
 
-import sereneWrite.MessageWriter;
-import sereneWrite.ActiveComponentWriter;
-import sereneWrite.SimplifiedComponentWriter;
+//import sereneWrite.ActiveComponentWriter;
+//import sereneWrite.SimplifiedComponentWriter;
 
 class ActiveNameClassDirector implements SimplifiedComponentVisitor{
 	
 	ActiveComponentBuilder componentBuilder;	
 	
-	MessageWriter debugWriter;
-	ActiveComponentWriter acw;
-	SimplifiedComponentWriter scw;
+	//ActiveComponentWriter acw;
+	//SimplifiedComponentWriter scw;
 	
-	ActiveNameClassDirector(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		scw = new SimplifiedComponentWriter();
-		acw = new ActiveComponentWriter();
+	ActiveNameClassDirector(){
+		//scw = new SimplifiedComponentWriter();
+		//acw = new ActiveComponentWriter();
 	}
 	
 	ANameClass createActiveNameClass(ActiveComponentBuilder componentBuilder,

@@ -26,16 +26,13 @@ import serene.validation.schema.simplified.components.SNameClass;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class SElement extends AbstractUniqueChildPattern{
 	SNameClass nameClass;
 	public SElement(SNameClass nameClass,
 				SPattern child,
 				int recordIndex, 
-				DocumentIndexedData documentIndexedData,  
-				MessageWriter debugWriter){		
-		super(child, recordIndex, documentIndexedData, debugWriter);
+				DocumentIndexedData documentIndexedData){		
+		super(child, recordIndex, documentIndexedData);
 		this.nameClass  = nameClass;
 	}
 	

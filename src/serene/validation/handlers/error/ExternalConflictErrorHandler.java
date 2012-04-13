@@ -36,8 +36,6 @@ import serene.validation.schema.active.components.AListPattern;
 	
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import sereneWrite.MessageWriter;
-
 /**
 * Handles errors that occur in an undetermined context processed parallely by a 
 * different handler for each possible definition. It is used by ElementConcurrentHandler 
@@ -59,8 +57,8 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
     
     boolean isHandled;
 
-	public ExternalConflictErrorHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public ExternalConflictErrorHandler(){
+		super();
 		id = ContextErrorHandlerManager.CONFLICT;		
 	}
 	
@@ -83,7 +81,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         this.candidatesConflictErrorHandler = candidatesConflictErrorHandler;
         this.isCandidate = isCandidate;
         
-		messageHandler = new ConflictMessageHandler(debugWriter);
+		messageHandler = new ConflictMessageHandler();
 		messageHandler.init(activeInputDescriptor);
         if(isCandidate)candidatesConflictErrorHandler.addCandidateMessageHandler(candidateIndex, messageHandler);
 	}	

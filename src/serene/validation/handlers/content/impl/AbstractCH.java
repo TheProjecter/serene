@@ -27,9 +27,6 @@ import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.match.MatchHandler;
 
-import sereneWrite.MessageWriter;
-
-
 abstract class AbstractCH implements EventHandler{    
     MatchHandler matchHandler;
            
@@ -40,13 +37,9 @@ abstract class AbstractCH implements EventHandler{
     
     ActiveInputDescriptor activeInputDescriptor;
     InputStackDescriptor inputStackDescriptor;
-    
-    MessageWriter debugWriter;
 	
-	AbstractCH(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		
-		externalConflictHandler = new ExternalConflictHandler(debugWriter);
+	AbstractCH(){		
+		externalConflictHandler = new ExternalConflictHandler();
 	}
 	
 	void init(MatchHandler matchHandler, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ValidatorEventHandlerPool pool){

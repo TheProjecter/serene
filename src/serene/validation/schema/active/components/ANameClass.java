@@ -20,12 +20,9 @@ import serene.validation.schema.active.Identifier;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import sereneWrite.MessageWriter;
-
-public abstract class ANameClass extends AbstractIdentifier{	
-		
-	public ANameClass(MessageWriter debugWriter){
-		super(debugWriter);
+public abstract class ANameClass extends AbstractIdentifier{		
+	public ANameClass(){
+		super();
 	}	
 		
 	public String toString(){

@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import sereneWrite.MessageWriter;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
@@ -31,8 +30,8 @@ import serene.validation.schema.active.components.AElement;
 import serene.validation.handlers.error.ContextErrorHandler;
 
 class StartValidationHandler extends ElementValidationHandler{				
-	StartValidationHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	StartValidationHandler(){
+		super();		
 	}
 		
 	public void recycle(){		

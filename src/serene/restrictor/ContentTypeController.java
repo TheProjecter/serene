@@ -27,8 +27,6 @@ import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 class ContentTypeController extends ContentType implements Reusable{
 	
 	IntList simpleContent;
@@ -38,11 +36,8 @@ class ContentTypeController extends ContentType implements Reusable{
 	ErrorDispatcher errorDispatcher;
 	
     boolean restrictToFileName;
-    
-	MessageWriter messageWriter;
 	
-	ContentTypeController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter messageWriter){
-		this.messageWriter = messageWriter;
+	ContentTypeController(ControllerPool pool, ErrorDispatcher errorDispatcher){
 		this.errorDispatcher = errorDispatcher;
 		this.pool= pool;
 		

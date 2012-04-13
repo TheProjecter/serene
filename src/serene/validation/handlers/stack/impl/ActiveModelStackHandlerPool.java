@@ -47,8 +47,6 @@ import serene.validation.handlers.conflict.StackConflictsHandler;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycler{
 	
 	// int contextStackHCreated;
@@ -91,10 +89,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	InputStackDescriptor inputStackDescriptor;
 	ActiveModelConflictHandlerPool conflictHandlerPool;
 	
-	MessageWriter debugWriter;
-	
-	public ActiveModelStackHandlerPool(StackHandlerPool pool, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	public ActiveModelStackHandlerPool(StackHandlerPool pool){
 		this.pool = pool;
 		
 		contextStackHMaxSize = 20;
@@ -198,7 +193,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	public ContextStackHandler getContextStackHandler(ActiveType type, ErrorCatcher ehm){			
 		if(contextStackHFree == 0){
 			// contextStackHCreated++;			
-			ContextStackHandler csh = new ContextStackHandler(debugWriter);	
+			ContextStackHandler csh = new ContextStackHandler();	
 			csh.init(inputStackDescriptor, this);
 			csh.init(type, ehm);
 			return csh;			
@@ -223,7 +218,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	public MinimalReduceStackHandler getMinimalReduceStackHandler(IntList reduceCountList, IntList startedCountList, ACompositor compositor, ErrorCatcher ehm){			
 		if(minimalReduceStackHFree == 0){
 			// minimalReduceStackHCreated++;			
-			MinimalReduceStackHandler csh = new MinimalReduceStackHandler(debugWriter);	
+			MinimalReduceStackHandler csh = new MinimalReduceStackHandler();	
 			csh.init(inputStackDescriptor, this);
 			csh.init(reduceCountList, startedCountList, compositor, ehm);
 			return csh;			
@@ -238,7 +233,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	public MinimalReduceStackHandler getMinimalReduceStackHandler(IntList reduceCountList, ACompositor compositor, ErrorCatcher ehm){			
 		if(minimalReduceStackHFree == 0){
 			// minimalReduceStackHCreated++;			
-			MinimalReduceStackHandler csh = new MinimalReduceStackHandler(debugWriter);	
+			MinimalReduceStackHandler csh = new MinimalReduceStackHandler();	
 			csh.init(inputStackDescriptor, this);
 			csh.init(reduceCountList, compositor, ehm);
 			return csh;			
@@ -262,7 +257,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	public MaximalReduceStackHandler getMaximalReduceStackHandler(IntList reduceCountList, IntList startedCountList, ACompositor compositor, ErrorCatcher ehm){			
 		if(maximalReduceStackHFree == 0){
 			// maximalReduceStackHCreated++;			
-			MaximalReduceStackHandler csh = new MaximalReduceStackHandler(debugWriter);	
+			MaximalReduceStackHandler csh = new MaximalReduceStackHandler();	
 			csh.init(inputStackDescriptor, this);
 			csh.init(reduceCountList, startedCountList, compositor, ehm);
 			return csh;			
@@ -277,7 +272,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	public MaximalReduceStackHandler getMaximalReduceStackHandler(IntList reduceCountList, ACompositor compositor, ErrorCatcher ehm){			
 		if(maximalReduceStackHFree == 0){
 			// maximalReduceStackHCreated++;			
-			MaximalReduceStackHandler csh = new MaximalReduceStackHandler(debugWriter);	
+			MaximalReduceStackHandler csh = new MaximalReduceStackHandler();	
 			csh.init(inputStackDescriptor, this);
 			csh.init(reduceCountList, compositor, ehm);
 			return csh;			
@@ -310,7 +305,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	    candidateStackHRequested++;
 		if(candidateStackHFree == 0){
 			candidateStackHCreated++;
-			CandidateStackHandlerImpl csh = new CandidateStackHandlerImpl(debugWriter);
+			CandidateStackHandlerImpl csh = new CandidateStackHandlerImpl();
 			csh.init(inputStackDescriptor, this);			
 			csh.init(topHandler, 
 						currentRule,
@@ -343,7 +338,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		candidateStackHRequested++;
 		if(candidateStackHFree == 0){
 			candidateStackHCreated++;
-			CandidateStackHandlerImpl csh = new CandidateStackHandlerImpl(debugWriter);
+			CandidateStackHandlerImpl csh = new CandidateStackHandlerImpl();
 			csh.init(inputStackDescriptor, this);			
 			csh.init(topHandler, 
 						currentRule,
@@ -377,7 +372,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		
 	public ConcurrentStackHandlerImpl getConcurrentStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher){				
 		if(concurrentStackHFree == 0){
-			ConcurrentStackHandlerImpl csh = new ConcurrentStackHandlerImpl(debugWriter);
+			ConcurrentStackHandlerImpl csh = new ConcurrentStackHandlerImpl();
 			csh.init(inputStackDescriptor, conflictHandlerPool, this);
 			csh.init(originalHandler, errorCatcher);
 			return csh;			

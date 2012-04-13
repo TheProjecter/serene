@@ -24,17 +24,12 @@ import javax.xml.namespace.QName;
 
 import javax.xml.stream.events.Namespace;
 
-import sereneWrite.MessageWriter;
-
 public class NamespacesIterator implements Iterator{    
     int position = 0;
     boolean removed = true;
     ArrayList<Namespace> namespaces;
     
-    MessageWriter debugWriter;
-    
-    public NamespacesIterator(ArrayList<Namespace> namespaces, MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+    public NamespacesIterator(ArrayList<Namespace> namespaces){
         this.namespaces = namespaces;
     }
     

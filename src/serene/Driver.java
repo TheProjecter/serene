@@ -45,7 +45,6 @@ import serene.validation.jaxp.RNGSchemaFactory;
 import serene.util.BooleanList;
 
 import sereneWrite.WriteErrorHandler;
-import sereneWrite.MessageWriter;
 import sereneWrite.WriteHandler;
 import sereneWrite.ConsoleHandler;
 

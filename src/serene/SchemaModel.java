@@ -32,17 +32,11 @@ import serene.dtdcompatibility.AttributeIdTypeModel;
 
 import serene.validation.schema.ValidationModel;
 
-import sereneWrite.MessageWriter;
-
 public class SchemaModel implements ValidationModel, DTDCompatibilityModel{
     ValidationModel validationModel;    
     DTDCompatibilityModel dtdCompatibilityModel;
-    
-    MessageWriter debugWriter;
     public SchemaModel(ValidationModel validationModel,
-            DTDCompatibilityModel dtdCompatibilityModel,
-            MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+            DTDCompatibilityModel dtdCompatibilityModel){
         this.validationModel = validationModel;
         this.dtdCompatibilityModel = dtdCompatibilityModel;        
     }

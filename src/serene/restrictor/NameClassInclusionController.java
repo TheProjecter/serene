@@ -49,8 +49,6 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 
-import sereneWrite.MessageWriter; 
-
 /**
 * The responsibility of this class is to test if the set of names defined by a 
 * name class is included in the set of names defined by another class. It is 
@@ -66,10 +64,7 @@ abstract class NameClassInclusionController implements SimplifiedComponentVisito
 	
 	boolean isIncluded;
 	
-	MessageWriter debugWriter;
-	
-	NameClassInclusionController(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	NameClassInclusionController(){
 	}
 	
 	boolean isIncludedIn(SNameClass nc){

@@ -32,8 +32,6 @@ import serene.validation.handlers.conflict.ExternalConflictHandler;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
-import sereneWrite.MessageWriter;
-
 abstract class ValidatingEEH extends ComparableEEH implements ContextErrorHandlerManager{
 
 	ValidatorErrorHandlerPool errorHandlerPool;
@@ -51,8 +49,8 @@ abstract class ValidatingEEH extends ComparableEEH implements ContextErrorHandle
 	int stateHistorySize;
 		
 	
-	ValidatingEEH(MessageWriter debugWriter){
-		super(debugWriter);
+	ValidatingEEH(){
+		super();
         contextErrorHandler = new ContextErrorHandler[HANDLER_COUNT];
         
 		stateHistorySize = 1;

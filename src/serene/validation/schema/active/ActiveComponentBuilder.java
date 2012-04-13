@@ -79,8 +79,6 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.schema.active.util.Level;
 
-import sereneWrite.MessageWriter;
-
 /**
 * Builds components, the big picture ActiveModel is the directors responsibility. 
 * Can return/remove the components of the current level(usefull for attaching commands).
@@ -99,17 +97,13 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 	ActiveModelStackHandlerPool stackHandlerPool;
 	ActiveModelRuleHandlerPool ruleHandlerPool;
 
-	
-	MessageWriter debugWriter;
-	
+
 	public ActiveComponentBuilder(ActiveModelStackHandlerPool stackHandlerPool,
-										ActiveModelRuleHandlerPool ruleHandlerPool, 
-										MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+										ActiveModelRuleHandlerPool ruleHandlerPool){
 		this.stackHandlerPool = stackHandlerPool;
 		this.ruleHandlerPool = ruleHandlerPool;
 		
-		level = Level.getTopInstance(debugWriter);
+		level = Level.getTopInstance();
 		topLevel = level;
 	}
 
@@ -215,69 +209,69 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 	//START PATTERN BUILDING ***************************************************
 	//**************************************************************************
 	public void buildElement(int index, ActiveGrammarModel model, SElement simplifiedComponent){
-		AElement e = new AElement(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
+		AElement e = new AElement(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(e);
 	}
 	public void buildAttribute(int index, ActiveGrammarModel model, SAttribute simplifiedComponent){
-		AAttribute a = new AAttribute(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
+		AAttribute a = new AAttribute(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(a);
 	}
 	public void buildGroup(SGroup simplifiedComponent){
-		AGroup g = new AGroup(getContentPatterns(), stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
+		AGroup g = new AGroup(getContentPatterns(), stackHandlerPool, ruleHandlerPool, simplifiedComponent);
 		clearContent();
 		addToCurrentLevel(g);	
 	}		
 	public void buildInterleave(SInterleave simplifiedComponent){
-		AInterleave i = new AInterleaveI(getContentPatterns(), stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
+		AInterleave i = new AInterleaveI(getContentPatterns(), stackHandlerPool, ruleHandlerPool, simplifiedComponent);
 		clearContent();
 		addToCurrentLevel(i);	
 	}
 	public void buildInterleave(SMixed simplifiedComponent){
-		AInterleave i = new AInterleaveM(getContentPatterns(), stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
+		AInterleave i = new AInterleaveM(getContentPatterns(), stackHandlerPool, ruleHandlerPool, simplifiedComponent);
 		clearContent();
 		addToCurrentLevel(i);	
 	}
 	public void buildChoicePattern(SChoicePattern simplifiedComponent){
-		AChoicePattern cp = new AChoicePattern(getContentPatterns(), ruleHandlerPool, simplifiedComponent, debugWriter);
+		AChoicePattern cp = new AChoicePattern(getContentPatterns(), ruleHandlerPool, simplifiedComponent);
 		clearContent();
 		addToCurrentLevel(cp);
 	}	
 	public void buildListPattern(SListPattern simplifiedComponent){
-		AListPattern lp = new AListPattern(getLastContentPattern(), stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
+		AListPattern lp = new AListPattern(getLastContentPattern(), stackHandlerPool, ruleHandlerPool, simplifiedComponent);
 		clearContent();
 		addToCurrentLevel(lp);
 	}
 	public void buildRef(int definitionIndex, ActiveGrammarModel model, SRef simplifiedComponent){
-		ARef r = new ARef(definitionIndex, model, ruleHandlerPool, simplifiedComponent, debugWriter);
+		ARef r = new ARef(definitionIndex, model, ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(r);
 	}
 	public void buildEmpty(SimplifiedComponent simplifiedComponent){
-		AEmpty e = new AEmpty(ruleHandlerPool, simplifiedComponent, debugWriter);
+		AEmpty e = new AEmpty(ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(e);
 	}
 	public void buildText(SText simplifiedComponent){
-		AText t = new ATextT(ruleHandlerPool, simplifiedComponent, debugWriter);
+		AText t = new ATextT(ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(t);
 	}
 	public void buildText(SMixed simplifiedComponent){
-		AText t = new ATextM(ruleHandlerPool, simplifiedComponent, debugWriter);
+		AText t = new ATextM(ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(t);
 	}
 	public void buildValue(String ns, Datatype datatype, String charContent, ActiveGrammarModel model, SValue simplifiedComponent){
-		AValue v = new AValue(ns, datatype, charContent, model, ruleHandlerPool, simplifiedComponent, debugWriter);
+		AValue v = new AValue(ns, datatype, charContent, model, ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(v);
 	}
 	public void buildData(Datatype datatype, ActiveGrammarModel model, SData simplifiedComponent){
-		AData d = new AData(datatype, getContentExceptPattern(),  model, ruleHandlerPool, simplifiedComponent, debugWriter);
+		AData d = new AData(datatype, getContentExceptPattern(),  model, ruleHandlerPool, simplifiedComponent);
 		clearContent();
 		addToCurrentLevel(d);
 	}		
 	public void buildNotAllowed(SNotAllowed simplifiedComponent){
-		ANotAllowed na = new ANotAllowed(ruleHandlerPool, simplifiedComponent, debugWriter);
+		ANotAllowed na = new ANotAllowed(ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(na);
 	}	
 	public void buildGrammar(SGrammar simplifiedComponent){
-		AGrammar g = new AGrammar(getLastContentPattern(), ruleHandlerPool, simplifiedComponent, debugWriter);		
+		AGrammar g = new AGrammar(getLastContentPattern(), ruleHandlerPool, simplifiedComponent);		
 		clearContent();
 		addToCurrentLevel(g);
 	}
@@ -290,21 +284,21 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 	//START NAME CLASS BUILDING ************************************************
 	//**************************************************************************	
 	public void buildName(String ns, String localPart, SName simplifiedComponent){
-		AName n = new AName(ns, localPart, simplifiedComponent, debugWriter);
+		AName n = new AName(ns, localPart, simplifiedComponent);
 		addToCurrentLevel(n);
 	}
 	public void buildAnyName(SAnyName simplifiedComponent){
-		AAnyName an = new AAnyName(getContentExceptNameClass(), simplifiedComponent, debugWriter);
+		AAnyName an = new AAnyName(getContentExceptNameClass(), simplifiedComponent);
 		clearContent();
 		addToCurrentLevel(an);
 	}
 	public void buildNsName(String ns, SNsName simplifiedComponent){
-		ANsName nn = new ANsName(ns, getContentExceptNameClass(), simplifiedComponent, debugWriter);
+		ANsName nn = new ANsName(ns, getContentExceptNameClass(), simplifiedComponent);
 		clearContent();
 		addToCurrentLevel(nn);
 	}
 	public void buildChoiceNameClass(SChoiceNameClass simplifiedComponent){
-		AChoiceNameClass cnc = new AChoiceNameClass(getContentNameClasses(), simplifiedComponent, debugWriter);
+		AChoiceNameClass cnc = new AChoiceNameClass(getContentNameClasses(), simplifiedComponent);
 		clearContent();
 		addToCurrentLevel(cnc);
 	}	
@@ -313,12 +307,12 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 
 	public void buildExceptNameClass(SExceptNameClass simplifiedComponent){
-		AExceptNameClass enc = new AExceptNameClass(getLastContentNameClass(), simplifiedComponent, debugWriter);
+		AExceptNameClass enc = new AExceptNameClass(getLastContentNameClass(), simplifiedComponent);
 		clearContent();
 		addToCurrentLevel(enc);
 	}
 	public void buildExceptPattern(int index, ActiveGrammarModel model, SExceptPattern simplifiedComponent){
-		AExceptPattern ep = new AExceptPattern(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent, debugWriter);
+		AExceptPattern ep = new AExceptPattern(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(ep);
 	}	
 }  

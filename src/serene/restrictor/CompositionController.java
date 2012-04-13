@@ -38,8 +38,6 @@ import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 abstract class CompositionController implements Reusable{
 	
 	final int NO_COMPOSITOR = -1;
@@ -69,10 +67,7 @@ abstract class CompositionController implements Reusable{
 	
 	ErrorDispatcher errorDispatcher;
 	
-	MessageWriter debugWriter;
-	
-	CompositionController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	CompositionController(ControllerPool pool, ErrorDispatcher errorDispatcher){
 		this.errorDispatcher = errorDispatcher;
 		this.pool = pool;
 		

@@ -44,8 +44,6 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.CharacterContentDescriptor;
 import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
-import sereneWrite.MessageWriter;
-
 class ElementConcurrentHandler extends CandidatesEEH{
 	List<AElement> candidateDefinitions;
 	List<ElementValidationHandler> candidates;	
@@ -54,11 +52,11 @@ class ElementConcurrentHandler extends CandidatesEEH{
     
 	ElementValidationHandler parent;
 	
-	ElementConcurrentHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	ElementConcurrentHandler(){
+		super();		
 		candidates = new ArrayList<ElementValidationHandler>(3);        
-		candidatesConflictHandler = new ExternalConflictHandler(debugWriter);
-        localCandidatesConflictErrorHandler = new CandidatesConflictErrorHandler(candidatesConflictHandler, debugWriter);
+		candidatesConflictHandler = new ExternalConflictHandler();
+        localCandidatesConflictErrorHandler = new CandidatesConflictErrorHandler(candidatesConflictHandler);
 	}	
 	
 	void init(List<AElement> candidateDefinitions, ElementValidationHandler parent){		

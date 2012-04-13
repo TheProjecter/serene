@@ -22,13 +22,11 @@ import serene.bind.util.DocumentIndexedData;
 
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
 class ForeignAttributeTask extends RNGParseAttributeTask{
     final String BASE = "base";
     
-	ForeignAttributeTask(MessageWriter debugWriter){
-		super(debugWriter);
+	ForeignAttributeTask(){
+		super();
 	}
 	public void execute(){
 	    DocumentIndexedData did = context.getDocumentIndexedData();

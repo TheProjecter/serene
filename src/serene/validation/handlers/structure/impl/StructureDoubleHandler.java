@@ -41,8 +41,6 @@ import serene.validation.handlers.conflict.StackConflictsHandler;
 
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 public abstract class StructureDoubleHandler implements StructureHandler{
 
 	MultipleChildrenAPattern rule;
@@ -71,10 +69,7 @@ public abstract class StructureDoubleHandler implements StructureHandler{
     int startInputRecordIndex;	
     boolean isStartSet;
 	
-	MessageWriter debugWriter;
-	
-	StructureDoubleHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;				
+	StructureDoubleHandler(){				
 		minimalReduceCount = new IntList();
 		maximalReduceCount = new IntList();
 		

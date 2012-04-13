@@ -44,8 +44,6 @@ import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 import serene.validation.handlers.error.ErrorCatcher;
 
-import sereneWrite.MessageWriter;
-
 class StructuredDataValidationHandler extends AbstractSDVH implements StructuredDataEventHandler{
     ExceptPatternValidationHandler parent;        
     StructuredDataContentTypeHandler structuredDataContentTypeHandler;
@@ -61,8 +59,8 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
     // Used for the list pattern validation and error reporting.
     int currentIndex;
     
-    StructuredDataValidationHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    StructuredDataValidationHandler(){
+        super();
         
         dataMatches = new ArrayList<AData>();
         valueMatches = new ArrayList<AValue>();
@@ -276,7 +274,7 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	    }else{
 	        if(temporaryMessageStorage == null) temporaryMessageStorage = new TemporaryMessageStorage[matches.size()];
 	        if(temporaryMessageStorage[currentIndex] == null){
-                temporaryMessageStorage[currentIndex] = new TemporaryMessageStorage(debugWriter);
+                temporaryMessageStorage[currentIndex] = new TemporaryMessageStorage();
                 temporaryMessageStorage[currentIndex].init(activeInputDescriptor);
             }
 	        currentErrorCatcher = temporaryMessageStorage[currentIndex];

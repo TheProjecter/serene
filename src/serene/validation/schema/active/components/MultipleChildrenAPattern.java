@@ -21,14 +21,11 @@ import serene.validation.schema.active.components.AbstractAPattern;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public abstract class MultipleChildrenAPattern extends AbstractAPattern{
  	protected APattern[] children; 
 	MultipleChildrenAPattern(APattern[] children,
-				ActiveModelRuleHandlerPool ruleHandlerPool,
-				MessageWriter debugWriter){		
-		super(ruleHandlerPool, debugWriter);
+				ActiveModelRuleHandlerPool ruleHandlerPool){		
+		super(ruleHandlerPool);
 		asParent(children);
 	}
 		

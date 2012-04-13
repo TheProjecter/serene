@@ -26,15 +26,13 @@ import serene.validation.schema.active.components.AElement;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
 
-import sereneWrite.MessageWriter;
-
 public abstract class ElementConflictResolver extends InternalConflictResolver{
 	
 	List<AElement> candidateDefinitions;
 	ConflictMessageReporter conflictMessageReporter;
 	boolean isResolved;	
-	public ElementConflictResolver(MessageWriter debugWriter){				
-		super(debugWriter);
+	public ElementConflictResolver(){				
+		super();
 		candidateDefinitions = new ArrayList<AElement>();
 		isResolved = false;
 	}

@@ -19,12 +19,10 @@ package serene.internal;
 import serene.bind.DocumentTask;
 import serene.bind.DocumentTaskContext;
 
-import sereneWrite.MessageWriter;
-
 abstract class RNGParseDocumentTask extends RNGParseTask implements DocumentTask{	
 	DocumentTaskContext context;	
-	RNGParseDocumentTask(MessageWriter debugWriter){
-		super(debugWriter);
+	RNGParseDocumentTask(){
+		super();
 	}		
 	public void setContext(DocumentTaskContext context){
 		this.context = context;

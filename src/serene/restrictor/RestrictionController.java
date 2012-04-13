@@ -24,8 +24,6 @@ import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.RecursionModel;
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
-
 public class RestrictionController{
     
 	RRController rrController;
@@ -35,13 +33,10 @@ public class RestrictionController{
     ErrorDispatcher errorDispatcher;
     
     boolean restrictToFileName;
-    
-	MessageWriter debugWriter;
-	
-	public RestrictionController(ErrorDispatcher errorDispatcher, MessageWriter debugWriter){		
-		this.debugWriter = debugWriter;
+
+	public RestrictionController(ErrorDispatcher errorDispatcher){
 		this.errorDispatcher = errorDispatcher;
-        controllerPool = new ControllerPool(errorDispatcher, debugWriter);
+        controllerPool = new ControllerPool(errorDispatcher);
 	}
 	
     public void setRestrictToFileName(boolean restrictToFileName){
@@ -53,13 +48,13 @@ public class RestrictionController{
 	public void control(SimplifiedModel simplifiedModel)throws SAXException{
 		if(simplifiedModel.hasRecursions()){
             if(rrController == null){
-                rrController = new RRController(controllerPool, errorDispatcher, debugWriter);
+                rrController = new RRController(controllerPool, errorDispatcher);
                 rrController.setRestrictToFileName(restrictToFileName);
             }
 			rrController.control(simplifiedModel);
 		}else{
             if(rController == null){
-                rController = new RController(controllerPool, errorDispatcher, debugWriter);
+                rController = new RController(controllerPool, errorDispatcher);
                 rController.setRestrictToFileName(restrictToFileName);
             }
 			rController.control(simplifiedModel);

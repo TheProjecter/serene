@@ -30,8 +30,6 @@ import serene.validation.schema.simplified.components.SPattern;
 import serene.bind.util.DocumentIndexedData;
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 public class SChoicePattern extends AbstractMultipleChildrenPattern{
     IntList allRecordIndexes;
     ArrayList<DocumentIndexedData> allDocumentIndexedData;
@@ -41,9 +39,8 @@ public class SChoicePattern extends AbstractMultipleChildrenPattern{
 	public SChoicePattern(SPattern[] children,
 				IntList allRecordIndexes, 
 				ArrayList<DocumentIndexedData> allDocumentIndexedData,   
-				boolean addedBySimplification,
-				MessageWriter debugWriter){		
-		super(children, DocumentIndexedData.NO_RECORD, null, debugWriter);
+				boolean addedBySimplification){		
+		super(children, DocumentIndexedData.NO_RECORD, null);
         this.allRecordIndexes = allRecordIndexes;
         this.allDocumentIndexedData = allDocumentIndexedData;
         this.addedBySimplification = addedBySimplification;
@@ -52,9 +49,8 @@ public class SChoicePattern extends AbstractMultipleChildrenPattern{
     public SChoicePattern(SPattern[] children,
 				int recordIndex, 
 				DocumentIndexedData documentIndexedData,  
-				boolean addedBySimplification,
-				MessageWriter debugWriter){		
-		super(children, recordIndex, documentIndexedData, debugWriter);
+				boolean addedBySimplification){		
+		super(children, recordIndex, documentIndexedData);
 		this.addedBySimplification = addedBySimplification;
 	}
     

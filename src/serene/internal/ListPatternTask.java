@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class ListPatternTask extends RNGParseEndElementTask{
-    ListPatternTask(MessageWriter debugWriter){
-		super(debugWriter);
+    ListPatternTask(){
+		super();
 	}
 	
 	public void execute(){

@@ -24,8 +24,6 @@ import org.relaxng.datatype.ValidationContext;
 
 import org.apache.xerces.util.SymbolTable;
 
-import sereneWrite.MessageWriter;
-
 public class XsdValidationContext implements org.apache.xerces.impl.dv.ValidationContext{
     ValidationContext rngValidationContext;
     
@@ -38,11 +36,7 @@ public class XsdValidationContext implements org.apache.xerces.impl.dv.Validatio
     
     SymbolTable symbolTable = null;
     
-    MessageWriter debugWriter;
-    
-    public XsdValidationContext(MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
-        
+    public XsdValidationContext(){        
         needsExtraChecking = false;
         needsFacetChecking = true;
         needsToNormalize = true;

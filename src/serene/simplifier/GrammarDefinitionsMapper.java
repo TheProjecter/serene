@@ -88,8 +88,6 @@ import serene.validation.schema.parsed.DefinitionCopier;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
-
 class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	
 	Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions;	
@@ -123,15 +121,11 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	
 	ErrorDispatcher errorDispatcher;
 	
-	MessageWriter debugWriter;
-	
 	GrammarDefinitionsMapper(XMLReader xmlReader,
 	                        InternalRNGFactory internalRNGFactory,
 							ErrorDispatcher errorDispatcher,
 							NamespaceInheritanceHandler namespaceInheritanceHandler,
-							DatatypeLibraryFactory datatypeLibraryFactory,
-							MessageWriter debugWriter){
-		this.debugWriter = debugWriter;		
+							DatatypeLibraryFactory datatypeLibraryFactory){
 		this.xmlReader = xmlReader;
 		this.internalRNGFactory = internalRNGFactory;
 		this.namespaceInheritanceHandler = namespaceInheritanceHandler;
@@ -295,14 +289,14 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	}
 	
 	private IncludedParsedModel parse(URI hrefURI){
-		if(includeParser == null)includeParser = new IncludeParser(xmlReader, internalRNGFactory, errorDispatcher, debugWriter);
+		if(includeParser == null)includeParser = new IncludeParser(xmlReader, internalRNGFactory, errorDispatcher);
 		return includeParser.parse(hrefURI);		
 	}
 	private void map(URI base,
 					Grammar includedGrammar, 
 					Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions, 
 					Map<Definition, ArrayList<Grammar>> definitionGrammars) throws SAXException{				
-		if(includedGrammarDefinitionsMapper == null)includedGrammarDefinitionsMapper = new IncludedGrammarDefinitionsMapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory, debugWriter);
+		if(includedGrammarDefinitionsMapper == null)includedGrammarDefinitionsMapper = new IncludedGrammarDefinitionsMapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory);
 		includedGrammarDefinitionsMapper.map(base, includedGrammar, grammarDefinitions, definitionExternalRefs, definitionGrammars, inclusionPath, componentAsciiDL, asciiDlDatatypeLibrary, simplificationContext);		
 	}
 	private void doReplacements(Include include,
@@ -339,7 +333,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			}else{
 				// create copies of the included definitions 
 				// and map to be ready for ns/currentDatatypeLibrary simplification
-				if(definitionCopier == null) definitionCopier = new DefinitionCopier(debugWriter);
+				if(definitionCopier == null) definitionCopier = new DefinitionCopier();
 				for(int i = 0; i < included.size(); i++){
 					Definition d = included.get(i);
 					d = definitionCopier.copy(d);

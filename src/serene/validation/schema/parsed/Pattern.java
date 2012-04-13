@@ -20,7 +20,6 @@ package serene.validation.schema.parsed;
 import java.util.Map;
 
 import serene.bind.util.DocumentIndexedData;
-import sereneWrite.MessageWriter;
 
 public abstract class Pattern extends ParsedComponent{	
 	Pattern(/*Map<String, String> prefixMapping,*/ 
@@ -28,8 +27,7 @@ public abstract class Pattern extends ParsedComponent{
 	                int ns, 
 	                int datatypeLibrary, 
 	                int recordIndex,
-                    DocumentIndexedData documentIndexedData,
-                    MessageWriter debugWriter){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
+                    DocumentIndexedData documentIndexedData){		
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 	}
 }	

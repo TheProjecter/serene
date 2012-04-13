@@ -59,9 +59,13 @@ class Tester{
 	String destinationDirName;
 	Stack<String> sourceDirNames;
 
+	int count;
+	
 	XMLReader xmlReader;
 	
 	public Tester(){
+	    count = 0;
+	    
 		debugWriter = new MessageWriter();			
 		debugWriter.setWriteHandler(new FileHandler());		
 		
@@ -92,6 +96,9 @@ class Tester{
 		}	
 	}
 	
+	int getTestCount(){
+	    return count;
+	}
 	
 	/**
 	* Naming convention for test files:
@@ -113,7 +120,7 @@ class Tester{
 		debugWriter.init(destinationDirName);		
 		debugErrorHandler.init(destinationDirName);			
 		if(schemaFactory == null){
-			schemaFactory = new RNGSchemaFactory(debugWriter);
+			schemaFactory = new RNGSchemaFactory();
             try{
                 schemaFactory.setFeature(Constants.LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE, true);
                 schemaFactory.setFeature(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE, true);
@@ -153,6 +160,7 @@ class Tester{
 			debugErrorHandler.print("TESTED SCHEMA "+ rngFile);			
 			System.out.println("TESTED SCHEMA "+ rngFile);
 			if(!initReader(rngFile)){
+			    debugErrorHandler.close();
 				return;
 			}			
 			String xmlFilePath = xmlFile.getAbsolutePath();
@@ -183,7 +191,7 @@ class Tester{
 		debugErrorHandler.init(destinationDirName);		
                 
 		if(schemaFactory == null){
-			schemaFactory = new RNGSchemaFactory(debugWriter);
+			schemaFactory = new RNGSchemaFactory();
             try{
                 schemaFactory.setFeature(Constants.LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE, true);
                 schemaFactory.setFeature(Constants.LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE, true);
@@ -229,6 +237,7 @@ class Tester{
 			debugErrorHandler.print("TESTED SCHEMA "+ rngFile);			
 			System.out.println("TESTED SCHEMA "+ rngFile);
 			if(!initReader(rngFile)){
+			    debugErrorHandler.close();
 				return;
 			}
 			for(int i = 0; i < xmlFiles.length; i++){
@@ -242,6 +251,7 @@ class Tester{
 			for(int i = 0; i < xmlFiles.length; i++){
 				if(xmlFiles[i] != null){
 					System.out.println("no schema file ");
+					debugErrorHandler.close();
 					return;
 				}
 			}			
@@ -284,6 +294,7 @@ class Tester{
 			System.out.println("TESTED SCHEMA "+ rngFile);
 			if(!initReader(rngFile)){
 				sourceDirNames.pop();
+				debugErrorHandler.close();
 				return;
 			}
 			for(int i = 0; i < xmlFiles.length; i++){
@@ -298,6 +309,7 @@ class Tester{
 				if(xmlFiles[i] != null){
 					System.out.println("no schema file ");
 					sourceDirNames.pop();
+					debugErrorHandler.close();
 					return;
 				}
 			}			
@@ -316,7 +328,8 @@ class Tester{
 	boolean initReader(File schemaFile){
 		Schema schema;
         debugErrorHandler.init();        
-		try{            
+		try{        
+		    count++;
 			schema = schemaFactory.newSchema(schemaFile);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -340,11 +353,12 @@ class Tester{
 		debugWriter.init(s);
 	}
 	
-	void validateXMLFile(String filePath){
+	void validateXMLFile(String filePath){	    
 		String name = filePath.substring(filePath.lastIndexOf(File.separator)+1, filePath.indexOf(".xml"));
 		debugErrorHandler.print("");
 		debugErrorHandler.print("TESTED DOCUMENT "+ name+".xml");		
 		try{					
+		    count++;
 			xmlReader.parse(filePath);			
 		}catch(IOException e){
 			e.printStackTrace();

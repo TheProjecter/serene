@@ -27,8 +27,6 @@ import serene.bind.util.DocumentIndexedData;
 
 import serene.validation.schema.Component;
 
-import sereneWrite.MessageWriter;
-
 public abstract class ParsedComponent implements Component{
 	int childIndex;	
 	ParsedComponent parent;
@@ -45,8 +43,6 @@ public abstract class ParsedComponent implements Component{
     AttributeInfo[] foreignAttributes;*/    
     int recordIndex;
     DocumentIndexedData documentIndexedData;
-    
-	MessageWriter debugWriter;	
 	
 	ParsedComponent(/*Map<String, String> prefixMapping,*/ 
                             int xmlBase,
@@ -56,9 +52,7 @@ public abstract class ParsedComponent implements Component{
                             String qName,
                             String location,*/
                             int recordIndex,
-                            DocumentIndexedData documentIndexedData, 
-                            MessageWriter debugWriter){		
-		this.debugWriter = debugWriter;
+                            DocumentIndexedData documentIndexedData){
 		/*this.prefixMapping = prefixMapping;*/ 
 		this.xmlBaseRecordIndex = xmlBase;
 		this.nsRecordIndex = ns;

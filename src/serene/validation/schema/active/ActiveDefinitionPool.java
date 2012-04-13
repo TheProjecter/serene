@@ -20,12 +20,9 @@ import serene.validation.schema.simplified.components.SPattern;
 
 import serene.util.ObjectIntHashMap;
 
-import sereneWrite.MessageWriter;
-
 public class ActiveDefinitionPool implements ActiveDefinitionRecycler{
 	
 	SPattern originalTopPattern;
-	
 	
 	ActiveGrammarModel grammarModel;
 	
@@ -36,14 +33,10 @@ public class ActiveDefinitionPool implements ActiveDefinitionRecycler{
 	int definitionMaxSize;
 	ActiveDefinition[] definitions;	
 	
-	MessageWriter debugWriter;
-	
 	ActiveDefinitionPool(SPattern originalTopPattern,
 							ActiveGrammarModel grammarModel,
 							ActiveDefinitionDirector definitionDirector,
-							ActiveComponentBuilder componentBuilder,
-							MessageWriter debugWriter){
-		this.debugWriter = debugWriter; 
+							ActiveComponentBuilder componentBuilder){
 		this.originalTopPattern = originalTopPattern;
 		this.grammarModel = grammarModel;
 		this.definitionDirector = definitionDirector;

@@ -23,12 +23,10 @@ import serene.validation.schema.active.components.AInnerPattern;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.StructureHandler;
 
-import sereneWrite.MessageWriter;
-
 abstract class MCMinimalReduceHandler extends MultipleChildrenPatternHandler implements MinimalReduceHandler{
 
-	public MCMinimalReduceHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public MCMinimalReduceHandler(){
+		super();
 	}
 
 	/*boolean isReduceRequired(){		

@@ -31,8 +31,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
-import sereneWrite.MessageWriter;
-
 /**
 * Subclasses handle all the patterns that don't have a direct correspondent in the 
 * document. These are patterns that reduce by themselves based on how the input coming
@@ -44,8 +42,8 @@ abstract class InnerPatternHandler extends StructureValidationHandler{
 	ParticleHandler currentChildParticleHandler;
 	
 	StackConflictsHandler stackConflictsHandler;
-	InnerPatternHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	InnerPatternHandler(){
+		super();		
 	}
 		
 	

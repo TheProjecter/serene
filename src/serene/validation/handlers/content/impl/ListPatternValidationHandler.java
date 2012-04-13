@@ -44,8 +44,6 @@ import serene.util.SpaceCharsHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
-import sereneWrite.MessageWriter;
-
 class ListPatternValidationHandler implements DataEventHandler,
                                         DataContentTypeHandler{
     ValidatorEventHandlerPool pool;
@@ -58,10 +56,7 @@ class ListPatternValidationHandler implements DataEventHandler,
     ErrorCatcher errorCatcher;    
     StackHandler stackHandler;
     
-    MessageWriter debugWriter;    
-    
-    ListPatternValidationHandler(MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+    ListPatternValidationHandler(){
     }
         
     

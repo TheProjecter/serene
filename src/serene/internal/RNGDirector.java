@@ -41,8 +41,6 @@ import serene.bind.AttributeTaskFactory;
 import serene.bind.ElementTaskFactory;
 
 
-import sereneWrite.MessageWriter;
-
 import serene.Constants;
 
 
@@ -109,10 +107,8 @@ class RNGDirector{
     boolean needsSynchronizedBindingPool;
     
     InternalIndexedData internalIndexedData;
-	MessageWriter debugWriter;
 	
-	RNGDirector(boolean needsSynchronizedBindingPool, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	RNGDirector(boolean needsSynchronizedBindingPool){
 		this.needsSynchronizedBindingPool = needsSynchronizedBindingPool;
                 
         SecuritySupport ss = new SecuritySupport();		
@@ -142,14 +138,14 @@ class RNGDirector{
 		endElementTaskFactory = new HashMap<SElement, RNGParseElementTaskFactory>();
 		attributeTaskFactory = new HashMap<SAttribute, RNGParseAttributeTaskFactory>();
 		
-		startLevelTaskFactory = new StartLevelTaskFactory(debugWriter);
-		nsTaskFactory = new NsTaskFactory(debugWriter);
-		datatypeLibraryTaskFactory = new DatatypeLibraryTaskFactory(debugWriter);
-		nameAttributeTaskFactory = new NameAttributeTaskFactory(debugWriter);
-		typeTaskFactory = new TypeTaskFactory(debugWriter);
-		combineTaskFactory = new CombineTaskFactory(debugWriter);
-		hrefTaskFactory = new HrefTaskFactory(debugWriter);
-		foreignAttributeTaskFactory = new ForeignAttributeTaskFactory(debugWriter);
+		startLevelTaskFactory = new StartLevelTaskFactory();
+		nsTaskFactory = new NsTaskFactory();
+		datatypeLibraryTaskFactory = new DatatypeLibraryTaskFactory();
+		nameAttributeTaskFactory = new NameAttributeTaskFactory();
+		typeTaskFactory = new TypeTaskFactory();
+		combineTaskFactory = new CombineTaskFactory();
+		hrefTaskFactory = new HrefTaskFactory();
+		foreignAttributeTaskFactory = new ForeignAttributeTaskFactory();
         
 		startGrammar();
 		
@@ -176,8 +172,7 @@ class RNGDirector{
         
 		SimplifiedModel s = new SimplifiedModel(start,
 									refDefinitionTopPattern,
-									null,
-									debugWriter);
+									null);
         return s;
 	}
 	
@@ -186,8 +181,7 @@ class RNGDirector{
         
 		return new SimplifiedModel(start,
 									refDefinitionTopPattern,									
-									null,
-									debugWriter);
+									null);
 	}
 	
 	SimplifiedModel getExternalRefModel(){
@@ -195,13 +189,12 @@ class RNGDirector{
         
 		return new SimplifiedModel(start,
 									refDefinitionTopPattern,
-									null,
-									debugWriter);
+									null);
 	}
 	
 	RNGParseBindingPool getBindingModelPool(){
-	    DummyTaskFactory dummyTaskFactory = new DummyTaskFactory(debugWriter);
-	    DocumentStartTaskFactory startDocumentTaskFactory = new DocumentStartTaskFactory(debugWriter);
+	    DummyTaskFactory dummyTaskFactory = new DummyTaskFactory();
+	    DocumentStartTaskFactory startDocumentTaskFactory = new DocumentStartTaskFactory();
 	    	    
 	    if(needsSynchronizedBindingPool){
 	        return new SynchronizedRNGParseBindingPool(startDocumentTaskFactory, 
@@ -214,9 +207,7 @@ class RNGDirector{
 	                                                                                                       
 	                                                    startLevelTaskFactory, 
 	                                                    dummyTaskFactory, 
-	                                                    null,
-	                                                    
-	                                                    debugWriter);
+	                                                    null);
 	    }
 	    return new UnsynchronizedRNGParseBindingPool(startDocumentTaskFactory, 
 	                                                    //null,
@@ -228,9 +219,7 @@ class RNGDirector{
 	                                                                                                       
 	                                                    startLevelTaskFactory, 
 	                                                    dummyTaskFactory, 
-	                                                    null,
-	                                                    
-	                                                    debugWriter);
+	                                                    null);
 	}
 	
 	private void startGrammar(){
@@ -310,7 +299,7 @@ class RNGDirector{
         
         SElement e = (SElement)builder.getCurrentPattern();
         needsStartTask.put(e, null);
-        endElementTaskFactory.put(e, new ElementWithNameInstanceTaskFactory(debugWriter));
+        endElementTaskFactory.put(e, new ElementWithNameInstanceTaskFactory());
     }
     private void nameQNameAttributeForElement()  throws DatatypeException{
         builder.startLevel();{
@@ -344,7 +333,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new ElementWithNameClassTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ElementWithNameClassTaskFactory());
 	}	
 	private void nameClassPatternPlus(){		
 		builder.startLevel();{
@@ -386,7 +375,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new AttributeWithNameClassTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new AttributeWithNameClassTaskFactory());
 	}
 	private void nameClassPatternSquare(){
 		builder.startLevel();{
@@ -428,7 +417,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new AttributeWithNameInstanceTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new AttributeWithNameInstanceTaskFactory());
 	}
 	private void nameQNameAttributeForAttribute()  throws DatatypeException{
         builder.startLevel();{
@@ -487,7 +476,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new GroupTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new GroupTaskFactory());
 	}
 	
 	
@@ -522,7 +511,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new InterleaveTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new InterleaveTaskFactory());
 	}		
 	
 	
@@ -557,7 +546,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new ChoicePatternTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ChoicePatternTaskFactory());
 	}
 	
 	
@@ -592,7 +581,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new OptionalTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new OptionalTaskFactory());
 	}
 	
 	
@@ -627,7 +616,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new ZeroOrMoreTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ZeroOrMoreTaskFactory());
 	}
 	
 	
@@ -662,7 +651,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new OneOrMoreTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new OneOrMoreTaskFactory());
 	}
 	
 	
@@ -697,7 +686,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new ListPatternTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ListPatternTaskFactory());
 	}
 	
 	
@@ -732,7 +721,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new MixedTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new MixedTaskFactory());
 	}
 	
 	
@@ -759,7 +748,7 @@ class RNGDirector{
 		builder.buildElement(InternalIndexedData.REF_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: ref"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskFactory.put(e, new RefTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new RefTaskFactory());
 	}
 	private void nameNCNameAttributeForRef()  throws DatatypeException{
         builder.startLevel();{
@@ -795,7 +784,7 @@ class RNGDirector{
 		builder.buildElement(InternalIndexedData.PARENT_REF_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: parentRef"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskFactory.put(e, new ParentRefTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ParentRefTaskFactory());
 	}
 	private void nameNCNameAttributeForParentRef()  throws DatatypeException{
         builder.startLevel();{
@@ -829,7 +818,7 @@ class RNGDirector{
 		builder.buildElement(InternalIndexedData.EMPTY_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: empty"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskFactory.put(e, new EmptyTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new EmptyTaskFactory());
 	}
 	
 	
@@ -855,7 +844,7 @@ class RNGDirector{
 		builder.buildElement(InternalIndexedData.TEXT_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: text"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskFactory.put(e, new TextTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new TextTaskFactory());
 	}
 	
 	
@@ -888,7 +877,7 @@ class RNGDirector{
 		builder.buildElement(InternalIndexedData.VALUE_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: value"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskFactory.put(e, new ValueTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ValueTaskFactory());
 	}
 	
 	
@@ -918,7 +907,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new DataTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new DataTaskFactory());
 	}
 	private void paramStarExceptPatternSquare() throws DatatypeException{
 		builder.startLevel();{
@@ -965,7 +954,7 @@ class RNGDirector{
 		builder.buildElement(InternalIndexedData.NOT_ALLOWED_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskFactory.put(e, new NotAllowedTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new NotAllowedTaskFactory());
 	}
 	
 	
@@ -992,7 +981,7 @@ class RNGDirector{
 		builder.buildElement(InternalIndexedData.EXTERNAL_REF_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: externalRef"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskFactory.put(e, new ExternalRefTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ExternalRefTaskFactory());
 	}
 	private void hrefAttributeExternalRef()  throws DatatypeException{
         builder.startLevel();{
@@ -1024,7 +1013,7 @@ class RNGDirector{
 		SElement e = (SElement)builder.getCurrentPattern();
 		includeStartTopPattern = e;
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new GrammarTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new GrammarTaskFactory());
 	}		
 	private void grammarContentStarForGrammar(){				
 		builder.startLevel();{
@@ -1069,7 +1058,7 @@ class RNGDirector{
 		builder.buildElement(InternalIndexedData.PARAM_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: param"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskFactory.put(e, new ParamTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ParamTaskFactory());
 		refDefinitionTopPattern[PARAM] = e;
 	}
 	private void nameNCNameAttributeForParam()  throws DatatypeException{
@@ -1113,7 +1102,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new ExceptPatternTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ExceptPatternTaskFactory());
 		refDefinitionTopPattern[EXCEPT_PATTERN] = e;
 	}
 	//**************************************************************************
@@ -1157,7 +1146,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new DivGrammarContentTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new DivGrammarContentTaskFactory());
 	}
 	private void grammarContentStarForDiv(){				
 		builder.startLevel();{
@@ -1195,7 +1184,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new IncludeTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new IncludeTaskFactory());
 	}
 	private void includeContentStarForInclude(){				
 		builder.startLevel();{
@@ -1253,7 +1242,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new DivIncludeContentTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new DivIncludeContentTaskFactory());
 	}
 	private void includeContentStarForDiv(){				
 		builder.startLevel();{
@@ -1302,7 +1291,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new StartTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new StartTaskFactory());
         refDefinitionTopPattern[START] = e;
     }
     private void combineAttributeSquareForStart() throws DatatypeException{
@@ -1353,7 +1342,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new DefineTaskFactory(debugWriter));        	
+		endElementTaskFactory.put(e, new DefineTaskFactory());        	
         refDefinitionTopPattern[DEFINE] = e;
     }
     private void nameNCNameAttributeForDefine()  throws DatatypeException{
@@ -1413,7 +1402,7 @@ class RNGDirector{
 		builder.buildElement(InternalIndexedData.NAME_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: name"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
-		endElementTaskFactory.put(e, new NameTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new NameTaskFactory());
 	}
 	
 	private void anyName() throws DatatypeException{
@@ -1433,7 +1422,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new AnyNameTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new AnyNameTaskFactory());
 	}
 	private void exceptNameClassSquareForAnyName() throws DatatypeException{	
 		builder.startLevel();{
@@ -1469,7 +1458,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new NsNameTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new NsNameTaskFactory());
 	}
 	private void exceptNameClassSquareForNsName() throws DatatypeException{	
 		builder.startLevel();{
@@ -1505,7 +1494,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new ChoiceNameClassTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ChoiceNameClassTaskFactory());
 	}	
 	private void nameClassPlusForChoice(){				
 		builder.startLevel();{
@@ -1550,7 +1539,7 @@ class RNGDirector{
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
-		endElementTaskFactory.put(e, new ExceptNameClassTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ExceptNameClassTaskFactory());
         refDefinitionTopPattern[EXCEPT_NAME_CLASS] = e;
     }
     
@@ -1625,7 +1614,7 @@ class RNGDirector{
 		
         SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);        
-		endElementTaskFactory.put(e, new ForeignElementTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ForeignElementTaskFactory());
 		refDefinitionTopPattern[FOREIGN_ELEMENT] = e;
 	}
 	private void anyNameExceptRNG(){
@@ -1661,7 +1650,7 @@ class RNGDirector{
 		
         SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);        
-		endElementTaskFactory.put(e, new ForeignElementTaskFactory(debugWriter));
+		endElementTaskFactory.put(e, new ForeignElementTaskFactory());
 		refDefinitionTopPattern[ANY_ELEMENT] = e;
 	}
 	private void anyContentForAny(){		

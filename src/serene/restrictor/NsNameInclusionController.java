@@ -20,15 +20,13 @@ import serene.validation.schema.simplified.components.SExceptNameClass;
 import serene.validation.schema.simplified.components.SName;
 import serene.validation.schema.simplified.components.SNsName;
 
-import sereneWrite.MessageWriter; 
-
 class NsNameInclusionController extends NameClassInclusionController{
 	
 	SNsName inn;	
 	InclusionController inclusionController;
 	
-	NsNameInclusionController(MessageWriter debugWriter){
-		super(debugWriter);
+	NsNameInclusionController(){
+		super();
 	}
 	
 	
@@ -57,7 +55,7 @@ class NsNameInclusionController extends NameClassInclusionController{
 		}		
 	 
 		if(inclusionController == null){
-			inclusionController = new InclusionController(debugWriter);
+			inclusionController = new InclusionController();
 		}		
 		isIncluded = inclusionController.inclusion(except.getChild(), iExcept.getChild());
 	}

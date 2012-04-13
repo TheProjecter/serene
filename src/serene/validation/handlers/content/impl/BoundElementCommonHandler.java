@@ -40,16 +40,13 @@ import serene.bind.BindingModel;
 import serene.bind.util.QueuePool;
 import serene.bind.util.Queue;
 
-import sereneWrite.MessageWriter;
-
 class BoundElementCommonHandler extends ElementCommonHandler implements BoundElementHandler{	
 	BindingModel bindingModel;
 	Queue queue;
 	QueuePool queuePool;
 	
-	
-	BoundElementCommonHandler(MessageWriter debugWriter){
-		super(debugWriter);	
+	BoundElementCommonHandler(){
+		super();	
 	}
 		
 	void init(ExternalConflictHandler conflictHandler, int candidateCount, ValidatingEEH parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){

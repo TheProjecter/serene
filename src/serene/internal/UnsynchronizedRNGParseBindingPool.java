@@ -34,8 +34,6 @@ import serene.validation.schema.simplified.components.SAttribute;
 
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
-import sereneWrite.MessageWriter;
-
 class UnsynchronizedRNGParseBindingPool extends RNGParseBindingPool{	
 	
 	UnsynchronizedRNGParseBindingPool(RNGParseDocumentTaskFactory startDocumentTaskFactory,
@@ -48,9 +46,7 @@ class UnsynchronizedRNGParseBindingPool extends RNGParseBindingPool{
                                         
                                     RNGParseElementTaskFactory genericStartElementTaskFactory,
                                     RNGParseElementTaskFactory genericEndElementTaskFactory,
-                                    RNGParseAttributeTaskFactory genericAttributeTaskFactory,
-									
-									MessageWriter debugWriter){
+                                    RNGParseAttributeTaskFactory genericAttributeTaskFactory){
 		super(startDocumentTaskFactory,
                         //endDocumentTaskFactory,    
                         
@@ -61,8 +57,7 @@ class UnsynchronizedRNGParseBindingPool extends RNGParseBindingPool{
                             
                         genericStartElementTaskFactory,
                         genericEndElementTaskFactory,
-                        genericAttributeTaskFactory,
-	                    debugWriter);
+                        genericAttributeTaskFactory);
 	} 
 	
 	

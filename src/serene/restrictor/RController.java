@@ -68,8 +68,6 @@ import serene.validation.handlers.error.ErrorDispatcher;
 import serene.restrictor.util.MorePath;
 import serene.restrictor.util.DataPath;
 
-import sereneWrite.MessageWriter;
-
 /**
 * Restrictions controller.
 */
@@ -123,16 +121,13 @@ public class RController implements RestrictingVisitor{
 	ErrorDispatcher errorDispatcher;
     
     boolean restrictToFileName;
-    
-	MessageWriter debugWriter;
 	
-	public RController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
+	public RController(ControllerPool pool, ErrorDispatcher errorDispatcher){
 		this.errorDispatcher = errorDispatcher;
-		this.debugWriter = debugWriter;
         this.pool = pool;
 				
 		handledDefinitions = new IntList();
-		definitionsContentTypes = new ObjectIntHashMap(debugWriter);
+		definitionsContentTypes = new ObjectIntHashMap();
         		
 		attributesPath = new Stack<SAttribute>();
 		morePath = new MorePath();

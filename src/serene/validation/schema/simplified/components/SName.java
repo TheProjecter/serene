@@ -25,8 +25,6 @@ import serene.validation.schema.simplified.components.SNameClass;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class SName extends SNameClass{	
 	String localPart;
 	String ns;
@@ -35,9 +33,8 @@ public class SName extends SNameClass{
 	        String localPart, 
 	        int recordIndex, 
 			DocumentIndexedData documentIndexedData, 
-			boolean addedBySimplification,
-			MessageWriter debugWriter){
-		super(recordIndex, documentIndexedData, debugWriter);		
+			boolean addedBySimplification){
+		super(recordIndex, documentIndexedData);		
 		this.ns = ns;
 		this.localPart = localPart;	
 		this.addedBySimplification = addedBySimplification;

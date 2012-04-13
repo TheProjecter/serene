@@ -115,8 +115,6 @@ import serene.util.AttributeInfo;
 import serene.util.NameInfo;
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class CompatibilityHandler implements RestrictingVisitor{
     SPattern[] startTopPattern;
 	SPattern[] refDefinitionTopPattern;
@@ -190,24 +188,20 @@ public class CompatibilityHandler implements RestrictingVisitor{
     
     boolean optimizedForResourceSharing;
         
-    MessageWriter debugWriter;
-    
     public CompatibilityHandler(ControllerPool controllerPool,
                                 ValidatorErrorHandlerPool errorHandlerPool,
                                 ValidatorEventHandlerPool eventHandlerPool,
                                 ActiveInputDescriptor activeInputDescriptor,
                                 InputStackDescriptor inputStackDescriptor,
-                                ErrorDispatcher errorDispatcher, 
-                                MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+                                ErrorDispatcher errorDispatcher){
         this.controllerPool = controllerPool;
         this.errorHandlerPool = errorHandlerPool;
         this.eventHandlerPool = eventHandlerPool;
         this.activeInputDescriptor = activeInputDescriptor;
         this.inputStackDescriptor = inputStackDescriptor;     
         this.errorDispatcher = errorDispatcher; 
-        defaultValueErrorHandler = new AttributeDefaultValueErrorHandler(activeInputDescriptor, errorDispatcher, debugWriter);
-        simetryController = new CompetitionSimetryController(controllerPool, errorDispatcher, debugWriter);
+        defaultValueErrorHandler = new AttributeDefaultValueErrorHandler(activeInputDescriptor, errorDispatcher);
+        simetryController = new CompetitionSimetryController(controllerPool, errorDispatcher);
         
         attributesDVListsStack = new Stack<ArrayList<AttributeInfo>>();
         attributeListsStack = new Stack<ArrayList<SAttribute>>();
@@ -228,7 +222,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
     public void setLevel1AttributeDefaultValue(boolean value){
         level1AttributeDefaultValue = value;
         if(level1AttributeDefaultValue){
-            if(ccAttribute == null) ccAttribute = new CompatibilityControlAttribute(debugWriter);
+            if(ccAttribute == null) ccAttribute = new CompatibilityControlAttribute();
             if(defaultValueHandler == null) defaultValueHandler = eventHandlerPool.getDefaultValueAttributeValidationHandler();  
         }
     }
@@ -249,7 +243,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
     
     public SchemaModel handle(ValidationModel validationModel) throws SAXException{     
         SimplifiedModel simplifiedModel = validationModel.getSimplifiedModel();
-        if(simplifiedModel == null)return new SchemaModel(validationModel, new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
+        if(simplifiedModel == null)return new SchemaModel(validationModel, new DTDCompatibilityModelImpl(null, null));
         activeModel = validationModel.getActiveModel(activeInputDescriptor, inputStackDescriptor, errorDispatcher);
         grammarModel = activeModel.getGrammarModel();       
                 
@@ -262,7 +256,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
         DTDCompatibilityModel dtdCompatibilityModel = null;
         if(level1AttributeDefaultValue){
             
-            attributeDefaultValueModel = new AttributeDefaultValueModel(debugWriter);
+            attributeDefaultValueModel = new AttributeDefaultValueModel();
             
             ccAttribute.init(grammarModel,
                         activeModel.getStackHandlerPool(),
@@ -285,7 +279,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             hasName = false;            
         }
         if(level1AttributeIdType){
-            attributeIdTypeModel = new AttributeIdTypeModel(debugWriter);
+            attributeIdTypeModel = new AttributeIdTypeModel();
             
             attributeContext = false;
             idTypeAttributeContent = false;
@@ -318,8 +312,8 @@ public class CompatibilityHandler implements RestrictingVisitor{
             if(errorDispatcher.hasAttributeIdTypeError()) attributeIdTypeModel = null;
             else attributeIdTypeModel.wrapUp();
         }
-        dtdCompatibilityModel = new DTDCompatibilityModelImpl(attributeDefaultValueModel, attributeIdTypeModel, debugWriter);
-        return new SchemaModel(validationModel, dtdCompatibilityModel, debugWriter);        
+        dtdCompatibilityModel = new DTDCompatibilityModelImpl(attributeDefaultValueModel, attributeIdTypeModel);
+        return new SchemaModel(validationModel, dtdCompatibilityModel);        
     }
     
     private void handleIdRefs() throws SAXException{
@@ -496,7 +490,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                         errorDispatcher.error(new AttributeIdTypeException(message, null));
                     }else{
                         SName name = (SName)element.getNameClass();
-                        attributeIdTypeModel.addElementNameInfo(new NameInfo(name.getNamespaceURI(), name.getLocalPart(), null, debugWriter));
+                        attributeIdTypeModel.addElementNameInfo(new NameInfo(name.getNamespaceURI(), name.getLocalPart(), null));
                     }
                 }else{
                     hasName = false;
@@ -512,7 +506,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                         errorDispatcher.error(new AttributeIdTypeException(message, null));
                     }else{
                         SName name = (SName)nameClass;
-                        attributeIdTypeModel.addElementNameInfo(new NameInfo(name.getNamespaceURI(), name.getLocalPart(), null, debugWriter));
+                        attributeIdTypeModel.addElementNameInfo(new NameInfo(name.getNamespaceURI(), name.getLocalPart(), null));
                     }
                 }
             }
@@ -587,8 +581,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                                                     name.getLocalPart(), 
                                                     null, 
                                                     defaultValue,
-                                                    idType,
-                                                    debugWriter);
+                                                    idType);
                     currentAttributesDVList.add(attributeInfo);
                 }                
                 
@@ -634,8 +627,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                                                     name.getLocalPart(), 
                                                     null, 
                                                     defaultValue,
-                                                    idType,
-                                                    debugWriter));
+                                                    idType));
                     }else{
                         String message = "DTD compatibility error. Attribute definition without a <name> name class, <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+" may not have non-null ID-type.";
                         errorDispatcher.error(new AttributeIdTypeException(message, null));

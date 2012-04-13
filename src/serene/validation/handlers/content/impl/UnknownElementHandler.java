@@ -24,11 +24,9 @@ import serene.validation.handlers.content.ElementEventHandler;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import sereneWrite.MessageWriter;
-
 class UnknownElementHandler extends ErrorEEH{	
-	UnknownElementHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	UnknownElementHandler(){
+		super();		
 	}
 		
 	public void recycle(){

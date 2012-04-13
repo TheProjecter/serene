@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class DivGrammarContentTask extends RNGParseEndElementTask{
-    DivGrammarContentTask(MessageWriter debugWriter){
-		super(debugWriter);
+    DivGrammarContentTask(){
+		super();
 	}
 	public void execute(){
 		builder.endLevel();

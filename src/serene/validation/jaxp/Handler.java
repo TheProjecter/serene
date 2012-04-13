@@ -27,8 +27,6 @@ import javax.xml.validation.ValidatorHandler;
 
 import serene.util.IntStack;
 
-import sereneWrite.MessageWriter;
-
 abstract class Handler{
     /**
 	* Locator to be initiated with the systemId of the source and used for DOM
@@ -67,10 +65,7 @@ abstract class Handler{
     
     ValidatorHandler validatorHandler;
     
-    MessageWriter debugWriter;
-    
-    Handler(MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+    Handler(){
         chars = new char[CHUNK_SIZE];
     }
     

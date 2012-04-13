@@ -19,15 +19,12 @@ package serene.util;
 
 import java.util.Arrays;
 
-import sereneWrite.MessageWriter;
-
 /**
 * Very simple implementation that allows the mapping of an Object key to an int
 * value. The actual instance of Object is not kept in the map, it cannot be accessed,
 * only used to store and retrieve the value.  
 */
 public class ObjectIntHashMap{
-	MessageWriter debugWriter;
 
 	int[][] hashTable;
 	int[][] intTable; 
@@ -61,8 +58,7 @@ public class ObjectIntHashMap{
 	int nullValue;	
 	boolean isNullValueSet;
 	
-	public ObjectIntHashMap(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;		
+	public ObjectIntHashMap(){		
         threshold = (int)(INITIAL_CAPACITY * LOAD_FACTOR);
         hashTable = new int[INITIAL_CAPACITY][];
 		intTable = new int[INITIAL_CAPACITY][];
@@ -75,9 +71,7 @@ public class ObjectIntHashMap{
 								int size,
 								int threshold,
 								int nullValue,	
-								boolean isNullValueSet,
-								MessageWriter debugWriter){
-		this.debugWriter = debugWriter;		
+								boolean isNullValueSet){
         this.hashTable = hashTable;
 		this.intTable = intTable;
 		this.size = size;
@@ -175,8 +169,7 @@ public class ObjectIntHashMap{
 								size,
 								threshold,
 								nullValue,	
-								isNullValueSet,
-								debugWriter);
+								isNullValueSet);
 	}
 	
 	public void cumulate(ObjectIntHashMap other){

@@ -16,13 +16,9 @@ limitations under the License.
 
 package serene.validation.handlers.conflict;
 
-import sereneWrite.MessageWriter;
-
 public abstract class ConflictHandlerPool{
-	MessageWriter debugWriter;
 	
-	ConflictHandlerPool(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;		
+	ConflictHandlerPool(){		
 	}
 	
 	public abstract ActiveModelConflictHandlerPool getActiveModelConflictHandlerPool();

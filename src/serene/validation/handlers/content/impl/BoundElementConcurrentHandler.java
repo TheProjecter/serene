@@ -35,9 +35,6 @@ import serene.bind.BindingModel;
 import serene.bind.util.QueuePool;
 import serene.bind.util.Queue;
 
-
-import sereneWrite.MessageWriter;
-
 class BoundElementConcurrentHandler extends ElementConcurrentHandler implements BoundElementHandler{
 	BindingModel bindingModel;
 	Queue queue;
@@ -47,8 +44,8 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 
 	boolean mayRecycleCandidateQueues;
 	
-	BoundElementConcurrentHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	BoundElementConcurrentHandler(){
+		super();		
 		
 		queueStartEntry = -1;
 	    queueEndEntry = -1;

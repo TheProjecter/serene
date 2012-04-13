@@ -25,8 +25,6 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class SData extends SPattern{
     Datatype datatype;
 	SExceptPattern[] exceptPattern; 	
@@ -34,9 +32,8 @@ public class SData extends SPattern{
 	public SData(Datatype datatype, 
 	            SExceptPattern[] exceptPattern, 
 	            int recordIndex, 
-				DocumentIndexedData documentIndexedData,
-				MessageWriter debugWriter){
-		super(recordIndex, documentIndexedData, debugWriter);
+				DocumentIndexedData documentIndexedData){
+		super(recordIndex, documentIndexedData);
 		this.datatype = datatype;
 		asParent(exceptPattern);
 	}

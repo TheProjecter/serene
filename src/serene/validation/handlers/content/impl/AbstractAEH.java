@@ -19,15 +19,10 @@ package serene.validation.handlers.content.impl;
 import serene.validation.handlers.content.AttributeEventHandler;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import sereneWrite.MessageWriter;
-
 abstract class AbstractAEH implements AttributeEventHandler{
 	InputStackDescriptor inputStackDescriptor;	
-	ValidatorEventHandlerPool pool;	
-	MessageWriter debugWriter;
-	
-	AbstractAEH(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	ValidatorEventHandlerPool pool;
+	AbstractAEH(){
 	}
 	
 	void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor){

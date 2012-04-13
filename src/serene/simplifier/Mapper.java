@@ -43,8 +43,6 @@ import serene.validation.schema.parsed.ExternalRef;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
-
 class Mapper{	
 	Map<Definition, Map<ExternalRef, URI>> definitionExternalRefs;
 	
@@ -59,11 +57,8 @@ class Mapper{
 	
 	ErrorDispatcher errorDispatcher;
 	
-	
-	MessageWriter debugWriter;
-	
-	Mapper(XMLReader xmlReader, InternalRNGFactory internalRNGFactory, ErrorDispatcher errorDispatcher, NamespaceInheritanceHandler namespaceInheritanceHandler, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	Mapper(XMLReader xmlReader, InternalRNGFactory internalRNGFactory, ErrorDispatcher errorDispatcher, NamespaceInheritanceHandler namespaceInheritanceHandler){
+		
 		this.xmlReader = xmlReader;
 		this.internalRNGFactory = internalRNGFactory;
 		this.errorDispatcher = errorDispatcher;
@@ -81,7 +76,7 @@ class Mapper{
             cl = Simplifier.class.getClassLoader();
         } 
 
-		grammarDefinitionsMapper = new GrammarDefinitionsMapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, new DatatypeLibraryFinder(cl), debugWriter);
+		grammarDefinitionsMapper = new GrammarDefinitionsMapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, new DatatypeLibraryFinder(cl));
 	}
 	
 	void setReplaceMissingDatatypeLibrary(boolean value){
@@ -109,8 +104,8 @@ class Mapper{
 				
 		if(definitionExternalRefs.isEmpty())return;
 			
-		if(externalRefParser == null)externalRefParser = new ExternalRefParser(xmlReader, internalRNGFactory, errorDispatcher, debugWriter);
-		if(mapper == null)mapper = new Mapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, debugWriter);
+		if(externalRefParser == null)externalRefParser = new ExternalRefParser(xmlReader, internalRNGFactory, errorDispatcher);
+		if(mapper == null)mapper = new Mapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler);
 		
 		Set<Definition> externalRefKeys = definitionExternalRefs.keySet();
 		for(Definition key : externalRefKeys){

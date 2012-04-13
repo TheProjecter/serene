@@ -36,8 +36,6 @@ import serene.util.ObjectIntHashMap;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 class RNGParseBindingModel implements BindingModel, Reusable{
     ParsedComponentBuilder parsedComponentBuilder;
     
@@ -54,8 +52,6 @@ class RNGParseBindingModel implements BindingModel, Reusable{
 	
 	RNGParseBindingPool pool;
 	
-	MessageWriter debugWriter;	
-	
 	// TODO
 	// Question: should you use task factories for every definition, so that for 
 	// each new occurrence a new task can be created if necessary? Ot maybe just
@@ -70,8 +66,7 @@ class RNGParseBindingModel implements BindingModel, Reusable{
                         RNGParseElementTask genericEndElementTask,
                         RNGParseAttributeTask genericAttributeTask,
                         ParsedComponentBuilder parsedComponentBuilder,
-                        RNGParseBindingPool pool,                        
-                        MessageWriter debugWriter){
+                        RNGParseBindingPool pool){
 		this.startDocumentTask = startDocumentTask;
         this.endDocumentTask = endDocumentTask;    
         
@@ -85,9 +80,7 @@ class RNGParseBindingModel implements BindingModel, Reusable{
         
         this.parsedComponentBuilder = parsedComponentBuilder;
         
-        this.pool = pool;
-        
-        this.debugWriter = debugWriter;	
+        this.pool = pool;	
 	}
 	
 	ParsedComponentBuilder getParsedComponentBuilder(){

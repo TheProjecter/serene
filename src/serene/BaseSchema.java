@@ -30,7 +30,6 @@ import serene.validation.handlers.error.SynchronizedErrorHandlerPool;
 import serene.validation.handlers.error.UnsynchronizedErrorHandlerPool;
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
 
 public abstract class BaseSchema extends Schema{
     protected boolean secureProcessing;
@@ -41,23 +40,19 @@ public abstract class BaseSchema extends Schema{
 	protected ContentHandlerPool contentHandlerPool;	
 	protected ErrorHandlerPool errorHandlerPool;
 	
-	protected MessageWriter debugWriter;
-    
     public BaseSchema(boolean secureProcessing,
                     boolean optimizedForResourceSharing,
-                    SchemaModel schemaModel,
-                    MessageWriter debugWriter){
-        this.debugWriter = debugWriter; 
+                    SchemaModel schemaModel){
         this.schemaModel = schemaModel;
         this.secureProcessing = secureProcessing;       
         this.optimizedForResourceSharing = optimizedForResourceSharing;
         
         if(optimizedForResourceSharing){
-            contentHandlerPool = SynchronizedContentHandlerPool.getInstance(debugWriter);
-            errorHandlerPool = SynchronizedErrorHandlerPool.getInstance(debugWriter);
+            contentHandlerPool = SynchronizedContentHandlerPool.getInstance();
+            errorHandlerPool = SynchronizedErrorHandlerPool.getInstance();
         }else{
-            contentHandlerPool = UnsynchronizedContentHandlerPool.getInstance(debugWriter);
-            errorHandlerPool = UnsynchronizedErrorHandlerPool.getInstance(debugWriter);
+            contentHandlerPool = UnsynchronizedContentHandlerPool.getInstance();
+            errorHandlerPool = UnsynchronizedErrorHandlerPool.getInstance();
         }
     }    
 }

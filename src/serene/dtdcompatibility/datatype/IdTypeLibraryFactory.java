@@ -22,18 +22,12 @@ import org.relaxng.datatype.DatatypeLibraryFactory;
 
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
 public class IdTypeLibraryFactory implements DatatypeLibraryFactory{			
-		
-	MessageWriter debugWriter;
+
 	public IdTypeLibraryFactory(){}
-	public IdTypeLibraryFactory(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-	}
 	public IdTypeLibrary createDatatypeLibrary(String namespace){
 		if(namespace.equals(Constants.DTD_COMPATIBILITY_DATATYPE_LIBRARY)){
-			return new IdTypeLibrary(debugWriter);
+			return new IdTypeLibrary();
 		}
 		return null;
 	} 

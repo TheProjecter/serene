@@ -22,14 +22,12 @@ import serene.validation.schema.active.ActiveComponentVisitor;
 
 import serene.validation.schema.simplified.components.SName;
 
-import sereneWrite.MessageWriter;
-
 public class AName extends ANameClass{	
 	String localPart;
 	String ns;
 	SName sname;
-	public AName(String ns, String localPart, SName sname, MessageWriter debugWriter){
-		super(debugWriter);		
+	public AName(String ns, String localPart, SName sname){
+		super();		
 		this.ns = ns;
 		this.localPart = localPart;
         this.sname = sname;		

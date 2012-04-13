@@ -49,15 +49,10 @@ import serene.validation.handlers.structure.impl.SInterleaveHandler;
 
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
-import sereneWrite.MessageWriter;
-
 public class RuleHandlerReplacer implements RuleHandlerVisitor{
 	StackConflictsHandler stackConflictsHandler;
-	
-	MessageWriter debugWriter;
 		
-	public RuleHandlerReplacer(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	public RuleHandlerReplacer(){
 	}
 	
 	public void replaceHandlers(StackConflictsHandler stackConflictsHandler, StructureHandler topHandler){

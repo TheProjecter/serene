@@ -21,8 +21,6 @@ import java.util.ArrayList;
 
 import serene.validation.schema.parsed.Define;
 
-import sereneWrite.MessageWriter;
-
 public class CombinedDefine{
 	ArrayList<Define> defines;	
 }

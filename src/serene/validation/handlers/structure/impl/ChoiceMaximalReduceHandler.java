@@ -26,7 +26,6 @@ import serene.validation.handlers.structure.RuleHandlerVisitor;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.error.ErrorCatcher;
-import sereneWrite.MessageWriter;
 
 // The reductions are done at childSaturated and at change(in the getHandlerForPattern).
 // Choice can never have excessive content. In case too many occurrences of 
@@ -37,8 +36,8 @@ public class ChoiceMaximalReduceHandler extends UCMaximalReduceHandler{
 	Rule currentChild;
 	
 	ChoiceMaximalReduceHandler original;
-	ChoiceMaximalReduceHandler(MessageWriter debugWriter){
-		super(debugWriter);			
+	ChoiceMaximalReduceHandler(){
+		super();			
 	}	
 	
 	

@@ -18,14 +18,13 @@ package serene.internal;
 
 import serene.bind.ElementTask;
 
-import sereneWrite.MessageWriter;
 
 class NotAllowedTaskFactory extends RNGParseEndElementTaskFactory{
-	public NotAllowedTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	public NotAllowedTaskFactory(){
+		super();
 	}
 	
 	public NotAllowedTask getTask(){
-		return new NotAllowedTask(debugWriter);
+		return new NotAllowedTask();
 	}
 }

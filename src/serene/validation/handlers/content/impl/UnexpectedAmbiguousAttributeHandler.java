@@ -21,13 +21,11 @@ import java.util.Arrays;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import sereneWrite.MessageWriter;
-
 class UnexpectedAmbiguousAttributeHandler extends ErrorAEH{
 	SimplifiedComponent[] attributes;
 	
-	UnexpectedAmbiguousAttributeHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	UnexpectedAmbiguousAttributeHandler(){
+		super();
 	}
 	
 	public void recycle(){

@@ -30,25 +30,18 @@ import org.apache.xerces.impl.dv.XSSimpleType;
 
 //import org.apache.xerces.impl.dv.xs.FullDVFactory;
 
-import sereneWrite.MessageWriter;
-
-
-public class XsdLibrary implements DatatypeLibrary{
-    MessageWriter debugWriter;
-	
+public class XsdLibrary implements DatatypeLibrary{	
     SchemaDVFactory xercesFactory;
     XsdValidationContext xsdValidationContext;
     HashMap<String, XsdDatatype> datatypes;
     
-	XsdLibrary(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-        
+	XsdLibrary(){
         xercesFactory = SchemaDVFactory.getInstance("org.apache.xerces.impl.dv.xs.FullDVFactory");
         if(xercesFactory == null){
             xercesFactory = SchemaDVFactory.getInstance();
         }
         
-        xsdValidationContext = new XsdValidationContext(debugWriter);
+        xsdValidationContext = new XsdValidationContext();
         
         datatypes = new HashMap<String, XsdDatatype>();
 	}
@@ -60,7 +53,7 @@ public class XsdLibrary implements DatatypeLibrary{
             xercesType = xercesFactory.getBuiltInType(typeLocalName);            
             if(xercesType == null) throw new DatatypeException("Type \"" + typeLocalName+"\" is not known in the library.");
             
-            datatype =  new XsdDatatype(xsdValidationContext, xercesType, debugWriter);
+            datatype =  new XsdDatatype(xsdValidationContext, xercesType);
             
             if(typeLocalName.equals("string")) datatype.setNeedsToNormalize(false);
             if(/*typeLocalName.equals("ID") 
@@ -75,6 +68,6 @@ public class XsdLibrary implements DatatypeLibrary{
 	}
 	
 	public DatatypeBuilder createDatatypeBuilder(String baseTypeLocalName) throws DatatypeException{
-        return new XsdBuilder(baseTypeLocalName, xercesFactory.getBuiltInType(baseTypeLocalName), xercesFactory, xsdValidationContext, debugWriter);
+        return new XsdBuilder(baseTypeLocalName, xercesFactory.getBuiltInType(baseTypeLocalName), xercesFactory, xsdValidationContext);
 	}
 }

@@ -24,8 +24,6 @@ import javax.xml.validation.ValidatorHandler;
 import serene.BaseSchema;
 import serene.SchemaModel;
 
-import sereneWrite.MessageWriter;
-
 //SPECIFICATION
 //	thread safe(should be shared across parsers and threads)
 //	immutable(validating the same document over the same schema gives the same result)
@@ -45,9 +43,8 @@ public class InternalRNGSchema extends BaseSchema{
                     boolean restrictToFileName,
                     boolean optimizedForResourceSharing,
                     SchemaModel schemaModel,
-                    RNGParseBindingPool bindingPool,
-                    MessageWriter debugWriter){
-		super(secureProcessing, optimizedForResourceSharing, schemaModel, debugWriter);
+                    RNGParseBindingPool bindingPool){
+		super(secureProcessing, optimizedForResourceSharing, schemaModel);
         this.level1DocumentationElement = level1DocumentationElement;
         this.restrictToFileName = restrictToFileName;
         this.bindingPool = bindingPool;
@@ -65,7 +62,6 @@ public class InternalRNGSchema extends BaseSchema{
 										bindingPool,
                                         level1DocumentationElement,
                                         restrictToFileName,
-                                        optimizedForResourceSharing,
-										debugWriter);
+                                        optimizedForResourceSharing);
 	}    
 }

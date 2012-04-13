@@ -26,12 +26,10 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
-import sereneWrite.MessageWriter;
-
 public class GrammarHandler extends UniqueChildPatternHandler{	
 	GrammarHandler original;
-	GrammarHandler(MessageWriter debugWriter){		
-		super(debugWriter);					
+	GrammarHandler(){		
+		super();					
 	}	
 	
 	void init(AGrammar grammar, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){

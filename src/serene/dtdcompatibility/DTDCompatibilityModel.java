@@ -16,8 +16,6 @@ limitations under the License.
 
 package serene.dtdcompatibility;
 
-import sereneWrite.MessageWriter;
-
 public interface DTDCompatibilityModel{
     AttributeDefaultValueModel getAttributeDefaultValueModel();
     AttributeIdTypeModel getAttributeIdTypeModel();

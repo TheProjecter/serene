@@ -16,8 +16,6 @@ limitations under the License.
 
 package serene.validation.handlers.conflict;
 
-import sereneWrite.MessageWriter;
-
 public class SynchronizedConflictHandlerPool extends ConflictHandlerPool{
 	private static volatile ConflictHandlerPool instance;
 	
@@ -90,8 +88,8 @@ public class SynchronizedConflictHandlerPool extends ConflictHandlerPool{
 	BoundUnresolvedAttributeConflictResolver[] boundUnresolvedAttributeConflictResolver;
 	
 	
-	SynchronizedConflictHandlerPool(MessageWriter debugWriter){
-		super(debugWriter);
+	SynchronizedConflictHandlerPool(){
+		super();
 		
 		amchPoolFree = 0;
 		amchPoolMaxSize = 10;
@@ -163,11 +161,11 @@ public class SynchronizedConflictHandlerPool extends ConflictHandlerPool{
         boundUnresolvedAttributeConflictResolverMaxSize = 10;
 	}
 	
-	public static ConflictHandlerPool getInstance(MessageWriter debugWriter){
+	public static ConflictHandlerPool getInstance(){
 		if(instance == null){
 			synchronized(SynchronizedConflictHandlerPool.class){
 				if(instance == null){
-					instance = new SynchronizedConflictHandlerPool(debugWriter); 
+					instance = new SynchronizedConflictHandlerPool(); 
 				}
 			}
 		}
@@ -770,7 +768,7 @@ public class SynchronizedConflictHandlerPool extends ConflictHandlerPool{
 	
 	public synchronized ActiveModelConflictHandlerPool getActiveModelConflictHandlerPool(){
 		if(amchPoolFree == 0){
-			ActiveModelConflictHandlerPool amchp = new ActiveModelConflictHandlerPool(instance, debugWriter);			
+			ActiveModelConflictHandlerPool amchp = new ActiveModelConflictHandlerPool(instance);			
 			return amchp;
 		}else{
 			ActiveModelConflictHandlerPool amchp = amchPools[--amchPoolFree];

@@ -80,16 +80,11 @@ import serene.util.IntStack;
 
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
-
 class ValidatorImpl extends Validator{    
 	LSResourceResolver lsResourceResolver;
 	
 	ErrorDispatcher errorDispatcher;
-	
-	MessageWriter debugWriter;
-	
+
 	ValidatorHandler validatorHandler;
 	
     DOMHandler domHandler;
@@ -125,10 +120,7 @@ class ValidatorImpl extends Validator{
                     boolean level1AttributeIdType,
                     boolean level2AttributeIdType,
                     boolean restrictToFileName,
-                    ValidatorHandler validatorHandler, 
-                    MessageWriter debugWriter){
-		this.debugWriter = debugWriter;		
-        
+                    ValidatorHandler validatorHandler){        
         this.secureProcessing = secureProcessing;
         this.namespacePrefixes = namespacePrefixes; 
         this.level1AttributeDefaultValue = level1AttributeDefaultValue;
@@ -148,7 +140,7 @@ class ValidatorImpl extends Validator{
         
 		this.validatorHandler = validatorHandler;
         
-		errorDispatcher = new ErrorDispatcher(debugWriter);
+		errorDispatcher = new ErrorDispatcher();
         
         validatorHandler.setErrorHandler(errorDispatcher);
 	}
@@ -359,7 +351,7 @@ class ValidatorImpl extends Validator{
                 }
                 // create handler and validate
                 if(xmlStreamWriter != null){
-                    if(stAXStreamBuildingHandler == null) stAXStreamBuildingHandler = new StAXStreamBuildingHandler(debugWriter);
+                    if(stAXStreamBuildingHandler == null) stAXStreamBuildingHandler = new StAXStreamBuildingHandler();
                     if(level2AttributeDefaultValue)stAXStreamBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
                     if(level2AttributeIdType){
                         validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, false);
@@ -374,7 +366,7 @@ class ValidatorImpl extends Validator{
                         stAXStreamBuildingHandler.setLevel2AttributeIdType(false);
                     }
                 }else{
-                    if(stAXEventBuildingHandler == null) stAXEventBuildingHandler = new StAXEventBuildingHandler(debugWriter);
+                    if(stAXEventBuildingHandler == null) stAXEventBuildingHandler = new StAXEventBuildingHandler();
                     if(level2AttributeDefaultValue) stAXEventBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
                     if(level2AttributeIdType){
                         validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, false);
@@ -404,7 +396,7 @@ class ValidatorImpl extends Validator{
                  }
                  // create handler and validate
                 if(xmlStreamWriter != null){
-                    if(stAXStreamBuildingHandler == null) stAXStreamBuildingHandler = new StAXStreamBuildingHandler(debugWriter);
+                    if(stAXStreamBuildingHandler == null) stAXStreamBuildingHandler = new StAXStreamBuildingHandler();
                     if(level2AttributeDefaultValue) stAXStreamBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
                     if(level2AttributeIdType){
                         validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, false);
@@ -419,7 +411,7 @@ class ValidatorImpl extends Validator{
                         stAXStreamBuildingHandler.setLevel2AttributeIdType(false);
                     }
                 }else{
-                    if(stAXEventBuildingHandler == null) stAXEventBuildingHandler = new StAXEventBuildingHandler(debugWriter);
+                    if(stAXEventBuildingHandler == null) stAXEventBuildingHandler = new StAXEventBuildingHandler();
                     if(level2AttributeDefaultValue) stAXEventBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
                     if(level2AttributeIdType){
                         validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, false);
@@ -453,7 +445,7 @@ class ValidatorImpl extends Validator{
                     throw new IllegalArgumentException("Source represents an XML artifact that cannot be validated. Input is expected to be XML documents or elements.");
                  }
                  // create handler and validate
-                 if(stAXHandler == null) stAXHandler = new StAXHandler(debugWriter);
+                 if(stAXHandler == null) stAXHandler = new StAXHandler();
                  stAXHandler.handle(source.getSystemId(), validatorHandler, xmlStreamReader);
              }catch(XMLStreamException e){
                  throw new SAXException(e);
@@ -469,7 +461,7 @@ class ValidatorImpl extends Validator{
                     throw new IllegalArgumentException("Source represents an XML artifact that cannot be validated. Input is expected to be XML documents or elements.");
                  }
                  // create handler and validate             
-                 if(stAXHandler == null) stAXHandler = new StAXHandler(debugWriter);                 
+                 if(stAXHandler == null) stAXHandler = new StAXHandler();                 
                  stAXHandler.handle(source.getSystemId(), validatorHandler, xmlEventReader);
              }catch(XMLStreamException e){
                  throw new SAXException(e);
@@ -496,7 +488,7 @@ class ValidatorImpl extends Validator{
         String systemId = source.getSystemId();
         
         if(resultNode == sourceNode){
-            if(domAugmentingHandler == null) domAugmentingHandler = new DOMAugmentingHandler(debugWriter);
+            if(domAugmentingHandler == null) domAugmentingHandler = new DOMAugmentingHandler();
             if(level2AttributeDefaultValue) domAugmentingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
             if(level2AttributeIdType){
                 validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, false);
@@ -522,7 +514,7 @@ class ValidatorImpl extends Validator{
                     throw new SAXException(e);
                 }
             }            
-            if(domBuildingHandler == null) domBuildingHandler = new DOMBuildingHandler(debugWriter);
+            if(domBuildingHandler == null) domBuildingHandler = new DOMBuildingHandler();
             if(level2AttributeDefaultValue) domBuildingHandler.setLevel2AttributeDefaultValue(level2AttributeDefaultValue);
             if(level2AttributeIdType){
                 validatorHandler.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, false);
@@ -547,7 +539,7 @@ class ValidatorImpl extends Validator{
             throw new IllegalArgumentException("Source represents an XML artifact that cannot be validated. Input is expected to be XML documents or elements.");
 		
         String systemId = source.getSystemId();        
-        if(domHandler == null) domHandler = new DOMHandler(debugWriter);
+        if(domHandler == null) domHandler = new DOMHandler();
         domHandler.handle(systemId, validatorHandler, node);        
 	}
 	

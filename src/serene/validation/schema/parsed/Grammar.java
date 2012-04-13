@@ -22,7 +22,6 @@ import java.util.Map;
 import org.xml.sax.SAXException;
 
 import serene.bind.util.DocumentIndexedData;
-import sereneWrite.MessageWriter;
 
 public class Grammar extends Pattern{	
 	ParsedComponent[] children;
@@ -33,9 +32,8 @@ public class Grammar extends Pattern{
                 int datatypeLibrary,
                 ParsedComponent[] children, 
                 int recordIndex,
-	            DocumentIndexedData documentIndexedData,
-	            MessageWriter debugWriter){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
+	            DocumentIndexedData documentIndexedData){
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 		asParent(children);		
 	}
 		

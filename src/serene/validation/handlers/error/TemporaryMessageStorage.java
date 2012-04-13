@@ -42,8 +42,6 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
-import sereneWrite.MessageWriter;
-
 public class TemporaryMessageStorage  implements ErrorCatcher{	
     
     ActiveInputDescriptor activeInputDescriptor;
@@ -529,14 +527,10 @@ public class TemporaryMessageStorage  implements ErrorCatcher{
     boolean internalConflict;
     ConflictMessageReporter conflictMessageReporter;
     
-    MessageWriter debugWriter;
-    
     boolean isDiscarded;
     boolean isClear;
     
-	public TemporaryMessageStorage(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-				
+	public TemporaryMessageStorage(){				
 		// {2}
         unknownElementIndex = -1;
         

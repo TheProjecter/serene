@@ -31,16 +31,14 @@ import serene.validation.handlers.stack.StackHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import sereneWrite.MessageWriter;
-
 // TODO
 // Cosider getting rid of the AbstractSaturatedContent subclasses.
 // Replace with a on the fly computing of saturation in the isSaturated()
 // Seems simpler and more consistent.
 abstract class MinimalReduceCountHandler extends LimitReduceCountHandler implements MinimalReduceHandler{
 		
-	public MinimalReduceCountHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public MinimalReduceCountHandler(){
+		super();
 		// TODO		
 		//create contentHandler subclasses
 		//set the default contentHandler value		

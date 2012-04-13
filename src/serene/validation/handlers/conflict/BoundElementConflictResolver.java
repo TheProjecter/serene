@@ -34,8 +34,6 @@ import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.bind.util.Queue;
 import serene.bind.BindingModel;
 
-import sereneWrite.MessageWriter;
-
 
 public abstract class BoundElementConflictResolver extends ElementConflictResolver{
     BindingModel bindingModel;
@@ -46,8 +44,8 @@ public abstract class BoundElementConflictResolver extends ElementConflictResolv
 	
 	Map<AElement, Queue> candidateQueues;
 	
-	public BoundElementConflictResolver(MessageWriter debugWriter){
-		super(debugWriter);
+	public BoundElementConflictResolver(){
+		super();
 	}
 	
 	void init(ConflictMessageReporter conflictMessageReporter,

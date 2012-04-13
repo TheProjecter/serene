@@ -48,8 +48,6 @@ import serene.validation.jaxp.util.AttributeWrapper;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
-
 public class AttributeIdTypeHandler{  
     String ID_TYPE = "ID";
     String IDREF_TYPE = "IDREF";
@@ -66,12 +64,8 @@ public class AttributeIdTypeHandler{
 
     boolean restrictToFileName;
     
-    MessageWriter debugWriter;
-    
     public AttributeIdTypeHandler(AttributeIdTypeModel attributeIdTypeModel,
-                                ErrorDispatcher errorDispatcher,
-                                MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+                                ErrorDispatcher errorDispatcher){
         this.errorDispatcher = errorDispatcher;
         if(errorDispatcher == null) throw new NullPointerException();
         
@@ -122,8 +116,7 @@ public class AttributeIdTypeHandler{
                                                                                             publicId,
                                                                                             systemId,
                                                                                             lineNumber,
-                                                                                            columnNumber,
-                                                                                            debugWriter)); 
+                                                                                            columnNumber)); 
                     if(previousId != null){
                         String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
                         previousId.getQName()+" at "+getLocation(previousId.getSystemId())+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
@@ -138,8 +131,7 @@ public class AttributeIdTypeHandler{
                                                                 publicId,
                                                                 systemId,
                                                                 lineNumber,
-                                                                columnNumber,
-                                                                debugWriter));
+                                                                columnNumber));
                 }else{
                     throw new IllegalStateException();   
                 }
@@ -183,8 +175,7 @@ public class AttributeIdTypeHandler{
                                                                                             publicId,
                                                                                             systemId,
                                                                                             lineNumber,
-                                                                                            columnNumber,
-                                                                                            debugWriter)); 
+                                                                                            columnNumber)); 
                     if(previousId != null){
                         String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
                         previousId.getQName()+" at "+getLocation(previousId.getSystemId())+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
@@ -204,8 +195,7 @@ public class AttributeIdTypeHandler{
                                                                 publicId,
                                                                 systemId,
                                                                 lineNumber,
-                                                                columnNumber,
-                                                                debugWriter));
+                                                                columnNumber));
                 }else if(idType == Datatype.ID_TYPE_IDREFS){
                     modifiedAttributes.addAttribute(namespaceURI,
                                             localName,
@@ -220,8 +210,7 @@ public class AttributeIdTypeHandler{
                                                                 publicId,
                                                                 systemId,
                                                                 lineNumber,
-                                                                columnNumber,
-                                                                debugWriter));
+                                                                columnNumber));
                 }else{
                     throw new IllegalStateException();   
                 }
@@ -252,7 +241,7 @@ public class AttributeIdTypeHandler{
             if(attributeInfo != null){
                 int idType = attributeInfo.getIdType();            
                 if(idType == Datatype.ID_TYPE_ID){
-                    AttributeWrapper modifiedAttribute = new AttributeWrapper(attrList.get(i), ID_TYPE, debugWriter);
+                    AttributeWrapper modifiedAttribute = new AttributeWrapper(attrList.get(i), ID_TYPE);
                     attrList.set(i, modifiedAttribute); 
                     NameLocationInfo previousId = idAttributes.put(value, new NameLocationInfo(namespaceURI,
                                                                                             localName,
@@ -260,15 +249,14 @@ public class AttributeIdTypeHandler{
                                                                                             publicId,
                                                                                             systemId,
                                                                                             lineNumber,
-                                                                                            columnNumber,
-                                                                                            debugWriter)); 
+                                                                                            columnNumber)); 
                     if(previousId != null){
                         String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
                         previousId.getQName()+" at "+getLocation(previousId.getSystemId())+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
                         errorDispatcher.error(new AttributeIdTypeException(message, publicId, systemId, lineNumber, columnNumber));
                     }
                 }else if(idType == Datatype.ID_TYPE_IDREF){
-                    AttributeWrapper modifiedAttribute = new AttributeWrapper(attrList.get(i), IDREF_TYPE, debugWriter);
+                    AttributeWrapper modifiedAttribute = new AttributeWrapper(attrList.get(i), IDREF_TYPE);
                     attrList.set(i, modifiedAttribute);
                     refAttributes.add(new AttributeLocationInfo(namespaceURI,
                                                                 localName,
@@ -278,10 +266,9 @@ public class AttributeIdTypeHandler{
                                                                 publicId,
                                                                 systemId,
                                                                 lineNumber,
-                                                                columnNumber,
-                                                                debugWriter));
+                                                                columnNumber));
                 }else if(idType == Datatype.ID_TYPE_IDREFS){
-                    AttributeWrapper modifiedAttribute = new AttributeWrapper(attrList.get(i), IDREFS_TYPE, debugWriter);
+                    AttributeWrapper modifiedAttribute = new AttributeWrapper(attrList.get(i), IDREFS_TYPE);
                     attrList.set(i, modifiedAttribute);
                     refAttributes.add(new AttributeLocationInfo(namespaceURI,
                                                                 localName,
@@ -291,8 +278,7 @@ public class AttributeIdTypeHandler{
                                                                 publicId,
                                                                 systemId,
                                                                 lineNumber,
-                                                                columnNumber,
-                                                                debugWriter));
+                                                                columnNumber));
                 }else{
                     throw new IllegalStateException();   
                 }
@@ -325,8 +311,7 @@ public class AttributeIdTypeHandler{
                                                                                             publicId,
                                                                                             systemId,
                                                                                             lineNumber,
-                                                                                            columnNumber,
-                                                                                            debugWriter)); 
+                                                                                            columnNumber)); 
                     if(previousId != null){
                         String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
                         previousId.getQName()+" at "+getLocation(previousId.getSystemId())+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
@@ -341,8 +326,7 @@ public class AttributeIdTypeHandler{
                                                                 publicId,
                                                                 systemId,
                                                                 lineNumber,
-                                                                columnNumber,
-                                                                debugWriter));
+                                                                columnNumber));
                 }else{
                     throw new IllegalStateException();   
                 }
@@ -386,8 +370,7 @@ public class AttributeIdTypeHandler{
                                                                                             publicId,
                                                                                             systemId,
                                                                                             lineNumber,
-                                                                                            columnNumber,
-                                                                                            debugWriter)); 
+                                                                                            columnNumber)); 
                     if(previousId != null){
                         String message = "Soundness error. Value of attribute "+qName+" with the ID-type ID is the same as  value of attribute "+
                         previousId.getQName()+" at "+getLocation(previousId.getSystemId())+":"+previousId.getLineNumber()+":"+previousId.getColumnNumber()+" with the ID-type ID.";
@@ -402,8 +385,7 @@ public class AttributeIdTypeHandler{
                                                                 publicId,
                                                                 systemId,
                                                                 lineNumber,
-                                                                columnNumber,
-                                                                debugWriter));
+                                                                columnNumber));
                 }else{
                     throw new IllegalStateException();   
                 }

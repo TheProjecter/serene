@@ -18,14 +18,12 @@ package serene.internal;
 
 import serene.bind.ElementTask;
 
-import sereneWrite.MessageWriter;
-
 class ChoiceNameClassTaskFactory extends RNGParseEndElementTaskFactory{
-	public ChoiceNameClassTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	public ChoiceNameClassTaskFactory(){
+		super();
 	}
 	
 	public ChoiceNameClassTask getTask(){
-	    return new ChoiceNameClassTask(debugWriter);
+	    return new ChoiceNameClassTask();
 	}
 }

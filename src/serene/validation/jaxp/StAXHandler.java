@@ -49,16 +49,13 @@ import javax.xml.namespace.QName;
 
 import serene.Constants;
 
-
 import serene.util.IntStack;
-
-import sereneWrite.MessageWriter;
 
 class StAXHandler extends Handler{
     int depth = 0;
     
-    StAXHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    StAXHandler(){
+        super();
     }
     
     void handle(String systemId, ValidatorHandler validatorHandler, XMLEventReader xmlEventReader) throws SAXException{

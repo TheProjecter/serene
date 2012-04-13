@@ -38,8 +38,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	final int GOOD_ORDER = -1;	
 	final int CURRENT_MISPLACED = 0;
@@ -65,8 +63,8 @@ public class GroupMaximalReduceCountHandler extends MaximalReduceCountHandler{
 	IntList startedCountList;
 	
 	GroupMaximalReduceCountHandler original;
-	GroupMaximalReduceCountHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	GroupMaximalReduceCountHandler(){
+		super();
 	
 		childRecordIndex = -1;
 		childRecordInitialSize = 10;

@@ -22,7 +22,6 @@ import java.util.Map;
 import org.xml.sax.SAXException;
 
 import serene.bind.util.DocumentIndexedData;
-import sereneWrite.MessageWriter;
 
 public class AttributeWithNameInstance extends Attribute{
 	int nameRecordIndex;
@@ -34,9 +33,8 @@ public class AttributeWithNameInstance extends Attribute{
 								int defaultValue,
 								ParsedComponent[] children,
 								int recordIndex,
-                                DocumentIndexedData documentIndexedData, 
-								MessageWriter debugWriter){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, defaultValue, children, recordIndex, documentIndexedData, debugWriter);
+                                DocumentIndexedData documentIndexedData){		
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, defaultValue, children, recordIndex, documentIndexedData);
 		this.nameRecordIndex = name;
 	}	
 

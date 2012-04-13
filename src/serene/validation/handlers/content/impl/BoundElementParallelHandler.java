@@ -33,8 +33,6 @@ import serene.bind.BindingModel;
 import serene.bind.util.QueuePool;
 import serene.bind.util.Queue;
 
-import sereneWrite.MessageWriter;
-
 class BoundElementParallelHandler extends ElementParallelHandler implements BoundElementHandler{
 	// TODO you might not need this???
 	// See about the queue in the common states.
@@ -45,9 +43,8 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 	BoundCommon boundCommon;
 	BoundConflict boundConflict;
 	
-	
-	BoundElementParallelHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	BoundElementParallelHandler(){
+		super();		
 	}
 
     void initStates(){

@@ -19,17 +19,14 @@ package serene.validation.schema.parsed;
 
 import serene.DTDMapping;
 
-import sereneWrite.MessageWriter;
 import sereneWrite.ParsedComponentWriter;
  
 public class ParsedModel{
 	Pattern topPattern;
 	
     DTDMapping dtdMapping;
-    
-	MessageWriter debugWriter;
-	public ParsedModel(DTDMapping dtdMapping, Pattern topPattern, MessageWriter debugWriter){		
-		this.debugWriter = debugWriter;
+
+	public ParsedModel(DTDMapping dtdMapping, Pattern topPattern){
         this.dtdMapping = dtdMapping;
         this.topPattern = topPattern;
         

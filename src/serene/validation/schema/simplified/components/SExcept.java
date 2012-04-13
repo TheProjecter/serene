@@ -18,12 +18,9 @@ package serene.validation.schema.simplified.components;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public abstract class SExcept extends AbstractSimplifiedComponent{
 	public SExcept(int recordIndex, 
-			DocumentIndexedData documentIndexedData, 
-			MessageWriter debugWriter){
-		super(recordIndex, documentIndexedData, debugWriter);
+			DocumentIndexedData documentIndexedData){
+		super(recordIndex, documentIndexedData);
 	}
 }

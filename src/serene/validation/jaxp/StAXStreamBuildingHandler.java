@@ -59,8 +59,6 @@ import serene.DocumentContext;
 
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
 class StAXStreamBuildingHandler extends StAXHandler{
     XMLStreamWriter xmlStreamWriter;
      
@@ -72,8 +70,8 @@ class StAXStreamBuildingHandler extends StAXHandler{
     
     DocumentContext documentContext;
     
-    StAXStreamBuildingHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    StAXStreamBuildingHandler(){
+        super();
     }
 
 

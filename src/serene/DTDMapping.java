@@ -20,17 +20,11 @@ import java.util.HashMap;
 
 import org.xml.sax.DTDHandler;
 
-import sereneWrite.MessageWriter;
-
 public class DTDMapping implements DTDHandler{
     HashMap<String, NotationDeclaration> notationDeclarations;
     HashMap<String, EntityDeclaration> entityDeclarations;
     
-	MessageWriter debugWriter;
-    
-    public DTDMapping(MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
-		
+    public DTDMapping(){
 		notationDeclarations = new HashMap<String, NotationDeclaration>(); 
         entityDeclarations = new HashMap<String, EntityDeclaration>();
     }
@@ -41,11 +35,11 @@ public class DTDMapping implements DTDHandler{
     }
     
     public void unparsedEntityDecl(String entityName, String publicId, String systemId, String notationName){
-		entityDeclarations.put(entityName, new EntityDeclaration(entityName, publicId, systemId, notationName, debugWriter));
+		entityDeclarations.put(entityName, new EntityDeclaration(entityName, publicId, systemId, notationName));
 	}
 	
     public void notationDecl(String notationName, String publicId, String systemId){
-		notationDeclarations.put(notationName, new NotationDeclaration(notationName, publicId, systemId, debugWriter));
+		notationDeclarations.put(notationName, new NotationDeclaration(notationName, publicId, systemId));
 	}
     
     public boolean isUnparsedEntity(String entityName){

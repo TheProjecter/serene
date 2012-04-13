@@ -23,15 +23,11 @@ import org.relaxng.datatype.DatatypeStreamingValidator;
 
 import serene.datatype.util.StringNormalizer;
 
-import sereneWrite.MessageWriter;
-
 class TokenDT implements Datatype{
 	
-	StringNormalizer stringNormalizer;  
-	MessageWriter debugWriter;
+	StringNormalizer stringNormalizer;
 	
-	TokenDT(StringNormalizer stringNormalizer, MessageWriter debugWriter){		
-		this.debugWriter = debugWriter;
+	TokenDT(StringNormalizer stringNormalizer){
 		this.stringNormalizer = stringNormalizer;
 	}
 	

@@ -17,7 +17,6 @@ limitations under the License.
 package serene.restrictor;
 
 import serene.validation.handlers.error.ErrorDispatcher;
-import sereneWrite.MessageWriter;
 
 public class ControllerPool{
 	ContentTypeController[] ctc;
@@ -46,10 +45,8 @@ public class ControllerPool{
 	int ocSize;
 	
 	ErrorDispatcher errorDispatcher;
-	MessageWriter debugWriter;
 	
-	ControllerPool(ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	ControllerPool(ErrorDispatcher errorDispatcher){
 		this.errorDispatcher = errorDispatcher;
 		
 		ctcFree = 0;
@@ -79,7 +76,7 @@ public class ControllerPool{
 	
 	ContentTypeController getContentTypeController(){
 		if(ctcFree == 0){
-			return new ContentTypeController(this, errorDispatcher, debugWriter);
+			return new ContentTypeController(this, errorDispatcher);
 		}else{			
 			return ctc[--ctcFree];
 		}		
@@ -96,7 +93,7 @@ public class ControllerPool{
 	
 	AttributeNamingController getAttributeNamingController(){
 		if(ancFree == 0){
-			return new AttributeNamingController(this, errorDispatcher, debugWriter);
+			return new AttributeNamingController(this, errorDispatcher);
 		}else{			
 			return anc[--ancFree];
 		}		
@@ -113,7 +110,7 @@ public class ControllerPool{
 	
 	ElementNamingController getElementNamingController(){
 		if(encFree == 0){
-			return new ElementNamingController(this, errorDispatcher, debugWriter);
+			return new ElementNamingController(this, errorDispatcher);
 		}else{			
 			return enc[--encFree];
 		}		
@@ -131,7 +128,7 @@ public class ControllerPool{
 	
 	AttributeLimitationNamingController getAttributeLimitationNamingController(){
 		if(alncFree == 0){
-			return new AttributeLimitationNamingController(this, errorDispatcher, debugWriter);
+			return new AttributeLimitationNamingController(this, errorDispatcher);
 		}else{			
 			return alnc[--alncFree];
 		}		
@@ -148,7 +145,7 @@ public class ControllerPool{
 	
 	ElementLimitationNamingController getElementLimitationNamingController(){
 		if(elncFree == 0){
-			return new ElementLimitationNamingController(this, errorDispatcher, debugWriter);
+			return new ElementLimitationNamingController(this, errorDispatcher);
 		}else{			
 			return elnc[--elncFree];
 		}		
@@ -165,7 +162,7 @@ public class ControllerPool{
 		
 	OverlapController getOverlapController(){
 		if(ocFree == 0){
-			return new OverlapController(this, debugWriter);
+			return new OverlapController(this);
 		}else{			
 			return oc[--ocFree];
 		}		

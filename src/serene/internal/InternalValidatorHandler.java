@@ -67,8 +67,6 @@ import serene.DocumentContext;
 
 import serene.util.SpaceCharsHandler;
 
-import sereneWrite.MessageWriter;
-
 import serene.bind.BindingModel;
 import serene.bind.BindingPool;
 import serene.bind.ElementTask;
@@ -108,9 +106,8 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	
 	ElementEventHandler elementHandler;	
 	ActiveModel activeModel;
-	
-	MessageWriter debugWriter;	
-	int count = 0;
+		
+	//int count = 0;
     
     
 	RNGParseBindingPool bindingPool;
@@ -135,10 +132,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
                             RNGParseBindingPool bindingPool,
                             boolean level1DocumentationElement,
                             boolean restrictToFileName,
-                            boolean optimizedForResourceSharing,                            
-							MessageWriter debugWriter){
-	    this.debugWriter = debugWriter;
-		
+                            boolean optimizedForResourceSharing){		
 		this.eventHandlerPool = eventHandlerPool;	
 		this.errorHandlerPool = errorHandlerPool;
 		
@@ -151,14 +145,14 @@ class InternalValidatorHandler extends BoundValidatorHandler{
                 
         this.bindingPool = bindingPool;
         
-        matchHandler  = new MatchHandler(debugWriter);
-		spaceHandler = new SpaceCharsHandler(debugWriter);					
-        documentContext = new DocumentContext(debugWriter);
+        matchHandler  = new MatchHandler();
+		spaceHandler = new SpaceCharsHandler();					
+        documentContext = new DocumentContext();
         
         
-		errorDispatcher = new ErrorDispatcher(debugWriter);		
+		errorDispatcher = new ErrorDispatcher();		
 		activeInputDescriptor = new ActiveInputDescriptor();
-		inputStackDescriptor = new InputStackDescriptor(activeInputDescriptor, debugWriter);
+		inputStackDescriptor = new InputStackDescriptor(activeInputDescriptor);
 		characterContentDescriptorPool = new CharacterContentDescriptorPool(activeInputDescriptor, spaceHandler);
 		characterContentDescriptor = characterContentDescriptorPool.getCharacterContentDescriptor();
 			
@@ -269,7 +263,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 		/*xmlBaseBinder.bind(queue, locator.getSystemId());// must happen last, after queue.newRecord() which is in elementHandler's init*/
 		
         if(level1DocumentationElement){
-            if(documentationElementHandler == null) documentationElementHandler = new DocumentationElementHandler(errorDispatcher, debugWriter);
+            if(documentationElementHandler == null) documentationElementHandler = new DocumentationElementHandler(errorDispatcher);
             else documentationElementHandler.init();
         }
 		//Note that locator is only garanteed to pass correct information AFTER
@@ -454,7 +448,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
             return matchHandler;
         }else if(name.equals(Constants.PARSED_MODEL_PROPERTY)){
             if(topPattern == null) return null;
-            return new ParsedModel(dtdMapping, topPattern, debugWriter);
+            return new ParsedModel(dtdMapping, topPattern);
         }else if(name.equals(Constants.INCLUDED_PARSED_MODEL_PROPERTY)){
             if(topPattern == null) return null;
             Grammar g = null;
@@ -468,7 +462,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
                 // SEEN , but needs review
                 return null;
             }
-            return new IncludedParsedModel(dtdMapping, g, debugWriter);
+            return new IncludedParsedModel(dtdMapping, g);
         }
 
         throw new SAXNotRecognizedException(name);

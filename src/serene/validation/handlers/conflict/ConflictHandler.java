@@ -21,16 +21,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
-import sereneWrite.MessageWriter;
-
 public abstract class ConflictHandler{
-	MessageWriter debugWriter;
-    
+	   
 	int candidatesCount;	
 	BitSet disqualified;	
 	
-	public ConflictHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	public ConflictHandler(){
 		disqualified = new BitSet();
         candidatesCount = -1;
 	}

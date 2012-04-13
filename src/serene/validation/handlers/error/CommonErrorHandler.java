@@ -38,8 +38,6 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
-import sereneWrite.MessageWriter;
-
 /**	
 * Handles errors that occur in an undetermined context which resolves for all the
 * individual parent handlers to functionally equivalent handlers. It is used by 
@@ -53,8 +51,8 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
     CandidatesConflictErrorHandler candidatesConflictErrorHandler;
     boolean isCandidate;
     
-	public CommonErrorHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public CommonErrorHandler(){
+		super();
 		id = ContextErrorHandlerManager.COMMON;
 	}
 	
@@ -72,7 +70,7 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 	public void init(CandidatesConflictErrorHandler candidatesConflictErrorHandler, boolean isCandidate){        
         this.candidatesConflictErrorHandler = candidatesConflictErrorHandler;
         this.isCandidate = isCandidate;
-		messageHandler = new ContextMessageHandler(debugWriter);   
+		messageHandler = new ContextMessageHandler();   
 		messageHandler.init(activeInputDescriptor);
 	}
 

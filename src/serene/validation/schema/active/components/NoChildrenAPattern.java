@@ -22,11 +22,9 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import sereneWrite.MessageWriter;
-
 public abstract class NoChildrenAPattern extends AbstractAPattern{ 	 
-	NoChildrenAPattern(ActiveModelRuleHandlerPool ruleHandlerPool, MessageWriter debugWriter){		
-		super(ruleHandlerPool, debugWriter);
+	NoChildrenAPattern(ActiveModelRuleHandlerPool ruleHandlerPool){		
+		super(ruleHandlerPool);
 	}
 	
 	boolean isInterleaved(){

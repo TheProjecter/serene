@@ -16,19 +16,17 @@ limitations under the License.
 
 package serene.validation.handlers.error;
 
-import sereneWrite.MessageWriter;
-
 public class UnsynchronizedErrorHandlerPool extends ErrorHandlerPool{	
-	UnsynchronizedErrorHandlerPool(MessageWriter debugWriter){
-		super(debugWriter);
+	UnsynchronizedErrorHandlerPool(){
+		super();
 	}
 	
-	public static UnsynchronizedErrorHandlerPool getInstance(MessageWriter debugWriter){
-		return new UnsynchronizedErrorHandlerPool(debugWriter);
+	public static UnsynchronizedErrorHandlerPool getInstance(){
+		return new UnsynchronizedErrorHandlerPool();
 	}
 	
 	public ValidatorErrorHandlerPool getValidatorErrorHandlerPool(){
-		return new ValidatorErrorHandlerPool(null, debugWriter);
+		return new ValidatorErrorHandlerPool(null);
 	}		
 	public void recycle(ValidatorErrorHandlerPool vehp){
 	    throw new IllegalStateException();

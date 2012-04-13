@@ -22,8 +22,6 @@ import serene.bind.util.DocumentIndexedData;
 
 import org.xml.sax.SAXException;
 
-import sereneWrite.MessageWriter;
-
 public class ZeroOrMore extends MultipleChildrenPattern{
 	
 	ZeroOrMore(/*Map<String, String> prefixMapping,*/
@@ -32,9 +30,8 @@ public class ZeroOrMore extends MultipleChildrenPattern{
                     int datatypeLibrary, 
                     ParsedComponent[] children, 
                     int recordIndex,
-                    DocumentIndexedData documentIndexedData,
-                    MessageWriter debugWriter){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData, debugWriter);
+                    DocumentIndexedData documentIndexedData){		
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
 	}	
 			
 	public void accept(ParsedComponentVisitor v){

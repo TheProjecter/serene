@@ -23,9 +23,6 @@ import javax.xml.validation.ValidatorHandler;
 import serene.BaseSchema;
 import serene.SchemaModel;
 
-
-import sereneWrite.MessageWriter;
-
 public class RNGSchema extends BaseSchema{		
 	boolean namespacePrefixes;
     boolean level1AttributeDefaultValue;
@@ -42,9 +39,8 @@ public class RNGSchema extends BaseSchema{
                     boolean level2AttributeIdType,
                     boolean restrictToFileName,
                     boolean optimizedForResourceSharing,
-                    SchemaModel schemaModel,
-                    MessageWriter debugWriter){
-		super(secureProcessing, optimizedForResourceSharing, schemaModel, debugWriter);
+                    SchemaModel schemaModel){
+		super(secureProcessing, optimizedForResourceSharing, schemaModel);
         this.namespacePrefixes = namespacePrefixes;
         this.level1AttributeDefaultValue = level1AttributeDefaultValue;
         this.level2AttributeDefaultValue = level2AttributeDefaultValue;
@@ -62,8 +58,7 @@ public class RNGSchema extends BaseSchema{
                                     level1AttributeIdType,
                                     level2AttributeIdType,
                                     restrictToFileName,
-                                    newValidatorHandler(), 
-                                    debugWriter);
+                                    newValidatorHandler());
 	}
 	
 	public ValidatorHandler newValidatorHandler(){	
@@ -77,7 +72,6 @@ public class RNGSchema extends BaseSchema{
                                         optimizedForResourceSharing,
                                         contentHandlerPool.getValidatorEventHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
-										schemaModel,
-										debugWriter);
+										schemaModel);
 	}
 }

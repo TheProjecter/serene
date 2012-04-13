@@ -25,8 +25,6 @@ import org.relaxng.datatype.ValidationContext;
 
 import serene.dtdcompatibility.InfosetModificationContext;
 
-import sereneWrite.MessageWriter;
-
 public class DocumentContext implements  ValidationContext, InfosetModificationContext, DTDHandler{
     
 	protected boolean isBaseURISet; 
@@ -34,14 +32,11 @@ public class DocumentContext implements  ValidationContext, InfosetModificationC
     
 	protected PrefixMapping prefixMapping;
     protected DTDMapping dtdMapping;
-    
-	protected MessageWriter debugWriter;	
 	
-    public DocumentContext(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+    public DocumentContext(){
 		isBaseURISet = false;
         
-        prefixMapping = new PrefixMapping(debugWriter);        
+        prefixMapping = new PrefixMapping();        
 	}
     	
     public void reset(){
@@ -54,12 +49,12 @@ public class DocumentContext implements  ValidationContext, InfosetModificationC
         
     // start DTDHandler
     public void unparsedEntityDecl(String entityName, String publicId, String systemId, String notationName){
-        if(dtdMapping == null) dtdMapping = new DTDMapping(debugWriter);		
+        if(dtdMapping == null) dtdMapping = new DTDMapping();		
 		dtdMapping.unparsedEntityDecl(entityName, publicId, systemId, notationName);
 	}
 	
     public void notationDecl(String notationName, String publicId, String systemId){
-        if(dtdMapping == null) dtdMapping = new DTDMapping(debugWriter);		
+        if(dtdMapping == null) dtdMapping = new DTDMapping();		
 		dtdMapping.notationDecl(notationName, publicId, systemId);
 	} 
     // end DTDHandler

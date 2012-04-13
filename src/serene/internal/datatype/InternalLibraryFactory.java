@@ -21,18 +21,12 @@ import org.relaxng.datatype.DatatypeLibraryFactory;
 
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
-public class InternalLibraryFactory implements DatatypeLibraryFactory{	
-	MessageWriter debugWriter;
+public class InternalLibraryFactory implements DatatypeLibraryFactory{
 	public InternalLibraryFactory(){}
-	public InternalLibraryFactory(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-	}
 	
 	public InternalLibrary createDatatypeLibrary(String namespace){
 		if(namespace.equals(Constants.INTERNAL_DATATYPE_LIBRARY)){
-			return new InternalLibrary(debugWriter);
+			return new InternalLibrary();
 		}
 		return null;
 	} 

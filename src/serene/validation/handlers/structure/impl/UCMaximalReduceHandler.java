@@ -23,11 +23,9 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.handlers.structure.MaximalReduceHandler;
 import serene.validation.handlers.structure.StructureHandler;
 
-import sereneWrite.MessageWriter;
-
 abstract class UCMaximalReduceHandler extends UniqueChildPatternHandler implements MaximalReduceHandler{
-	public UCMaximalReduceHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public UCMaximalReduceHandler(){
+		super();
 	}
 	
 	/*boolean isReduceRequired(){

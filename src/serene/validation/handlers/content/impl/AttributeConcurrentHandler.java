@@ -31,8 +31,6 @@ import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import sereneWrite.MessageWriter;
-
 class AttributeConcurrentHandler extends ValidatingAEH{
     ElementValidationHandler parent;	
     
@@ -43,10 +41,10 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 	ValidatorErrorHandlerPool errorHandlerPool;
 	TemporaryMessageStorage[] temporaryMessageStorage;
 	
-	AttributeConcurrentHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	AttributeConcurrentHandler(){
+		super();
 		candidates = new ArrayList<CandidateAttributeValidationHandler>(3);		
-		localCandidatesConflictHandler = new ExternalConflictHandler(debugWriter);
+		localCandidatesConflictHandler = new ExternalConflictHandler();
 	}
 		
 	public void recycle(){

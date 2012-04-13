@@ -16,17 +16,13 @@ limitations under the License.
 
 package serene.util;
 
-import sereneWrite.MessageWriter;
-
 public class CharsBuffer{
 	
 	char[] content;
 	int count;
 	int size;
-	
-	MessageWriter debugWriter;
-	public CharsBuffer(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+
+	public CharsBuffer(){
 		count = 0;
 		size = 100;
 		content = new char[size];		

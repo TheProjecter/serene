@@ -16,17 +16,12 @@ limitations under the License.
 
 package serene.dtdcompatibility;
 
-import sereneWrite.MessageWriter;
-
 public class DTDCompatibilityModelImpl implements DTDCompatibilityModel{
     AttributeDefaultValueModel attributeDefaultValueModel;
     AttributeIdTypeModel attributeIdTypeModel;
-    
-    MessageWriter debugWriter;
+
     public DTDCompatibilityModelImpl(AttributeDefaultValueModel attributeDefaultValueModel,
-            AttributeIdTypeModel attributeIdTypeModel,
-            MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+            AttributeIdTypeModel attributeIdTypeModel){
         this.attributeDefaultValueModel = attributeDefaultValueModel;
         this.attributeIdTypeModel = attributeIdTypeModel;        
     }

@@ -23,12 +23,10 @@ import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import sereneWrite.MessageWriter;
-
 public class ContextMessageHandler  extends AbstractMessageHandler implements ExternalConflictErrorCatcher{	
     
-	public ContextMessageHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public ContextMessageHandler(){
+		super();
 	}	
     
 	
@@ -48,8 +46,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
                                     candidatesCount,
                                     disqualified,
                                     candidateMessages,
-                                    errorDispatcher,                                    
-                                    debugWriter);
+                                    errorDispatcher);
               
         return result;
     }

@@ -23,7 +23,6 @@ import serene.validation.schema.simplified.components.SName;
 import serene.validation.schema.simplified.components.SNsName;
 import serene.validation.schema.simplified.components.SAnyName;
 
-import sereneWrite.MessageWriter; 
 
 class NameOverlapController extends NameClassOverlapController{
 	SName name;
@@ -32,9 +31,8 @@ class NameOverlapController extends NameClassOverlapController{
 	NsNameOverlapController nsNameOverlapController;
 	
 	NameOverlapController(AnyNameOverlapController anyNameOverlapController,
-							NsNameOverlapController nsNameOverlapController,
-							MessageWriter debugWriter){
-		super(debugWriter);		
+							NsNameOverlapController nsNameOverlapController){
+		super();		
 		this.anyNameOverlapController = anyNameOverlapController;
 		this.nsNameOverlapController = nsNameOverlapController;
 	}

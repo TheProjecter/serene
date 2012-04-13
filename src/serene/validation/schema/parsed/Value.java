@@ -21,7 +21,6 @@ import java.util.Map;
 import org.xml.sax.SAXException;
 
 import serene.bind.util.DocumentIndexedData;
-import sereneWrite.MessageWriter;
 
 public class Value extends NoChildrenPattern{
 	int typeRecordIndex;
@@ -33,9 +32,8 @@ public class Value extends NoChildrenPattern{
             int type,
             String characterContent,
             int recordIndex,
-            DocumentIndexedData documentIndexedData,  
-            MessageWriter debugWriter){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
+            DocumentIndexedData documentIndexedData){		
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 		this.characterContent = characterContent;
 		this.typeRecordIndex = type; 
 	}

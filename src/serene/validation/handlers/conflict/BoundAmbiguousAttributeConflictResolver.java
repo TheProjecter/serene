@@ -34,13 +34,10 @@ import serene.bind.util.Queue;
 import serene.bind.BindingModel;
 import serene.bind.AttributeTask;
 
-import sereneWrite.MessageWriter;
-
-
 public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConflictResolver{
     BitSet disqualified;
-    public BoundAmbiguousAttributeConflictResolver(MessageWriter debugWriter){
-		super(debugWriter);
+    public BoundAmbiguousAttributeConflictResolver(){
+		super();
 	}
 	
 	public void recycle(){

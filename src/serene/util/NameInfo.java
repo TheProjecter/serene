@@ -17,20 +17,13 @@ limitations under the License.
 
 package serene.util;
 
-import sereneWrite.MessageWriter;
-
-
 public class NameInfo{
     String namespaceURI;
     String localName;
     String qName;
-    MessageWriter debugWriter;
-    
     public NameInfo(String namespaceURI,
                         String localName,
-                        String qName,
-                        MessageWriter debugWriter){    
-        this.debugWriter = debugWriter;
+                        String qName){
         this.namespaceURI = namespaceURI;
         this.localName = localName;
         this.qName = qName;

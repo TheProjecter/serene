@@ -42,8 +42,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public abstract class AInterleave extends MultipleChildrenAPattern implements ACompositor{	
 	
 	int satisfactionIndicator;
@@ -53,9 +51,8 @@ public abstract class AInterleave extends MultipleChildrenAPattern implements AC
 	
 	public AInterleave(APattern[] children,
 				ActiveModelStackHandlerPool stackHandlerPool,
-				ActiveModelRuleHandlerPool ruleHandlerPool,
-				MessageWriter debugWriter){		
-		super(children, ruleHandlerPool, debugWriter);
+				ActiveModelRuleHandlerPool ruleHandlerPool){		
+		super(children, ruleHandlerPool);
 		this.stackHandlerPool = stackHandlerPool;
 	}		
 	

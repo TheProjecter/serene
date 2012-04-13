@@ -38,8 +38,6 @@ import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.parsed.ParsedComponentBuilder;
 
 
-import sereneWrite.MessageWriter;
-
 public abstract class RNGParseBindingPool implements BindingPool{		
     RNGParseDocumentTaskFactory startDocumentTaskFactory;
     //RNGParseDocumentTaskFactory endDocumentTaskFactory;    
@@ -54,8 +52,6 @@ public abstract class RNGParseBindingPool implements BindingPool{
 	RNGParseAttributeTaskFactory genericAttributeTaskFactory;
 	  
 		
-	MessageWriter debugWriter;
-	
 	public RNGParseBindingPool(RNGParseDocumentTaskFactory startDocumentTaskFactory,
                                     //RNGParseDocumentTaskFactory endDocumentTaskFactory,    
                                     
@@ -66,11 +62,8 @@ public abstract class RNGParseBindingPool implements BindingPool{
                                         
                                     RNGParseElementTaskFactory genericStartElementTaskFactory,
                                     RNGParseElementTaskFactory genericEndElementTaskFactory,
-                                    RNGParseAttributeTaskFactory genericAttributeTaskFactory,
-                                    
-									MessageWriter debugWriter){
+                                    RNGParseAttributeTaskFactory genericAttributeTaskFactory){
 		
-	    this.debugWriter = debugWriter;
 		
 		this.startDocumentTaskFactory = startDocumentTaskFactory;
         //this.endDocumentTaskFactory = endDocumentTaskFactory;    
@@ -89,7 +82,7 @@ public abstract class RNGParseBindingPool implements BindingPool{
 
 	
 	RNGParseBindingModel createModel(){
-		ParsedComponentBuilder builder = new ParsedComponentBuilder(debugWriter);
+		ParsedComponentBuilder builder = new ParsedComponentBuilder();
 		
 		RNGParseDocumentTask startDocumentTask = startDocumentTaskFactory.getTask();
 		startDocumentTask.setExecutant(builder);
@@ -146,8 +139,7 @@ public abstract class RNGParseBindingPool implements BindingPool{
                         genericEndElementTask,
                         null,
                         builder,
-                        this,
-                        debugWriter);
+                        this);
 	}
 	public abstract void recycle(BindingModel bm);	
 	public abstract void recycle(RNGParseBindingModel bm);

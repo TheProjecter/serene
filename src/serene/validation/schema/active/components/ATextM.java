@@ -20,14 +20,11 @@ import serene.validation.schema.simplified.components.SMixed;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public class ATextM extends AText{
 	SMixed smixed;
 	public ATextM(ActiveModelRuleHandlerPool ruleHandlerPool, 
-	            SMixed smixed, 
-	            MessageWriter debugWriter){
-		super(ruleHandlerPool, debugWriter);
+	            SMixed smixed){
+		super(ruleHandlerPool);
 		this.smixed = smixed;
 		minOccurs = 0;
 		maxOccurs = UNBOUNDED;

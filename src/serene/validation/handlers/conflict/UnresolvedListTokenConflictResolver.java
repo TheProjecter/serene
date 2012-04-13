@@ -24,8 +24,6 @@ import serene.validation.schema.active.components.CharsActiveTypeItem;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import sereneWrite.MessageWriter;
-
 /*
 * In the ConcurrentStackHandler each level handles a conflict and every handler 
 * on that level gets a reference to an InternalConflictResolver instance. This 
@@ -33,8 +31,8 @@ import sereneWrite.MessageWriter;
 * number is greater than 1, it reports ambiguous content.   
 */
 public class UnresolvedListTokenConflictResolver extends ListTokenConflictResolver{
-	public UnresolvedListTokenConflictResolver(MessageWriter debugWriter){				
-		super(debugWriter);
+	public UnresolvedListTokenConflictResolver(){				
+		super();
 	}	
     
 	public void recycle(){

@@ -32,12 +32,10 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public class AEmpty extends NoChildrenAPattern{
 	SimplifiedComponent sempty;
-	public AEmpty(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent sempty, MessageWriter debugWriter){
-		super(ruleHandlerPool, debugWriter);
+	public AEmpty(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent sempty){
+		super(ruleHandlerPool);
 		this.sempty = sempty;
 	}	
 		

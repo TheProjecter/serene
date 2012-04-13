@@ -53,7 +53,6 @@ import serene.internal.InternalRNGFactory;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
 import sereneWrite.ParsedComponentWriter;
 
 public class RNGSimplifier extends Simplifier{	
@@ -63,19 +62,19 @@ public class RNGSimplifier extends Simplifier{
 	Stack<URI> inclusionPath;
 	
     
-	public RNGSimplifier(ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		super(errorDispatcher, debugWriter);
+	public RNGSimplifier(ErrorDispatcher errorDispatcher){
+		super(errorDispatcher);
 				
 		grammarDefinitions = new HashMap<Grammar, Map<String, ArrayList<Definition>>>();		
 		externalRefs = new HashMap<ExternalRef, URI>();			
 		docParsedModels = new HashMap<URI, ParsedModel>();
-		namespaceInheritanceHandler = new NamespaceInheritanceHandler(debugWriter);
-		pool = new DefinitionSimplifierPool(errorDispatcher, debugWriter);
+		namespaceInheritanceHandler = new NamespaceInheritanceHandler();
+		pool = new DefinitionSimplifierPool(errorDispatcher);
 		
 		componentAsciiDL = new HashMap<ParsedComponent, String>();
 		asciiDlDatatypeLibrary = new HashMap<String, DatatypeLibrary>();
 		
-		indexes = new ObjectIntHashMap(debugWriter);	
+		indexes = new ObjectIntHashMap();	
 		indexes.setNullValue(-1);
 				
 		previousGrammars = new Stack<Grammar>();
@@ -90,11 +89,11 @@ public class RNGSimplifier extends Simplifier{
 		
 		inclusionPath = new Stack<URI>();		
         
-        simplificationContext = new DocumentSimplificationContext(debugWriter);
+        simplificationContext = new DocumentSimplificationContext();
 	}
 	
 	public void setParserComponents(XMLReader xmlReader, InternalRNGFactory internalRNGFactory){
-	    mapper = new Mapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, debugWriter);
+	    mapper = new Mapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler);
 	}
 	
 	public void setReplaceMissingDatatypeLibrary(boolean value){
@@ -144,7 +143,7 @@ public class RNGSimplifier extends Simplifier{
 		//System.out.println("docParsedModels "+docParsedModels);
 		//System.out.println("**************************************");
 		
-		recursionModel = new RecursionModel(debugWriter);
+		recursionModel = new RecursionModel();
 		
         
 		simplify();
@@ -164,8 +163,7 @@ public class RNGSimplifier extends Simplifier{
         
 		SimplifiedModel simplifiedModel = new SimplifiedModel(simplifiedTopPattern, 
 											definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]),
-											recursionModel,
-											debugWriter);
+											recursionModel);
 		return simplifiedModel;
 	}
 		

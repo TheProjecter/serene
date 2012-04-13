@@ -33,8 +33,6 @@ import org.apache.xerces.xs.XSSimpleTypeDefinition;
 
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
 public class XsdBuilder implements DatatypeBuilder {    
     
     String typeLocalName;
@@ -53,13 +51,8 @@ public class XsdBuilder implements DatatypeBuilder {
     
     String targetNamespace;
     
-    
-    
-    MessageWriter debugWriter;
-    
-	public XsdBuilder(String typeLocalName, XSSimpleType baseType, SchemaDVFactory xercesFactory, XsdValidationContext xsdValidationContext, MessageWriter debugWriter){
+	public XsdBuilder(String typeLocalName, XSSimpleType baseType, SchemaDVFactory xercesFactory, XsdValidationContext xsdValidationContext){
         
-        this.debugWriter = debugWriter;
         this.typeLocalName = typeLocalName;
         this.xercesFactory = xercesFactory;
         this.xsdValidationContext = xsdValidationContext;
@@ -145,7 +138,7 @@ public class XsdBuilder implements DatatypeBuilder {
 	}	
     
     public Datatype createDatatype() throws DatatypeException{
-        XsdDatatype datatype = new XsdDatatype(xsdValidationContext, restrictedType, debugWriter); 
+        XsdDatatype datatype = new XsdDatatype(xsdValidationContext, restrictedType); 
         if(typeLocalName.equals("string")) datatype.setNeedsToNormalize(false);
             if(/*typeLocalName.equals("ID") 
                 || typeLocalName.equals("IDREF")

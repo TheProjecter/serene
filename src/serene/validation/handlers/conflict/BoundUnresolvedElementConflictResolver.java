@@ -30,13 +30,11 @@ import serene.validation.schema.active.components.AElement;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.MessageReporter;
 
-import sereneWrite.MessageWriter;
-
 
 public class BoundUnresolvedElementConflictResolver extends BoundElementConflictResolver{
 	
-	public BoundUnresolvedElementConflictResolver(MessageWriter debugWriter){
-		super(debugWriter);
+	public BoundUnresolvedElementConflictResolver(){
+		super();
 	}
 	
 	public void recycle(){

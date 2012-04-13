@@ -39,8 +39,6 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
-import sereneWrite.MessageWriter;
-
 /**
 * Used for the handling of interleave when it may have a cardinality greater then
 * one. It is not reduced until the end of the an entire group of interleave 
@@ -73,8 +71,8 @@ public class MInterleaveHandler extends InterleaveHandler{
 	
 	MInterleaveHandler original;
 	
-	MInterleaveHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	MInterleaveHandler(){
+		super();
 		
 		/*childIndex = -1;
 		childrenSize = 10;

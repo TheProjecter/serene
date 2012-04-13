@@ -25,12 +25,10 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.handlers.content.ElementEventHandler;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import sereneWrite.MessageWriter;
-
 class UnexpectedElementHandler extends ErrorEEH{
 	SimplifiedComponent element;
-	UnexpectedElementHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	UnexpectedElementHandler(){
+		super();		
 	}
 	
 	void init(SimplifiedComponent element, ElementValidationHandler parent){

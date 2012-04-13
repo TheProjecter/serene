@@ -25,16 +25,11 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.UserDataHandler;
 
-import sereneWrite.MessageWriter;
-
 public class AttrWrapper implements Attr{
     Attr attr;
     boolean isSpecified;
     
-    MessageWriter debugWriter;
-    
-    public AttrWrapper(Attr attr, boolean isSpecified, MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+    public AttrWrapper(Attr attr, boolean isSpecified){
         this.attr = attr;
         this.isSpecified = isSpecified;
     }

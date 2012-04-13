@@ -35,8 +35,6 @@ import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
 import serene.validation.handlers.error.ContextErrorHandlerManager;
 
-import sereneWrite.MessageWriter;
-
 class ElementCommonHandler extends UndeterminedEEH{	
 	ComparableEEH uniqueHandler; 
 	
@@ -44,8 +42,8 @@ class ElementCommonHandler extends UndeterminedEEH{
 	int candidateCount;
 	
 	ValidatingEEH parent;
-	ElementCommonHandler(MessageWriter debugWriter){
-		super(debugWriter);	
+	ElementCommonHandler(){
+		super();	
 	}
 	
 	void init(ExternalConflictHandler conflictHandler, int candidateCount, ValidatingEEH parent){

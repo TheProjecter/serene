@@ -29,8 +29,6 @@ import serene.validation.handlers.conflict.ElementConflictResolver;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.AElement;
 
-import sereneWrite.MessageWriter;
-
 import serene.util.IntList;
 
 class StartMessageHandler implements MessageReporter{
@@ -77,10 +75,7 @@ class StartMessageHandler implements MessageReporter{
 	int ambiguousAmbiguousElementIndexWW;
 	int ambiguousAmbiguousElementSizeWW;
     
-    
-    MessageWriter debugWriter;
-    public StartMessageHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;        
+    public StartMessageHandler(){        
 	}
     
 	public void setDiscarded(boolean isDiscarded){

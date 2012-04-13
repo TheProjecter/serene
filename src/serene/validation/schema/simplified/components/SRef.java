@@ -25,15 +25,12 @@ import serene.validation.schema.DefinitionPointer;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class SRef extends AbstractNoChildrenPattern implements DefinitionPointer{
 	int definitionIndex;
 	public SRef(int definitionIndex,
 					int recordIndex, 
-					DocumentIndexedData documentIndexedData,  
-					MessageWriter debugWriter){
-		super(recordIndex, documentIndexedData, debugWriter);
+					DocumentIndexedData documentIndexedData){
+		super(recordIndex, documentIndexedData);
 		this.definitionIndex = definitionIndex;
 	}
 		

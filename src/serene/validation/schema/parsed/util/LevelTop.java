@@ -19,13 +19,10 @@ package serene.validation.schema.parsed.util;
 
 import java.util.Arrays;
 
-import sereneWrite.MessageWriter;
-
-class LevelTop extends Level{
-	
-	LevelTop(MessageWriter debugWriter){
-		super(debugWriter);
-		child = new LevelBottom(this, debugWriter);
+class LevelTop extends Level{	
+	LevelTop(){
+		super();
+		child = new LevelBottom(this);
 	}	
 	
 	public boolean isTopLevel(){

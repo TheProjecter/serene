@@ -37,8 +37,6 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
-import sereneWrite.MessageWriter;
-
 public class ListPatternHandler extends StructureValidationHandler{
 	AListPattern rule;
 	
@@ -47,8 +45,8 @@ public class ListPatternHandler extends StructureValidationHandler{
 	
 	ListPatternHandler original;
 	
-	ListPatternHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	ListPatternHandler(){
+		super();
 		noContent = new NoContent();
 		openContent = new OpenContent();
 		satisfiedContent = new SatisfiedContent();

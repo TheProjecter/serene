@@ -24,19 +24,17 @@ import serene.bind.BindingPool;
 
 import serene.validation.schema.active.ActiveModelPool;
 
-import sereneWrite.MessageWriter;
-
 public class UnsynchronizedContentHandlerPool extends ContentHandlerPool{
-	UnsynchronizedContentHandlerPool(MessageWriter debugWriter){
-		super(debugWriter);				
+	UnsynchronizedContentHandlerPool(){
+		super();				
 	}
 	
-	public static UnsynchronizedContentHandlerPool getInstance(MessageWriter debugWriter){
-		return new UnsynchronizedContentHandlerPool(debugWriter);
+	public static UnsynchronizedContentHandlerPool getInstance( ){
+		return new UnsynchronizedContentHandlerPool();
 	}	
 	
 	public ValidatorEventHandlerPool getValidatorEventHandlerPool(){
-		return new ValidatorEventHandlerPool(null, debugWriter);
+		return new ValidatorEventHandlerPool(null);
 	}	
 	public void recycle(ValidatorEventHandlerPool eventHandlerPool){
 	    throw new IllegalStateException();

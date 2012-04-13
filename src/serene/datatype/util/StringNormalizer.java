@@ -18,12 +18,8 @@ package serene.datatype.util;
 
 import java.util.StringTokenizer;
 
-import sereneWrite.MessageWriter;
-
 public class StringNormalizer {
-	MessageWriter messageWriter;
-	public StringNormalizer(MessageWriter messageWriter){
-		this.messageWriter = messageWriter;
+	public StringNormalizer(){
 	}
 	
 	public String normalize(String s) {

@@ -47,8 +47,6 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import org.relaxng.datatype.ValidationContext;
 
-import sereneWrite.MessageWriter;
-
 public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer, 
 														ElementContentType, 
 														AttributesType,
@@ -85,9 +83,8 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 	public ARef(int index, 
 					ActiveGrammarModel grammarModel,
 					ActiveModelRuleHandlerPool ruleHandlerPool,
-					SRef sref, 
-					MessageWriter debugWriter){
-		super(null, ruleHandlerPool, debugWriter);
+					SRef sref){
+		super(null, ruleHandlerPool);
 		this.index = index;
 		this.grammarModel = grammarModel;
 		this.sref = sref;

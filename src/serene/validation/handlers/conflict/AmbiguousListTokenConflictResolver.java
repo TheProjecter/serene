@@ -26,8 +26,6 @@ import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
-import sereneWrite.MessageWriter;
-
 /*
 * In the ConcurrentStackHandler each level handles a conflict and every handler 
 * on that level gets a reference to an InternalConflictResolver instance. This 
@@ -36,8 +34,8 @@ import sereneWrite.MessageWriter;
 */
 public class AmbiguousListTokenConflictResolver extends ListTokenConflictResolver{
     BitSet disqualified;
-	public AmbiguousListTokenConflictResolver(MessageWriter debugWriter){				
-		super(debugWriter);
+	public AmbiguousListTokenConflictResolver(){				
+		super();
 	}
 	
 	void init(BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){

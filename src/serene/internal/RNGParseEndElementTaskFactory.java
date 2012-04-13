@@ -18,12 +18,10 @@ package serene.internal;
 
 import serene.validation.schema.simplified.components.SAttribute;
 
-import sereneWrite.MessageWriter;
-
 abstract class RNGParseEndElementTaskFactory extends RNGParseElementTaskFactory{
     
-	RNGParseEndElementTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	RNGParseEndElementTaskFactory(){
+		super();
 	}
 }
 	

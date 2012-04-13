@@ -20,14 +20,12 @@ import serene.validation.schema.simplified.components.SExceptNameClass;
 import serene.validation.schema.simplified.components.SName;
 import serene.validation.schema.simplified.components.SNsName;
 
-import sereneWrite.MessageWriter; 
-
 class NameInclusionController extends NameClassInclusionController{
 	
 	SName in;
 	
-	NameInclusionController(MessageWriter debugWriter){
-		super(debugWriter);
+	NameInclusionController(){
+		super();
 	}
 	
 	void init(SName in){

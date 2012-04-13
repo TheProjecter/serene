@@ -17,22 +17,15 @@ limitations under the License.
 
 package serene.util;
 
-import sereneWrite.MessageWriter;
-
 public class LocationInfo{
     String publicId;
     String systemId;
     int lineNumber;
-    int columnNumber;
-    MessageWriter debugWriter;
-    
+    int columnNumber;    
     public LocationInfo(String publicId,
                         String systemId,
                         int lineNumber,
-                        int columnNumber,
-                        MessageWriter debugWriter){    
-        this.debugWriter = debugWriter;
-        
+                        int columnNumber){        
         this.publicId = publicId;
         this.systemId = systemId;
         this.lineNumber = lineNumber;

@@ -33,14 +33,12 @@ import serene.bind.AttributeTask;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 class BoundAttributeValidationHandler extends AttributeValidationHandler implements BoundAttributeHandler{
 	BindingModel bindingModel;
 	Queue queue;
 	int entry;
-	BoundAttributeValidationHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	BoundAttributeValidationHandler(){
+		super();		
 	}
 	
 	void init(AAttribute attribute, ElementValidationHandler parent, ContextErrorHandlerManager contextErrorHandlerManager, BindingModel bindingModel, Queue queue, int entry){

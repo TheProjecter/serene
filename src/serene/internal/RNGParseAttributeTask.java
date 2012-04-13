@@ -19,12 +19,10 @@ package serene.internal;
 import serene.bind.AttributeTask;
 import serene.bind.AttributeTaskContext;
 
-import sereneWrite.MessageWriter;
-
 public abstract class RNGParseAttributeTask extends RNGParseTask implements AttributeTask{	
 	AttributeTaskContext context;	
-	RNGParseAttributeTask(MessageWriter debugWriter){
-		super(debugWriter);
+	RNGParseAttributeTask(){
+		super();
 	}
 		
 	public boolean executeBeforeStartElementTask(){

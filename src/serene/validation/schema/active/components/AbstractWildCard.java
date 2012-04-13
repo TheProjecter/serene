@@ -21,15 +21,12 @@ import serene.validation.schema.active.components.AExceptNameClass;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import sereneWrite.MessageWriter;
-
 abstract class AbstractWildCard extends ANameClass{
 	
 	protected AExceptNameClass child;	
 	
-	AbstractWildCard(AExceptNameClass child,
-			MessageWriter debugWriter){
-		super(debugWriter);		
+	AbstractWildCard(AExceptNameClass child){
+		super();		
 		asParent(child);
 	}	
 	

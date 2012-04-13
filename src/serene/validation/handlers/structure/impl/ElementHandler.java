@@ -35,8 +35,6 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
-import sereneWrite.MessageWriter;
-
 public class ElementHandler extends StructureValidationHandler{	
 	AElement rule;
 	
@@ -44,8 +42,8 @@ public class ElementHandler extends StructureValidationHandler{
 	StructureHandler childStructureHandler;	
 	
 	ElementHandler original;
-	ElementHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	ElementHandler(){
+		super();
 		noContent = new NoContent();
 		openContent = new OpenContent();
 		satisfiedContent = new SatisfiedContent();

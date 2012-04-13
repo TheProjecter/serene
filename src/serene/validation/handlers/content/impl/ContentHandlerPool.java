@@ -24,12 +24,8 @@ import serene.bind.BindingPool;
 
 import serene.validation.schema.active.ActiveModelPool;
 
-import sereneWrite.MessageWriter;
-
 public abstract class ContentHandlerPool{
-	MessageWriter debugWriter;
-	ContentHandlerPool(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	ContentHandlerPool(){
 	}
 	
 	public abstract ValidatorEventHandlerPool getValidatorEventHandlerPool();	

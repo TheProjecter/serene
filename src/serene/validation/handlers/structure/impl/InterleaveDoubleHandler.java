@@ -35,15 +35,12 @@ import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
-
 import serene.util.IntList;
-
-import sereneWrite.MessageWriter;
 
 public class InterleaveDoubleHandler extends StructureDoubleHandler{
 	InterleaveDoubleHandler original;
-	InterleaveDoubleHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	InterleaveDoubleHandler(){
+		super();
 	}
 	
 	public void recycle(){

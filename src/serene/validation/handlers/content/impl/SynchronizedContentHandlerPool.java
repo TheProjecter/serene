@@ -24,8 +24,6 @@ import serene.bind.BindingPool;
 
 import serene.validation.schema.active.ActiveModelPool;
 
-import sereneWrite.MessageWriter;
-
 public class SynchronizedContentHandlerPool extends ContentHandlerPool{
 	private static volatile SynchronizedContentHandlerPool instance; 
 	
@@ -222,8 +220,8 @@ public class SynchronizedContentHandlerPool extends ContentHandlerPool{
 	BoundAttributeParallelHandler[] boundAttributeParallelH;
 		
 	
-	SynchronizedContentHandlerPool(MessageWriter debugWriter){
-		super(debugWriter);
+	SynchronizedContentHandlerPool(){
+		super();
 				
 		
 		eventHandlerPoolFree = 0; 
@@ -426,11 +424,11 @@ public class SynchronizedContentHandlerPool extends ContentHandlerPool{
         boundAttributeParallelHMaxSize = 20;
 	}
 	
-	public static SynchronizedContentHandlerPool getInstance(MessageWriter debugWriter){
+	public static SynchronizedContentHandlerPool getInstance(){
 		if(instance == null){
 			synchronized(ContentHandlerPool.class){
 				if(instance == null){
-					instance = new SynchronizedContentHandlerPool(debugWriter); 
+					instance = new SynchronizedContentHandlerPool(); 
 				}
 			}
 		}
@@ -439,7 +437,7 @@ public class SynchronizedContentHandlerPool extends ContentHandlerPool{
 	
 	public synchronized ValidatorEventHandlerPool getValidatorEventHandlerPool(){
 		if(eventHandlerPoolFree == 0){
-			ValidatorEventHandlerPool ehp = new ValidatorEventHandlerPool(this, debugWriter);
+			ValidatorEventHandlerPool ehp = new ValidatorEventHandlerPool(this);
 			return ehp;
 		}else{
 			ValidatorEventHandlerPool ehp = eventHandlerPools[--eventHandlerPoolFree];

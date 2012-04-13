@@ -26,8 +26,6 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
-import sereneWrite.MessageWriter;
-
 /*
 * In the ConcurrentStackHandler each level handles a conflict and every handler 
 * on that level gets a reference to an InternalConflictResolver instance. This 
@@ -37,8 +35,8 @@ import sereneWrite.MessageWriter;
 public abstract class AttributeConflictResolver extends InternalConflictResolver{
 	List<AAttribute> candidateDefinitions;
 	TemporaryMessageStorage[] temporaryMessageStorage;
-	public AttributeConflictResolver(MessageWriter debugWriter){				
-		super(debugWriter);
+	public AttributeConflictResolver(){				
+		super();
 		candidateDefinitions = new ArrayList<AAttribute>();
 	}	
 	

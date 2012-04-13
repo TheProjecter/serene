@@ -37,8 +37,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 public abstract class StructureValidationHandler implements StructureHandler, ChildEventHandler{
 	
 	StructureHandler parent;
@@ -60,11 +58,7 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
     int startInputRecordIndex;
     boolean isStartSet;	
 	
-	
-	MessageWriter debugWriter;
-	
-	StructureValidationHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;		
+	StructureValidationHandler(){		
 		startInputRecordIndex = -1;
 		isStartSet = false;	
 	}	

@@ -22,17 +22,11 @@ import org.relaxng.datatype.DatatypeLibraryFactory;
 
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
-public class XsdLibraryFactory implements DatatypeLibraryFactory{		
-	MessageWriter debugWriter;
+public class XsdLibraryFactory implements DatatypeLibraryFactory{
 	public XsdLibraryFactory(){}
-	public XsdLibraryFactory(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-	}
 	public XsdLibrary createDatatypeLibrary(String namespace){
 		if(namespace.equals(Constants.XSD_DATATYPE_LIBRARY)){
-			return new XsdLibrary(debugWriter);
+			return new XsdLibrary();
 		}
 		return null;
 	} 

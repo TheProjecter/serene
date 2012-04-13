@@ -22,15 +22,11 @@ import java.util.HashMap;
 
 import javax.xml.XMLConstants;
 
-import sereneWrite.MessageWriter;
 public class PrefixMapping{
 	HashMap<String, String> prefixMapping;
     HashMap<String, String> uriMapping;
-	PrefixMapping parent;
-	MessageWriter debugWriter;	
-    
-	public PrefixMapping(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;		
+	PrefixMapping parent;    
+	public PrefixMapping(){		
 		prefixMapping = new HashMap<String, String>();
         prefixMapping.put(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
         
@@ -38,8 +34,7 @@ public class PrefixMapping{
         uriMapping.put(XMLConstants.XML_NS_URI, XMLConstants.XML_NS_PREFIX);
 	}
 	
-	public PrefixMapping(PrefixMapping parent, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;	
+	public PrefixMapping(PrefixMapping parent){
 		this.parent = parent;
 		prefixMapping = new HashMap<String, String>();
         prefixMapping.put(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
@@ -61,7 +56,7 @@ public class PrefixMapping{
 	public PrefixMapping startMapping(String prefix, String uri){
 		if(prefixMapping.containsKey(prefix)){
             if(prefix.equals(XMLConstants.XML_NS_PREFIX)) return this;
-			PrefixMapping newMapping = new PrefixMapping(this, debugWriter);
+			PrefixMapping newMapping = new PrefixMapping(this);
 			newMapping.startMapping(prefix, uri);
 			return newMapping;
 		}

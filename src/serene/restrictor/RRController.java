@@ -64,8 +64,6 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
-
 /**
 * Restrictions controller for recursive reference schemas.
 */
@@ -86,8 +84,8 @@ public class RRController extends RController{
 	OpenAlternativesHandler openAlternativesHandler;
 	
 	
-	public RRController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		super(pool, errorDispatcher, debugWriter);
+	public RRController(ControllerPool pool, ErrorDispatcher errorDispatcher){
+		super(pool, errorDispatcher);
 		
 		loopElement = new ArrayList<BooleanStack>();
 		loopOptional = new ArrayList<BooleanStack>();
@@ -98,7 +96,7 @@ public class RRController extends RController{
 		definitionInfiniteLoops = new ArrayList<ArrayList<SRef>>();
 		definitionOpenAlternatives = new ArrayList<Map<SRef, ArrayList<SRef>>>();
 		
-		openAlternativesHandler = new OpenAlternativesHandler(debugWriter);
+		openAlternativesHandler = new OpenAlternativesHandler();
 	}
 	
 	public void control(SimplifiedModel simplifiedModel) throws SAXException{
@@ -542,7 +540,7 @@ public class RRController extends RController{
 			return false;
 		}else{
 			if(alternativeSeeker == null){
-				alternativeSeeker = new AlternativeSeeker(debugWriter);
+				alternativeSeeker = new AlternativeSeeker();
 				alternativeSeeker.init(recursionModel,
 								definitionBlindLoops,
 								definitionInfiniteLoops,

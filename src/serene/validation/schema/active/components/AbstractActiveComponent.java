@@ -21,15 +21,10 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.ActiveComponent;
 
-import sereneWrite.MessageWriter;
-
 abstract class AbstractActiveComponent implements ActiveComponent{
 	protected int childIndex;	
-		
-	protected MessageWriter debugWriter;	
 	
-	AbstractActiveComponent(MessageWriter debugWriter){		
-		this.debugWriter = debugWriter;		
+	AbstractActiveComponent(){		
 		childIndex = -1;
 	}
 	

@@ -54,8 +54,6 @@ import serene.validation.schema.active.util.AbstractActiveComponentVisitor;
 
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 /**
 *
 * It creates flattened representations of the missing definitions' required 
@@ -103,10 +101,8 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
     CacheMap relevantCache;
     SubtreeAnalyser subtreeAnalyser;
     SortingSubtreeAnalyser sortingSubtreeAnalyser;
-    MessageWriter debugWriter;
     
-    public MissingContentAnalyser(MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+    public MissingContentAnalyser(){
         relevantCache = new CacheMap();
         subtreeAnalyser = new SubtreeAnalyser();
         sortingSubtreeAnalyser = new SortingSubtreeAnalyser();

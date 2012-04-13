@@ -40,8 +40,6 @@ import serene.validation.handlers.structure.util.ChildFinder;
 
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 public class GroupDoubleHandler extends StructureDoubleHandler{
 	IntList minimalStartedCount;
 	IntList maximalStartedCount;
@@ -50,12 +48,12 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 	
 	GroupDoubleHandler original;
 	
-	GroupDoubleHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	GroupDoubleHandler(){
+		super();		
 		minimalStartedCount = new IntList();
 		maximalStartedCount = new IntList();
 		
-		childFinder = new ChildFinder(debugWriter);
+		childFinder = new ChildFinder();
 	}
 		
 	public void recycle(){

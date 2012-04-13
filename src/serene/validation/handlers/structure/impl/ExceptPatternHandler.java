@@ -37,7 +37,6 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
-import sereneWrite.MessageWriter;
 public class ExceptPatternHandler extends StructureValidationHandler{
 	AExceptPattern rule;
 	
@@ -46,8 +45,8 @@ public class ExceptPatternHandler extends StructureValidationHandler{
 	
 	ExceptPatternHandler original;
 	
-	ExceptPatternHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	ExceptPatternHandler(){
+		super();
 		noContent = new NoContent();
 		openContent = new OpenContent();
 		satisfiedContent = new SatisfiedContent();

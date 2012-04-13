@@ -35,7 +35,6 @@ import serene.validation.schema.ValidationModelImpl;
 import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.SimplifiedModel;
 
-import sereneWrite.MessageWriter;
 
 /**
 * The InternalRNGFactory class is not thread-safe and not re-entrant. One instance *
@@ -44,15 +43,14 @@ import sereneWrite.MessageWriter;
 public class UnsynchronizedInternalRNGFactory extends InternalRNGFactory{	
 	private UnsynchronizedInternalRNGFactory(boolean level1DocumentationElement, 
 	                                            boolean restrictToFileName, 
-	                                            boolean optimizedForResourceSharing,
-	                                            MessageWriter debugWriter) throws DatatypeException{		
-		super(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, debugWriter);	
+	                                            boolean optimizedForResourceSharing) throws DatatypeException{		
+		super(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing);	
 		
 		
 	}
     
-	public static InternalRNGFactory getInstance(boolean level1DocumentationElement, boolean restrictToFileName, boolean optimizedForResourceSharing, MessageWriter debugWriter)  throws DatatypeException{
+	public static InternalRNGFactory getInstance(boolean level1DocumentationElement, boolean restrictToFileName, boolean optimizedForResourceSharing)  throws DatatypeException{
 	    if(optimizedForResourceSharing) throw new IllegalStateException();
-		return new UnsynchronizedInternalRNGFactory(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, debugWriter);
+		return new UnsynchronizedInternalRNGFactory(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing);
 	}	
 }

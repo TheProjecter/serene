@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class GrammarTask extends RNGParseEndElementTask{
-	GrammarTask(MessageWriter debugWriter){
-		super(debugWriter);
+	GrammarTask(){
+		super();
 	}
 	public void execute(){
 		builder.endLevel();

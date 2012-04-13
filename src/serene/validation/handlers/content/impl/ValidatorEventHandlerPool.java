@@ -54,8 +54,6 @@ import serene.Reusable;
 
 import serene.util.SpaceCharsHandler;
 
-import sereneWrite.MessageWriter;
-
 public class ValidatorEventHandlerPool implements Reusable{
 	ContentHandlerPool contentHandlerPool;
 	
@@ -256,10 +254,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	boolean full;
 	
-	MessageWriter debugWriter;
-	
-	ValidatorEventHandlerPool(ContentHandlerPool contentHandlerPool, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	ValidatorEventHandlerPool(ContentHandlerPool contentHandlerPool){
 		this.contentHandlerPool = contentHandlerPool;
 		
 		elementVHMaxSize = 40;
@@ -868,7 +863,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	public ElementValidationHandler getElementValidationHandler(AElement element, ElementValidationHandler parent){		
 		if(elementVHFree == 0){
-			ElementValidationHandler che = new ElementValidationHandler(debugWriter);
+			ElementValidationHandler che = new ElementValidationHandler();
 			che.init(this, activeInputDescriptor, inputStackDescriptor, spaceHandler, matchHandler, errorHandlerPool);			
 			che.init(element,  parent);
 			return che;			
@@ -893,7 +888,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	public StartValidationHandler getStartValidationHandler(AElement start){		
 		if(startVHFree == 0){
-			StartValidationHandler che = new StartValidationHandler(debugWriter);
+			StartValidationHandler che = new StartValidationHandler();
 			che.init(this, activeInputDescriptor, inputStackDescriptor, spaceHandler, matchHandler, errorHandlerPool);			
 			che.init(start, null);
 			return che;			
@@ -919,7 +914,7 @@ public class ValidatorEventHandlerPool implements Reusable{
     
 	UnexpectedElementHandler getUnexpectedElementHandler(SimplifiedComponent e, ElementValidationHandler parent){				
 		if(unexpectedElementHFree == 0){
-			UnexpectedElementHandler ueh = new UnexpectedElementHandler(debugWriter);
+			UnexpectedElementHandler ueh = new UnexpectedElementHandler();
 			ueh.init(this, activeInputDescriptor, inputStackDescriptor);
 			ueh.init(e, parent);			
 			return ueh;			
@@ -944,7 +939,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	UnexpectedAmbiguousElementHandler getUnexpectedAmbiguousElementHandler(List<SimplifiedComponent> elements, ElementValidationHandler parent){		
 		if(unexpectedAmbiguousEHFree == 0){
-			UnexpectedAmbiguousElementHandler uach = new UnexpectedAmbiguousElementHandler(debugWriter);
+			UnexpectedAmbiguousElementHandler uach = new UnexpectedAmbiguousElementHandler();
 			uach.init(this, activeInputDescriptor, inputStackDescriptor);
 			uach.init(elements, parent);
 			return uach;
@@ -969,7 +964,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	UnknownElementHandler getUnknownElementHandler(ElementValidationHandler parent){
 		if(unknownElementHFree == 0){
-			UnknownElementHandler ueh = new UnknownElementHandler(debugWriter);
+			UnknownElementHandler ueh = new UnknownElementHandler();
 			ueh.init(this, activeInputDescriptor, inputStackDescriptor);
 			ueh.init(parent);			
 			return ueh;			
@@ -994,7 +989,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	ElementDefaultHandler getElementDefaultHandler(ElementEventHandler parent){
 		if(elementDefaultHFree == 0){
-			ElementDefaultHandler deh = new ElementDefaultHandler(debugWriter);
+			ElementDefaultHandler deh = new ElementDefaultHandler();
 			deh.init(this, activeInputDescriptor, inputStackDescriptor);
 			deh.init(parent);
 			return deh;			
@@ -1023,7 +1018,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	BoundUnexpectedElementHandler getBoundUnexpectedElementHandler(SimplifiedComponent e, ElementValidationHandler parent, Queue queue){				
 		if(boundUnexpectedElementHFree == 0){
-			BoundUnexpectedElementHandler ueh = new BoundUnexpectedElementHandler(debugWriter);
+			BoundUnexpectedElementHandler ueh = new BoundUnexpectedElementHandler();
 			ueh.init(this, activeInputDescriptor, inputStackDescriptor);
 			ueh.init(e, parent, queue);			
 			return ueh;			
@@ -1048,7 +1043,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	BoundUnexpectedAmbiguousElementHandler getBoundUnexpectedAmbiguousElementHandler(List<SimplifiedComponent> boundElements, ElementValidationHandler parent, Queue queue){		
 		if(boundUnexpectedAmbiguousEHFree == 0){
-			BoundUnexpectedAmbiguousElementHandler uach = new BoundUnexpectedAmbiguousElementHandler(debugWriter);
+			BoundUnexpectedAmbiguousElementHandler uach = new BoundUnexpectedAmbiguousElementHandler();
 			uach.init(this, activeInputDescriptor, inputStackDescriptor);
 			uach.init(boundElements, parent, queue);
 			return uach;
@@ -1073,7 +1068,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	BoundUnknownElementHandler getBoundUnknownElementHandler(BoundElementValidationHandler parent, Queue queue){
 		if(boundUnknownElementHFree == 0){
-			BoundUnknownElementHandler ueh = new BoundUnknownElementHandler(debugWriter);
+			BoundUnknownElementHandler ueh = new BoundUnknownElementHandler();
 			ueh.init(this, activeInputDescriptor, inputStackDescriptor);
 			ueh.init(parent, queue);			
 			return ueh;			
@@ -1098,7 +1093,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	BoundElementDefaultHandler getBoundElementDefaultHandler(ElementEventHandler parent, Queue queue){
 		if(boundElementDefaultHFree == 0){
-			BoundElementDefaultHandler deh = new BoundElementDefaultHandler(debugWriter);
+			BoundElementDefaultHandler deh = new BoundElementDefaultHandler();
 			deh.init(this, activeInputDescriptor, inputStackDescriptor);
 			deh.init(parent, queue);
 			return deh;			
@@ -1126,7 +1121,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	ElementConcurrentHandler getElementConcurrentHandler(List<AElement> candidateDefinitions, ElementValidationHandler parent){		
 		if(elementConcurrentHFree == 0){
-			ElementConcurrentHandler ech = new ElementConcurrentHandler(debugWriter);
+			ElementConcurrentHandler ech = new ElementConcurrentHandler();
 			ech.init(this, activeInputDescriptor, inputStackDescriptor, errorHandlerPool);			
 			ech.init(candidateDefinitions, parent);
 			return ech;
@@ -1151,7 +1146,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	ElementParallelHandler getElementParallelHandler(ExternalConflictHandler conflictHandler, CandidatesConflictErrorHandler candidatesConflictErrorHandler, CandidatesEEH parent){		
 		if(elementParallelHFree == 0){			
-			ElementParallelHandler eph = new ElementParallelHandler(debugWriter);
+			ElementParallelHandler eph = new ElementParallelHandler();
 			eph.init(this, activeInputDescriptor, inputStackDescriptor);
 			eph.init(conflictHandler, candidatesConflictErrorHandler, parent);
 			return eph;
@@ -1176,7 +1171,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 
 	ElementCommonHandler getElementCommonHandler(ExternalConflictHandler conflictHandler, int candidateCount, ValidatingEEH parent){		
 		if(elementCommonHFree == 0){			
-			ElementCommonHandler eph = new ElementCommonHandler(debugWriter);
+			ElementCommonHandler eph = new ElementCommonHandler();
 			eph.init(this, activeInputDescriptor, inputStackDescriptor);
 			eph.init(conflictHandler, candidateCount, parent);
 			return eph;
@@ -1203,7 +1198,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	UnexpectedAttributeHandler getUnexpectedAttributeHandler(SimplifiedComponent a, ElementValidationHandler parent){				
 		if(unexpectedAttributeHFree == 0){
-			UnexpectedAttributeHandler uah = new UnexpectedAttributeHandler(debugWriter);
+			UnexpectedAttributeHandler uah = new UnexpectedAttributeHandler();
 			uah.init(this, inputStackDescriptor);
 			uah.init(a, parent);			
 			return uah;			
@@ -1228,7 +1223,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	UnexpectedAmbiguousAttributeHandler getUnexpectedAmbiguousAttributeHandler(List<SimplifiedComponent> aa, ElementValidationHandler parent){		
 		if(unexpectedAmbiguousAHFree == 0){
-			UnexpectedAmbiguousAttributeHandler uach = new UnexpectedAmbiguousAttributeHandler(debugWriter);
+			UnexpectedAmbiguousAttributeHandler uach = new UnexpectedAmbiguousAttributeHandler();
 			uach.init(this, inputStackDescriptor);
 			uach.init(aa, parent);
 			return uach;
@@ -1253,7 +1248,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	UnknownAttributeHandler getUnknownAttributeHandler(ElementValidationHandler parent){
 		if(unknownAttributeHFree == 0){
-			UnknownAttributeHandler uah = new UnknownAttributeHandler(debugWriter);
+			UnknownAttributeHandler uah = new UnknownAttributeHandler();
 			uah.init(this, inputStackDescriptor);
 			uah.init(parent);			
 			return uah;			
@@ -1280,7 +1275,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	public AttributeValidationHandler getAttributeValidationHandler(AAttribute attribute, ElementValidationHandler parent, ContextErrorHandlerManager contextErrorHandlerManager){		
 		if(attributeVHFree == 0){
-			AttributeValidationHandler avh = new AttributeValidationHandler(debugWriter);
+			AttributeValidationHandler avh = new AttributeValidationHandler();
 			avh.init(this, inputStackDescriptor, matchHandler);
 			avh.init(attribute,  parent, contextErrorHandlerManager);
 			return avh;			
@@ -1306,7 +1301,7 @@ public class ValidatorEventHandlerPool implements Reusable{
     
     public CandidateAttributeValidationHandler getCandidateAttributeValidationHandler(AAttribute candidateAttribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex, TemporaryMessageStorage[] temporaryMessageStorage){		
 		if(candidateAttributeVHFree == 0){
-			CandidateAttributeValidationHandler avh = new CandidateAttributeValidationHandler(debugWriter);
+			CandidateAttributeValidationHandler avh = new CandidateAttributeValidationHandler();
 			avh.init(this, activeInputDescriptor, inputStackDescriptor, matchHandler);
 			avh.init(candidateAttribute,  parent, conflictHandler, candidateIndex, temporaryMessageStorage);
 			return avh;			
@@ -1331,7 +1326,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	AttributeConcurrentHandler getAttributeConcurrentHandler(List<AAttribute> candidateDefinitions, ElementValidationHandler parent){		
 		if(attributeConcurrentHFree == 0){
-			AttributeConcurrentHandler ach = new AttributeConcurrentHandler(debugWriter);
+			AttributeConcurrentHandler ach = new AttributeConcurrentHandler();
 			ach.init(this, inputStackDescriptor, errorHandlerPool);
 			ach.init(candidateDefinitions, parent);
 			return ach;
@@ -1356,7 +1351,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 
     AttributeParallelHandler getAttributeParallelHandler(CandidatesEEH parent, ExternalConflictHandler candidatesConflictHandler, CandidatesConflictErrorHandler elementCandidatesConflictErrorHandler){		
 		if(attributeParallelHFree == 0){
-			AttributeParallelHandler ach = new AttributeParallelHandler(debugWriter);
+			AttributeParallelHandler ach = new AttributeParallelHandler();
 			ach.init(this, inputStackDescriptor);
 			ach.init(parent, candidatesConflictHandler, elementCandidatesConflictErrorHandler);
 			return ach;
@@ -1381,7 +1376,7 @@ public class ValidatorEventHandlerPool implements Reusable{
     
     AttributeDefaultHandler getAttributeDefaultHandler(ComparableEEH parent){		
 		if(attributeDefaultHFree == 0){
-			AttributeDefaultHandler ach = new AttributeDefaultHandler(debugWriter);
+			AttributeDefaultHandler ach = new AttributeDefaultHandler();
 			ach.init(this, inputStackDescriptor);
 			ach.init(parent);
 			return ach;
@@ -1406,7 +1401,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 
 	CharactersValidationHandler getCharactersValidationHandler(MarkupEventHandler parent, CharsContentTypeHandler charsContentTypeHandler, ErrorCatcher contextErrorCatcher){		
 		if(charactersValidationHFree == 0){
-			CharactersValidationHandler ach = new CharactersValidationHandler(debugWriter);
+			CharactersValidationHandler ach = new CharactersValidationHandler();
 			ach.init(matchHandler, validationContext, spaceHandler, activeInputDescriptor, inputStackDescriptor, this);
 			ach.init(parent, charsContentTypeHandler, contextErrorCatcher);
 			return ach;
@@ -1431,7 +1426,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	StructuredDataValidationHandler getStructuredDataValidationHandler(ExceptPatternValidationHandler parent, StructuredDataContentTypeHandler structuredDataContentTypeHandler, ErrorCatcher contextErrorCatcher){		
 		if(structuredDataValidationHFree == 0){
-			StructuredDataValidationHandler ach = new StructuredDataValidationHandler(debugWriter);
+			StructuredDataValidationHandler ach = new StructuredDataValidationHandler();
 			ach.init(matchHandler, validationContext, spaceHandler, activeInputDescriptor, inputStackDescriptor, this);
 			ach.init(parent, structuredDataContentTypeHandler, contextErrorCatcher);
 			return ach;
@@ -1456,7 +1451,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	DataValidationHandler getDataValidationHandler(ListPatternValidationHandler parent, DataContentTypeHandler dataContentTypeHandler, ErrorCatcher contextErrorCatcher){		
 		if(dataValidationHFree == 0){
-			DataValidationHandler ach = new DataValidationHandler(debugWriter);
+			DataValidationHandler ach = new DataValidationHandler();
 			ach.init(matchHandler, validationContext, spaceHandler, activeInputDescriptor, inputStackDescriptor, this);
 			ach.init(parent, dataContentTypeHandler, contextErrorCatcher);
 			return ach;
@@ -1482,7 +1477,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 
     public DefaultValueAttributeValidationHandler getDefaultValueAttributeValidationHandler(){		
 		if(defaultVAttributeHFree == 0){
-			DefaultValueAttributeValidationHandler dvah = new DefaultValueAttributeValidationHandler(debugWriter);
+			DefaultValueAttributeValidationHandler dvah = new DefaultValueAttributeValidationHandler();
 			dvah.init(this, inputStackDescriptor, matchHandler);
 			return dvah;
 		}
@@ -1506,7 +1501,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	ListPatternValidationHandler getListPatternValidationHandler(AListPattern listPattern, AbstractSDVH parent, ErrorCatcher errorCatcher){		
 		if(listPatternVHFree == 0){
-			ListPatternValidationHandler lpvh = new ListPatternValidationHandler(debugWriter);
+			ListPatternValidationHandler lpvh = new ListPatternValidationHandler();
 			lpvh.init(this, inputStackDescriptor, spaceHandler);
 			lpvh.init(listPattern, parent, errorCatcher);
 			return lpvh;
@@ -1531,7 +1526,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	ExceptPatternValidationHandler getExceptPatternValidationHandler(AData data, AExceptPattern exceptPattern, AbstractDVH parent, ErrorCatcher errorCatcher){		
 		if(exceptPatternVHFree == 0){
-			ExceptPatternValidationHandler ach = new ExceptPatternValidationHandler(debugWriter);
+			ExceptPatternValidationHandler ach = new ExceptPatternValidationHandler();
 			ach.init(this, inputStackDescriptor);
 			ach.init(data, exceptPattern, parent, errorCatcher);
 			return ach;
@@ -1559,7 +1554,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	public BoundElementValidationHandler getElementValidationHandler(AElement element, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
 		if(boundElementVHFree == 0){
-			BoundElementValidationHandler bevh = new BoundElementValidationHandler(debugWriter);
+			BoundElementValidationHandler bevh = new BoundElementValidationHandler();
 			bevh.init(this, activeInputDescriptor, inputStackDescriptor, spaceHandler, matchHandler, errorHandlerPool);			
 			bevh.init(element,  parent, bindingModel, queue, queuePool);
 			return bevh;			
@@ -1584,7 +1579,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	public BoundStartValidationHandler getBoundStartValidationHandler(AElement element, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
 		if(boundStartVHFree == 0){
-			BoundStartValidationHandler bevh = new BoundStartValidationHandler(debugWriter);
+			BoundStartValidationHandler bevh = new BoundStartValidationHandler();
 			bevh.init(this, activeInputDescriptor, inputStackDescriptor, spaceHandler, matchHandler, errorHandlerPool);			
 			bevh.init(element,  null, bindingModel, queue, queuePool);
 			return bevh;			
@@ -1609,7 +1604,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 
 	BoundElementConcurrentHandler getElementConcurrentHandler(List<AElement> candidateDefinitions, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
 		if(boundElementConcurrentHFree == 0){
-			BoundElementConcurrentHandler ech = new BoundElementConcurrentHandler(debugWriter);
+			BoundElementConcurrentHandler ech = new BoundElementConcurrentHandler();
 			ech.init(this, activeInputDescriptor, inputStackDescriptor, errorHandlerPool);			
 			ech.init(candidateDefinitions, parent, bindingModel, queue, queuePool);
 			return ech;
@@ -1635,7 +1630,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	BoundElementParallelHandler getElementParallelHandler(ExternalConflictHandler conflictHandler, CandidatesConflictErrorHandler candidatesConflictErrorHandler, CandidatesEEH parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
 		if(boundElementParallelHFree == 0){			
-			BoundElementParallelHandler eph = new BoundElementParallelHandler(debugWriter);
+			BoundElementParallelHandler eph = new BoundElementParallelHandler();
 			eph.init(this, activeInputDescriptor, inputStackDescriptor, errorHandlerPool);
 			eph.init(conflictHandler, candidatesConflictErrorHandler, parent, bindingModel, queue, queuePool);
 			return eph;
@@ -1661,7 +1656,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	BoundElementCommonHandler getBoundElementCommonHandler(ExternalConflictHandler conflictHandler, int candidateCount, ValidatingEEH parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
 		if(boundElementCommonHFree == 0){			
-			BoundElementCommonHandler eph = new BoundElementCommonHandler(debugWriter);
+			BoundElementCommonHandler eph = new BoundElementCommonHandler();
 			eph.init(this, activeInputDescriptor, inputStackDescriptor);
 			eph.init(conflictHandler, candidateCount, parent, bindingModel, queue, queuePool);
 			return eph;
@@ -1690,7 +1685,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	public BoundAttributeValidationHandler getAttributeValidationHandler(AAttribute boundAttribute, ElementValidationHandler parent, ContextErrorHandlerManager contextErrorHandlerManager, BindingModel bindingModel, Queue queue, int entry){		
 		if(boundAttributeVHFree == 0){
-			BoundAttributeValidationHandler bavh = new BoundAttributeValidationHandler(debugWriter);
+			BoundAttributeValidationHandler bavh = new BoundAttributeValidationHandler();
 			bavh.init(this, inputStackDescriptor, matchHandler);
 			bavh.init(boundAttribute,  parent, contextErrorHandlerManager, bindingModel, queue, entry);
 			return bavh;			
@@ -1715,7 +1710,7 @@ public class ValidatorEventHandlerPool implements Reusable{
     
     public BoundCandidateAttributeValidationHandler getCandidateAttributeValidationHandler(AAttribute boundCandidateAttribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex, BindingModel bindingModel, Queue queue, int entry){		
 		if(boundCandidateAttributeVHFree == 0){
-			BoundCandidateAttributeValidationHandler bavh = new BoundCandidateAttributeValidationHandler(debugWriter);
+			BoundCandidateAttributeValidationHandler bavh = new BoundCandidateAttributeValidationHandler();
 			bavh.init(this, activeInputDescriptor, inputStackDescriptor, matchHandler);
 			bavh.init(boundCandidateAttribute,  parent, conflictHandler, candidateIndex, bindingModel, queue, entry);
 			return bavh;			
@@ -1740,7 +1735,7 @@ public class ValidatorEventHandlerPool implements Reusable{
 	
 	BoundAttributeConcurrentHandler getAttributeConcurrentHandler(List<AAttribute> candidateDefinitions, ElementValidationHandler parent, BindingModel bindingModel, Queue queue, int entry){		
 		if(boundAttributeConcurrentHFree == 0){
-			BoundAttributeConcurrentHandler ach = new BoundAttributeConcurrentHandler(debugWriter);
+			BoundAttributeConcurrentHandler ach = new BoundAttributeConcurrentHandler();
 			ach.init(this, inputStackDescriptor, errorHandlerPool);
 			ach.init(candidateDefinitions, parent, bindingModel, queue, entry);
 			return ach;
@@ -1766,7 +1761,7 @@ public class ValidatorEventHandlerPool implements Reusable{
     
     BoundAttributeParallelHandler getAttributeParallelHandler(CandidatesEEH parent, ExternalConflictHandler candidatesConflictHandler, CandidatesConflictErrorHandler elementCandidatesConflictErrorHandler, BindingModel bindingModel, Queue queue, int entry){		
 		if(boundAttributeParallelHFree == 0){
-			BoundAttributeParallelHandler ach = new BoundAttributeParallelHandler(debugWriter);
+			BoundAttributeParallelHandler ach = new BoundAttributeParallelHandler();
 			ach.init(this, inputStackDescriptor);
 			ach.init(parent, candidatesConflictHandler, elementCandidatesConflictErrorHandler, bindingModel, queue, entry);
 			return ach;

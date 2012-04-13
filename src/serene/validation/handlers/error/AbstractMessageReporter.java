@@ -20,8 +20,6 @@ import java.util.BitSet;
 
 import serene.validation.schema.active.components.AElement;
 
-import sereneWrite.MessageWriter;
-
 public abstract class AbstractMessageReporter implements MessageReporter{
     MessageReporter parent;// the handler that is supposed to report before this when delayed in a conflict situation
     
@@ -37,12 +35,7 @@ public abstract class AbstractMessageReporter implements MessageReporter{
     
     int conflictResolutionId;
        
-    
-	MessageWriter debugWriter;
-	
-    public AbstractMessageReporter(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		
+    public AbstractMessageReporter(){
         conflictResolutionId = RESOLVED;
 	}	
     

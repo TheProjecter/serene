@@ -21,17 +21,11 @@ import org.relaxng.datatype.DatatypeLibraryFactory;
 
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
-public class NativeLibraryFactory implements DatatypeLibraryFactory{		
-	MessageWriter debugWriter;
+public class NativeLibraryFactory implements DatatypeLibraryFactory{
 	public NativeLibraryFactory(){}
-	public NativeLibraryFactory(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-	}
 	public NativeLibrary createDatatypeLibrary(String namespace){
 		if(namespace.equals(Constants.NATIVE_DATATYPE_LIBRARY)){
-			return new NativeLibrary(debugWriter);
+			return new NativeLibrary();
 		}
 		return null;
 	} 

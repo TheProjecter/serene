@@ -19,8 +19,6 @@ package serene.validation.schema.parsed;
 
 import java.util.Map;
 
-import sereneWrite.MessageWriter;
-
 import serene.bind.util.DocumentIndexedData;
 
 abstract class Div extends ParsedComponent{
@@ -31,9 +29,8 @@ abstract class Div extends ParsedComponent{
             int datatypeLibrary,
             ParsedComponent[] children, 
             int recordIndex,
-            DocumentIndexedData documentIndexedData,
-            MessageWriter debugWriter){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
+            DocumentIndexedData documentIndexedData){
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
         asParent(children);
 	}
     

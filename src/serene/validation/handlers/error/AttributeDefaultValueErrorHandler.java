@@ -43,8 +43,6 @@ import serene.dtdcompatibility.AttributeDefaultValueException;
 
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
-import sereneWrite.MessageWriter;
-
 public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
     
     String qName;
@@ -59,12 +57,8 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
     
     ActiveInputDescriptor activeInputDescriptor;
     
-    MessageWriter debugWriter;
-    
     public AttributeDefaultValueErrorHandler(ActiveInputDescriptor activeInputDescriptor,
-                                                ErrorDispatcher errorDispatcher, 
-                                                MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+                                                ErrorDispatcher errorDispatcher){
         this.errorDispatcher = errorDispatcher;
         this.activeInputDescriptor = activeInputDescriptor;
         

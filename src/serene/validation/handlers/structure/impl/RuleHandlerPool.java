@@ -16,15 +16,8 @@ limitations under the License.
 
 package serene.validation.handlers.structure.impl;
 
-
-
-import sereneWrite.MessageWriter;
-
 public abstract class RuleHandlerPool{	
-	MessageWriter debugWriter;
-	
-	RuleHandlerPool(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;		
+	RuleHandlerPool(){		
 	}
 		
 	public abstract ActiveModelRuleHandlerPool getActiveModelRuleHandlerPool();		

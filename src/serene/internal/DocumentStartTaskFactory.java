@@ -18,15 +18,13 @@ package serene.internal;
 
 import serene.bind.ElementTask;
 
-import sereneWrite.MessageWriter;
-
 class DocumentStartTaskFactory extends RNGParseDocumentTaskFactory{
     
-	public DocumentStartTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	public DocumentStartTaskFactory(){
+		super();
 	}
 	
 	public DocumentStartTask getTask(){
-		return new DocumentStartTask(debugWriter);
+		return new DocumentStartTask();
 	}
 }

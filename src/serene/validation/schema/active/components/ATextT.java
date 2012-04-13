@@ -20,14 +20,11 @@ import serene.validation.schema.simplified.components.SText;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public class ATextT extends AText{
 	SText stext;
 	public ATextT(ActiveModelRuleHandlerPool ruleHandlerPool, 
-	            SText stext, 
-	            MessageWriter debugWriter){
-		super(ruleHandlerPool, debugWriter);
+	            SText stext){
+		super(ruleHandlerPool);
 		this.stext = stext;
 		minOccurs = 0;
 		maxOccurs = UNBOUNDED;

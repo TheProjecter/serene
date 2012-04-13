@@ -37,13 +37,10 @@ import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import sereneWrite.MessageWriter;
-
 public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{	
-
-    
-	public CandidatesConflictMessageHandler(MessageWriter debugWriter){
-		super(debugWriter);
+  
+	public CandidatesConflictMessageHandler(){
+		super();
 	}	
 	
     public ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher){
@@ -61,8 +58,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
                                     candidatesCount,
                                     disqualified,
                                     candidateMessages,
-                                    errorDispatcher,                                    
-                                    debugWriter);
+                                    errorDispatcher);
     }
     
     

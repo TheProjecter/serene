@@ -21,8 +21,6 @@ import java.util.ArrayList;
 
 import serene.validation.schema.parsed.Start;
 
-import sereneWrite.MessageWriter;
-
 public class CombinedStart{
 	ArrayList<Start> defines;	
 }

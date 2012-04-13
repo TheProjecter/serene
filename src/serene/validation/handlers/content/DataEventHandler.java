@@ -20,8 +20,6 @@ import org.xml.sax.SAXException;
 
 import serene.validation.schema.active.DataActiveType;
 
-import sereneWrite.MessageWriter;
-
 public interface DataEventHandler extends EventHandler{	
 	void handleChars(char[] chars, DataActiveType context) throws SAXException;	
 	void handleString(String value, DataActiveType context) throws SAXException;

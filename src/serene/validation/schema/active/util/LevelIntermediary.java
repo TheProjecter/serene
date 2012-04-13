@@ -23,15 +23,12 @@ import serene.validation.schema.active.components.ANameClass;
 import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.AExceptNameClass;
 
-import sereneWrite.MessageWriter;
-
 class LevelIntermediary extends Level{
 	Level parent;
-	LevelIntermediary(Level parent,
-		 				MessageWriter debugWriter){		
-		super( debugWriter);
+	LevelIntermediary(Level parent){		
+		super();
 		this.parent = parent;
-		child = new LevelBottom(this, debugWriter);
+		child = new LevelBottom(this);
 	}
 		
 	LevelIntermediary(int ncIndex,
@@ -42,9 +39,8 @@ class LevelIntermediary extends Level{
 						APattern[] patterns,
 						AExceptNameClass exceptNameClass,
 						AExceptPattern exceptPattern, 
-						Level parent,
-						MessageWriter debugWriter){		
-		super(debugWriter);
+						Level parent){		
+		super();
 		this.parent = parent;		
 		this.ncIndex = ncIndex;		
 		this.ncSize = ncSize;		
@@ -54,7 +50,7 @@ class LevelIntermediary extends Level{
 		this.patterns = patterns;
 		this.exceptNameClass  = exceptNameClass;
 		this.exceptPattern = exceptPattern;
-		child = new LevelBottom(this, debugWriter);	
+		child = new LevelBottom(this);	
 	}
 	public boolean isTopLevel(){
 		return false;

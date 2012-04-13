@@ -27,8 +27,6 @@ import org.apache.xerces.impl.dv.XSSimpleType;
 import serene.datatype.xsd.XsdValidationContext;
 
 import serene.datatype.util.StringNormalizer;
-
-import sereneWrite.MessageWriter;
  
 class InternalLibrary implements DatatypeLibrary{    
     Datatype qNameDT;
@@ -36,13 +34,8 @@ class InternalLibrary implements DatatypeLibrary{
     Datatype hrefURIDT;
     Datatype datatypeLibraryURIDT;
     Datatype combineDT;    
-    
-    
-	MessageWriter debugWriter;
 	
-	public InternalLibrary(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-        
+	public InternalLibrary(){        
         combineDT = new CombineDT();
     
         SchemaDVFactory xercesFactory = SchemaDVFactory.getInstance("org.apache.xerces.impl.dv.xs.FullDVFactory");
@@ -50,15 +43,15 @@ class InternalLibrary implements DatatypeLibrary{
             xercesFactory = SchemaDVFactory.getInstance();
         }
         
-        XsdValidationContext xsdValidationContext = new XsdValidationContext(debugWriter);
+        XsdValidationContext xsdValidationContext = new XsdValidationContext();
         
         XSSimpleType anyURIXerces = xercesFactory.getBuiltInType("anyURI");
         
-        hrefURIDT = new HrefURIDT(xsdValidationContext, anyURIXerces, debugWriter);
-        datatypeLibraryURIDT = new DatatypeLibraryURIDT(xsdValidationContext, anyURIXerces, debugWriter);
+        hrefURIDT = new HrefURIDT(xsdValidationContext, anyURIXerces);
+        datatypeLibraryURIDT = new DatatypeLibraryURIDT(xsdValidationContext, anyURIXerces);
         
-        qNameDT = new QNameDT(xsdValidationContext, xercesFactory.getBuiltInType("QName"), debugWriter);
-        ncNameDT = new NCNameDT(xsdValidationContext, xercesFactory.getBuiltInType("NCName"), debugWriter);
+        qNameDT = new QNameDT(xsdValidationContext, xercesFactory.getBuiltInType("QName"));
+        ncNameDT = new NCNameDT(xsdValidationContext, xercesFactory.getBuiltInType("NCName"));
 	}
 	
 	public Datatype createDatatype(String typeLocalName) throws DatatypeException{

@@ -18,49 +18,9 @@ package serene.bind;
 
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
-/*import java.util.Map;
-
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
-
-import serene.util.ObjectIntHashMap;
-
-import sereneWrite.MessageWriter;*/
 
 public interface BindingPool{
     
-	
-	/*public BindingPool(ElementTaskFactory startDocumentTaskFactory,
-                                    ElementTaskFactory endDocumentTaskFactory,    
-                                    
-                                    Map<SElement, ElementTaskFactory> startElementTaskFactory,
-                                    Map<SElement, ElementTaskFactory> endElementTaskFactory,
-                                    Map<SAttribute, AttributeTaskFactory> attributeTaskFactory,
-                                        
-                                    ElementTaskFactory genericStartElementTaskFactory,
-                                    ElementTaskFactory genericEndElementTaskFactory,
-                                    AttributeTaskFactory genericAttributeTaskFactory,
-                                    
-									MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		
-		this.startDocumentTaskFactory = startDocumentTaskFactory;
-        this.endDocumentTaskFactory = endDocumentTaskFactory;    
-        
-        this.startElementTaskFactory = startElementTaskFactory;
-        this.endElementTaskFactory = endElementTaskFactory;
-        this.attributeTaskFactory = attributeTaskFactory;
-            
-        this.genericStartElementTaskFactory = genericStartElementTaskFactory;
-        this.genericEndElementTaskFactory = genericEndElementTaskFactory;
-        this.genericAttributeTaskFactory = genericAttributeTaskFactory;
-        
-		
-		queuePoolFree = 0;
-		queuePoolMaxSize = 3;	
-		queuePool = new ValidatorQueuePool[5];					
-	}	*/
-	
 	BindingModel getBindingModel();
 		
 	void recycle(BindingModel bm);	

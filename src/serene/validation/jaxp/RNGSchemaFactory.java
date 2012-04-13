@@ -73,8 +73,6 @@ import org.w3c.dom.Attr;
 
 import org.relaxng.datatype.DatatypeException;
 
-import sereneWrite.MessageWriter;
-
 import serene.internal.InternalRNGFactory;
 import serene.internal.SynchronizedInternalRNGFactory;
 import serene.internal.UnsynchronizedInternalRNGFactory;
@@ -135,10 +133,8 @@ public class RNGSchemaFactory extends SchemaFactory{
 	
 	ErrorDispatcher errorDispatcher;
 
-	MessageWriter debugWriter;
-	
 	public RNGSchemaFactory(){		
-		errorDispatcher = new ErrorDispatcher(null);
+		errorDispatcher = new ErrorDispatcher();
 		
 		initDefaultFeatures();
 		initDefaultProperties();	
@@ -152,22 +148,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 		createRestrictionController();
 	}
 	
-	public RNGSchemaFactory(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		
-		errorDispatcher = new ErrorDispatcher(debugWriter);
-		
-		initDefaultFeatures();
-		initDefaultProperties();	
-				
-		try{
-		    createParser();
-        }catch(DatatypeException e){
-            throw new IllegalStateException(e.getMessage());
-        }
-		createSimplifier();
-		createRestrictionController();		
-	}
+	
 	
 	private void initDefaultFeatures(){
         namespacePrefixes = false;            
@@ -202,9 +183,9 @@ public class RNGSchemaFactory extends SchemaFactory{
 	}
 	private void createSchemaFactory()  throws DatatypeException{
 	    if(optimizedForResourceSharing){	    
-		    internalRNGFactory = SynchronizedInternalRNGFactory.getInstance(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, debugWriter);    
+		    internalRNGFactory = SynchronizedInternalRNGFactory.getInstance(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing);    
 		}else{
-		    internalRNGFactory = UnsynchronizedInternalRNGFactory.getInstance(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, debugWriter);
+		    internalRNGFactory = UnsynchronizedInternalRNGFactory.getInstance(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing);
 		}	    
 	}	
 	private void createXMLReader(){
@@ -237,7 +218,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 	}
 	
     private void createSimplifier(){
-		simplifier = new RNGSimplifier(errorDispatcher, debugWriter);
+		simplifier = new RNGSimplifier(errorDispatcher);
 		simplifier.setParserComponents(xmlReader, internalRNGFactory);
 		simplifier.setReplaceMissingDatatypeLibrary(replaceMissingDatatypeLibrary);
         simplifier.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
@@ -245,7 +226,7 @@ public class RNGSchemaFactory extends SchemaFactory{
         simplifier.setRestrictToFileName(restrictToFileName);
 	}
 	private void createRestrictionController(){
-		restrictionController = new RestrictionController(errorDispatcher, debugWriter);
+		restrictionController = new RestrictionController(errorDispatcher);
         restrictionController.setRestrictToFileName(restrictToFileName);
 	}
     private void createCompatibilityHandler(){
@@ -255,7 +236,7 @@ public class RNGSchemaFactory extends SchemaFactory{
             ActiveInputDescriptor aid = (ActiveInputDescriptor)validatorHandler.getProperty(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY);
             InputStackDescriptor isd = (InputStackDescriptor)validatorHandler.getProperty(Constants.INPUT_STACK_DESCRIPTOR_PROPERTY);
             ControllerPool cp = (ControllerPool)restrictionController.getProperty(Constants.CONTROLLER_POOL_PROPERTY);
-            compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, aid, isd, errorDispatcher, debugWriter);
+            compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, aid, isd, errorDispatcher);
             compatibilityHandler.setRestrictToFileName(restrictToFileName);
             compatibilityHandler.setOptimizeForResourceSharing(optimizedForResourceSharing);
         }catch (SAXNotRecognizedException e) {
@@ -522,7 +503,7 @@ public class RNGSchemaFactory extends SchemaFactory{
                    throw new IllegalArgumentException("Source represents an XML artifact that cannot be validated. Input is expected to be XML documents or elements.");
                 }
                 // create handler and validate
-                if(stAXHandler == null) stAXHandler = new StAXHandler(debugWriter);
+                if(stAXHandler == null) stAXHandler = new StAXHandler();
                 stAXHandler.handle(source.getSystemId(), validatorHandler, xmlStreamReader);
             }catch(XMLStreamException e){
                 throw new SAXException(e);
@@ -538,7 +519,7 @@ public class RNGSchemaFactory extends SchemaFactory{
                    throw new IllegalArgumentException("Source represents an XML artifact that cannot be validated. Input is expected to be XML documents or elements.");
                 }
                 // create handler and validate             
-                if(stAXHandler == null) stAXHandler = new StAXHandler(debugWriter);                 
+                if(stAXHandler == null) stAXHandler = new StAXHandler();                 
                 stAXHandler.handle(source.getSystemId(), validatorHandler, xmlEventReader);
             }catch(XMLStreamException e){
                 throw new SAXException(e);
@@ -601,7 +582,7 @@ public class RNGSchemaFactory extends SchemaFactory{
             throw new IllegalArgumentException("Source represents an XML artifact that cannot be validated. Input is expected to be XML documents or elements.");
 		
         String systemId = source.getSystemId();        
-        if(domHandler == null) domHandler = new DOMHandler(debugWriter);
+        if(domHandler == null) domHandler = new DOMHandler();
         domHandler.handle(systemId, validatorHandler, node);
         
         ParsedModel pm = getParsedModel();
@@ -627,7 +608,7 @@ public class RNGSchemaFactory extends SchemaFactory{
         SchemaModel schemaModel = null;
         
 		if(parsedModel == null) {
-			schemaModel = new SchemaModel(new ValidationModelImpl(null, null, optimizedForResourceSharing, debugWriter), new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
+			schemaModel = new SchemaModel(new ValidationModelImpl(null, null, optimizedForResourceSharing), new DTDCompatibilityModelImpl(null, null));
             RNGSchema schema  = new RNGSchema(false,
                                         namespacePrefixes,
                                         level1AttributeDefaultValue,
@@ -636,8 +617,7 @@ public class RNGSchemaFactory extends SchemaFactory{
                                         level2AttributeIdType,
                                         restrictToFileName,
                                         optimizedForResourceSharing,
-                                        schemaModel, 
-                                        debugWriter);
+                                        schemaModel);
             return schema;
 		}	
         
@@ -658,9 +638,9 @@ public class RNGSchemaFactory extends SchemaFactory{
 		if(simplifiedModel != null){
             restrictionController.control(simplifiedModel);
             if(errorDispatcher.hasUnrecoverableError()){
-                schemaModel = new SchemaModel(new ValidationModelImpl(null, null, optimizedForResourceSharing, debugWriter), new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
+                schemaModel = new SchemaModel(new ValidationModelImpl(null, null, optimizedForResourceSharing), new DTDCompatibilityModelImpl(null, null));
             }else{
-                ValidationModel vm = new ValidationModelImpl(parsedModel, simplifiedModel, optimizedForResourceSharing, debugWriter);
+                ValidationModel vm = new ValidationModelImpl(parsedModel, simplifiedModel, optimizedForResourceSharing);
                 if(level1AttributeDefaultValue || level1AttributeIdType){
                     if(compatibilityHandler == null){                
                         ValidatorErrorHandlerPool vehp = (ValidatorErrorHandlerPool)validatorHandler.getProperty(Constants.ERROR_HANDLER_POOL_PROPERTY);
@@ -668,17 +648,17 @@ public class RNGSchemaFactory extends SchemaFactory{
                         ActiveInputDescriptor aid = (ActiveInputDescriptor)validatorHandler.getProperty(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY);
                         InputStackDescriptor isd = (InputStackDescriptor)validatorHandler.getProperty(Constants.INPUT_STACK_DESCRIPTOR_PROPERTY);
                         ControllerPool cp = (ControllerPool)restrictionController.getProperty(Constants.CONTROLLER_POOL_PROPERTY);
-                        compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, aid, isd, errorDispatcher, debugWriter);                
+                        compatibilityHandler = new CompatibilityHandler(cp, vehp, ehp, aid, isd, errorDispatcher);                
                     }
                     if(level1AttributeDefaultValue) compatibilityHandler.setLevel1AttributeDefaultValue(true);
                     if(level1AttributeIdType) compatibilityHandler.setLevel1AttributeIdType(true);
                     schemaModel = compatibilityHandler.handle(vm);
                 }else{
-                    schemaModel = new SchemaModel(vm, new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
+                    schemaModel = new SchemaModel(vm, new DTDCompatibilityModelImpl(null, null));
                 }
             }
         }else{
-            schemaModel = new SchemaModel(new ValidationModelImpl(null, null, optimizedForResourceSharing, debugWriter), new DTDCompatibilityModelImpl(null, null, debugWriter), debugWriter);
+            schemaModel = new SchemaModel(new ValidationModelImpl(null, null, optimizedForResourceSharing), new DTDCompatibilityModelImpl(null, null));
         }
         
 		RNGSchema schema  = new RNGSchema(false,
@@ -689,8 +669,7 @@ public class RNGSchemaFactory extends SchemaFactory{
                                         level2AttributeIdType,
                                         restrictToFileName,
                                         optimizedForResourceSharing,
-                                        schemaModel, 
-                                        debugWriter);
+                                        schemaModel);
 		return schema;
 	}
 	

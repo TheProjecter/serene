@@ -30,27 +30,20 @@ import org.apache.xerces.impl.dv.XSSimpleType;
 
 import serene.datatype.xsd.XsdValidationContext;
 
-import sereneWrite.MessageWriter;
-
-
-public class IdTypeLibrary implements DatatypeLibrary{
-    MessageWriter debugWriter;
-	
+public class IdTypeLibrary implements DatatypeLibrary{	
     SchemaDVFactory xercesFactory;
     XsdValidationContext xsdValidationContext;
     HashMap<String, IdTypeDT> datatypes;
     // TODO 
     // map of builders ?
     
-	IdTypeLibrary(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-        
+	IdTypeLibrary(){
         xercesFactory = SchemaDVFactory.getInstance("org.apache.xerces.impl.dv.xs.FullDVFactory");// Make sure you get the Full factory
         if(xercesFactory == null) xercesFactory = SchemaDVFactory.getInstance();// Make sure you get the some factory
         //xercesFactory = SchemaDVFactory.getInstance();        
         //System.out.println("*****"+xercesFactory);
         
-        xsdValidationContext = new XsdValidationContext(debugWriter);
+        xsdValidationContext = new XsdValidationContext();
         
         datatypes = new HashMap<String, IdTypeDT>();
 	}
@@ -72,7 +65,7 @@ public class IdTypeLibrary implements DatatypeLibrary{
             xercesType = xercesFactory.getBuiltInType(typeLocalName);            
             //if(xercesType == null) throw new DatatypeException("Type \"" + typeLocalName+"\" is not known in the library.");
             
-            datatype =  new IdTypeDT(xsdValidationContext, xercesType, debugWriter);
+            datatype =  new IdTypeDT(xsdValidationContext, xercesType);
             datatype.setIdType(idType);
             datatypes.put(typeLocalName, datatype);
         }        
@@ -80,6 +73,6 @@ public class IdTypeLibrary implements DatatypeLibrary{
 	}
 	
 	public DatatypeBuilder createDatatypeBuilder(String baseTypeLocalName) throws DatatypeException{
-        return new IdTypeBuilder(baseTypeLocalName, xercesFactory.getBuiltInType(baseTypeLocalName), xercesFactory, xsdValidationContext, debugWriter);
+        return new IdTypeBuilder(baseTypeLocalName, xercesFactory.getBuiltInType(baseTypeLocalName), xercesFactory, xsdValidationContext);
 	}
 }

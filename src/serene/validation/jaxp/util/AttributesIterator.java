@@ -24,17 +24,12 @@ import javax.xml.namespace.QName;
 
 import javax.xml.stream.events.Attribute;
 
-import sereneWrite.MessageWriter;
-
 public class AttributesIterator implements Iterator{    
     int position = 0;
     boolean removed = true;
     ArrayList<Attribute> attributes;
     
-    MessageWriter debugWriter;
-    
-    public AttributesIterator(ArrayList<Attribute> attributes, MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+    public AttributesIterator(ArrayList<Attribute> attributes){
         this.attributes = attributes;
     }
     

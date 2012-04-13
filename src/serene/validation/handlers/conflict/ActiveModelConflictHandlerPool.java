@@ -40,8 +40,6 @@ import serene.bind.BindingModel;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 public class ActiveModelConflictHandlerPool implements Reusable{
 	ConflictHandlerPool pool;
 	InputStackDescriptor inputStackDescriptor;
@@ -128,11 +126,8 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	
 	boolean full;
 	
-	MessageWriter debugWriter;	
 	
-	
-	public ActiveModelConflictHandlerPool(ConflictHandlerPool pool, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;	
+	public ActiveModelConflictHandlerPool(ConflictHandlerPool pool){
 		this.pool = pool;		
 		
 		ambiguousElementConflictResolverMaxSize = 10;
@@ -336,7 +331,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	public AmbiguousElementConflictResolver getAmbiguousElementConflictResolver(ConflictMessageReporter conflictMessageReporter){				
 		if(ambiguousElementConflictResolverFree == 0){
 			// ambiguousElementConflictResolverCreated++;
-			AmbiguousElementConflictResolver icr = new AmbiguousElementConflictResolver(debugWriter);
+			AmbiguousElementConflictResolver icr = new AmbiguousElementConflictResolver();
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(conflictMessageReporter);			
 			return icr;			
@@ -361,7 +356,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	public UnresolvedElementConflictResolver getUnresolvedElementConflictResolver(ConflictMessageReporter conflictMessageReporter){				
 		if(unresolvedElementConflictResolverFree == 0){
 			// unresolvedElementConflictResolverCreated++;
-			UnresolvedElementConflictResolver icr = new UnresolvedElementConflictResolver(debugWriter);
+			UnresolvedElementConflictResolver icr = new UnresolvedElementConflictResolver();
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(conflictMessageReporter);			
 			return icr;			
@@ -386,7 +381,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	public AmbiguousAttributeConflictResolver getAmbiguousAttributeConflictResolver(BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){				
 		if(ambiguousAttributeConflictResolverFree == 0){
 			// ambiguousAttributeConflictResolverCreated++;
-			AmbiguousAttributeConflictResolver icr = new AmbiguousAttributeConflictResolver(debugWriter);
+			AmbiguousAttributeConflictResolver icr = new AmbiguousAttributeConflictResolver();
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(disqualified, temporaryMessageStorage);			
 			return icr;			
@@ -412,7 +407,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	public UnresolvedAttributeConflictResolver getUnresolvedAttributeConflictResolver(TemporaryMessageStorage[] temporaryMessageStorage){				
 		if(unresolvedAttributeConflictResolverFree == 0){
 			// unresolvedAttributeConflictResolverCreated++;
-			UnresolvedAttributeConflictResolver icr = new UnresolvedAttributeConflictResolver(debugWriter);
+			UnresolvedAttributeConflictResolver icr = new UnresolvedAttributeConflictResolver();
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(temporaryMessageStorage);			
 			return icr;			
@@ -437,7 +432,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	public AmbiguousCharsConflictResolver getAmbiguousCharsConflictResolver(BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){				
 		if(ambiguousCharsConflictResolverFree == 0){
 			// ambiguousCharsConflictResolverCreated++;
-			AmbiguousCharsConflictResolver icr = new AmbiguousCharsConflictResolver(debugWriter);
+			AmbiguousCharsConflictResolver icr = new AmbiguousCharsConflictResolver();
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(disqualified, temporaryMessageStorage);			
 			return icr;			
@@ -462,7 +457,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	public UnresolvedCharsConflictResolver getUnresolvedCharsConflictResolver(TemporaryMessageStorage[] temporaryMessageStorage){				
 		if(unresolvedCharsConflictResolverFree == 0){
 			// unresolvedCharsConflictResolverCreated++;
-			UnresolvedCharsConflictResolver icr = new UnresolvedCharsConflictResolver(debugWriter);
+			UnresolvedCharsConflictResolver icr = new UnresolvedCharsConflictResolver();
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(temporaryMessageStorage);			
 			return icr;			
@@ -487,7 +482,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
     public AmbiguousListTokenConflictResolver getAmbiguousListTokenConflictResolver(BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){				
 		if(ambiguousListTokenConflictResolverFree == 0){
 			// ambiguousListTokenConflictResolverCreated++;
-			AmbiguousListTokenConflictResolver icr = new AmbiguousListTokenConflictResolver(debugWriter);
+			AmbiguousListTokenConflictResolver icr = new AmbiguousListTokenConflictResolver();
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(disqualified, temporaryMessageStorage);			
 			return icr;			
@@ -512,7 +507,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	public UnresolvedListTokenConflictResolver getUnresolvedListTokenConflictResolver(TemporaryMessageStorage[] temporaryMessageStorage){				
 		if(unresolvedListTokenConflictResolverFree == 0){
 			// unresolvedListTokenConflictResolverCreated++;
-			UnresolvedListTokenConflictResolver icr = new UnresolvedListTokenConflictResolver(debugWriter);
+			UnresolvedListTokenConflictResolver icr = new UnresolvedListTokenConflictResolver();
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(temporaryMessageStorage);
 			return icr;			
@@ -544,7 +539,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 																		Map<AElement, Queue> candidateQueues){				
 		if(boundAmbiguousElementConflictResolverFree == 0){
 			// boundAmbiguousElementConflictResolverCreated++;
-			BoundAmbiguousElementConflictResolver icr = new BoundAmbiguousElementConflictResolver(debugWriter);
+			BoundAmbiguousElementConflictResolver icr = new BoundAmbiguousElementConflictResolver();
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(conflictMessageReporter,
 			        bindingModel,
@@ -584,7 +579,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 																		Map<AElement, Queue> candidateQueues){				
 		if(boundUnresolvedElementConflictResolverFree == 0){
 			// boundUnresolvedElementConflictResolverCreated++;
-			BoundUnresolvedElementConflictResolver icr = new BoundUnresolvedElementConflictResolver(debugWriter);
+			BoundUnresolvedElementConflictResolver icr = new BoundUnresolvedElementConflictResolver();
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(conflictMessageReporter,
 			        bindingModel,
@@ -627,7 +622,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
                                                                                             BindingModel bindingModel){				
 		if(boundAmbiguousAttributeConflictResolverFree == 0){
 			// boundAmbiguousAttributeConflictResolverCreated++;
-			BoundAmbiguousAttributeConflictResolver icr = new BoundAmbiguousAttributeConflictResolver(debugWriter);
+			BoundAmbiguousAttributeConflictResolver icr = new BoundAmbiguousAttributeConflictResolver();
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(disqualified,
 			        temporaryMessageStorage,
@@ -669,7 +664,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
                                                                                             BindingModel bindingModel){				
 		if(boundUnresolvedAttributeConflictResolverFree == 0){
 			// boundUnresolvedAttributeConflictResolverCreated++;
-			BoundUnresolvedAttributeConflictResolver icr = new BoundUnresolvedAttributeConflictResolver(debugWriter);
+			BoundUnresolvedAttributeConflictResolver icr = new BoundUnresolvedAttributeConflictResolver();
 			icr.init(this, activeInputDescriptor, inputStackDescriptor);
 			icr.init(temporaryMessageStorage,
                     value, 

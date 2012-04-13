@@ -37,8 +37,6 @@ import serene.validation.schema.active.components.AExceptPattern;
 
 import serene.util.ObjectIntHashMap;
 
-import sereneWrite.MessageWriter;
-
 public class ActiveGrammarModel{
 	
 	AElement startElement;
@@ -58,10 +56,7 @@ public class ActiveGrammarModel{
 	ObjectIntHashMap sexceptPatternIndexMap;
 	ActiveDefinitionPool[] exceptPatternDefinitionPool;
 	
-	MessageWriter debugWriter;
-	
-	ActiveGrammarModel(MessageWriter debugWriter){
-		this.debugWriter  = debugWriter;
+	ActiveGrammarModel(){
 	}
 	
 	void init(AElement startElement,

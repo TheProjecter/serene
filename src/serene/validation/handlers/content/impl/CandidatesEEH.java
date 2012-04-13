@@ -18,11 +18,9 @@ package serene.validation.handlers.content.impl;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import sereneWrite.MessageWriter;
-
 abstract class CandidatesEEH extends ValidatingEEH{
 
-	CandidatesEEH(MessageWriter debugWriter){
-		super(debugWriter);		
+	CandidatesEEH(){
+		super();		
 	}
 }

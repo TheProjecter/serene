@@ -23,8 +23,6 @@ import org.xml.sax.SAXException;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class Name extends NameClass{	
 	String characterContent;
 	Name(/*Map<String, String> prefixMapping,*/
@@ -33,9 +31,8 @@ public class Name extends NameClass{
             int datatypeLibrary, 
             String characterContent,
             int recordIndex,
-            DocumentIndexedData documentIndexedData,   
-            MessageWriter debugWriter){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);		
+            DocumentIndexedData documentIndexedData){
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);		
 		this.characterContent = characterContent;		
 	}
 	

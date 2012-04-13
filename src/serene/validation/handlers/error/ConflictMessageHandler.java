@@ -41,8 +41,6 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 public class ConflictMessageHandler  extends AbstractMessageHandler implements ConflictErrorCatcher{	
 
  	// {2}
@@ -163,8 +161,8 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     // {30}
     int conflictFEC;
     
-	public ConflictMessageHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public ConflictMessageHandler(){
+		super();
 	}	
 	
     public ConflictMessageReporter getConflictMessageReporter(ErrorDispatcher errorDispatcher){
@@ -183,8 +181,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
                                     candidatesCount,
                                     disqualified,
                                     candidateMessages,
-                                    errorDispatcher,                                    
-                                    debugWriter);
+                                    errorDispatcher);
                 
         return result;
     }

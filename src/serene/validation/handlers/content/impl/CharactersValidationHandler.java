@@ -44,8 +44,6 @@ import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 import serene.validation.handlers.error.ErrorCatcher;
 
-import sereneWrite.MessageWriter;
-
 class CharactersValidationHandler extends AbstractSDVH implements CharactersEventHandler{
     MarkupEventHandler parent;        
     CharsContentTypeHandler charsContentTypeHandler;
@@ -59,8 +57,8 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
     ErrorCatcher currentErrorCatcher;
     int currentIndex;
     
-    CharactersValidationHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    CharactersValidationHandler(){
+        super();
         
         dataMatches = new ArrayList<AData>();
         valueMatches = new ArrayList<AValue>();
@@ -289,7 +287,7 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	        if(temporaryMessageStorage == null) temporaryMessageStorage = new TemporaryMessageStorage[matches.size()];
 	        
 	        if(temporaryMessageStorage[currentIndex] == null){
-                temporaryMessageStorage[currentIndex] = new TemporaryMessageStorage(debugWriter);
+                temporaryMessageStorage[currentIndex] = new TemporaryMessageStorage();
                 temporaryMessageStorage[currentIndex].init(activeInputDescriptor);
             }
 	        currentErrorCatcher = temporaryMessageStorage[currentIndex];

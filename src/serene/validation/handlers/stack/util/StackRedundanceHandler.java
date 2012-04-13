@@ -20,10 +20,7 @@ import java.util.Arrays;
 
 import serene.validation.handlers.stack.CandidateStackHandler;
 
-import sereneWrite.MessageWriter;
 public class StackRedundanceHandler{
-	MessageWriter debugWriter;
-
 	CandidateStackHandler[] candidatesTable;
 	int[] codesCacheTable;
  
@@ -33,8 +30,7 @@ public class StackRedundanceHandler{
     int size;
 	
 	
-	public StackRedundanceHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;		
+	public StackRedundanceHandler(){		
         size = 10;
         codesCacheTable = new int[size];
 		candidatesTable = new CandidateStackHandler[size];

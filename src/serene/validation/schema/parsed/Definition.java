@@ -21,8 +21,6 @@ import java.util.Map;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public abstract class Definition extends ParsedComponent implements GrammarContent, IncludeContent{
 	int combineRecordIndex;
     ParsedComponent[] children;	
@@ -36,9 +34,8 @@ public abstract class Definition extends ParsedComponent implements GrammarConte
                     String qName, 
                     String location,*/
                     int recordIndex,
-                    DocumentIndexedData documentIndexedData,                    
-                    MessageWriter debugWriter){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
+                    DocumentIndexedData documentIndexedData){
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 		this.combineRecordIndex = combine;
 		asParent(children);		
 	}	

@@ -19,13 +19,11 @@ package serene.validation.schema.active.util;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ANameClass;
 
-import sereneWrite.MessageWriter;
-
 class LevelTop extends Level{
 	
-	LevelTop(MessageWriter debugWriter){
-		super(debugWriter);
-		child = new LevelBottom(this, debugWriter);
+	LevelTop(){
+		super();
+		child = new LevelBottom(this);
 	}	
 	
 	public boolean isTopLevel(){

@@ -23,15 +23,12 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class SExceptNameClass extends SExcept{		
 	SNameClass child;
 	public SExceptNameClass(SNameClass child,
 			int recordIndex, 
-			DocumentIndexedData documentIndexedData,
-			MessageWriter debugWriter){
-		super(recordIndex, documentIndexedData, debugWriter);
+			DocumentIndexedData documentIndexedData){
+		super(recordIndex, documentIndexedData);
 		asParent(child);
 	}	
 	
