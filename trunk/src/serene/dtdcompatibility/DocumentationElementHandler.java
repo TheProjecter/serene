@@ -26,8 +26,6 @@ import serene.util.BooleanStack;
 import serene.validation.handlers.error.ErrorDispatcher;
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
 public class DocumentationElementHandler{
     final String PARAM = "param";
     final String VALUE = "value";
@@ -38,10 +36,8 @@ public class DocumentationElementHandler{
     BooleanStack documentablePosition;
     
     ErrorDispatcher errorDispatcher;
-    MessageWriter debugWriter;
     
-    public DocumentationElementHandler(ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+    public DocumentationElementHandler(ErrorDispatcher errorDispatcher){
         this.errorDispatcher = errorDispatcher;    
         documentationDepth = 0;
         nestedDocumentation = false;

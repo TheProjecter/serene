@@ -48,9 +48,6 @@ import serene.validation.schema.simplified.components.SChoiceNameClass;
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
-
-import sereneWrite.MessageWriter; 
-
 class InclusionController implements SimplifiedComponentVisitor{
 	
 	SNameClass including;
@@ -59,13 +56,9 @@ class InclusionController implements SimplifiedComponentVisitor{
 	NsNameInclusionController nsNameInclusionController;	
 	NameInclusionController nameInclusionController;
 	
-	MessageWriter debugWriter;
-	
-	InclusionController(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		
-		nsNameInclusionController = new NsNameInclusionController(debugWriter);	
-		nameInclusionController = new NameInclusionController(debugWriter);
+	InclusionController(){
+		nsNameInclusionController = new NsNameInclusionController();	
+		nameInclusionController = new NameInclusionController();
 	}
 	
 	/**

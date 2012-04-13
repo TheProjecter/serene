@@ -24,8 +24,6 @@ import org.xml.sax.SAXException;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class ChoiceNameClass extends MultipleChildrenNameClass{
     ChoiceNameClass(/*Map<String, String> prefixMapping,*/ 
                         int xmlBase,
@@ -33,9 +31,8 @@ public class ChoiceNameClass extends MultipleChildrenNameClass{
                         int datatypeLibrary, 
                         ParsedComponent[] children,
                         int recordIndex,
-                        DocumentIndexedData documentIndexedData,   
-						MessageWriter debugWriter){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData, debugWriter);
+                        DocumentIndexedData documentIndexedData){
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
 	}
 	
 	public void accept(ParsedComponentVisitor v){

@@ -44,8 +44,6 @@ import serene.util.IntStack;
 import serene.DocumentContext;
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
 class DOMAugmentingHandler extends DOMHandler{
 
     Element currentElement;
@@ -59,8 +57,8 @@ class DOMAugmentingHandler extends DOMHandler{
     
     DocumentContext documentContext;
     
-    DOMAugmentingHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    DOMAugmentingHandler(){
+        super();
     }    
     
     void setLevel2AttributeDefaultValue(boolean level2AttributeDefaultValue){

@@ -18,14 +18,12 @@ package serene.internal;
 
 import serene.bind.ElementTask;
 
-import sereneWrite.MessageWriter;
-
 class DivGrammarContentTaskFactory extends RNGParseEndElementTaskFactory{
-	public DivGrammarContentTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	public DivGrammarContentTaskFactory(){
+		super();
 	}
 	
 	public DivGrammarContentTask getTask(){
-	    return new DivGrammarContentTask(debugWriter);
+	    return new DivGrammarContentTask();
 	}
 }

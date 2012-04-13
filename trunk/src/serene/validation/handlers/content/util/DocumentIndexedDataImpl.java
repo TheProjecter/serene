@@ -21,8 +21,6 @@ import java.util.Map;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 class DocumentIndexedDataImpl implements DocumentIndexedData{            
 
 	int[] itemIdTable;

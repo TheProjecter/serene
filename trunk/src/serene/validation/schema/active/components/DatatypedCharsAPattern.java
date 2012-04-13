@@ -27,16 +27,13 @@ import serene.validation.schema.active.components.DatatypedActiveTypeItem;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public abstract class DatatypedCharsAPattern extends CharsAPattern implements DatatypedActiveTypeItem{
 	Datatype datatype;	
 	ActiveGrammarModel grammarModel;
 	DatatypedCharsAPattern(Datatype datatype,
 				ActiveGrammarModel grammarModel,
-				ActiveModelRuleHandlerPool ruleHandlerPool,
-				MessageWriter debugWriter){		
-		super(ruleHandlerPool, debugWriter);
+				ActiveModelRuleHandlerPool ruleHandlerPool){		
+		super(ruleHandlerPool);
 		this.datatype = datatype;
 		this.grammarModel = grammarModel;
 	}

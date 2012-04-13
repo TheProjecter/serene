@@ -63,19 +63,13 @@ import serene.validation.schema.parsed.Start;
 
 import serene.validation.schema.parsed.ForeignComponent;
 
-import sereneWrite.MessageWriter;
-
 class NsInheritanceHandler implements ParsedComponentVisitor{
 	
 	String ns;
 	
 	Map<ParsedComponent, ParsedComponent> descendanceMap;
 	
-	MessageWriter debugWriter;
-	
-	NsInheritanceHandler(Map<ParsedComponent, ParsedComponent> descendanceMap,
-						MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	NsInheritanceHandler(Map<ParsedComponent, ParsedComponent> descendanceMap){
 		this.descendanceMap = descendanceMap;
 	}
 	

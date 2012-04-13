@@ -22,15 +22,12 @@ import serene.validation.schema.active.components.AExceptNameClass;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
 
-import sereneWrite.MessageWriter;
-
 public class ANsName extends AbstractWildCard{		
 	String ns;
 	SNsName snsName;
 	public ANsName(String ns, AExceptNameClass child,
-			SNsName snsName, 
-			MessageWriter debugWriter){	
-		super(child, debugWriter);
+			SNsName snsName){	
+		super(child);
 		this.ns = ns;
 		this.snsName = snsName;
 	}

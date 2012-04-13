@@ -25,16 +25,14 @@ import serene.validation.schema.simplified.components.SPattern;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
 
 public class SGroup extends AbstractMultipleChildrenPattern{	
     boolean addedBySimplification;
 	public SGroup(SPattern[] children,
 				int recordIndex, 
 				DocumentIndexedData documentIndexedData,
-				boolean addedBySimplification,
-				MessageWriter debugWriter){	
-		super(children, recordIndex, documentIndexedData, debugWriter);
+				boolean addedBySimplification){	
+		super(children, recordIndex, documentIndexedData);
 		this.addedBySimplification = addedBySimplification;
 	}
 		

@@ -24,12 +24,10 @@ import serene.validation.schema.active.ActiveGrammarModel;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 class CompatibilityControlAttribute extends AAttribute{
     
-    CompatibilityControlAttribute(MessageWriter debugWriter){
-            super(-1, null, null, null, null, debugWriter);                
+    CompatibilityControlAttribute(){
+            super(-1, null, null, null, null);                
     }
     
     void init(ActiveGrammarModel grammarModel,

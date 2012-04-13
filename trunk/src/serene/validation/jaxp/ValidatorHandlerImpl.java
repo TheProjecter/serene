@@ -69,8 +69,6 @@ import serene.DocumentContext;
 
 import serene.util.SpaceCharsHandler;
 
-import sereneWrite.MessageWriter;
-
 import serene.Constants;
 
 public class ValidatorHandlerImpl extends ValidatorHandler{    
@@ -115,7 +113,6 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
     DocumentContext documentContext;
     
     final boolean noModification = true;
-	MessageWriter debugWriter;	
 	public ValidatorHandlerImpl(boolean secureProcessing,                            
                             boolean namespacePrefixes,
                             boolean level1AttributeDefaultValue,
@@ -126,10 +123,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
                             boolean optimizedForResourceSharing,
                             ValidatorEventHandlerPool eventHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
-							SchemaModel schemaModel,
-							MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		
+							SchemaModel schemaModel){		
         this.secureProcessing = secureProcessing;
         this.namespacePrefixes = namespacePrefixes; 
         this.level1AttributeDefaultValue = level1AttributeDefaultValue;
@@ -145,14 +139,14 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
 		
 		this.schemaModel = schemaModel;
 		
-		matchHandler  = new MatchHandler(debugWriter);
-		spaceHandler = new SpaceCharsHandler(debugWriter);					
-        documentContext = new DocumentContext(debugWriter);
+		matchHandler  = new MatchHandler();
+		spaceHandler = new SpaceCharsHandler();					
+        documentContext = new DocumentContext();
         prefixNamespaces = new HashMap<String, String>();
         
-		errorDispatcher = new ErrorDispatcher(debugWriter);
+		errorDispatcher = new ErrorDispatcher();
         activeInputDescriptor = new ActiveInputDescriptor();		
-		inputStackDescriptor = new InputStackDescriptor(activeInputDescriptor, debugWriter);
+		inputStackDescriptor = new InputStackDescriptor(activeInputDescriptor);
 		characterContentDescriptorPool = new CharacterContentDescriptorPool(activeInputDescriptor, spaceHandler); 
 		characterContentDescriptor = characterContentDescriptorPool.getCharacterContentDescriptor();
 		        
@@ -245,14 +239,14 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         if(level2AttributeDefaultValue){                        
             AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
             if(attributeDefaultValueModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Feature "+Constants.LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE+" cannot be supported.");
-            if(attributeDefaultValueHandler == null) attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher, debugWriter);
+            if(attributeDefaultValueHandler == null) attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher);
         }
         
         if(level1AttributeIdType || level2AttributeIdType){
             AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
             if(attributeIdTypeModel == null) throw new IllegalStateException("Attempting to use incorrect schema. Feature "+Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE+" cannot be supported.");
             if(attributeIdTypeHandler == null){
-                attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+                attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher);
                 attributeIdTypeHandler.setRestrictToFileName(restrictToFileName);
             }
             else attributeIdTypeHandler.init();
@@ -433,7 +427,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
                 AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
                 if(attributeDefaultValueModel == null) throw new SAXNotSupportedException("Schema model configuration cannot support feature, needed schema structures are incorrect.");
                 if(attributeDefaultValueHandler == null){
-                    attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher, debugWriter);
+                    attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher);
                 }
             }            
         }else if(name.equals(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE)){
@@ -442,7 +436,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
                 AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
                 if(attributeIdTypeModel == null) throw new SAXNotSupportedException("Schema model configuration cannot support feature, needed schema structures are incorrect.");
                 if(attributeIdTypeHandler == null){
-                    attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+                    attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher);
                 }
             }
             level1AttributeIdType = value;
@@ -453,7 +447,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
                 AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
                 if(attributeIdTypeModel == null) throw new SAXNotSupportedException("Schema model configuration cannot support feature, needed schema structures are incorrect.");
                 if(attributeIdTypeHandler == null){
-                    attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+                    attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher);
                 }
             }
         }else if(name.equals(Constants.RESTRICT_TO_FILE_NAME_FEATURE)){
@@ -547,13 +541,13 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
         }else if(name.equals(Constants.ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY)){
             if(attributeDefaultValueHandler == null){
                 AttributeDefaultValueModel attributeDefaultValueModel = schemaModel.getAttributeDefaultValueModel();
-                attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher, debugWriter);
+                attributeDefaultValueHandler = new AttributeDefaultValueHandler(attributeDefaultValueModel, errorDispatcher);
             }
             return attributeDefaultValueHandler;
         }else if(name.equals(Constants.ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY)){
             if(attributeIdTypeHandler == null){
                 AttributeIdTypeModel attributeIdTypeModel = schemaModel.getAttributeIdTypeModel();
-                attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher, debugWriter);
+                attributeIdTypeHandler = new AttributeIdTypeHandler(attributeIdTypeModel, errorDispatcher);
             }
             return attributeIdTypeHandler;
         }

@@ -34,8 +34,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public class AData extends DatatypedCharsAPattern{	
 	AExceptPattern exceptPattern;    
 	
@@ -44,9 +42,8 @@ public class AData extends DatatypedCharsAPattern{
 				AExceptPattern exceptPattern,
 				ActiveGrammarModel grammarModel,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SData sdata, 
-				MessageWriter debugWriter){
-		super(datatype, grammarModel, ruleHandlerPool, debugWriter);
+				SData sdata){
+		super(datatype, grammarModel, ruleHandlerPool);
 		this.sdata = sdata;
 		asParent(exceptPattern);
 	}

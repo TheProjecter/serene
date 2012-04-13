@@ -55,7 +55,6 @@ import serene.internal.InternalRNGFactory;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
 import sereneWrite.ParsedComponentWriter;
 
 import serene.Reusable;
@@ -66,8 +65,8 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 	IntList nullCombine;
 	IntList otherCombine;
 	
-	DefinitionSimplifier(DefinitionSimplifierPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		super(errorDispatcher, debugWriter);
+	DefinitionSimplifier(DefinitionSimplifierPool pool, ErrorDispatcher errorDispatcher){
+		super(errorDispatcher);
 		this.pool = pool;
 		
 		nullCombine = new IntList();		

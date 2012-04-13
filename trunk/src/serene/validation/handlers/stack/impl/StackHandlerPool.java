@@ -16,13 +16,8 @@ limitations under the License.
 
 package serene.validation.handlers.stack.impl;
 
-import sereneWrite.MessageWriter;
-
 public abstract class StackHandlerPool{
-	MessageWriter debugWriter;
-	
-	StackHandlerPool(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;	
+	StackHandlerPool(){	
 	}
 		
 	public abstract ActiveModelStackHandlerPool getActiveModelStackHandlerPool();		

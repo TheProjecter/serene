@@ -32,8 +32,6 @@ import org.apache.xerces.xs.XSSimpleTypeDefinition;
 
 import serene.datatype.xsd.XsdValidationContext;
 
-import sereneWrite.MessageWriter;
-
 import serene.Constants;
 
 public class IdTypeBuilder implements DatatypeBuilder {
@@ -52,14 +50,10 @@ public class IdTypeBuilder implements DatatypeBuilder {
     XSObjectList dummyAnnotations = null;
     
     String targetNamespace;
-    
-    
-    
-    MessageWriter debugWriter;
-    
-	public IdTypeBuilder(String typeLocalName, XSSimpleType baseType, SchemaDVFactory xercesFactory, XsdValidationContext xsdValidationContext, MessageWriter debugWriter){
         
-        this.debugWriter = debugWriter;
+    
+	public IdTypeBuilder(String typeLocalName, XSSimpleType baseType, SchemaDVFactory xercesFactory, XsdValidationContext xsdValidationContext){
+    
         this.typeLocalName = typeLocalName;
         this.xercesFactory = xercesFactory;
         this.xsdValidationContext = xsdValidationContext;
@@ -146,7 +140,7 @@ public class IdTypeBuilder implements DatatypeBuilder {
     
     
     public Datatype createDatatype() throws DatatypeException{
-        IdTypeDT datatype = new IdTypeDT(xsdValidationContext, restrictedType, debugWriter);        
+        IdTypeDT datatype = new IdTypeDT(xsdValidationContext, restrictedType);        
         return datatype;
     }
 }

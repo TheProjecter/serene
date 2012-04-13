@@ -28,8 +28,6 @@ import org.apache.xerces.impl.dv.InvalidDatatypeValueException;
 
 import serene.datatype.xsd.XsdValidationContext;
 
-import sereneWrite.MessageWriter;
-
 class IdTypeDT implements Datatype{
     boolean isContextDependent;
     boolean needsExtraChecking;
@@ -42,8 +40,7 @@ class IdTypeDT implements Datatype{
     XSSimpleType xercesType;
     
     IdTypeDT(XsdValidationContext xsdValidationContext,
-                XSSimpleType xercesType, 
-                MessageWriter debugWriter){
+                XSSimpleType xercesType){
         this.xercesType = xercesType;
         this.xsdValidationContext = xsdValidationContext;
         

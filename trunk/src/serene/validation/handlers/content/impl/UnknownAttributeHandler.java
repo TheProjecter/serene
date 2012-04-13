@@ -16,12 +16,10 @@ limitations under the License.
 
 package serene.validation.handlers.content.impl;
 
-import sereneWrite.MessageWriter;
-
 class UnknownAttributeHandler extends ErrorAEH{
 		
-	UnknownAttributeHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	UnknownAttributeHandler(){
+		super();
 	}
 	
 	public void recycle(){

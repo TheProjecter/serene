@@ -18,14 +18,12 @@ package serene.internal;
 
 import serene.bind.ElementTask;
 
-import sereneWrite.MessageWriter;
-
 class InterleaveTaskFactory extends RNGParseEndElementTaskFactory{
-	public InterleaveTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	public InterleaveTaskFactory(){
+		super();
 	}
 	
 	public InterleaveTask getTask(){
-		return new InterleaveTask(debugWriter);
+		return new InterleaveTask();
 	}
 }

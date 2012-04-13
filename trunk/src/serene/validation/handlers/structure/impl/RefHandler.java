@@ -26,12 +26,10 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
-import sereneWrite.MessageWriter;
-
 public class RefHandler extends UniqueChildPatternHandler{
 	RefHandler original;
-	RefHandler(MessageWriter debugWriter){		
-		super(debugWriter);		
+	RefHandler(){		
+		super();		
 	}	
 	
 	void init(ARef ref, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){		

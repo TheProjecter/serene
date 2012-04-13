@@ -28,8 +28,6 @@ import serene.validation.handlers.content.BoundAttributeHandler;
 import serene.bind.BindingModel;
 import serene.bind.util.Queue;
 
-import sereneWrite.MessageWriter;
-
 class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler implements BoundAttributeHandler{
 	
 	BindingModel bindingModel;
@@ -37,8 +35,8 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 	int entry;
 	String value;
 	
-	BoundAttributeConcurrentHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	BoundAttributeConcurrentHandler(){
+		super();		
 	}
 
 	void init(List<AAttribute> candidateDefinitions, ElementValidationHandler parent, BindingModel bindingModel, Queue queue, int entry){

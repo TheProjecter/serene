@@ -54,7 +54,6 @@ import serene.validation.schema.active.util.ContextCacheMaker;
 
 import serene.util.ObjectIntHashMap;
 
-import sereneWrite.MessageWriter;
 //import sereneWrite.ActiveComponentWriter;
 
 class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
@@ -65,12 +64,10 @@ class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
 	ActiveGrammarModel grammarModel;
 	
 	//ActiveComponentWriter acw;
-	MessageWriter debugWriter;
 	
-	ActiveDefinitionDirector(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	ActiveDefinitionDirector(){
 		//acw = new ActiveComponentWriter();
-		cacheMaker = new ContextCacheMaker(debugWriter);
+		cacheMaker = new ContextCacheMaker();
 	}
 	
 	ActiveDefinition createDefinition(ActiveComponentBuilder builder,
@@ -96,8 +93,7 @@ class ActiveDefinitionDirector implements SimplifiedComponentVisitor{
 										cacheMaker.getListPatterns(),
 										cacheMaker.getTexts(),
 										cacheMaker.getRefs(),
-										recycler, 
-										debugWriter);
+										recycler);
 		return def;
 	}
 	

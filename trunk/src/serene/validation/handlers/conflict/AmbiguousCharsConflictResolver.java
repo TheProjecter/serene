@@ -28,12 +28,10 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
-import sereneWrite.MessageWriter;
-
 public class AmbiguousCharsConflictResolver extends CharsConflictResolver{
     BitSet disqualified;	
-	public AmbiguousCharsConflictResolver(MessageWriter debugWriter){				
-		super(debugWriter);
+	public AmbiguousCharsConflictResolver(){				
+		super();
 	}
 	
 	public void recycle(){

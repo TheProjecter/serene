@@ -16,19 +16,17 @@ limitations under the License.
 
 package serene.validation.handlers.conflict;
 
-import sereneWrite.MessageWriter;
-
 public class UnsynchronizedConflictHandlerPool extends ConflictHandlerPool{	
-	UnsynchronizedConflictHandlerPool(MessageWriter debugWriter){
-		super(debugWriter);		
+	UnsynchronizedConflictHandlerPool(){
+		super();		
 	}
 	
-	public static ConflictHandlerPool getInstance(MessageWriter debugWriter){		
-		return new UnsynchronizedConflictHandlerPool(debugWriter);
+	public static ConflictHandlerPool getInstance(){		
+		return new UnsynchronizedConflictHandlerPool();
 	}
 	
 	public ActiveModelConflictHandlerPool getActiveModelConflictHandlerPool(){
-        return new ActiveModelConflictHandlerPool(null, debugWriter);
+        return new ActiveModelConflictHandlerPool(null);
 	}
 		
 	public void recycle(ActiveModelConflictHandlerPool amchp){

@@ -31,8 +31,6 @@ import serene.validation.handlers.error.CandidatesConflictErrorHandler;
 import serene.bind.BindingModel;
 import serene.bind.util.Queue;
 
-import sereneWrite.MessageWriter;
-
 class BoundAttributeParallelHandler extends AttributeParallelHandler{
 
     BoundCommon boundCommon;
@@ -42,8 +40,8 @@ class BoundAttributeParallelHandler extends AttributeParallelHandler{
 	Queue queue;
 	int entry;
     
-    BoundAttributeParallelHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    BoundAttributeParallelHandler(){
+        super();
         individualHandlers = new ArrayList<ComparableAEH>();
     }
             

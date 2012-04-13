@@ -26,11 +26,9 @@ import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
-import sereneWrite.MessageWriter;
-
 public class UnresolvedCharsConflictResolver extends CharsConflictResolver{    	
-	public UnresolvedCharsConflictResolver(MessageWriter debugWriter){				
-		super(debugWriter);
+	public UnresolvedCharsConflictResolver(){				
+		super();
 	}
 	
 	public void recycle(){

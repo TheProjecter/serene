@@ -18,14 +18,12 @@ package serene.internal;
 
 import serene.bind.ElementTask;
 
-import sereneWrite.MessageWriter;
-
 class ElementWithNameClassTaskFactory extends RNGParseEndElementTaskFactory{
-	public ElementWithNameClassTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	public ElementWithNameClassTaskFactory(){
+		super();
 	}
 	
 	public ElementWithNameClassTask getTask(){
-		return new ElementWithNameClassTask(debugWriter);
+		return new ElementWithNameClassTask();
 	}	
 }

@@ -30,11 +30,9 @@ import serene.validation.handlers.content.StructuredDataEventHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import sereneWrite.MessageWriter;
-
 abstract class AbstractSDVH extends AbstractDVH implements ErrorCatcher{    
-    AbstractSDVH(MessageWriter debugWriter){
-        super(debugWriter);
+    AbstractSDVH(){
+        super();
     }
 	
 	void validateListPattern(char[] chars, AListPattern listPattern) throws SAXException{

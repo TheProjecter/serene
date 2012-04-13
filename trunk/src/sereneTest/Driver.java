@@ -33,6 +33,7 @@ public class Driver{
 	* Usage: java sereneTest.Driver {a} test-directory [-d destination-directory-name] [-r result-file-name] [-x xml-file name].
 	*/
 	public static void main(String args[]){		
+	    long startTime = System.currentTimeMillis();
 		if(args == null || args.length == 0){
 			System.out.println("Usage: java sereneTest.Driver [a] test-directory [-d destination-directory-name] [-r result-file-name] [-x xml-file name]."
 				+"\n"
@@ -190,6 +191,9 @@ public class Driver{
 		if(xmlFileName != null) tester.test(sourcePath, xmlFileName, destinationDirName, resultsDestinationFileName);
 		else tester.test(sourcePath, destinationDirName, resultsDestinationFileName);
 
+		System.out.println("Tests: " + tester.getTestCount());
+		System.out.println("Elapsed time: " + (System.currentTimeMillis() - startTime));
+		
 		if(analyse){
 			if(!resultsDestinationFileName.equals("testResults.txt")){
 				System.out.println("\nRegression analysis not performed, see usage:"
@@ -218,7 +222,8 @@ public class Driver{
 			
 			Analyser analyser = new Analyser();
 			analyser.analyse(testPath, standardDirName, destinationDirName, resultsDestinationFileName);
-		}		
+		}
+				
 	}   
 	
 }

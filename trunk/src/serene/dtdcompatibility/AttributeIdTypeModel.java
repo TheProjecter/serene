@@ -25,19 +25,13 @@ import serene.validation.schema.active.Identifier;
 import serene.util.AttributeInfo;
 import serene.util.NameInfo;
 
-import sereneWrite.MessageWriter;
-
 public class AttributeIdTypeModel{    
     AttributeInfo[] idTypeAttributes;
     NameInfo[] idElements;
      
     HashSet<SNameClass> attributeNames;
     
-    MessageWriter debugWriter;
-    
-    public AttributeIdTypeModel(MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
-        
+    public AttributeIdTypeModel(){        
         attributeNames = new HashSet<SNameClass>();
     }
     

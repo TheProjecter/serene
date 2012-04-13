@@ -50,8 +50,6 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter; 
-
 public class OverlapController implements SimplifiedComponentVisitor, Reusable{
 	
 	SNameClass test;
@@ -63,23 +61,17 @@ public class OverlapController implements SimplifiedComponentVisitor, Reusable{
 		
 	ControllerPool pool;
 	
-	MessageWriter debugWriter;
-	
-	public OverlapController(ControllerPool pool, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	public OverlapController(ControllerPool pool){
 		this.pool = pool;
 		
-		NsNameInclusionController nsNameInclusionController = new NsNameInclusionController(debugWriter);
-		NameInclusionController nameInclusionController = new NameInclusionController(debugWriter);
+		NsNameInclusionController nsNameInclusionController = new NsNameInclusionController();
+		NameInclusionController nameInclusionController = new NameInclusionController();
 		anyNameOverlapController = new AnyNameOverlapController(nsNameInclusionController,
-																nameInclusionController,
-																debugWriter);
+																nameInclusionController);
 		nsNameOverlapController = new NsNameOverlapController(anyNameOverlapController,
-															nameInclusionController,
-															debugWriter);	
+															nameInclusionController);	
 		nameOverlapController = new NameOverlapController(anyNameOverlapController,
-														nsNameOverlapController,
-														debugWriter);
+														nsNameOverlapController);
 	}
 		
 	public void recycle(){

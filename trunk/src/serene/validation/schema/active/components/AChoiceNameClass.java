@@ -22,15 +22,12 @@ import serene.validation.schema.active.ActiveComponentVisitor;
 
 import serene.validation.schema.simplified.components.SChoiceNameClass;
 
-import sereneWrite.MessageWriter;
-
 public class AChoiceNameClass extends ANameClass{	
 	ANameClass[] children;
 	SChoiceNameClass schoiceNameClass;
 	public AChoiceNameClass(ANameClass[] children,
-	                    SChoiceNameClass schoiceNameClass,
-						MessageWriter debugWriter){
-		super(debugWriter);
+	                    SChoiceNameClass schoiceNameClass){
+		super();
 		this.schoiceNameClass = schoiceNameClass;
 		asParent(children);
 	}

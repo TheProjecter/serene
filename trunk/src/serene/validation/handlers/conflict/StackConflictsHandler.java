@@ -34,8 +34,6 @@ import serene.validation.handlers.structure.CardinalityHandler;
 import serene.util.IntList;
 import serene.util.ObjectIntHashMap;
 
-import sereneWrite.MessageWriter;
-
 public class StackConflictsHandler implements InternalConflictDescriptor{
 			
 	HashSet<ActiveTypeItem> activeTypeItems;
@@ -50,11 +48,8 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 	// Maps a rule to the count of all the handlers and group that are involved 
 	// with that rule and could result in disqualifying errors;
 	ObjectIntHashMap ruleDisqualifiersCount; 
-	 
-	MessageWriter debugWriter;
-	public StackConflictsHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		
+
+	public StackConflictsHandler(){		
 		activeTypeItems = new HashSet<ActiveTypeItem>();
 		
 		ruleHandlers = new HashSet<RuleHandler>();
@@ -64,7 +59,7 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 	
 		handledIndexes = new HashMap<InternalConflictResolver, IntList>();
 
-		ruleDisqualifiersCount = new ObjectIntHashMap(debugWriter);
+		ruleDisqualifiersCount = new ObjectIntHashMap();
 		ruleDisqualifiersCount.setNullValue(0);
 	}	
 	

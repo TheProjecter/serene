@@ -22,8 +22,6 @@ import serene.validation.schema.active.DataActiveType;
 import serene.validation.schema.active.StructuredDataActiveType;
 import serene.validation.schema.active.CharsActiveType;
 
-import sereneWrite.MessageWriter;
-
 public interface CharactersEventHandler extends EventHandler{	
 	void handleChars(char[] chars, CharsActiveType context, boolean isComplexContent) throws SAXException;	
 	void handleString(String value, CharsActiveType context, boolean isComplexContent) throws SAXException;

@@ -23,8 +23,6 @@ import org.relaxng.datatype.DatatypeException;
 
 import serene.datatype.util.StringNormalizer;
 
-import sereneWrite.MessageWriter;
-
 class NativeLibrary implements DatatypeLibrary{
 	Datatype tokenDT;
     Datatype stringDT;
@@ -33,15 +31,12 @@ class NativeLibrary implements DatatypeLibrary{
     DatatypeBuilder stringBuilder;
     
 	StringNormalizer stringNormalizer;    
-    
-	MessageWriter debugWriter;
-	
-	NativeLibrary(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-        stringNormalizer = new StringNormalizer(debugWriter);
+    	
+	NativeLibrary(){
+        stringNormalizer = new StringNormalizer();
         
         stringDT = new StringDT();
-        tokenDT = new TokenDT(stringNormalizer, debugWriter);
+        tokenDT = new TokenDT(stringNormalizer);
         
         tokenBuilder = new NativeBuilder(stringDT);
         stringBuilder = new NativeBuilder(tokenDT);

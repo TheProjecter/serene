@@ -46,14 +46,12 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 class AttributeDefaultHandler extends ComparableAEH{
 		
     ComparableEEH parent;  
 	
-	AttributeDefaultHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	AttributeDefaultHandler(){
+		super();
 	}
 		
 	public void recycle(){

@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class HrefTask extends RNGParseAttributeTask{
-	HrefTask(MessageWriter debugWriter){
-		super(debugWriter);
+	HrefTask(){
+		super();
 	}
 	public void execute(){
 		builder.setHref(context.getAttributeInputRecordIndex());		

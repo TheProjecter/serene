@@ -41,16 +41,11 @@ import serene.Constants;
 
 import serene.util.IntStack;
 
-import sereneWrite.MessageWriter;
-
 class DOMHandler extends Handler{
-
 	
-    DOMHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    DOMHandler(){
+        super();
     }
-    
-    
     
 	void handle(String systemId, ValidatorHandler validatorHandler, Node node) throws SAXException{        
         this.validatorHandler = validatorHandler;

@@ -16,13 +16,11 @@ limitations under the License.
 
 package serene.validation.handlers.content.impl;
 
-import sereneWrite.MessageWriter;
-
 abstract class ErrorAEH extends ComparableAEH{
     ElementValidationHandler parent;
     
-	ErrorAEH(MessageWriter debugWriter){
-		super(debugWriter);
+	ErrorAEH(){
+		super();
 	}
 		
 	public void handleAttribute(String value){

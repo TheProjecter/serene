@@ -33,9 +33,6 @@ import serene.validation.handlers.stack.StackHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-
-import sereneWrite.MessageWriter;
-
 public class GroupHandler extends MultipleChildrenPatternHandler{
 	final int GOOD_ORDER = -1;	
 	final int CURRENT_MISPLACED = 0;
@@ -62,8 +59,8 @@ public class GroupHandler extends MultipleChildrenPatternHandler{
 	GroupHandler original;
     
     
-	GroupHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	GroupHandler(){
+		super();
 	
 		childRecordIndex = -1;
 		childRecordInitialSize = 10;

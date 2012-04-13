@@ -21,11 +21,9 @@ import serene.validation.schema.active.components.CharsActiveTypeItem;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public abstract class CharsAPattern extends NoChildrenAPattern implements CharsActiveTypeItem{ 	 
-	CharsAPattern(ActiveModelRuleHandlerPool ruleHandlerPool, MessageWriter debugWriter){		
-		super(ruleHandlerPool, debugWriter);
+	CharsAPattern(ActiveModelRuleHandlerPool ruleHandlerPool){		
+		super(ruleHandlerPool);
 	}
 		
 	public String toString(){

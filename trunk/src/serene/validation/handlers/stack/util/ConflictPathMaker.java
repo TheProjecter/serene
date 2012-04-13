@@ -40,18 +40,13 @@ import serene.validation.schema.active.components.AGrammar;
 
 import serene.validation.schema.active.RuleVisitor;
 
-import sereneWrite.MessageWriter;
-
 public class ConflictPathMaker implements RuleVisitor{
 	int maxSize;
 	int size;
 	Rule[] path;
 	Rule[][] innerPathes;
-	
-	MessageWriter debugWriter;
-	
-	public ConflictPathMaker(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+
+	public ConflictPathMaker(){
 	}
 	
 	// Returns a bidimensional array containing all the pathes from every rule 

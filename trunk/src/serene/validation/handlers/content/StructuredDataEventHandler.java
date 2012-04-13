@@ -20,8 +20,6 @@ import org.xml.sax.SAXException;
 
 import serene.validation.schema.active.StructuredDataActiveType;
 
-import sereneWrite.MessageWriter;
-
 public interface StructuredDataEventHandler extends EventHandler{
 	void handleChars(char[] chars, StructuredDataActiveType context) throws SAXException;	
 	void handleString(String value, StructuredDataActiveType context) throws SAXException;

@@ -35,8 +35,6 @@ import serene.validation.schema.ValidationModelImpl;
 import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.SimplifiedModel;
 
-import sereneWrite.MessageWriter;
-
 
 public abstract class InternalRNGFactory{	
 	
@@ -52,19 +50,15 @@ public abstract class InternalRNGFactory{
     boolean restrictToFileName;
     boolean optimizedForResourceSharing;
 	
-	MessageWriter debugWriter;
-	
 	protected InternalRNGFactory(boolean level1DocumentationElement, 
 	                                boolean restrictToFileName, 
-	                                boolean optimizedForResourceSharing,
-	                                MessageWriter debugWriter) throws DatatypeException{		
-		this.debugWriter = debugWriter;
+	                                boolean optimizedForResourceSharing) throws DatatypeException{
         this.level1DocumentationElement = level1DocumentationElement;
         this.restrictToFileName = restrictToFileName;
         this.optimizedForResourceSharing = optimizedForResourceSharing;
 		
-		builder = new SimplifiedComponentBuilder(debugWriter);			
-		rngDirector = new RNGDirector(false, debugWriter);
+		builder = new SimplifiedComponentBuilder();			
+		rngDirector = new RNGDirector(false);
 
 		rngDirector.createModels(builder);		
 		
@@ -87,43 +81,40 @@ public abstract class InternalRNGFactory{
 		// TODO see that you add the unexpected and the unknown nodes somehow
 		// here or in the builder, whereever you see fit
 		// they have to be added to all elements, including empty		
-		ValidationModel vm = new ValidationModelImpl(null, rngModel, optimizedForResourceSharing, debugWriter); 
-        SchemaModel sm = new SchemaModel(vm, null, debugWriter); 
+		ValidationModel vm = new ValidationModelImpl(null, rngModel, optimizedForResourceSharing); 
+        SchemaModel sm = new SchemaModel(vm, null); 
 		InternalRNGSchema schema = new InternalRNGSchema(false,
                                         level1DocumentationElement,                                        
                                         restrictToFileName,
                                         optimizedForResourceSharing,
                                         sm, 
-                                        pool,
-										debugWriter);					
+                                        pool);					
 		return schema;
 	}
 	
 	public InternalRNGSchema getExternalRefSchema(){	
 	    if(externalRefModel == null) externalRefModel = rngDirector.getExternalRefModel();
-		ValidationModel vm = new ValidationModelImpl(null, externalRefModel, optimizedForResourceSharing, debugWriter); 
-        SchemaModel sm = new SchemaModel(vm, null, debugWriter);
+		ValidationModel vm = new ValidationModelImpl(null, externalRefModel, optimizedForResourceSharing); 
+        SchemaModel sm = new SchemaModel(vm, null);
 		InternalRNGSchema schema = new InternalRNGSchema(false,
                                         level1DocumentationElement,
                                         restrictToFileName,
                                         optimizedForResourceSharing,
                                         sm,
-                                        pool,
-										debugWriter);		
+                                        pool);		
 		return schema;
 	}
 	
 	public InternalRNGSchema getIncludeSchema(){	
 	    if(includeModel == null) includeModel = rngDirector.getIncludeModel();
-		ValidationModel vm = new ValidationModelImpl(null, includeModel, optimizedForResourceSharing, debugWriter); 
-        SchemaModel sm = new SchemaModel(vm, null, debugWriter);
+		ValidationModel vm = new ValidationModelImpl(null, includeModel, optimizedForResourceSharing); 
+        SchemaModel sm = new SchemaModel(vm, null);
 		InternalRNGSchema schema = new InternalRNGSchema(false,
                                         level1DocumentationElement,
                                         restrictToFileName,
                                         optimizedForResourceSharing,
                                         sm,
-                                        pool,
-										debugWriter);		
+                                        pool);		
 		return schema;
 	}
 	

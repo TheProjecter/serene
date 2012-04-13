@@ -28,12 +28,10 @@ import serene.validation.schema.active.components.AElement;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.MessageReporter;
 
-import sereneWrite.MessageWriter;
-
 public class UnresolvedElementConflictResolver extends ElementConflictResolver{
 	
-	public UnresolvedElementConflictResolver(MessageWriter debugWriter){				
-		super(debugWriter);
+	public UnresolvedElementConflictResolver(){				
+		super();
 	}
 	
 	public void recycle(){

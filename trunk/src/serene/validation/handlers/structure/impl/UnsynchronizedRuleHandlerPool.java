@@ -16,21 +16,17 @@ limitations under the License.
 
 package serene.validation.handlers.structure.impl;
 
-
-
-import sereneWrite.MessageWriter;
-
 public class UnsynchronizedRuleHandlerPool extends RuleHandlerPool{	
-	UnsynchronizedRuleHandlerPool(MessageWriter debugWriter){
-		super(debugWriter);
+	UnsynchronizedRuleHandlerPool(){
+		super();
 	}
 	
-	public static UnsynchronizedRuleHandlerPool getInstance(MessageWriter debugWriter){
-		return new UnsynchronizedRuleHandlerPool(debugWriter);
+	public static UnsynchronizedRuleHandlerPool getInstance(){
+		return new UnsynchronizedRuleHandlerPool();
 	}
 	
 	public ActiveModelRuleHandlerPool getActiveModelRuleHandlerPool(){
-		return new ActiveModelRuleHandlerPool(null, debugWriter);
+		return new ActiveModelRuleHandlerPool(null);
 	}
 		
 	public void recycle(ActiveModelRuleHandlerPool amrhp){

@@ -26,16 +26,11 @@ import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
 import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public class ActiveModelFactory{	
 	ActiveGrammarModelFactory grammarModelFactory;
 	
-	MessageWriter debugWriter;
-	
-	public ActiveModelFactory(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;		
-		grammarModelFactory = new ActiveGrammarModelFactory(debugWriter);
+	public ActiveModelFactory(){		
+		grammarModelFactory = new ActiveGrammarModelFactory();
 	}
 	
 	public ActiveModel createActiveModel(SimplifiedModel simplifiedModel,		
@@ -51,7 +46,6 @@ public class ActiveModelFactory{
 							ruleHandlerPool,
 							stackHandlerPool,
 							conflictHandlerPool,
-							pool,
-							debugWriter);																							
+							pool);																							
 	}
 }

@@ -26,7 +26,6 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
-import sereneWrite.MessageWriter;
 
 /*
 * In the ConcurrentStackHandler each level handles a conflict and every handler 
@@ -36,8 +35,8 @@ import sereneWrite.MessageWriter;
 */
 public class AmbiguousAttributeConflictResolver extends AttributeConflictResolver{
 	BitSet disqualified;	
-	public AmbiguousAttributeConflictResolver(MessageWriter debugWriter){				
-		super(debugWriter);
+	public AmbiguousAttributeConflictResolver(){				
+		super();
 	}
 	
 	public void recycle(){

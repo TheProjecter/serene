@@ -38,16 +38,13 @@ import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
-
-import sereneWrite.MessageWriter;
-
 class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler 
                                             implements DefaultValueAttributeHandler{
 		
 	ErrorCatcher errorCatcher;
     
-	DefaultValueAttributeValidationHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	DefaultValueAttributeValidationHandler(){
+		super();
 	}
 	
     

@@ -48,8 +48,6 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.util.ObjectIntHashMap;
 
-import sereneWrite.MessageWriter;
-
 public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisitor{	
 
 	AElement startElement;
@@ -99,18 +97,15 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 		
 	ActiveNameClassDirector nameClassDirector;
 	
-	MessageWriter debugWriter;
-	
-	public ActiveGrammarModelFactory(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		nameClassDirector = new ActiveNameClassDirector(debugWriter);
+	public ActiveGrammarModelFactory(){
+		nameClassDirector = new ActiveNameClassDirector();
 	}
 	
 	public ActiveGrammarModel createActiveGrammarModel(SimplifiedModel simplifiedModel,													
 													ActiveModelRuleHandlerPool ruleHandlerPool,
 													ActiveModelStackHandlerPool stackHandlerPool){
 		init(stackHandlerPool, ruleHandlerPool);
-		model = new ActiveGrammarModel(debugWriter);
+		model = new ActiveGrammarModel();
         
 		createStart(simplifiedModel, stackHandlerPool, ruleHandlerPool);
         
@@ -132,14 +127,13 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 	}
 	
 	private void init(ActiveModelStackHandlerPool stackHandlerPool, ActiveModelRuleHandlerPool ruleHandlerPool){		
-		definitionDirector = new ActiveDefinitionDirector(debugWriter);
+		definitionDirector = new ActiveDefinitionDirector();
 		componentBuilder = new ActiveComponentBuilder(stackHandlerPool,
-														ruleHandlerPool, 
-														debugWriter);
+														ruleHandlerPool);
 		
-		selementIndexMap = new ObjectIntHashMap(debugWriter);
-		sattributeIndexMap = new ObjectIntHashMap(debugWriter);
-		sexceptPatternIndexMap = new ObjectIntHashMap(debugWriter);
+		selementIndexMap = new ObjectIntHashMap();
+		sattributeIndexMap = new ObjectIntHashMap();
+		sexceptPatternIndexMap = new ObjectIntHashMap();
 		
 		elementIndex = 0;
 		elementSize = 10;		
@@ -165,9 +159,8 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
         elementDefinitions[elementIndex] = new ActiveDefinitionPool(originalTopPattern,
 																	model,
 																	definitionDirector,
-																	componentBuilder,
-																	debugWriter);
-        startElement = new AElement(elementIndex, model, stackHandlerPool, ruleHandlerPool, null, debugWriter);
+																	componentBuilder);
+        startElement = new AElement(elementIndex, model, stackHandlerPool, ruleHandlerPool, null);
         elementIndex++;
         
         originalTopPattern.accept(this);
@@ -179,8 +172,7 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 			refDefinitions[i] = new ActiveDefinitionPool(originalTopPatterns[i],
 																	model,
 																	definitionDirector,
-																	componentBuilder,
-																	debugWriter);
+																	componentBuilder);
 		}
         
         for(SPattern originalTopPattern : originalTopPatterns){
@@ -197,8 +189,7 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 		elementDefinitions[elementIndex++] = new ActiveDefinitionPool(originalElement.getChild(),
 																	model,
 																	definitionDirector,
-																	componentBuilder,
-																	debugWriter);
+																	componentBuilder);
 	}
 	
 	private void createRecord(SAttribute originalAttribute){		
@@ -210,8 +201,7 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 		attributeDefinitions[attributeIndex++] = new ActiveDefinitionPool(originalAttribute.getChildren()[0],
 																	model,
 																	definitionDirector,
-																	componentBuilder,
-																	debugWriter);
+																	componentBuilder);
 	}
 	
 	private void createRecord(SExceptPattern originalExceptPattern){		
@@ -220,8 +210,7 @@ public class ActiveGrammarModelFactory extends AbstractSimplifiedComponentVisito
 		exceptPatternDefinitions[exceptPatternIndex++] = new ActiveDefinitionPool(originalExceptPattern.getChild(),
 																	model,
 																	definitionDirector,
-																	componentBuilder,
-																	debugWriter);
+																	componentBuilder);
 	}
 	
 	private void increaseElementSize(){

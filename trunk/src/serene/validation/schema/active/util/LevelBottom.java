@@ -19,13 +19,10 @@ package serene.validation.schema.active.util;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ANameClass;
 
-import sereneWrite.MessageWriter;
-
 class LevelBottom extends Level{
 	Level parent;
-	LevelBottom(Level parent,
-		 	MessageWriter debugWriter){		
-		super( debugWriter);
+	LevelBottom(Level parent){		
+		super( );
 		this.parent = parent;		
 	}
 	
@@ -49,8 +46,7 @@ class LevelBottom extends Level{
 													patterns,
 													exceptNameClass,
 													exceptPattern,
-													parent,
-													debugWriter);
+													parent);
 		parent.setChild(intermediary);
 		return intermediary.getLevelDown();
 	}

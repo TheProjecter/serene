@@ -23,12 +23,10 @@ import serene.DTDMapping;
 import serene.NotationDeclaration;
 import serene.EntityDeclaration;
 
-import sereneWrite.MessageWriter;
-
 class DocumentSimplificationContext extends DocumentContext{
   	
-    DocumentSimplificationContext(MessageWriter debugWriter){
-		super(debugWriter);
+    DocumentSimplificationContext(){
+		super();
 	}
     	
     void setDTDMapping(DTDMapping dtdMapping){

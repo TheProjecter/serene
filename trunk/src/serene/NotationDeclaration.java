@@ -16,20 +16,14 @@ limitations under the License.
 
 package serene;
 
-import sereneWrite.MessageWriter;
-
 public class NotationDeclaration{
     String name;
     String publicId;
     String systemId;
     
-    MessageWriter debugWriter;
-    
     public NotationDeclaration(String name,
                     String publicId,
-                    String systemId,    
-                    MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+                    String systemId){
         this.name = name;
         this.publicId = publicId;
         this.systemId = systemId;

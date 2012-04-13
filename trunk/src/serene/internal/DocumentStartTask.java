@@ -19,11 +19,9 @@ package serene.internal;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 class DocumentStartTask extends RNGParseDocumentTask{
-    DocumentStartTask(MessageWriter debugWriter){
-		super(debugWriter);
+    DocumentStartTask(){
+		super();
 	}
 	public void execute(){	
 	    builder.setDocumentIndexedData(context.getDocumentIndexedData());

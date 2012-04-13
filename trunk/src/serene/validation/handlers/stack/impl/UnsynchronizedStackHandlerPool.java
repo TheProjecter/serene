@@ -16,19 +16,17 @@ limitations under the License.
 
 package serene.validation.handlers.stack.impl;
 
-import sereneWrite.MessageWriter;
-
 public class UnsynchronizedStackHandlerPool extends StackHandlerPool{
-	UnsynchronizedStackHandlerPool(MessageWriter debugWriter){
-		super(debugWriter);
+	UnsynchronizedStackHandlerPool(){
+		super();
 	}
 	
-	public static UnsynchronizedStackHandlerPool getInstance(MessageWriter debugWriter){
-		return new UnsynchronizedStackHandlerPool(debugWriter);
+	public static UnsynchronizedStackHandlerPool getInstance(){
+		return new UnsynchronizedStackHandlerPool();
 	}
 	
 	public ActiveModelStackHandlerPool getActiveModelStackHandlerPool(){
-		return new ActiveModelStackHandlerPool(null, debugWriter);
+		return new ActiveModelStackHandlerPool(null);
 	}
 		
 	public void recycle(ActiveModelStackHandlerPool amshp){

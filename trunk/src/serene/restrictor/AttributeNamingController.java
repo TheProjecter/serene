@@ -28,12 +28,10 @@ import serene.validation.schema.simplified.components.SGroup;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
-
 class AttributeNamingController extends NamingController{
 		
-	AttributeNamingController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		super(pool, errorDispatcher, debugWriter);
+	AttributeNamingController(ControllerPool pool, ErrorDispatcher errorDispatcher){
+		super(pool, errorDispatcher);
 		
 	}
 	

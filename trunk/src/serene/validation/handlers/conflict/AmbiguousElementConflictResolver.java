@@ -28,12 +28,10 @@ import serene.validation.schema.active.components.AElement;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.MessageReporter;
 
-import sereneWrite.MessageWriter;
-
 public class AmbiguousElementConflictResolver extends ElementConflictResolver{
 	
-	public AmbiguousElementConflictResolver(MessageWriter debugWriter){				
-		super(debugWriter);
+	public AmbiguousElementConflictResolver(){				
+		super();
 	}
 		
 	public void recycle(){

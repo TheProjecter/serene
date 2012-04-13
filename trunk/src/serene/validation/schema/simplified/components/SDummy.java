@@ -25,14 +25,11 @@ import serene.validation.schema.simplified.components.SPattern;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class SDummy extends AbstractMultipleChildrenPattern{	
 	public SDummy(SPattern[] children,
 				int recordIndex, 
-				DocumentIndexedData documentIndexedData,
-				MessageWriter debugWriter){	
-		super(children, recordIndex, documentIndexedData, debugWriter);
+				DocumentIndexedData documentIndexedData){	
+		super(children, recordIndex, documentIndexedData);
 	}
 		
 	public void accept(SimplifiedComponentVisitor v){

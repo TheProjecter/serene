@@ -29,8 +29,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import sereneWrite.MessageWriter;
-
 // same as choice, also for simplification
 // the difference is that it only has one possible child
 
@@ -43,8 +41,8 @@ abstract class UniqueChildPatternHandler extends InnerPatternHandler{
 	ParticleHandler childParticleHandler;
 	StructureHandler childStructureHandler;	
 	
-	UniqueChildPatternHandler(MessageWriter debugWriter){		
-		super(debugWriter);
+	UniqueChildPatternHandler(){		
+		super();
 		noContent = new NoContent();
 		openContent = new OpenContent();
 		satisfiedContent = new SatisfiedContent();

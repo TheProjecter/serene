@@ -23,12 +23,10 @@ import serene.validation.schema.active.components.AInnerPattern;
 import serene.validation.handlers.structure.MaximalReduceHandler;
 import serene.validation.handlers.structure.StructureHandler;
 
-import sereneWrite.MessageWriter;
-
 abstract class MCMaximalReduceHandler extends MultipleChildrenPatternHandler implements MaximalReduceHandler{
 
-	public MCMaximalReduceHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public MCMaximalReduceHandler(){
+		super();
 	}
 	
 	/*boolean isReduceRequired(){

@@ -18,12 +18,9 @@ package serene.validation.handlers.content.impl;
 
 import org.xml.sax.SAXException;
 
-import sereneWrite.MessageWriter;
-
-abstract class ValidatingAEH extends ComparableAEH{
-		
-	ValidatingAEH(MessageWriter debugWriter){
-		super(debugWriter);
+abstract class ValidatingAEH extends ComparableAEH{		
+	ValidatingAEH(){
+		super();
 	}
 	
 	public void handleAttribute(String value) throws SAXException{

@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.validation.handlers.structure.impl;
 
-import sereneWrite.MessageWriter;
-
 public abstract class InterleaveHandler extends MultipleChildrenPatternHandler{
 	
-	InterleaveHandler(MessageWriter debugWriter){
-		super(debugWriter);			
+	InterleaveHandler(){
+		super();			
 	}	
 } 

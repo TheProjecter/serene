@@ -21,8 +21,6 @@ import java.util.Arrays;
 
 import serene.validation.schema.parsed.ParsedComponent;
 
-import sereneWrite.MessageWriter;
-
 public abstract class Level{
 		
 	Level child;
@@ -31,19 +29,15 @@ public abstract class Level{
 	int pcIndex;
 	int pcSize;
 	
-	MessageWriter debugWriter;
-	
-	Level(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		
+	Level(){
 		pcIndex = -1;
 		pcSize = 1;
 		parsedComponents = new ParsedComponent[pcSize];		
 	}
 	
 	
-	public static Level getTopInstance(MessageWriter debugWriter){
-		return new LevelTop(debugWriter);
+	public static Level getTopInstance(){
+		return new LevelTop();
 	}
 	
 	public abstract boolean isTopLevel();	

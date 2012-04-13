@@ -21,15 +21,10 @@ import java.util.Map;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class DefinitionCopier implements ParsedComponentVisitor{
 	Definition copy;
 	
-	MessageWriter debugWriter;
-	
-	public DefinitionCopier(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	public DefinitionCopier(){
 	}
 	
 	public Definition copy(Definition definition){
@@ -63,8 +58,7 @@ public class DefinitionCopier implements ParsedComponentVisitor{
 							/*qName,
 							location,*/
 							recordIndex,
-							did,
-							debugWriter);	 		
+							did);	 		
 	}
 	public void visit(Start start){
 		/*Map<String, String> prefixMapping = start.getXmlns();*/
@@ -89,8 +83,7 @@ public class DefinitionCopier implements ParsedComponentVisitor{
 							/*qName,
 							location,*/
 							recordIndex,
-							did,
-							debugWriter);		
+							did);		
 	}
 	
 	public void visit(Param param){

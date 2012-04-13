@@ -39,12 +39,7 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import sereneWrite.MessageWriter;
-
-
 public class MatchHandler{
-
-	MessageWriter debugWriter;
 	
 	List<AElement> elementMatches;
 	List<AAttribute> attributeMatches;
@@ -59,8 +54,7 @@ public class MatchHandler{
     
 	boolean recognizeOutOfContext;
 	
-	public MatchHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	public MatchHandler(){
 		elementMatches = new ArrayList<AElement>();
 		attributeMatches = new ArrayList<AAttribute>();
 		datas = new ArrayList<AData>();

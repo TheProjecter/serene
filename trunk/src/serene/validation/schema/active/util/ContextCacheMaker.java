@@ -38,8 +38,7 @@ import serene.validation.schema.active.components.AChoiceNameClass;
 import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.AExceptNameClass;
 
-import sereneWrite.MessageWriter;
-import sereneWrite.ActiveComponentWriter;
+//import sereneWrite.ActiveComponentWriter;
 
 public class ContextCacheMaker extends AbstractActiveComponentVisitor{
 	int elementIndex; //boyscout type, always prepared
@@ -73,11 +72,9 @@ public class ContextCacheMaker extends AbstractActiveComponentVisitor{
 	
 	ContextCacheMaker cacheMaker;
 	
-	MessageWriter debugWriter;
-	ActiveComponentWriter acw;
-	public ContextCacheMaker(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		acw = new ActiveComponentWriter();
+	//ActiveComponentWriter acw;
+	public ContextCacheMaker(){
+		//acw = new ActiveComponentWriter();
 		
 		elementIndex = 0;
 		elementSize = 10;	
@@ -228,7 +225,7 @@ public class ContextCacheMaker extends AbstractActiveComponentVisitor{
 	public void visit(AListPattern list){
 		if(listPatternIndex == listPatternSize) increaseListPatternSize();		 
 		listPatterns[listPatternIndex++] = list;
-		if(cacheMaker == null)cacheMaker = new ContextCacheMaker(debugWriter);
+		if(cacheMaker == null)cacheMaker = new ContextCacheMaker();
 		cacheMaker.init();
 		cacheMaker.makeCache(list.getChild());
 		list.setContextCache(cacheMaker.getDatas(), cacheMaker.getValues(), cacheMaker.getRefs());

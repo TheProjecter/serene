@@ -20,15 +20,12 @@ import serene.validation.schema.simplified.components.SPattern;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 abstract class AbstractMultipleChildrenPattern extends SPattern{
  	protected SPattern[] children; 
 	AbstractMultipleChildrenPattern(SPattern[] children,
 				int recordIndex, 
-				DocumentIndexedData documentIndexedData,  
-				MessageWriter debugWriter){		
-		super(recordIndex, documentIndexedData, debugWriter);
+				DocumentIndexedData documentIndexedData){		
+		super(recordIndex, documentIndexedData);
 		asParent(children);
 	}
 		

@@ -25,8 +25,6 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class SValue extends AbstractNoChildrenPattern{
 	String ns;
     Datatype datatype;
@@ -36,9 +34,8 @@ public class SValue extends AbstractNoChildrenPattern{
 				Datatype datatype,
 				String charContent,
 				int recordIndex, 
-				DocumentIndexedData documentIndexedData,   
-				MessageWriter debugWriter){
-		super(recordIndex, documentIndexedData, debugWriter);
+				DocumentIndexedData documentIndexedData){
+		super(recordIndex, documentIndexedData);
 		this.ns = ns;		
 		this.datatype = datatype;
 		this.charContent = charContent;

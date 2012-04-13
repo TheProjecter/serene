@@ -45,8 +45,7 @@ import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import sereneWrite.ActiveComponentWriter;
-import sereneWrite.MessageWriter;
+//import sereneWrite.ActiveComponentWriter;
 
 public class AElement extends MarkupAPattern 
 					implements AttributesType, ElementContentType, NamedActiveTypeItem{	
@@ -64,14 +63,12 @@ public class AElement extends MarkupAPattern
 				ActiveGrammarModel grammarModel,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SElement selement, 
-				MessageWriter debugWriter){		
+				SElement selement){		
 		super(index,
 				null, 
 				grammarModel, 
 				stackHandlerPool, 
-				ruleHandlerPool,  
-				debugWriter);		
+				ruleHandlerPool);		
 		this.index = index;
 		this.selement = selement;
 		//acw = new ActiveComponentWriter();

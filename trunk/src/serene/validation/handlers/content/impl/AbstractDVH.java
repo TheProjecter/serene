@@ -46,14 +46,11 @@ import serene.validation.handlers.match.MatchHandler;
 
 import serene.util.SpaceCharsHandler;
 
-import sereneWrite.MessageWriter;
-
-
 abstract class AbstractDVH extends AbstractCH implements ErrorCatcher{
     ValidationContext validationContext;        	
     SpaceCharsHandler spaceHandler;
-	AbstractDVH(MessageWriter debugWriter){
-		super(debugWriter);
+	AbstractDVH(){
+		super();
 	}
 	
 	void init(MatchHandler matchHandler, ValidationContext validationContext, SpaceCharsHandler spaceHandler, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ValidatorEventHandlerPool pool){

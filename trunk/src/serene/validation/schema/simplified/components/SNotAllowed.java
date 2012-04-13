@@ -23,15 +23,12 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class SNotAllowed extends AbstractNoChildrenPattern{
 	boolean addedBySimplification;
 	public SNotAllowed(int recordIndex, 
 				DocumentIndexedData documentIndexedData,  
-				boolean addedBySimplification,
-				MessageWriter debugWriter){
-		super(recordIndex, documentIndexedData, debugWriter);
+				boolean addedBySimplification){
+		super(recordIndex, documentIndexedData);
 		this.addedBySimplification = addedBySimplification;
 	}	
 			

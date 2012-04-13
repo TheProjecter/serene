@@ -26,8 +26,6 @@ import serene.validation.handlers.match.MatchHandler;
 
 import serene.validation.handlers.stack.StackHandler;
 
-import sereneWrite.MessageWriter;
-
 abstract class AttributeDefinitionHandler extends ValidatingAEH 
                                             implements CharsContentTypeHandler{
     AAttribute attribute;
@@ -36,8 +34,8 @@ abstract class AttributeDefinitionHandler extends ValidatingAEH
 	
 	StackHandler stackHandler;
 	
-    AttributeDefinitionHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    AttributeDefinitionHandler(){
+        super();
     }
   
     void reset(){       

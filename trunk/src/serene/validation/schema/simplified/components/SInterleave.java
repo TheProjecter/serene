@@ -30,8 +30,6 @@ import serene.validation.schema.simplified.components.SPattern;
 import serene.bind.util.DocumentIndexedData;
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 public class SInterleave extends AbstractMultipleChildrenPattern{
     IntList allRecordIndexes;	
     ArrayList<DocumentIndexedData> allDocumentIndexedData;
@@ -39,9 +37,8 @@ public class SInterleave extends AbstractMultipleChildrenPattern{
 	public SInterleave(SPattern[] children,
 				IntList allRecordIndexes, 
 				ArrayList<DocumentIndexedData> allDocumentIndexedData,
-				boolean addedBySimplification,
-				MessageWriter debugWriter){		
-		super(children, DocumentIndexedData.NO_RECORD, null, debugWriter);
+				boolean addedBySimplification){		
+		super(children, DocumentIndexedData.NO_RECORD, null);
         this.allRecordIndexes = allRecordIndexes; 
         this.allDocumentIndexedData = allDocumentIndexedData;
         this.addedBySimplification = addedBySimplification;
@@ -49,9 +46,8 @@ public class SInterleave extends AbstractMultipleChildrenPattern{
 	
     public SInterleave(SPattern[] children,
 				int recordIndex, 
-				DocumentIndexedData documentIndexedData,  
-				MessageWriter debugWriter){		
-		super(children, recordIndex, documentIndexedData, debugWriter);
+				DocumentIndexedData documentIndexedData){		
+		super(children, recordIndex, documentIndexedData);
 		addedBySimplification = false;
 	}
     

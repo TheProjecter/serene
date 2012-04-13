@@ -30,8 +30,6 @@ import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import sereneWrite.MessageWriter;
-
 /*
 * In the ConcurrentStackHandler each level handles a conflict and every handler 
 * on that level gets a reference to an InternalConflictResolver instance. This 
@@ -47,10 +45,8 @@ public abstract class InternalConflictResolver implements ConflictResolver{
 	ActiveInputDescriptor activeInputDescriptor;
 	
 	ActiveModelConflictHandlerPool pool;
-	MessageWriter debugWriter;
 	
-	public InternalConflictResolver(MessageWriter debugWriter){				
-		this.debugWriter = debugWriter;
+	public InternalConflictResolver(){
 		qualified = new BitSet();
 	}
 		

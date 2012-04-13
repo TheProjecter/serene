@@ -54,8 +54,6 @@ import serene.bind.util.Queue;
 
 import serene.util.CharsBuffer;
 
-import sereneWrite.MessageWriter;
-
 class BoundElementValidationHandler extends ElementValidationHandler implements BoundElementHandler{
 	BindingModel bindingModel;
 	Queue queue;
@@ -65,10 +63,10 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	
 	CharsBuffer bindCharsBuffer;
 	
-	BoundElementValidationHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	BoundElementValidationHandler(){
+		super();		
 		
-		bindCharsBuffer = new CharsBuffer(debugWriter);
+		bindCharsBuffer = new CharsBuffer();
 		
 		queueStartEntry = -1;
 	    queueEndEntry = -1;

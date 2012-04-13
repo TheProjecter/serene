@@ -22,15 +22,12 @@ import serene.validation.schema.simplified.components.SExceptNameClass;
 
 import serene.validation.schema.active.Identifier;
 
-import sereneWrite.MessageWriter;
-
 public class AExceptNameClass extends AbstractIdentifier{		
 	ANameClass child;
 	SExceptNameClass sexceptNameClass;
 	public AExceptNameClass(ANameClass child,
-			SExceptNameClass sexceptNameClass, 
-			MessageWriter debugWriter){
-		super( debugWriter);
+			SExceptNameClass sexceptNameClass){
+		super();
 		this.sexceptNameClass = sexceptNameClass;
 		asParent(child);
 	}	

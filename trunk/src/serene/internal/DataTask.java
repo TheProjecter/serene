@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class DataTask extends RNGParseEndElementTask{
-	DataTask(MessageWriter debugWriter){
-		super(debugWriter);
+	DataTask(){
+		super();
 	}	
 	public void execute(){
 		builder.endLevel();

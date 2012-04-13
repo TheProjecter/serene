@@ -16,14 +16,12 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class ForeignAttributeTaskFactory extends RNGParseAttributeTaskFactory{
-	public ForeignAttributeTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	public ForeignAttributeTaskFactory(){
+		super();
 	}
 	
 	public ForeignAttributeTask getTask(){	
-		return new ForeignAttributeTask(debugWriter);
+		return new ForeignAttributeTask();
 	}
 }

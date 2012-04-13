@@ -44,8 +44,6 @@ import serene.util.ObjectIntHashMap;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 public class ActiveModel  implements Reusable{
 
 	ActiveGrammarModel grammarModel;
@@ -56,15 +54,11 @@ public class ActiveModel  implements Reusable{
 	
 	ActiveModelPool pool;	
 	
-	MessageWriter debugWriter;
-	
 	public ActiveModel(ActiveGrammarModel grammarModel,
 					ActiveModelRuleHandlerPool ruleHandlerPool,
 					ActiveModelStackHandlerPool stackHandlerPool,
 					ActiveModelConflictHandlerPool conflictHandlerPool,
-					ActiveModelPool pool,
-					MessageWriter debugWriter){
-		this.debugWriter = debugWriter;	
+					ActiveModelPool pool){
 		this.grammarModel = grammarModel;
 		
 		this.ruleHandlerPool = ruleHandlerPool;

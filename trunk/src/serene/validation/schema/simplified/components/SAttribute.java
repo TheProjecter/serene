@@ -23,8 +23,6 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public class SAttribute extends AbstractMultipleChildrenPattern{
 	SNameClass nameClass;
 	int defaultValueRecordIndex;
@@ -32,9 +30,8 @@ public class SAttribute extends AbstractMultipleChildrenPattern{
 								SPattern[] children,
                                 int defaultValue,
 								int recordIndex, 
-								DocumentIndexedData documentIndexedData,
-								MessageWriter debugWriter){		
-		super(children, recordIndex, documentIndexedData, debugWriter);
+								DocumentIndexedData documentIndexedData){		
+		super(children, recordIndex, documentIndexedData);
 		this.nameClass = nameClass;
         this.defaultValueRecordIndex = defaultValue;
 	}	

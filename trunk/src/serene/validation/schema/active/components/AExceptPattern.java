@@ -44,8 +44,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import org.relaxng.datatype.ValidationContext;
 
-import sereneWrite.MessageWriter;
-
 public class AExceptPattern extends AbstractRule 
 							implements StructuredDataActiveType, ActiveDefinitionPointer{
 	APattern child;
@@ -73,9 +71,8 @@ public class AExceptPattern extends AbstractRule
 			ActiveGrammarModel grammarModel,
 			ActiveModelStackHandlerPool stackHandlerPool,
 			ActiveModelRuleHandlerPool ruleHandlerPool,
-			SExceptPattern sexceptPattern, 
-			MessageWriter debugWriter){
-		super(ruleHandlerPool, debugWriter);
+			SExceptPattern sexceptPattern){
+		super(ruleHandlerPool);
 		this.index = index;
 		this.grammarModel = grammarModel;
 		this.stackHandlerPool = stackHandlerPool;

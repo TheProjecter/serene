@@ -32,12 +32,10 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public class ANotAllowed extends NoChildrenAPattern{
 	SNotAllowed snotAllowed;
-	public ANotAllowed(ActiveModelRuleHandlerPool ruleHandlerPool, SNotAllowed snotAllowed, MessageWriter debugWriter){
-		super(ruleHandlerPool, debugWriter);
+	public ANotAllowed(ActiveModelRuleHandlerPool ruleHandlerPool, SNotAllowed snotAllowed){
+		super(ruleHandlerPool);
 		this.snotAllowed = snotAllowed;
 	}	
 	

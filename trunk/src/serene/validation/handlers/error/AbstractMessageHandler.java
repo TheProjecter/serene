@@ -45,8 +45,6 @@ import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 public abstract class AbstractMessageHandler  extends AbstractMessageReporter{	
     
     ActiveInputDescriptor activeInputDescriptor;
@@ -532,8 +530,8 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     boolean isDiscarded;*/
    
     int clientCount;
-	public AbstractMessageHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public AbstractMessageHandler(){
+		super();
 			
         messageTotalCount = 0;  
         

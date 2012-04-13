@@ -29,12 +29,10 @@ import serene.validation.schema.simplified.components.SGroup;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
-
 class ElementNamingController extends NamingController{
 		
-	ElementNamingController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		super(pool, errorDispatcher, debugWriter);
+	ElementNamingController(ControllerPool pool, ErrorDispatcher errorDispatcher){
+		super(pool, errorDispatcher);
 	}
 		
 	public void recycle(){

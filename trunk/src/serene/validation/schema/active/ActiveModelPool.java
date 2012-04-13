@@ -42,8 +42,6 @@ import serene.validation.handlers.error.ErrorDispatcher;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
-import sereneWrite.MessageWriter;
-
 public class ActiveModelPool{
 
 	ConflictHandlerPool conflictHandlerPool;
@@ -60,28 +58,24 @@ public class ActiveModelPool{
 		
 	boolean optimizedForResourceSharing;
 	
-	MessageWriter debugWriter;
-	
 	public ActiveModelPool(SimplifiedModel simplifiedModel,
-	                        boolean optimizedForResourceSharing,
-							MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	                        boolean optimizedForResourceSharing){
 		this.simplifiedModel = simplifiedModel;
 		this.optimizedForResourceSharing = optimizedForResourceSharing;
-		modelFactory = new ActiveModelFactory(debugWriter);
+		modelFactory = new ActiveModelFactory();
 		
 		modelFree = 0; 
 		modelMaxSize = 10;
 		models = new ActiveModel[5];
 
 		if(optimizedForResourceSharing){
-            conflictHandlerPool = SynchronizedConflictHandlerPool.getInstance(debugWriter);
-            stackHandlerPool = SynchronizedStackHandlerPool.getInstance(debugWriter);
-            ruleHandlerPool = SynchronizedRuleHandlerPool.getInstance(debugWriter);
+            conflictHandlerPool = SynchronizedConflictHandlerPool.getInstance();
+            stackHandlerPool = SynchronizedStackHandlerPool.getInstance();
+            ruleHandlerPool = SynchronizedRuleHandlerPool.getInstance();
         }else{
-            conflictHandlerPool = UnsynchronizedConflictHandlerPool.getInstance(debugWriter);
-            stackHandlerPool = UnsynchronizedStackHandlerPool.getInstance(debugWriter);
-            ruleHandlerPool = UnsynchronizedRuleHandlerPool.getInstance(debugWriter);
+            conflictHandlerPool = UnsynchronizedConflictHandlerPool.getInstance();
+            stackHandlerPool = UnsynchronizedStackHandlerPool.getInstance();
+            ruleHandlerPool = UnsynchronizedRuleHandlerPool.getInstance();
         }
 	}
 	

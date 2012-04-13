@@ -18,22 +18,19 @@ limitations under the License.
 package serene.util;
 
 import org.relaxng.datatype.Datatype;
-import sereneWrite.MessageWriter;
 
 
 public class AttributeInfo extends NameInfo{
     String value;
     int idType;
     
-    MessageWriter debugWriter;
     
     public AttributeInfo(String namespaceURI,
                         String localName,
                         String qName,
                         String value,
-                        int idType,
-                        MessageWriter debugWriter){    
-        super(namespaceURI,localName, qName, debugWriter);        
+                        int idType){    
+        super(namespaceURI,localName, qName);        
         if(!(idType == Datatype.ID_TYPE_NULL 
             || idType == Datatype.ID_TYPE_ID
             || idType == Datatype.ID_TYPE_IDREF

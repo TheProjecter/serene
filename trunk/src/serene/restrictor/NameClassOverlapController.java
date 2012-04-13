@@ -48,17 +48,11 @@ import serene.validation.schema.simplified.components.SChoiceNameClass;
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
-
-import sereneWrite.MessageWriter; 
-
 abstract class NameClassOverlapController implements SimplifiedComponentVisitor{
 	
 	boolean overlap;
 	
-	MessageWriter debugWriter;
-	
-	NameClassOverlapController(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	NameClassOverlapController(){
 	}
 	
 	boolean overlap(SNameClass nc){

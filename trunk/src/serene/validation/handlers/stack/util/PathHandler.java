@@ -44,9 +44,6 @@ import serene.validation.schema.active.ActiveComponentVisitor;
 
 import serene.validation.handlers.structure.StructureHandler;
 
-import sereneWrite.MessageWriter;
-
-
 public class PathHandler implements ActiveComponentVisitor{
 	StructureHandler topHandler;
 	Rule topRule;
@@ -54,11 +51,8 @@ public class PathHandler implements ActiveComponentVisitor{
 	
 	StructureHandler bottomHandler;	
 	int expectedOrderHandlingCount;	
-	
-	MessageWriter debugWriter;
 
-	public PathHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;				
+	public PathHandler(){				
 	}
 	
 	public void init(StructureHandler topHandler){

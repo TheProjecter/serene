@@ -54,8 +54,6 @@ import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 class CandidateAttributeValidationHandler extends AttributeDefinitionHandler 
                                             implements ErrorCatcher{
 	
@@ -67,8 +65,8 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	
 	ActiveInputDescriptor activeInputDescriptor;
 	
-	CandidateAttributeValidationHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	CandidateAttributeValidationHandler(){
+		super();
 		candidateIndex = -1;
 	}
 		
@@ -225,7 +223,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
-		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
 		    temporaryMessageStorage[candidateIndex].init(activeInputDescriptor);
 		}
 		temporaryMessageStorage[candidateIndex].ambiguousCharacterContentWarning(inputRecordIndex, possibleDefinitions);
@@ -234,7 +232,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
-		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
 		    temporaryMessageStorage[candidateIndex].init(activeInputDescriptor);
 		}
 		temporaryMessageStorage[candidateIndex].ambiguousAttributeValueWarning(inputRecordIndex, possibleDefinitions);
@@ -247,7 +245,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
-		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
 		    temporaryMessageStorage[candidateIndex].init(activeInputDescriptor);
 		}
 		temporaryMessageStorage[candidateIndex].attributeValueDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
@@ -259,7 +257,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
-		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
 		    temporaryMessageStorage[candidateIndex].init(activeInputDescriptor);
 		}
 		temporaryMessageStorage[candidateIndex].attributeValueValueError(inputRecordIndex, charsDefinition);
@@ -271,7 +269,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
-		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
 		    temporaryMessageStorage[candidateIndex].init(activeInputDescriptor);
 		}
 		temporaryMessageStorage[candidateIndex].attributeValueExceptedError(inputRecordIndex, charsDefinition);
@@ -290,7 +288,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
-		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
 		    temporaryMessageStorage[candidateIndex].init(activeInputDescriptor);
 		}
 		temporaryMessageStorage[candidateIndex].unresolvedAttributeValue(inputRecordIndex, possibleDefinitions);
@@ -299,7 +297,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
-		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
 		    temporaryMessageStorage[candidateIndex].init(activeInputDescriptor);
 		}
 		temporaryMessageStorage[candidateIndex].listTokenDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
@@ -307,7 +305,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
-		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
 		    temporaryMessageStorage[candidateIndex].init(activeInputDescriptor);
 		}
 		temporaryMessageStorage[candidateIndex].listTokenValueError(inputRecordIndex, charsDefinition);
@@ -315,7 +313,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
-		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
 		    temporaryMessageStorage[candidateIndex].init(activeInputDescriptor);
 		}
 		temporaryMessageStorage[candidateIndex].listTokenExceptedError(inputRecordIndex, charsDefinition);
@@ -325,7 +323,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
     public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
-		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
 		    temporaryMessageStorage[candidateIndex].init(activeInputDescriptor);
 		}
 		temporaryMessageStorage[candidateIndex].unresolvedListTokenInContextError(inputRecordIndex, possibleDefinitions);
@@ -333,7 +331,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
-		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage(debugWriter);
+		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
 		    temporaryMessageStorage[candidateIndex].init(activeInputDescriptor);
 		}
 		temporaryMessageStorage[candidateIndex].ambiguousListTokenInContextWarning(inputRecordIndex, possibleDefinitions);

@@ -32,13 +32,11 @@ import serene.validation.handlers.error.MessageReporter;
 
 import serene.bind.util.Queue;
 
-import sereneWrite.MessageWriter;
-
 
 public class BoundAmbiguousElementConflictResolver extends BoundElementConflictResolver{
 	
-	public BoundAmbiguousElementConflictResolver(MessageWriter debugWriter){
-		super(debugWriter);
+	public BoundAmbiguousElementConflictResolver(){
+		super();
 	}
 	
 	public void recycle(){

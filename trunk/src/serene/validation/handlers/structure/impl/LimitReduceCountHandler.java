@@ -41,8 +41,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 // TODO
 // Cosider getting rid of the AbstractSaturatedContent subclasses.
 // Replace with a on the fly computing of saturation in the isSaturated()
@@ -63,8 +61,8 @@ abstract class LimitReduceCountHandler extends MultipleChildrenPatternHandler im
 	* reduction, determined by the other siblings, were met. 
 	*/
 	IntList reduceCountList;
-	public LimitReduceCountHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public LimitReduceCountHandler(){
+		super();
 		noContent = new TopNoContent();
 		contentHandler = noContent;
 		// TODO	

@@ -22,8 +22,6 @@ import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 public class ValidatorErrorHandlerPool implements Reusable{
 	
 	ErrorDispatcher errorDispatcher;
@@ -64,10 +62,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 	
 	ErrorHandlerPool errorHandlerPool; 
 	
-	MessageWriter debugWriter;
-	
-	public ValidatorErrorHandlerPool(ErrorHandlerPool errorHandlerPool, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;		
+	public ValidatorErrorHandlerPool(ErrorHandlerPool errorHandlerPool){
 		this.errorHandlerPool = errorHandlerPool;
 		
         validationErrorHMaxSize = 40;
@@ -184,7 +179,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 	public ValidationErrorHandler getValidationErrorHandler(){				
 		if(validationErrorHFree == 0){
 			// validationErrorHCreated++;
-			ValidationErrorHandler veh = new ValidationErrorHandler(debugWriter);			 
+			ValidationErrorHandler veh = new ValidationErrorHandler();			 
 			veh.init(this, errorDispatcher, activeInputDescriptor);
 			return veh;			
 		}else{
@@ -209,7 +204,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 	public ExternalConflictErrorHandler getExternalConflictErrorHandler(CandidatesConflictErrorHandler candidatesConflictErrorHandler, int candidateIndex, boolean isCandidate){
 		if(conflictErrorHFree == 0){
 			// conflictErrorHCreated++;
-			ExternalConflictErrorHandler eh = new ExternalConflictErrorHandler(debugWriter);
+			ExternalConflictErrorHandler eh = new ExternalConflictErrorHandler();
 			eh.init(this, errorDispatcher, activeInputDescriptor);
 			eh.init(candidatesConflictErrorHandler, candidateIndex, isCandidate);
 			return eh;			
@@ -235,7 +230,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 	public CommonErrorHandler getCommonErrorHandler(CandidatesConflictErrorHandler candidatesConflictErrorHandler, boolean isCandidate){
 		if(commonErrorHFree == 0){
 			// commonErrorHCreated++;
-			CommonErrorHandler eh = new CommonErrorHandler(debugWriter);
+			CommonErrorHandler eh = new CommonErrorHandler();
 			eh.init(this, errorDispatcher, activeInputDescriptor);
 			eh.init(candidatesConflictErrorHandler, isCandidate);
 			return eh;			
@@ -260,7 +255,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
 	public DefaultErrorHandler getDefaultErrorHandler(){				
 		if(defaultErrorHFree == 0){
 			// defaultErrorHCreated++;
-			DefaultErrorHandler eh = new DefaultErrorHandler(debugWriter);
+			DefaultErrorHandler eh = new DefaultErrorHandler();
 			eh.init(this, errorDispatcher, activeInputDescriptor);
 			//eh.init();
 			return eh;			
@@ -285,7 +280,7 @@ public class ValidatorErrorHandlerPool implements Reusable{
     public StartErrorHandler getStartErrorHandler(){				
 		if(startErrorHFree == 0){
 			// startErrorHCreated++;
-			StartErrorHandler eh = new StartErrorHandler(debugWriter);
+			StartErrorHandler eh = new StartErrorHandler();
 			eh.init(this, errorDispatcher, activeInputDescriptor);
 			//eh.init();
 			return eh;			

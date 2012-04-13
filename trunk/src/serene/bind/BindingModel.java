@@ -29,8 +29,6 @@ import serene.util.ObjectIntHashMap;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 public interface BindingModel extends Reusable{
     
 	void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException;	

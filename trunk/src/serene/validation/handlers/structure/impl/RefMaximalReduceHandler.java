@@ -26,12 +26,10 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
-import sereneWrite.MessageWriter;
-
 public class RefMaximalReduceHandler extends UCMaximalReduceHandler{
 	RefMaximalReduceHandler original;
-	RefMaximalReduceHandler(MessageWriter debugWriter){		
-		super(debugWriter);		
+	RefMaximalReduceHandler(){		
+		super();		
 	}	
 	
 	void init(ARef ref, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){		

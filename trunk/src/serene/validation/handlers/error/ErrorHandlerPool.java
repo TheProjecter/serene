@@ -16,14 +16,8 @@ limitations under the License.
 
 package serene.validation.handlers.error;
 
-import sereneWrite.MessageWriter;
-
 public abstract class ErrorHandlerPool{	
-	MessageWriter debugWriter;
-	
-	ErrorHandlerPool(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-	}
+	ErrorHandlerPool(){}
 	
 	
 	public abstract ValidatorErrorHandlerPool getValidatorErrorHandlerPool();		

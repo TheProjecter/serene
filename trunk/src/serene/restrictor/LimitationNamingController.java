@@ -40,8 +40,6 @@ import serene.validation.schema.simplified.components.SZeroOrMore;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
-
 abstract class LimitationNamingController extends NamingController{	
 	final int RELEVANT = 1;
 	final int IRELEVANT = -1;
@@ -49,8 +47,8 @@ abstract class LimitationNamingController extends NamingController{
 	IntStack compositorRelevance;
 	IntStack cardinalityRelevance;
 	
-	LimitationNamingController(ControllerPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		super(pool, errorDispatcher, debugWriter);
+	LimitationNamingController(ControllerPool pool, ErrorDispatcher errorDispatcher){
+		super(pool, errorDispatcher);
 		
 		compositorRelevance = new IntStack();
 		cardinalityRelevance = new IntStack();

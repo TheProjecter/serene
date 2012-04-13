@@ -53,8 +53,6 @@ import serene.util.IntStack;
 import serene.DocumentContext;
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
 class DOMBuildingHandler extends DOMHandler{
 
     /** Table for quick check of child insertion. */
@@ -98,8 +96,8 @@ class DOMBuildingHandler extends DOMHandler{
     
     DocumentContext documentContext;
     
-    DOMBuildingHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    DOMBuildingHandler(){
+        super();
         resultNodeChildren = new ArrayList<Node>(); 
     }
     

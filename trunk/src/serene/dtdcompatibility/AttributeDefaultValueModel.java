@@ -25,8 +25,6 @@ import serene.validation.schema.simplified.components.SNameClass;
 
 import serene.util.AttributeInfo;
 
-import sereneWrite.MessageWriter;
-
 public class AttributeDefaultValueModel{
     
     Identifier[] elementIdentifiers;
@@ -34,11 +32,7 @@ public class AttributeDefaultValueModel{
     
     HashSet<SNameClass> elementNames;
     
-    MessageWriter debugWriter;
-    
-    public AttributeDefaultValueModel(MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
-        
+    public AttributeDefaultValueModel(){
         elementNames = new HashSet<SNameClass>();
     }
     

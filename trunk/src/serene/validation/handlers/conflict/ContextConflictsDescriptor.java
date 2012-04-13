@@ -21,19 +21,13 @@ import java.util.HashSet;
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.ActiveTypeItem;
 
-import sereneWrite.MessageWriter;
-
-
 public class ContextConflictsDescriptor implements InternalConflictDescriptor{
 	
 	HashSet<ActiveTypeItem> conflictActiveTypeItems;
 	HashSet<Rule> conflictPathRules;
     HashSet<Rule> conflictPathTops;
 	
-	MessageWriter debugWriter;
-	
-	public ContextConflictsDescriptor(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	public ContextConflictsDescriptor(){
 		conflictActiveTypeItems = new HashSet<ActiveTypeItem>();
 		conflictPathRules = new HashSet<Rule>();
         conflictPathTops = new HashSet<Rule>();

@@ -33,15 +33,13 @@ import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import sereneWrite.MessageWriter;
-
 abstract class AbstractRule extends AbstractActiveComponent implements Rule{
 	protected Rule parent;
 	
 	protected ActiveModelRuleHandlerPool ruleHandlerPool;
 	
-	AbstractRule(ActiveModelRuleHandlerPool ruleHandlerPool, MessageWriter debugWriter){
-		super(debugWriter);
+	AbstractRule(ActiveModelRuleHandlerPool ruleHandlerPool){
+		super();
 		this.ruleHandlerPool = ruleHandlerPool; 
 	}
 

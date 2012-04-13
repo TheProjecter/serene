@@ -26,8 +26,6 @@ import org.relaxng.datatype.DatatypeStreamingValidator;
 import org.apache.xerces.impl.dv.XSSimpleType;
 import org.apache.xerces.impl.dv.InvalidDatatypeValueException;
 
-import sereneWrite.MessageWriter;
-
 class XsdDatatype implements Datatype{
     boolean isContextDependent;
     boolean needsExtraChecking;
@@ -39,8 +37,7 @@ class XsdDatatype implements Datatype{
     XSSimpleType xercesType;
     
     XsdDatatype(XsdValidationContext xsdValidationContext,
-                XSSimpleType xercesType, 
-                MessageWriter debugWriter){
+                XSSimpleType xercesType){
         this.xercesType = xercesType;
         this.xsdValidationContext = xsdValidationContext;
         

@@ -25,15 +25,13 @@ import serene.validation.handlers.content.BoundElementHandler;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import sereneWrite.MessageWriter;
-
 class BoundUnknownElementHandler extends UnknownElementHandler implements BoundElementHandler{
     Queue queue;
     int queueStartEntry;
     int queueEndEntry;
     
-    BoundUnknownElementHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    BoundUnknownElementHandler(){
+        super();
     }
     
     void init(ElementValidationHandler parent, Queue queue){

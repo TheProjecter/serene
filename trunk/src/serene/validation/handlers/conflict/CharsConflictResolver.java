@@ -28,13 +28,11 @@ import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import sereneWrite.MessageWriter;
-
 public abstract class CharsConflictResolver extends InternalConflictResolver{	
     List<CharsActiveTypeItem> candidateDefinitions;
     TemporaryMessageStorage[] temporaryMessageStorage;  
-	public CharsConflictResolver(MessageWriter debugWriter){				
-		super(debugWriter);
+	public CharsConflictResolver(){				
+		super();
 		candidateDefinitions = new ArrayList<CharsActiveTypeItem>();
 	}
 	

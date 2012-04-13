@@ -23,8 +23,6 @@ import java.util.List;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import sereneWrite.MessageWriter;
-
 import serene.validation.schema.active.components.AElement;
 
 import serene.bind.util.Queue;
@@ -39,8 +37,8 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.handlers.error.ContextErrorHandler;
 
 class BoundStartValidationHandler extends BoundElementValidationHandler{				
-	BoundStartValidationHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	BoundStartValidationHandler(){
+		super();		
 	}
 		
 	public void recycle(){	

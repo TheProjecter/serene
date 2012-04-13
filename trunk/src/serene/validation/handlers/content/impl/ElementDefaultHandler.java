@@ -32,14 +32,12 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.CharacterContentDescriptor;
 import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
-import sereneWrite.MessageWriter;
-
 class ElementDefaultHandler extends ComparableEEH{	
 	int depth;
 	ElementEventHandler parent;
 	
-	ElementDefaultHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	ElementDefaultHandler(){
+		super();		
 	}
 	
 	void init(ElementEventHandler parent){

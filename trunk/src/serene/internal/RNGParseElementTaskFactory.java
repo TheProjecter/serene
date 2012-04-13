@@ -18,13 +18,9 @@ package serene.internal;
 
 import serene.bind.ElementTaskFactory;
 
-import sereneWrite.MessageWriter;
-
 abstract class RNGParseElementTaskFactory implements ElementTaskFactory{
-	MessageWriter debugWriter;
 	
-	RNGParseElementTaskFactory(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	RNGParseElementTaskFactory(){
 	}
 	public abstract RNGParseElementTask getTask();
 }

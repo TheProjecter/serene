@@ -59,8 +59,6 @@ import serene.validation.schema.simplified.util.Level;
 import serene.bind.util.DocumentIndexedData;
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 /**
 * Builds components, the big picture SimplifiedModel is the directors responsibility. 
 * Can return/remove the components of the current level(usefull for attaching commands).
@@ -70,13 +68,10 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	
 	Level level;
 	//for debug only
-	Level topLevel;	
-	MessageWriter debugWriter;
+	Level topLevel;
 	
-	
-	public SimplifiedComponentBuilder(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		level = Level.getTopInstance(debugWriter);
+	public SimplifiedComponentBuilder(){
+		level = Level.getTopInstance();
 		topLevel = level;
 	}
 	
@@ -222,102 +217,102 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	//START PATTERN BUILDING ***************************************************
 	//**************************************************************************	
 	public void buildElement(int recordIndex, DocumentIndexedData documentIndexedData){
-		SElement e = new SElement(getLastContentNameClass(), getLastContentPattern(), recordIndex, documentIndexedData, debugWriter);
+		SElement e = new SElement(getLastContentNameClass(), getLastContentPattern(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(e);
 	}
 	public void buildAttribute(int defaultValue, int recordIndex, DocumentIndexedData documentIndexedData){
-		SAttribute a = new SAttribute(getLastContentNameClass(), getContentPatterns(), defaultValue, recordIndex, documentIndexedData, debugWriter);
+		SAttribute a = new SAttribute(getLastContentNameClass(), getContentPatterns(), defaultValue, recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(a);
 	}
 	public void buildGroup(int recordIndex, DocumentIndexedData documentIndexedData, boolean addedBySimplification){
-		SGroup g = new SGroup(getContentPatterns(), recordIndex, documentIndexedData, addedBySimplification, debugWriter);
+		SGroup g = new SGroup(getContentPatterns(), recordIndex, documentIndexedData, addedBySimplification);
 		clearContent();
 		addToCurrentLevel(g);
 	}
     public void buildReplacementGroup(int recordIndex, DocumentIndexedData documentIndexedData, boolean addedBySimplification){
         SPattern[] children = getAllCurrentPatterns();
-		SGroup g = new SGroup(children, recordIndex, documentIndexedData, addedBySimplification, debugWriter);
+		SGroup g = new SGroup(children, recordIndex, documentIndexedData, addedBySimplification);
 		clearCurrentPatterns();
 		addToCurrentLevel(g);
 	}
 	public void buildInterleave(int recordIndex, DocumentIndexedData documentIndexedData){
-		SInterleave i = new SInterleave(getContentPatterns(), recordIndex, documentIndexedData, debugWriter);
+		SInterleave i = new SInterleave(getContentPatterns(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(i);
 	}
     public void buildInterleave(SPattern[] children, IntList allRecordIndexes, ArrayList<DocumentIndexedData> allDocumentIndexedData, boolean addedBySimplification){
-		SInterleave i = new SInterleave(children, allRecordIndexes, allDocumentIndexedData, addedBySimplification, debugWriter);
+		SInterleave i = new SInterleave(children, allRecordIndexes, allDocumentIndexedData, addedBySimplification);
 		addToCurrentLevel(i);	
 	}
 	public void buildChoicePattern(int recordIndex, DocumentIndexedData documentIndexedData, boolean addedBySimplification){
-		SChoicePattern cp = new SChoicePattern(getContentPatterns(), recordIndex, documentIndexedData, addedBySimplification, debugWriter);
+		SChoicePattern cp = new SChoicePattern(getContentPatterns(), recordIndex, documentIndexedData, addedBySimplification);
 		clearContent();
 		addToCurrentLevel(cp);
 	}
     public void buildChoicePattern(SPattern[] children, IntList allRecordIndexes, ArrayList<DocumentIndexedData> allDocumentIndexedData, boolean addedBySimplification){
-		SChoicePattern cp = new SChoicePattern(children, allRecordIndexes, allDocumentIndexedData, addedBySimplification, debugWriter);		
+		SChoicePattern cp = new SChoicePattern(children, allRecordIndexes, allDocumentIndexedData, addedBySimplification);		
 		addToCurrentLevel(cp);
 	}
     public void buildReplacementChoicePattern(int recordIndex, DocumentIndexedData documentIndexedData, boolean addedBySimplification){
         SPattern[] children = getAllCurrentPatterns();
-		SChoicePattern c = new SChoicePattern(children, recordIndex, documentIndexedData, addedBySimplification, debugWriter);
+		SChoicePattern c = new SChoicePattern(children, recordIndex, documentIndexedData, addedBySimplification);
 		clearCurrentPatterns();
 		addToCurrentLevel(c);	
 	}
 	public void buildMixed(int recordIndex, DocumentIndexedData documentIndexedData){
-		SMixed o = new SMixed(getLastContentPattern(), recordIndex, documentIndexedData, debugWriter);
+		SMixed o = new SMixed(getLastContentPattern(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(o);
 	}
 	public void buildOptional(int recordIndex, DocumentIndexedData documentIndexedData){
-		SOptional o = new SOptional(getLastContentPattern(), recordIndex, documentIndexedData, debugWriter);
+		SOptional o = new SOptional(getLastContentPattern(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(o);
 	}
 	public void buildZeroOrMore(int recordIndex, DocumentIndexedData documentIndexedData){
-		SZeroOrMore zom = new SZeroOrMore(getLastContentPattern(), recordIndex, documentIndexedData, debugWriter);
+		SZeroOrMore zom = new SZeroOrMore(getLastContentPattern(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(zom);
 	}
 	public void buildOneOrMore(int recordIndex, DocumentIndexedData documentIndexedData){
-		SOneOrMore oom = new SOneOrMore(getLastContentPattern(), recordIndex, documentIndexedData, debugWriter);
+		SOneOrMore oom = new SOneOrMore(getLastContentPattern(), recordIndex, documentIndexedData);
 		clearContent();		
 		addToCurrentLevel(oom);
 	}
 	public void buildListPattern(int recordIndex, DocumentIndexedData documentIndexedData){
-		SListPattern lp = new SListPattern(getLastContentPattern(), recordIndex, documentIndexedData, debugWriter);
+		SListPattern lp = new SListPattern(getLastContentPattern(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(lp);
 	}
 	public void buildRef(int definitionIndex, int recordIndex, DocumentIndexedData documentIndexedData){
-		SRef r = new SRef(definitionIndex, recordIndex, documentIndexedData, debugWriter);
+		SRef r = new SRef(definitionIndex, recordIndex, documentIndexedData);
 		addToCurrentLevel(r);
 	}
 	public void buildEmpty(int recordIndex, DocumentIndexedData documentIndexedData, boolean addedBySimplification){
-		SEmpty e = new SEmpty(recordIndex, documentIndexedData, addedBySimplification, debugWriter);
+		SEmpty e = new SEmpty(recordIndex, documentIndexedData, addedBySimplification);
 		addToCurrentLevel(e);
 	}
 	public void buildText(int recordIndex, DocumentIndexedData documentIndexedData, boolean addedBySimplification){
-		SText t = new SText(recordIndex, documentIndexedData, addedBySimplification, debugWriter);
+		SText t = new SText(recordIndex, documentIndexedData, addedBySimplification);
 		addToCurrentLevel(t);
 	}
 	public void buildValue(String ns, Datatype datatype, String charContent, int recordIndex, DocumentIndexedData documentIndexedData){
-		SValue v = new SValue(ns, datatype, charContent, recordIndex, documentIndexedData, debugWriter);
+		SValue v = new SValue(ns, datatype, charContent, recordIndex, documentIndexedData);
 		addToCurrentLevel(v);
 	}
 	public void buildData(Datatype datatype, int recordIndex, DocumentIndexedData documentIndexedData){
-		SData d = new SData(datatype, getContentExceptPatterns(), recordIndex, documentIndexedData, debugWriter);
+		SData d = new SData(datatype, getContentExceptPatterns(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(d);
 	}		
 	public void buildNotAllowed(int recordIndex, DocumentIndexedData documentIndexedData, boolean addedBySimplification){
-		SNotAllowed na = new SNotAllowed(recordIndex, documentIndexedData, addedBySimplification, debugWriter);
+		SNotAllowed na = new SNotAllowed(recordIndex, documentIndexedData, addedBySimplification);
 		addToCurrentLevel(na);
 	}	
 	public void buildGrammar(int recordIndex, DocumentIndexedData documentIndexedData){
-		SGrammar g = new SGrammar(getLastContentPattern(), recordIndex, documentIndexedData, debugWriter);
+		SGrammar g = new SGrammar(getLastContentPattern(), recordIndex, documentIndexedData);
 		clearContent();		
 		addToCurrentLevel(g);
 	}
@@ -331,27 +326,27 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	public void buildName(String ns, String localPart, int recordIndex, DocumentIndexedData documentIndexedData, boolean addedBySimplification){
 	    if(localPart == null) throw new IllegalStateException(); 
-		SName n = new SName(ns, localPart, recordIndex, documentIndexedData, addedBySimplification, debugWriter);
+		SName n = new SName(ns, localPart, recordIndex, documentIndexedData, addedBySimplification);
 		addToCurrentLevel(n);
 	}
 	public void buildAnyName(int recordIndex, DocumentIndexedData documentIndexedData){
-		SAnyName an = new SAnyName(getContentExceptNameClass(), recordIndex, documentIndexedData, debugWriter);
+		SAnyName an = new SAnyName(getContentExceptNameClass(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(an);
 	}
 	public void buildNsName(String ns, int recordIndex, DocumentIndexedData documentIndexedData){
-		SNsName nn = new SNsName(ns, getContentExceptNameClass(), recordIndex, documentIndexedData, debugWriter);
+		SNsName nn = new SNsName(ns, getContentExceptNameClass(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(nn);
 	}
 	public void buildChoiceNameClass(int recordIndex, DocumentIndexedData documentIndexedData){
-		SChoiceNameClass cnc = new SChoiceNameClass(getContentNameClasses(), recordIndex, documentIndexedData, debugWriter);
+		SChoiceNameClass cnc = new SChoiceNameClass(getContentNameClasses(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(cnc);
 	}	
     public void buildReplacementChoiceNameClass(int recordIndex, DocumentIndexedData documentIndexedData){
         SNameClass[] children = getAllCurrentNameClasses();
-		SChoiceNameClass c = new SChoiceNameClass(children, recordIndex, documentIndexedData, debugWriter);
+		SChoiceNameClass c = new SChoiceNameClass(children, recordIndex, documentIndexedData);
 		clearCurrentNameClasses();
 		addToCurrentLevel(c);
 	}
@@ -359,19 +354,19 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	//END NAME CLASS BUILDING **************************************************
 	//**************************************************************************	
 	public void buildExceptNameClass(int recordIndex, DocumentIndexedData documentIndexedData){
-		SExceptNameClass enc = new SExceptNameClass(getLastContentNameClass(), recordIndex, documentIndexedData, debugWriter);
+		SExceptNameClass enc = new SExceptNameClass(getLastContentNameClass(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(enc);
 	}
 	public void buildExceptPattern(int recordIndex, DocumentIndexedData documentIndexedData){
-		SExceptPattern ep = new SExceptPattern(getLastContentPattern(), recordIndex, documentIndexedData, debugWriter);
+		SExceptPattern ep = new SExceptPattern(getLastContentPattern(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(ep);
 	}
 	
 	
 	public void buildDummy(int recordIndex, DocumentIndexedData documentIndexedData){
-		SDummy d = new SDummy(getContentPatterns(), recordIndex, documentIndexedData, debugWriter);
+		SDummy d = new SDummy(getContentPatterns(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(d);
 	}		

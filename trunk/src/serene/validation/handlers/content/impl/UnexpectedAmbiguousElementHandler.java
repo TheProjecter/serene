@@ -26,13 +26,11 @@ import serene.validation.handlers.content.ElementEventHandler;
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import sereneWrite.MessageWriter;
-
 class UnexpectedAmbiguousElementHandler extends ErrorEEH{
 	//String qName;
 	SimplifiedComponent[] elements;
-	UnexpectedAmbiguousElementHandler(MessageWriter debugWriter){
-		super(debugWriter);	
+	UnexpectedAmbiguousElementHandler(){
+		super();	
 	}		
 	
 	void init(List<SimplifiedComponent> elements, ElementValidationHandler parent){

@@ -24,17 +24,11 @@ import serene.util.IntList;
 import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SRef;
 
-import sereneWrite.MessageWriter;
-
 public class RecursionModel{
 	Set<SPattern> recursiveReferences;
 	IntList recursiveDefinitionIndexes;
 	
-	MessageWriter messageWriter;
-	
-	public RecursionModel(MessageWriter messageWriter){
-		this.messageWriter = messageWriter;
-		
+	public RecursionModel(){
 		recursiveReferences = new HashSet<SPattern>();
 		recursiveDefinitionIndexes = new IntList();
 	}

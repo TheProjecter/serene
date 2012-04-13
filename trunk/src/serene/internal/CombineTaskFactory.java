@@ -16,14 +16,12 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class CombineTaskFactory extends RNGParseAttributeTaskFactory{
-	public CombineTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	public CombineTaskFactory(){
+		super();
 	}
 	
 	public CombineTask getTask(){	
-		return new CombineTask(debugWriter);
+		return new CombineTask();
 	}
 }

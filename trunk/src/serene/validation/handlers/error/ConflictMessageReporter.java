@@ -28,8 +28,6 @@ import serene.validation.schema.active.components.AElement;
 
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 public class ConflictMessageReporter extends AbstractMessageReporter{
     
     MessageReporter commonMessages; // It can be only one because it is about this context.
@@ -63,9 +61,8 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
                                     int candidatesCount,
                                     BitSet disqualified,
                                     MessageReporter[] candidateMessages,
-                                    ErrorDispatcher errorDispatcher,                                    
-                                    MessageWriter debugWriter){
-        super(debugWriter);
+                                    ErrorDispatcher errorDispatcher){
+        super();
         
         this.parent = parent;
         this.reportingContextType = reportingContextType;
@@ -118,8 +115,7 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
                                     candidatesCount,
                                     disqualified,
                                     candidateMessages,
-                                    errorDispatcher,                                    
-                                    debugWriter);
+                                    errorDispatcher);
     }
     
     public void setDiscarded(boolean isDiscarded){

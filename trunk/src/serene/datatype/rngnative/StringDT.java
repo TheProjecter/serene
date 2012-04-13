@@ -21,8 +21,6 @@ import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 import org.relaxng.datatype.DatatypeStreamingValidator;
 
-import sereneWrite.MessageWriter;
-
 class StringDT implements Datatype{
 	public boolean isValid(String str, ValidationContext vc) {
 		return true;

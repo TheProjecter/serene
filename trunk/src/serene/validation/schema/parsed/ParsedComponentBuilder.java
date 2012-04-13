@@ -25,16 +25,11 @@ import serene.validation.schema.parsed.util.Level;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
-
-
 public class ParsedComponentBuilder implements ComponentBuilder{	
 	
 	Level level;
 	//for debug only
-	Level topLevel;	
-	MessageWriter debugWriter;
+	Level topLevel;
 	
 	int xmlBaseRecordIndex;
 	int nsRecordIndex;
@@ -48,9 +43,8 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 	DocumentIndexedData schemaDocumentIndexedData;
 		
 	
-	public ParsedComponentBuilder(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		level = Level.getTopInstance(debugWriter);
+	public ParsedComponentBuilder(){
+		level = Level.getTopInstance();
 		topLevel = level;
 		
 		
@@ -169,8 +163,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                                        datatypeLibraryRecordIndex,		                                                        
 		                                                        getContentParsedComponents(), 
 		                                                        recordIndex,
-		                                                        schemaDocumentIndexedData,
-		                                                        debugWriter);
+		                                                        schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(ewnc);
@@ -186,8 +179,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
                                                                 nameRecordIndex,		                                                        
 		                                                        getContentParsedComponents(), 
 		                                                        recordIndex,
-		                                                        schemaDocumentIndexedData,
-		                                                        debugWriter);
+		                                                        schemaDocumentIndexedData);
 		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		clearContent();
@@ -204,8 +196,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                                        defaultValueRecordIndex,
 		                                                        getContentParsedComponents(), 
 		                                                        recordIndex,
-		                                                        schemaDocumentIndexedData,
-		                                                        debugWriter);
+		                                                        schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(awnc);
@@ -222,8 +213,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                                        defaultValueRecordIndex,
 		                                                        getContentParsedComponents(), 
 		                                                        recordIndex,
-		                                                        schemaDocumentIndexedData,
-		                                                        debugWriter);
+		                                                        schemaDocumentIndexedData);
 		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		clearContent();
@@ -239,8 +229,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                        datatypeLibraryRecordIndex, 
 		                        getContentParsedComponents(), 
 		                        recordIndex,
-                                schemaDocumentIndexedData,
-                                debugWriter);
+                                schemaDocumentIndexedData);
         resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(g);
@@ -255,8 +244,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                            datatypeLibraryRecordIndex, 
 		                            getContentParsedComponents(), 
 		                            recordIndex,
-		                            schemaDocumentIndexedData, 
-		                            debugWriter);
+		                            schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(i);
@@ -271,8 +259,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                            datatypeLibraryRecordIndex, 
 		                            getContentParsedComponents(), 
 		                            recordIndex,
-                                    schemaDocumentIndexedData,
-                                    debugWriter);
+                                    schemaDocumentIndexedData);
         resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(cp);
@@ -287,8 +274,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                datatypeLibraryRecordIndex, 
 		                                getContentParsedComponents(), 
 		                                recordIndex,
-		                                schemaDocumentIndexedData, 
-		                                debugWriter);
+		                                schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(o);
@@ -303,8 +289,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                    datatypeLibraryRecordIndex, 
 		                                    getContentParsedComponents(), 
 		                                    recordIndex,
-		                                    schemaDocumentIndexedData, 
-		                                    debugWriter);
+		                                    schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(zom);
@@ -319,8 +304,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                    datatypeLibraryRecordIndex, 
 		                                    getContentParsedComponents(), 
 		                                    recordIndex,
-		                                    schemaDocumentIndexedData,
-		                                    debugWriter);
+		                                    schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(oom);
@@ -335,8 +319,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
                                                 datatypeLibraryRecordIndex, 
                                                 getContentParsedComponents(), 
                                                 recordIndex,
-                                                schemaDocumentIndexedData, 
-                                                debugWriter);
+                                                schemaDocumentIndexedData);
         resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(lp);
@@ -351,8 +334,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                        datatypeLibraryRecordIndex, 
 		                        getContentParsedComponents(), 
 		                        recordIndex,
-		                        schemaDocumentIndexedData, 
-		                        debugWriter);
+		                        schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(m);
@@ -368,8 +350,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                        nameRecordIndex, 
 		                        getContentParsedComponents(), 
 		                        recordIndex,
-		                        schemaDocumentIndexedData, 
-		                        debugWriter);
+		                        schemaDocumentIndexedData);
 		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		addToCurrentLevel(r);
@@ -385,8 +366,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                nameRecordIndex, 
 		                                getContentParsedComponents(), 
 		                                recordIndex,
-		                                schemaDocumentIndexedData,
-		                                debugWriter);
+		                                schemaDocumentIndexedData);
 		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		addToCurrentLevel(r);
@@ -401,8 +381,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                datatypeLibraryRecordIndex, 
 		                                getContentParsedComponents(), 
 		                                recordIndex,
-		                                schemaDocumentIndexedData,
-		                                debugWriter);
+		                                schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		addToCurrentLevel(e);
 		/*writeLevels();*/
@@ -416,8 +395,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                        datatypeLibraryRecordIndex, 
 		                        getContentParsedComponents(), 
 		                        recordIndex,
-		                        schemaDocumentIndexedData,
-		                        debugWriter);
+		                        schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		addToCurrentLevel(t);
 		/*writeLevels();*/
@@ -433,8 +411,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                            typeRecordIndex,
 		                            characterContent,
 		                            recordIndex,
-		                            schemaDocumentIndexedData,
-		                            debugWriter);
+		                            schemaDocumentIndexedData);
 		if(typeRecordIndex != DocumentIndexedData.NO_RECORD)typeRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		addToCurrentLevel(v);
@@ -450,8 +427,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                            typeRecordIndex, 
 		                            getContentParsedComponents(), 
 		                            recordIndex,
-		                            schemaDocumentIndexedData,
-		                            debugWriter);
+		                            schemaDocumentIndexedData);
 		if(typeRecordIndex != DocumentIndexedData.NO_RECORD)typeRecordIndex = DocumentIndexedData.NO_RECORD;
         resetCommonAttributtes();		
 		clearContent();
@@ -467,8 +443,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                datatypeLibraryRecordIndex, 
 		                                getContentParsedComponents(), 
 		                                recordIndex,
-		                                schemaDocumentIndexedData,
-		                                debugWriter);
+		                                schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		addToCurrentLevel(na);
 		/*writeLevels();*/
@@ -483,8 +458,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                   hrefRecordIndex, 
 		                                   getContentParsedComponents(), 
 		                                   recordIndex,
-		                                   schemaDocumentIndexedData,
-		                                   debugWriter);
+		                                   schemaDocumentIndexedData);
 		if(hrefRecordIndex != DocumentIndexedData.NO_RECORD)hrefRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		addToCurrentLevel(er);
@@ -499,8 +473,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                    datatypeLibraryRecordIndex, 
 		                                    getContentParsedComponents(), 
 		                                    recordIndex,
-		                                    schemaDocumentIndexedData,
-		                                    debugWriter);
+		                                    schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(g);
@@ -524,8 +497,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                        datatypeLibraryRecordIndex,
 		                        characterContent, 
 		                        recordIndex,
-		                        schemaDocumentIndexedData,
-		                        debugWriter);
+		                        schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		addToCurrentLevel(n);
 		/*writeLevels();*/
@@ -539,8 +511,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                            datatypeLibraryRecordIndex,
 		                            getContentParsedComponents(), 
 		                            recordIndex,
-                                    schemaDocumentIndexedData,
-                                    debugWriter);
+                                    schemaDocumentIndexedData);
         resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(an);
@@ -555,8 +526,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                datatypeLibraryRecordIndex,
 		                                getContentParsedComponents(), 
 		                                recordIndex,
-                                        schemaDocumentIndexedData,
-                                        debugWriter);
+                                        schemaDocumentIndexedData);
         resetCommonAttributtes();		
 		clearContent();
 		addToCurrentLevel(nn);
@@ -571,8 +541,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                                datatypeLibraryRecordIndex,
 		                                                getContentParsedComponents(), 
 		                                                recordIndex,
-		                                                schemaDocumentIndexedData, 
-		                                                debugWriter);
+		                                                schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(cnc);
@@ -597,8 +566,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                            combineRecordIndex,
 		                            getContentParsedComponents(), 
 		                            recordIndex,
-		                            schemaDocumentIndexedData,
-		                            debugWriter);
+		                            schemaDocumentIndexedData);
 		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
 		if(combineRecordIndex != DocumentIndexedData.NO_RECORD)combineRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
@@ -616,8 +584,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                            combineRecordIndex, 
 		                            getContentParsedComponents(),
 		                            recordIndex,
-		                            schemaDocumentIndexedData,
-		                            debugWriter);
+		                            schemaDocumentIndexedData);
 		if(combineRecordIndex != DocumentIndexedData.NO_RECORD)combineRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		clearContent();
@@ -637,8 +604,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                                    datatypeLibraryRecordIndex, 
 		                                                    getContentParsedComponents(), 
 		                                                    recordIndex,
-		                                                    schemaDocumentIndexedData,
-		                                                    debugWriter);
+		                                                    schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(dic);
@@ -653,8 +619,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                                        datatypeLibraryRecordIndex,
 		                                                        getContentParsedComponents(), 
 		                                                        recordIndex,
-		                                                        schemaDocumentIndexedData,
-		                                                        debugWriter);
+		                                                        schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(dgc);
@@ -672,8 +637,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                            nameRecordIndex,
 		                            characterContent, 
 		                            recordIndex,
-		                            schemaDocumentIndexedData,
-		                            debugWriter);
+		                            schemaDocumentIndexedData);
 		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		addToCurrentLevel(p);
@@ -689,8 +653,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                                datatypeLibraryRecordIndex,
 		                                                getContentParsedComponents(), 
 		                                                recordIndex,
-		                                                schemaDocumentIndexedData,
-		                                                debugWriter);
+		                                                schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(enc);
@@ -705,8 +668,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                            datatypeLibraryRecordIndex, 
 		                                            getContentParsedComponents(), 
 		                                            recordIndex,
-		                                            schemaDocumentIndexedData,
-		                                            debugWriter);
+		                                            schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(ep);
@@ -723,8 +685,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                hrefRecordIndex,
 		                                getContentParsedComponents(), 
 		                                recordIndex,
-		                                schemaDocumentIndexedData,
-		                                debugWriter);
+		                                schemaDocumentIndexedData);
 		if(hrefRecordIndex != DocumentIndexedData.NO_RECORD)hrefRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		clearContent();
@@ -741,8 +702,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                        datatypeLibraryRecordIndex, 
 		                        getContentParsedComponents(), 
 		                        recordIndex,
-		                        schemaDocumentIndexedData,
-		                        debugWriter);
+		                        schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(dd);
@@ -756,8 +716,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                                xmlBaseRecordIndex, 
 		                                                getContentParsedComponents(), 
 		                                                recordIndex,
-		                                                schemaDocumentIndexedData,
-		                                                debugWriter);
+		                                                schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(fc);

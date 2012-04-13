@@ -22,7 +22,6 @@ import java.util.Map;
 import org.xml.sax.SAXException;
 
 import serene.bind.util.DocumentIndexedData;
-import sereneWrite.MessageWriter;
 
 public class Include extends ParsedComponent implements GrammarContent{
 	int hrefRecordIndex;
@@ -34,9 +33,8 @@ public class Include extends ParsedComponent implements GrammarContent{
 	            int href, 
 	            ParsedComponent[] children, 
 	            int recordIndex,
-	            DocumentIndexedData documentIndexedData,
-	            MessageWriter debugWriter){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData, debugWriter);
+	            DocumentIndexedData documentIndexedData){
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 		this.hrefRecordIndex = href;
 		asParent(children);
 	}

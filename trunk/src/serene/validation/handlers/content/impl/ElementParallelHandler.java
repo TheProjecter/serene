@@ -35,8 +35,6 @@ import serene.validation.handlers.error.CandidatesConflictErrorHandler;
 import serene.validation.handlers.error.ContextErrorHandlerManager;
 import serene.validation.handlers.error.ContextErrorHandler;
 
-import sereneWrite.MessageWriter;
-
 class ElementParallelHandler extends CandidatesEEH{	
 	ExternalConflictHandler candidatesConflictHandler;
 	
@@ -48,8 +46,8 @@ class ElementParallelHandler extends CandidatesEEH{
 	
 	CandidatesEEH parent;
 	
-	ElementParallelHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	ElementParallelHandler(){
+		super();
 		individualHandlers = new ArrayList<ComparableEEH>();
         initStates();
 	}

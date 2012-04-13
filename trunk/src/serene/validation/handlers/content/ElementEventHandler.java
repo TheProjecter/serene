@@ -23,9 +23,6 @@ import org.xml.sax.Attributes;
 import serene.validation.handlers.content.util.CharacterContentDescriptor;
 import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
-import sereneWrite.MessageWriter;
-
-
 public interface ElementEventHandler extends MarkupEventHandler{
 	ElementEventHandler getParentHandler();	
 	ElementEventHandler handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException;

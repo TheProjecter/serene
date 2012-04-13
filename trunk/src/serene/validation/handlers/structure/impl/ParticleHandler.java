@@ -34,8 +34,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
-import sereneWrite.MessageWriter;
-
 public class ParticleHandler implements CardinalityHandler, Reusable{
  
 	ParticleHandler original;
@@ -73,11 +71,7 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	
 	StackConflictsHandler stackConflictsHandler;
 	
-	MessageWriter debugWriter;	
-	
-	public ParticleHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-			
+	public ParticleHandler(){			
 		stateId = NO_OCCURRENCE;
 		occurs =0;
 		

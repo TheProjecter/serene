@@ -20,7 +20,6 @@ import java.util.Map;
 import org.xml.sax.SAXException;
 
 import serene.bind.util.DocumentIndexedData;
-import sereneWrite.MessageWriter;
 
 public class ForeignComponent extends ParsedComponent{
     
@@ -29,9 +28,8 @@ public class ForeignComponent extends ParsedComponent{
                     int xmlBase, 
                     ParsedComponent[] children, 
                     int recordIndex,
-                    DocumentIndexedData documentIndexedData,
-                    MessageWriter debugWriter){    
-		super(/*prefixMapping,*/ xmlBase, DocumentIndexedData.NO_RECORD, DocumentIndexedData.NO_RECORD, recordIndex, documentIndexedData, debugWriter);
+                    DocumentIndexedData documentIndexedData){    
+		super(/*prefixMapping,*/ xmlBase, DocumentIndexedData.NO_RECORD, DocumentIndexedData.NO_RECORD, recordIndex, documentIndexedData);
         asParent(children);
 	}
     

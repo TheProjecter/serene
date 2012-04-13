@@ -26,12 +26,10 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
-import sereneWrite.MessageWriter;
-
 public class GrammarMinimalReduceHandler extends UCMinimalReduceHandler{
 	GrammarMinimalReduceHandler original;	
-	GrammarMinimalReduceHandler(MessageWriter debugWriter){		
-		super(debugWriter);					
+	GrammarMinimalReduceHandler(){		
+		super();					
 	}	
 	
 	void init(AGrammar grammar, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){

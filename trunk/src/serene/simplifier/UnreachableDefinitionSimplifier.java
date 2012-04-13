@@ -33,12 +33,11 @@ import serene.validation.schema.parsed.ParentRef;
 import serene.validation.schema.parsed.Grammar;
 
 import serene.util.IntList;
-import sereneWrite.MessageWriter;
 
 class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
 
-    UnreachableDefinitionSimplifier(DefinitionSimplifierPool pool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		super(pool, errorDispatcher, debugWriter);
+    UnreachableDefinitionSimplifier(DefinitionSimplifierPool pool, ErrorDispatcher errorDispatcher){
+		super(pool, errorDispatcher);
 	}       
 	
 	public void recycle(){

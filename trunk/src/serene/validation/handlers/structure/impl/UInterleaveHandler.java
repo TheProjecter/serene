@@ -25,15 +25,13 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
-import sereneWrite.MessageWriter;
-
 public class UInterleaveHandler extends InterleaveHandler{
 	ContentHandler superSatisfiedContent; 
 	ContentHandler satisfiedNeverReduceContent;
 	
 	UInterleaveHandler original;
-	UInterleaveHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	UInterleaveHandler(){
+		super();
 		satisfiedNeverReduceContent = new SatisfiedNeverReduceContent();
 		superSatisfiedContent = satisfiedContent;		
 	}	

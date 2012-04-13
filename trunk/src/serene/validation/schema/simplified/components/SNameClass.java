@@ -18,18 +18,15 @@ package serene.validation.schema.simplified.components;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 public abstract class SNameClass extends AbstractSimplifiedComponent{	
 		
 	public SNameClass(int recordIndex, 
-			DocumentIndexedData documentIndexedData, 
-			MessageWriter debugWriter){
+			DocumentIndexedData documentIndexedData){
 	    // TODO 
 	    // Consider null the location data, if it is never needed (restrictions 
 	    // control?). Changes should be made in the constructors of the 
 	    // subclasses. 
-		super(recordIndex, documentIndexedData, debugWriter);
+		super(recordIndex, documentIndexedData);
 	}	
 		
 	public String toString(){

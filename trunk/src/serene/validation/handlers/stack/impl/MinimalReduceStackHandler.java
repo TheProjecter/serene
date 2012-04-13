@@ -25,13 +25,11 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.StructureHandler;
 
-import sereneWrite.MessageWriter;
-
 public class MinimalReduceStackHandler extends ContextStackHandler{
 	ActiveModelStackHandlerPool pool;
 	
-	MinimalReduceStackHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	MinimalReduceStackHandler(){
+		super();
 	}		
 	
 	public void recycle(){

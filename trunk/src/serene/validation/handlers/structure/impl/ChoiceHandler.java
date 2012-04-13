@@ -32,8 +32,6 @@ import serene.validation.handlers.conflict.StackConflictsHandler;
 
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
-import sereneWrite.MessageWriter;
-
 // The reductions are done at childSaturated and at change(in the getHandlerForPattern).
 // Choice can never have excessive content. In case too many occurrences of 
 // one of the children happen, then the error will be reported as too many
@@ -43,8 +41,8 @@ public class ChoiceHandler extends UniqueChildPatternHandler{
 	
 	ChoiceHandler original;
 	
-	ChoiceHandler(MessageWriter debugWriter){
-		super(debugWriter);			
+	ChoiceHandler(){
+		super();			
 	}	
 	
 	

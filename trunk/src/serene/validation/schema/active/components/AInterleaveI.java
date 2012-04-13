@@ -21,8 +21,6 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.schema.simplified.components.SInterleave;
 
-import sereneWrite.MessageWriter;
-
 public class AInterleaveI extends AInterleave{
     
 	SInterleave sinterleave;
@@ -30,9 +28,8 @@ public class AInterleaveI extends AInterleave{
 	public AInterleaveI(APattern[] children,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool, 
-				SInterleave sinterleave, 
-				MessageWriter debugWriter){		
-		super(children, stackHandlerPool, ruleHandlerPool, debugWriter);
+				SInterleave sinterleave){		
+		super(children, stackHandlerPool, ruleHandlerPool);
 		this.sinterleave = sinterleave;
 	}	
 	

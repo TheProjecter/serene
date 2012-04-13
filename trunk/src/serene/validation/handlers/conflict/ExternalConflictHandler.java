@@ -25,12 +25,10 @@ import serene.validation.schema.active.components.AElement;
 
 import serene.validation.handlers.content.ElementEventHandler;
 
-import sereneWrite.MessageWriter;
-
 public class ExternalConflictHandler extends ConflictHandler{	
 		
-	public ExternalConflictHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	public ExternalConflictHandler(){
+		super();
 	}
 	
 	public void copyDisqualified(ExternalConflictHandler other){

@@ -23,8 +23,6 @@ import serene.validation.schema.simplified.components.SNameClass;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 import serene.validation.schema.simplified.components.SExceptPattern;
 
-import sereneWrite.MessageWriter;
-
 public abstract class Level{
 		
 	Level child;
@@ -44,11 +42,7 @@ public abstract class Level{
 	int epIndex;
 	int epSize;
 	
-	MessageWriter debugWriter;
-	
-	Level(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		
+	Level(){
 		ptIndex = -1;
 		ptSize = 1;
 		patterns = new SPattern[ptSize];
@@ -62,8 +56,8 @@ public abstract class Level{
 		exceptPatterns = new SExceptPattern[epSize];	
 	}
 	
-	public static Level getTopInstance(MessageWriter debugWriter){
-		return new LevelTop(debugWriter);
+	public static Level getTopInstance(){
+		return new LevelTop();
 	}
 	
 	public abstract boolean isTopLevel();

@@ -22,12 +22,10 @@ import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.parsed.Pattern;
 import serene.validation.schema.parsed.Grammar;
 
-import sereneWrite.MessageWriter;
- 
 public class IncludedParsedModel extends ParsedModel{
 	Grammar grammar;
-	public IncludedParsedModel(DTDMapping dtdMapping, Grammar topPattern, MessageWriter debugWriter){		
-		super(dtdMapping, topPattern, debugWriter);
+	public IncludedParsedModel(DTDMapping dtdMapping, Grammar topPattern){		
+		super(dtdMapping, topPattern);
         this.grammar = topPattern;
 	}
     

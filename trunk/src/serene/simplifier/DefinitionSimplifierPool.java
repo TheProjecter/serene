@@ -17,7 +17,6 @@ limitations under the License.
 package serene.simplifier;
 
 import serene.validation.handlers.error.ErrorDispatcher;
-import sereneWrite.MessageWriter;
 
 class DefinitionSimplifierPool{
 	DefinitionSimplifier[] ds;
@@ -29,10 +28,8 @@ class DefinitionSimplifierPool{
 	int udsSize;
 	
 	ErrorDispatcher errorDispatcher;
-	MessageWriter debugWriter;
 	
-	DefinitionSimplifierPool(ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	DefinitionSimplifierPool(ErrorDispatcher errorDispatcher){
 		this.errorDispatcher = errorDispatcher;
 		
 		dsFree = 0;
@@ -46,7 +43,7 @@ class DefinitionSimplifierPool{
 	
 	DefinitionSimplifier getDefinitionSimplifier(){
 		if(dsFree == 0){
-			return new DefinitionSimplifier(this, errorDispatcher, debugWriter);
+			return new DefinitionSimplifier(this, errorDispatcher);
 		}else{			
 			return ds[--dsFree];
 		}		
@@ -64,7 +61,7 @@ class DefinitionSimplifierPool{
     
     UnreachableDefinitionSimplifier getUnreachableDefinitionSimplifier(){
 		if(udsFree == 0){
-			return new UnreachableDefinitionSimplifier(this, errorDispatcher, debugWriter);
+			return new UnreachableDefinitionSimplifier(this, errorDispatcher);
 		}else{			
 			return uds[--udsFree];
 		}		

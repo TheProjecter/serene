@@ -62,8 +62,6 @@ import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.structure.StructureHandler;
 
-import sereneWrite.MessageWriter;
-
 public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 	
 	ArrayList<CandidateStackHandler> temporary;
@@ -89,20 +87,16 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 
 	InputStackDescriptor inputStackDescriptor;	
 	
-	MessageWriter debugWriter;
-	
-	ConcurrentStackHandlerImpl(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		
+	ConcurrentStackHandlerImpl(){		
 		candidates = new ArrayList<CandidateStackHandler>();
 		temporary = new ArrayList<CandidateStackHandler>();
 		
 		resolvers = new ArrayList<InternalConflictResolver>();
 		
-		contextConflictsDescriptor = new ContextConflictsDescriptor(debugWriter);
+		contextConflictsDescriptor = new ContextConflictsDescriptor();
 		
-		stackRedundanceHandler = new StackRedundanceHandler(debugWriter);
-		conflictPathMaker = new ConflictPathMaker(debugWriter);
+		stackRedundanceHandler = new StackRedundanceHandler();
+		conflictPathMaker = new ConflictPathMaker();
 	}
 	
 	public void recycle(){		

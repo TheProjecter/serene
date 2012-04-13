@@ -46,8 +46,6 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.Reusable;
 
-import sereneWrite.MessageWriter;
-
 public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler{
 
 	RuleHandlerPool pool;
@@ -242,10 +240,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		
 	boolean full;
 	
-	MessageWriter debugWriter;
-	
-	public ActiveModelRuleHandlerPool(RuleHandlerPool pool, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	public ActiveModelRuleHandlerPool(RuleHandlerPool pool){
 		this.pool = pool;		
 		
 		particleHandlerMaxSize = 100;        
@@ -684,7 +679,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	    particleHandlerRequested++;
 		if(particleHandlerFree == 0){
 			particleHandlerCreated++;			
-			ParticleHandler ph = new ParticleHandler(debugWriter);
+			ParticleHandler ph = new ParticleHandler();
 			ph.init(activeInputDescriptor, this);
 			ph.init(childEventHandler, p, errorCatcher);
 			return ph;
@@ -713,7 +708,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	    choiceHandlerRequested++;
 		if(choiceHandlerFree == 0){
 			choiceHandlerCreated++;
-			ChoiceHandler ch = new ChoiceHandler(debugWriter);
+			ChoiceHandler ch = new ChoiceHandler();
 			ch.init(this, activeInputDescriptor, inputStackDescriptor);
 			ch.init(cp, errorCatcher, parent, stackHandler);
 			return ch;			
@@ -740,7 +735,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	    groupHandlerRequested++;
 		if(groupHandlerFree == 0){
 			groupHandlerCreated++;
-			GroupHandler gh = new GroupHandler(debugWriter);
+			GroupHandler gh = new GroupHandler();
 			gh.init(this, activeInputDescriptor, inputStackDescriptor);			
 			gh.init(g, errorCatcher, parent, stackHandler);
 			return gh;			
@@ -766,7 +761,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public RefHandler getStructureValidationHandler(ARef r, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(refHandlerFree == 0){
 			// refHandlerCreated++;
-			RefHandler pih = new RefHandler(debugWriter);
+			RefHandler pih = new RefHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(r, errorCatcher, parent, stackHandler);
 			return pih;			
@@ -791,7 +786,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public GrammarHandler getStructureValidationHandler(AGrammar g, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(grammarHandlerFree == 0){
 			// grammarHandlerCreated++;
-			GrammarHandler pih = new GrammarHandler(debugWriter);
+			GrammarHandler pih = new GrammarHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(g, errorCatcher, parent, stackHandler);
 			return pih;			
@@ -816,7 +811,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public UInterleaveHandler getUInterleaveHandler(AInterleave i, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(uinterleaveHandlerFree == 0){
 			// uinterleaveHandlerCreated++;
-			UInterleaveHandler ih = new UInterleaveHandler(debugWriter);
+			UInterleaveHandler ih = new UInterleaveHandler();
 			ih.init(this, activeInputDescriptor, inputStackDescriptor);
 			ih.init(i, errorCatcher, parent, stackHandler);
 			return ih;			
@@ -841,7 +836,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public MInterleaveHandler getMInterleaveHandler(AInterleave i, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(minterleaveHandlerFree == 0){
 			// minterleaveHandlerCreated++;
-			MInterleaveHandler ih = new MInterleaveHandler(debugWriter);
+			MInterleaveHandler ih = new MInterleaveHandler();
 			ih.init(this, activeInputDescriptor, inputStackDescriptor);
 			ih.init(i, errorCatcher, parent, stackHandler, this);
 			return ih;			
@@ -866,7 +861,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public SInterleaveHandler getSInterleaveHandler(AInterleave i, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler, MInterleaveHandler primaryHandler){				
 		if(sinterleaveHandlerFree == 0){
 			// sinterleaveHandlerCreated++;
-			SInterleaveHandler ih = new SInterleaveHandler(debugWriter);
+			SInterleaveHandler ih = new SInterleaveHandler();
 			ih.init(this, activeInputDescriptor, inputStackDescriptor);
 			ih.init(i, errorCatcher, parent, stackHandler, primaryHandler);
 			return ih;			
@@ -893,7 +888,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	    elementHandlerRequested++;
 		if(elementHandlerFree == 0){
 			elementHandlerCreated++;
-			ElementHandler eh = new ElementHandler(debugWriter);
+			ElementHandler eh = new ElementHandler();
 			eh.init(this, activeInputDescriptor, inputStackDescriptor);
 			eh.init(e, errorCatcher, stackHandler);
 			return eh;			
@@ -919,7 +914,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public AttributeHandler getStructureValidationHandler(AAttribute a, ErrorCatcher errorCatcher, StackHandler stackHandler){				
 		if(attributeHandlerFree == 0){
 			// attributeHandlerCreated++;
-			AttributeHandler ah = new AttributeHandler(debugWriter);
+			AttributeHandler ah = new AttributeHandler();
 			ah.init(this, activeInputDescriptor, inputStackDescriptor);
 			ah.init(a, errorCatcher, stackHandler);
 			return ah;			
@@ -944,7 +939,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public ExceptPatternHandler getStructureValidationHandler(AExceptPattern a, ErrorCatcher errorCatcher, StackHandler stackHandler){				
 		if(exceptPatternHandlerFree == 0){
 			// exceptPatternHandlerCreated++;
-			ExceptPatternHandler ah = new ExceptPatternHandler(debugWriter);
+			ExceptPatternHandler ah = new ExceptPatternHandler();
 			ah.init(this, activeInputDescriptor, inputStackDescriptor);
 			ah.init(a, errorCatcher, stackHandler);
 			return ah;			
@@ -969,7 +964,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public ListPatternHandler getStructureValidationHandler(AListPattern a, ErrorCatcher errorCatcher, StackHandler stackHandler){				
 		if(listPatternHandlerFree == 0){
 			// listPatternHandlerCreated++;
-			ListPatternHandler ah = new ListPatternHandler(debugWriter);
+			ListPatternHandler ah = new ListPatternHandler();
 			ah.init(this, activeInputDescriptor, inputStackDescriptor);
 			ah.init(a, errorCatcher, stackHandler);
 			return ah;			
@@ -994,7 +989,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public GroupDoubleHandler getStructureDoubleHandler(AGroup pattern, ErrorCatcher errorCatcher,  StructureHandler parent, StackHandler stackHandler, ActiveModelStackHandlerPool stackHandlerPool){				
 		if(groupDoubleHandlerFree == 0){
 			// groupDoubleHandlerCreated++;
-			GroupDoubleHandler sih = new GroupDoubleHandler(debugWriter);
+			GroupDoubleHandler sih = new GroupDoubleHandler();
 			sih.init(this, activeInputDescriptor, inputStackDescriptor);
 			sih.init(pattern, errorCatcher, parent, stackHandler, stackHandlerPool);
 			return sih;			
@@ -1019,7 +1014,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public InterleaveDoubleHandler getStructureDoubleHandler(AInterleave pattern, ErrorCatcher errorCatcher,  StructureHandler parent, StackHandler stackHandler, ActiveModelStackHandlerPool stackHandlerPool){				
 		if(interleaveDoubleHandlerFree == 0){
 			// interleaveDoubleHandlerCreated++;
-			InterleaveDoubleHandler sih = new InterleaveDoubleHandler(debugWriter);
+			InterleaveDoubleHandler sih = new InterleaveDoubleHandler();
 			sih.init(this, activeInputDescriptor, inputStackDescriptor);
 			sih.init(pattern, errorCatcher, parent, stackHandler, stackHandlerPool);
 			return sih;			
@@ -1044,7 +1039,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public GroupMinimalReduceCountHandler getMinimalReduceCountHandler(IntList reduceCountList, IntList startedCountList, AGroup g, ErrorCatcher errorCatcher, MinimalReduceStackHandler stackHandler){				
 		if(groupMinimalReduceCountHandlerFree == 0){
 			// groupMinimalReduceCountHandlerCreated++;
-			GroupMinimalReduceCountHandler pih = new GroupMinimalReduceCountHandler(debugWriter);
+			GroupMinimalReduceCountHandler pih = new GroupMinimalReduceCountHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(reduceCountList, startedCountList, g, errorCatcher, stackHandler);
 			return pih;			
@@ -1069,7 +1064,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public GroupMaximalReduceCountHandler getMaximalReduceCountHandler(IntList reduceCountList, IntList startedCountList, AGroup g, ErrorCatcher errorCatcher, MaximalReduceStackHandler stackHandler){				
 		if(groupMaximalReduceCountHandlerFree == 0){
 			// groupMaximalReduceCountHandlerCreated++;
-			GroupMaximalReduceCountHandler pih = new GroupMaximalReduceCountHandler(debugWriter);
+			GroupMaximalReduceCountHandler pih = new GroupMaximalReduceCountHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(reduceCountList, startedCountList, g, errorCatcher, stackHandler);
 			return pih;			
@@ -1094,7 +1089,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public InterleaveMinimalReduceCountHandler getMinimalReduceCountHandler(IntList reduceCountList, AInterleave i, ErrorCatcher errorCatcher, MinimalReduceStackHandler stackHandler){				
 		if(interleaveMinimalReduceCountHandlerFree == 0){
 			// interleaveMinimalReduceCountHandlerCreated++;
-			InterleaveMinimalReduceCountHandler pih = new InterleaveMinimalReduceCountHandler(debugWriter);
+			InterleaveMinimalReduceCountHandler pih = new InterleaveMinimalReduceCountHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(reduceCountList, i, errorCatcher, stackHandler);
 			return pih;			
@@ -1119,7 +1114,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public InterleaveMaximalReduceCountHandler getMaximalReduceCountHandler(IntList reduceCountList, AInterleave i, ErrorCatcher errorCatcher, MaximalReduceStackHandler stackHandler){				
 		if(interleaveMaximalReduceCountHandlerFree == 0){
 			// interleaveMaximalReduceCountHandlerCreated++;
-			InterleaveMaximalReduceCountHandler pih = new InterleaveMaximalReduceCountHandler(debugWriter);
+			InterleaveMaximalReduceCountHandler pih = new InterleaveMaximalReduceCountHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(reduceCountList, i, errorCatcher, stackHandler);
 			return pih;			
@@ -1145,7 +1140,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public GrammarMinimalReduceHandler getMinimalReduceHandler(AGrammar g, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(grammarMinimalReduceHandlerFree == 0){
 			// grammarMinimalReduceHandlerCreated++;
-			GrammarMinimalReduceHandler pih = new GrammarMinimalReduceHandler(debugWriter);
+			GrammarMinimalReduceHandler pih = new GrammarMinimalReduceHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(g, errorCatcher, parent, stackHandler);
 			return pih;			
@@ -1170,7 +1165,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public GrammarMaximalReduceHandler getMaximalReduceHandler(AGrammar g, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(grammarMaximalReduceHandlerFree == 0){
 			// grammarMaximalReduceHandlerCreated++;
-			GrammarMaximalReduceHandler pih = new GrammarMaximalReduceHandler(debugWriter);
+			GrammarMaximalReduceHandler pih = new GrammarMaximalReduceHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(g, errorCatcher, parent, stackHandler);
 			return pih;			
@@ -1195,7 +1190,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public RefMinimalReduceHandler getMinimalReduceHandler(ARef r, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(refMinimalReduceHandlerFree == 0){
 			// refMinimalReduceHandlerCreated++;
-			RefMinimalReduceHandler rmrh = new RefMinimalReduceHandler(debugWriter);
+			RefMinimalReduceHandler rmrh = new RefMinimalReduceHandler();
 			rmrh.init(this, activeInputDescriptor, inputStackDescriptor);
 			rmrh.init(r, errorCatcher, parent, stackHandler);
 			return rmrh;			
@@ -1220,7 +1215,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public RefMaximalReduceHandler getMaximalReduceHandler(ARef r, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(refMaximalReduceHandlerFree == 0){
 			// refMaximalReduceHandlerCreated++;
-			RefMaximalReduceHandler pih = new RefMaximalReduceHandler(debugWriter);
+			RefMaximalReduceHandler pih = new RefMaximalReduceHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(r, errorCatcher, parent, stackHandler);
 			return pih;			
@@ -1245,7 +1240,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public ChoiceMinimalReduceHandler getMinimalReduceHandler(AChoicePattern c, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(choiceMinimalReduceHandlerFree == 0){
 			// choiceMinimalReduceHandlerCreated++;
-			ChoiceMinimalReduceHandler pih = new ChoiceMinimalReduceHandler(debugWriter);
+			ChoiceMinimalReduceHandler pih = new ChoiceMinimalReduceHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(c, errorCatcher, parent, stackHandler);
 			return pih;			
@@ -1270,7 +1265,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public ChoiceMaximalReduceHandler getMaximalReduceHandler(AChoicePattern c, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(choiceMaximalReduceHandlerFree == 0){
 			// choiceMaximalReduceHandlerCreated++;
-			ChoiceMaximalReduceHandler pih = new ChoiceMaximalReduceHandler(debugWriter);
+			ChoiceMaximalReduceHandler pih = new ChoiceMaximalReduceHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(c, errorCatcher, parent, stackHandler);
 			return pih;			
@@ -1295,7 +1290,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public GroupMinimalReduceHandler getMinimalReduceHandler(AGroup g, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(groupMinimalReduceHandlerFree == 0){
 			// groupMinimalReduceHandlerCreated++;
-			GroupMinimalReduceHandler pih = new GroupMinimalReduceHandler(debugWriter);
+			GroupMinimalReduceHandler pih = new GroupMinimalReduceHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(g, errorCatcher, parent, stackHandler);
 			return pih;			
@@ -1320,7 +1315,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public GroupMaximalReduceHandler getMaximalReduceHandler(AGroup g, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(groupMaximalReduceHandlerFree == 0){
 			// groupMaximalReduceHandlerCreated++;
-			GroupMaximalReduceHandler pih = new GroupMaximalReduceHandler(debugWriter);
+			GroupMaximalReduceHandler pih = new GroupMaximalReduceHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(g, errorCatcher, parent, stackHandler);
 			return pih;			
@@ -1345,7 +1340,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public InterleaveMinimalReduceHandler getMinimalReduceHandler(AInterleave i, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(interleaveMinimalReduceHandlerFree == 0){
 			// interleaveMinimalReduceHandlerCreated++;
-			InterleaveMinimalReduceHandler pih = new InterleaveMinimalReduceHandler(debugWriter);
+			InterleaveMinimalReduceHandler pih = new InterleaveMinimalReduceHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(i, errorCatcher, parent, stackHandler);
 			return pih;			
@@ -1370,7 +1365,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	public InterleaveMaximalReduceHandler getMaximalReduceHandler(AInterleave i, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){				
 		if(interleaveMaximalReduceHandlerFree == 0){
 			// interleaveMaximalReduceHandlerCreated++;
-			InterleaveMaximalReduceHandler pih = new InterleaveMaximalReduceHandler(debugWriter);
+			InterleaveMaximalReduceHandler pih = new InterleaveMaximalReduceHandler();
 			pih.init(this, activeInputDescriptor, inputStackDescriptor);
 			pih.init(i, errorCatcher, parent, stackHandler);
 			return pih;			

@@ -21,13 +21,10 @@ import java.util.Arrays;
 import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SNameClass;
 
-import sereneWrite.MessageWriter;
-
 class LevelBottom extends Level{
 	Level parent;	
-	LevelBottom(Level parent,
-		 	MessageWriter debugWriter){		
-		super(debugWriter);
+	LevelBottom(Level parent){		
+		super();
 		this.parent = parent;		
 	}
 	
@@ -51,8 +48,7 @@ class LevelBottom extends Level{
 													patterns,
 													exceptNameClass,
 													exceptPatterns,
-													parent,
-													debugWriter);
+													parent);
 		parent.setChild(intermediary);
 		return intermediary.getLevelDown();
 	}

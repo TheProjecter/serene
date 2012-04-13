@@ -36,13 +36,11 @@ import serene.bind.util.Queue;
 import serene.bind.BindingModel;
 import serene.bind.AttributeTask;
 
-import sereneWrite.MessageWriter;
-
 
 public class BoundUnresolvedAttributeConflictResolver extends BoundAttributeConflictResolver{
 	    
-	public BoundUnresolvedAttributeConflictResolver(MessageWriter debugWriter){
-		super(debugWriter);
+	public BoundUnresolvedAttributeConflictResolver(){
+		super();
 	}
 	
 	public void recycle(){

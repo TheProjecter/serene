@@ -44,8 +44,6 @@ import serene.validation.jaxp.util.AttributeWrapper;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
-import sereneWrite.MessageWriter;
-
 public class AttributeDefaultValueHandler{
     final String defaultAttributeType = "CDATA";
     
@@ -55,11 +53,9 @@ public class AttributeDefaultValueHandler{
     XMLEventFactory xmlEventFactory; 
     
     ErrorDispatcher errorDispatcher;
-    MessageWriter debugWriter;
     
-    public AttributeDefaultValueHandler(AttributeDefaultValueModel attributeDefaultValueModel, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
-        this.errorDispatcher = errorDispatcher;;
+    public AttributeDefaultValueHandler(AttributeDefaultValueModel attributeDefaultValueModel, ErrorDispatcher errorDispatcher){
+        this.errorDispatcher = errorDispatcher;
         this.attributeDefaultValueModel = attributeDefaultValueModel;
         matchedAttributes = new BitSet();
     }
@@ -249,7 +245,7 @@ public class AttributeDefaultValueHandler{
                     parentElement.setAttributeNodeNS(defaultAttrImpl);
                 }else{
                     try{
-                        defaultAttribute = new AttrWrapper(defaultAttribute, false, debugWriter);
+                        defaultAttribute = new AttrWrapper(defaultAttribute, false);
                     }catch(Exception e){
                         errorDispatcher.warning(new SAXParseException("DTD compatibility warning. In the context of element <"+parentElement.getTagName()+"> for the attribute "+getQName(dvNsURI, dvLocalName, infosetModificationContext)+" added by validator the Specified parameter could not be set to false. "+e.getMessage(), null));
                     }
@@ -348,7 +344,7 @@ public class AttributeDefaultValueHandler{
                                                                     dvNsURI,
                                                                     dvLocalName,
                                                                     defaultValueInfo.getValue());
-                defaultAttribute = new AttributeWrapper(defaultAttribute, null, false, debugWriter);
+                defaultAttribute = new AttributeWrapper(defaultAttribute, null, false);
                 attributeEvents.add(defaultAttribute);
             }
         }    

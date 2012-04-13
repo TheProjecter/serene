@@ -28,25 +28,19 @@ import javax.xml.stream.XMLStreamException;
 
 import javax.xml.namespace.QName;
 
-import sereneWrite.MessageWriter;
-
 public class AttributeWrapper implements Attribute{
     Attribute attribute;
     String idType; 
     boolean isSpecified;
     boolean wrapsSpecified;
     
-    MessageWriter debugWriter;
-    
-    public AttributeWrapper(Attribute attribute, String IdType, MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+    public AttributeWrapper(Attribute attribute, String IdType){
         this.attribute = attribute;
         this.idType = idType;
         wrapsSpecified = false;
     }
         
-    public AttributeWrapper(Attribute attribute, String IdType, boolean isSpecified, MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+    public AttributeWrapper(Attribute attribute, String IdType, boolean isSpecified){
         this.attribute = attribute;
         this.idType = idType;
         this.isSpecified = isSpecified;

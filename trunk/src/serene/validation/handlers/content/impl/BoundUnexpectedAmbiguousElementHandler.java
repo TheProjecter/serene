@@ -28,15 +28,13 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import sereneWrite.MessageWriter;
-
 class BoundUnexpectedAmbiguousElementHandler extends UnexpectedAmbiguousElementHandler implements BoundElementHandler{
     Queue queue;
     int queueStartEntry;
     int queueEndEntry;
     
-    BoundUnexpectedAmbiguousElementHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    BoundUnexpectedAmbiguousElementHandler(){
+        super();
     }
     
     void init(List<SimplifiedComponent> elements, ElementValidationHandler parent, Queue queue){

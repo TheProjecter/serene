@@ -31,23 +31,18 @@ import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.util.IntList;
 
-import sereneWrite.MessageWriter;
-
 class CompetitionSimetryController{
     ArrayList<ElementRecord> records;
     OverlapController overlapController;
     
     ErrorDispatcher errorDispatcher;
     
-    MessageWriter debugWriter;
-    
     boolean restrictToFileName;
     
-    CompetitionSimetryController(ControllerPool controllerPool, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+    CompetitionSimetryController(ControllerPool controllerPool, ErrorDispatcher errorDispatcher){
         this.errorDispatcher = errorDispatcher;
         records = new ArrayList<ElementRecord>();
-        overlapController = new OverlapController(controllerPool, debugWriter);
+        overlapController = new OverlapController(controllerPool);
     }
     
     public void setRestrictToFileName(boolean value){

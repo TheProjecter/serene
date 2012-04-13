@@ -17,24 +17,19 @@ limitations under the License.
 
 package serene.util;
 
-import sereneWrite.MessageWriter;
-
 public class NameLocationInfo extends NameInfo{
     String publicId;
     String systemId;
     int lineNumber;
     int columnNumber;
-    MessageWriter debugWriter;
-    
     public NameLocationInfo(String namespaceURI,
                         String localName,
                         String qName,
                         String publicId,
                         String systemId,
                         int lineNumber,
-                        int columnNumber,
-                        MessageWriter debugWriter){
-        super(namespaceURI, localName, qName, debugWriter);        
+                        int columnNumber){
+        super(namespaceURI, localName, qName);        
         this.publicId = publicId;
         this.systemId = systemId;
         this.lineNumber = lineNumber;

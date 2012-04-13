@@ -23,18 +23,12 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public abstract class UniqueChildAPattern extends AbstractAPattern{
 	APattern child;
-	/*UniqueChildAPattern(ActiveModelRuleHandlerPool ruleHandlerPool, MessageWriter debugWriter){
-		super(ruleHandlerPool, debugWriter);
-	}*/	
 	
 	public UniqueChildAPattern(APattern child,
-				ActiveModelRuleHandlerPool ruleHandlerPool,
-				MessageWriter debugWriter){		
-		super(ruleHandlerPool, debugWriter);
+				ActiveModelRuleHandlerPool ruleHandlerPool){		
+		super(ruleHandlerPool);
 		asParent(child);
 	}
 		

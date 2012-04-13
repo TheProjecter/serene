@@ -51,9 +51,6 @@ import serene.validation.handlers.match.MatchHandler;
 
 import serene.util.SpaceCharsHandler;
 
-import sereneWrite.MessageWriter;
-
-
 class DataValidationHandler extends AbstractDVH implements DataEventHandler{
     ListPatternValidationHandler parent;            
     DataContentTypeHandler dataContentTypeHandler;
@@ -66,8 +63,8 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
     ErrorCatcher currentErrorCatcher;
     int currentIndex;
     
-	DataValidationHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	DataValidationHandler(){
+		super();
 		
 		dataMatches = new ArrayList<AData>();
 		valueMatches = new ArrayList<AValue>();
@@ -232,7 +229,7 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	    }else{
 	        if(temporaryMessageStorage == null) temporaryMessageStorage = new TemporaryMessageStorage[matches.size()];
 	        if(temporaryMessageStorage[currentIndex] == null){
-                temporaryMessageStorage[currentIndex] = new TemporaryMessageStorage(debugWriter);
+                temporaryMessageStorage[currentIndex] = new TemporaryMessageStorage();
                 temporaryMessageStorage[currentIndex].init(activeInputDescriptor);
             }
 	        currentErrorCatcher = temporaryMessageStorage[currentIndex];

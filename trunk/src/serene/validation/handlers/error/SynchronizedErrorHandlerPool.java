@@ -16,8 +16,6 @@ limitations under the License.
 
 package serene.validation.handlers.error;
 
-import sereneWrite.MessageWriter;
-
 public class SynchronizedErrorHandlerPool extends ErrorHandlerPool{	
 	private static volatile SynchronizedErrorHandlerPool instance;
 	
@@ -50,8 +48,8 @@ public class SynchronizedErrorHandlerPool extends ErrorHandlerPool{
 	int startErrorHFree;
 	StartErrorHandler[] startErrorH;
 		
-	SynchronizedErrorHandlerPool(MessageWriter debugWriter){
-		super(debugWriter);
+	SynchronizedErrorHandlerPool(){
+		super();
 		
 		vehPoolFree = 0;
 		vehPools = new ValidatorErrorHandlerPool[10];
@@ -85,11 +83,11 @@ public class SynchronizedErrorHandlerPool extends ErrorHandlerPool{
         
 	}
 	
-	public static SynchronizedErrorHandlerPool getInstance(MessageWriter debugWriter){
+	public static SynchronizedErrorHandlerPool getInstance( ){
 		if(instance == null){
 			synchronized(ErrorHandlerPool.class){
 				if(instance == null){
-					instance = new SynchronizedErrorHandlerPool(debugWriter); 
+					instance = new SynchronizedErrorHandlerPool(); 
 				}
 			}
 		}
@@ -98,7 +96,7 @@ public class SynchronizedErrorHandlerPool extends ErrorHandlerPool{
 	
 	public synchronized ValidatorErrorHandlerPool getValidatorErrorHandlerPool(){
 		if(vehPoolFree == 0){
-			ValidatorErrorHandlerPool vehp = new ValidatorErrorHandlerPool(this, debugWriter);
+			ValidatorErrorHandlerPool vehp = new ValidatorErrorHandlerPool(this);
 			return vehp;
 		}else{
 			ValidatorErrorHandlerPool vehp = vehPools[--vehPoolFree];

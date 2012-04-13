@@ -16,12 +16,11 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
 
 class AttributeWithNameInstanceTask extends RNGParseEndElementTask{
 
-	AttributeWithNameInstanceTask(MessageWriter debugWriter){
-		super(debugWriter);
+	AttributeWithNameInstanceTask(){
+		super();
 	}
 	
 	public void execute(){

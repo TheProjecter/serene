@@ -26,16 +26,14 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public abstract class AbstractAPattern extends AbstractRule implements APattern{	
 	
 	
 	protected int minOccurs;
 	protected int maxOccurs;
 	
-	public AbstractAPattern(ActiveModelRuleHandlerPool ruleHandlerPool, MessageWriter debugWriter){		
-		super(ruleHandlerPool, debugWriter);
+	public AbstractAPattern(ActiveModelRuleHandlerPool ruleHandlerPool){		
+		super(ruleHandlerPool);
 		minOccurs = 1;
 		maxOccurs = 1;
 	}

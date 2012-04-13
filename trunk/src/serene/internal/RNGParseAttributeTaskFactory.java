@@ -18,13 +18,8 @@ package serene.internal;
 
 import serene.bind.AttributeTaskFactory;
 
-import sereneWrite.MessageWriter;
-
 public abstract class RNGParseAttributeTaskFactory implements AttributeTaskFactory{
-	MessageWriter debugWriter;
-	
-	RNGParseAttributeTaskFactory(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	RNGParseAttributeTaskFactory(){
 	}
 	public abstract RNGParseAttributeTask getTask();
 }

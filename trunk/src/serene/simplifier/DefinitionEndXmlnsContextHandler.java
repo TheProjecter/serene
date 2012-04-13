@@ -66,17 +66,11 @@ import serene.validation.schema.parsed.Definition;
 
 import serene.validation.schema.parsed.ForeignComponent;
 
-import sereneWrite.MessageWriter;
-
 class DefinitionEndXmlnsContextHandler implements ParsedComponentVisitor{
 	DocumentSimplificationContext simplificationContext;    
 	Map<ParsedComponent, ParsedComponent> descendanceMap;
 	
-	MessageWriter debugWriter;
-	
-	DefinitionEndXmlnsContextHandler(Map<ParsedComponent, ParsedComponent> descendanceMap,
-						MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	DefinitionEndXmlnsContextHandler(Map<ParsedComponent, ParsedComponent> descendanceMap){
 		this.descendanceMap = descendanceMap;
 	}
 	

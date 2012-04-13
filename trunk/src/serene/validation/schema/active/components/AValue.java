@@ -35,8 +35,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public class AValue extends DatatypedCharsAPattern{
 	String ns;
 	String charContent;
@@ -50,9 +48,8 @@ public class AValue extends DatatypedCharsAPattern{
 					String charContent,
 					ActiveGrammarModel grammarModel, 					
 					ActiveModelRuleHandlerPool ruleHandlerPool,
-					SValue svalue, 
-					MessageWriter debugWriter){
-		super(datatype, grammarModel, ruleHandlerPool, debugWriter);
+					SValue svalue){
+		super(datatype, grammarModel, ruleHandlerPool);
 		this.ns = ns;
 		this.charContent = charContent;
 		this.svalue = svalue;

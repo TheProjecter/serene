@@ -68,8 +68,6 @@ import serene.validation.handlers.content.util.ActiveInputDescriptor;
 import serene.validation.handlers.content.util.CharacterContentDescriptor;
 import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
  
-import sereneWrite.MessageWriter;
-
 class ElementValidationHandler extends ValidatingEEH
 							implements ErrorCatcher, 
 							ElementContentTypeHandler,
@@ -96,8 +94,8 @@ class ElementValidationHandler extends ValidatingEEH
 		
 	ElementValidationHandler parent;
 	
-	ElementValidationHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	ElementValidationHandler(){
+		super();
         /*charContentLineNumber = -1;
         charContentColumnNumber = -1;
         charContentBuffer = new CharsBuffer(debugWriter);*/

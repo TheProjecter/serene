@@ -45,8 +45,6 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
 class ExternalRefParser{    
 	XMLReader xmlReader;
 	
@@ -54,13 +52,9 @@ class ExternalRefParser{
 	
 	ErrorDispatcher errorDispatcher;
 	
-	MessageWriter debugWriter;
-	
 	ExternalRefParser(XMLReader xmlReader, 
 	                    InternalRNGFactory internalRNGFactory, 
-	                    ErrorDispatcher errorDispatcher, 
-	                    MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	                    ErrorDispatcher errorDispatcher){
 		this.xmlReader = xmlReader;	
 		
 		InternalRNGSchema schema = internalRNGFactory.getExternalRefSchema();

@@ -26,14 +26,12 @@ import serene.validation.handlers.content.ElementEventHandler;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import sereneWrite.MessageWriter;
-
 class BoundElementDefaultHandler extends ElementDefaultHandler implements BoundElementHandler{
     Queue queue;
     int queueStartEntry;
     int queueEndEntry;
-    BoundElementDefaultHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    BoundElementDefaultHandler(){
+        super();
         
         queueStartEntry = -1;
 	    queueEndEntry = -1;

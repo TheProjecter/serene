@@ -6,7 +6,6 @@ import java.util.Map;
 import org.xml.sax.SAXException;
 
 import serene.bind.util.DocumentIndexedData;
-import sereneWrite.MessageWriter;
 
 public class Start extends Definition{
 	Start(/*Map<String, String> prefixMapping,*/
@@ -19,9 +18,8 @@ public class Start extends Definition{
             String qName, 
             String location,*/
             int recordIndex,
-            DocumentIndexedData documentIndexedData,                    
-            MessageWriter debugWriter){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, combine, children, recordIndex, documentIndexedData, debugWriter);
+            DocumentIndexedData documentIndexedData){
+		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, combine, children, recordIndex, documentIndexedData);
 	}		
 	public void accept(ParsedComponentVisitor v){
 		v.visit(this);

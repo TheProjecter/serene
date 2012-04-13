@@ -22,12 +22,10 @@ import serene.util.AttributeInfo;
 
 import serene.validation.schema.simplified.components.SAttribute;
 
-import sereneWrite.MessageWriter;
-
 abstract class RNGParseEndElementTask extends RNGParseElementTask{
 	
-	RNGParseEndElementTask(MessageWriter debugWriter){
-		super(debugWriter);		
+	RNGParseEndElementTask(){
+		super();		
 	}
 	
 	/*Map<String, String> getPrefixMapping(){

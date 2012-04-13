@@ -23,7 +23,6 @@ import org.relaxng.datatype.DatatypeLibrary;
 import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SAttribute;
 
-import sereneWrite.MessageWriter;
 import sereneWrite.SimplifiedComponentWriter;
 
 public class SimplifiedModel{
@@ -32,14 +31,10 @@ public class SimplifiedModel{
 	SPattern[] refDefinitionTopPattern;
 
 	RecursionModel recursionModel;
-    
-	MessageWriter debugWriter;
 	
 	public SimplifiedModel(SPattern[] startTopPattern,
 								SPattern[] refDefinitionTopPattern,
-								RecursionModel recursionModel,
-								MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+								RecursionModel recursionModel){
 		this.startTopPattern = startTopPattern;
 		this.refDefinitionTopPattern = refDefinitionTopPattern;
 		this.recursionModel = recursionModel;

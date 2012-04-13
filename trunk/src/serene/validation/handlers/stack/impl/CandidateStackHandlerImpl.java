@@ -59,8 +59,6 @@ import serene.validation.handlers.stack.util.RuleHandlerReplacer;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import sereneWrite.MessageWriter;
-
 public class CandidateStackHandlerImpl extends ContextStackHandler 
 								implements CandidateStackHandler, ErrorCatcher{
 									
@@ -120,10 +118,10 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	Rule[] currentInnerPath;
 	InternalConflictResolver currentResolver;
 	
-	public CandidateStackHandlerImpl(MessageWriter debugWriter){
-		super(debugWriter);
-		stackConflictsHandler = new StackConflictsHandler(debugWriter);
-		ruleHandlerReplacer = new RuleHandlerReplacer(debugWriter);
+	public CandidateStackHandlerImpl(){
+		super();
+		stackConflictsHandler = new StackConflictsHandler();
+		ruleHandlerReplacer = new RuleHandlerReplacer();
 	}	
 	
 	

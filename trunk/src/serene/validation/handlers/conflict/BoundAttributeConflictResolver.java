@@ -31,8 +31,6 @@ import serene.validation.handlers.error.TemporaryMessageStorage;
 import serene.bind.util.Queue;
 import serene.bind.BindingModel;
 
-import sereneWrite.MessageWriter;
-
 
 public abstract class BoundAttributeConflictResolver extends AttributeConflictResolver{
 	Queue targetQueue;
@@ -44,8 +42,8 @@ public abstract class BoundAttributeConflictResolver extends AttributeConflictRe
     String localName;*/
     String value;
     
-	public BoundAttributeConflictResolver(MessageWriter debugWriter){
-		super(debugWriter);
+	public BoundAttributeConflictResolver(){
+		super();
 	}
 	
 	void init(TemporaryMessageStorage[] temporaryMessageStorage,

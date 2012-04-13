@@ -40,8 +40,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import org.relaxng.datatype.ValidationContext;
 
-import sereneWrite.MessageWriter;
-
 public abstract class MarkupAPattern extends UniqueChildAPattern
 									implements ActiveNameClassPointer,
 												ActiveDefinitionPointer,
@@ -73,9 +71,8 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 				APattern child,
 				ActiveGrammarModel grammarModel,
 				ActiveModelStackHandlerPool stackHandlerPool,
-				ActiveModelRuleHandlerPool ruleHandlerPool,
-				MessageWriter debugWriter){		
-		super(child, ruleHandlerPool, debugWriter);
+				ActiveModelRuleHandlerPool ruleHandlerPool){		
+		super(child, ruleHandlerPool);
 		this.index = index;
 		this.grammarModel = grammarModel;		
 		this.stackHandlerPool = stackHandlerPool;

@@ -107,7 +107,6 @@ import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
 import sereneWrite.ParsedComponentWriter;
 
 import serene.Constants;
@@ -166,15 +165,13 @@ abstract class Simplifier implements SimplifyingVisitor{
     boolean level1AttributeIdType;
 	boolean replaceMissingDatatypeLibrary;
     boolean restrictToFileName;
-    
-	MessageWriter debugWriter;
+
 	//ParsedComponentWriter pcw;
 	
-	Simplifier(ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;				
+	Simplifier(ErrorDispatcher errorDispatcher){	
 		this.errorDispatcher = errorDispatcher;
 
-		builder = new SimplifiedComponentBuilder(debugWriter);		
+		builder = new SimplifiedComponentBuilder();		
 		//pcw = new ParsedComponentWriter();
 		
 		replaceMissingDatatypeLibrary =  true;

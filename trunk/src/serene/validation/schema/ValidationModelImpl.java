@@ -27,8 +27,6 @@ import serene.validation.handlers.error.ErrorDispatcher;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
-import sereneWrite.MessageWriter;
-
 public class ValidationModelImpl implements ValidationModel{
     ParsedModel parsedModel;
     SimplifiedModel simplifiedModel;
@@ -36,17 +34,13 @@ public class ValidationModelImpl implements ValidationModel{
     
     boolean optimizedForResourceSharing;
     
-    MessageWriter debugWriter;
-    
     public ValidationModelImpl(ParsedModel parsedModel,
                         SimplifiedModel simplifiedModel,
-                        boolean optimizedForResourceSharing,
-                        MessageWriter debugWriter){
-        this.debugWriter = debugWriter; 
+                        boolean optimizedForResourceSharing){
         this.parsedModel = parsedModel;
         this.simplifiedModel = simplifiedModel;
         this.optimizedForResourceSharing = optimizedForResourceSharing;
-        activeModelPool = new ActiveModelPool(simplifiedModel, optimizedForResourceSharing, debugWriter);
+        activeModelPool = new ActiveModelPool(simplifiedModel, optimizedForResourceSharing);
     }
     
     

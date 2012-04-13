@@ -35,8 +35,6 @@ import serene.validation.schema.parsed.ParsedComponentBuilder;
 
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
-import sereneWrite.MessageWriter;
-
 class SynchronizedRNGParseBindingPool extends RNGParseBindingPool{
     RNGParseBindingModel[] bindingModel;
 	int bindingModelFree, bindingModelMaxSize;	    
@@ -50,9 +48,7 @@ class SynchronizedRNGParseBindingPool extends RNGParseBindingPool{
                                         
                                     RNGParseElementTaskFactory genericStartElementTaskFactory,
                                     RNGParseElementTaskFactory genericEndElementTaskFactory,
-                                    RNGParseAttributeTaskFactory genericAttributeTaskFactory,
-									
-									MessageWriter debugWriter){
+                                    RNGParseAttributeTaskFactory genericAttributeTaskFactory){
 		super(startDocumentTaskFactory,
                         //endDocumentTaskFactory,    
                         
@@ -63,9 +59,7 @@ class SynchronizedRNGParseBindingPool extends RNGParseBindingPool{
                             
                         genericStartElementTaskFactory,
                         genericEndElementTaskFactory,
-                        genericAttributeTaskFactory,
-                        
-	                    debugWriter);
+                        genericAttributeTaskFactory);
 			
 	} 
 	

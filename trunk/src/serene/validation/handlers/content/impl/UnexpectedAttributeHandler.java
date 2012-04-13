@@ -18,13 +18,11 @@ package serene.validation.handlers.content.impl;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import sereneWrite.MessageWriter;
-
 class UnexpectedAttributeHandler extends ErrorAEH{
 	SimplifiedComponent attribute;	
 	
-	UnexpectedAttributeHandler(MessageWriter debugWriter){
-		super(debugWriter);
+	UnexpectedAttributeHandler(){
+		super();
 	}
 	
 	public void recycle(){

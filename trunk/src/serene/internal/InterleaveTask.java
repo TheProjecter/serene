@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class InterleaveTask extends RNGParseEndElementTask{
-	InterleaveTask(MessageWriter debugWriter){
-		super(debugWriter);
+	InterleaveTask(){
+		super();
 	}
 	public void execute(){
 		builder.endLevel();

@@ -24,18 +24,12 @@ import serene.validation.handlers.content.ElementEventHandler;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
-
-import sereneWrite.MessageWriter;
-
 abstract class AbstractEEH implements ElementEventHandler{
     ActiveInputDescriptor activeInputDescriptor;
 	InputStackDescriptor inputStackDescriptor;	
 	ValidatorEventHandlerPool pool;
 	
-	MessageWriter debugWriter;
-	
-	AbstractEEH(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	AbstractEEH(){
 	}
 	
 	void init(ValidatorEventHandlerPool pool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){

@@ -36,15 +36,12 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import sereneWrite.MessageWriter;
-
 public class AGrammar extends UniqueChildAPattern implements AInnerPattern{	
 	SGrammar sgrammar;
 	public AGrammar(APattern child,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
-				SGrammar sgrammar, 
-				MessageWriter debugWriter){
-		super(child, ruleHandlerPool, debugWriter);
+				SGrammar sgrammar){
+		super(child, ruleHandlerPool);
 		this.sgrammar = sgrammar;
 	}
 		

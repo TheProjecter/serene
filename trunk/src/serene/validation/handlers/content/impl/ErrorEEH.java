@@ -32,12 +32,10 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.CharacterContentDescriptor;
 import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
-import sereneWrite.MessageWriter;
-
 abstract class ErrorEEH extends ComparableEEH{	
 	ElementValidationHandler parent;	
-	ErrorEEH(MessageWriter debugWriter){
-		super(debugWriter);		
+	ErrorEEH(){
+		super();		
 	}
 	
 	void init(ElementValidationHandler parent){

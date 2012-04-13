@@ -26,8 +26,6 @@ import serene.util.IntList;
 
 import serene.validation.schema.simplified.components.SRef;
 
-import sereneWrite.MessageWriter;
-
 class OpenAlternativesHandler{
 	int definitionCount;
 	ArrayList<ArrayList<SRef>> definitionBlindLoops;
@@ -39,10 +37,7 @@ class OpenAlternativesHandler{
 	
 	OpenAlternativesHandler openAlternativesHandler;
 	
-	MessageWriter debugWriter;
-	
-	OpenAlternativesHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	OpenAlternativesHandler(){
 	}
 	
 	void init(int definitionCount,
@@ -93,7 +88,7 @@ class OpenAlternativesHandler{
 				int iIndex = interlocking.get(i);
 				if(!undecidedLoopDefinitionPath.contains(iIndex)){					
 					if(openAlternativesHandler == null){
-						openAlternativesHandler = new OpenAlternativesHandler(debugWriter);					
+						openAlternativesHandler = new OpenAlternativesHandler();					
 					}
 					openAlternativesHandler.init(definitionCount,
 												definitionBlindLoops,

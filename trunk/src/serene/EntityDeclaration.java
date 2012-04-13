@@ -16,22 +16,16 @@ limitations under the License.
 
 package serene;
 
-import sereneWrite.MessageWriter;
-
 public class EntityDeclaration{
     String name;
     String publicId;
     String systemId;
     String notationName;
     
-    MessageWriter debugWriter;
-    
     public EntityDeclaration(String name,
                     String publicId,
                     String systemId,
-                    String notationName,
-                    MessageWriter debugWriter){
-        this.debugWriter = debugWriter;
+                    String notationName){
         this.name = name;
         this.publicId = publicId;
         this.systemId = systemId;

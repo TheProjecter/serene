@@ -16,14 +16,12 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class DatatypeLibraryTaskFactory extends RNGParseAttributeTaskFactory{
-	public DatatypeLibraryTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	public DatatypeLibraryTaskFactory(){
+		super();
 	}
 	
 	public DatatypeLibraryTask getTask(){	
-		return new DatatypeLibraryTask(debugWriter);
+		return new DatatypeLibraryTask();
 	}
 }

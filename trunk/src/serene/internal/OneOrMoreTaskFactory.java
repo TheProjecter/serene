@@ -20,14 +20,12 @@ import serene.validation.schema.simplified.components.SAttribute;
 
 import serene.bind.ElementTask;
 
-import sereneWrite.MessageWriter;
-
 class OneOrMoreTaskFactory extends RNGParseEndElementTaskFactory{    
-	public OneOrMoreTaskFactory(MessageWriter debugWriter){
-		super(debugWriter);
+	public OneOrMoreTaskFactory(){
+		super();
 	}
 	
 	public OneOrMoreTask getTask(){
-		return new OneOrMoreTask( debugWriter);
+		return new OneOrMoreTask( );
 	}
 }

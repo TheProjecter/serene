@@ -23,8 +23,6 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.bind.util.DocumentIndexedData;
 
-import sereneWrite.MessageWriter;
-
 abstract class AbstractSimplifiedComponent implements SimplifiedComponent{
 	protected int childIndex;	
 	protected SimplifiedComponent parent;
@@ -32,11 +30,9 @@ abstract class AbstractSimplifiedComponent implements SimplifiedComponent{
 	/*protected String qName;
 	protected String location;*/
     int recordIndex;
-    DocumentIndexedData documentIndexedData;	
-	protected MessageWriter debugWriter;	
+    DocumentIndexedData documentIndexedData;
 	
-	public AbstractSimplifiedComponent(int recordIndex, DocumentIndexedData documentIndexedData, MessageWriter debugWriter){		
-		this.debugWriter = debugWriter;
+	public AbstractSimplifiedComponent(int recordIndex, DocumentIndexedData documentIndexedData){
 		this.recordIndex = recordIndex;
 		this.documentIndexedData = documentIndexedData;
 		

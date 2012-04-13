@@ -25,13 +25,11 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
-import sereneWrite.MessageWriter;
-
 public class SInterleaveHandler extends InterleaveHandler{
 	MInterleaveHandler primaryHandler;
 		
-	SInterleaveHandler(MessageWriter debugWriter){
-		super(debugWriter);		
+	SInterleaveHandler(){
+		super();		
 	}	
 	
 	void init(AInterleave interleave, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler, MInterleaveHandler primaryHandler){

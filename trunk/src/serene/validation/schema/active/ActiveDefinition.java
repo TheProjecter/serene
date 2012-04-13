@@ -27,8 +27,6 @@ import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AListPattern;
 import serene.validation.schema.active.components.AText;
 
-import sereneWrite.MessageWriter;
-
 public class ActiveDefinition implements Reusable{
 		
 	APattern topAPattern;
@@ -45,8 +43,6 @@ public class ActiveDefinition implements Reusable{
 	
 	ActiveDefinitionRecycler recycler;	
 	
-	MessageWriter debugWriter;
-	
 	ActiveDefinition(APattern topAPattern,
 						AElement[] elements,
 						AAttribute[] attributes,
@@ -55,9 +51,7 @@ public class ActiveDefinition implements Reusable{
 						AListPattern[] listPatterns,
 						AText[] texts,
 						ARef[] refs,						
-						ActiveDefinitionRecycler recycler,						
-						MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+						ActiveDefinitionRecycler recycler){
 		this.topAPattern = topAPattern;
 		this.elements = elements;
 		this.attributes = attributes;

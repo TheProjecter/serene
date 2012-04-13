@@ -65,8 +65,6 @@ import serene.DocumentContext;
 
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
 class StAXEventBuildingHandler extends StAXHandler{
     XMLEventWriter xmlEventWriter;
     XMLEventFactory xmlEventFactory;
@@ -82,8 +80,8 @@ class StAXEventBuildingHandler extends StAXHandler{
     
     DocumentContext documentContext;
     
-    StAXEventBuildingHandler(MessageWriter debugWriter){
-        super(debugWriter);
+    StAXEventBuildingHandler(){
+        super();
         xmlEventFactory = xmlEventFactory.newInstance();
         
         namespaceIteratorStack = new Stack<Iterator>();
@@ -324,11 +322,11 @@ class StAXEventBuildingHandler extends StAXHandler{
             attributeIdTypeHandler.handle(namespaceURI, localPart, attrList, startElement.getLocation());
         }
         
-        Iterator namespacesIterator = new NamespacesIterator(nsList, debugWriter);
+        Iterator namespacesIterator = new NamespacesIterator(nsList);
         namespaceIteratorStack.push(namespacesIterator);
         try{
             xmlEventWriter.add(xmlEventFactory.createStartElement(elemName,
-                                                                new AttributesIterator(attrList, debugWriter),
+                                                                new AttributesIterator(attrList),
                                                                 namespacesIterator));
         }catch(XMLStreamException e){
             throw new SAXException(e);
@@ -404,11 +402,11 @@ class StAXEventBuildingHandler extends StAXHandler{
             attributeIdTypeHandler.handle(namespaceURI, localPart, attrList, xmlStreamReader.getLocation());
         }
         
-        Iterator namespacesIterator = new NamespacesIterator(nsList, debugWriter);
+        Iterator namespacesIterator = new NamespacesIterator(nsList);
         namespaceIteratorStack.push(namespacesIterator);
         try{
             xmlEventWriter.add(xmlEventFactory.createStartElement(elemName,
-                                                                new AttributesIterator(attrList, debugWriter),
+                                                                new AttributesIterator(attrList),
                                                                 namespacesIterator));
         }catch(XMLStreamException e){
             throw new SAXException(e);

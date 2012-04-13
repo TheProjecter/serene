@@ -41,16 +41,12 @@ import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.Constants;
 
-import sereneWrite.MessageWriter;
-
 class IncludeParser{
 	XMLReader xmlReader;		
 	
 	ValidatorHandler validatorHandler;
-	MessageWriter debugWriter;
-		
-	IncludeParser(XMLReader xmlReader, InternalRNGFactory internalRNGFactory, ErrorDispatcher errorDispatcher, MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+			
+	IncludeParser(XMLReader xmlReader, InternalRNGFactory internalRNGFactory, ErrorDispatcher errorDispatcher){		
 		this.xmlReader = xmlReader;
 		
 		InternalRNGSchema schema = internalRNGFactory.getIncludeSchema();

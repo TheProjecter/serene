@@ -30,8 +30,6 @@ import org.apache.xerces.impl.dv.InvalidDatatypeValueException;
 
 import serene.datatype.xsd.XsdValidationContext;
 
-import sereneWrite.MessageWriter;
-
 class DatatypeLibraryURIDT implements Datatype{
     boolean needsExtraChecking;
     boolean needsFacetChecking;
@@ -42,8 +40,7 @@ class DatatypeLibraryURIDT implements Datatype{
     XSSimpleType xercesType;
     
     DatatypeLibraryURIDT(XsdValidationContext xsdValidationContext,
-                XSSimpleType xercesType, 
-                MessageWriter debugWriter){
+                XSSimpleType xercesType){
         this.xercesType = xercesType;
         this.xsdValidationContext = xsdValidationContext;
         

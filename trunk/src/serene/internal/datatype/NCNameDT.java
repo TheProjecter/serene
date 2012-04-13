@@ -28,8 +28,6 @@ import org.apache.xerces.impl.dv.InvalidDatatypeValueException;
 
 import serene.datatype.xsd.XsdValidationContext;
 
-import sereneWrite.MessageWriter;
-
 class NCNameDT implements Datatype{
     boolean needsExtraChecking;
     boolean needsFacetChecking;
@@ -40,8 +38,7 @@ class NCNameDT implements Datatype{
     XSSimpleType xercesType;
     
     NCNameDT(XsdValidationContext xsdValidationContext,
-                XSSimpleType xercesType, 
-                MessageWriter debugWriter){
+                XSSimpleType xercesType){
         this.xercesType = xercesType;
         this.xsdValidationContext = xsdValidationContext;
         

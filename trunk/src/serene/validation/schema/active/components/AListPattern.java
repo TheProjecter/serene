@@ -49,9 +49,6 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import org.relaxng.datatype.ValidationContext;
 
-
-import sereneWrite.MessageWriter;
-
 public class AListPattern extends UniqueChildAPattern 
                                         implements DataActiveType, 
                                         StructuredDataActiveTypeItem{
@@ -70,9 +67,8 @@ public class AListPattern extends UniqueChildAPattern
 	public AListPattern(APattern child,
 					ActiveModelStackHandlerPool stackHandlerPool,
 					ActiveModelRuleHandlerPool ruleHandlerPool,
-					SListPattern slist, 
-					MessageWriter debugWriter){
-		super(child, ruleHandlerPool, debugWriter);
+					SListPattern slist){
+		super(child, ruleHandlerPool);
 		this.stackHandlerPool = stackHandlerPool;
 		this.slist = slist;
 	}	

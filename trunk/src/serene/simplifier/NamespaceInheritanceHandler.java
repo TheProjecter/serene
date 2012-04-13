@@ -22,8 +22,6 @@ import java.util.HashMap;
 import serene.validation.schema.parsed.ParsedComponent;
 import serene.validation.schema.parsed.Definition;
 
-import sereneWrite.MessageWriter;
-
 class NamespaceInheritanceHandler{
 		
 	Map<ParsedComponent, ParsedComponent> descendanceMap;
@@ -33,16 +31,13 @@ class NamespaceInheritanceHandler{
 	DefinitionStartXmlnsContextHandler definitionStartXmlnsContextHandler;
     DefinitionEndXmlnsContextHandler definitionEndXmlnsContextHandler;
 	
-	MessageWriter debugWriter;
-	
-	NamespaceInheritanceHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	NamespaceInheritanceHandler(){
 		descendanceMap = new HashMap<ParsedComponent, ParsedComponent>();
 		
-		nsInheritanceHandler = new NsInheritanceHandler(descendanceMap, debugWriter);
+		nsInheritanceHandler = new NsInheritanceHandler(descendanceMap);
         
-        definitionStartXmlnsContextHandler = new DefinitionStartXmlnsContextHandler(descendanceMap, debugWriter);
-        definitionEndXmlnsContextHandler = new DefinitionEndXmlnsContextHandler(descendanceMap, debugWriter);
+        definitionStartXmlnsContextHandler = new DefinitionStartXmlnsContextHandler(descendanceMap);
+        definitionEndXmlnsContextHandler = new DefinitionEndXmlnsContextHandler(descendanceMap);
 	}
 	
 	void put(ParsedComponent descendant, ParsedComponent ancestor){//key inherits from value

@@ -24,18 +24,12 @@ import serene.validation.schema.parsed.ParsedComponentBuilder;
 
 import serene.bind.Task;
 
-import sereneWrite.MessageWriter;
-
 public abstract class RNGParseTask implements Task{
 	ParsedComponentBuilder builder;	
-
-	MessageWriter debugWriter;
 	
-	RNGParseTask(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	RNGParseTask(){
 	}
-	
-	
+		
 	void setExecutant(ParsedComponentBuilder builder){
 		this.builder = builder;	
 	} 

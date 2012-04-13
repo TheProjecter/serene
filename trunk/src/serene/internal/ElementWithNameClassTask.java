@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class ElementWithNameClassTask extends RNGParseEndElementTask{    
-	ElementWithNameClassTask(MessageWriter debugWriter){
-		super(debugWriter);
+	ElementWithNameClassTask(){
+		super();
 	}
 	public void execute(){
 		builder.endLevel();

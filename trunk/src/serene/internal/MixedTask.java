@@ -16,11 +16,9 @@ limitations under the License.
 
 package serene.internal;
 
-import sereneWrite.MessageWriter;
-
 class MixedTask extends RNGParseEndElementTask{
-	MixedTask(MessageWriter debugWriter){
-		super(debugWriter);
+	MixedTask(){
+		super();
 	}
 	public void execute(){
 		builder.endLevel();

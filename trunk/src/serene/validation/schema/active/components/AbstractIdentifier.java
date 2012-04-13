@@ -19,13 +19,11 @@ package serene.validation.schema.active.components;
 import serene.validation.schema.active.Identifier;
 import serene.validation.schema.active.ActiveComponent;
 
-import sereneWrite.MessageWriter;
-
 public abstract class AbstractIdentifier extends AbstractActiveComponent implements Identifier{
 	protected ActiveComponent parent;
 	
-	public AbstractIdentifier(MessageWriter debugWriter){		
-		super(debugWriter);
+	public AbstractIdentifier(){		
+		super();
 	}
 
 	void setParent(ActiveComponent parent){		 

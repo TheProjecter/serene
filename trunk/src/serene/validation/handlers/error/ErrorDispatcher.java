@@ -31,7 +31,6 @@ import serene.dtdcompatibility.DocumentationElementException;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import sereneWrite.MessageWriter;
 import sereneWrite.FileHandler;
 
 public class ErrorDispatcher implements ErrorHandler{
@@ -47,10 +46,7 @@ public class ErrorDispatcher implements ErrorHandler{
     boolean hasAttributeIdTypeError = false;
     boolean hasDocumentationElementError = false;
     
-	MessageWriter debugWriter;
-		
-	public ErrorDispatcher(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
+	public ErrorDispatcher(){
 	}
 	
 	public void init(){

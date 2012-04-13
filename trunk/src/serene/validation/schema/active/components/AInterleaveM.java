@@ -21,8 +21,6 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.schema.simplified.components.SMixed;
 
-import sereneWrite.MessageWriter;
-
 public class AInterleaveM extends AInterleave{
     
 	SMixed smixed;
@@ -30,9 +28,8 @@ public class AInterleaveM extends AInterleave{
 	public AInterleaveM(APattern[] children,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool, 
-				SMixed smixed, 
-				MessageWriter debugWriter){		
-		super(children, stackHandlerPool, ruleHandlerPool, debugWriter);
+				SMixed smixed){		
+		super(children, stackHandlerPool, ruleHandlerPool);
 		this.smixed = smixed;
 	}	
 	

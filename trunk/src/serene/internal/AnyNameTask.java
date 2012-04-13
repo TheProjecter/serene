@@ -18,12 +18,10 @@ package serene.internal;
 
 import serene.validation.schema.simplified.components.SAttribute;
 
-import sereneWrite.MessageWriter;
-
 class AnyNameTask extends RNGParseEndElementTask{
 
-	AnyNameTask(MessageWriter debugWriter){
-		super(debugWriter);
+	AnyNameTask(){
+		super();
 	}
 	public void execute(){	
 		builder.endLevel();

@@ -16,13 +16,9 @@ limitations under the License.
 
 package serene.util;
 
-import sereneWrite.MessageWriter;
-
 public class SpaceCharsHandler{
-	
-	MessageWriter debugWriter;
-	public SpaceCharsHandler(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;		
+
+	public SpaceCharsHandler(){		
 	}
 	
     public boolean isSpace(char[] chars){

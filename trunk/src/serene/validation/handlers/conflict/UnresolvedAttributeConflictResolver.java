@@ -25,8 +25,6 @@ import serene.validation.schema.active.components.AAttribute;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import sereneWrite.MessageWriter;
-
 /*
 * In the ConcurrentStackHandler each level handles a conflict and every handler 
 * on that level gets a reference to an InternalConflictResolver instance. This 
@@ -35,8 +33,8 @@ import sereneWrite.MessageWriter;
 */
 public class UnresolvedAttributeConflictResolver extends AttributeConflictResolver{
 	
-	public UnresolvedAttributeConflictResolver(MessageWriter debugWriter){				
-		super(debugWriter);
+	public UnresolvedAttributeConflictResolver(){				
+		super();
 	}
 	
 	public void recycle(){
