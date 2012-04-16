@@ -9,16 +9,12 @@ import org.relaxng.datatype.DatatypeException;
 
 import serene.datatype.util.StringNormalizer;
 
-import sereneWrite.MessageWriter;
-
 class ExternalLibrary implements DatatypeLibrary{
 	StringNormalizer stringNormalizer; 
-	MessageWriter debugWriter;
     SimilarTokenBuilder similarTokenBuilder;
 	
-	ExternalLibrary(MessageWriter debugWriter){
-		this.debugWriter = debugWriter;
-		stringNormalizer = new StringNormalizer(debugWriter);
+	ExternalLibrary(){
+		stringNormalizer = new StringNormalizer();
         similarTokenBuilder  = new SimilarTokenBuilder();
 	}
 	

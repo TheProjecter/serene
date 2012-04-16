@@ -16,7 +16,7 @@ public class ExternalLibraryFactory implements DatatypeLibraryFactory{
 	}
 	public ExternalLibrary createDatatypeLibrary(String namespace){
 		if(namespace.equals(EXTERNAL_LIBRARY)){
-			return new ExternalLibrary(debugWriter);
+			return new ExternalLibrary();
 		}
 		return null;
 	} 

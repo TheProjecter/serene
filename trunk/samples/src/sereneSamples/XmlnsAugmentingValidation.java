@@ -40,7 +40,6 @@ import org.w3c.dom.Document;
 import serene.validation.jaxp.RNGSchemaFactory;
 
 import sereneWrite.WriteErrorHandler;
-import sereneWrite.MessageWriter;
 import sereneWrite.WriteHandler;
 import sereneWrite.ConsoleHandler;
 
@@ -65,13 +64,8 @@ public class XmlnsAugmentingValidation{
 		SchemaFactory schemaFactory;
 		Schema schema;
 		
-		MessageWriter debugWriter;
 		WriteErrorHandler debugErrorHandler;		
 				
-		
-		debugWriter = new MessageWriter();			
-		debugWriter.setWriteHandler(new ConsoleHandler());
-		
 		debugErrorHandler = new WriteErrorHandler();
 		debugErrorHandler.setWriteHandler(new ConsoleHandler());
 		try{
@@ -83,7 +77,7 @@ public class XmlnsAugmentingValidation{
 		debugErrorHandler.print("*SCHEMA "+args[0]);
 				
 		//schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		schemaFactory = new RNGSchemaFactory(debugWriter);
+		schemaFactory = new RNGSchemaFactory();
 		
 		try{	
 			schema = schemaFactory.newSchema(new File(args[0]));
