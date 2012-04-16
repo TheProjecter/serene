@@ -138,7 +138,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		currentHandler = null;
 		
 		stackConflictsHandler.clear();
-		
+	
 		recycler.recycle(this);
 	}
 	
@@ -253,7 +253,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		stackConflictsHandler.record(element, resolver, definitionCandidateIndex);		
 		setCurrentHandler(element, innerPath, resolver);
 		currentHandler.handleChildShift(element, expectedOrderHandlingCount, stackConflictsHandler, resolver);		
-		/*stackConflictsHandler.resolveInactiveConflicts();*/		
+		/*stackConflictsHandler.resolveInactiveConflicts();*/
 	}
 	
 	public void shift(AAttribute attribute, 
@@ -282,7 +282,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		stackConflictsHandler.record(attribute, resolver, definitionCandidateIndex);
 		setCurrentHandler(attribute, innerPath, resolver);
 		currentHandler.handleChildShift(attribute, expectedOrderHandlingCount, stackConflictsHandler, resolver);
-		/*stackConflictsHandler.resolveInactiveConflicts();*/		
+		/*stackConflictsHandler.resolveInactiveConflicts();*/
 	}
 	
 	public void shift(CharsActiveTypeItem chars, 
@@ -314,7 +314,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		stackConflictsHandler.record(chars, resolver, definitionCandidateIndex);
 		setCurrentHandler(chars, innerPath, resolver);
 		currentHandler.handleChildShift(chars, expectedOrderHandlingCount, stackConflictsHandler, resolver);
-		/*stackConflictsHandler.resolveInactiveConflicts();*/		
+		/*stackConflictsHandler.resolveInactiveConflicts();*/
 	}
 	
 		
@@ -395,7 +395,8 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		endSubtreeValidation(handler);
 		 
 		setCurrentHandler(child, currentInnerPath, currentResolver);
-		currentHandler.handleChildShift(child, expectedOrderHandlingCount, stackConflictsHandler, currentResolver);		
+		currentHandler.handleChildShift(child, expectedOrderHandlingCount, stackConflictsHandler, currentResolver);
+		
 	}
 	
 	// Changes the old currentHandler during path activation. The new currentHandler

@@ -23,14 +23,14 @@ import serene.bind.util.DocumentIndexedData;
 
 abstract class MultipleChildrenNameClass extends NameClass{
  	ParsedComponent[] children; 
-	MultipleChildrenNameClass(/*Map<String, String> prefixMapping,*/
+	MultipleChildrenNameClass(
 	                                int xmlBase,
                                     int ns, 
                                     int datatypeLibrary, 
                                     ParsedComponent[] children,
                                     int recordIndex,
                                     DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 		asParent(children);
 	}
 		

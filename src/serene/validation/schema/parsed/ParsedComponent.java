@@ -44,7 +44,7 @@ public abstract class ParsedComponent implements Component{
     int recordIndex;
     DocumentIndexedData documentIndexedData;
 	
-	ParsedComponent(/*Map<String, String> prefixMapping,*/ 
+	ParsedComponent( 
                             int xmlBase,
                             int ns, 
                             int datatypeLibrary,

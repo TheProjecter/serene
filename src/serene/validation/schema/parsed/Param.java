@@ -26,7 +26,7 @@ import serene.bind.util.DocumentIndexedData;
 public class Param extends ParsedComponent{
 	int nameRecordIndex;
 	String characterContent;		
-	Param(/*Map<String, String> prefixMapping,*/ 
+	Param( 
 	            int xmlBase,
                 int ns, 
                 int datatypeLibrary,
@@ -34,7 +34,7 @@ public class Param extends ParsedComponent{
                 String characterContent, 
                 int recordIndex,
                 DocumentIndexedData documentIndexedData){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 		this.characterContent = characterContent;
 		this.nameRecordIndex = name;
 	}

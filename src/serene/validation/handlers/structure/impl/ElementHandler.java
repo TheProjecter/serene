@@ -44,12 +44,6 @@ public class ElementHandler extends StructureValidationHandler{
 	ElementHandler original;
 	ElementHandler(){
 		super();
-		noContent = new NoContent();
-		openContent = new OpenContent();
-		satisfiedContent = new SatisfiedContent();
-		saturatedContent = new SaturatedContent();
-		excessiveContent = new ExcessiveContent();
-		contentHandler = noContent;
 	}	
 	
 	void init(AElement element, ErrorCatcher errorCatcher, StackHandler stackHandler){
@@ -69,7 +63,7 @@ public class ElementHandler extends StructureValidationHandler{
 			childParticleHandler.recycle();
 			childParticleHandler = null;
 		}
-		contentHandler = noContent;	
+		contentIndex = NO_CONTENT;	
 		
 		if(isStartSet){
 		    activeInputDescriptor.unregisterClientForRecord(startInputRecordIndex, this);
@@ -183,7 +177,7 @@ public class ElementHandler extends StructureValidationHandler{
 			childStructureHandler.handleValidatingReduce();
 		}
 		if(childParticleHandler != null){
-			if(contentHandler.isSatisfied()){
+			if(isSatisfied()){
 				childParticleHandler.reportMissing(rule, startInputRecordIndex);
 			}
 		}else{
@@ -252,7 +246,7 @@ public class ElementHandler extends StructureValidationHandler{
 						errorCatcher, 
 						childParticleHandler, 
 						childStructureHandler, 
-						contentHandler.getContentIndex(),
+						contentIndex,
 						startInputRecordIndex,
 						isStartSet);
 		copy.setOriginal(this);
@@ -303,24 +297,13 @@ public class ElementHandler extends StructureValidationHandler{
 							ErrorCatcher errorCatcher,
 							ParticleHandler childParticleHandler, 
 							StructureHandler childStructureHandler,
-							int contentHandlerContentIndex,
+							int contentIndex,
 							int startInputRecordIndex,
 							boolean isStartSet){	
 		if(childParticleHandler != null)this.childParticleHandler = childParticleHandler.getCopy(this, errorCatcher);
 		if(childStructureHandler != null)this.childStructureHandler = childStructureHandler.getCopy(this, stackHandler, errorCatcher);
-		if(contentHandlerContentIndex == NO_CONTENT){
-			contentHandler = noContent;
-		}else if(contentHandlerContentIndex == OPEN_CONTENT){
-			contentHandler = openContent;
-		}else if(contentHandlerContentIndex == SATISFIED_CONTENT){
-			contentHandler = satisfiedContent;
-		}else if(contentHandlerContentIndex == SATURATED_CONTENT){
-			contentHandler = saturatedContent;
-		}else if(contentHandlerContentIndex == EXCESSIVE_CONTENT){
-			contentHandler = excessiveContent;
-		}else{
-			throw new IllegalArgumentException();
-		}		
+		
+        this.contentIndex = contentIndex;		
 		
 		if(this.isStartSet){
             activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex, this);
@@ -355,145 +338,200 @@ public class ElementHandler extends StructureValidationHandler{
 		return childParticleHandler;
 	}
 	
-	class NoContent extends AbstractNoContent{
-		public void childOpen(){		
-			setStart();
-			contentHandler = openContent;
-		}
-		public void requiredChildSatisfied(){
-			setStart();
-			contentHandler = satisfiedContent;
-		}
-		public void optionalChildSatisfied(){
-			setStart();
-			contentHandler = satisfiedContent;
-		}
-		public void childSaturated(){
-			setStart();
-			contentHandler = saturatedContent;
-		}				
+	public boolean isSatisfied(){
+		switch(contentIndex){
+            case NO_CONTENT :
+                return false;
+            case OPEN_CONTENT :
+                return false;
+            case SATISFIED_CONTENT :
+                if(childStructureHandler != null && !childStructureHandler.isSatisfied()){
+                    return false;
+                }			
+                return true;
+            case SATURATED_CONTENT :
+                if(childStructureHandler != null && !childStructureHandler.isSatisfied()){
+                    return false;
+                }			
+                return true;
+            case UNSATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();
+            case SATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();
+            case EXCESSIVE_CONTENT :
+                if(childStructureHandler != null && !childStructureHandler.isSatisfied()){
+                    return false;
+                }			
+                return true;
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();
+            case SATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();
+            default :
+                throw new IllegalStateException();
+        }		
 	}
 	
-	class OpenContent extends AbstractOpenContent{
-		public void childOpen(){
-			throw new IllegalStateException();
-		}
-		public void requiredChildSatisfied(){						
-			contentHandler = satisfiedContent;
-		}
-		public void optionalChildSatisfied(){
-			contentHandler = satisfiedContent;
-		}
-		public void childSaturated(){
-			contentHandler = saturatedContent;
-		}
-		public void childExcessive(){					
-			throw new IllegalStateException();
-		}		
-	}
-	class SatisfiedContent extends AbstractSatisfiedContent{
-		public boolean isSatisfied(){
-			if(childStructureHandler != null && !childStructureHandler.isSatisfied()){
-				return false;
-			}			
-			return true;
-		}
-		public void childOpen(){
-		}
-		public void requiredChildSatisfied(){
-			// TODO review
-			throw new IllegalStateException();
-		}
-		public void optionalChildSatisfied(){
-			// TODO review
-			throw new IllegalStateException();
-		}
-		/*public void childSatisfiedPlus(){
-			return ACCEPT;
-		}*/
-		public void childSaturated(){
-			contentHandler = saturatedContent;
-		}
-		public void childExcessive(){
-			throw new IllegalStateException();
-			// childParticleHandler.reportExcessive(element, startSystemId, startLineNumber, startColumnNumber);			
-			// contentHandler = excessiveContent;
-		}	
-	}
-	class SaturatedContent extends AbstractSaturatedContent{
-		public boolean isSatisfied(){
-			if(childStructureHandler != null && !childStructureHandler.isSatisfied()){
-				return false;
-			}			
-			return true;
-		}
-		public void childOpen(){
-			//throw new IllegalStateException();
-			// It is possible to have this in cases when the child of element
-			// is handled by a UniqueChildPatternHandler (choice, ref , etc)
-			// and after that was reduced excessive content is started. It would
-			// be the initial childOpen event fired from the NoContent state of 
-			// the new childStructureHandler.
-		}
-		public void requiredChildSatisfied(){
-			throw new IllegalStateException();
-		}
-		public void optionalChildSatisfied(){
-			throw new IllegalStateException();
-		}
-		/*public void childSatisfiedPlus(){						
-			throw new IllegalStateException();
-		}*/		
-		public void childSaturated(){
-			throw new IllegalStateException();
-		}
-		public void childExcessive(){
-			childParticleHandler.reportExcessive(rule, startInputRecordIndex);
-			contentHandler = excessiveContent;
-		}
-	}
-	class ExcessiveContent extends AbstractExcessiveContent{
-		public boolean isSatisfied(){
-			if(childStructureHandler != null && !childStructureHandler.isSatisfied()){
-				return false;
-			}			
-			return true;
-		}
-		public int getContentIndex(){
-				return EXCESSIVE_CONTENT;
-		}
-		public void childOpen(){
-			// throw new IllegalStateException();
-			// It is possible to have this in cases when the child of element
-			// is handled by a UniqueChildPatternHandler (choice, ref , etc)
-			// and after that was reduced excessive content is started. It would
-			// be the initial childOpen event fired from the NoContent state of 
-			// the new childStructureHandler
-		}
-		public void requiredChildSatisfied(){
-			throw new IllegalStateException();
-		}
-		public void optionalChildSatisfied(){
-			throw new IllegalStateException();
-		}
-		/*public void childSatisfiedPlus(){						
-			throw new IllegalStateException();
-		}*/		
-		public void childSaturated(){
-			throw new IllegalStateException();
-		}
-		public void childExcessive(){
-			childParticleHandler.reportExcessive(rule, startInputRecordIndex);
-		}
-		// TODO what exactly is the state here
+	public void childOpen(){
+		switch(contentIndex){
+            case NO_CONTENT :
+                setStart();
+                contentIndex = OPEN_CONTENT;
+                break;
+            case OPEN_CONTENT :
+                throw new IllegalStateException();
+            case SATISFIED_CONTENT :
+                break;
+            case SATURATED_CONTENT :
+                //throw new IllegalStateException();
+                // It is possible to have this in cases when the child of element
+                // is handled by a UniqueChildPatternHandler (choice, ref , etc)
+                // and after that was reduced excessive content is started. It would
+                // be the initial childOpen event fired from the NoContent state of 
+                // the new childStructureHandler.
+                break;
+            case UNSATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();
+            case SATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();
+            case EXCESSIVE_CONTENT :
+                //throw new IllegalStateException();
+                // It is possible to have this in cases when the child of element
+                // is handled by a UniqueChildPatternHandler (choice, ref , etc)
+                // and after that was reduced excessive content is started. It would
+                // be the initial childOpen event fired from the NoContent state of 
+                // the new childStructureHandler
+                break;
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();
+            case SATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();
+            default :
+                throw new IllegalStateException();
+        }		
 	}
 	
+	public void requiredChildSatisfied(){
+		switch(contentIndex){
+            case NO_CONTENT :
+                setStart();
+                contentIndex = SATISFIED_CONTENT;
+                break;
+            case OPEN_CONTENT :
+                contentIndex = SATISFIED_CONTENT;
+                break;
+            case SATISFIED_CONTENT :
+                throw new IllegalStateException();  
+            case SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case SATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            case SATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            default :
+                throw new IllegalStateException();    
+        }		
+	}
+	
+	public void optionalChildSatisfied(){
+		switch(contentIndex){
+            case NO_CONTENT :
+                setStart();
+                contentIndex = SATISFIED_CONTENT;
+                break;
+            case OPEN_CONTENT :
+                contentIndex = SATISFIED_CONTENT;
+                break;
+            case SATISFIED_CONTENT :
+                throw new IllegalStateException();  
+            case SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case SATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            case SATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            default :
+                throw new IllegalStateException();    
+        }		
+	}
+	
+	public void childSaturated(){
+		switch(contentIndex){
+            case NO_CONTENT :
+                setStart();
+                contentIndex = SATURATED_CONTENT;
+                break;
+            case OPEN_CONTENT :
+                contentIndex = SATURATED_CONTENT;
+                break;
+            case SATISFIED_CONTENT :
+                contentIndex = SATURATED_CONTENT;
+                break;
+            case SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case SATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            case SATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            default :
+                throw new IllegalStateException();    
+        }		
+	}
+	
+	
+	public void childExcessive(){
+		switch(contentIndex){
+            case NO_CONTENT :
+                throw new IllegalStateException();  
+            case OPEN_CONTENT :
+                throw new IllegalStateException();  
+            case SATISFIED_CONTENT :
+                throw new IllegalStateException();  
+            case SATURATED_CONTENT :
+                childParticleHandler.reportExcessive(rule, startInputRecordIndex);
+                contentIndex = EXCESSIVE_CONTENT;
+                break;
+            case UNSATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case SATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case EXCESSIVE_CONTENT :
+                childParticleHandler.reportExcessive(rule, startInputRecordIndex);  
+                break;
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            case SATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            default :
+                throw new IllegalStateException();    
+        }		
+	}
+	
+		
 	public void accept(RuleHandlerVisitor visitor){
 		visitor.visit(this);
 	}
 	
 	public String toString(){		
 		//return "ElementHandler "+hashCode()+" "+rule.toString()+" contentHandler "+contentHandler.toString();
-		return "ElementHandler  "+rule.toString()+" contentHandler "+contentHandler.toString();
+		return "ElementHandler  "+rule.toString()+" contentIndex="+contentIndex;
 	}
 } 

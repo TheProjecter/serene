@@ -25,14 +25,14 @@ import serene.bind.util.DocumentIndexedData;
 
 public class Name extends NameClass{	
 	String characterContent;
-	Name(/*Map<String, String> prefixMapping,*/
+	Name(
 	        int xmlBase,
             int ns, 
             int datatypeLibrary, 
             String characterContent,
             int recordIndex,
             DocumentIndexedData documentIndexedData){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);		
+		super( xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);		
 		this.characterContent = characterContent;		
 	}
 	

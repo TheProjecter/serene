@@ -25,7 +25,7 @@ import serene.bind.util.DocumentIndexedData;
 
 public class AttributeWithNameInstance extends Attribute{
 	int nameRecordIndex;
-	AttributeWithNameInstance(/*Map<String, String> prefixMapping,*/ 
+	AttributeWithNameInstance( 
 	                            int xmlBase,
 								int ns, 
 								int datatypeLibrary, 
@@ -34,7 +34,7 @@ public class AttributeWithNameInstance extends Attribute{
 								ParsedComponent[] children,
 								int recordIndex,
                                 DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, defaultValue, children, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, defaultValue, children, recordIndex, documentIndexedData);
 		this.nameRecordIndex = name;
 	}	
 

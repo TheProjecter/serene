@@ -91,6 +91,6 @@ abstract class MaximalReduceCountHandler extends LimitReduceCountHandler impleme
 	//End InnerPattern------------------------------------------------------------------
 	
 	public String toString(){
-		return "MaximalReduceHandler contentHandler "+contentHandler.toString();
+		return "MaximalReduceHandler contentIndex="+contentIndex;
 	}
 } 

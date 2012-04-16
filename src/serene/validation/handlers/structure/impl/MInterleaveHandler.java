@@ -50,13 +50,6 @@ public class MInterleaveHandler extends InterleaveHandler{
 	
 	// children in the order they come
 	APattern[] definition;
-	/*private int[] itemId;
-	private String[] qName;
-	private String[] systemId;
-	private int[] lineNumber;
-	private int[] columnNumber;
-	private int childIndex;
-	private int childrenSize;*/
 	int[] childInputRecordIndex;
 	int currentChildIndex;
 	int childMaxSize;
@@ -73,17 +66,6 @@ public class MInterleaveHandler extends InterleaveHandler{
 	
 	MInterleaveHandler(){
 		super();
-		
-		/*childIndex = -1;
-		childrenSize = 10;
-		
-		definition = new APattern[childrenSize];
-		itemId = new int[childrenSize];
-		qName = new String[childrenSize];
-		systemId = new String[childrenSize];
-		lineNumber = new int[childrenSize];
-		columnNumber = new int[childrenSize];*/
-		
 		
 	    currentChildIndex = -1;
 	    childMaxSize = 20;
@@ -186,17 +168,10 @@ public class MInterleaveHandler extends InterleaveHandler{
 						size,
 						satisfactionLevel,
 						saturationLevel,
-						contentHandler.getContentIndex(),
+						contentIndex,
 						startInputRecordIndex,
 						isStartSet,
 						definition,
-						/*itemId,
-						qName,
-						systemId,
-						lineNumber,
-						columnNumber,
-						childIndex,
-						childrenSize*/
 						childInputRecordIndex,
 						currentChildIndex);
 		copy.setOriginal(this);
@@ -213,17 +188,10 @@ public class MInterleaveHandler extends InterleaveHandler{
 					size,
 					satisfactionLevel,
 					saturationLevel,
-					contentHandler.getContentIndex(),
+					contentIndex,
 					startInputRecordIndex,
 					isStartSet,
 					definition,
-					/*itemId,
-					qName,
-					systemId,
-					lineNumber,
-					columnNumber,
-					childIndex,
-					childrenSize*/
 					childInputRecordIndex,
 					currentChildIndex);
 		copy.setOriginal(this);
@@ -244,17 +212,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 	
 	
 	//Start ValidationHandler---------------------------------------------------------		
-	void handleParticleShift(int inputRecordIndex, APattern cd){		
-		/*if(++childIndex == childrenSize)increaseChildrenStorageSize();
-		if(childIndex == 0)setStart();
-		
-		systemId[childIndex] = sysId;
-		lineNumber[childIndex] = ln;
-		columnNumber[childIndex] = cn;
-		qName[childIndex] = qn;
-		itemId[childIndex] = iti;
-		definition[childIndex] = cd;
-		*/
+	void handleParticleShift(int inputRecordIndex, APattern cd){
 		// for(int i = 0; i < childrenSize; i++){		
 			// System.out.print(qName[i]+" ");			
 		// }
@@ -293,7 +251,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 	// void closeContentParticle(APattern childPattern) super
 	void setEmptyState(){
 		closeContent();
-		contentHandler = noContent;
+		contentIndex = NO_CONTENT;
 		satisfactionLevel = 0;
 		saturationLevel = 0;				
 		//***		isReduceLocked = false;
@@ -335,17 +293,10 @@ public class MInterleaveHandler extends InterleaveHandler{
 							int size,
 							int satisfactionLevel,
 							int saturationLevel,							
-							int contentHandlerContentIndex,
+							int contentIndex,
 							int startInputRecordIndex,
 							boolean isStartSet,
 							APattern[] definition,
-							/*int[] itemId,
-							String[] qName,
-							String[] systemId,
-							int[] lineNumber,
-							int[] columnNumber,
-							int childIndex,
-							int childrenSize*/
 							int[] childInputRecordIndex,
 							int currentChildIndex){
 		
@@ -358,23 +309,9 @@ public class MInterleaveHandler extends InterleaveHandler{
 			if(cph[i] != null)childParticleHandlers[i] = cph[i].getCopy(this, errorCatcher);
 			if(csh[i] != null)childStructureHandlers[i] = csh[i].getCopy(this, stackHandler, errorCatcher);
 		}
-		if(contentHandlerContentIndex == NO_CONTENT){
-			contentHandler = noContent;
-		}else if(contentHandlerContentIndex == OPEN_CONTENT){
-			contentHandler = openContent;
-		}else if(contentHandlerContentIndex == SATISFIED_CONTENT){
-			contentHandler = satisfiedContent;
-		}else if(contentHandlerContentIndex == UNSATISFIED_SATURATED_CONTENT){
-			contentHandler = unsatisfiedSaturatedContent;
-		}else if(contentHandlerContentIndex == SATISFIED_SATURATED_CONTENT){
-			contentHandler = satisfiedSaturatedContent;
-		}else if(contentHandlerContentIndex == UNSATISFIED_EXCESSIVE_CONTENT){
-			contentHandler = unsatisfiedExcessiveContent;
-		}else if(contentHandlerContentIndex == SATISFIED_EXCESSIVE_CONTENT){
-			contentHandler = satisfiedExcessiveContent;
-		}else{
-			throw new IllegalArgumentException();
-		}
+		
+		this.contentIndex = contentIndex;
+		
 		this.satisfactionLevel = satisfactionLevel;
 		this.saturationLevel = saturationLevel;
 		
@@ -402,28 +339,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 	int computeOccurrencesCount(){
 		// System.out.println("m validating reduce");
 		currentSecondaryHandler = pool.getSInterleaveHandler((AInterleave)rule, errorCatcher, null, stackHandler, this);
-		int occurrencesCount = 0;		
-		/*for(mValidationLoopCounter = 0; mValidationLoopCounter <= childIndex; mValidationLoopCounter++){
-			// System.out.println("\tloop "+mValidationLoopCounter+" "+qName[mValidationLoopCounter]);
-			currentSecondaryHandler.handleParticleShift(systemId[mValidationLoopCounter],
-														lineNumber[mValidationLoopCounter],
-														columnNumber[mValidationLoopCounter],
-														qName[mValidationLoopCounter],
-														itemId[mValidationLoopCounter],
-														definition[mValidationLoopCounter]);
-			if(mValidationLoopCounter == childIndex){				
-				if(!currentSecondaryHandler.isSatisfied()){					
-					// System.out.println("last unsatisfied "+mValidationLoopCounter+" "+qName[mValidationLoopCounter]);
-					currentSecondaryHandler.recycle();
-					currentSecondaryHandler = secondaryHandlers.remove(secondaryHandlers.size()-1);
-					mValidationLoopCounter = lastShiftIndex.removeLast();
-					// System.out.println("last unsatisfied go to "+mValidationLoopCounter+" "+qName[mValidationLoopCounter]);
-				}
-			}
-			if(secondaryHandlers.size() > occurrencesCount){
-				occurrencesCount = secondaryHandlers.size();
-			}
-		}*/
+		int occurrencesCount = 0;	
 		
 		for(mValidationLoopCounter = 0; mValidationLoopCounter <= currentChildIndex; mValidationLoopCounter++){
 			// System.out.println("\tloop "+mValidationLoopCounter+" "+qName[mValidationLoopCounter]);
@@ -448,7 +364,6 @@ public class MInterleaveHandler extends InterleaveHandler{
 	}
 	
 	void satisfiedOccurrence(){
-		/*if(mValidationLoopCounter == childIndex)return;*/
 		if(mValidationLoopCounter == currentChildIndex)return;		
 		secondaryHandlers.add(currentSecondaryHandler);
 		lastShiftIndex.add(mValidationLoopCounter);
@@ -457,12 +372,7 @@ public class MInterleaveHandler extends InterleaveHandler{
 		// System.out.println("satisfied "+secondaryHandlers);
 	}
 	
-	void excessiveOccurrence(){	    
-		/*if(secondaryHandlers.isEmpty()){
-			errorCatcher.illegalContent(rule, itemId[0], qName[0], systemId[0], lineNumber[0], columnNumber[0]);
-			mValidationLoopCounter = childIndex+1;//stop the loop
-			return;
-		}*/
+	void excessiveOccurrence(){
 		if(secondaryHandlers.isEmpty()){
 			errorCatcher.illegalContent(rule, childInputRecordIndex[0]);			
 			mValidationLoopCounter = currentChildIndex+1;//stop the loop
@@ -476,31 +386,6 @@ public class MInterleaveHandler extends InterleaveHandler{
 	}
 	
 	void increaseChildrenStorageSize(){
-		/*childrenSize += 10;
-		
-		APattern[] increasedD = new APattern[childrenSize];
-		System.arraycopy(definition, 0, increasedD, 0, childIndex);
-		definition = increasedD;
-		
-		int[] increasedITI = new int[childrenSize];
-		System.arraycopy(itemId, 0, increasedITI, 0, childIndex);
-		itemId = increasedITI;
-		
-		String[] increasedQN = new String[childrenSize];
-		System.arraycopy(qName, 0, increasedQN, 0, childIndex);
-		qName = increasedQN;
-		
-		String[] increasedSI = new String[childrenSize];
-		System.arraycopy(systemId, 0, increasedSI, 0, childIndex);
-		systemId = increasedSI;
-					
-		int[] increasedLN = new int[childrenSize];
-		System.arraycopy(lineNumber, 0, increasedLN, 0, childIndex);
-		lineNumber = increasedLN;
-		
-		int[] increasedCN = new int[childrenSize];
-		System.arraycopy(columnNumber, 0, increasedCN, 0, childIndex);
-		columnNumber = increasedCN;*/
 		
 		int newSize = childInputRecordIndex.length + increaseSizeAmount;
 		
@@ -518,6 +403,6 @@ public class MInterleaveHandler extends InterleaveHandler{
 	}
 	public String toString(){		
 		//return "MInterleaveHandler "+hashCode()+" "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentHandler "+contentHandler.toString();
-		return "MInterleaveHandler  "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentHandler "+contentHandler.toString();
+		return "MInterleaveHandler  "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentIndex="+contentIndex;
 	}
 } 

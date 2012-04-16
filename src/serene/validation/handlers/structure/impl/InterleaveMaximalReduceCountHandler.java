@@ -30,15 +30,11 @@ import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 
 public class InterleaveMaximalReduceCountHandler extends MaximalReduceCountHandler{
-	ContentHandler superSatisfiedContent; 
-	ContentHandler satisfiedNeverReduceContent;
 	
 	InterleaveMaximalReduceCountHandler original;
 	
 	InterleaveMaximalReduceCountHandler(){
 		super();
-		satisfiedNeverReduceContent = new SatisfiedNeverReduceContent();
-		superSatisfiedContent = satisfiedContent;
 	}	
 	
 	void init(IntList reduceCountList, AInterleave interleave, ErrorCatcher errorCatcher, MaximalReduceStackHandler stackHandler){
@@ -57,9 +53,7 @@ public class InterleaveMaximalReduceCountHandler extends MaximalReduceCountHandl
 		childQName = new String[size][];
 		childSystemId = new String[size][];
 		childLineNumber = new int[size][];
-		childColumnNumber = new int[size][];		
-		if(saturationIndicator == 0 && interleave.getMinOccurs() <= 1)satisfiedContent = satisfiedNeverReduceContent;
-		else satisfiedContent = superSatisfiedContent;
+		childColumnNumber = new int[size][];
 	}
 			
 	public void recycle(){
@@ -99,7 +93,7 @@ public class InterleaveMaximalReduceCountHandler extends MaximalReduceCountHandl
 						size,
 						satisfactionLevel,
 						saturationLevel,
-						contentHandler.getContentIndex(),
+						contentIndex,
 						startInputRecordIndex,
 						isStartSet);
 		copy.setOriginal(this);
@@ -128,7 +122,7 @@ public class InterleaveMaximalReduceCountHandler extends MaximalReduceCountHandl
 							int size,
 							int satisfactionLevel,
 							int saturationLevel,
-							int contentHandlerContentIndex,
+							int contentIndex,
 							int startInputRecordIndex,
 							boolean isStartSet){
 		if(this.size < size){
@@ -140,23 +134,9 @@ public class InterleaveMaximalReduceCountHandler extends MaximalReduceCountHandl
 			if(cph[i] != null)childParticleHandlers[i] = cph[i].getCopy(this, errorCatcher);
 			if(csh[i] != null)childStructureHandlers[i] = csh[i].getCopy(this, stackHandler, errorCatcher);
 		}
-		if(contentHandlerContentIndex == NO_CONTENT){
-			contentHandler = noContent;
-		}else if(contentHandlerContentIndex == OPEN_CONTENT){
-			contentHandler = openContent;
-		}else if(contentHandlerContentIndex == SATISFIED_CONTENT){
-			contentHandler = satisfiedContent;
-		}else if(contentHandlerContentIndex == UNSATISFIED_SATURATED_CONTENT){
-			contentHandler = unsatisfiedSaturatedContent;
-		}else if(contentHandlerContentIndex == SATISFIED_SATURATED_CONTENT){
-			contentHandler = satisfiedSaturatedContent;
-		}else if(contentHandlerContentIndex == UNSATISFIED_EXCESSIVE_CONTENT){
-			contentHandler = unsatisfiedExcessiveContent;
-		}else if(contentHandlerContentIndex == SATISFIED_EXCESSIVE_CONTENT){
-			contentHandler = satisfiedExcessiveContent;
-		}else{
-			throw new IllegalArgumentException();
-		}
+		
+		this.contentIndex = contentIndex;
+		
 		this.satisfactionLevel = satisfactionLevel;
 		this.saturationLevel = saturationLevel;
 		
@@ -175,36 +155,6 @@ public class InterleaveMaximalReduceCountHandler extends MaximalReduceCountHandl
 	}
 	public String toString(){		
 		//return "InterleaveMaximalReduceCountHandler "+hashCode()+" "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentHandler "+contentHandler.toString();
-		return "InterleaveMaximalReduceCountHandler  "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentHandler "+contentHandler.toString();
+		return "InterleaveMaximalReduceCountHandler  "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentIndex="+contentIndex;
 	}
-
-	protected class SatisfiedNeverReduceContent extends AbstractSatisfiedContent{
-		public boolean isSatisfied(){
-			for(int i = 0; i < size; i++){
-				if(childStructureHandlers[i] != null && !childStructureHandlers[i].isSatisfied())
-					return false;
-				
-				if(childParticleHandlers[i] != null && !childParticleHandlers[i].isSatisfied()
-					&& !(childParticleHandlers[i].getDistanceToSatisfaction() == 1 && childStructureHandlers[i] != null))
-						return false;				
-			}
-			return true;
-		}
-		public void childOpen(){
-		}
-		public void optionalChildSatisfied(){
-		}
-		public void requiredChildSatisfied(){			
-			throw new IllegalStateException();
-		}
-		/*public void childSatisfiedPlus(){			
-			return ACCEPT;
-		}*/
-		public void childSaturated(){
-			throw new IllegalStateException();
-		}
-		public void childExcessive(){
-			throw new IllegalStateException();
-		}		
-	}	
 } 

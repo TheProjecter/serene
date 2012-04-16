@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 import serene.bind.util.DocumentIndexedData;
 
 public class ParentRef extends InternalRefPattern{
-	ParentRef(/*Map<String, String> prefixMapping,*/ 
+	ParentRef( 
 	            int xmlBase,
                 int ns, 
                 int datatypeLibrary,
@@ -32,7 +32,7 @@ public class ParentRef extends InternalRefPattern{
                 ParsedComponent[] children, 
                 int recordIndex,
                 DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, name, children, recordIndex, documentIndexedData);		
+		super( xmlBase, ns, datatypeLibrary, name, children, recordIndex, documentIndexedData);		
 	}
 		
 	public void accept(ParsedComponentVisitor v){

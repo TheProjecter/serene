@@ -25,7 +25,7 @@ import serene.bind.util.DocumentIndexedData;
 public class ExternalRef extends MultipleChildrenPattern{
 	int hrefRecordIndex;
 	
-	public ExternalRef(/*Map<String, String> prefixMapping,*/ 
+	public ExternalRef( 
 	                int xmlBase,
                     int ns, 
                     int datatypeLibrary,
@@ -33,7 +33,7 @@ public class ExternalRef extends MultipleChildrenPattern{
                     ParsedComponent[] children, 
                     int recordIndex,
                     DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
 		this.hrefRecordIndex = href;
 	}	
 			

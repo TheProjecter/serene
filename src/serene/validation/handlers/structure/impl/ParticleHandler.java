@@ -101,21 +101,22 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 		recycler.recycle(this);		
 	}
 	
-	public int functionalEquivalenceCode(){	
-	    if(stateId == CardinalityHandler.NO_OCCURRENCE){
-			return -1000;
-		}else if(stateId == CardinalityHandler.SATISFIED_SIMPLE){
-			return occurs*definition.hashCode();
-		}else if(stateId == CardinalityHandler.SATISFIED_NEVER_SATURATED){
-			return 0;
-		}else if(stateId == CardinalityHandler.SATURATED){
-			return occurs*definition.hashCode();
-		}else if(stateId == CardinalityHandler.EXCESSIVE){
-			return 0;
-		}else if(stateId == CardinalityHandler.OPEN){
-			return occurs*definition.hashCode();
-		}else{
-			throw new IllegalStateException();
+	public int functionalEquivalenceCode(){
+		switch(stateId){
+		    case NO_OCCURRENCE :
+		        return -1000;
+		    case SATISFIED_SIMPLE :
+		        return occurs*definition.hashCode();
+		    case SATISFIED_NEVER_SATURATED :
+		        return 0;
+		    case SATURATED :
+		        return occurs*definition.hashCode();
+		    case EXCESSIVE :
+		        return 0;
+		    case OPEN :
+		        return occurs*definition.hashCode();
+		    default:
+		        throw new IllegalStateException();
 		}
 	}
 	
@@ -185,152 +186,192 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	}
 			
 	public boolean isSatisfied(){
-	    return stateId == SATISFIED_NEVER_SATURATED 
-	                || stateId == SATISFIED_SIMPLE 
-	                || stateId == SATURATED 
-	                || stateId == EXCESSIVE ;
+	    switch(stateId){
+		    case NO_OCCURRENCE :
+		        return false;
+		    case SATISFIED_SIMPLE :
+		        return true;
+		    case SATISFIED_NEVER_SATURATED :
+		        return true;
+		    case SATURATED :
+		        return true;
+		    case EXCESSIVE :
+		        return true;
+		    case OPEN :
+		        return false;
+		    default:
+		        throw new IllegalStateException();
+		}
 	}
 	
 	public boolean isSaturated(){
-	    return stateId == SATURATED
-	                || stateId == EXCESSIVE ;
+	    switch(stateId){
+		    case NO_OCCURRENCE :
+		        return false;
+		    case SATISFIED_SIMPLE :
+		        return false;
+		    case SATISFIED_NEVER_SATURATED :
+		        return false;
+		    case SATURATED :
+		        return true;
+		    case EXCESSIVE :
+		        return true;
+		    case OPEN :
+		        return false;
+		    default:
+		        throw new IllegalStateException();
+		}
 	}
 	
 	public void handleOccurrence(int inputRecordIndex){
 		occurs++;		
-		
-		
-		if(stateId == CardinalityHandler.NO_OCCURRENCE){
-		    if(occursSatisfied == 0){			
-				if(occursSaturated == APattern.UNBOUNDED){
-					if(stackConflictsHandler != null){
-						unregisterWithStackConflictsHandler();
-					}					 
-					childEventHandler.optionalChildSatisfied();
-					stateId = SATISFIED_NEVER_SATURATED;
-				}else{
-					maintainAllCorrespondingInputRecordIndex(inputRecordIndex);					
-					if(occurs == occursSaturated){						
-						childEventHandler.optionalChildSatisfied();
-						childEventHandler.childSaturated();
-						stateId = SATURATED;
-					}else{						
-						childEventHandler.optionalChildSatisfied();
-						stateId = SATISFIED_SIMPLE;
-					}				
-				}
-			}else if(occurs == occursSatisfied){	
-				if(occursSaturated == APattern.UNBOUNDED){
-					if(stackConflictsHandler != null){
-						unregisterWithStackConflictsHandler();
-					}					 
-					childEventHandler.requiredChildSatisfied();
-					stateId = SATISFIED_NEVER_SATURATED;
-				}else{
-					maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
-					if(occurs == occursSaturated){						
-						childEventHandler.requiredChildSatisfied();
-						childEventHandler.childSaturated();
-						stateId = SATURATED;
-					}else{						
-						childEventHandler.requiredChildSatisfied();
-						stateId = SATISFIED_SIMPLE;
-					}				
-				}
-			}else{				
-				childEventHandler.childOpen();
-				stateId = OPEN;
-			}		    
-		}else if(stateId == CardinalityHandler.SATISFIED_SIMPLE){
-		    maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
-			if(occurs == occursSaturated){				
-				childEventHandler.childSaturated();
-				stateId = SATURATED;
-			}		    
-		}else if(stateId == CardinalityHandler.SATISFIED_NEVER_SATURATED){
-		    
-		    
-		}else if(stateId == CardinalityHandler.SATURATED){
-		    maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
-			handleOccurrenceForSaturated();			    
-		}else if(stateId == CardinalityHandler.EXCESSIVE){
-		    maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
-			handleOccurrenceForExcessive();
-		}else if(stateId == CardinalityHandler.OPEN){
-		    if(occurs == occursSatisfied){	
-				if(occursSaturated == APattern.UNBOUNDED){
-					if(stackConflictsHandler != null){
-						unregisterWithStackConflictsHandler();
-					}
-					clearCorrespondingInputRecordIndex();					 
-					childEventHandler.requiredChildSatisfied();
-					stateId = SATISFIED_NEVER_SATURATED;
-				}else{
-					maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
-					if(occurs == occursSaturated){						
-						childEventHandler.requiredChildSatisfied();
-						childEventHandler.childSaturated();
-						stateId = SATURATED;
-					}else{						
-						childEventHandler.requiredChildSatisfied();
-						stateId = SATISFIED_SIMPLE;
-					}				
-				}
-			}		    
-		}else{
-			throw new IllegalStateException();
+				
+		switch(stateId){
+		    case NO_OCCURRENCE :
+		        if(occursSatisfied == 0){			
+                    if(occursSaturated == APattern.UNBOUNDED){
+                        if(stackConflictsHandler != null){
+                            unregisterWithStackConflictsHandler();
+                        }					 
+                        childEventHandler.optionalChildSatisfied();
+                        stateId = SATISFIED_NEVER_SATURATED;
+                    }else{
+                        maintainAllCorrespondingInputRecordIndex(inputRecordIndex);					
+                        if(occurs == occursSaturated){						
+                            childEventHandler.optionalChildSatisfied();
+                            childEventHandler.childSaturated();
+                            stateId = SATURATED;
+                        }else{						
+                            childEventHandler.optionalChildSatisfied();
+                            stateId = SATISFIED_SIMPLE;
+                        }				
+                    }
+                }else if(occurs == occursSatisfied){	
+                    if(occursSaturated == APattern.UNBOUNDED){
+                        if(stackConflictsHandler != null){
+                            unregisterWithStackConflictsHandler();
+                        }					 
+                        childEventHandler.requiredChildSatisfied();
+                        stateId = SATISFIED_NEVER_SATURATED;
+                    }else{
+                        maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
+                        if(occurs == occursSaturated){						
+                            childEventHandler.requiredChildSatisfied();
+                            childEventHandler.childSaturated();
+                            stateId = SATURATED;
+                        }else{						
+                            childEventHandler.requiredChildSatisfied();
+                            stateId = SATISFIED_SIMPLE;
+                        }				
+                    }
+                }else{				
+                    childEventHandler.childOpen();
+                    stateId = OPEN;
+                }	
+		        break;
+		    case SATISFIED_SIMPLE :
+		        maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
+                if(occurs == occursSaturated){				
+                    childEventHandler.childSaturated();
+                    stateId = SATURATED;
+                }
+		        break;
+		    case SATISFIED_NEVER_SATURATED :
+		        break;
+		    case SATURATED :
+		        maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
+		        handleOccurrenceForSaturated();			
+		        break;
+		    case EXCESSIVE :
+		        maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
+		        handleOccurrenceForExcessive();
+		        break;
+		    case OPEN :
+		        if(occurs == occursSatisfied){	
+                    if(occursSaturated == APattern.UNBOUNDED){
+                        if(stackConflictsHandler != null){
+                            unregisterWithStackConflictsHandler();
+                        }
+                        clearCorrespondingInputRecordIndex();					 
+                        childEventHandler.requiredChildSatisfied();
+                        stateId = SATISFIED_NEVER_SATURATED;
+                    }else{
+                        maintainAllCorrespondingInputRecordIndex(inputRecordIndex);
+                        if(occurs == occursSaturated){						
+                            childEventHandler.requiredChildSatisfied();
+                            childEventHandler.childSaturated();
+                            stateId = SATURATED;
+                        }else{						
+                            childEventHandler.requiredChildSatisfied();
+                            stateId = SATISFIED_SIMPLE;
+                        }				
+                    }
+                }
+		        break;
+		    default:
+		        throw new IllegalStateException();
 		}
 	}
 		
 	public void handleOccurrence(StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver){
 		occurs++;
-		
-		if(stateId == CardinalityHandler.NO_OCCURRENCE){
-		    registerWithStackConflictsHandler(stackConflictsHandler, resolver);
-			handleOccurrenceForNoOccurrence();		    
-		}else if(stateId == CardinalityHandler.SATISFIED_SIMPLE){
-		    registerWithStackConflictsHandler(stackConflictsHandler, resolver);
-			handleOccurrenceForSatisfiedSimple();		    
-		}else if(stateId == CardinalityHandler.SATISFIED_NEVER_SATURATED){
-		    
-		    
-		}else if(stateId == CardinalityHandler.SATURATED){
-		    registerWithStackConflictsHandler(stackConflictsHandler, resolver);
-			handleOccurrenceForSaturated();		    
-		}else if(stateId == CardinalityHandler.EXCESSIVE){
-		    registerWithStackConflictsHandler(stackConflictsHandler, resolver);
-			handleOccurrenceForExcessive();		    
-		}else if(stateId == CardinalityHandler.OPEN){
-		    registerWithStackConflictsHandler(stackConflictsHandler, resolver);
-			handleOccurrenceForOpen();		    
-		}else{
-			throw new IllegalStateException();
+				
+		switch(stateId){
+		    case NO_OCCURRENCE :		      
+		        registerWithStackConflictsHandler(stackConflictsHandler, resolver);
+		        handleOccurrenceForNoOccurrence();
+		        break;
+		    case SATISFIED_SIMPLE :
+		        registerWithStackConflictsHandler(stackConflictsHandler, resolver);
+		        handleOccurrenceForSatisfiedSimple();
+		        break;
+		    case SATISFIED_NEVER_SATURATED :
+		        break;
+		    case SATURATED :
+		        registerWithStackConflictsHandler(stackConflictsHandler, resolver);
+		        handleOccurrenceForSaturated();
+		        break;
+		    case EXCESSIVE :
+		        registerWithStackConflictsHandler(stackConflictsHandler, resolver);
+		        handleOccurrenceForExcessive();
+		        break;
+		    case OPEN :
+		        registerWithStackConflictsHandler(stackConflictsHandler, resolver);
+		        handleOccurrenceForOpen();
+		        break;
+		    default:
+		        throw new IllegalStateException();
 		}
 	}
 	
 	public void handleOccurrence(StackConflictsHandler stackConflictsHandler){
 		occurs++;
 		
-		if(stateId == CardinalityHandler.NO_OCCURRENCE){
-		    registerWithStackConflictsHandler(stackConflictsHandler);
-			handleOccurrenceForNoOccurrence();		    
-		}else if(stateId == CardinalityHandler.SATISFIED_SIMPLE){
-		    registerWithStackConflictsHandler(stackConflictsHandler);
-			handleOccurrenceForSatisfiedSimple();		    
-		}else if(stateId == CardinalityHandler.SATISFIED_NEVER_SATURATED){
-		    
-		    
-		}else if(stateId == CardinalityHandler.SATURATED){
-		    registerWithStackConflictsHandler(stackConflictsHandler);
-			handleOccurrenceForSaturated();		    
-		}else if(stateId == CardinalityHandler.EXCESSIVE){
-		    registerWithStackConflictsHandler(stackConflictsHandler);
-			handleOccurrenceForExcessive();		    
-		}else if(stateId == CardinalityHandler.OPEN){
-		    registerWithStackConflictsHandler(stackConflictsHandler);
-			handleOccurrenceForOpen();		    
-		}else{
-			throw new IllegalStateException();
+		switch(stateId){
+		    case NO_OCCURRENCE :		      
+		        registerWithStackConflictsHandler(stackConflictsHandler);
+		        handleOccurrenceForNoOccurrence();
+		        break;
+		    case SATISFIED_SIMPLE :
+		        registerWithStackConflictsHandler(stackConflictsHandler);
+		        handleOccurrenceForSatisfiedSimple();
+		        break;
+		    case SATISFIED_NEVER_SATURATED :
+		        break;
+		    case SATURATED :
+		        registerWithStackConflictsHandler(stackConflictsHandler);
+		        handleOccurrenceForSaturated();
+		        break;
+		    case EXCESSIVE :
+		        registerWithStackConflictsHandler(stackConflictsHandler);
+		        handleOccurrenceForExcessive();
+		        break;
+		    case OPEN :
+		        registerWithStackConflictsHandler(stackConflictsHandler);
+		        handleOccurrenceForOpen();
+		        break;
+		    default:
+		        throw new IllegalStateException();
 		}	
 	}
 	
@@ -392,66 +433,80 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	}
 	public void reportExcessive(Rule context, int startInputRecordIndex){
 		
-		if(stateId == CardinalityHandler.SATURATED){
-		    if(stackConflictsHandler != null){
-				stackConflictsHandler.disqualify(definition);
-				return;
-			}			
-			errorCatcher.excessiveContent(context,
-											startInputRecordIndex,
-											definition, 
-											Arrays.copyOfRange(correspondingInputRecordIndex, 0, currentIndex+1));		    
-		}else if(stateId == CardinalityHandler.EXCESSIVE){
-		    if(stackConflictsHandler != null){
-				stackConflictsHandler.disqualify(definition);
-				return;
-			}
-			errorCatcher.excessiveContent(context,											
-											definition, 
-											correspondingInputRecordIndex[currentIndex]);		    
-		}else{
-			throw new IllegalStateException();
-		}
+		switch(stateId){		    
+		    case SATURATED :
+		        if(stackConflictsHandler != null){
+                    stackConflictsHandler.disqualify(definition);
+                    return;
+                }			
+                errorCatcher.excessiveContent(context,
+                                                startInputRecordIndex,
+                                                definition, 
+                                                Arrays.copyOfRange(correspondingInputRecordIndex, 0, currentIndex+1));
+		        break;
+		    case EXCESSIVE :
+		        if(stackConflictsHandler != null){
+                    stackConflictsHandler.disqualify(definition);
+                    return;
+                }
+                errorCatcher.excessiveContent(context,											
+                                                definition, 
+                                                correspondingInputRecordIndex[currentIndex]);
+		        break;
+		    case NO_OCCURRENCE :		        	
+		        throw new IllegalStateException();
+		    case SATISFIED_SIMPLE :
+		        throw new IllegalStateException();
+		    case SATISFIED_NEVER_SATURATED :
+		        throw new IllegalStateException();
+		    case OPEN :
+		        throw new IllegalStateException();
+		    default:
+		        throw new IllegalStateException();
+		}		
 	}
 	
-	public void reportMissing(Rule context, int startInputRecordIndex){			
-		if(stateId == CardinalityHandler.NO_OCCURRENCE){
-		    if(stackConflictsHandler != null){
-				stackConflictsHandler.disqualify(context);
-				return;
-			}	
-			errorCatcher.missingContent(context,  
-									startInputRecordIndex,
-									definition, 
-									occursSatisfied, 
-									occurs, 
-									Arrays.copyOfRange(correspondingInputRecordIndex, 0, currentIndex+1));		    
-		}else if(stateId == CardinalityHandler.SATISFIED_SIMPLE){
-		    
-		    
-		}else if(stateId == CardinalityHandler.SATISFIED_NEVER_SATURATED){
-		    
-		    
-		}else if(stateId == CardinalityHandler.SATURATED){
-		    
-		    
-		}else if(stateId == CardinalityHandler.EXCESSIVE){
-		    
-		    
-		}else if(stateId == CardinalityHandler.OPEN){
-		    if(stackConflictsHandler != null){
-				stackConflictsHandler.disqualify(context);
-				return;
-			}	
-			errorCatcher.missingContent(context,  
-									startInputRecordIndex,
-									definition, 
-									occursSatisfied, 
-									occurs,
-									Arrays.copyOfRange(correspondingInputRecordIndex, 0, currentIndex+1));		    
-		}else{
-			throw new IllegalStateException();
-		}
+	public void reportMissing(Rule context, int startInputRecordIndex){	    
+		switch(stateId){
+		    case NO_OCCURRENCE :		        	
+		        if(stackConflictsHandler != null){
+                    stackConflictsHandler.disqualify(context);
+                    return;
+                }	
+                errorCatcher.missingContent(context,  
+                                        startInputRecordIndex,
+                                        definition, 
+                                        occursSatisfied, 
+                                        occurs, 
+                                        Arrays.copyOfRange(correspondingInputRecordIndex, 0, currentIndex+1));
+		        break;
+		    case OPEN :
+		        if(stackConflictsHandler != null){
+                    stackConflictsHandler.disqualify(context);
+                    return;
+                }	
+                errorCatcher.missingContent(context,  
+                                        startInputRecordIndex,
+                                        definition, 
+                                        occursSatisfied, 
+                                        occurs,
+                                        Arrays.copyOfRange(correspondingInputRecordIndex, 0, currentIndex+1));
+		        break;
+		    case SATISFIED_SIMPLE :
+		        //throw new IllegalStateException();
+		        break;
+		    case SATISFIED_NEVER_SATURATED :
+		        //throw new IllegalStateException();
+		        break;
+		    case SATURATED :
+		        //throw new IllegalStateException();
+		        break;
+		    case EXCESSIVE :
+		        //throw new IllegalStateException();
+		        break;
+		    default:
+		        throw new IllegalStateException();
+		}		
 	}	
 	
 	
@@ -544,21 +599,29 @@ public class ParticleHandler implements CardinalityHandler, Reusable{
 	
 	public String toString(){
 	    String s = null;
-	    if(stateId == CardinalityHandler.NO_OCCURRENCE){
-			s = "NO_OCCURRENCE";
-		}else if(stateId == CardinalityHandler.SATISFIED_SIMPLE){
-			s = "SATISFIED_SIMPLE";
-		}else if(stateId == CardinalityHandler.SATISFIED_NEVER_SATURATED){
-			s = "SATISFIED_NEVER_SATURATED";
-		}else if(stateId == CardinalityHandler.SATURATED){
-			s = "SATURATED";
-		}else if(stateId == CardinalityHandler.EXCESSIVE){
-			s = "EXCESSIVE";
-		}else if(stateId == CardinalityHandler.OPEN){
-			s = "OPEN";
-		}else{
-			throw new IllegalStateException();
-		}
+	    
+	    switch(stateId){
+		    case NO_OCCURRENCE :
+		        s = "NO_OCCURRENCE";
+		        break;
+		    case SATISFIED_SIMPLE :
+		        s = "SATISFIED_SIMPLE";
+		        break;
+		    case SATISFIED_NEVER_SATURATED :
+		        s = "SATISFIED_NEVER_SATURATED";
+		        break;
+		    case SATURATED :
+		        s = "SATURATED";
+		        break;
+		    case EXCESSIVE :
+		        s = "EXCESSIVE";
+		        break;
+		    case OPEN :
+		        s = "OPEN";
+		        break;
+		    default:
+		        throw new IllegalStateException();
+		}		
 		return "ParticleHandler  "+definition+" occurs "+occurs+" state "+s+" "+stackConflictsHandler;
 	}
 }

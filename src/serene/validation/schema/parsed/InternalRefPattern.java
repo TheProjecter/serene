@@ -23,7 +23,7 @@ import serene.bind.util.DocumentIndexedData;
 
 abstract class InternalRefPattern extends MultipleChildrenPattern{	
 	int nameRecordIndex;
-	InternalRefPattern(/*Map<String, String> prefixMapping,*/ 
+	InternalRefPattern( 
 	                int xmlBase,
                     int ns, 
                     int datatypeLibrary,
@@ -31,7 +31,7 @@ abstract class InternalRefPattern extends MultipleChildrenPattern{
                     ParsedComponent[] children, 
                     int recordIndex,
                     DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);		
+		super( xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);		
 		this.nameRecordIndex = name;	
 	}
 	

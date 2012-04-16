@@ -41,13 +41,8 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	
 	StructureHandler parent;
 	
-	ContentHandler contentHandler;
-	ContentHandler noContent;
-	ContentHandler openContent;
-	ContentHandler satisfiedContent;
-	ContentHandler saturatedContent;
-	ContentHandler excessiveContent;
-
+	int contentIndex;
+	
 	ActiveInputDescriptor activeInputDescriptor;
 	InputStackDescriptor inputStackDescriptor;	
 	ErrorCatcher errorCatcher; 
@@ -70,12 +65,33 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	}	
 	
 	//Start RuleHandler---------------------------------------------------------------
-	public boolean isSatisfied(){
-		return contentHandler.isSatisfied();
-	}	
+	
 	public boolean isSaturated(){
-		return contentHandler.isSaturated();
+		switch(contentIndex){
+            case NO_CONTENT :
+                return false;
+            case OPEN_CONTENT :
+                return false;
+            case SATISFIED_CONTENT :
+                return false;
+            case SATURATED_CONTENT :
+                return true;
+            case UNSATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();
+            case SATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();
+            case EXCESSIVE_CONTENT :
+                return true;
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();
+            case SATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();
+            default :
+                throw new IllegalStateException();
+        }		
 	}
+	
+	
 	public void setStackConflictsHandler(StackConflictsHandler stackConflictsHandler){
 		throw new IllegalStateException();
 	}
@@ -144,29 +160,10 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	//End ValidationHandler-----------------------------------------------------------
 	
 	//Start ChildEventHandler---------------------------------------------------------
-	public int getContentIndex(){
-		int result = contentHandler.getContentIndex();
-		return result;
+	public int getContentIndex(){		
+		return contentIndex;
 	}
-	public void childOpen(){
-		contentHandler.childOpen();
-	}	
-	public void requiredChildSatisfied(){
-		contentHandler.requiredChildSatisfied();
-	}
-	
-	public void optionalChildSatisfied(){
-		contentHandler.optionalChildSatisfied();
-	}
-		
-	public void childSaturated(){
-		contentHandler.childSaturated();
-	}
-	
-	public void childExcessive(){
-		contentHandler.childExcessive();
-	}	
-		
+			
 	public int functionalEquivalenceCode(){
 		throw new IllegalArgumentException("hehe functional equivalence!");
 		//return contentHandler.functionalEquivalenceCode();
@@ -178,107 +175,5 @@ public abstract class StructureValidationHandler implements StructureHandler, Ch
 	}
 	public StructureHandler getCopy(IntList reduceCountList, IntList startedCountList, StackHandler stackHandler, ErrorCatcher errorCatcher){
 		throw new IllegalStateException();
-	}
-	
-	abstract class ContentHandler implements RuleHandler, ChildEventHandler{
-		public void recycle(){
-			throw new UnsupportedOperationException();
-		}
-		public void accept(RuleHandlerVisitor visitor){
-			throw new IllegalStateException();
-		}
-		public Rule getRule(){
-			throw new UnsupportedOperationException();
-		}
-		public RuleHandler getOriginal(){
-			throw new IllegalStateException();
-		}
-		public void setStackConflictsHandler(StackConflictsHandler stackConflictsHandler){
-			throw new IllegalStateException();
-		}
-	}
-		
-	abstract class AbstractNoContent extends ContentHandler{
-		public int getContentIndex(){
-			return NO_CONTENT;
-		}	
-		public void childExcessive(){			
-			throw new IllegalStateException();
-		}			
-		public boolean isSatisfied(){
-			return false;
-		}
-		public boolean isSaturated(){
-			return false;
-		}
-		
-		public int functionalEquivalenceCode(){
-			throw new UnsupportedOperationException();
-		}
-		public String toString(){
-			return "NO CONTENT";
-		}		
-	}
-	
-	abstract class AbstractOpenContent extends ContentHandler{
-		public int getContentIndex(){
-			return OPEN_CONTENT;
-		}		
-		public boolean isSatisfied(){
-			return false;
-		}
-		public boolean isSaturated(){
-			return false;
-		}
-		public int functionalEquivalenceCode(){
-			throw new UnsupportedOperationException();
-		}
-		public String toString(){
-			return "CONTENT OPEN";
-		}		
-	}
-	abstract class AbstractSatisfiedContent extends ContentHandler{
-		public int getContentIndex(){
-			return SATISFIED_CONTENT;
-		}
-		public boolean isSaturated(){
-			return false;
-		}
-		public int functionalEquivalenceCode(){
-			throw new UnsupportedOperationException();
-		}
-		public String toString(){
-			return "CONTENT SATISFIED";
-		}		
 	}	
-	
-	abstract class AbstractSaturatedContent extends ContentHandler{
-		public int getContentIndex(){
-			return SATURATED_CONTENT;
-		}		
-		public boolean isSaturated(){
-			return true;
-		}
-		public int functionalEquivalenceCode(){
-			throw new UnsupportedOperationException();
-		}
-		public String toString(){
-			return "CONTENT SATURATED";
-		}		
-	}
-	
-	abstract class AbstractExcessiveContent extends ContentHandler{
-		public int getContentIndex(){
-			return EXCESSIVE_CONTENT;
-		}
-		public boolean isSaturated(){
-			return true;
-		}
-		public int functionalEquivalenceCode(){
-			throw new UnsupportedOperationException();
-		}
-		public String toString(){
-			return "CONTENT EXCESSIVE";
-		}		
-	}
 }

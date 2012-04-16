@@ -109,8 +109,7 @@ public class SInterleaveHandler extends InterleaveHandler{
 		
 	//Start ChildEventHandler---------------------------------------------------------
 	public int getContentIndex(){
-		int result = contentHandler.getContentIndex();
-		return result;
+		return contentIndex;
 	}
 	public void childOpen(){
 		if(satisfactionIndicator == 0){
@@ -146,6 +145,6 @@ public class SInterleaveHandler extends InterleaveHandler{
 	
 	public String toString(){		
 		//return "SInterleaveHandler "+hashCode()+" "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentHandler "+contentHandler.toString();
-		return "SInterleaveHandler  "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentHandler "+contentHandler.toString();
+		return "SInterleaveHandler  "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentIndex="+contentIndex;
 	}	
 } 

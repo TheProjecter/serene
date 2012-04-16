@@ -83,6 +83,6 @@ abstract class MinimalReduceCountHandler extends LimitReduceCountHandler impleme
 	
 	
 	public String toString(){
-		return "MinimalReduceHandler contentHandler "+contentHandler.toString();
+		return "MinimalReduceHandler contentIndex="+contentIndex;
 	}
 } 

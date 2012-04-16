@@ -154,11 +154,10 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	//START PATTERN BUILDING ***************************************************
 	//**************************************************************************
-	public void buildElementWithNameClass(/*Map<String, String> declaredXmlns, */
+	public void buildElementWithNameClass(
                                             int recordIndex){
-		/*/*writeLevels();*/
-		ElementWithNameClass ewnc = new ElementWithNameClass(/*declaredXmlns,*/ 
-		                                                        xmlBaseRecordIndex, 
+		
+		ElementWithNameClass ewnc = new ElementWithNameClass(xmlBaseRecordIndex, 
 		                                                        nsRecordIndex, 
 		                                                        datatypeLibraryRecordIndex,		                                                        
 		                                                        getContentParsedComponents(), 
@@ -167,13 +166,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(ewnc);
-		/*writeLevels();*/
+		
 	}
-	public void buildElementWithNameInstance(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		ElementWithNameInstance ewni = new ElementWithNameInstance(/*declaredXmlns, */
-		                                                        xmlBaseRecordIndex, 
+	public void buildElementWithNameInstance(int recordIndex){
+			
+		ElementWithNameInstance ewni = new ElementWithNameInstance(xmlBaseRecordIndex, 
 		                                                        nsRecordIndex, 
 		                                                        datatypeLibraryRecordIndex,
                                                                 nameRecordIndex,		                                                        
@@ -184,13 +181,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(ewni);
-		/*writeLevels();*/
+		
 	}
-	public void buildAttributeWithNameClass(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		AttributeWithNameClass awnc = new AttributeWithNameClass(/*declaredXmlns, */
-		                                                        xmlBaseRecordIndex, 
+	public void buildAttributeWithNameClass(int recordIndex){
+			
+		AttributeWithNameClass awnc = new AttributeWithNameClass(xmlBaseRecordIndex, 
 		                                                        nsRecordIndex,
 		                                                        datatypeLibraryRecordIndex,
 		                                                        defaultValueRecordIndex,
@@ -200,13 +195,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(awnc);
-		/*writeLevels();*/
+		
 	}
-	public void buildAttributeWithNameInstance(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		AttributeWithNameInstance awni = new AttributeWithNameInstance(/*declaredXmlns,*/ 
-		                                                        xmlBaseRecordIndex, 
+	public void buildAttributeWithNameInstance(int recordIndex){
+			
+		AttributeWithNameInstance awni = new AttributeWithNameInstance(xmlBaseRecordIndex, 
 		                                                        nsRecordIndex, 
 		                                                        datatypeLibraryRecordIndex, 
 		                                                        nameRecordIndex, 
@@ -218,13 +211,12 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(awni);
-		/*writeLevels();*/
+		
 	}	
-	public void buildGroup(/*Map<String, String> declaredXmlns, */
+	public void buildGroup(
 	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		Group g = new Group(/*declaredXmlns,*/ 
-		                        xmlBaseRecordIndex, 
+			
+		Group g = new Group(xmlBaseRecordIndex, 
 		                        nsRecordIndex, 
 		                        datatypeLibraryRecordIndex, 
 		                        getContentParsedComponents(), 
@@ -233,13 +225,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
         resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(g);
-		/*/*writeLevels();*/
+		
 	}		
-	public void buildInterleave(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*writeLevels();*/
-		Interleave i = new Interleave(/*declaredXmlns,*/
-		                            xmlBaseRecordIndex, 
+	public void buildInterleave(int recordIndex){
+		
+		Interleave i = new Interleave(xmlBaseRecordIndex, 
 		                            nsRecordIndex, 
 		                            datatypeLibraryRecordIndex, 
 		                            getContentParsedComponents(), 
@@ -248,13 +238,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(i);
-		/*/*writeLevels();*/
+		
 	}
-	public void buildChoicePattern(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		ChoicePattern cp = new ChoicePattern(/*declaredXmlns, */
-		                            xmlBaseRecordIndex, 
+	public void buildChoicePattern(int recordIndex){
+			
+		ChoicePattern cp = new ChoicePattern(xmlBaseRecordIndex, 
 		                            nsRecordIndex, 
 		                            datatypeLibraryRecordIndex, 
 		                            getContentParsedComponents(), 
@@ -263,13 +251,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
         resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(cp);
-		/*writeLevels();*/
+		
 	}
-	public void buildOptional(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		Optional o = new Optional(/*declaredXmlns, */
-		                                xmlBaseRecordIndex, 
+	public void buildOptional(int recordIndex){
+			
+		Optional o = new Optional(xmlBaseRecordIndex, 
 		                                nsRecordIndex, 
 		                                datatypeLibraryRecordIndex, 
 		                                getContentParsedComponents(), 
@@ -278,13 +264,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(o);
-		/*/*writeLevels();*/
+		
 	}
-	public void buildZeroOrMore(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		ZeroOrMore zom = new ZeroOrMore(/*declaredXmlns, */
-		                                    xmlBaseRecordIndex, 
+	public void buildZeroOrMore(int recordIndex){
+			
+		ZeroOrMore zom = new ZeroOrMore(xmlBaseRecordIndex, 
 		                                    nsRecordIndex, 
 		                                    datatypeLibraryRecordIndex, 
 		                                    getContentParsedComponents(), 
@@ -293,13 +277,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(zom);
-		/*writeLevels();*/
+		
 	}
-	public void buildOneOrMore(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		OneOrMore oom = new OneOrMore(/*declaredXmlns, */
-		                                    xmlBaseRecordIndex, 
+	public void buildOneOrMore(int recordIndex){
+			
+		OneOrMore oom = new OneOrMore(xmlBaseRecordIndex, 
 		                                    nsRecordIndex, 
 		                                    datatypeLibraryRecordIndex, 
 		                                    getContentParsedComponents(), 
@@ -308,13 +290,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(oom);
-		/*writeLevels();*/
+		
 	}
-	public void buildListPattern(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		ListPattern lp = new ListPattern(/*declaredXmlns, */
-                                                xmlBaseRecordIndex, 
+	public void buildListPattern(int recordIndex){
+			
+		ListPattern lp = new ListPattern(xmlBaseRecordIndex, 
                                                 nsRecordIndex, 
                                                 datatypeLibraryRecordIndex, 
                                                 getContentParsedComponents(), 
@@ -323,13 +303,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
         resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(lp);
-		/*writeLevels();*/
+		
 	}
-	public void buildMixed(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		Mixed m = new Mixed(/*declaredXmlns, */
-		                        xmlBaseRecordIndex, 
+	public void buildMixed(int recordIndex){
+			
+		Mixed m = new Mixed(xmlBaseRecordIndex, 
 		                        nsRecordIndex, 
 		                        datatypeLibraryRecordIndex, 
 		                        getContentParsedComponents(), 
@@ -338,13 +316,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(m);
-		/*writeLevels();*/
+		
 	}
-	public void buildRef(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		Ref r = new Ref(/*declaredXmlns, */
-		                        xmlBaseRecordIndex, 
+	public void buildRef(int recordIndex){
+			
+		Ref r = new Ref(xmlBaseRecordIndex, 
 		                        nsRecordIndex, 
 		                        datatypeLibraryRecordIndex, 
 		                        nameRecordIndex, 
@@ -354,13 +330,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		addToCurrentLevel(r);
-		/*writeLevels();*/
+		
 	}
-	public void buildParentRef(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		ParentRef r = new ParentRef(/*declaredXmlns, */
-		                                xmlBaseRecordIndex, 
+	public void buildParentRef(int recordIndex){
+			
+		ParentRef r = new ParentRef(xmlBaseRecordIndex, 
 		                                nsRecordIndex, 
 		                                datatypeLibraryRecordIndex, 
 		                                nameRecordIndex, 
@@ -370,13 +344,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		addToCurrentLevel(r);
-		/*writeLevels();*/
+		
 	}
-	public void buildEmpty(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		Empty e = new Empty(/*declaredXmlns, */
-		                                xmlBaseRecordIndex, 
+	public void buildEmpty(int recordIndex){
+			
+		Empty e = new Empty( xmlBaseRecordIndex, 
 		                                nsRecordIndex, 
 		                                datatypeLibraryRecordIndex, 
 		                                getContentParsedComponents(), 
@@ -384,13 +356,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		addToCurrentLevel(e);
-		/*writeLevels();*/
+		
 	}
-	public void buildText(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		Text t = new Text(/*declaredXmlns, */
-		                        xmlBaseRecordIndex, 
+	public void buildText(int recordIndex){
+			
+		Text t = new Text( xmlBaseRecordIndex, 
 		                        nsRecordIndex, 
 		                        datatypeLibraryRecordIndex, 
 		                        getContentParsedComponents(), 
@@ -398,14 +368,12 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                        schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		addToCurrentLevel(t);
-		/*writeLevels();*/
+		
 	}	
-	public void buildValue(/*Map<String, String> declaredXmlns,*/ 
-	                                            String characterContent,
+	public void buildValue(   String characterContent,
 	                                            int recordIndex){
-		/*/*writeLevels();*/
-		Value v = new Value(/*declaredXmlns, */
-		                            xmlBaseRecordIndex, 
+		
+		Value v = new Value( xmlBaseRecordIndex, 
 		                            nsRecordIndex, 
 		                            datatypeLibraryRecordIndex, 
 		                            typeRecordIndex,
@@ -415,13 +383,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		if(typeRecordIndex != DocumentIndexedData.NO_RECORD)typeRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		addToCurrentLevel(v);
-		/*writeLevels();*/
+		
 	}
-	public void buildData(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		Data d = new Data(/*declaredXmlns, */
-		                            xmlBaseRecordIndex, 
+	public void buildData(int recordIndex){
+			
+		Data d = new Data( xmlBaseRecordIndex, 
 		                            nsRecordIndex, 
 		                            datatypeLibraryRecordIndex, 
 		                            typeRecordIndex, 
@@ -432,13 +398,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
         resetCommonAttributtes();		
 		clearContent();
 		addToCurrentLevel(d);
-		/*writeLevels();*/
+		
 	}		
-	public void buildNotAllowed(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		NotAllowed na = new NotAllowed(/*declaredXmlns, */
-		                                xmlBaseRecordIndex, 
+	public void buildNotAllowed(int recordIndex){
+			
+		NotAllowed na = new NotAllowed(xmlBaseRecordIndex, 
 		                                nsRecordIndex, 
 		                                datatypeLibraryRecordIndex, 
 		                                getContentParsedComponents(), 
@@ -446,13 +410,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                                schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		addToCurrentLevel(na);
-		/*writeLevels();*/
+		
 	}			
-	public void buildExternalRef(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		ExternalRef er = new ExternalRef(/*declaredXmlns, */
-		                                   xmlBaseRecordIndex, 
+	public void buildExternalRef(int recordIndex){
+			
+		ExternalRef er = new ExternalRef(xmlBaseRecordIndex, 
 		                                   nsRecordIndex, 
 		                                   datatypeLibraryRecordIndex, 
 		                                   hrefRecordIndex, 
@@ -462,13 +424,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		if(hrefRecordIndex != DocumentIndexedData.NO_RECORD)hrefRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		addToCurrentLevel(er);
-		/*writeLevels();*/
+		
 	}
-	public void buildGrammar(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		Grammar g = new Grammar(/*declaredXmlns, */
-		                                    xmlBaseRecordIndex, 
+	public void buildGrammar(int recordIndex){
+			
+		Grammar g = new Grammar(xmlBaseRecordIndex, 
 		                                    nsRecordIndex, 
 		                                    datatypeLibraryRecordIndex, 
 		                                    getContentParsedComponents(), 
@@ -477,7 +437,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(g);
-		/*writeLevels();*/
+		
 	}
 	//**************************************************************************
 	//END PATTERN BUILDING *****************************************************
@@ -487,12 +447,10 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	//START NAME CLASS BUILDING ************************************************
 	//**************************************************************************	
-	public void buildName(/*Map<String, String> declaredXmlns,*/ 
-	                                            String characterContent,
+	public void buildName( String characterContent,
 	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		Name n = new Name(/*declaredXmlns, */
-		                        xmlBaseRecordIndex, 
+			
+		Name n = new Name(xmlBaseRecordIndex, 
 		                        nsRecordIndex, 
 		                        datatypeLibraryRecordIndex,
 		                        characterContent, 
@@ -500,13 +458,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		                        schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		addToCurrentLevel(n);
-		/*writeLevels();*/
+		
 	}
-	public void buildAnyName(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		AnyName an = new AnyName(/*declaredXmlns, */
-		                            xmlBaseRecordIndex, 
+	public void buildAnyName(int recordIndex){
+			
+		AnyName an = new AnyName(xmlBaseRecordIndex, 
 		                            nsRecordIndex, 
 		                            datatypeLibraryRecordIndex,
 		                            getContentParsedComponents(), 
@@ -515,13 +471,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
         resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(an);
-		/*writeLevels();*/
+		
 	}
-	public void buildNsName(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		NsName nn = new NsName(/*declaredXmlns, */
-		                                xmlBaseRecordIndex, 
+	public void buildNsName(int recordIndex){
+			
+		NsName nn = new NsName(xmlBaseRecordIndex, 
 		                                nsRecordIndex, 
 		                                datatypeLibraryRecordIndex,
 		                                getContentParsedComponents(), 
@@ -530,13 +484,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
         resetCommonAttributtes();		
 		clearContent();
 		addToCurrentLevel(nn);
-		/*writeLevels();*/
+		
 	}
-	public void buildChoiceNameClass(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		ChoiceNameClass cnc = new ChoiceNameClass(/*declaredXmlns, */
-		                                                xmlBaseRecordIndex, 
+	public void buildChoiceNameClass(int recordIndex){
+			
+		ChoiceNameClass cnc = new ChoiceNameClass(xmlBaseRecordIndex, 
 		                                                nsRecordIndex, 
 		                                                datatypeLibraryRecordIndex,
 		                                                getContentParsedComponents(), 
@@ -545,7 +497,7 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(cnc);
-		/*writeLevels();*/
+		
 	}	
 	//**************************************************************************
 	//END NAME CLASS BUILDING **************************************************
@@ -555,11 +507,9 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	//START DEFINITION BUILDING ************************************************
 	//**************************************************************************	
-	public void buildDefine(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		Define d = new Define(/*declaredXmlns, */
-		                            xmlBaseRecordIndex, 
+	public void buildDefine(int recordIndex){
+			
+		Define d = new Define(xmlBaseRecordIndex, 
 		                            nsRecordIndex, 
 		                            datatypeLibraryRecordIndex, 
 		                            nameRecordIndex, 
@@ -572,13 +522,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(d);
-		/*writeLevels();*/
+		
 	}
-	public void buildStart(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/
-		Start s = new Start(/*declaredXmlns, */
-		                            xmlBaseRecordIndex, 
+	public void buildStart(int recordIndex){
+		
+		Start s = new Start(xmlBaseRecordIndex, 
 		                            nsRecordIndex, 
 		                            datatypeLibraryRecordIndex, 
 		                            combineRecordIndex, 
@@ -589,17 +537,15 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(s);
-		/*writeLevels();*/
+		
 	}
 	//**************************************************************************
 	//END DEFINITION BUILDING **************************************************
 	//**************************************************************************
 
-	public void buildDivIncludeContent(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		DivIncludeContent dic = new DivIncludeContent(/*declaredXmlns, */
-		                                                    xmlBaseRecordIndex, 
+	public void buildDivIncludeContent(int recordIndex){
+			
+		DivIncludeContent dic = new DivIncludeContent(xmlBaseRecordIndex, 
 		                                                    nsRecordIndex, 
 		                                                    datatypeLibraryRecordIndex, 
 		                                                    getContentParsedComponents(), 
@@ -608,13 +554,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(dic);
-		/*writeLevels();*/
+		
 	}
-	public void buildDivGrammarContent(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		DivGrammarContent dgc = new DivGrammarContent(/*declaredXmlns, */
-		                                                        xmlBaseRecordIndex, 
+	public void buildDivGrammarContent(int recordIndex){
+			
+		DivGrammarContent dgc = new DivGrammarContent(xmlBaseRecordIndex, 
 		                                                        nsRecordIndex, 
 		                                                        datatypeLibraryRecordIndex,
 		                                                        getContentParsedComponents(), 
@@ -623,15 +567,13 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(dgc);
-		/*writeLevels();*/
+		
 	}
 
-	public void buildParam(/*Map<String, String> declaredXmlns,*/ 
-	                                            String characterContent,
+	public void buildParam( String characterContent,
                                                 int recordIndex){
-		/*/*writeLevels();*/	
-		Param p = new Param(/*declaredXmlns,*/ 
-		                            xmlBaseRecordIndex, 
+			
+		Param p = new Param(xmlBaseRecordIndex, 
 		                            nsRecordIndex, 
 		                            datatypeLibraryRecordIndex, 
 		                            nameRecordIndex,
@@ -641,14 +583,12 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		if(nameRecordIndex != DocumentIndexedData.NO_RECORD)nameRecordIndex = DocumentIndexedData.NO_RECORD;
 		resetCommonAttributtes();
 		addToCurrentLevel(p);
-		/*writeLevels();*/
+		
 	}
 
-	public void buildExceptNameClass(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		ExceptNameClass enc = new ExceptNameClass(/*declaredXmlns, */
-		                                                xmlBaseRecordIndex, 
+	public void buildExceptNameClass(int recordIndex){
+			
+		ExceptNameClass enc = new ExceptNameClass(xmlBaseRecordIndex, 
 		                                                nsRecordIndex, 
 		                                                datatypeLibraryRecordIndex,
 		                                                getContentParsedComponents(), 
@@ -657,13 +597,11 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(enc);
-		/*writeLevels();*/
+		
 	}
-	public void buildExceptPattern(/*Map<String, String> declaredXmlns,*/     
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		ExceptPattern ep = new ExceptPattern(/*declaredXmlns, */
-		                                            xmlBaseRecordIndex, 
+	public void buildExceptPattern(int recordIndex){
+			
+		ExceptPattern ep = new ExceptPattern(xmlBaseRecordIndex, 
 		                                            nsRecordIndex, 
 		                                            datatypeLibraryRecordIndex, 
 		                                            getContentParsedComponents(), 
@@ -672,14 +610,12 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(ep);
-		/*writeLevels();*/
+		
 	}
 	
-	public void buildInclude(/*Map<String, String> declaredXmlns,*/ 
-                                                int recordIndex){
-		/*/*writeLevels();*/	
-		Include i = new Include(/*declaredXmlns, */
-		                                xmlBaseRecordIndex, 
+	public void buildInclude( int recordIndex){
+			
+		Include i = new Include( xmlBaseRecordIndex, 
 		                                nsRecordIndex, 
 		                                datatypeLibraryRecordIndex, 
 		                                hrefRecordIndex,
@@ -690,14 +626,12 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(i);
-		/*writeLevels();*/
+		
 	}
 	
-	public void buildDummy(/*Map<String, String> declaredXmlns,*/ 
-	                                            int recordIndex){
-		/*/*writeLevels();*/	
-		Dummy dd = new Dummy(/*declaredXmlns, */
-		                        xmlBaseRecordIndex, 
+	public void buildDummy(int recordIndex){
+			
+		Dummy dd = new Dummy(xmlBaseRecordIndex, 
 		                        nsRecordIndex, 
 		                        datatypeLibraryRecordIndex, 
 		                        getContentParsedComponents(), 
@@ -706,20 +640,18 @@ public class ParsedComponentBuilder implements ComponentBuilder{
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(dd);
-		/*writeLevels();*/
+		
 	}
     
-    public void buildForeignComponent(/*Map<String, String> declaredXmlns,*/ 
-                                                int recordIndex){
-		/*/*writeLevels();*/	
-		ForeignComponent fc = new ForeignComponent(/*declaredXmlns, */
-		                                                xmlBaseRecordIndex, 
+    public void buildForeignComponent(int recordIndex){
+			
+		ForeignComponent fc = new ForeignComponent(xmlBaseRecordIndex, 
 		                                                getContentParsedComponents(), 
 		                                                recordIndex,
 		                                                schemaDocumentIndexedData);
 		resetCommonAttributtes();
 		clearContent();
 		addToCurrentLevel(fc);
-		/*writeLevels();*/
+		
 	}
 }

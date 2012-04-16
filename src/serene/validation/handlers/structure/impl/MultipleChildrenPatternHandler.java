@@ -64,41 +64,303 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 	*/	
 	protected int saturationLevel;
 	
-	
-	protected ContentHandler unsatisfiedSaturatedContent;
-	protected ContentHandler satisfiedSaturatedContent;
-	protected ContentHandler unsatisfiedExcessiveContent;
-	protected ContentHandler satisfiedExcessiveContent;
-	
 	public MultipleChildrenPatternHandler(){
 		super();
 		size  = 5;		
 		
 		childParticleHandlers = new ParticleHandler[size];
 		childStructureHandlers = new StructureHandler[size];
-		
-		noContent = new NoContent();
-		openContent = new OpenContent();		
-		satisfiedContent = new SatisfiedRequiredContent();
-		unsatisfiedSaturatedContent = new UnsatisfiedSaturatedContent();
-		satisfiedSaturatedContent = new SatisfiedSaturatedContent();
-		unsatisfiedExcessiveContent = new UnsatisfiedExcessiveContent();
-		satisfiedExcessiveContent = new SatisfiedExcessiveContent();
-		contentHandler = noContent;
 	}	
 	//--------------------------------------------------------------------------------------------
 	//Start ChildEventHandler---------------------------------------------------------------------
 	//--------------------------------------------------------------------------------------------
-	public void requiredChildSatisfied(){		
-		++satisfactionLevel;		
-		contentHandler.requiredChildSatisfied();
+	
+	public boolean isSaturated(){
+		switch(contentIndex){
+            case NO_CONTENT :
+                return false;
+            case OPEN_CONTENT :
+                return false;
+            case SATISFIED_CONTENT :
+                return false;
+            case SATURATED_CONTENT :
+                throw new IllegalStateException();
+            case UNSATISFIED_SATURATED_CONTENT :
+                return true;
+            case SATISFIED_SATURATED_CONTENT :
+                return true;
+            case EXCESSIVE_CONTENT :
+                throw new IllegalStateException();
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                if(saturationLevel == saturationIndicator)
+                    return true;
+                return false;
+            case SATISFIED_EXCESSIVE_CONTENT :
+                if(saturationLevel == saturationIndicator)
+                    return true;
+                return false;
+            default :
+                throw new IllegalStateException();
+        }		
 	}
+	
+	
+	public boolean isSatisfied(){
+		switch(contentIndex){
+            case NO_CONTENT :
+                return false;
+            case OPEN_CONTENT :
+                return false;
+            case SATISFIED_CONTENT :
+                for(int i = 0; i < size; i++){
+                    if(childStructureHandlers[i] != null && !childStructureHandlers[i].isSatisfied())
+                        return false;
+                    
+                    if(childParticleHandlers[i] != null && !childParticleHandlers[i].isSatisfied()
+                        && !(childParticleHandlers[i].getDistanceToSatisfaction() == 1 && childStructureHandlers[i] != null))
+                            return false;				
+                }
+                return true;
+            case SATURATED_CONTENT :
+                throw new IllegalStateException();
+            case UNSATISFIED_SATURATED_CONTENT :
+                return false;
+            case SATISFIED_SATURATED_CONTENT :
+                for(int i = 0; i < size; i++){
+                    //System.out.println(i);
+                    //System.out.println(childStructureHandlers[i]);
+                    if(childStructureHandlers[i] != null && !childStructureHandlers[i].isSatisfied())
+                        return false;
+                    //System.out.println(childParticleHandlers[i]);
+                    if(childParticleHandlers[i] != null && !childParticleHandlers[i].isSatisfied()
+                        && !(childParticleHandlers[i].getDistanceToSatisfaction() == 1 && childStructureHandlers[i] != null))
+                            return false;				
+                }
+                return true;
+            case EXCESSIVE_CONTENT :
+                throw new IllegalStateException();
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                return false;
+            case SATISFIED_EXCESSIVE_CONTENT :
+                for(int i = 0; i < size; i++){
+                    if(childStructureHandlers[i] != null && !childStructureHandlers[i].isSatisfied())
+                        return false;
+                    
+                    if(childParticleHandlers[i] != null && !childParticleHandlers[i].isSatisfied()
+                        && !(childParticleHandlers[i].getDistanceToSatisfaction() == 1 && childStructureHandlers[i] != null))
+                            return false;				
+                }
+                return true;
+            default :
+                throw new IllegalStateException();
+        }		
+	}
+	
+    public void childOpen(){
+		switch(contentIndex){
+            case NO_CONTENT :
+                setStart();
+                parent.childOpen();
+                if(satisfactionIndicator == 0){
+                    contentIndex = SATISFIED_CONTENT;
+                }else{
+                    contentIndex = OPEN_CONTENT;
+                }
+                break;
+            case OPEN_CONTENT :
+                break;
+            case SATISFIED_CONTENT :
+                break;
+            case SATURATED_CONTENT :
+                throw new IllegalStateException();
+            case UNSATISFIED_SATURATED_CONTENT :
+                break;
+            case SATISFIED_SATURATED_CONTENT :
+                break;
+            case EXCESSIVE_CONTENT :
+                throw new IllegalStateException();
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                break;
+            case SATISFIED_EXCESSIVE_CONTENT :
+                break;
+            default :
+                throw new IllegalStateException();
+        }		
+	}
+	
+	
 	public void optionalChildSatisfied(){
-		contentHandler.optionalChildSatisfied();
+		switch(contentIndex){
+            case NO_CONTENT :
+                setStart();
+                parent.childOpen();
+                if(satisfactionIndicator == 0){
+                    contentIndex = SATISFIED_CONTENT;
+                }else{
+                    contentIndex = OPEN_CONTENT;
+                }
+                break;
+            case OPEN_CONTENT :
+                break;
+            case SATISFIED_CONTENT :
+                break;  
+            case SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_SATURATED_CONTENT :
+                break;  
+            case SATISFIED_SATURATED_CONTENT :
+                break;
+            case EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                break;  
+            case SATISFIED_EXCESSIVE_CONTENT :
+                break;  
+            default :
+                throw new IllegalStateException();    
+        }		
 	}
+	
+	public void requiredChildSatisfied(){
+	    ++satisfactionLevel;
+	    
+		switch(contentIndex){
+            case NO_CONTENT :
+                setStart();
+                parent.childOpen();			
+                if(satisfactionLevel == satisfactionIndicator) {
+                    contentIndex = SATISFIED_CONTENT;
+                }else{
+                    contentIndex = OPEN_CONTENT;
+                }
+                break;
+            case OPEN_CONTENT :
+                if(satisfactionLevel == satisfactionIndicator) {
+                    contentIndex = SATISFIED_CONTENT;
+                }
+                break;
+            case SATISFIED_CONTENT :
+                throw new IllegalStateException();  
+            case SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_SATURATED_CONTENT :
+                if(satisfactionLevel == satisfactionIndicator){
+                    contentIndex = SATISFIED_SATURATED_CONTENT;
+                }
+                break;
+            case SATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                if(satisfactionLevel == satisfactionIndicator){
+                    contentIndex = SATISFIED_EXCESSIVE_CONTENT;
+                }
+                break;
+            case SATISFIED_EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            default :
+                throw new IllegalStateException();    
+        }		
+	}
+		
 	public void childSaturated(){
-		++saturationLevel;
-		contentHandler.childSaturated();
+	    ++saturationLevel;
+	    
+		switch(contentIndex){
+            case NO_CONTENT :
+                setStart();
+                parent.childOpen();
+                if(saturationLevel == saturationIndicator){
+                    contentIndex = UNSATISFIED_SATURATED_CONTENT;
+                }
+                else contentIndex = OPEN_CONTENT;
+                break;
+            case OPEN_CONTENT :
+                if(saturationLevel == saturationIndicator){
+                    contentIndex = UNSATISFIED_SATURATED_CONTENT;
+                }
+                break;
+            case SATISFIED_CONTENT :
+                if(saturationLevel == saturationIndicator){
+                    contentIndex = SATISFIED_SATURATED_CONTENT;
+                }
+                break;
+            case SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case SATISFIED_SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case EXCESSIVE_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                break;  
+            case SATISFIED_EXCESSIVE_CONTENT :
+                break;  
+            default :
+                throw new IllegalStateException();    
+        }		
+	}
+	
+	
+	public void childExcessive(){
+		switch(contentIndex){
+            case NO_CONTENT :
+                // To be totally transparent and consistent with total delegation of 
+                // reduce decision responsibility to dedicated methods 
+                // handleExcessiveChildReduce() is used here too, but it really seems
+                // a bit exagerated.
+                if(!handleExcessiveChildReduce()){
+                    reportExcessive();			
+                    contentIndex = UNSATISFIED_EXCESSIVE_CONTENT;
+                }
+                break;
+            case OPEN_CONTENT :
+                // To be totally transparent and consistent with total delegation of 
+                // reduce decision responsibility to dedicated methods 
+                // handleExcessiveChildReduce() is used here too, but it really seems
+                // a bit exagerated.
+                if(!handleExcessiveChildReduce()){
+                    reportExcessive();			
+                    contentIndex = UNSATISFIED_EXCESSIVE_CONTENT;
+                }
+                break;
+            case SATISFIED_CONTENT :
+                if(!handleExcessiveChildReduce()){
+                    reportExcessive();			
+                    contentIndex = SATISFIED_EXCESSIVE_CONTENT;
+                }
+                break;
+            case SATURATED_CONTENT :
+                throw new IllegalStateException();  
+            case UNSATISFIED_SATURATED_CONTENT :
+                if(!handleExcessiveChildReduce()){
+                    reportExcessive();
+                    contentIndex = UNSATISFIED_EXCESSIVE_CONTENT;
+                }  
+                break;
+            case SATISFIED_SATURATED_CONTENT :
+                if(!handleExcessiveChildReduce()){
+                    reportExcessive();			
+                    contentIndex = SATISFIED_EXCESSIVE_CONTENT;
+                }
+                break;
+            case EXCESSIVE_CONTENT :
+                throw new IllegalStateException();
+            case UNSATISFIED_EXCESSIVE_CONTENT :
+                if(!handleExcessiveChildReduce()){
+                    reportExcessive();
+                }
+                break;
+            case SATISFIED_EXCESSIVE_CONTENT :
+                if(!handleExcessiveChildReduce()){
+				reportExcessive();
+				}
+				break;
+            default :
+                throw new IllegalStateException();    
+        }		
 	}	
 	//--------------------------------------------------------------------------------------------
 	//End ChildEventHandler-----------------------------------------------------------------------
@@ -230,7 +492,7 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 	//boolean handleStateSaturationReduce() super	
 	//boolean isReduceAllowed() super
 	boolean isReduceRequired(){
-		return saturationIndicator == size && contentHandler.isSaturated();
+		return saturationIndicator == size && isSaturated();
 	}
 	boolean isReduceAcceptable(){
 		return parent.acceptsMDescendentReduce(rule);
@@ -266,7 +528,7 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 			stackConflictsHandler.close(this);
 			stackConflictsHandler = null;
 		}
-		contentHandler = noContent;
+		contentIndex = NO_CONTENT;
 		satisfactionLevel = 0;
 		saturationLevel = 0;
 		
@@ -335,7 +597,7 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 		return childParticleHandlers;
 	}
 	
-	protected class NoContent extends AbstractNoContent{
+	/*protected class NoContent extends AbstractNoContent{
 		public void childOpen(){	
 			setStart();
 			parent.childOpen();
@@ -382,9 +644,6 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 				contentHandler = satisfiedContent;
 			}			
 		}
-		/*public void childSatisfiedPlus(){
-			return ACCEPT;
-		}*/
 		public void childSaturated(){	
 			if(saturationLevel == saturationIndicator){
 				contentHandler = unsatisfiedSaturatedContent;
@@ -421,10 +680,6 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 		public void requiredChildSatisfied(){			
 			throw new IllegalStateException();
 		}
-		/*public void childSatisfiedPlus(){
-			//if(isClosingAllowed()) makeConsecutiveHandler();
-			return ACCEPT;
-		}*/
 		public void childSaturated(){		
 			if(saturationLevel == saturationIndicator){
 				contentHandler = satisfiedSaturatedContent;
@@ -579,8 +834,8 @@ abstract class MultipleChildrenPatternHandler extends InnerPatternHandler{
 		public String toString(){
 			return "CONTENT SATISFIED EXCESSIVE";
 		}	
-	}
+	}*/
 	public String toString(){
-		return "MultipleChildrenPatternHandler contentHandler "+contentHandler.toString();
+		return "MultipleChildrenPatternHandler contentIndex="+contentIndex;
 	}
 } 

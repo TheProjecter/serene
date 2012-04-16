@@ -22,12 +22,12 @@ import java.util.Map;
 import serene.bind.util.DocumentIndexedData;
 
 public abstract class Pattern extends ParsedComponent{	
-	Pattern(/*Map<String, String> prefixMapping,*/ 
+	Pattern( 
 	                int xmlBase,
 	                int ns, 
 	                int datatypeLibrary, 
 	                int recordIndex,
                     DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 	}
 }	
