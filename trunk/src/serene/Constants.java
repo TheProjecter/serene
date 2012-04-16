@@ -17,25 +17,25 @@ limitations under the License.
 package serene;
 
 public interface Constants{
-    String ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/attributeDefaultValueHandler";
-    String ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/attributeIdTypeHandler";
-    String DTD_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdHandler";
-    String DTD_MAPPING_PROPERTY = "http://serenerng.org/validatorHandler/property/dtdMapping";
-    String ERROR_HANDLER_POOL_PROPERTY = "http://serenerng.org/validatorHandler/property/errorHandlerPool";
-    String EVENT_HANDLER_POOL_PROPERTY = "http://serenerng.org/validatorHandler/property/eventHandlerPool";
-    String ACTIVE_INPUT_DESCRIPTOR_PROPERTY = "http://serenerng.org/validatorHandler/property/activeInputDescriptor";
-    String INPUT_STACK_DESCRIPTOR_PROPERTY = "http://serenerng.org/validatorHandler/property/inputStackDescriptor";
-    String DOCUMENT_CONTEXT_PROPERTY = "http://serenerng.org/validatorHandler/property/documentContextProperty";
-    String MATCH_HANDLER_PROPERTY = "http://serenerng.org/validatorHandler/property/matchHandler";
-    String CONTROLLER_POOL_PROPERTY = "http://serenerng.org/controller/property/controllerPool";
-    String PARSED_COMPONENT_BUILDER_PROPERTY = "http://serenerng.org/controller/property/parsedComponentBuilder";
-    String PARSED_MODEL_PROPERTY = "http://serenerng.org/controller/property/parsedModel";
-    String INCLUDED_PARSED_MODEL_PROPERTY = "http://serenerng.org/controller/property/includedParsedModel";
+    String ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY = "http://serenerng.com/validatorHandler/property/attributeDefaultValueHandler";
+    String ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY = "http://serenerng.com/validatorHandler/property/attributeIdTypeHandler";
+    String DTD_HANDLER_PROPERTY = "http://serenerng.com/validatorHandler/property/dtdHandler";
+    String DTD_MAPPING_PROPERTY = "http://serenerng.com/validatorHandler/property/dtdMapping";
+    String ERROR_HANDLER_POOL_PROPERTY = "http://serenerng.com/validatorHandler/property/errorHandlerPool";
+    String EVENT_HANDLER_POOL_PROPERTY = "http://serenerng.com/validatorHandler/property/eventHandlerPool";
+    String ACTIVE_INPUT_DESCRIPTOR_PROPERTY = "http://serenerng.com/validatorHandler/property/activeInputDescriptor";
+    String INPUT_STACK_DESCRIPTOR_PROPERTY = "http://serenerng.com/validatorHandler/property/inputStackDescriptor";
+    String DOCUMENT_CONTEXT_PROPERTY = "http://serenerng.com/validatorHandler/property/documentContextProperty";
+    String MATCH_HANDLER_PROPERTY = "http://serenerng.com/validatorHandler/property/matchHandler";
+    String CONTROLLER_POOL_PROPERTY = "http://serenerng.com/controller/property/controllerPool";
+    String PARSED_COMPONENT_BUILDER_PROPERTY = "http://serenerng.com/controller/property/parsedComponentBuilder";
+    String PARSED_MODEL_PROPERTY = "http://serenerng.com/controller/property/parsedModel";
+    String INCLUDED_PARSED_MODEL_PROPERTY = "http://serenerng.com/controller/property/includedParsedModel";
     
-    String TARGET_NAMESPACE_NAME = "http://serenerng.org/param/targetNamespace";
+    String TARGET_NAMESPACE_NAME = "http://serenerng.com/param/targetNamespace";
     
     String XSD_DATATYPE_LIBRARY = "http://www.w3.org/2001/XMLSchema-datatypes";
-    String INTERNAL_DATATYPE_LIBRARY = "http://serenerng.org/datatype/internal";
+    String INTERNAL_DATATYPE_LIBRARY = "http://serenerng.com/datatype/internal";
     String DTD_COMPATIBILITY_DATATYPE_LIBRARY = "http://relaxng.org/ns/compatibility/datatypes/1.0";
     String NATIVE_DATATYPE_LIBRARY = "";    
 	String TOKEN_DT = "token";
@@ -46,18 +46,18 @@ public interface Constants{
     String DTD_COMPATIBILITY_DOCUMENTATION = "documentation";
     
     String NAMESPACES_PREFIXES_SAX_FEATURE = "http://xml.org/sax/features/namespace-prefixes";
-    String PARSED_MODEL_SCHEMA_FEATURE = "http://serenerng.org/features//schemaFactory/features/parsedModelSchema";
-    String REPLACE_MISSING_LIBRARY_FEATURE = "http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary";
+    String PARSED_MODEL_SCHEMA_FEATURE = "http://serenerng.com/features//schemaFactory/features/parsedModelSchema";
+    String REPLACE_MISSING_LIBRARY_FEATURE = "http://serenerng.com/features/schemaFactory/replaceMissingDatatypeLibrary";
     
-    String LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level1/attributeDefaultValue";
-    String LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level2/attributeDefaultValue";
+    String LEVEL1_ATTRIBUTE_DEFAULT_VALUE_FEATURE = "http://serenerng.com/features/DTDCompatibility/level1/attributeDefaultValue";
+    String LEVEL2_ATTRIBUTE_DEFAULT_VALUE_FEATURE = "http://serenerng.com/features/DTDCompatibility/level2/attributeDefaultValue";
     
-    String LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level1/attributeIdType";
-    String LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE = "http://serenerng.org/features/DTDCompatibility/level2/attributeIdType";
+    String LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE = "http://serenerng.com/features/DTDCompatibility/level1/attributeIdType";
+    String LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE = "http://serenerng.com/features/DTDCompatibility/level2/attributeIdType";
     
-    String LEVEL1_DOCUMENTATION_ELEMENT_FEATURE = "http://serenerng.org/features/DTDCompatibility/level1/documentationElement";
+    String LEVEL1_DOCUMENTATION_ELEMENT_FEATURE = "http://serenerng.com/features/DTDCompatibility/level1/documentationElement";
     
-    String RESTRICT_TO_FILE_NAME_FEATURE = "http://serenerng.org/features/restrictToFileName";
+    String RESTRICT_TO_FILE_NAME_FEATURE = "http://serenerng.com/features/restrictToFileName";
     
-    String OPTIMIZE_FOR_RESOURCE_SHARING_FEATURE = "http://serenerng.org/features/optimizeForResourceSharing";
+    String OPTIMIZE_FOR_RESOURCE_SHARING_FEATURE = "http://serenerng.com/features/optimizeForResourceSharing";
 }

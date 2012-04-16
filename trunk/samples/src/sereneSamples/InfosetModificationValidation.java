@@ -92,8 +92,8 @@ public class InfosetModificationValidation{
 			
 		schemaFactory = SchemaFactory.newInstance(XMLConstants.RELAXNG_NS_URI);
         try{
-            schemaFactory.setFeature("http://serenerng.org/features/DTDCompatibility/level2/attributeDefaultValue", true);
-            schemaFactory.setFeature("http://serenerng.org/features/DTDCompatibility/level2/attributeIdType", true);
+            schemaFactory.setFeature("http://serenerng.com/features/DTDCompatibility/level2/attributeDefaultValue", true);
+            schemaFactory.setFeature("http://serenerng.com/features/DTDCompatibility/level2/attributeIdType", true);
         }catch(SAXNotRecognizedException e){
             e.printStackTrace();
         }catch(SAXNotSupportedException e){
