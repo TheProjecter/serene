@@ -8,7 +8,7 @@ import org.xml.sax.SAXException;
 import serene.bind.util.DocumentIndexedData;
 
 public class Start extends Definition{
-	Start(/*Map<String, String> prefixMapping,*/
+	Start(
 	        int xmlBase,
             int ns, 
             int datatypeLibrary, 
@@ -19,7 +19,7 @@ public class Start extends Definition{
             String location,*/
             int recordIndex,
             DocumentIndexedData documentIndexedData){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, combine, children, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, combine, children, recordIndex, documentIndexedData);
 	}		
 	public void accept(ParsedComponentVisitor v){
 		v.visit(this);

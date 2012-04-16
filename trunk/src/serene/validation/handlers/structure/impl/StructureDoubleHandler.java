@@ -61,11 +61,6 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 	
 	RuleHandlerRecycler recycler;
 	
-	/*int ittemId;
-	String starttQName;
-	String starttSystemId;
-	int starttLineNumber;
-	int starttColumnNumber;*/
     int startInputRecordIndex;	
     boolean isStartSet;
 	
@@ -242,11 +237,6 @@ public abstract class StructureDoubleHandler implements StructureHandler{
 	//End StructureHandler------------------------------------------------------------
 	
 	void setStart(){
-	    /*ittemId = inputStackDescriptor.getItemId();
-		starttSystemId = inputStackDescriptor.getSystemId();		
-		starttLineNumber = inputStackDescriptor.getLineNumber();
-		starttColumnNumber = inputStackDescriptor.getColumnNumber();
-		starttQName = inputStackDescriptor.getItemDescription();*/
         startInputRecordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();
         isStartSet = true;
         activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);

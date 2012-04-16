@@ -26,14 +26,14 @@ import serene.bind.util.DocumentIndexedData;
 public class Grammar extends Pattern{	
 	ParsedComponent[] children;
 	
-	Grammar(/*Map<String, String> prefixMapping,*/ 
+	Grammar( 
                 int xmlBase, 
                 int ns, 
                 int datatypeLibrary,
                 ParsedComponent[] children, 
                 int recordIndex,
 	            DocumentIndexedData documentIndexedData){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 		asParent(children);		
 	}
 		

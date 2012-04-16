@@ -93,7 +93,7 @@ public class ChoiceMaximalReduceHandler extends UCMaximalReduceHandler{
 					errorCatcher, 
 					childParticleHandler, 
 					childStructureHandler,					
-					contentHandler.getContentIndex(),
+					contentIndex,
 					startInputRecordIndex,
 					isStartSet,
 					currentChild);
@@ -106,7 +106,7 @@ public class ChoiceMaximalReduceHandler extends UCMaximalReduceHandler{
 					errorCatcher, 
 					childParticleHandler, 
 					childStructureHandler,
-					contentHandler.getContentIndex(),
+					contentIndex,
 					startInputRecordIndex,
 					isStartSet,
 					currentChild);
@@ -142,23 +142,14 @@ public class ChoiceMaximalReduceHandler extends UCMaximalReduceHandler{
 							ErrorCatcher errorCatcher,
 							ParticleHandler childParticleHandler, 
 							StructureHandler childStructureHandler,
-							int contentHandlerContentIndex,
+							int contentIndex,
 							int startInputRecordIndex,
                             boolean isStartSet,							
 							Rule currentChild){
 		if(childParticleHandler != null)this.childParticleHandler = childParticleHandler.getCopy(this, errorCatcher);
 		if(childStructureHandler != null)this.childStructureHandler = childStructureHandler.getCopy(this, stackHandler, errorCatcher);
-		if(contentHandlerContentIndex == NO_CONTENT){
-			contentHandler = noContent;
-		}else if(contentHandlerContentIndex == OPEN_CONTENT){
-			contentHandler = openContent;
-		}else if(contentHandlerContentIndex == SATISFIED_CONTENT){
-			contentHandler = satisfiedContent;
-		}else if(contentHandlerContentIndex == SATURATED_CONTENT){
-			contentHandler = saturatedContent;
-		}else{
-			throw new IllegalArgumentException();
-		}	
+		
+		this.contentIndex = contentIndex;
 		
 		if(this.isStartSet){
             activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex, this);
@@ -177,6 +168,6 @@ public class ChoiceMaximalReduceHandler extends UCMaximalReduceHandler{
 	}
 	public String toString(){
 		//return "ChoiceMaximalReduceHandler "+hashCode()+" "+rule.toString()+" contentHandler "+contentHandler.toString();
-		return "ChoiceMaximalReduceHandler  "+rule.toString()+" contentHandler "+contentHandler.toString();
+		return "ChoiceMaximalReduceHandler  "+rule.toString()+" contentIndex="+contentIndex;
 	}
 } 

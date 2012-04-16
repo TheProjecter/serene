@@ -25,7 +25,7 @@ import serene.bind.util.DocumentIndexedData;
 public class Value extends NoChildrenPattern{
 	int typeRecordIndex;
 	String characterContent;		
-	Value(/*Map<String, String> prefixMapping,*/
+	Value(
 	        int xmlBase,
             int ns,					 
             int datatypeLibrary, 
@@ -33,7 +33,7 @@ public class Value extends NoChildrenPattern{
             String characterContent,
             int recordIndex,
             DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 		this.characterContent = characterContent;
 		this.typeRecordIndex = type; 
 	}

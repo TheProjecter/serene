@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 import serene.bind.util.DocumentIndexedData;
 
 public class AttributeWithNameClass extends Attribute{
-	AttributeWithNameClass(/*Map<String, String> prefixMapping,*/
+	AttributeWithNameClass(
 	                            int xmlBase,
 								int ns, 
 								int datatypeLibrary,
@@ -32,7 +32,7 @@ public class AttributeWithNameClass extends Attribute{
 								ParsedComponent[] children,
 								int recordIndex,
                                 DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, defaultValue, children, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, defaultValue, children, recordIndex, documentIndexedData);
 	}	
 	public void accept(ParsedComponentVisitor v){
 		v.visit(this);

@@ -23,14 +23,14 @@ import org.xml.sax.SAXException;
 import serene.bind.util.DocumentIndexedData;
 
 public class ExceptPattern extends Except{
-	ExceptPattern(/*Map<String, String> prefixMapping,*/ 
+	ExceptPattern( 
 	                    int xmlBase,
                         int ns, 
                         int datatypeLibrary, 
                         ParsedComponent[] children, 
                         int recordIndex,
                         DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
 	}	
 	
 	public void accept(ParsedComponentVisitor v){

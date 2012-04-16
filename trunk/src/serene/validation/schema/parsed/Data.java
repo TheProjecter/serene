@@ -25,7 +25,7 @@ import serene.bind.util.DocumentIndexedData;
 
 public class Data extends MultipleChildrenPattern{
 	int typeRecordIndex;		
-	Data(/*Map<String, String> prefixMapping,*/ 
+	Data( 
 	                int xmlBase,
                     int ns, 
                     int datatypeLibrary, 
@@ -33,7 +33,7 @@ public class Data extends MultipleChildrenPattern{
                     ParsedComponent[] children, 
                     int recordIndex,
                     DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
 		this.typeRecordIndex = type; 
 	}
 	public String getType(){

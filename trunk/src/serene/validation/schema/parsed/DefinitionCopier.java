@@ -47,7 +47,7 @@ public class DefinitionCopier implements ParsedComponentVisitor{
 		int recordIndex = define.getRecordIndex();
 		DocumentIndexedData did = define.getDocumentIndexedData();
 		
-		copy = new Define(/*prefixMapping,*/
+		copy = new Define(
 							xmlBase,
 							ns,
 							datatypeLibrary,
@@ -73,7 +73,7 @@ public class DefinitionCopier implements ParsedComponentVisitor{
 		int recordIndex = start.getRecordIndex();
 		DocumentIndexedData did = start.getDocumentIndexedData();
 		
-		copy = new Start(/*prefixMapping,*/
+		copy = new Start(
 							xmlBase,
 							ns,
 							datatypeLibrary,

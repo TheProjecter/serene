@@ -604,7 +604,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 		return p;
     }
     
-	private Schema newSchema(String systemId, ParsedModel parsedModel) throws SAXException{        
+	private Schema newSchema(String baseURI, ParsedModel parsedModel) throws SAXException{        
         SchemaModel schemaModel = null;
         
 		if(parsedModel == null) {
@@ -623,9 +623,9 @@ public class RNGSchemaFactory extends SchemaFactory{
         
 		//build simplified model
 		SimplifiedModel simplifiedModel = null;		
-		if(systemId != null){
+		if(baseURI != null){
 			try{
-				simplifiedModel = simplifier.simplify(new URI(systemId), parsedModel);
+				simplifiedModel = simplifier.simplify(new URI(baseURI), parsedModel);
 			}catch(URISyntaxException use){
 				throw new SAXException(use.getMessage());
 			}

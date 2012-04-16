@@ -56,24 +56,10 @@ public class Queue implements Reusable,
 	DocumentTask startDocumentTask;
 	DocumentTask endDocumentTask;
 	
-	/*String[] location;
-    NameInfo[] elementNameInfo;*/
-    int[] elementInputIndex;
-    // Map<String, String>[] xmlns; TODO replace, this is not working well!!! LATER: I think it is...
-	/*String[] xmlBase; // TODO should be removed*/ 	
-    /*// There can be several attribute instances for the same definition when 
-    // the name is defined using a wild card. This implies a one to many relation
-    // between the attributeIndex(corresponding to definition) and the actual
-    // attribute data (name and value). So the queue must be prepared to 
-    // accomodate all the occurrences, but, at least for now, the relationship
-    // definition - task stays one to one.
-    // Implementation [record index][attribute definition index][instance index]
-    AttributeInfo[][][] attributeInfo;
-	AttributeTask[][] attributeTask;*/
+    int[] elementInputIndex;    
 	int[][] attributeInputIndex;
 	AttributeTask[][] attributeTask;
-	//Implementation [queue record index of corresponding start element][input record]	
-	/*String[] characterContent;*/
+	//Implementation [queue record index of corresponding start element][input record]
 	ElementTask[] elementTask;
 	String[] characterContent;
 	//Implementation [queue record index of corresponding start element][input record]	
@@ -97,8 +83,6 @@ public class Queue implements Reusable,
 	int reservationIndex;
 	int reservationSize;
 		
-	// Map<String, String> declaredXmlns;	
-	
 	boolean isClear;	
 	
 	ActiveInputDescriptor activeInputDescriptor;
@@ -116,16 +100,12 @@ public class Queue implements Reusable,
 		
 		currentAttributeIndex = -1;
 		
-		/*location = new String[size];
-        elementNameInfo = new NameInfo[size];*/
+		
         elementInputIndex = new int[size];
         Arrays.fill(elementInputIndex, -1);
-		/*xmlns = new HashMap[size];*/
-		/*xmlBase = new String[size];
-        attributeInfo = new AttributeInfo[size][][];*/
+		
         attributeInputIndex = new int[size][];
-		attributeTask = new AttributeTask[size][];		
-		/*characterContent = new String[size];*/	
+		attributeTask = new AttributeTask[size][];
 		elementTask = new ElementTask[size];
 		characterContent = new String[size];
 		correspStartIndex = new int[size];		
@@ -165,18 +145,12 @@ public class Queue implements Reusable,
 	
 	
 	void clearContent(){
-		/*Arrays.fill(location, null);
-        Arrays.fill(elementNameInfo, null);
-        Arrays.fill(elementInputIndex, -1);*/
         for(int i = 0; i < elementInputIndex.length; i++){
             if(elementInputIndex[i] != -1){
                 activeInputDescriptor.unregisterClientForRecord(elementInputIndex[i], this);
                 elementInputIndex[i] = -1;
             }
         }
-		/*Arrays.fill(xmlns, null);*/		
-        /*Arrays.fill(attributeInputIndex, null);
-        Arrays.fill(attributeTask, null);*/
         for(int i = 0; i < attributeTask.length; i++){
             if(attributeInputIndex[i] != null){
                 for(int j = 0; j < attributeTask[i].length; j++){
@@ -193,8 +167,6 @@ public class Queue implements Reusable,
 		Arrays.fill(elementTask, null);
 		Arrays.fill(correspStartIndex, -1);
 		Arrays.fill(correspEndIndex, -1);
-		
-		/*declaredXmlns = null;*/
 		
 		reservationIndex = -1;
 				
@@ -214,23 +186,11 @@ public class Queue implements Reusable,
 	void init(){	    		
 		isClear = false;
 	}
-	
-	/*void init(Map<String, String> declaredXmlns, ActiveInputDescriptor activeInputDescriptor, ValidatorQueuePool pool){
-		this.pool = pool;
-		this.declaredXmlns = declaredXmlns;
-		this.activeInputDescriptor = activeInputDescriptor;
-		isClear = false;
-	}*/
-	
+		
 	public void recycle(){
 		if(!isClear)clear();
 		pool.recycle(this);
 	}
-	
-	/*public void index(ObjectIntHashMap sattributeIndexMap){		
-		this.sattributeIndexMap = sattributeIndexMap;
-		attributeCount = sattributeIndexMap.size();
-	}	*/
 	
 	public void setProperty(String name, Object value) throws SAXNotRecognizedException{
 	    if(name == null)throw new NullPointerException();
@@ -255,22 +215,6 @@ public class Queue implements Reusable,
         }
 		throw new SAXNotRecognizedException("UNKNOWN FEATURE.");
 	}
-		
-	/*public int newRecord(){
-		// System.out.println(hashCode()+" RECORD ");
-		// System.out.println(hashCode()+" size "+size);
-		// System.out.println(hashCode()+" currentIndex "+currentIndex);
-		// System.out.println(hashCode()+" correspStartIndex "+correspStartIndex.length);
-		 
-		if(++currentIndex == size)increaseSize();
-		correspStartIndex[currentIndex] = -1;
-		if(declaredXmlns != null){
-			xmlns[currentIndex] = declaredXmlns;
-			declaredXmlns = null;
-		}
-		return currentIndex;
-	}*/
-	
 	
 	public void addStartDocument(int inputIndex, DocumentTask startTask){
 	    documentInputIndex = inputIndex;
@@ -291,10 +235,6 @@ public class Queue implements Reusable,
 	public int addStartElement(int inputIndex, ElementTask task){
 	    if(++currentIndex == size)increaseSize();
 		correspStartIndex[currentIndex] = -1;
-		/*if(declaredXmlns != null){
-			xmlns[currentIndex] = declaredXmlns;
-			declaredXmlns = null;
-		}*/
 		
 		elementInputIndex[currentIndex] = inputIndex;
 		activeInputDescriptor.registerClientForRecord(inputIndex, this);
@@ -306,10 +246,6 @@ public class Queue implements Reusable,
 	public int addStartElement(int inputIndex){
 	    if(++currentIndex == size)increaseSize();
 		correspStartIndex[currentIndex] = -1;
-		/*if(declaredXmlns != null){
-			xmlns[currentIndex] = declaredXmlns;
-			declaredXmlns = null;
-		}*/
 		
 		elementInputIndex[currentIndex] = inputIndex;
 		activeInputDescriptor.registerClientForRecord(inputIndex, this);
@@ -320,10 +256,6 @@ public class Queue implements Reusable,
 	public int addStartElement(ElementTask task){
 	    if(++currentIndex == size)increaseSize();
 		correspStartIndex[currentIndex] = -1;
-		/*if(declaredXmlns != null){
-			xmlns[currentIndex] = declaredXmlns;
-			declaredXmlns = null;
-		}*/
 		
 		elementInputIndex[currentIndex] = -1;
 		elementTask[currentIndex] = task;
@@ -342,60 +274,8 @@ public class Queue implements Reusable,
 		return currentIndex;
 	}
 	
-	/*public void addLocation(int record, String loc){
-		// System.out.println(hashCode()+" ADD LOCATION ");
-		location[record] = loc;
-	}
-
-	
-    public void addNameInfo(int record, NameInfo eni){
-		// System.out.println(hashCode()+" ADD ELEMENT QNAME ");
-		//System.out.println(record+" /"+content+"/");
-        elementNameInfo[record] = eni;
-	}
-	
-	public void addElementInputIndex(int queueRecordIndex, int inputIndex, ElementTask task){
-		// System.out.println(hashCode()+" ADD LOCATION ");
-		elementInputIndex[queueRecordIndex] = inputIndex;
-		activeInputDescriptor.registerClientForRecord(inputIndex, this);
-		elementTask[queueRecordIndex] = task;
-	}
-	
-	public void addElementTask(int queueRecordIndex, ElementTask task){
-		// System.out.println(hashCode()+" ADD LOCATION ");
-		elementTask[queueRecordIndex] = task;
-	}*/
-	
-    
-	
-    
-	/*public void addAttributeInputIndex(int record, int attributeIndex, AttributeInfo ai){
-		// System.out.println(hashCode()+" ADD ATTRIBUTE QNAME");		
-		//System.out.println(record+" /"+attributeIndex+"/"+qN+"/");
-		if(attributeIndex < 0 || attributeIndex > attributeCount) throw new IllegalArgumentException();
-        
-		if(attributeInfo[record] == null ){
-            attributeInfo[record] = new AttributeInfo[attributeCount][];
-            attributeInfo[record][attributeIndex] = new AttributeInfo[1];
-            attributeInfo[record][attributeIndex][0] = ai;            
-        }else{
-            if(attributeInfo[record][attributeIndex] == null){
-                attributeInfo[record][attributeIndex] = new AttributeInfo[1];
-                attributeInfo[record][attributeIndex][0] = ai;
-            }else{         
-                int currentLength = attributeInfo[record][attributeIndex].length;
-                
-                AttributeInfo[] increasedURI = new AttributeInfo[currentLength+1];
-                System.arraycopy(attributeInfo[record][attributeIndex], 0, increasedURI, 0, currentLength);
-                attributeInfo[record][attributeIndex] = increasedURI;
-                attributeInfo[record][attributeIndex][currentLength] = ai;
-            }
-        }        
-	}*/
 	
 	public void addAttribute(int startElementQIndex, int inputIndex, AttributeTask task){
-		// System.out.println(hashCode()+" ADD ATTRIBUTE QNAME");		
-		//System.out.println(record+" /"+attributeIndex+"/"+qN+"/");
 		
 		if(attributeInputIndex[startElementQIndex] == null ){
             attributeInputIndex[startElementQIndex] = new int[attributeInitialSize];
@@ -432,8 +312,6 @@ public class Queue implements Reusable,
 	}
 	
 	public void addAttribute(int startElementQIndex, AttributeTask task){
-		// System.out.println(hashCode()+" ADD ATTRIBUTE QNAME");		
-		//System.out.println(record+" /"+attributeIndex+"/"+qN+"/");
 		
 		if(attributeInputIndex[startElementQIndex] == null ){
             attributeInputIndex[startElementQIndex] = new int[attributeInitialSize];
@@ -464,22 +342,7 @@ public class Queue implements Reusable,
         attributeTask[startElementQIndex][length] = task;
 	}
 	
-	/*public void addAttributeTask(int record, int attributeIndex, AttributeTask task){
-		// System.out.println(hashCode()+" ADD ATTRIBUTE TASK ");
-		if(attributeIndex < 0 || attributeIndex > attributeCount) throw new IllegalArgumentException();
-		if(attributeTask[record] == null )attributeTask[record] = new AttributeTask[attributeCount];
-		attributeTask[record][attributeIndex] = task;
-	}
-	public void addCharacterContent(int record, String content){
-		// System.out.println(hashCode()+" ADD CHARACTER CONTENT ");
-		//System.out.println(record+" /"+content+"/");
-		if(characterContent[record] == null) characterContent[record] = content;
-		else characterContent[record] += content;
-	}*/
-	
-	public void addCharacterContent(int startElementQIndex, String cc){
-		// System.out.println(hashCode()+" ADD CHARACTER CONTENT ");
-		//System.out.println(record+" /"+content+"/");		
+	public void addCharacterContent(int startElementQIndex, String cc){				
 		characterContent[startElementQIndex] = cc;        
 	}
 	
@@ -494,8 +357,6 @@ public class Queue implements Reusable,
 	*/
 	public void registerReservation(int reservationStartIndex, int entriesCount){	
 	    
-		/*if(reservationStartIndex != currentIndex) throw new IllegalArgumentException();*/
-		
         boolean startIsReserved = false;
         int i = 0;
 		for(; i < reservationStartEntry.length; i++){
@@ -530,7 +391,6 @@ public class Queue implements Reusable,
 		
 		
 		if(currentIndex < lastIndex){
-	        // clear from reservationStartIndex to currentIndex inclusive
 	        for(i = reservationStartIndex; i <= currentIndex; i++){
 	            if(elementInputIndex[i] != -1){
 	                activeInputDescriptor.unregisterClientForRecord(elementInputIndex[i], this);
@@ -576,10 +436,7 @@ public class Queue implements Reusable,
 	* the reserved places any existing data is removed. The currentIndex is set 
 	* to the last reserved index if that is greater. 
 	*/
-	public void registerReservation(int reservationStartIndex, int entriesCount, boolean isUsed){
-		// System.out.println(hashCode()+" entries "+entriesCount);		
-		/*if(reservationStartIndex != currentIndex) throw new IllegalArgumentException();*/
-			 
+	public void registerReservation(int reservationStartIndex, int entriesCount, boolean isUsed){			 
 		boolean startIsReserved = false;
 		int i = 0;
 		for(; i < reservationStartEntry.length; i++){
@@ -745,31 +602,6 @@ public class Queue implements Reusable,
 	    elementTask[endIndex] = endTask;
 	}
 	
-	/*public void addIndexCorrespondence(int endRecord, int startIndex){
-		// System.out.println(hashCode()+" ADD INDEX CORRESPONDENCE ");
-		//System.out.println(record+" "+startIndex);
-		correspStartIndex[endRecord] = startIndex;
-		correspEndIndex[startIndex] = endRecord;
-	}	
-	public void addElementTasks(int record, ElementTask startTask, ElementTask endTask){
-		// System.out.println(hashCode()+" ADD ELEMENT TASK ");
-		//System.out.println(record+" "+startTask+" "+endTask);
-		int startRecord = correspStartIndex[record];
-		if(startRecord == -1)throw new IllegalStateException();		
-		elementTask[startRecord] = startTask;
-		elementTask[record] = endTask;
-	}
-	public void addXmlns(String prefix, String uri){
-		// System.out.println(hashCode()+" ADD XMLNS ");
-		if(declaredXmlns == null)declaredXmlns = new HashMap<String, String>();
-		declaredXmlns.put(prefix, uri);
-		//System.out.println(hashCode()+" +++++"+declaredXmlns);
-	}
-	public void addXmlBase(String base){
-		// System.out.println(hashCode()+" ADD XML BASE ");
-		xmlBase[currentIndex] = base;		
-	}*/
-	
 	
 	// TODO : xmlns!!!
 	// The declared xmlns is set from the ValidatorHandler, the replacement 
@@ -792,11 +624,8 @@ public class Queue implements Reusable,
 		if(reservationCount != otherEndEntry - otherStartEntry + 1) throw new IllegalArgumentException("Reservation count is "+reservationCount+"; other queue requires "+(otherEndEntry - otherStartEntry + 1)+".");
 	
 		
-		/*String[] otherL = other.getAllLocations();
-        NameInfo[] otherENI = other.getAllNameInfos();*/
         int[] otherEII = other.getAllElementInputIndexes(); 
-		/*Map[] otherXmlns = other.getAllXmlns();*/
-		/*String[] otherXmlBase = other.getAllXmlBase();*/
+		        
         int[][] otherAII = other.getAllAttributeInputIndexes();
 		AttributeTask[][] otherAT = other.getAllAttributeTasks();
 		String[] otherCC = other.getAllCharacterContent();
@@ -858,53 +687,13 @@ public class Queue implements Reusable,
                 correspEndIndex[otherCSI[otherIndex]] = thisIndex;                
 			}else{
 			    throw new IllegalStateException();
-			}
-			
-			/*
-			The other is cheaper as it needs one less System.arraycopy
-			
-			if(otherCEI[otherIndex]!= -1){
-			    // start element
-			    correspStartIndex[thisIndex] = otherCSI[otherIndex]; // should be -1
- 			    correspEndIndex[thisIndex] = otherCEI[otherIndex] + diff;  			     
-			}else if(otherCSI[otherIndex]!= -1){
-			    // end element
-			    correspStartIndex[thisIndex] = otherCSI[otherIndex] + diff; 
- 			    correspEndIndex[thisIndex] = otherCEI[otherIndex];// should be -1
-			}else{
-			    correspStartIndex[thisIndex] = otherCSI[otherIndex];
-			    correspEndIndex[thisIndex] = otherCEI[otherIndex];
-			} */
+			}		
 		}	
 		
 		
 		// Only take over the task and task related content, not the reservations
 		// since that implies a relation with the specific document handler, not 
-		// with the document.
-		/*int otherReservationsCount = other.getReservationsCount();		
-		if(otherReservationsCount == 0 ){
-			reservationUsed[reservationRegistrationIndex] = true;		
-			return;
-		}
-
-		if(reservationIndex+otherReservationsCount+1 >= reservationSize)increaseReservation(otherReservationsCount);
-		
-		int[] otherReservationStartEntry = other.getReservationStartEntry();
-		int[] otherReservationEntriesCount = other.getReservationEntriesCount();
-		boolean[] otherReservationUsed = other.getReservationUsed();
-		for(int i = 0; i < otherReservationsCount; i++){
-		    // When other reservations offset is between the otherStartEntry and 
-		    // otherEndEntry check this reservation for corresponding entry. If 
-		    // it exists replace it, else create new record.
-		    int otherRSE = otherReservationStartEntry[i];
-		    if(otherRSE >= otherStartEntry && otherRSE <= otherEndEntry){
-		        registerReservation(otherRSE + diff, otherReservationEntriesCount[i], otherReservationUsed[i]);
-		    }
-		    
-			/*reservationStartEntry[++reservationIndex] = otherReservationStartEntry[i]+reservedStartEntry;
-			reservationEntriesCount[reservationIndex] = otherReservationEntriesCount[i];
-			reservationUsed[reservationIndex] = otherReservationUsed[i];*/ 			
-		/*}*/
+		// with the document.		
 		reservationUsed[reservationRegistrationIndex] = true;	
 	}
 	
@@ -934,21 +723,6 @@ public class Queue implements Reusable,
 		// System.out.println(hashCode()+" EXECUTE ALL");		
 		//System.out.println(hashCode()+" ");
 		//System.out.println(toString());
-		/*for(currentIndex = 0 ; currentIndex < size; currentIndex++){			
-			//System.out.println(currentIndex+"/"+elementTask[currentIndex]);			
-			if(elementTask[currentIndex] != null){
-				elementTask[currentIndex].setContext(this);
-				elementTask[currentIndex].execute();
-			}
-			if(attributeTask[currentIndex] != null){
-				for(currentAttributeIndex = 0; currentAttributeIndex < attributeTask[currentIndex].length; currentAttributeIndex++){
-					if(attributeTask[currentIndex][currentAttributeIndex] != null){
-						attributeTask[currentIndex][currentAttributeIndex].setContext(this);
-						attributeTask[currentIndex][currentAttributeIndex].execute();
-					}
-				}
-			}
-		}*/
 		
 		if(startDocumentTask != null){
 		    startDocumentTask.setContext(this);
@@ -1066,51 +840,6 @@ public class Queue implements Reusable,
 	
 	//ElementTaskContext
 	//--------------------------------------------------------------------------
-	/*public String getStartLocation(){
-		int startIndex;
-		if(!isCurrentEntryStart()) startIndex = correspStartIndex[currentIndex];
-		else startIndex = currentIndex;
-		return location[startIndex];
-	}
-	public String getEndLocation(){
-		int endIndex;
-		if(isCurrentEntryStart()) endIndex = correspEndIndex[currentIndex];
-		else endIndex = currentIndex;
-		return location[endIndex];
-	}
-    public NameInfo getElementNameInfo(){
-		int nameIndex;
-		if(!isCurrentEntryStart()) nameIndex = correspStartIndex[currentIndex];
-		else nameIndex = currentIndex;
-		return elementNameInfo[nameIndex];
-	}*/
-	/*public String getXmlBase(){
-		int baseIndex;
-		if(!isCurrentEntryStart()) baseIndex = correspStartIndex[currentIndex];
-		else baseIndex = currentIndex;
-		return xmlBase[baseIndex];
-	}*/	
-	
-	
-	/*public Map<String, String> getDeclaredXmlns(){
-		int mapIndex;
-		if(!isCurrentEntryStart()) mapIndex = correspStartIndex[currentIndex];
-		else mapIndex = currentIndex;
-		return xmlns[mapIndex];
-	}*/
-    
-    /*public AttributeInfo[] getAttributeInfo(SAttribute attribute){
-		int attributesRecordIndex;
-		if(!isCurrentEntryStart()) attributesRecordIndex = correspStartIndex[currentIndex];
-		else attributesRecordIndex = currentIndex;
-		
-		int attributeIndex = sattributeIndexMap.get(attribute);		
-		//System.out.println(currentIndex+" /"+attributesRecordIndex+"/");
-		//System.out.println(currentIndex+" /"+attributeIndex+"/"+attribute);
-		//System.out.println(currentIndex+" /"+Arrays.toString(attributeValue[attributesRecordIndex]));
-		if(attributeInfo[attributesRecordIndex]!=null)return attributeInfo[attributesRecordIndex][attributeIndex];
-		return null;
-	}*/
 	
 	public int getElementInputRecordIndex(){
 	    int startIndex;
@@ -1118,13 +847,6 @@ public class Queue implements Reusable,
 	    else startIndex = currentIndex;
 	    return elementInputIndex[startIndex];
 	}
-	
-	/*public int getEndElementInputRecordIndex(){
-	    int endIndex;
-	    if(isCurrentEntryStart()) endIndex = correspEndIndex[currentIndex];
-	    else endIndex = currentIndex;
-	    return elementInputIndex[endIndex];
-	}*/
 	
 	public String getCharacterContent(){
 		int characterContentIndex;
@@ -1137,11 +859,7 @@ public class Queue implements Reusable,
 	
 	//AttributeTaskContext
 	//--------------------------------------------------------------------------
-    /*public AttributeInfo[] getAttributeInfo(){
-		// when executing an attribute task the currentIndex is always at a start tag
-		return attributeInfo[currentIndex][currentAttributeIndex];
-	}*/
-	
+    
 	public int getAttributeInputRecordIndex(){
 		// when executing an attribute task the currentIndex is always at a start tag
 		return attributeInputIndex[currentIndex][currentAttributeIndex];
@@ -1238,24 +956,9 @@ public class Queue implements Reusable,
 		reservationUsed = increasedRU;
 	}
 	
-	/*private String[] getAllLocations(){
-		return location;
-	}
-	
-    private NameInfo[] getAllNameInfos(){
-		return elementNameInfo;
-	}*/
-	
 	private int[] getAllElementInputIndexes(){
 	    return elementInputIndex;
 	}
-	
-	/*private Map[] getAllXmlns(){
-		return xmlns;
-	}*/
-	/*private String[] getAllXmlBase(){
-		return xmlBase;
-	}*/
 	
     private int[][] getAllAttributeInputIndexes(){
 		return attributeInputIndex;

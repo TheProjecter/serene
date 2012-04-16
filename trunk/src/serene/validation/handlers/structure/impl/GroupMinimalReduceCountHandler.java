@@ -164,7 +164,7 @@ public class GroupMinimalReduceCountHandler extends MinimalReduceCountHandler{
 						size,
 						satisfactionLevel,
 						saturationLevel,
-						contentHandler.getContentIndex(),
+						contentIndex,
 						startInputRecordIndex,
 						isStartSet,
 						childDefinition,
@@ -256,7 +256,7 @@ public class GroupMinimalReduceCountHandler extends MinimalReduceCountHandler{
 							int size,
 							int satisfactionLevel,
 							int saturationLevel,
-							int contentHandlerContentIndex,
+							int contentIndex,
 							int startInputRecordIndex,
 							boolean isStartSet,
 							APattern[] childDefinition,
@@ -295,23 +295,9 @@ public class GroupMinimalReduceCountHandler extends MinimalReduceCountHandler{
 			if(cph[i] != null)childParticleHandlers[i] = cph[i].getCopy(this, errorCatcher);
 			if(csh[i] != null)childStructureHandlers[i] = csh[i].getCopy(this, stackHandler, errorCatcher);
 		}
-		if(contentHandlerContentIndex == NO_CONTENT){
-			contentHandler = noContent;
-		}else if(contentHandlerContentIndex == OPEN_CONTENT){
-			contentHandler = openContent;
-		}else if(contentHandlerContentIndex == SATISFIED_CONTENT){
-			contentHandler = satisfiedContent;
-		}else if(contentHandlerContentIndex == UNSATISFIED_SATURATED_CONTENT){
-			contentHandler = unsatisfiedSaturatedContent;
-		}else if(contentHandlerContentIndex == SATISFIED_SATURATED_CONTENT){
-			contentHandler = satisfiedSaturatedContent;
-		}else if(contentHandlerContentIndex == UNSATISFIED_EXCESSIVE_CONTENT){
-			contentHandler = unsatisfiedExcessiveContent;
-		}else if(contentHandlerContentIndex == SATISFIED_EXCESSIVE_CONTENT){
-			contentHandler = satisfiedExcessiveContent;
-		}else{
-			throw new IllegalArgumentException();
-		}
+		
+		this.contentIndex = contentIndex;
+		
 		this.satisfactionLevel = satisfactionLevel;
 		this.saturationLevel = saturationLevel;
 		
@@ -324,8 +310,6 @@ public class GroupMinimalReduceCountHandler extends MinimalReduceCountHandler{
 		    activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
 		}		
 	}	
-		
-		
 	
 	
 	// -> creates new arrays at lastCorrectChildIndexIndex++
@@ -417,7 +401,7 @@ public class GroupMinimalReduceCountHandler extends MinimalReduceCountHandler{
 	
 	public String toString(){
 		//return "GroupMinimalReduceCountHandler "+hashCode()+" "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentHandler "+contentHandler.toString();
-		return "GroupMinimalReduceCountHandler  "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentHandler "+contentHandler.toString();
+		return "GroupMinimalReduceCountHandler  "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentIndex="+contentIndex;
 	}
 	
 } 

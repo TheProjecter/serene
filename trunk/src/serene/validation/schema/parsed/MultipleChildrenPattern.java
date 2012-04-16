@@ -23,14 +23,14 @@ import serene.bind.util.DocumentIndexedData;
 
 abstract class MultipleChildrenPattern extends Pattern{
  	ParsedComponent[] children; 
-	MultipleChildrenPattern(/*Map<String, String> prefixMapping,*/
+	MultipleChildrenPattern(
 	                            int xmlBase,
                                 int ns, 
                                 int datatypeLibrary, 
                                 ParsedComponent[] children, 
                                 int recordIndex,
                                 DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 		asParent(children);
 	}
 		

@@ -62,6 +62,7 @@ public class ContextStackHandler  implements  StackHandler{
 	*/
 	boolean isCurrentHandlerReseted; 
 	
+	
 	ContextStackHandler(){
 		endingValidation = false;
 		isCurrentHandlerReseted = false;
@@ -75,7 +76,8 @@ public class ContextStackHandler  implements  StackHandler{
 		topHandler.recycle();
 		topHandler = null;
 		currentHandler = null;
-		recycler.recycle(this);		
+		recycler.recycle(this);	
+		
 	}
 	
 	void init(InputStackDescriptor inputStackDescriptor, StackHandlerRecycler recycler){
@@ -90,19 +92,19 @@ public class ContextStackHandler  implements  StackHandler{
 	}
 		
 	
-	public void shift(AElement element){		
-		setCurrentHandler(element);	
-		currentHandler.handleChildShiftAndOrder(element, expectedOrderHandlingCount);		
+	public void shift(AElement element){        	    
+		setCurrentHandler(element);
+		currentHandler.handleChildShiftAndOrder(element, expectedOrderHandlingCount);
 	}	
 	
-	public void shift(AAttribute attribute){				
+	public void shift(AAttribute attribute){
 		setCurrentHandler(attribute);	
-		currentHandler.handleChildShiftAndOrder(attribute, expectedOrderHandlingCount);		
+		currentHandler.handleChildShiftAndOrder(attribute, expectedOrderHandlingCount);
 	}
 	
-	public void shift(CharsActiveTypeItem chars){				
+	public void shift(CharsActiveTypeItem chars){	    
 		setCurrentHandler(chars);		
-		currentHandler.handleChildShiftAndOrder(chars, expectedOrderHandlingCount);		
+		currentHandler.handleChildShiftAndOrder(chars, expectedOrderHandlingCount);
 	}
 	
 	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter){
@@ -147,7 +149,7 @@ public class ContextStackHandler  implements  StackHandler{
 		throw new IllegalStateException();
 	}
 	
-	public void reduce(StructureHandler handler){
+	public void reduce(StructureHandler handler){    
 		// Check that during normal validation only the active branches are allowed to reduce
 		// During endValidation it starts from the bottom reducing any existing branch,
 		// no check is performed.
@@ -167,7 +169,7 @@ public class ContextStackHandler  implements  StackHandler{
 		currentHandler.handleChildShiftAndOrder(child, expectedOrderHandlingCount);
 	}
 	
-	public void validatingReshift(StructureHandler handler, APattern child){
+	public void validatingReshift(StructureHandler handler, APattern child){	    
 		endSubtreeValidation(handler);
 		 
 		setCurrentHandler(child);
@@ -177,13 +179,13 @@ public class ContextStackHandler  implements  StackHandler{
 	// Changes the old currentHandler during path activation. The new currentHandler
 	// must be set again by calling the pathHandler to activate in the new conditions. 
 	public void reset(StructureHandler handler){
-		//TODO	
+	    //TODO	
 		endSubtreeValidation(currentHandler);
 		isCurrentHandlerReseted = true;
 	}
 		
 	public void blockReduce(StructureHandler handler, int count, APattern pattern, int startInputRecordIndex){
-		// TODO the checks for Exception
+	    // TODO the checks for Exception
 		if(!endingValidation && !isActive(handler, currentHandler))throw new IllegalArgumentException();
 		StructureHandler parent = handler.getParentHandler();	
 		boolean shifted = true;
@@ -200,7 +202,7 @@ public class ContextStackHandler  implements  StackHandler{
 		if(shifted)parent.closeContentStructure(pattern);// must be last so it does not remove location data before error messages
 	}
 	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int startInputRecordIndex){
-		// TODO the checks for Exception
+	    // TODO the checks for Exception
 		if(!endingValidation && !isActive(handler, currentHandler))throw new IllegalArgumentException();
 		StructureHandler parent = handler.getParentHandler();	
 		boolean shifted = true;
@@ -217,13 +219,13 @@ public class ContextStackHandler  implements  StackHandler{
 		if(shifted)parent.closeContentStructure(pattern);// must be last so it does not remove location data before error messages
 	}
 	
-	public void endValidation(){		
-		endingValidation = true;
+	public void endValidation(){
+        endingValidation = true;
 		topHandler.handleValidatingReduce();
 	}
 	
-	public void endSubtreeValidation(StructureHandler handler){		
-		endingValidation = true;
+	public void endSubtreeValidation(StructureHandler handler){
+        endingValidation = true;
 		handler.handleValidatingReduce();
 		endingValidation = false;
 	}
@@ -245,7 +247,7 @@ public class ContextStackHandler  implements  StackHandler{
 		return currentHandler;
 	}
 	
-	public int functionalEquivalenceCode(){		
+	public int functionalEquivalenceCode(){	    
 		return topHandler.functionalEquivalenceCode();
 	}
 	

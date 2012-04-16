@@ -25,15 +25,10 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
-public class UInterleaveHandler extends InterleaveHandler{
-	ContentHandler superSatisfiedContent; 
-	ContentHandler satisfiedNeverReduceContent;
-	
+public class UInterleaveHandler extends InterleaveHandler{	
 	UInterleaveHandler original;
 	UInterleaveHandler(){
 		super();
-		satisfiedNeverReduceContent = new SatisfiedNeverReduceContent();
-		superSatisfiedContent = satisfiedContent;		
 	}	
 	
 	void init(AInterleave interleave, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
@@ -47,9 +42,7 @@ public class UInterleaveHandler extends InterleaveHandler{
 		if(size > childParticleHandlers.length){
 			childParticleHandlers = new ParticleHandler[size];
 			childStructureHandlers = new StructureHandler[size];
-		}		
-		if(saturationIndicator == 0 && interleave.getMinOccurs() <= 1)satisfiedContent = satisfiedNeverReduceContent;
-		else satisfiedContent = superSatisfiedContent;
+		}
 	}
 			
 	public void recycle(){
@@ -84,7 +77,7 @@ public class UInterleaveHandler extends InterleaveHandler{
 						size,
 						satisfactionLevel,
 						saturationLevel,
-						contentHandler.getContentIndex(),
+						contentIndex,
 						startInputRecordIndex,
 						isStartSet);
 		copy.setOriginal(this);
@@ -99,7 +92,7 @@ public class UInterleaveHandler extends InterleaveHandler{
 						size,
 						satisfactionLevel,
 						saturationLevel,
-						contentHandler.getContentIndex(),
+						contentIndex,
 						startInputRecordIndex,
 						isStartSet);
 		copy.setOriginal(this);
@@ -133,7 +126,7 @@ public class UInterleaveHandler extends InterleaveHandler{
 							int size,
 							int satisfactionLevel,
 							int saturationLevel,
-							int contentHandlerContentIndex,
+							int contentIndex,
 							int startInputRecordIndex,
 							boolean isStartSet){
 		
@@ -146,23 +139,9 @@ public class UInterleaveHandler extends InterleaveHandler{
 			if(cph[i] != null)childParticleHandlers[i] = cph[i].getCopy(this, errorCatcher);
 			if(csh[i] != null)childStructureHandlers[i] = csh[i].getCopy(this, stackHandler, errorCatcher);
 		}
-		if(contentHandlerContentIndex == NO_CONTENT){
-			contentHandler = noContent;
-		}else if(contentHandlerContentIndex == OPEN_CONTENT){
-			contentHandler = openContent;
-		}else if(contentHandlerContentIndex == SATISFIED_CONTENT){
-			contentHandler = satisfiedContent;
-		}else if(contentHandlerContentIndex == UNSATISFIED_SATURATED_CONTENT){
-			contentHandler = unsatisfiedSaturatedContent;
-		}else if(contentHandlerContentIndex == SATISFIED_SATURATED_CONTENT){
-			contentHandler = satisfiedSaturatedContent;
-		}else if(contentHandlerContentIndex == UNSATISFIED_EXCESSIVE_CONTENT){
-			contentHandler = unsatisfiedExcessiveContent;
-		}else if(contentHandlerContentIndex == SATISFIED_EXCESSIVE_CONTENT){
-			contentHandler = satisfiedExcessiveContent;
-		}else{
-			throw new IllegalArgumentException();
-		}
+		
+		this.contentIndex = contentIndex;
+		
 		this.satisfactionLevel = satisfactionLevel;
 		this.saturationLevel = saturationLevel;
 		
@@ -182,33 +161,6 @@ public class UInterleaveHandler extends InterleaveHandler{
 	
 	public String toString(){		
 		//return "UInterleaveHandler "+hashCode()+" "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentHandler "+contentHandler.toString();
-		return "UInterleaveHandler  "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentHandler "+contentHandler.toString();
-	}
-			
-	protected class SatisfiedNeverReduceContent extends AbstractSatisfiedContent{		
-		public boolean isSatisfied(){
-			for(int i = 0; i < size; i++){
-				if(childStructureHandlers[i] != null && !childStructureHandlers[i].isSatisfied())
-					return false;
-				
-				if(childParticleHandlers[i] != null && !childParticleHandlers[i].isSatisfied()
-					&& !(childParticleHandlers[i].getDistanceToSatisfaction() == 1 && childStructureHandlers[i] != null))
-						return false;				
-			}
-			return true;
-		}
-		public void childOpen(){
-		}
-		public void optionalChildSatisfied(){
-		}
-		public void requiredChildSatisfied(){			
-			throw new IllegalStateException();
-		}
-		public void childSaturated(){
-			throw new IllegalStateException();
-		}
-		public void childExcessive(){
-			throw new IllegalStateException();
-		}		
-	}
+		return "UInterleaveHandler  "+rule.toString()+" "+satisfactionLevel+"/"+satisfactionIndicator+" contentIndex="+contentIndex;
+	}	
 } 

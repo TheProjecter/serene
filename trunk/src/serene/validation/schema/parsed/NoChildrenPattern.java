@@ -22,13 +22,13 @@ import java.util.Map;
 import serene.bind.util.DocumentIndexedData;
 
 abstract class NoChildrenPattern extends Pattern{ 	 
-    NoChildrenPattern(/*Map<String, String> prefixMapping,*/
+    NoChildrenPattern(
                            int xmlBase,
                            int ns, 
                            int datatypeLibrary,
                            int recordIndex,
                            DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 	}
 		
 	public String toString(){

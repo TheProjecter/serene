@@ -260,7 +260,6 @@ class InternalValidatorHandler extends BoundValidatorHandler{
             locator.getColumnNumber());
         
 		elementHandler = eventHandlerPool.getBoundStartValidationHandler(activeModel.getStartElement(), bindingModel, queue, queuePool);
-		/*xmlBaseBinder.bind(queue, locator.getSystemId());// must happen last, after queue.newRecord() which is in elementHandler's init*/
 		
         if(level1DocumentationElement){
             if(documentationElementHandler == null) documentationElementHandler = new DocumentationElementHandler(errorDispatcher);
@@ -277,16 +276,9 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         if(!documentContext.isBaseURISet())documentContext.setBaseURI(locator.getSystemId());        
 	}
 	public void characters(char[] chars, int start, int length)throws SAXException{
-		//TODO make sure this is correct for all circumstances
-		characterContentDescriptor.add(chars, start, length, locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
-		//charsBuffer.append(chars, start, length);		
-		/*inputStackDescriptor.pushCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());*/
+		characterContentDescriptor.add(chars, start, length, locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());		
 	}
 	public void startPrefixMapping(String prefix, String uri){
-		/*xmlnsBinder.bind(queue, prefix, uri);*/
-		// When adding the xmlns it is not known if the element will be ambiguous
-		// and cause a conflict, so add this to the queue and let the concurrent
-		// and parallel handler worry about passing to the candidate queues.
 		if(declaredXmlns == null)declaredXmlns = new HashMap<String, String>();
 		declaredXmlns.put(prefix, uri);
 		
@@ -298,12 +290,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	public void startElement(String namespaceURI, 
 							String localName, 
 							String qName, 
-							Attributes attributes) throws SAXException{
-		/*char[] charContent = charsBuffer.removeCharsArray();		
-		if(charContent.length > 0){			
-			elementHandler.handleInnerCharacters(charContent);		
-			inputStackDescriptor.popCharsContent();
-		}*/
+							Attributes attributes) throws SAXException{		
 		if(!characterContentDescriptor.isEmpty()){
 		    elementHandler.handleInnerCharacters(characterContentDescriptor, characterContentDescriptorPool);
 		    characterContentDescriptor.clear(); 
@@ -330,10 +317,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         }
 		
 		elementHandler = elementHandler.handleStartElement(qName, namespaceURI, localName, restrictToFileName);		
-		/*String xmlBase = attributes.getValue(XMLConstants.XML_NS_URI, "base");		
-		if(xmlBase != null){
-			xmlBaseBinder.bind(queue, xmlBase);
-		}*/
+		
 		elementHandler.handleAttributes(attributes, locator);
         
         if(level1DocumentationElement){
@@ -345,10 +329,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	public void endElement(String namespaceURI, 
 							String localName, 
 							String qName) throws SAXException{ 
-		/*char[] charContent = charsBuffer.removeCharsArray();
-		if(charContent.length == 0)inputStackDescriptor.pushCharsContent(locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
-		elementHandler.handleLastCharacters(charContent);
-        if(charContent.length == 0)inputStackDescriptor.popCharsContent();*/
+		
         elementHandler.handleLastCharacters(characterContentDescriptor);
 		characterContentDescriptor.clear();
 		
@@ -385,6 +366,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	}
 
 	public void endBinding(){
+	    // TODO xmlBase - maybe the documentEndTask
 	    ParsedComponentBuilder builder = bindingModel.getParsedComponentBuilder();
 	    topPattern = (Pattern)builder.getCurrentParsedComponent();
 	    dtdMapping = documentContext.getDTDMapping();

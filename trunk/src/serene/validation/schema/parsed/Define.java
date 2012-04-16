@@ -25,7 +25,7 @@ import serene.bind.util.DocumentIndexedData;
 
 public class Define extends Definition{	
 	int nameRecordIndex;	
-	Define(/*Map<String, String> prefixMapping,*/ 
+	Define( 
 	            int xmlBase,
 				int ns,
 				int datatypeLibrary, 
@@ -34,7 +34,7 @@ public class Define extends Definition{
 				ParsedComponent[] children,
                 int recordIndex,
                 DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, combine, children, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, combine, children, recordIndex, documentIndexedData);
 		this.nameRecordIndex = name;
 	}
 	public String getName(){

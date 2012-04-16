@@ -28,6 +28,7 @@ public interface ChildEventHandler{
 	final static int EXCESSIVE_CONTENT = 6;
 	final static int UNSATISFIED_EXCESSIVE_CONTENT = 7;
 	final static int SATISFIED_EXCESSIVE_CONTENT = 8;
+	
 	final static int LIMIT_REDUCE = 9;
 	
 	int getContentIndex();

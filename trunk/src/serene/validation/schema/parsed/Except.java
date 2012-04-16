@@ -23,14 +23,14 @@ import serene.bind.util.DocumentIndexedData;
 
 public abstract class Except extends ParsedComponent{
     ParsedComponent[] children;	
-	public Except(/*Map<String, String> prefixMapping,*/ 
+	public Except( 
 	                        int xmlBase,
                             int ns, 
                             int datatypeLibrary,
                             ParsedComponent[] children, 
                             int recordIndex,
                             DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
         asParent(children);
 	}
     void asParent(ParsedComponent[] children){

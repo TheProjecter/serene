@@ -25,14 +25,14 @@ import serene.bind.util.DocumentIndexedData;
 
 public class Empty extends MultipleChildrenPattern{
 	
-	public Empty(/*Map<String, String> prefixMapping,*/ 
+	public Empty( 
 	                int xmlBase,
                     int ns, 
                     int datatypeLibrary, 
                     ParsedComponent[] children, 
                     int recordIndex,
                     DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
 	}	
 			
 	public void accept(ParsedComponentVisitor v){

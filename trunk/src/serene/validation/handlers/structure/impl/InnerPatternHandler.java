@@ -179,7 +179,7 @@ abstract class InnerPatternHandler extends StructureValidationHandler{
 	}
 		
 	boolean isReduceAllowed(){
-		return contentHandler.isSatisfied();
+		return isSatisfied();
 	}
 	abstract boolean isReduceRequired();
 	abstract boolean isReduceAcceptable();

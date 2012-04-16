@@ -93,7 +93,7 @@ public class ChoiceMinimalReduceHandler extends UCMinimalReduceHandler{
 					errorCatcher, 
 					childParticleHandler, 
 					childStructureHandler, 
-					contentHandler.getContentIndex(),
+					contentIndex,
 					startInputRecordIndex,
 					isStartSet,
 					currentChild);
@@ -107,7 +107,7 @@ public class ChoiceMinimalReduceHandler extends UCMinimalReduceHandler{
 					errorCatcher, 
 					childParticleHandler, 
 					childStructureHandler,
-					contentHandler.getContentIndex(),
+					contentIndex,
 					startInputRecordIndex,
 					isStartSet,
 					currentChild);
@@ -143,23 +143,25 @@ public class ChoiceMinimalReduceHandler extends UCMinimalReduceHandler{
 							ErrorCatcher errorCatcher,
 							ParticleHandler childParticleHandler, 
 							StructureHandler childStructureHandler,
-							int contentHandlerContentIndex,
+							int contentIndex,
 							int startInputRecordIndex,
 							boolean isStartSet,
 							Rule currentChild){
 		if(childParticleHandler != null)this.childParticleHandler = childParticleHandler.getCopy(this, errorCatcher);
 		if(childStructureHandler != null)this.childStructureHandler = childStructureHandler.getCopy(this, stackHandler, errorCatcher);
-		if(contentHandlerContentIndex == NO_CONTENT){
+		/*if(contentIndex == NO_CONTENT){
 			contentHandler = noContent;
-		}else if(contentHandlerContentIndex == OPEN_CONTENT){
+		}else if(contentIndex == OPEN_CONTENT){
 			contentHandler = openContent;
-		}else if(contentHandlerContentIndex == SATISFIED_CONTENT){
+		}else if(contentIndex == SATISFIED_CONTENT){
 			contentHandler = satisfiedContent;
-		}else if(contentHandlerContentIndex == SATURATED_CONTENT){
+		}else if(contentIndex == SATURATED_CONTENT){
 			contentHandler = saturatedContent;
 		}else{
 			throw new IllegalArgumentException();
-		}	
+		}*/
+		
+		this.contentIndex = contentIndex;
 		
 		if(this.isStartSet){
             activeInputDescriptor.unregisterClientForRecord(this.startInputRecordIndex, this);
@@ -178,6 +180,6 @@ public class ChoiceMinimalReduceHandler extends UCMinimalReduceHandler{
 	}
 	public String toString(){
 		//return "ChoiceMinimalReduceHandler "+hashCode()+" "+rule.toString()+" contentHandler "+contentHandler.toString();
-		return "ChoiceMinimalReduceHandler  "+rule.toString()+" contentHandler "+contentHandler.toString();
+		return "ChoiceMinimalReduceHandler  "+rule.toString()+" contentIndex="+contentIndex;
 	}
 } 

@@ -24,12 +24,12 @@ import serene.bind.util.DocumentIndexedData;
 public class ForeignComponent extends ParsedComponent{
     
     ParsedComponent children[];
-	ForeignComponent(/*Map<String, String> prefixMapping,*/ 
+	ForeignComponent( 
                     int xmlBase, 
                     ParsedComponent[] children, 
                     int recordIndex,
                     DocumentIndexedData documentIndexedData){    
-		super(/*prefixMapping,*/ xmlBase, DocumentIndexedData.NO_RECORD, DocumentIndexedData.NO_RECORD, recordIndex, documentIndexedData);
+		super( xmlBase, DocumentIndexedData.NO_RECORD, DocumentIndexedData.NO_RECORD, recordIndex, documentIndexedData);
         asParent(children);
 	}
     

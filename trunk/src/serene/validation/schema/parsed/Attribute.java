@@ -24,7 +24,7 @@ import serene.bind.util.DocumentIndexedData;
 public abstract class Attribute extends MultipleChildrenPattern{	
     
 	int defaultValueRecordIndex;
-	Attribute(/*Map<String, String> prefixMapping,*/ 
+	Attribute( 
 	                int xmlBase,
                     int ns, 
                     int datatypeLibrary,
@@ -32,7 +32,7 @@ public abstract class Attribute extends MultipleChildrenPattern{
                     ParsedComponent[] children, 
                     int recordIndex,
                     DocumentIndexedData documentIndexedData){		
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
 		this.defaultValueRecordIndex = defaultValue;
 	}
 		

@@ -24,14 +24,14 @@ import org.xml.sax.SAXException;
 import serene.bind.util.DocumentIndexedData;
 
 public class DivGrammarContent extends Div implements GrammarContent{
-	DivGrammarContent(/*Map<String, String> prefixMapping,*/
+	DivGrammarContent(
 	                    int xmlBase,
 	                    int ns, 
 	                    int datatypeLibrary,
                         ParsedComponent[] children, 
                         int recordIndex,
                         DocumentIndexedData documentIndexedData){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
 	}
 		
 	public void accept(ParsedComponentVisitor v){

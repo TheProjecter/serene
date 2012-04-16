@@ -22,13 +22,13 @@ import java.util.Map;
 import serene.bind.util.DocumentIndexedData;
 
 public abstract class NameClass extends ParsedComponent{
-	 NameClass(/*Map<String, String> prefixMapping,*/
+	 NameClass(
 	            int xmlBase,
                 int ns, 
                 int datatypeLibrary,
                 int recordIndex,
                 DocumentIndexedData documentIndexedData){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, recordIndex, documentIndexedData);
 	}	
 	
 	public String toString(){

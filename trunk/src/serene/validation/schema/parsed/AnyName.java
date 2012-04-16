@@ -25,14 +25,14 @@ import java.util.Arrays;
 import org.xml.sax.SAXException;
 
 public class AnyName extends MultipleChildrenNameClass{		
-	AnyName(/*Map<String, String> prefixMapping,*/
+	AnyName(
 	                int xmlBase,
 	                int ns, 
 	                int datatypeLibrary, 
 	                ParsedComponent[] children, 
 	                int recordIndex,
                     DocumentIndexedData documentIndexedData){
-		super(/*prefixMapping,*/ xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
+		super( xmlBase, ns, datatypeLibrary, children, recordIndex, documentIndexedData);
 	}	
 	
 	public void accept(ParsedComponentVisitor v){
