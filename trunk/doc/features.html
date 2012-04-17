@@ -9,7 +9,7 @@
         <BR>
     </P>
     <P>
-        The features implemented by <B>Serene 0.6</B> are:
+        The features implemented by <B>Serene 0.6.1</B> are:
     </P>
     <P>
         <CODE><B>http://xml.org/sax/features/namespace-prefixes</B></CODE>
@@ -28,7 +28,7 @@
         See <A HREF="samples.html">samples</A> for an example.
     </P>
     <P>
-        <CODE><B>http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary</B></CODE>
+        <CODE><B>http://serenerng.com/features/schemaFactory/replaceMissingDatatypeLibrary</B></CODE>
     </P>
     <P>
         This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
@@ -51,7 +51,7 @@
         See <A HREF="samples.html">samples</A> for an example.
     </P>
     <P>
-        <CODE><B>http://serenerng.org/features//schemaFactory/features/parsedModelSchema</B></CODE>
+        <CODE><B>http://serenerng.com/features//schemaFactory/features/parsedModelSchema</B></CODE>
     </P>
     <P>
         This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
@@ -61,7 +61,7 @@
         memory freed. By default it is set to <CODE>false</CODE>.
     </P>
     <P>
-        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/attributeDefaultValue</B></CODE>
+        <CODE><B>http://serenerng.com/features/DTDCompatibility/level1/attributeDefaultValue</B></CODE>
     </P>
     <P>
         This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
@@ -71,7 +71,7 @@
         <CODE>false</CODE>.
     </P>
     <P>
-        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/attributeIdType</B></CODE>
+        <CODE><B>http://serenerng.com/features/DTDCompatibility/level1/attributeIdType</B></CODE>
     </P>
     <P>
         This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>,
@@ -83,7 +83,7 @@
         By default it is set to <CODE>false</CODE>.
     </P>
     <P>
-        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/documentationElement</B></CODE>
+        <CODE><B>http://serenerng.com/features/DTDCompatibility/level1/documentationElement</B></CODE>
     </P>
     <P>
         This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
@@ -92,7 +92,7 @@
         property holds. By default it is set to <CODE>false</CODE>.
     </P>
     <P>
-        <CODE><B>http://serenerng.org/features/DTDCompatibility/level2/attributeDefaultValue</B></CODE>
+        <CODE><B>http://serenerng.com/features/DTDCompatibility/level2/attributeDefaultValue</B></CODE>
     </P>
     <P>
         This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.ValidatorHandler</CODE>
@@ -106,7 +106,7 @@
     <P> 
         When this feature is set to <CODE>true</CODE> in the 
         <CODE>javax.xml.validation.SchemaFactory</CODE>, internally also the  
-        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/attributeDefaultValue</B></CODE>
+        <CODE><B>http://serenerng.com/features/DTDCompatibility/level1/attributeDefaultValue</B></CODE>
         feature is set to <CODE>true</CODE>, so that the necessary internal model is 
         built from the schema document. When this feature is set to <CODE>true</CODE> 
         in the <CODE>javax.xml.validation.ValidatorHandler</CODE>, or 
@@ -114,7 +114,7 @@
         ensure that the necessary internal model is present and correct.
     </P>
     <P>
-        <CODE><B>http://serenerng.org/features/DTDCompatibility/level2/attributeIdType</B></CODE>
+        <CODE><B>http://serenerng.com/features/DTDCompatibility/level2/attributeIdType</B></CODE>
     </P>
     <P>
         This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.ValidatorHandler</CODE>
@@ -128,7 +128,7 @@
     <P> 
         When this feature is set to <CODE>true</CODE> in the 
         <CODE>javax.xml.validation.SchemaFactory</CODE>, internally also the  
-        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/attributeIdType</B></CODE>
+        <CODE><B>http://serenerng.com/features/DTDCompatibility/level1/attributeIdType</B></CODE>
         feature is set to <CODE>true</CODE>, so that the necessary internal model is 
         built from the schema document. When this feature is set to <CODE>true</CODE> 
         in the <CODE>javax.xml.validation.ValidatorHandler</CODE>, or 
@@ -136,7 +136,7 @@
         ensure that the necessary internal model is present and correct.
     </P>
     <P>
-        <CODE><B>http://serenerng.org/features/restrictToFileName</B></CODE>
+        <CODE><B>http://serenerng.com/features/restrictToFileName</B></CODE>
     </P>
     <P>
         This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>,
@@ -147,11 +147,21 @@
         passed to the <CODE>SAXParseException</CODE>. By default it is set to <CODE>true</CODE>.
     </P>
     <P>
+        <CODE><B>http://serenerng.com/features/optimizeForResourceSharing</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>               
+        which, when set to <CODE>true</CODE>, ensures that common internal resources are
+        created for and shared by all the threads. It should improve performance in an environement 
+        with several threads validating alternativelly. Due to synchronization envolved it 
+        should be used carefully. By default it is set to <CODE>false</CODE>.
+    </P>
+    <P>
         <BR><BR>
     </P>
     <HR>
     <P>
-        Copyright &copy; 2010, 2011 Radu Cernuta
+        Copyright &copy; 2010, 2011, 2012 Radu Cernuta
     </P>
     <HR>
 </BODY>
