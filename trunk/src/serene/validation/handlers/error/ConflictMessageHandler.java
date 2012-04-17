@@ -3420,9 +3420,6 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 				break;
 			}
 		}
-		/*if(index == -1){
-            throw new IllegalArgumentException();
-        }*/
         return index;
     }
     
@@ -3447,19 +3444,16 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         messageTotalCount--;
         conflictResolutionId = RESOLVED;
         candidatesCount = -1;
-        if(commonMessages != null){
-            /*if(isMessageRetrieved || isDiscarded)*/commonMessages.unregisterClient(this); // It can be only one because it is about this context.
+        if(commonMessages != null){commonMessages.unregisterClient(this); // It can be only one because it is about this context.
             commonMessages = null;
         }
         
         disqualified = null;
         
         if(candidateMessages != null){
-            /*if(isMessageRetrieved || isDiscarded){*/
-                for(MessageReporter cm : candidateMessages){
-                    if(cm != null)cm.unregisterClient(this);
-                }
-            /*}*/
+            for(MessageReporter cm : candidateMessages){
+                if(cm != null)cm.unregisterClient(this);
+            }
             candidateMessages = null;
         }
         
@@ -3851,7 +3845,6 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     public void unregisterClient(MessageReporter mr){
         clientCount--;
         if(clientCount == 0){
-            /*isDiscarded = true;// just in case*/
             clear();
         }
     }    
@@ -3914,7 +3907,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         
         messageTotalCount = 0;
         
-        if(/*(isMessageRetrieved || isDiscarded) &&*/ parent != null){
+        if(parent != null){
             parent.unregisterClient(this);
             parent = null;
         }
@@ -3927,9 +3920,6 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         reportingContextLineNumber = -1;
         reportingContextColumnNumber = -1;
         conflictResolutionId = UNRESOLVED;
-        
-        /*isMessageRetrieved = false;
-        isDiscarded = false;*/
         
     }
     

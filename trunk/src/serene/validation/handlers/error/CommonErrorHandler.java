@@ -59,7 +59,6 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 	public void recycle(){
         isCandidate = false;
         if(!isHandled && messageHandler != null){
-            /*messageHandler.setDiscarded(true);*/
             messageHandler.clear(this);
         }        
         messageHandler = null;
@@ -238,7 +237,6 @@ public class CommonErrorHandler extends AbstractContextErrorHandler{
 	}
     
 	public void discard(){
-	    /*messageHandler.setDiscarded(true);*/
 	    messageHandler.clear(this);
 	}
 	

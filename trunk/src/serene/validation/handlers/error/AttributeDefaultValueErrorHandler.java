@@ -82,11 +82,7 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
     public void setRestrictToFileName(boolean value){
         restrictToFileName = value;
     }
-    
-    /*public boolean hasError(){
-        return !messages.isEmpty();
-    }*/
-    
+        
     public void report() throws SAXException{        
         for(String message : errorMessages){
             errorDispatcher.error(new AttributeDefaultValueException(message, null, null, -1, -1));
@@ -129,35 +125,19 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
 		
 	
 	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){		
-		/*String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
-                        +" does not match attribute pattern."
-                        +" Excessive content in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+". ";                 
-        errorMessages.add(message);*/
-        throw new IllegalStateException();
+		throw new IllegalStateException();
 	}
 	
 	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
-		/*String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
-                        +" does not match attribute pattern."
-                        +" Excessive content in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+". ";
-        errorMessages.add(message);*/
-        throw new IllegalStateException();
+		throw new IllegalStateException();
 	}
 	
 	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
-		/*String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
-                        +" does not match attribute pattern."
-                        +" Missing content in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+". ";
-        errorMessages.add(message);*/
-        throw new IllegalStateException();
+		throw new IllegalStateException();
 	}
 
 	public void illegalContent(Rule context, int startInputRecordIndex){
-		/*String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
-                        +" does not match attribute pattern."
-                        +" Illegal content in the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+". ";
-        errorMessages.add(message);*/
-        throw new IllegalStateException();        
+		throw new IllegalStateException();        
 	}
 	
 	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){

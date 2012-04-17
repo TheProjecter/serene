@@ -57,9 +57,7 @@ public interface MessageReporter{
     void clear(CandidatesConflictErrorHandler cceh);
     void clear(TemporaryMessageStorage tms);
     void clear(ElementConflictResolver ecr);
-        
-    /*void setDiscarded(boolean isDiscarded);*/
-    
+     
     void registerClient(MessageReporter mr);
     void unregisterClient(MessageReporter mr);
 }

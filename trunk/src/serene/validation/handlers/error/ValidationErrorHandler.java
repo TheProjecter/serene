@@ -60,7 +60,6 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
 	}
 	public void recycle(){
         if(!isHandled){
-            /*messageHandler.setDiscarded(true);*/
             messageHandler.clear(this);            
         }
 		pool.recycle(this);        
@@ -219,20 +218,19 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
     
 	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 				throws SAXException{
-        messageHandler.report(contextType, qName, definition, restrictToFileName, locator, errorDispatcher/*, ""*/);
+        messageHandler.report(contextType, qName, definition, restrictToFileName, locator, errorDispatcher);
 		messageHandler.clear(this);
 		isHandled = true;
 	}
 	
 	public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator)
 				throws SAXException{
-        messageHandler.report(contextType, qName, null, restrictToFileName, locator, errorDispatcher/*, ""*/);
+        messageHandler.report(contextType, qName, null, restrictToFileName, locator, errorDispatcher);
 		messageHandler.clear(this);
 		isHandled = true;
 	}
 
 	public void discard(){
-	    /*messageHandler.setDiscarded(true);*/
 	    messageHandler.clear(this);
 	}
 	

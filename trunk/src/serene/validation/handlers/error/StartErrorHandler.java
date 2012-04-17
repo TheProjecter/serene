@@ -206,13 +206,13 @@ public class StartErrorHandler extends AbstractContextErrorHandler{
     
 	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
 				throws SAXException{
-        messageHandler.report(contextType, qName, definition, restrictToFileName, locator, errorDispatcher/*, ""*/);
+        messageHandler.report(contextType, qName, definition, restrictToFileName, locator, errorDispatcher);
 		messageHandler.clear(this);
 	}
 	
 	public void handle(int contextType, String qName, boolean restrictToFileName, Locator locator)
 				throws SAXException{
-        messageHandler.report(contextType, qName, null, restrictToFileName, locator, errorDispatcher/*, ""*/);
+        messageHandler.report(contextType, qName, null, restrictToFileName, locator, errorDispatcher);
 		messageHandler.clear(this);
 	}
 	

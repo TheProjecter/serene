@@ -57,87 +57,35 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     int increaseSizeAmount = 5;
 	
 	// {2}
-	/*String[] unknownElementQName;
-	String[] unknownElementSystemId;
-	int[] unknownElementLineNumber;
-	int[] unknownElementColumnNumber;
-	int unknownElementIndex;
-	int unknownElementSize;*/
     int[] unknownElementInputRecordIndex;
     int unknownElementIndex;	
 	
-	// {3}
-	/*String[] unexpectedElementQName;
-	SimplifiedComponent[] unexpectedElementDefinition;
-	String[] unexpectedElementSystemId;
-	int[] unexpectedElementLineNumber;
-	int[] unexpectedElementColumnNumber;
-	int unexpectedElementIndex;
-	int unexpectedElementSize;*/
+	// {3}	
 	SimplifiedComponent[] unexpectedElementDefinition;
 	int[] unexpectedElementInputRecordIndex;
 	int unexpectedElementIndex;
 		
 	// {4}
-	/*String[] unexpectedAmbiguousElementQName;
-	SimplifiedComponent[][] unexpectedAmbiguousElementDefinition;
-	String[] unexpectedAmbiguousElementSystemId;
-	int[] unexpectedAmbiguousElementLineNumber;
-	int[] unexpectedAmbiguousElementColumnNumber;
-	int unexpectedAmbiguousElementIndex;
-	int unexpectedAmbiguousElementSize;*/
 	SimplifiedComponent[][] unexpectedAmbiguousElementDefinition;
 	int[] unexpectedAmbiguousElementInputRecordIndex;
 	int unexpectedAmbiguousElementIndex;
 	
 	// {5}
-	/*String[] unknownAttributeQName;
-	String[] unknownAttributeSystemId;
-	int[] unknownAttributeLineNumber;
-	int[] unknownAttributeColumnNumber;
-	int unknownAttributeIndex;
-	int unknownAttributeSize;*/
     int[] unknownAttributeInputRecordIndex;
     int unknownAttributeIndex;	
 	
 	// {6}
-	/*String[] unexpectedAttributeQName;
-	SimplifiedComponent[] unexpectedAttributeDefinition;
-	String[] unexpectedAttributeSystemId;
-	int[] unexpectedAttributeLineNumber;
-	int[] unexpectedAttributeColumnNumber;
-	int unexpectedAttributeIndex;
-	int unexpectedAttributeSize;*/
 	SimplifiedComponent[] unexpectedAttributeDefinition;
 	int[] unexpectedAttributeInputRecordIndex;
 	int unexpectedAttributeIndex;
 		
 	// {7}
-	/*String[] unexpectedAmbiguousAttributeQName;
-	SimplifiedComponent[][] unexpectedAmbiguousAttributeDefinition;
-	String[] unexpectedAmbiguousAttributeSystemId;
-	int[] unexpectedAmbiguousAttributeLineNumber;
-	int[] unexpectedAmbiguousAttributeColumnNumber;
-	int unexpectedAmbiguousAttributeIndex;
-	int unexpectedAmbiguousAttributeSize;*/
 	SimplifiedComponent[][] unexpectedAmbiguousAttributeDefinition;
 	int[] unexpectedAmbiguousAttributeInputRecordIndex;
 	int unexpectedAmbiguousAttributeIndex;
 	
 	
 	// {8}
-	/*APattern[] misplacedContext;
-	String[] misplacedStartSystemId;
-	int[] misplacedStartLineNumber;
-	int[] misplacedStartColumnNumber;
-	APattern[][] misplacedDefinition;
-	int[][][] misplacedItemId;
-	String[][][] misplacedQName;	
-	String[][][] misplacedSystemId;
-	int[][][] misplacedLineNumber;
-	int[][][] misplacedColumnNumber;
-	int misplacedIndex;
-	int misplacedSize;*/
 	APattern[] misplacedContext;
 	int[] misplacedStartInputRecordIndex;
 	APattern[][] misplacedDefinition;
@@ -146,18 +94,6 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	
 
 	// {9}
-	/*Rule[] excessiveContext;
-	String[] excessiveStartSystemId;
-	int[] excessiveStartLineNumber;
-	int[] excessiveStartColumnNumber;
-	APattern[] excessiveDefinition;
-	int[][] excessiveItemId;
-	String[][] excessiveQName;
-	String[][] excessiveSystemId;
-	int[][] excessiveLineNumber;
-	int[][] excessiveColumnNumber;
-	int excessiveIndex;
-	int excessiveSize;*/
 	Rule[] excessiveContext;
 	int[] excessiveStartInputRecordIndex;
 	APattern[] excessiveDefinition;
@@ -166,19 +102,6 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	
 	
 	// {10}
-	/*Rule[] missingContext;
-	String[] missingStartSystemId;
-	int[] missingStartLineNumber;
-	int[] missingStartColumnNumber;
-	APattern[] missingDefinition;
-	int[] missingExpected;
-	int[] missingFound;
-	String[][] missingQName;
-	String[][] missingSystemId;
-	int[][] missingLineNumber;
-	int[][] missingColumnNumber;
-	int missingIndex;
-	int missingSize;*/
 	Rule[] missingContext;
 	int[] missingStartInputRecordIndex;
 	APattern[] missingDefinition;
@@ -189,51 +112,22 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	
 	
 	// {11}
-	/*Rule[] illegalContext;
-	int[] illegalItemId;
-	String[] illegalQName;
-	String[] illegalStartSystemId;
-	int[] illegalStartLineNumber;
-	int[] illegalStartColumnNumber;	
-	int illegalIndex;
-	int illegalSize;*/
 	Rule[] illegalContext;
 	int[] illegalStartInputRecordIndex;
 	int illegalIndex;
 	
 	// {12 A}
-	/*String[] unresolvedAmbiguousElementQNameEE;
-	String[] unresolvedAmbiguousElementSystemIdEE;
-	int[] unresolvedAmbiguousElementLineNumberEE;
-	int[] unresolvedAmbiguousElementColumnNumberEE;
-	AElement[][] unresolvedAmbiguousElementDefinitionEE;
-	int unresolvedAmbiguousElementIndexEE;
-	int unresolvedAmbiguousElementSizeEE;*/
 	int[] unresolvedAmbiguousElementInputRecordIndexEE;
 	AElement[][] unresolvedAmbiguousElementDefinitionEE;
 	int unresolvedAmbiguousElementIndexEE;
 	
 	
 	// {12 U}
-	/*String[] unresolvedUnresolvedElementQNameEE;
-	String[] unresolvedUnresolvedElementSystemIdEE;
-	int[] unresolvedUnresolvedElementLineNumberEE;
-	int[] unresolvedUnresolvedElementColumnNumberEE;
-	AElement[][] unresolvedUnresolvedElementDefinitionEE;
-	int unresolvedUnresolvedElementIndexEE;
-	int unresolvedUnresolvedElementSizeEE;*/
 	int[] unresolvedUnresolvedElementInputRecordIndexEE;
 	AElement[][] unresolvedUnresolvedElementDefinitionEE;
 	int unresolvedUnresolvedElementIndexEE;
 
 	// {13}
-	/*String[] unresolvedAttributeQNameEE;
-	String[] unresolvedAttributeSystemIdEE;
-	int[] unresolvedAttributeLineNumberEE;
-	int[] unresolvedAttributeColumnNumberEE;
-	AAttribute[][] unresolvedAttributeDefinitionEE;
-	int unresolvedAttributeIndexEE;
-	int unresolvedAttributeSizeEE;*/
 	int[] unresolvedAttributeInputRecordIndexEE;
 	AAttribute[][] unresolvedAttributeDefinitionEE;
 	int unresolvedAttributeIndexEE;
@@ -241,78 +135,36 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	// {14}
 		
 	// {w1 U}
-	/*String[] ambiguousUnresolvedElementQNameWW;
-	String[] ambiguousUnresolvedElementSystemIdWW;
-	int[] ambiguousUnresolvedElementLineNumberWW;
-	int[] ambiguousUnresolvedElementColumnNumberWW;
-	AElement[][] ambiguousUnresolvedElementDefinitionWW;
-	int ambiguousUnresolvedElementIndexWW;
-	int ambiguousUnresolvedElementSizeWW;*/
 	int[] ambiguousUnresolvedElementInputRecordIndexWW;
 	AElement[][] ambiguousUnresolvedElementDefinitionWW;
 	int ambiguousUnresolvedElementIndexWW;
 	
 	
 	// {w1 A}
-	/*String[] ambiguousAmbiguousElementQNameWW;
-	String[] ambiguousAmbiguousElementSystemIdWW;
-	int[] ambiguousAmbiguousElementLineNumberWW;
-	int[] ambiguousAmbiguousElementColumnNumberWW;
-	AElement[][] ambiguousAmbiguousElementDefinitionWW;
-	int ambiguousAmbiguousElementIndexWW;
-	int ambiguousAmbiguousElementSizeWW;*/
 	int[] ambiguousAmbiguousElementInputRecordIndexWW;
 	AElement[][] ambiguousAmbiguousElementDefinitionWW;
 	int ambiguousAmbiguousElementIndexWW;
 	
 	
 	// {w2}
-	/*String[] ambiguousAttributeQNameWW;
-	String[] ambiguousAttributeSystemIdWW;
-	int[] ambiguousAttributeLineNumberWW;
-	int[] ambiguousAttributeColumnNumberWW;
-	AAttribute[][] ambiguousAttributeDefinitionWW;
-	int ambiguousAttributeIndexWW;
-	int ambiguousAttributeSizeWW;*/
 	int[] ambiguousAttributeInputRecordIndexWW;
 	AAttribute[][] ambiguousAttributeDefinitionWW;
 	int ambiguousAttributeIndexWW;
 	
 
 	// {w3}
-	/*String[] ambiguousCharsSystemIdWW;
-	int[] ambiguousCharsLineNumberWW;
-	int[] ambiguousCharsColumnNumberWW;
-	CharsActiveTypeItem[][] ambiguousCharsDefinitionWW;
-	int ambiguousCharsIndexWW;
-	int ambiguousCharsSizeWW;*/
 	int[] ambiguousCharsInputRecordIndexWW;
 	CharsActiveTypeItem[][] ambiguousCharsDefinitionWW;
 	int ambiguousCharsIndexWW;
 	
 	
 	// {w4}
-	/*String[] ambiguousAVAttributeQNameWW;
-	String[] ambiguousAVSystemIdWW;
-	int[] ambiguousAVLineNumberWW;
-	int[] ambiguousAVColumnNumberWW;
-	CharsActiveTypeItem[][] ambiguousAVDefinitionWW;
-	int ambiguousAVIndexWW;
-	int ambiguousAVSizeWW;*/
 	int[] ambiguousAVInputRecordIndexWW;
 	CharsActiveTypeItem[][] ambiguousAVDefinitionWW;
 	int ambiguousAVIndexWW;
 	
 	
 	// {15}
-	/*String datatypeElementQNameCC[];
-	String datatypeCharsSystemIdCC[];//CC character content
-	int datatypeCharsLineNumberCC[];
-	int datatypeCharsColumnNumberCC[];
-	DatatypedActiveTypeItem datatypeCharsDefinitionCC[];
-	String datatypeErrorMessageCC[];
-	int datatypeIndexCC;
-	int datatypeSizeCC;*/
 	int[] datatypeCharsInputRecordIndex;
 	DatatypedActiveTypeItem[] datatypeCharsDefinition;
 	String datatypeCharsErrorMessage[];
@@ -320,14 +172,6 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	
 	
 	// {16}
-	/*String datatypeAttributeQNameAV[];
-	String datatypeCharsSystemIdAV[];//AV attribute value
-	int datatypeCharsLineNumberAV[];
-	int datatypeCharsColumnNumberAV[];
-	DatatypedActiveTypeItem datatypeCharsDefinitionAV[];
-	String datatypeErrorMessageAV[];
-	int datatypeIndexAV;
-	int datatypeSizeAV;*/
 	int[] datatypeAVInputRecordIndex;
 	DatatypedActiveTypeItem[] datatypeAVDefinition;
 	String datatypeAVErrorMessage[];
@@ -335,112 +179,52 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
    
 	
 	// {17}
-	/*String valueCharsSystemIdCC[];//CC character content
-	int valueCharsLineNumberCC[];
-	int valueCharsColumnNumberCC[];
-	AValue valueCharsDefinitionCC[];
-	int valueIndexCC;
-	int valueSizeCC;*/
 	int[] valueCharsInputRecordIndex;
 	AValue[] valueCharsDefinition;
 	int valueCharsIndex;
 	
 	// {18}
-	/*String valueAttributeQNameAV[];
-	String valueCharsSystemIdAV[];//AV attribute value
-	int valueCharsLineNumberAV[];
-	int valueCharsColumnNumberAV[];
-	AValue valueCharsDefinitionAV[];
-	int valueIndexAV;
-	int valueSizeAV;*/
 	int[] valueAVInputRecordIndex;
 	AValue[] valueAVDefinition;
 	int valueAVIndex;
 	
 	
 	// {19}
-	/*String exceptElementQNameCC[];
-	String exceptCharsSystemIdCC[];//CC character content
-	int exceptCharsLineNumberCC[];
-	int exceptCharsColumnNumberCC[];
-	AData exceptCharsDefinitionCC[];
-	int exceptIndexCC;
-	int exceptSizeCC;*/
 	int[] exceptCharsInputRecordIndex;
 	AData[] exceptCharsDefinition;
 	int exceptCharsIndex;
 	
 	// {20}
-	/*String exceptAttributeQNameAV[];
-	String exceptCharsSystemIdAV[];//AV attribute except
-	int exceptCharsLineNumberAV[];
-	int exceptCharsColumnNumberAV[];
-	AData exceptCharsDefinitionAV[];
-	int exceptIndexAV;
-	int exceptSizeAV;*/
 	int[] exceptAVInputRecordIndex;
 	AData[] exceptAVDefinition;
 	int exceptAVIndex;
 	
 	
 	// {21}
-	/*String unexpectedCharsSystemIdCC[];//CC character content
-	int unexpectedCharsLineNumberCC[];
-	int unexpectedCharsColumnNumberCC[];
-	AElement unexpectedContextDefinitionCC[];
-	int unexpectedIndexCC;
-	int unexpectedSizeCC;*/
 	int[] unexpectedCharsInputRecordIndex;
 	AElement[] unexpectedCharsDefinition;
 	int unexpectedCharsIndex;
 	
 	
 	// {22}
-	/*String unexpectedCharsSystemIdAV[];//AV attribute unexpected
-	int unexpectedCharsLineNumberAV[];
-	int unexpectedCharsColumnNumberAV[];
-	AAttribute unexpectedContextDefinitionAV[];
-	int unexpectedIndexAV;
-	int unexpectedSizeAV;*/
 	int[] unexpectedAVInputRecordIndex;
 	AAttribute[] unexpectedAVDefinition;
 	int unexpectedAVIndex;
 	
 	
 	// {23}
-	/*String unresolvedCharsSystemIdEECC[];//CC character content
-	int unresolvedCharsLineNumberEECC[];
-	int unresolvedCharsColumnNumberEECC[];
-	CharsActiveTypeItem unresolvedPossibleDefinitionsCC[][];
-	int unresolvedIndexCC;
-	int unresolvedSizeCC;*/
 	int[] unresolvedCharsInputRecordIndexEE;
 	CharsActiveTypeItem[][] unresolvedCharsDefinitionEE;
 	int unresolvedCharsIndexEE;
 	
 	
 	// {24}
-	/*String unresolvedAttributeQNameEEAV[];
-	String unresolvedCharsSystemIdEEAV[];//AV attribute unresolved
-	int unresolvedCharsLineNumberEEAV[];
-	int unresolvedCharsColumnNumberEEAV[];
-	CharsActiveTypeItem unresolvedPossibleDefinitionsAV[][];
-	int unresolvedIndexAV;
-	int unresolvedSizeAV;*/
 	int[] unresolvedAVInputRecordIndexEE;
 	CharsActiveTypeItem[][] unresolvedAVDefinitionEE;
 	int unresolvedAVIndexEE;
 	
 	
 	// {25}
-	/*String datatypeTokenLP[];//LP list pattern
-	String datatypeCharsSystemIdLP[];
-	int datatypeCharsLineNumberLP[];
-	int datatypeCharsColumnNumberLP[];
-	DatatypedActiveTypeItem datatypeCharsDefinitionLP[];
-	String datatypeErrorMessageLP[];
-	int datatypeIndexLP;
-	int datatypeSizeLP;*/
 	int[] datatypeTokenInputRecordIndex;
 	DatatypedActiveTypeItem[] datatypeTokenDefinition;
 	String datatypeTokenErrorMessage[];
@@ -448,25 +232,11 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	
     	
 	// {26}
-	/*String valueTokenLP[];//LP list pattern
-	String valueCharsSystemIdLP[];
-	int valueCharsLineNumberLP[];
-	int valueCharsColumnNumberLP[];
-	AValue valueCharsDefinitionLP[];
-	int valueIndexLP;
-	int valueSizeLP;*/
 	int[] valueTokenInputRecordIndex;
 	AValue[] valueTokenDefinition;
 	int valueTokenIndex;
 	
 	// {27}
-	/*String exceptTokenLP[];//LP list pattern
-	String exceptCharsSystemIdLP[];
-	int exceptCharsLineNumberLP[];
-	int exceptCharsColumnNumberLP[];
-	AData exceptCharsDefinitionLP[];
-	int exceptIndexLP;
-	int exceptSizeLP;*/
 	int[] exceptTokenInputRecordIndex;
 	AData[] exceptTokenDefinition;
 	int exceptTokenIndex;
@@ -474,40 +244,17 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	// {28}
 	    
     // {28_1}
-	/*String unresolvedTokenLPICE[];//LPICE list pattern in context validation error
-	String unresolvedCharsSystemIdEELPICE[];
-	int unresolvedCharsLineNumberEELPICE[];
-	int unresolvedCharsColumnNumberEELPICE[];
-	CharsActiveTypeItem unresolvedPossibleDefinitionsLPICE[][];
-	int unresolvedIndexLPICE;
-	int unresolvedSizeLPICE;*/
 	int[] unresolvedTokenInputRecordIndexLPICE;
     CharsActiveTypeItem unresolvedTokenDefinitionLPICE[][];
 	int unresolvedTokenIndexLPICE;
     
     // {28_2}
-	/*String ambiguousTokenLPICW[];//LPICW list pattern in context validation warning
-	String ambiguousCharsSystemIdEELPICW[];
-	int ambiguousCharsLineNumberEELPICW[];
-	int ambiguousCharsColumnNumberEELPICW[];
-	CharsActiveTypeItem ambiguousPossibleDefinitionsLPICW[][];
-	int ambiguousIndexLPICW;
-	int ambiguousSizeLPICW;*/
 	int[] ambiguousTokenInputRecordIndexLPICW;
     CharsActiveTypeItem ambiguousTokenDefinitionLPICW[][];
 	int ambiguousTokenIndexLPICW;
     
 	
 	// {29}
-	/*Rule[] missingCompositorContentContext;
-	String[] missingCompositorContentStartSystemId;
-	int[] missingCompositorContentStartLineNumber;
-	int[] missingCompositorContentStartColumnNumber;
-	APattern[] missingCompositorContentDefinition;
-	int[] missingCompositorContentExpected;
-	int[] missingCompositorContentFound;
-	int missingCompositorContentIndex;
-	int missingCompositorContentSize;*/
 	Rule[] missingCompositorContentContext;
 	int[] missingCompositorContentStartInputRecordIndex;
 	APattern[] missingCompositorContentDefinition;
@@ -525,10 +272,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     
     
     int messageTotalCount;
-		
-    /*boolean isMessageRetrieved;
-    boolean isDiscarded;*/
-   
+	
     int clientCount;
 	public AbstractMessageHandler(){
 		super();
@@ -657,32 +401,14 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         missingCompositorContentIndex = -1;
         
         // {30}     
-        
-        /*isMessageRetrieved = false;
-        isDiscarded = false;*/
-
+    
         clientCount = 0;
 	}  
     
 	void init(ActiveInputDescriptor activeInputDescriptor){
-	    /*isMessageRetrieved = false;
-        isDiscarded = false;*/
 	    this.activeInputDescriptor = activeInputDescriptor;
 	}
-	
-	/*public void setDiscarded(boolean isDiscarded){
-        this.isDiscarded = isDiscarded;
-        
-        /*if(commonMessages != null)commonMessages.setDiscarded(isDiscarded);
-        
-        if(candidateMessages!= null){
-            for(int i = 0; i < candidateMessages.length; i++){
-                if(candidateMessages[i] != null)candidateMessages[i].setDiscarded(isDiscarded);;
-            }
-        }
-        if(parent != null)parent.setDiscarded(isDiscarded);*/
-   /* }*/
-    
+		
 	public void registerClient(MessageReporter mr){
 	    clientCount++;
 	}
@@ -737,7 +463,6 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     }
     
     public void report(int reportingContextType, String reportingContextQName, AElement reportingContextDefinition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
-        /*isMessageRetrieved = true;*/
         
         this.reportingContextType = reportingContextType;
         this.reportingContextQName = reportingContextQName;
@@ -818,7 +543,6 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
     }
         
     public void report(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException{
-        /*isMessageRetrieved = true;*/
         
         if(parent != null){
             parent.report(restrictToFileName, locator, errorDispatcher, prefix);//parent should have been located, else illegal state            
@@ -1281,8 +1005,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 
         if(!message.equals("")){            
             message = getErrorIntro(prefix, restrictToFileName) + message;
-        }
-		/*isMessageRetrieved = true;*/
+        }		
 		return message;
 	} 
     
@@ -1461,21 +1184,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
         if(nameIndex == 0) nameIndex = systemId.lastIndexOf('/')+1;
         return systemId.substring(nameIndex);	
     }
-    
-    /*private String getItemDescription(int itemId, String qName){
-        String description = null;
-        if(itemId == InputStackDescriptor.ELEMENT){
-            description = "element <"+qName+">";
-        }else if(itemId == InputStackDescriptor.ATTRIBUTE){
-            description = "attribute \""+qName+"\"";
-        }else if(itemId == InputStackDescriptor.CHARACTER_CONTENT){
-            description = "character content";
-        }else if(itemId == InputStackDescriptor.LIST_TOKEN){
-            description = "list token \""+qName+"\"";
-        }
-        return description;
-    }*/
-    
+        
     
     private String getItemDescription(int recordIndex){
         String description = null;
