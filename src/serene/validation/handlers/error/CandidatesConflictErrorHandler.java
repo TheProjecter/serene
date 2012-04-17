@@ -213,20 +213,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             warningIds.clear();
         } 
     }
-    
-    
-    /*private boolean allCandidatesPresentError(int errorId){
-        if(cumulatorDummy == null) cumulatorDummy = new BitSet();
-        for(int j = 0; j < errorCandidates[errorId].length; j++){
-           cumulatorDummy.or(errorCandidates[errorId][j]);
-           if(cumulatorDummy.cardinality() == candidatesCount){
-               cumulatorDummy.clear();
-               return true;
-           }
-        }   
-        cumulatorDummy.clear();
-        return false;
-    }*/
+        
     
     // In case the result is ambiguous (several qualified candidates) it attempts 
     // to disqualify all those with errors in the subtree (delayed messages), but 
@@ -261,7 +248,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
             if(candidateMessagesStack[winnerIndex] != null) hasDelayedMessages = true;
             for(int i = 0; i < candidateMessagesStack.length; i++){ 
                 if(i != winnerIndex && candidateMessagesStack[i] != null){
-                    /*candidateMessagesStack[i].setDiscarded(true);*/
                     candidateMessagesStack[i].clear(this);
                     candidateMessagesStack[i] = null;
                 }
@@ -281,7 +267,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
                         if(!hasDelayedMessages)  hasDelayedMessages = true;
                     }
                 }else{
-                    /*candidateMessagesStack[i].setDiscarded(true);*/
                     candidateMessagesStack[i].clear(this);
                     candidateMessagesStack[i] = null;
                 }
@@ -305,7 +290,6 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         
         for(int i = 0; i < candidatesCount; i++){            
             if(disqualified.get(i)){
-                /*candidateMessagesStack[i].setDiscarded(true);*/
                 candidateMessagesStack[i].clear(this);
                 candidateMessagesStack[i] = null; 
             }
@@ -806,19 +790,16 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     public void clear(boolean deep){
         if(deep || !isHandled){
             if(localMessageHandler !=null ){
-                /*localMessageHandler.setDiscarded(true);*/
                 localMessageHandler.clear(this);
             }
             if(candidateMessagesStack != null){
                 for(int i = 0; i< candidateMessagesStack.length; i++){
                     if(candidateMessagesStack[i] != null){
-                        /*candidateMessageHandlers[i].setDiscarded(true);*/
                         candidateMessageHandlers[i].clear(this);
                     }
                 }
             } 
             if(commonMessagesStack !=null ){
-                /*commonMessagesStack.setDiscarded(true);*/
                 commonMessagesStack.clear(this);
             }
         }

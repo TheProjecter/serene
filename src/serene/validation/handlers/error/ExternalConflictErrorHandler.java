@@ -67,7 +67,6 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         candidatesConflictErrorHandler = null;
         isCandidate = false;
         if(!isHandled && messageHandler != null){
-            /*messageHandler.setDiscarded(true);*/
             messageHandler.clear(this);
         }        
 		messageHandler = null;
@@ -545,7 +544,6 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	}
 	
 	public void discard(){
-	    /*messageHandler.setDiscarded(true);*/
 	    messageHandler.clear(this);
 	}
 	

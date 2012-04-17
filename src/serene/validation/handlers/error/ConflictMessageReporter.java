@@ -119,20 +119,7 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     }
     
     public void setDiscarded(boolean isDiscarded){
-        this.isDiscarded = isDiscarded;    
-        
-        /*if(commonMessages != null)commonMessages.setDiscarded(isDiscarded);
-        
-        if(candidateMessages!= null){
-            for(int i = 0; i < candidateMessages.length; i++){
-                if(candidateMessages[i] != null){
-                    candidateMessages[i].setDiscarded(isDiscarded);
-                }
-            }
-        }
-        if(parent != null){
-            parent.setDiscarded(isDiscarded);
-        }*/
+        this.isDiscarded = isDiscarded;
     }
     
     public boolean containsErrorMessage(){
@@ -200,7 +187,6 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
             if(candidateMessages != null){
                 for(int i = 0; i < candidateMessages.length; i++){
                     if(!qualified.get(i) && candidateMessages[i] != null){
-                        /*candidateMessages[i].setDiscarded(true);*/
                         candidateMessages[i].unregisterClient(this);
                         candidateMessages[i] = null;
                     }
@@ -331,7 +317,7 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     }
     private void clear(){
         if(commonMessages != null){
-            /*if(isMessageRetrieved || isDiscarded)*/commonMessages.unregisterClient(this); // It can be only one because it is about this context.
+            commonMessages.unregisterClient(this); // It can be only one because it is about this context.
             commonMessages = null;
         }
         
@@ -339,18 +325,16 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
         
         disqualified = null;
         
-        if(candidateMessages != null){
-            /*if(isMessageRetrieved || isDiscarded){*/
-                for(MessageReporter cm : candidateMessages){                    
-                    if(cm != null){
-                        cm.unregisterClient(this);
-                    }
+        if(candidateMessages != null){            
+            for(MessageReporter cm : candidateMessages){                    
+                if(cm != null){
+                    cm.unregisterClient(this);
                 }
-            /*}*/
+            }
             candidateMessages = null;
         }
              
-        if(/*(isMessageRetrieved || isDiscarded) &&*/ parent != null) {
+        if(parent != null) {
             parent.unregisterClient(this);
             parent = null;
         }

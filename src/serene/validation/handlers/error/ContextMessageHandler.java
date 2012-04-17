@@ -1,3 +1,20 @@
+/*
+Copyright 2011 Radu Cernuta 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
 package serene.validation.handlers.error;
 
 import java.util.Arrays;
@@ -1583,20 +1600,18 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         conflictResolutionId = RESOLVED;
         candidatesCount = -1;
         if(commonMessages != null){
-            /*if(isMessageRetrieved || isDiscarded)*/commonMessages.unregisterClient(this); // It can be only one because it is about this context.
+            commonMessages.unregisterClient(this); // It can be only one because it is about this context.
             commonMessages = null;
         }
         
         disqualified = null;
         
         if(candidateMessages != null){
-            /*if(isMessageRetrieved || isDiscarded){*/
-                for(MessageReporter cm : candidateMessages){                    
-                    if(cm != null){
-                        cm.unregisterClient(this);
-                    }
+            for(MessageReporter cm : candidateMessages){                    
+                if(cm != null){
+                    cm.unregisterClient(this);
                 }
-            /*}*/
+            }
             candidateMessages = null;
         }
     }
@@ -1735,7 +1750,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     public void unregisterClient(MessageReporter mr){
         clientCount--;
         if(clientCount == 0){
-            /*isDiscarded = true;// just in case*/
             clear();
         }
     }
@@ -1799,7 +1813,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         
         messageTotalCount = 0;
         
-        if(/*(isMessageRetrieved || isDiscarded) &&*/ parent != null){
+        if(parent != null){
             parent.unregisterClient(this);
             parent = null;
         }
@@ -1812,9 +1826,6 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         reportingContextLineNumber = -1;
         reportingContextColumnNumber = -1;
         conflictResolutionId = RESOLVED;
-        
-        /*isMessageRetrieved = false;
-        isDiscarded = false;*/
     }
     
     public void internalConflict(ConflictMessageReporter conflictMessageReporter){
