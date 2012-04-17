@@ -1,10 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 <HEAD>
-	<TITLE>Serene 0.6 Documentation</TITLE>
+	<TITLE>Serene 0.6.1 Documentation</TITLE>
 </HEAD>
 <BODY>
-    <H1 CLASS="western">Serene 0.6</H1>
+    <H1 CLASS="western">Serene 0.6.1</H1>
     <P>
         <BR>
     </P>
@@ -81,7 +81,7 @@
         <BR>
     </P>
     <P>
-        <B>Serene 0.6</B> was developed and tested using Java 5.0, and this 
+        <B>Serene 0.6.1</B> was developed and tested using Java 5.0, and this 
         is the recommended JRE (Java Runtime Environment). Previous versions would 
         not work, later should be fine.
     </P>
@@ -93,7 +93,7 @@
         <BR>
     </P>
     <P>
-        <B>Serene 0.6</B> is packaged as a ZIP
+        <B>Serene 0.6.1</B> is packaged as a ZIP
         file, you can extract the ZIP files using the Java jar tool to unpack
         the distribution. 
     </P>
@@ -194,7 +194,7 @@
                 <P>src/</P>
             </TD>
             <TD WIDTH="50%">
-                <P>Directory containing the source files for Serene 0.6 validation
+                <P>Directory containing the source files for Serene 0.6.1 validation
                 engine, testing tool and the org.relaxng.datatype API.</P>
             </TD>
         </TR>
@@ -226,7 +226,7 @@
     </TABLE>
     </P>
     <P>
-        In order to use <B>Serene 0.6</B> through the JAXP 1.3 Validation
+        In order to use <B>Serene 0.6.1</B> through the JAXP 1.3 Validation
         Framework API you must place the serene.jar file in your class path
         and preserve the original tree structure of the lib directory. If any 
         of the jar files has been moved, you must also explicitly add it to the 
@@ -239,6 +239,11 @@
     <P>
         <BR>
     </P>
+    <P>
+         <B>Serene 0.6.1</B> has been extensively reviewed and refactored in order 
+         to improve performance. Some bugs were fixed, messages were slightly 
+         twicked, one feature was added.
+    </P> 
     <P>
          <B>Serene 0.6</B> concentrates on further improving message quality.
          The accent is on error interpretation and reporting. Several bugs were 
@@ -499,7 +504,7 @@
         <BR>
     </P>
     <P>
-        The features implemented by <B>Serene 0.6</B> are:
+        The features implemented by <B>Serene 0.6.1</B> are:
     </P>
     <P>
         <CODE><B>http://xml.org/sax/features/namespace-prefixes</B></CODE>
@@ -637,6 +642,16 @@
         passed to the <CODE>SAXParseException</CODE>. By default it is set to <CODE>true</CODE>.
     </P>
     <P>
+        <CODE><B>http://serenerng.com/features/optimizeForResourceSharing</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>               
+        which, when set to <CODE>true</CODE>, ensures that common internal resources are
+        created for and shared by all the threads. It should improve performance in an environement 
+        with several threads validating alternativelly. Due to synchronization envolved it 
+        should be used carefully. By default it is set to <CODE>false</CODE>.
+    </P>
+    <P>
         <BR>
     </P>
     <H2><A NAME="customDatatypeLibraries"/>Custom Datatype Libraries</H2>
@@ -644,7 +659,7 @@
         <BR>
     </P>
     <P>
-        <B>Serene 0.6 </B>supports the vendor independent API for RELAX NG datatype 
+        <B>Serene 0.6.1 </B>supports the vendor independent API for RELAX NG datatype 
         libraries developed by James Clark and Kohsuke Kawaguchi, 
         <CODE>org.relaxng.datatypes</CODE>, so you can create your own libraries, 
         pack them as jar files adding the necessary 
@@ -813,7 +828,7 @@
         <BR>
     </P>
     <P>
-        <B>Serene 0.6</B> can be used as a command line tool either directly 
+        <B>Serene 0.6.1</B> can be used as a command line tool either directly 
         by using serene.jar and the -jar option
     </P>
     <P>
@@ -851,7 +866,7 @@
         which can be used for regression testing. 
     </P>
     <P>
-        <B>Serene 0.6 </B>includes a command line tool that allows you to
+        <B>Serene 0.6.1 </B>includes a command line tool that allows you to
         run the tests yourself either directly by using sereneTest.jar and
         the -jar option
     </P>
@@ -994,7 +1009,7 @@
             <P>
                 <CODE>sereneSamples.SourceValidation</CODE> demonstrating the
                 use of a <CODE>javax.xml.validation.Validator</CODE> for RELAX NG
-                through <B>Serene 0.6</B> with various implementations of 
+                through <B>Serene 0.6.1</B> with various implementations of 
                 <CODE>javax.xml.transform.Source</CODE>
             </P> 
         <LI>
