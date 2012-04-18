@@ -4,6 +4,19 @@
 = Features =
 <br>
 
+==Serene 0.6.1==
+
+Features added by this release:
+
+*{{{http://serenerng.com/features/optimizeForResourceSharing}}}*
+
+This is a *Serene* feature for the {{{javax.xml.validation.SchemaFactory}}} which, when set to {{{true}}}, ensures that common internal resources are created for and shared by all the threads. It should improve performance in an environement with several threads validating alternativelly. Due to synchronization envolved it should be used carefully. By default it is set to {{{false}}}.
+
+
+
+No old features are removed by this release.
+
+
 ==Serene 0.6==
 
 Features added by this release:
