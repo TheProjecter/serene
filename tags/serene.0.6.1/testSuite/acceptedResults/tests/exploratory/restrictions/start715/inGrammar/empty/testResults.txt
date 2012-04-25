@@ -1,0 +1,5 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\start715\inGrammar\empty\schema.rng
+
+null:-1:-1 Restrictions 7.1.5 error. The start of schema <rng:grammar> at schema.rng:3:62 is not expected to result in an <empty> component.

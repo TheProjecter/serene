@@ -1,0 +1,31 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\reduce\blockReduce\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+
+
+TESTED DOCUMENT document2.xml
+
+
+
+TESTED DOCUMENT document3.xml
+
+
+
+TESTED DOCUMENT document4.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/blockReduce/document4.xml:28:8 Syntax error. Element <root> corresponding to definition <element> at schema.rng:23:26 contains errors: 
+Illegal content.
+The document structure starting with element <aa> at document4.xml:22:7 does not match schema definition <interleave> at schema.rng:25:17.
+
+
+
+TESTED DOCUMENT document5.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/blockReduce/document5.xml:29:8 Syntax error. Element <root> corresponding to definition <element> at schema.rng:23:26 contains errors: 
+Illegal content.
+The document structure starting with element <bb> at document5.xml:22:7 does not match schema definition <interleave> at schema.rng:25:17.

@@ -1,0 +1,6 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\compatibility\attributeDefaultValue\illegalElementNameClass\schema.rng
+
+null:-1:-1 DTD compatibility error. Default value not allowed for attribute definitions in the content model of an element definition without a <name> name class, <element> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/illegalElementNameClass/schema.rng:23:18 :
+<attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/illegalElementNameClass/schema.rng:26:59.

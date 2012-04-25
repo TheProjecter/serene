@@ -1,0 +1,83 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\charsConflictIntegration\list\coOccurrence\ambiguous\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/list/coOccurrence/ambiguous/document1.xml:19:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Missing content.
+In the document structure starting at document1.xml:19:7, corresponding to definition <list> at schema.rng:22:11, expected 1 occurrence corresponding to definition <choice> at schema.rng:23:15, found 0.
+
+
+
+TESTED DOCUMENT document2.xml
+
+
+
+TESTED DOCUMENT document3.xml
+
+
+
+TESTED DOCUMENT document4.xml
+
+
+
+TESTED DOCUMENT document5.xml
+
+
+
+TESTED DOCUMENT document6.xml
+
+
+
+TESTED DOCUMENT document7.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/list/coOccurrence/ambiguous/document7.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Unresolved list token.
+List token "bar3" at document7.xml:20:10 cannot be resolved to a single schema definition, all candidates resulted in errors. Available definitions: 
+<data> at schema.rng:27:37
+<data> at schema.rng:33:39
+<data> at schema.rng:39:39
+<value> at schema.rng:25:20
+<value> at schema.rng:31:20
+<value> at schema.rng:37:20.
+Unresolved list token.
+List token "true" at document7.xml:20:10 cannot be resolved to a single schema definition, all candidates resulted in errors. Available definitions: 
+<data> at schema.rng:27:37
+<data> at schema.rng:33:39
+<data> at schema.rng:39:39
+<value> at schema.rng:25:20
+<value> at schema.rng:31:20
+<value> at schema.rng:37:20.
+
+
+
+TESTED DOCUMENT document8.xml
+
+
+
+TESTED DOCUMENT document9.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/list/coOccurrence/ambiguous/document9.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Unresolved list token.
+List token "bar2" at document9.xml:20:7 cannot be resolved to a single schema definition, all candidates resulted in errors. Available definitions: 
+<data> at schema.rng:27:37
+<data> at schema.rng:33:39
+<data> at schema.rng:39:39
+<value> at schema.rng:25:20
+<value> at schema.rng:31:20
+<value> at schema.rng:37:20.
+Unresolved list token.
+List token "7" at document9.xml:20:7 cannot be resolved to a single schema definition, all candidates resulted in errors. Available definitions: 
+<data> at schema.rng:27:37
+<data> at schema.rng:33:39
+<data> at schema.rng:39:39
+<value> at schema.rng:25:20
+<value> at schema.rng:31:20
+<value> at schema.rng:37:20.
+
+
+
+TESTED DOCUMENT document10.xml

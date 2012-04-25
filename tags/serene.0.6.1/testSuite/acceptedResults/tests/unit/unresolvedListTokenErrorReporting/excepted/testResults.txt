@@ -1,0 +1,27 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\unresolvedListTokenErrorReporting\excepted\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/unresolvedListTokenErrorReporting/excepted/document1.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Excepted token.
+List token "true" at document1.xml:20:10 matches a value excepted by schema definition <data> at schema.rng:27:38.
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/unresolvedListTokenErrorReporting/excepted/document2.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Excepted token.
+List token "true" at document2.xml:20:12 matches a value excepted by schema definition <data> at schema.rng:27:38.
+
+
+
+TESTED DOCUMENT document3.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/unresolvedListTokenErrorReporting/excepted/document3.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Excepted token.
+List token "true" at document3.xml:20:16 matches a value excepted by schema definition <data> at schema.rng:27:38.

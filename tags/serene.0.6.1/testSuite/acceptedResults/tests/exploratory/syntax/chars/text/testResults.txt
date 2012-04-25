@@ -1,0 +1,13 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\syntax\chars\text\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/chars/text/document1.xml:27:8 Syntax error. Element <root> corresponding to definition <rng:element> at schema.rng:23:16 contains errors: 
+Order error.
+Misplaced content in the document structure starting at document1.xml:22:4, corresponding to definition <rng:group> at schema.rng:25:15:
+character content at document1.xml:22:4, corresponding to definition <rng:text> at schema.rng:29:16
+element <bb> at document1.xml:25:6, corresponding to definition <rng:element> at schema.rng:30:28.

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<TITLE>Custom Datatypes Libraries</TITLE>
+</HEAD>
+<BODY>
+    <H1>Custom Datatype Libraries</H1>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene 0.6.1 </B>supports the vendor independent API for RELAX NG datatype 
+        libraries developed by James Clark and Kohsuke Kawaguchi, 
+        <CODE>org.relaxng.datatypes</CODE>, so you can create your own libraries, 
+        pack them as jar files adding the necessary 
+        <CODE>META-INF/services/org.relaxng.datatype.DatatypeLibraryFactory</CODE>
+        file containing the names of your service providers for the 
+        <CODE>org.relaxng.datatype.DatatypeLibraryFactory</CODE> service, add them 
+        in the classpath, and they will be found dynamically at runtime.        
+        See <A HREF="samples.html">samples</A> for an example.
+    </P>
+    <P>
+        External datatypes may use <CODE>param</CODE> elements, but it is their 
+        responsibility to implement the 
+        <A HREF="http://relaxng.org/spec-20011203.html#constraints">
+        Relax NG Simplification 4.16.Constraints</A> rule. 
+        See <A HREF="samples.html">samples</A> source code for an example.   
+    </P>
+    <P>
+        <BR><BR>
+    </P>
+    <HR>
+    <P>
+        Copyright &copy; 2010 Radu Cernuta
+    </P>
+    <HR>
+</BODY>
+</HTML>

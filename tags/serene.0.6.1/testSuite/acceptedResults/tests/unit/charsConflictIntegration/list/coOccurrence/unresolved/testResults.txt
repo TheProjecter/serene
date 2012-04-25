@@ -1,0 +1,53 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\charsConflictIntegration\list\coOccurrence\unresolved\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/list/coOccurrence/unresolved/document1.xml:22:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Missing content.
+In the document structure starting at document1.xml:21:5, corresponding to definition <group> at schema.rng:30:16, expected 1 or more occurrences corresponding to definition <data> at schema.rng:33:39, found 0.
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/list/coOccurrence/unresolved/document2.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Illegal datatype.
+List token "baz" at document2.xml:20:9 does not match the datatype required by schema definition <data> at schema.rng:27:39. cvc-datatype-valid.1.2.1: 'baz' is not a valid value for 'boolean'.
+
+
+
+TESTED DOCUMENT document3.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/list/coOccurrence/unresolved/document3.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Illegal datatype.
+List token "baz" at document3.xml:20:9 does not match the datatype required by schema definition <data> at schema.rng:33:39. cvc-datatype-valid.1.2.1: 'baz' is not a valid value for 'integer'.
+
+
+
+TESTED DOCUMENT document4.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/list/coOccurrence/unresolved/document4.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Unresolved list token.
+List token "baz" at document4.xml:20:4 cannot be resolved to a single schema definition, all candidates resulted in errors. Available definitions: 
+<data> at schema.rng:27:39
+<data> at schema.rng:33:39
+<value> at schema.rng:25:20
+<value> at schema.rng:31:20.
+
+
+
+TESTED DOCUMENT document5.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/list/coOccurrence/unresolved/document5.xml:22:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Excessive content.
+In the document structure starting at document5.xml:21:7, corresponding to definition <list> at schema.rng:22:11,  expected 1 occurrence corresponding to definition <choice> at schema.rng:23:15, found 2 starting at: 
+list token "bar1" at document5.xml:21:7
+list token "2" at document5.xml:21:7.
+Missing content.
+In the document structure starting at document5.xml:21:7, corresponding to definition <group> at schema.rng:24:16, expected 1 or more occurrences corresponding to definition <data> at schema.rng:27:39, found 0.
+Missing content.
+In the document structure starting at document5.xml:21:7, corresponding to definition <group> at schema.rng:30:16, expected 1 occurrence corresponding to definition <value> at schema.rng:31:20, found 0.

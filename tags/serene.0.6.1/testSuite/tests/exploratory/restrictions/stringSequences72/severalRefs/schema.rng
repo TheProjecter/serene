@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rng:grammar xmlns:rng="http://relaxng.org/ns/structure/1.0">	
+	<rng:start>
+		<rng:element>
+			<rng:name> root </rng:name>
+            <rng:element name="foo">
+                <rng:ref name="commonAttribute"/>
+                <rng:data type="token"/>
+            </rng:element>
+        
+            <rng:element name="bar">
+                <rng:ref name="commonAttribute"/>
+                <rng:data type="token"/>
+            </rng:element>
+ 		</rng:element>
+	</rng:start>	
+    
+    <rng:define name="commonAttribute">
+        <rng:attribute name="attribute"/>
+    </rng:define>    
+</rng:grammar>

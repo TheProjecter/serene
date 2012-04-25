@@ -1,0 +1,52 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\deactivateBranch\group\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/group/document2.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
+Order error.
+Misplaced content in the document structure starting at document2.xml:3:10, corresponding to definition <group> at schema.rng:3:10:
+element <bb> at document2.xml:3:10, corresponding to definition <group> at schema.rng:7:16.
+
+
+
+TESTED DOCUMENT document3.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/group/document3.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
+Order error.
+Misplaced content in the document structure starting at document3.xml:3:10, corresponding to definition <group> at schema.rng:3:10:
+element <dd> at document3.xml:5:10, corresponding to definition <element> at schema.rng:15:28.
+
+
+
+TESTED DOCUMENT document4.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/group/document4.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
+Order error.
+Misplaced content in the document structure starting at document4.xml:3:10, corresponding to definition <group> at schema.rng:3:10:
+element <dd> at document4.xml:4:10, corresponding to definition <element> at schema.rng:15:28.
+
+
+
+TESTED DOCUMENT document5.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/group/document5.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
+Order error.
+Misplaced content in the document structure starting at document5.xml:4:10, corresponding to definition <group> at schema.rng:7:16:
+element <cc> at document5.xml:4:10, corresponding to definition <element> at schema.rng:11:32.
+
+
+
+TESTED DOCUMENT document6.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/deactivateBranch/group/document6.xml:7:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:2:65 contains errors: 
+Order error.
+Misplaced content in the document structure starting at document6.xml:3:10, corresponding to definition <group> at schema.rng:3:10:
+element <bb> at document6.xml:3:10, corresponding to definition <group> at schema.rng:7:16.

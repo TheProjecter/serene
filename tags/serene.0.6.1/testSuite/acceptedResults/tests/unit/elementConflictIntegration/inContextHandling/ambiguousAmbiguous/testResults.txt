@@ -1,0 +1,29 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\elementConflictIntegration\inContextHandling\ambiguousAmbiguous\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/elementConflictIntegration/inContextHandling/ambiguousAmbiguous/document1.xml:4:7 Syntax warning. Element <foo> corresponding to definition <element> at schema.rng:2:65 generates warning: 
+Ambiguous element.
+Element <bar> at document1.xml:3:7, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
+<element> at schema.rng:4:25
+<element> at schema.rng:7:25
+<element> at schema.rng:10:25.
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/elementConflictIntegration/inContextHandling/ambiguousAmbiguous/document2.xml:5:7 Syntax error. Ambiguous element <bar> contains errors common to all possible definitions: 
+Unexpected character content.
+Character content at document2.xml:4:4 is not allowed by the element's schema definition <element> at schema.rng:4:25.
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/elementConflictIntegration/inContextHandling/ambiguousAmbiguous/document2.xml:6:7 Syntax warning. Element <foo> corresponding to definition <element> at schema.rng:2:65 generates warning: 
+Ambiguous element.
+Element <bar> at document2.xml:3:6, ambiguous after content validation, cannot be desambiguated by in context validation, all candidates could be correct. Possible definitions:
+<element> at schema.rng:4:25
+<element> at schema.rng:7:25
+<element> at schema.rng:10:25.

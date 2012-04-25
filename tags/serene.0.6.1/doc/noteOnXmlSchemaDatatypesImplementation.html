@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<TITLE>Note on XML Schema Datatypes Implementation</TITLE>
+</HEAD>
+<BODY>
+    <H1>Note on XML Schema Datatypes Implementation</H1>
+    <P>
+        <BR>
+    </P>
+    <P>
+        This release implements the XML Schema datatypes by wrapping Apache Xerces2 
+        Java. It comes with version 2.10.0 which has the following limitations:
+    </P>
+    <P>       
+        <UL>
+            <LI> 
+                length, minLength, and maxLength facets are limited to the value 
+                2147483647. Items larger than this limit will not be validated 
+                correctly.
+            </LI>
+
+            <LI> 
+                The values of minimum and maximum quantifiers in the pattern
+                regular expressions are limited to the value 2147483647.
+                Items larger than this limit will not be validated correctly.
+            </LI>
+            <LI>
+                The absolute values of the fraction portion of the second values
+                in date/time datatypes are limited to the value 2147483647.
+                Items larger than this limit will not be validated correctly.
+                i.e. 11.2147483648 is not supported as a second value. 
+            </LI>
+            <LI> 
+                Leap seconds are not supported in the values of date/time datatypes.
+            </LI>
+        </UL>
+    </P>
+    <P>
+        Also in the original XML Schema recommendation, the lexical space of the 
+        simple type gMonth is --MM--. An erratum E2-12 changed that to --MM. For 
+        compatibility reasons, Xerces currently supports both forms. To align with 
+        the recommendation, the old form is deprecated, and support for that form 
+        is planed to be discontinued in a future release. 
+    </P>   
+    <P>
+        <BR><BR>
+    </P>
+    <HR>
+    <P>
+        Copyright &copy; 2011 Radu Cernuta
+    </P>
+    <HR>
+</BODY>
