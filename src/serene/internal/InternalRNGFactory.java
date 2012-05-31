@@ -49,13 +49,16 @@ public abstract class InternalRNGFactory{
     boolean level1DocumentationElement;
     boolean restrictToFileName;
     boolean optimizedForResourceSharing;
+    boolean processEmbededSchematron;
 	
 	protected InternalRNGFactory(boolean level1DocumentationElement, 
 	                                boolean restrictToFileName, 
-	                                boolean optimizedForResourceSharing) throws DatatypeException{
+	                                boolean optimizedForResourceSharing,
+	                                boolean processEmbededSchematron) throws DatatypeException{
         this.level1DocumentationElement = level1DocumentationElement;
         this.restrictToFileName = restrictToFileName;
         this.optimizedForResourceSharing = optimizedForResourceSharing;
+        this.processEmbededSchematron = processEmbededSchematron;
 		
 		builder = new SimplifiedComponentBuilder();			
 		rngDirector = new RNGDirector(false);
@@ -74,6 +77,9 @@ public abstract class InternalRNGFactory{
         this.restrictToFileName = restrictToFileName;    
     }
     
+    public void setProcessEmbededSchematron(boolean processEmbededSchematron){
+        this.processEmbededSchematron = processEmbededSchematron;
+    }
   
 	public InternalRNGSchema getInternalRNGSchema(){
 		//TODO could be loaded from a previously serialized 
@@ -87,6 +93,7 @@ public abstract class InternalRNGFactory{
                                         level1DocumentationElement,                                        
                                         restrictToFileName,
                                         optimizedForResourceSharing,
+                                        processEmbededSchematron,
                                         sm, 
                                         pool);					
 		return schema;
@@ -100,19 +107,21 @@ public abstract class InternalRNGFactory{
                                         level1DocumentationElement,
                                         restrictToFileName,
                                         optimizedForResourceSharing,
+                                        processEmbededSchematron,
                                         sm,
                                         pool);		
 		return schema;
 	}
 	
-	public InternalRNGSchema getIncludeSchema(){	
+	public InternalRNGIncludeSchema getIncludeSchema(){	
 	    if(includeModel == null) includeModel = rngDirector.getIncludeModel();
 		ValidationModel vm = new ValidationModelImpl(null, includeModel, optimizedForResourceSharing); 
         SchemaModel sm = new SchemaModel(vm, null);
-		InternalRNGSchema schema = new InternalRNGSchema(false,
+		InternalRNGIncludeSchema schema = new InternalRNGIncludeSchema(false,
                                         level1DocumentationElement,
                                         restrictToFileName,
                                         optimizedForResourceSharing,
+                                        processEmbededSchematron,
                                         sm,
                                         pool);		
 		return schema;

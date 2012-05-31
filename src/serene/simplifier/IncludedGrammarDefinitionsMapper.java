@@ -46,12 +46,10 @@ import serene.validation.handlers.error.ErrorDispatcher;
 class IncludedGrammarDefinitionsMapper extends GrammarDefinitionsMapper{
 	Map<Definition, ArrayList<Grammar>> definitionGrammars;
 	
-	IncludedGrammarDefinitionsMapper(XMLReader xmlReader, 
-								InternalRNGFactory internalRNGFactory, 
-								ErrorDispatcher errorDispatcher, 
+	IncludedGrammarDefinitionsMapper(ErrorDispatcher errorDispatcher, 
 								NamespaceInheritanceHandler namespaceInheritanceHandler,
 								DatatypeLibraryFactory datatypeLibraryFactory){
-		super(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory);
+		super(errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory);
 	}
 	
 	void map(URI base,

@@ -43,14 +43,18 @@ import serene.validation.schema.simplified.SimplifiedModel;
 public class UnsynchronizedInternalRNGFactory extends InternalRNGFactory{	
 	private UnsynchronizedInternalRNGFactory(boolean level1DocumentationElement, 
 	                                            boolean restrictToFileName, 
-	                                            boolean optimizedForResourceSharing) throws DatatypeException{		
-		super(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing);	
+	                                            boolean optimizedForResourceSharing,
+	                                            boolean processEmbededSchematron) throws DatatypeException{		
+		super(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbededSchematron);	
 		
 		
 	}
     
-	public static InternalRNGFactory getInstance(boolean level1DocumentationElement, boolean restrictToFileName, boolean optimizedForResourceSharing)  throws DatatypeException{
+	public static InternalRNGFactory getInstance(boolean level1DocumentationElement, 
+	                                                boolean restrictToFileName, 
+	                                                boolean optimizedForResourceSharing,
+	                                                boolean processEmbededSchematron)  throws DatatypeException{
 	    if(optimizedForResourceSharing) throw new IllegalStateException();
-		return new UnsynchronizedInternalRNGFactory(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing);
+		return new UnsynchronizedInternalRNGFactory(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbededSchematron);
 	}	
 }

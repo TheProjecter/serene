@@ -19,8 +19,12 @@ limitations under the License.
 package serene;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.xml.XMLConstants;
+
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 public class PrefixMapping{
 	HashMap<String, String> prefixMapping;
@@ -88,6 +92,12 @@ public class PrefixMapping{
 		return null;
 	}
     
+	void transferMappings(ContentHandler ch) throws SAXException{
+	    Set<String> prefixes = prefixMapping.keySet();
+	    for(String prefix : prefixes){
+	        ch.startPrefixMapping(prefix, prefixMapping.get(prefix));
+	    }
+	}
     public String toString(){
         return "PREFIX MAPPING "+prefixMapping+" "+uriMapping+" PARENT "+parent;
     }

@@ -44,17 +44,21 @@ public class SynchronizedInternalRNGFactory extends InternalRNGFactory{
 	
 	private SynchronizedInternalRNGFactory(boolean level1DocumentationElement, 
 	                                        boolean restrictToFileName, 
-	                                        boolean optimizedForResourceSharing) throws DatatypeException{		
-		super(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing);	
+	                                        boolean optimizedForResourceSharing,
+	                                        boolean processEmbededSchematron) throws DatatypeException{		
+		super(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbededSchematron);	
 		
 	}
     
-	public static InternalRNGFactory getInstance(boolean level1DocumentationElement, boolean restrictToFileName, boolean optimizedForResourceSharing)  throws DatatypeException{
+	public static InternalRNGFactory getInstance(boolean level1DocumentationElement, 
+	                                                boolean restrictToFileName, 
+	                                                boolean optimizedForResourceSharing,
+	                                                boolean processEmbededSchematron)  throws DatatypeException{
 	    if(!optimizedForResourceSharing) throw new IllegalStateException();
 		if(instance == null){
 			synchronized(InternalRNGFactory.class){
 				if(instance == null){
-					instance = new SynchronizedInternalRNGFactory(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing); 
+					instance = new SynchronizedInternalRNGFactory(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbededSchematron); 
 				}
 			}
 		}

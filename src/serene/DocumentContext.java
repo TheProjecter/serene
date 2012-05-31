@@ -20,6 +20,8 @@ package serene;
 import javax.xml.XMLConstants;
 
 import org.xml.sax.DTDHandler;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 import org.relaxng.datatype.ValidationContext;
 
@@ -59,9 +61,6 @@ public class DocumentContext implements  ValidationContext, InfosetModificationC
 	} 
     // end DTDHandler
     
-	/*public PrefixMapping getPrefixMapping(){
-		return prefixMapping;
-	}*/
 	
 	public DTDMapping getDTDMapping(){
 		return dtdMapping;
@@ -82,6 +81,15 @@ public class DocumentContext implements  ValidationContext, InfosetModificationC
     
     public boolean isBaseURISet(){
         return isBaseURISet;
+    }
+    
+    public void transferPrefixMappings(ContentHandler ch) throws SAXException{
+        prefixMapping.transferMappings(ch);
+    }
+    
+    public void transferDTDMappings(DTDHandler dh) throws SAXException{
+        if(dtdMapping != null)
+            dtdMapping.transferMappings(dh);
     }
     
     // start ValidationContext

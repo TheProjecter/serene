@@ -20,11 +20,19 @@ package serene.simplifier;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Set;
+
+import javax.xml.transform.Templates;
+
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.TemplatesHandler;
+
 
 import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
@@ -115,19 +123,23 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	String currentDatatypeLibrary;
 	
 	boolean replaceMissingDatatypeLibrary;
-    boolean restrictToFileName;
+    boolean processEmbededSchematron;
+	boolean restrictToFileName;
+	
+	TransformerHandler schematronStartTransformerHandler;
+    SAXResult expandedSchematronResult;
+    TransformerHandler schematronCompilerXSLT1;
+    TransformerHandler schematronCompilerXSLT2;
+    TemplatesHandler schematronTemplatesHandler;
+    List<Templates> schematronTemplates;
     
     DocumentSimplificationContext simplificationContext;
 	
 	ErrorDispatcher errorDispatcher;
 	
-	GrammarDefinitionsMapper(XMLReader xmlReader,
-	                        InternalRNGFactory internalRNGFactory,
-							ErrorDispatcher errorDispatcher,
+	GrammarDefinitionsMapper(ErrorDispatcher errorDispatcher,
 							NamespaceInheritanceHandler namespaceInheritanceHandler,
-							DatatypeLibraryFactory datatypeLibraryFactory){
-		this.xmlReader = xmlReader;
-		this.internalRNGFactory = internalRNGFactory;
+							DatatypeLibraryFactory datatypeLibraryFactory){		
 		this.namespaceInheritanceHandler = namespaceInheritanceHandler;
 		this.errorDispatcher = errorDispatcher;
 		this.datatypeLibraryFactory = datatypeLibraryFactory;
@@ -143,6 +155,25 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
         this.restrictToFileName = restrictToFileName;
     }
     
+    void setProcessEmbededSchematron(boolean processEmbededSchematron){
+        this.processEmbededSchematron = processEmbededSchematron;
+    }
+    
+    void setParserComponents(XMLReader xmlReader, InternalRNGFactory internalRNGFactory){
+        this.xmlReader = xmlReader;
+		this.internalRNGFactory = internalRNGFactory;
+    }
+    void setSchematronParserComponents(TransformerHandler schematronStartTransformerHandler,
+	                                            SAXResult expandedSchematronResult,
+	                                            TransformerHandler schematronCompilerXSLT1,
+	                                            TransformerHandler schematronCompilerXSLT2,
+	                                            TemplatesHandler schematronTemplatesHandler){
+	    this.schematronStartTransformerHandler = schematronStartTransformerHandler;
+	    this.expandedSchematronResult = expandedSchematronResult;
+	    this.schematronCompilerXSLT1 = schematronCompilerXSLT1;
+	    this.schematronCompilerXSLT2 = schematronCompilerXSLT2;
+	    this.schematronTemplatesHandler = schematronTemplatesHandler;
+    }
 	void map(URI xmlBaseUri,
 			Pattern topPattern,
 			Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,
@@ -179,6 +210,44 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			topPattern.accept(this);
 	}
 	
+	void map(URI xmlBaseUri,
+			Pattern topPattern,
+			Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,
+			Map<Definition, Map<ExternalRef, URI>> definitionExternalRefs,
+			Stack<URI> inclusionPath,
+			Map<ParsedComponent, String> componentAsciiDL,
+			Map<String, DatatypeLibrary> asciiDlDatatypeLibrary,
+            DocumentSimplificationContext simplificationContext,
+            List<Templates> schematronTemplates) throws SAXException{
+		this.grammarDefinitions = grammarDefinitions;	
+		this.definitionExternalRefs = definitionExternalRefs;	
+		this.inclusionPath = inclusionPath;
+		this.componentAsciiDL = componentAsciiDL;
+		this.asciiDlDatatypeLibrary = asciiDlDatatypeLibrary;
+        this.simplificationContext = simplificationContext;
+        this.schematronTemplates = schematronTemplates;
+		
+		this.xmlBaseUri = xmlBaseUri;
+		currentGrammar = null;
+		currentDefinition = null;
+		currentContextDefinitions = null;
+		currentDatatypeLibrary = "";
+		
+		if(!asciiDlDatatypeLibrary.containsKey(currentDatatypeLibrary)){
+			DatatypeLibrary nativeDL = datatypeLibraryFactory.createDatatypeLibrary(currentDatatypeLibrary);
+			asciiDlDatatypeLibrary.put(currentDatatypeLibrary, nativeDL);
+			if(nativeDL == null){
+				//System.out.println("error 4.3 unknown or unsupported DatatypeLibrary");
+				String message = "Simplification 4.3 error. "
+				+"Native datatype library is unknown or unsupported.";				
+				errorDispatcher.error(new SAXParseException(message, null));
+			}
+		}
+		
+		if(topPattern !=null)//to catch situations when href uris were faultive
+			topPattern.accept(this);
+	}
+	
 	public void visit(Include include) throws SAXException{
 		String dla = include.getDatatypeLibraryAttribute();
 		String oldDla = null;
@@ -190,7 +259,10 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		
 		String href = include.getHref();
 		if(href == null){
-			//syntax error			
+			//syntax error	
+			if(oldDla != null){
+                currentDatatypeLibrary = oldDla;
+            }
 			return;
 		}
 		
@@ -211,6 +283,9 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			//System.out.println(message);
 			errorDispatcher.error(new SAXParseException(message, null));
 			xmlBaseUri = oldBase;
+			if(oldDla != null){
+                currentDatatypeLibrary = oldDla;
+            }
 			return;
 		}
 		if(hrefURI.getFragment() != null){
@@ -221,6 +296,9 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			// report 4.5 error
 			errorDispatcher.error(new SAXParseException(message, null));
 			xmlBaseUri = oldBase;
+			if(oldDla != null){
+                currentDatatypeLibrary = oldDla;
+            }
 			return;
 		}
 		if(inclusionPath.contains(hrefURI)){
@@ -231,16 +309,49 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			// report 4.6 error
 			errorDispatcher.error(new SAXParseException(message, null));
 			xmlBaseUri = oldBase;
+			if(oldDla != null){
+                currentDatatypeLibrary = oldDla;
+            }
 			return; 
 		}
 		
-        IncludedParsedModel includedModel = parse(hrefURI); 
+		//**********************************************************************
+		Map<String, ArrayList<Definition>> parentContextDefinitions = currentContextDefinitions;
+		currentContextDefinitions = new HashMap<String, ArrayList<Definition>>();
+						
+		ParsedComponent[] children = include.getChildren();		
+		if(children != null) next(children);
+		//**********************************************************************
+		
+        IncludedParsedModel includedModel = null;
         
-        if(includedModel == null) return;
+        if(processEmbededSchematron){
+            includedModel = parse(hrefURI, currentContextDefinitions);
+        }else{
+            includedModel = parse(hrefURI);
+        }
+        
+        if(includedModel == null){
+            xmlBaseUri = oldBase;
+            currentContextDefinitions = parentContextDefinitions;
+    
+            if(oldDla != null){
+                currentDatatypeLibrary = oldDla;
+            }	
+            return;
+        }
         
 		Grammar includedGrammar = includedModel.getTopPattern();
         
-		if(includedGrammar == null) return;
+		if(includedGrammar == null){
+		    xmlBaseUri = oldBase;
+            currentContextDefinitions = parentContextDefinitions;
+    
+            if(oldDla != null){
+                currentDatatypeLibrary = oldDla;
+            }	
+		    return;
+		}
 
         DTDMapping dtdMapping = includedModel.getDTDMapping();
         if(dtdMapping != null) simplificationContext.merge(dtdMapping);	
@@ -255,11 +366,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		map(hrefURI, includedGrammar, grammarDefinitions, definitionGrammars);
 		inclusionPath.pop();
 		
-		Map<String, ArrayList<Definition>> parentContextDefinitions = currentContextDefinitions;
-		currentContextDefinitions = new HashMap<String, ArrayList<Definition>>();
-						
-		ParsedComponent[] children = include.getChildren();		
-		if(children != null) next(children);
+		//*************************************************
 
 		doReplacements(include,
 					includedGrammar, 
@@ -289,14 +396,42 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	}
 	
 	private IncludedParsedModel parse(URI hrefURI){
-		if(includeParser == null)includeParser = new IncludeParser(xmlReader, internalRNGFactory, errorDispatcher);
+		if(includeParser == null){
+		    includeParser = new IncludeParser(errorDispatcher);
+		    includeParser.setParserComponents(xmlReader, internalRNGFactory);
+		    if(processEmbededSchematron)includeParser.setSchematronParserComponents(schematronStartTransformerHandler,
+	                                                            expandedSchematronResult,
+	                                                            schematronCompilerXSLT1,
+	                                                            schematronCompilerXSLT2,
+	                                                            schematronTemplatesHandler);
+		    includeParser.setRestrictToFileName(restrictToFileName);
+		    includeParser.setProcessEmbededSchematron(processEmbededSchematron);		    
+		}
 		return includeParser.parse(hrefURI);		
 	}
+	private IncludedParsedModel parse(URI hrefURI, Map<String, ArrayList<Definition>> overrideDefinitions){
+		if(includeParser == null){
+		    includeParser = new IncludeParser(errorDispatcher);
+		    includeParser.setParserComponents(xmlReader, internalRNGFactory);
+		    if(processEmbededSchematron)includeParser.setSchematronParserComponents(schematronStartTransformerHandler,
+	                                                            expandedSchematronResult,
+	                                                            schematronCompilerXSLT1,
+	                                                            schematronCompilerXSLT2,
+	                                                            schematronTemplatesHandler);
+		    includeParser.setRestrictToFileName(restrictToFileName);
+		    includeParser.setProcessEmbededSchematron(processEmbededSchematron);		    
+		}
+		return includeParser.parse(hrefURI, overrideDefinitions, schematronTemplates);		
+	}
+	
 	private void map(URI base,
 					Grammar includedGrammar, 
 					Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions, 
 					Map<Definition, ArrayList<Grammar>> definitionGrammars) throws SAXException{				
-		if(includedGrammarDefinitionsMapper == null)includedGrammarDefinitionsMapper = new IncludedGrammarDefinitionsMapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory);
+	    if(includedGrammarDefinitionsMapper == null){
+	        includedGrammarDefinitionsMapper = new IncludedGrammarDefinitionsMapper(errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory);
+	        includedGrammarDefinitionsMapper.setParserComponents(xmlReader, internalRNGFactory);
+	    }
 		includedGrammarDefinitionsMapper.map(base, includedGrammar, grammarDefinitions, definitionExternalRefs, definitionGrammars, inclusionPath, componentAsciiDL, asciiDlDatatypeLibrary, simplificationContext);		
 	}
 	private void doReplacements(Include include,
@@ -535,8 +670,11 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		
 		String name = define.getName();
 		add:{
-			if(name == null) break add;
-			name = name.trim()+'*';//add marker to separate define without name attribute from start
+			if(name == null){
+			    name = "*";
+			    break add;
+			}
+			name = name.trim();//add marker to separate define without name attribute from start ! NOT ANY MORE
 			ArrayList<Definition> defs = currentContextDefinitions.get(name);
 			if(defs == null){
 				defs = new ArrayList<Definition>();

@@ -164,6 +164,37 @@ limitations under the License.
        
     <!--
     ****************************************************************************
+    * SERENE TEST RNG SCHEMATRON
+    ****************************************************************************
+    -->
+    <target name="cleanForSereneTestRNGSchematron" depends="compile" description="Delete the ${buildPack.dir}.">
+		<echo>Cleaning for sereneTestRNGSchematron...</echo>
+		<delete dir="${buildPack.dir}"/>
+	</target>
+    
+    <target name="prepareForSereneTestRNGSchematron" depends="cleanForSereneTestRNGSchematron" description="Create the ${buildPack.dir} and copy ${buildClasses.dir}/sereneTestRNGSchematron to it.">
+        <echo>Preparing for sereneTestRNGSchematron...</echo>
+        <mkdir dir="${buildPack.dir}"/>
+        <copy todir="${buildPack.dir}">
+            <fileset dir="${buildClasses.dir}">
+                <include name="sereneTestRNGSchematron/**/*.class"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="packSereneTestRNGSchematron" depends="prepareForSereneTestRNGSchematron" description="Create jar file ${intLib.dir}/sereneTestRNGSchematron.jar">
+        <echo>Packing sereneTestRNGSchematron...</echo>
+        <jar destfile="${intLib.dir}/sereneTestRNGSchematron.jar" basedir="${buildPack.dir}">
+            <manifest>
+                <attribute name="Class-Path" value="../../${xercesJar.file} ../../${rngDatatypeJar.file} sereneWrite.jar serene.jar"/>
+                <attribute name="Main-Class" value="sereneTestRNGSchematron.Driver"/>
+            </manifest>
+        </jar>
+    </target>
+    
+    
+    <!--
+    ****************************************************************************
     * TOP TARGETS
     ****************************************************************************
     -->
@@ -184,6 +215,16 @@ limitations under the License.
         <java jar="${intLib.dir}/sereneTest.jar" fork="true">
             <arg value="-a"/>
             <arg value="testSuite"/>
+        </java>
+    </target>
+    
+    <target name="testRNGSchematron" depends="packSereneWrite, packSerene, packSereneTest, packSereneTestRNGSchematron" description="Builds the entire project and runs the sereneTestRNGSchematron.Driver on the testSuiteRNGSchematron/ with the regression analysis option on.">        
+        <delete dir="${build.dir}"/>
+        <echo>This was the test RNG Schematron build.</echo>
+        <echo>Running the RNG Schematron test.</echo>
+        <java jar="${intLib.dir}/sereneTestRNGSchematron.jar" fork="true">
+            <arg value="-a"/>
+            <arg value="testSuiteRNGSchematron"/>
         </java>
     </target>
 </project>

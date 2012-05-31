@@ -20,6 +20,10 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXException;
 
+import javax.xml.transform.ErrorListener;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.SourceLocator;
+
 import serene.SereneRecoverableException;
 
 import serene.datatype.MissingLibraryException;
@@ -33,7 +37,7 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.FileHandler;
 
-public class ErrorDispatcher implements ErrorHandler{
+public class ErrorDispatcher implements ErrorHandler, ErrorListener{
 	
 	ErrorHandler errorHandler;
     ErrorDispatcher errorDispatcher;
@@ -142,6 +146,50 @@ public class ErrorDispatcher implements ErrorHandler{
 	}
 	
     
+	
+	public void fatalError(TransformerException exception) throws TransformerException{	     
+		if(errorHandler != null){
+		    try{
+		        SourceLocator sl = exception.getLocator();
+		        if(sl != null)errorHandler.fatalError(new SAXParseException(exception.getMessage(), sl.getPublicId(), sl.getSystemId(), sl.getLineNumber(), sl.getColumnNumber(), exception));
+		        else errorHandler.fatalError(new SAXParseException(exception.getMessage(), null, null, -1, -1, exception));
+		    }catch(SAXException e){
+		        throw new TransformerException(e);
+		    }
+		}
+        else if(errorDispatcher != null) errorDispatcher.fatalError(exception);
+		hasError = true;
+        hasUnrecoverableError = true;
+	}
+	
+	public void error(TransformerException exception) throws TransformerException{        
+        if(errorHandler != null){		    	
+		    try{
+		        SourceLocator sl = exception.getLocator();
+		        if(sl != null)errorHandler.error(new SAXParseException(exception.getMessage(), sl.getPublicId(), sl.getSystemId(), sl.getLineNumber(), sl.getColumnNumber(), exception));
+		        else errorHandler.error(new SAXParseException(exception.getMessage(), null, null, -1, -1, exception));
+		    }catch(SAXException e){
+		        throw new TransformerException(e);
+		    }
+		}
+        else if(errorDispatcher != null) errorDispatcher.error(exception);        
+        hasError = true;
+        hasUnrecoverableError = true;        
+	}
+	
+	public void warning(TransformerException exception) throws TransformerException{
+		if(errorHandler != null){
+		    try{
+		        SourceLocator sl = exception.getLocator();
+		        if(sl != null)errorHandler.warning(new SAXParseException(exception.getMessage(), sl.getPublicId(), sl.getSystemId(), sl.getLineNumber(), sl.getColumnNumber(), exception));
+		        else errorHandler.warning(new SAXParseException(exception.getMessage(), null, null, -1, -1, exception));
+		    }catch(SAXException e){
+		        throw new TransformerException(e);
+		    }
+		}
+        else if(errorDispatcher != null) errorDispatcher.warning(exception);
+	}
+	
     public boolean hasError(){
         return hasError;
     }

@@ -21,9 +21,15 @@ import java.net.URI;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import javax.xml.XMLConstants;
+
+import javax.xml.transform.Templates;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.TemplatesHandler;
 
 import org.xml.sax.XMLReader;
 import org.xml.sax.SAXException;
@@ -73,6 +79,7 @@ public class RNGSimplifier extends Simplifier{
 		
 		componentAsciiDL = new HashMap<ParsedComponent, String>();
 		asciiDlDatatypeLibrary = new HashMap<String, DatatypeLibrary>();
+			
 		
 		indexes = new ObjectIntHashMap();	
 		indexes.setNullValue(-1);
@@ -84,27 +91,44 @@ public class RNGSimplifier extends Simplifier{
 		definitionEmptyChild = new BooleanList();
 		definitionNotAllowedChild = new BooleanList();
 		
-		//pcw = new ParsedComponentWriter();
-		
+		//pcw = new ParsedComponentWriter();		
 		
 		inclusionPath = new Stack<URI>();		
         
         simplificationContext = new DocumentSimplificationContext();
+        
+        mapper = new Mapper(errorDispatcher, namespaceInheritanceHandler);
 	}
 	
+	public void setRestrictToFileName(boolean restrictToFileName){
+        this.restrictToFileName = restrictToFileName;
+        mapper.setRestrictToFileName(restrictToFileName);
+    }    
+    public void setProcessEmbededSchematron(boolean processEmbededSchematron){
+        this.processEmbededSchematron = processEmbededSchematron;
+        mapper.setProcessEmbededSchematron(processEmbededSchematron);
+    }
+    
 	public void setParserComponents(XMLReader xmlReader, InternalRNGFactory internalRNGFactory){
-	    mapper = new Mapper(xmlReader, internalRNGFactory, errorDispatcher, namespaceInheritanceHandler);
+	    mapper.setParserComponents(xmlReader, internalRNGFactory);
 	}
 	
+	public void setSchematronParserComponents(TransformerHandler schematronStartTransformerHandler,
+	                                            SAXResult expandedSchematronResult,
+	                                            TransformerHandler schematronCompilerXSLT1,
+	                                            TransformerHandler schematronCompilerXSLT2,
+	                                            TemplatesHandler schematronTemplatesHandler){
+	    mapper.setSchematronParserComponents(schematronStartTransformerHandler,
+	                expandedSchematronResult,
+	                schematronCompilerXSLT1,
+	                schematronCompilerXSLT2,
+	                schematronTemplatesHandler);
+	}
 	public void setReplaceMissingDatatypeLibrary(boolean value){
 		replaceMissingDatatypeLibrary =  value;
 		mapper.setReplaceMissingDatatypeLibrary(value);
 	}
     
-    public void setRestrictToFileName(boolean restrictToFileName){
-        this.restrictToFileName = restrictToFileName;
-        mapper.setRestrictToFileName(restrictToFileName);
-    } 
     
 	public SimplifiedModel simplify(URI base, ParsedModel parsedModel)  throws SAXException{
         if(parsedModel == null) return null;
@@ -167,6 +191,72 @@ public class RNGSimplifier extends Simplifier{
 		return simplifiedModel;
 	}
 		
+	
+	public SimplifiedModel simplify(URI base, ParsedModel parsedModel, List<Templates> schematronTemplates)  throws SAXException{
+        if(parsedModel == null) return null;
+        
+        Pattern topPattern = parsedModel.getTopPattern();        
+		if(topPattern == null) return null;
+					
+		grammarDefinitions.clear();
+		externalRefs.clear();
+		docParsedModels.clear();
+		inclusionPath.clear();
+		
+		componentAsciiDL.clear();
+		asciiDlDatatypeLibrary.clear();
+        
+        simplificationContext.reset();
+		
+        paramStack.clear();
+        
+		this.topPattern = topPattern;
+		inclusionPath.push(base);
+		docParsedModels.put(base, parsedModel);
+		
+		mapper.map(base,
+					topPattern,
+					grammarDefinitions,
+					externalRefs,
+					docParsedModels,
+					inclusionPath,
+					componentAsciiDL,
+					asciiDlDatatypeLibrary,
+                    simplificationContext,
+                    schematronTemplates);
+		
+		//System.out.println("grammarDefinitions "+grammarDefinitions);
+		//System.out.println("externalRefs "+externalRefs);
+		//System.out.println("docParsedModels "+docParsedModels);
+		//System.out.println("**************************************");
+		
+		recursionModel = new RecursionModel();
+		
+        
+		simplify();
+		SPattern[] simplifiedTopPattern = builder.getAllCurrentPatterns();
+		if(simplifiedTopPattern == null){
+            if(emptyChild){
+                // for the 7.1.5 restrictions on start
+                // TODO make sure it is correct to treat notAllowed like this
+                builder.buildEmpty(topPattern.getRecordIndex(), topPattern.getDocumentIndexedData(), true);
+                simplifiedTopPattern = builder.getAllCurrentPatterns();
+            }else if(notAllowedElement || notAllowedChild){
+                builder.buildNotAllowed(topPattern.getRecordIndex(), topPattern.getDocumentIndexedData(), true);
+                simplifiedTopPattern = builder.getAllCurrentPatterns();
+            }
+            
+		}
+        
+		SimplifiedModel simplifiedModel = new SimplifiedModel(simplifiedTopPattern, 
+											definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]),
+											recursionModel);
+		return simplifiedModel;
+	}
+	
+	
+	
+	
 	private void simplify()  throws SAXException{
 		emptyChild = false;
         emptyComponent = null;

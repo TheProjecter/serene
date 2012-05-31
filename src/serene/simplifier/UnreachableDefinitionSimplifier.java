@@ -146,7 +146,7 @@ class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
 	}
         
     public void visit(Ref ref) throws SAXException{
-        String name = ref.getName() == null ? "*" : ref.getName().trim()+'*';
+        String name = ref.getName() == null ? "*" : ref.getName().trim();
 		ArrayList<Definition> definitions = getReferencedDefinition(currentGrammar, name);
 		
 		if(definitions == null){
@@ -163,7 +163,7 @@ class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
 	}
     
 	public void visit(ParentRef parentRef) throws SAXException{
-        String name = parentRef.getName() == null ? "*" : parentRef.getName().trim()+'*';        
+        String name = parentRef.getName() == null ? "*" : parentRef.getName().trim();        
 		ArrayList<Definition> definitions = getReferencedDefinition(previousGrammars.peek(), name);
         
 		if(definitions == null){
