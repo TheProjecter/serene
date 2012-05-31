@@ -203,7 +203,7 @@ limitations under the License.
         <echo>This was the restricted build.</echo>
     </target>
     
-    <target name="default" depends="packSereneWrite, packSerene, packSereneTest" description="Builds the entire project, including the test tool.">        
+    <target name="default" depends="packSereneWrite, packSerene, packSereneTest, packSereneTestRNGSchematron" description="Builds the entire project, including the test tool.">        
         <delete dir="${build.dir}"/>
         <echo>This was the default build.</echo>
     </target>
