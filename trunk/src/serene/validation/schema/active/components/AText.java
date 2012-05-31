@@ -16,6 +16,7 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import java.util.List;
 
 import serene.validation.schema.active.components.APattern;
 
@@ -39,6 +40,23 @@ public abstract class AText extends CharsAPattern{
 		
 	}	
 	
+	
+	public boolean isTextContent(){
+	    return true;
+	}
+	public boolean isCharsContent(){
+	    return true;
+	}	
+	
+    
+	
+    public void setMatches(List<AText> texts){
+        texts.add(this);
+    }    
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns, List<AText> texts){
+        texts.add(this);
+    }
+    
     
 	public void accept(ActiveComponentVisitor v){
 		v.visit(this);

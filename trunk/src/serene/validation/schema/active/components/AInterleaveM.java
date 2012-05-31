@@ -26,10 +26,24 @@ public class AInterleaveM extends AInterleave{
 	SMixed smixed;
 	
 	public AInterleaveM(APattern[] children,
+	            boolean allowsElements,
+                boolean allowsAttributes,
+                boolean allowsDatas,
+                boolean allowsValues,	
+                boolean allowsListPatterns,
+                boolean allowsText,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool, 
 				SMixed smixed){		
-		super(children, stackHandlerPool, ruleHandlerPool);
+		super(children, 
+		        allowsElements,
+                allowsAttributes,
+                allowsDatas,
+                allowsValues,	
+                allowsListPatterns,
+                allowsText,
+                stackHandlerPool, 
+                ruleHandlerPool);
 		this.smixed = smixed;
 	}	
 	

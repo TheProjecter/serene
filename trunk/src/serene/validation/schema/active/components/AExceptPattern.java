@@ -23,7 +23,6 @@ import serene.validation.schema.simplified.components.SExceptPattern;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.RuleVisitor;
-import serene.validation.schema.active.ActiveDefinition;
 import serene.validation.schema.active.ActiveDefinitionPointer;
 import serene.validation.schema.active.ActiveGrammarModel;
 import serene.validation.schema.active.StructuredDataActiveType;
@@ -49,24 +48,22 @@ public class AExceptPattern extends AbstractRule
 	APattern child;
 	
 	int index;
-	
-	ActiveDefinition definition;
+
 	ActiveGrammarModel grammarModel;
 	
 	ActiveModelStackHandlerPool stackHandlerPool;
-	
-	boolean allowsDataContent;
+		
 	AData[] contextDatas;
 	
-	boolean allowsValueContent;
 	AValue[] contextValues;
 	
-	boolean allowsListPatternContent;
 	AListPattern[] contextListPatterns;
 	
 	ARef[] contextRefs;
 	
 	SExceptPattern sexceptPattern;
+	
+	
 	public AExceptPattern(int index,
 			ActiveGrammarModel grammarModel,
 			ActiveModelStackHandlerPool stackHandlerPool,
@@ -86,7 +83,56 @@ public class AExceptPattern extends AbstractRule
 			((AbstractAPattern)child).setChildIndex(0);
 		}
 	}	
-			
+		
+
+    public boolean allowsElements(){
+        if(child == null) return false;
+        return child.isElementContent();
+    }
+	public boolean allowsAttributes(){
+	    if(child == null) return false;
+	    return child.isAttributeContent();
+	}
+	public boolean allowsDatas(){
+	    if(child == null) return false;
+	    return child.isDataContent();
+	}
+	public boolean allowsValues(){
+	    if(child == null) return false;
+	    return child.isValueContent();
+	}
+	public boolean allowsListPatterns(){
+	    if(child == null) return false;
+	    return child.isListPatternContent();
+	}
+	public boolean allowsText(){
+	    if(child == null) return false;
+	    return child.isTextContent();
+	}
+	public boolean allowsCharsContent(){
+	    if(child == null) return false;
+	    return allowsDatas() || allowsValues() || allowsListPatterns() || allowsText();
+	}	
+	public boolean allowsStructuredDataContent(){
+	    if(child == null) return false;
+	    return allowsDatas() || allowsValues() || allowsListPatterns();
+	}	
+	public boolean allowsUnstructuredDataContent(){
+	    if(child == null) return false;
+	    return allowsDatas() || allowsValues();
+	}	
+	
+	
+	
+	public void setContentMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns){
+        if(child.isStructuredDataContent()) child.setMatches(datas, values, listPatterns);
+    }
+    public void setContentMatches(List<AData> datas, List<AValue> values){
+        if(child.isUnstructuredDataContent()) child.setMatches(datas, values);
+	}
+	
+	
+	
 	public APattern getChild(){
 		return child;
 	}
@@ -120,72 +166,17 @@ public class AExceptPattern extends AbstractRule
 		return index;
 	}  
 	public void assembleDefinition(){
-		setDefinition();
-		setContextCache();
-		assembleRefDefinitions();		
+		asParent(grammarModel.getExceptPatternDefinitionTopPattern(index));		
 	}
 	public void releaseDefinition(){
 		if(child != null){
-			((AbstractAPattern)child).setParent(null);
-			((AbstractAPattern)child).setChildIndex(-1);		
+			child.setReleased();
+			grammarModel.recycleExceptPatternDefinitionTopPattern(index, child);
 			child = null;
-		}
-		releaseRefDefinitions();
-		resetContextCache();		
-		definition.recycle();
+		}	
 	}
 	//--------------------------------------------------------------------------
-	protected void setDefinition(){
-		definition = grammarModel.getExceptPatternDefinition(index);
-		asParent(definition.getTopPattern());		
-	}
-	protected void setContextCache(){
-		contextRefs = definition.getRefs();
 	
-		contextDatas = definition.getDatas();
-		if(contextDatas != null && contextDatas.length != 0) allowsDataContent = true;
-		
-		contextValues = definition.getValues();
-		if(contextValues != null && contextValues.length != 0) allowsValueContent = true;
-		
-		contextListPatterns = definition.getListPatterns();
-		if(contextListPatterns != null && contextListPatterns.length != 0) allowsListPatternContent = true;
-	}
-	protected void assembleRefDefinitions(){
-		if(contextRefs != null)
-			for(int i = 0; i< contextRefs.length; i++){						
-				contextRefs[i].assembleDefinition();						
-				if(!allowsDataContent){
-					allowsDataContent = contextRefs[i].allowsDataContent();
-				}
-				if(!allowsValueContent){
-					allowsValueContent = contextRefs[i].allowsValueContent();
-				}
-				if(!allowsListPatternContent){
-					allowsListPatternContent = contextRefs[i].allowsListPatternContent();
-				}
-			}
-		if(allowsListPatternContent)
-			for(int i = 0; i < contextListPatterns.length; i++){
-				contextListPatterns[i].assembleRefDefinitions();
-			}			
-	}
-	
-	protected void resetContextCache(){
-		allowsDataContent = false;
-		contextDatas = null;
-		
-		allowsValueContent = false;
-		contextValues = null;
-		
-		allowsListPatternContent = false;
-		contextListPatterns = null;
-	}
-	protected void releaseRefDefinitions(){
-		for(int i = 0; i< contextRefs.length; i++){						
-			contextRefs[i].releaseDefinition();
-		}	
-	}	
 	
 	//Type
 	//--------------------------------------------------------------------------
@@ -204,66 +195,13 @@ public class AExceptPattern extends AbstractRule
 	
 	//DataActiveType
 	//--------------------------------------------------------------------------
-	public boolean allowsChars(){
-		return allowsDataContent 
-				|| allowsValueContent 
-				|| allowsListPatternContent;
-	}
 	
-	public boolean allowsDataContent(){
-		return allowsDataContent;
-	}	
-	public List<AData> getDataMatches(List<AData> dataMatches){	
-		if(!allowsDataContent) return dataMatches;
-		for(AData data: contextDatas){
-			dataMatches.add(data);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsDataContent())
-					dataMatches = ref.getDataMatches(dataMatches);
-			}		
-		}
-		return dataMatches;
-	}
-	
-	public boolean allowsValueContent(){
-		return allowsValueContent;
-	}
-	public List<AValue> getValueMatches(List<AValue> valueMatches){	
-		if(!allowsValueContent) return valueMatches;
-		for(AValue avalue: contextValues){
-			valueMatches.add(avalue);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsValueContent())
-					valueMatches = ref.getValueMatches(valueMatches);
-			}		
-		}
-		return valueMatches;
-	}
 	//--------------------------------------------------------------------------
 	
 	
 	//StructuredDataActiveType
 	//--------------------------------------------------------------------------
-	public boolean allowsListPatternContent(){
-		return allowsListPatternContent;
-	}	
-	public List<AListPattern> getListPatterns(List<AListPattern> listPatterns){
-		if(!allowsListPatternContent) return listPatterns;
-		for(AListPattern listPattern: contextListPatterns){
-			listPatterns.add(listPattern);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsListPatternContent())
-					listPatterns = ref.getListPatterns(listPatterns);
-			}		
-		}
-		return listPatterns;
-	}
+	
 	//--------------------------------------------------------------------------
 	
 	public boolean isChildRequired(){

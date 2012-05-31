@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import java.util.List;
+
 import serene.validation.schema.active.Rule;
 
 import serene.validation.handlers.structure.ChildEventHandler;
@@ -30,9 +32,32 @@ public interface APattern extends Rule{
 	void setMaxOccurs(int maxOccurs);
 	int getMinOccurs();
 	int getMaxOccurs();
+	
+	void setReleased();
+	
 	ParticleHandler getParticleHandler(ChildEventHandler ceh, ErrorCatcher ec);
 	
 	boolean isRequiredContent();
     boolean isRequiredBranch();
+    
+    
+    boolean isElementContent();
+	boolean isAttributeContent();
+	boolean isDataContent();
+	boolean isValueContent();
+	boolean isListPatternContent();
+	boolean isTextContent();
 	
+	boolean isCharsContent();
+    boolean isStructuredDataContent();
+    boolean isUnstructuredDataContent();
+    
+    
+    void setElementMatches(String ns, String name, List<AElement> elements);
+    void setAttributeMatches(String ns, String name, List<AAttribute> attributes);    
+    
+    void setMatches(List<AText> texts);    
+    void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns, List<AText> texts);
+    void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns);
+    void setMatches(List<AData> datas, List<AValue> values);
 }	

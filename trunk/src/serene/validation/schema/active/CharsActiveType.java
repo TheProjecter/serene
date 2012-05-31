@@ -19,9 +19,13 @@ package serene.validation.schema.active;
 import java.util.List;
 
 import serene.validation.schema.active.components.AText;
-import serene.validation.schema.active.components.DatatypedCharsAPattern;
+import serene.validation.schema.active.components.AData;
+import serene.validation.schema.active.components.AValue;
+import serene.validation.schema.active.components.AListPattern;
 
 public interface CharsActiveType extends StructuredDataActiveType{
-	boolean allowsTextContent();	
-	List<AText> getTexts(List<AText> texts);
+    void setContentMatches(List<AText> texts);    
+    void setContentMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns, List<AText> texts);
+	boolean allowsText();
+	boolean allowsCharsContent();	    
 }

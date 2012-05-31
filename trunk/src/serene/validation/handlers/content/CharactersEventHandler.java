@@ -18,11 +18,10 @@ package serene.validation.handlers.content;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.DataActiveType;
-import serene.validation.schema.active.StructuredDataActiveType;
-import serene.validation.schema.active.CharsActiveType;
+import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.active.components.AAttribute;
 
 public interface CharactersEventHandler extends EventHandler{	
-	void handleChars(char[] chars, CharsActiveType context, boolean isComplexContent) throws SAXException;	
-	void handleString(String value, CharsActiveType context, boolean isComplexContent) throws SAXException;
+	void handleChars(char[] chars, AElement context, boolean isComplexContent) throws SAXException;	
+	void handleString(String value, AAttribute context, boolean isComplexContent) throws SAXException;
 }

@@ -26,11 +26,7 @@ import serene.validation.schema.simplified.components.SRef;
 import serene.validation.schema.active.RuleVisitor;
 import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.ActiveDefinitionPointer;
-import serene.validation.schema.active.ActiveDefinition;
 import serene.validation.schema.active.ActiveGrammarModel;
-import serene.validation.schema.active.ElementContentType;
-import serene.validation.schema.active.AttributesType;
-import serene.validation.schema.active.CharsActiveType;
 
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
@@ -47,40 +43,15 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import org.relaxng.datatype.ValidationContext;
 
-public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer, 
-														ElementContentType, 
-														AttributesType,
-														CharsActiveType,
+public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer, 														
 														AInnerPattern{	
-	
-	boolean allowsDataContent;
-	AData[] contextDatas;
-	
-	boolean allowsValueContent;
-	AValue[] contextValues;
-	
-	boolean allowsListPatternContent;
-	AListPattern[] contextListPatterns;
-	
-	boolean allowsTextContent;
-	AText[] contextTexts;
-	
-	boolean allowsElementContent;
-	AElement[] contextElements;
-	
-	boolean allowsAttributes;	
-	AAttribute[] contextAttributes;
-	
-	ARef[] contextRefs;
-	
 	int index;	
 	
 	ActiveGrammarModel grammarModel;	
-	ActiveDefinition definition;
 	
 	SRef sref;
 	
-	public ARef(int index, 
+	public ARef(int index,
 					ActiveGrammarModel grammarModel,
 					ActiveModelRuleHandlerPool ruleHandlerPool,
 					SRef sref){
@@ -89,7 +60,47 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 		this.grammarModel = grammarModel;
 		this.sref = sref;
 	}
+	
+	
+		
+	public boolean isElementContent(){
+        if(child == null) return false;
+        return child.isElementContent();
+    }
+	public boolean isAttributeContent(){
+	    if(child == null) return false;
+	    return child.isAttributeContent();
+	}
+	public boolean isDataContent(){
+	    if(child == null) return false;
+	    return child.isDataContent();
+	}
+	public boolean isValueContent(){
+	    if(child == null) return false;
+	    return child.isValueContent();
+	}
+	public boolean isListPatternContent(){
+	    if(child == null) return false;
+	    return child.isListPatternContent();
+	}
+	public boolean isTextContent(){
+	    if(child == null) return false;
+	    return child.isTextContent();
+	}
+	public boolean isCharsContent(){
+	    if(child == null) return false;
+	    return child.isCharsContent();
+	}	
+	public boolean isStructuredDataContent(){
+	    if(child == null) return false;
+	    return child.isStructuredDataContent();
+	}	
+	public boolean isUnstructuredDataContent(){
+	    if(child == null) return false;
+	    return child.isUnstructuredDataContent();
+	}
 
+	
 	/**
 	* Throws a NullPointerException if the definition is not assembled. 
 	* This means the method can only be used during validation.
@@ -106,101 +117,16 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 		return index;
 	}  
 	public void assembleDefinition(){
-		setDefinition();
-		setContextCache();
-		assembleRefDefinitions();
+		asParent(grammarModel.getRefDefinitionTopPattern(index));
 	}
 	public void releaseDefinition(){
 		if(child != null){
-			((AbstractAPattern)child).setParent(null);
-			((AbstractAPattern)child).setChildIndex(-1);		
+			child.setReleased();
+			grammarModel.recycleRefDefinitionTopPattern(index, child);
 			child = null;
-		}
-		releaseRefDefinitions();
-		resetContextCache();		
-		definition.recycle();
+		}	
 	}
 	//--------------------------------------------------------------------------
-	protected void setDefinition(){
-		definition = grammarModel.getRefDefinition(index);
-		asParent(definition.getTopPattern());	
-	}
-	protected void setContextCache(){
-		contextRefs = definition.getRefs();
-		
-		contextDatas = definition.getDatas();
-		if(contextDatas != null && contextDatas.length != 0) allowsDataContent = true;
-		
-		contextValues = definition.getValues();
-		if(contextValues != null && contextValues.length != 0) allowsValueContent = true;
-		
-		contextListPatterns = definition.getListPatterns();
-		if(contextListPatterns != null && contextListPatterns.length != 0) allowsListPatternContent = true;
-		
-		contextTexts = definition.getTexts();
-		if(contextTexts != null && contextTexts.length != 0) allowsTextContent = true;
-		
-		contextElements = definition.getElements();
-		if(contextElements != null && contextElements.length != 0) allowsElementContent = true;
-		
-		contextAttributes = definition.getAttributes();
-		if(contextAttributes != null && contextAttributes.length != 0) allowsAttributes = true;	
-		
-	}
-	protected void assembleRefDefinitions(){
-		if(contextRefs != null)
-			for(int i = 0; i< contextRefs.length; i++){						
-				contextRefs[i].assembleDefinition();	
-				if(!allowsDataContent){
-					allowsDataContent = contextRefs[i].allowsDataContent();
-				}
-				if(!allowsValueContent){
-					allowsValueContent = contextRefs[i].allowsValueContent();
-				}
-				if(!allowsListPatternContent){
-					allowsListPatternContent = contextRefs[i].allowsListPatternContent();
-				}
-				if(!allowsTextContent){
-					allowsTextContent = contextRefs[i].allowsTextContent();
-				}
-				if(!allowsElementContent){
-					allowsElementContent = contextRefs[i].allowsElementContent();
-				}
-				if(!allowsAttributes){
-					allowsAttributes = contextRefs[i].allowsAttributes();
-				}
-			}
-		if(allowsListPatternContent)
-			for(int i = 0; i < contextListPatterns.length; i++){
-				contextListPatterns[i].assembleRefDefinitions();
-			}
-	}
-	
-	protected void resetContextCache(){
-		allowsDataContent = false;
-		contextDatas = null;
-		
-		allowsValueContent = false;
-		contextValues = null;
-		
-		allowsListPatternContent = false;
-		contextListPatterns = null;
-		
-		allowsTextContent = false;
-		contextTexts = null;
-		
-		allowsElementContent = false;
-		contextElements = null;
-		
-		allowsAttributes = false;		
-		contextAttributes = null;
-	}	
-	
-	protected void releaseRefDefinitions(){
-		for(int i = 0; i< contextRefs.length; i++){						
-			contextRefs[i].releaseDefinition();
-		}	
-	}	
 	
 	
 	//Type
@@ -220,140 +146,33 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 	
 	//DataActiveType
 	//--------------------------------------------------------------------------
-	public boolean allowsChars(){
-		return allowsDataContent 
-				|| allowsValueContent 
-				|| allowsListPatternContent
-				|| allowsTextContent;
-	}
 	
-	public boolean allowsDataContent(){
-		return allowsDataContent;
-	}	
-	public List<AData> getDataMatches(List<AData> dataMatches){	
-		if(!allowsDataContent) return dataMatches;
-		for(AData data: contextDatas){
-			dataMatches.add(data);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsDataContent())
-					dataMatches = ref.getDataMatches(dataMatches);
-			}		
-		}
-		return dataMatches;
-	}
-	
-	public boolean allowsValueContent(){
-		return allowsValueContent;
-	}
-	public List<AValue> getValueMatches(List<AValue> valueMatches){	
-		if(!allowsValueContent) return valueMatches;
-		for(AValue avalue: contextValues){
-			valueMatches.add(avalue);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsValueContent())
-					valueMatches = ref.getValueMatches(valueMatches);
-			}		
-		}
-		return valueMatches;
-	}
 	//--------------------------------------------------------------------------
 	
 	
 	//StructuredDataActiveType
 	//--------------------------------------------------------------------------
-	public boolean allowsListPatternContent(){
-		return allowsListPatternContent;
-	}	
-	public List<AListPattern> getListPatterns(List<AListPattern> listPatterns){
-		if(!allowsListPatternContent) return listPatterns;
-		for(AListPattern listPattern: contextListPatterns){
-			listPatterns.add(listPattern);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsListPatternContent())
-					listPatterns = ref.getListPatterns(listPatterns);
-			}		
-		}
-		return listPatterns;
-	}
+	
 	//--------------------------------------------------------------------------
 	
 	
 	
 	//CharsActiveType
 	//--------------------------------------------------------------------------
-	public boolean allowsTextContent(){
-		return allowsTextContent;
-	}	
-	public List<AText> getTexts(List<AText> texts){
-		if(!allowsTextContent) return texts;
-		for(AText text: contextTexts){
-			texts.add(text);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsTextContent())
-					texts = ref.getTexts(texts);
-			}		
-		}
-		return texts;
-	}
+	
 	//--------------------------------------------------------------------------
 	
 	
 		
 	//AttributesType
 	//--------------------------------------------------------------------------	
-	public boolean allowsAttributes(){
-		return allowsAttributes;
-	}
-	public List<AAttribute> getAttributeMatches(String namespace, String name, List<AAttribute> matches){
-		if(!allowsAttributes) return matches;
-		if(contextAttributes != null){
-			for(AAttribute descendent : contextAttributes){
-				if(descendent.nameClassMatches(namespace, name)){
-					matches.add(descendent);
-				}
-			}
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsAttributes())
-					matches = ref.getAttributeMatches(namespace, name, matches);
-			}		
-		}
-		return matches;
-	}
+	
 	//--------------------------------------------------------------------------
 	
 	
 	//ElementContentType
 	//--------------------------------------------------------------------------
-	public boolean allowsElementContent(){
-		return allowsElementContent;
-	}
-	public List<AElement> getElementMatches(String namespace, String name, List<AElement> matches){		
-		if(!allowsElementContent) return matches;
-		if(contextElements != null){
-			for(AElement descendent : contextElements){
-				if(descendent.nameClassMatches(namespace, name)){
-					matches.add(descendent);
-				}
-			}
-		}
-		if(contextRefs != null){	
-			for(ARef ref : contextRefs){
-				if(ref.allowsElementContent())
-					matches = ref.getElementMatches(namespace, name, matches);
-			}		
-		}
-		return matches;
-	}	
+		
 	//--------------------------------------------------------------------------
 
 	
@@ -368,7 +187,8 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
     
     public int functionalEquivalenceCode(){
         //return simplifiedComponent.hashCode();
-        return definition.getTopPattern().functionalEquivalenceCode();
+        //return definition.getTopPattern().functionalEquivalenceCode();
+        return child.functionalEquivalenceCode();
     }  
     
     public SRef getCorrespondingSimplifiedComponent(){

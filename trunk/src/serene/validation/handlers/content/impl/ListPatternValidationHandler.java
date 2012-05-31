@@ -88,7 +88,7 @@ class ListPatternValidationHandler implements DataEventHandler,
         return parent;    
     }
     
-    public void handleChars(char[] chars, DataActiveType context) throws SAXException{
+    public void handleChars(char[] chars, AListPattern context) throws SAXException{
         stackHandler = listPattern.getStackHandler(errorCatcher);
         
         DataValidationHandler dvh = pool.getDataValidationHandler(this, this, errorCatcher);        
@@ -108,7 +108,7 @@ class ListPatternValidationHandler implements DataEventHandler,
 		stackHandler = null;
     }
 	
-	public void handleString(String value, DataActiveType context) throws SAXException{
+	public void handleString(String value, AListPattern context) throws SAXException{
 	    stackHandler = listPattern.getStackHandler(errorCatcher);
 	    
 	    DataValidationHandler dvh = pool.getDataValidationHandler(this, this, errorCatcher);

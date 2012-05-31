@@ -54,6 +54,9 @@ import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 
 import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SRef;
+import serene.validation.schema.simplified.components.SElement;
+import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.components.SExceptPattern;
 
 import serene.internal.InternalRNGFactory;
 
@@ -148,6 +151,10 @@ public class RNGSimplifier extends Simplifier{
 		
         paramStack.clear();
         
+	    selements.clear();	
+	    sattributes.clear();	
+	    sexceptPatterns.clear();
+        
 		this.topPattern = topPattern;
 		inclusionPath.push(base);
 		docParsedModels.put(base, parsedModel);
@@ -184,9 +191,19 @@ public class RNGSimplifier extends Simplifier{
             }
             
 		}
-        
+        SElement startElement;        
+        if(simplifiedTopPattern != null && simplifiedTopPattern.length > 0){
+            startElement = new SElement(selements.size(), null, simplifiedTopPattern[0], -1, null);
+        }else{
+            startElement = new SElement(selements.size(), null, null, -1, null);
+        }
+        selements.add(startElement); 
 		SimplifiedModel simplifiedModel = new SimplifiedModel(simplifiedTopPattern, 
 											definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]),
+											selements.size()-1,
+											selements.toArray(new SElement[selements.size()]),
+											sattributes.toArray(new SAttribute[sattributes.size()]),
+											sexceptPatterns.toArray(new SExceptPattern[sexceptPatterns.size()]),
 											recursionModel);
 		return simplifiedModel;
 	}
@@ -209,7 +226,11 @@ public class RNGSimplifier extends Simplifier{
         simplificationContext.reset();
 		
         paramStack.clear();
-        
+       
+	    selements.clear();	
+	    sattributes.clear();	
+	    sexceptPatterns.clear();	    
+	    
 		this.topPattern = topPattern;
 		inclusionPath.push(base);
 		docParsedModels.put(base, parsedModel);
@@ -248,15 +269,24 @@ public class RNGSimplifier extends Simplifier{
             
 		}
         
+		SElement startElement;        
+        if(simplifiedTopPattern != null && simplifiedTopPattern.length > 0){
+            startElement = new SElement(selements.size(), null, simplifiedTopPattern[0], -1, null);
+        }else{
+            startElement = new SElement(selements.size(), null, null, -1, null);
+        }
+        selements.add(startElement);   
 		SimplifiedModel simplifiedModel = new SimplifiedModel(simplifiedTopPattern, 
 											definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]),
+											selements.size()-1,
+											selements.toArray(new SElement[selements.size()]),
+											sattributes.toArray(new SAttribute[sattributes.size()]),
+											sexceptPatterns.toArray(new SExceptPattern[sexceptPatterns.size()]),
 											recursionModel);
 		return simplifiedModel;
 	}
 	
-	
-	
-	
+		
 	private void simplify()  throws SAXException{
 		emptyChild = false;
         emptyComponent = null;

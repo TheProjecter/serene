@@ -18,7 +18,6 @@ package serene.validation.schema.active.util;
 
 
 import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.components.AExceptNameClass;
 
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
@@ -34,11 +33,6 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AGrammar;
 
-import serene.validation.schema.active.components.AName;
-import serene.validation.schema.active.components.AAnyName;
-import serene.validation.schema.active.components.ANsName;
-import serene.validation.schema.active.components.AChoiceNameClass;
-
 import serene.validation.schema.active.ActiveComponent;
 import serene.validation.schema.active.ActiveComponentVisitor;
 
@@ -48,35 +42,13 @@ public abstract class AbstractActiveComponentVisitor implements ActiveComponentV
 		ActiveComponent child = exceptAPattern.getChild();
 		if(child != null) child.accept(this);
 	}
-	public void visit(AExceptNameClass exceptANameClass){
-		ActiveComponent child = exceptANameClass.getChild();
-		if(child != null) child.accept(this);		
-	}
-		
-	public void visit(AName component){}
-	public void visit(AAnyName anyName){
-		ActiveComponent child = anyName.getChild();
-		if(child != null) child.accept(this);
-	}
-	public void visit(ANsName nsName){
-		ActiveComponent child = nsName.getChild();
-		if(child != null) child.accept(this);
-	}
-	public void visit(AChoiceNameClass choice){
-		ActiveComponent[] children = choice.getChildren();
-		if(children != null) next(children);
-	}	
 	
 	
 	public void visit(AElement element){
-		ActiveComponent nameClass = element.getNameClass();
-		if(nameClass != null) nameClass.accept(this);
 		ActiveComponent child = element.getChild();
 		if(child != null) child.accept(this);	
 	}	
-	public void visit(AAttribute attribute){
-		ActiveComponent nameClass = attribute.getNameClass();
-		if(nameClass != null) nameClass.accept(this);		
+	public void visit(AAttribute attribute){		
 		ActiveComponent child = attribute.getChild();
 		if(child != null) child.accept(this);		
 	}

@@ -26,10 +26,24 @@ public class AInterleaveI extends AInterleave{
 	SInterleave sinterleave;
 	
 	public AInterleaveI(APattern[] children,
+	            boolean allowsElements,
+                boolean allowsAttributes,
+                boolean allowsDatas,
+                boolean allowsValues,	
+                boolean allowsListPatterns,
+                boolean allowsText,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool, 
 				SInterleave sinterleave){		
-		super(children, stackHandlerPool, ruleHandlerPool);
+		super(children, 
+		        allowsElements,
+                allowsAttributes,
+                allowsDatas,
+                allowsValues,	
+                allowsListPatterns,
+                allowsText,
+                stackHandlerPool,
+                ruleHandlerPool);
 		this.sinterleave = sinterleave;
 	}	
 	

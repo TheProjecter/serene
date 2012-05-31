@@ -14,10 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package serene.validation.schema.active;
+package serene.validation.schema;
 
-import serene.validation.schema.active.Identifier;
 
-public interface Identifier extends ActiveComponent{	
+public interface Identifier{	
 	boolean matches(String namespace, String name);
 }

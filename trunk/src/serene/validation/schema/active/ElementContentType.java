@@ -21,6 +21,6 @@ import java.util.List;
 import serene.validation.schema.active.components.AElement;
 
 public interface ElementContentType extends ActiveType{
-	boolean allowsElementContent();	
-	List<AElement> getElementMatches(String namespace, String name, List<AElement> matches);
+	void setElementContentMatches(String ns, String name, List<AElement> elements);
+	boolean allowsElements();		
 }

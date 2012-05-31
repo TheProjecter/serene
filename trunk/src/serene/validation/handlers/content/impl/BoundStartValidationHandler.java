@@ -127,7 +127,7 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
     
     
 	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
-		if(!element.allowsElementContent()){
+		if(!element.allowsElements()){
 			handleUnexpectedElementHandler(namespace, name, restrictToFileName);
             reportContextErrors(restrictToFileName, inputStackDescriptor);
             return pool.getElementDefaultHandler(this);

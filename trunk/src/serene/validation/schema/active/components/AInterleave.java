@@ -50,9 +50,22 @@ public abstract class AInterleave extends MultipleChildrenAPattern implements AC
 	ActiveModelStackHandlerPool stackHandlerPool;
 	
 	public AInterleave(APattern[] children,
+	            boolean allowsElements,
+                boolean allowsAttributes,
+                boolean allowsDatas,
+                boolean allowsValues,	
+                boolean allowsListPatterns,
+                boolean allowsText,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool){		
-		super(children, ruleHandlerPool);
+		super(children, 
+		        allowsElements,
+                allowsAttributes,
+                allowsDatas,
+                allowsValues,	
+                allowsListPatterns,
+                allowsText,
+		    ruleHandlerPool);
 		this.stackHandlerPool = stackHandlerPool;
 	}		
 	

@@ -53,10 +53,23 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 	
 	SGroup sgroup;
 	public AGroup(APattern[] children,
+	            boolean allowsElements,
+                boolean allowsAttributes,
+                boolean allowsDatas,
+                boolean allowsValues,	
+                boolean allowsListPatterns,
+                boolean allowsText,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
 				SGroup sgroup){	
-		super(children, ruleHandlerPool);
+		super(children, 
+		        allowsElements,
+                allowsAttributes,
+                allowsDatas,
+                allowsValues,	
+                allowsListPatterns,
+                allowsText,
+                ruleHandlerPool);
 		this.stackHandlerPool = stackHandlerPool;
 		this.sgroup = sgroup;
 	}

@@ -18,10 +18,9 @@ package serene.validation.schema.active;
 
 import java.util.List;
 
-import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 
 public interface AttributesType extends ActiveType{
+    void setAttributeContentMatches(String ns, String name, List<AAttribute> attributes);
 	boolean allowsAttributes();
-	List<AAttribute> getAttributeMatches(String namespace, String name, List<AAttribute> matches);
 }

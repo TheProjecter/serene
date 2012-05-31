@@ -39,8 +39,6 @@ import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 	
-import serene.validation.schema.active.ActiveComponentVisitor;
-
 import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.conflict.InternalConflictResolver;

@@ -38,9 +38,22 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerPattern{
     SChoicePattern schoicePattern;
 	public AChoicePattern(APattern[] children,
+        	    boolean allowsElements,
+                boolean allowsAttributes,
+                boolean allowsDatas,
+                boolean allowsValues,	
+                boolean allowsListPatterns,
+                boolean allowsText,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
 				SChoicePattern schoicePattern){		
-		super(children, ruleHandlerPool);
+		super(children, 
+		        allowsElements,
+                allowsAttributes,
+                allowsDatas,
+                allowsValues,	
+                allowsListPatterns,
+                allowsText,
+                ruleHandlerPool);
 		this.schoicePattern = schoicePattern;
 	}
 

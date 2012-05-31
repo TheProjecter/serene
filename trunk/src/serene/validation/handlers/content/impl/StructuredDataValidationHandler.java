@@ -33,6 +33,7 @@ import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.APattern;
+import serene.validation.schema.active.components.AExceptPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
@@ -97,27 +98,27 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	    return parent;
 	}
 	
-    public void handleChars(char[] chars, StructuredDataActiveType type) throws SAXException{				
+    public void handleChars(char[] chars, AExceptPattern type) throws SAXException{				
         int dataOffset = -1;    
         int valueOffset = -1; 	    
-        int listOffset = -1;
+        int listOffset = -1;        
+        matchHandler.handleCharsMatches(type);
         
-        if(type.allowsDataContent()){
-		    dataMatches.addAll(matchHandler.getDataMatches(type));						
+        if(type.allowsDatas()){
+		    dataMatches.addAll(matchHandler.getDataMatches());						
 			dataOffset = 0;
 			matches.addAll(dataMatches);
 		}	
-		if(type.allowsValueContent()){
-			valueMatches.addAll(matchHandler.getValueMatches(type));			
+		if(type.allowsValues()){		    
+			valueMatches.addAll(matchHandler.getValueMatches());			
 			valueOffset = matches.size();
 			matches.addAll(valueMatches);				
 		}	
-		if(type.allowsListPatternContent()){
-			listMatches.addAll(matchHandler.getListPatternMatches(type));
+		if(type.allowsListPatterns()){
+			listMatches.addAll(matchHandler.getListPatternMatches());
 			listOffset = matches.size();
 			matches.addAll(listMatches);	
 		}
-		
 		
 		if(dataMatches != null && dataMatches.size() > 0){
 		    for(int i = 0; i < dataMatches.size(); i++){
@@ -141,23 +142,24 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 		handleAddToParent();
 	}
 	
-	public void handleString(String value, StructuredDataActiveType type) throws SAXException{
+	public void handleString(String value, AExceptPattern type) throws SAXException{
 	    int dataOffset = -1;    
         int valueOffset = -1; 	    
         int listOffset = -1;
-                
-        if(type.allowsDataContent()){
-		    dataMatches.addAll(matchHandler.getDataMatches(type));						
+        matchHandler.handleCharsMatches(type);
+        
+        if(type.allowsDatas()){
+		    dataMatches.addAll(matchHandler.getDataMatches());						
 			dataOffset = 0;
 			matches.addAll(dataMatches);
 		}	
-		if(type.allowsValueContent()){
-			valueMatches.addAll(matchHandler.getValueMatches(type));			
+		if(type.allowsValues()){
+			valueMatches.addAll(matchHandler.getValueMatches());			
 			valueOffset = matches.size();
 			matches.addAll(valueMatches);				
 		}	
-		if(type.allowsListPatternContent()){
-			listMatches.addAll(matchHandler.getListPatternMatches(type));
+		if(type.allowsListPatterns()){
+			listMatches.addAll(matchHandler.getListPatternMatches());
 			listOffset = matches.size();
 			matches.addAll(listMatches);	
 		}

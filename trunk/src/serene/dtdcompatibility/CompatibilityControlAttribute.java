@@ -27,7 +27,7 @@ import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 class CompatibilityControlAttribute extends AAttribute{
     
     CompatibilityControlAttribute(){
-            super(-1, null, null, null, null);                
+            super(-1, null, null, null, null, null);                
     }
     
     void init(ActiveGrammarModel grammarModel,
@@ -44,7 +44,7 @@ class CompatibilityControlAttribute extends AAttribute{
     }
     
     public String toString(){
-		String s = "CompatibilityControlAttribute "+getNameClass()+" "+index+ " min "+minOccurs+" max "+maxOccurs;		
+		String s = "CompatibilityControlAttribute "+getIdentifier()+" "+index+ " min "+minOccurs+" max "+maxOccurs;		
 		return s;
 	}
 }

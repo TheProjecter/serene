@@ -179,7 +179,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	
 	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
 		
-		if(!element.allowsElementContent()) 
+		if(!element.allowsElements()) 
 			return getUnexpectedElementHandler(namespace, name);
 				
 		List<AElement> elementMatches = matchHandler.matchElement(namespace, name, element);
@@ -228,71 +228,23 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	}	
 
 	public void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{		
-		/*boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
-        if(!isIgnorable && element.allowsTextContent()){
-            hasComplexContent = true;
-            CharactersValidationHandler ceh = pool.getCharactersValidationHandler(this, this, this);
-            ceh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
-            ceh.recycle();
-            
-            // Character content binding is not done by the InternalConflictResolver 
-            // because there are no differences between different internal pattern
-            // configurations, the text is added anyway.
-            // Still it would be better to have the "normalized" version resulted 
-            // from the processing done for the validation.
-            // TODO see about what to do if chars validation results in errors
-            characterContentBinding();	
-            
-        }else if(!isIgnorable && ! element.allowsChars()){
-            unexpectedCharacterContent(inputStackDescriptor.getCurrentItemInputRecordIndex(), element);
-        }else{
-            // element.allowsDataContent()
-            //  || element.allowsValueContent()
-            //  || element.allowsListPatternContent()
-            
-            // append the content, it could be that the element following is an error
-            if(chars.length > 0){            
-                charContentBuffer.append(chars, 0, chars.length);
-                if(charContentLineNumber == -1 ){
-                    charContentSystemId = inputStackDescriptor.getSystemId();
-                    charContentPublicId = inputStackDescriptor.getPublicId();
-                    charContentLineNumber = inputStackDescriptor.getLineNumber();
-                    charContentColumnNumber = inputStackDescriptor.getColumnNumber();
-                }
-            }
-            
-            // Character content binding is not done by the InternalConflictResolver 
-            // because there are no differences between different internal pattern
-            // configurations, the text is added anyway.
-            // Still it would be better to have the "normalized" version resulted 
-            // from the processing done for the validation.
-            // TODO see about what to do if chars validation results in errors
-            characterContentBinding();	
-        } */   
-		/*// Character content binding is not done by the InternalConflictResolver 
-		// because there are no differences between different internal pattern
-		// configurations, the text is added anyway.
-		// Still it would be better to have the "normalized" version resulted 
-		// from the processing done for the validation.
-		// TODO see about what to do if chars validation results in errors
-		characterContentBinding(chars);	*/
-		
+				
 		boolean isIgnorable = characterContentDescriptor.isEmpty() || characterContentDescriptor.isSpaceOnly();
-        if(!isIgnorable && element.allowsTextContent()){            
+        if(!isIgnorable && element.allowsText()){            
             char[] cc = characterContentDescriptor.getCharArrayContent();
             setBindText(cc);
             
             hasComplexContent = true;
             inputStackDescriptor.push(characterContentDescriptor.getStartIndex());
             CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
-            cvh.handleChars(cc, (CharsActiveType)element, hasComplexContent);
+            cvh.handleChars(cc, element, hasComplexContent);
             inputStackDescriptor.pop();
             cvh.recycle();
-        }else if(!isIgnorable && !element.allowsChars()){
+        }else if(!isIgnorable && !element.allowsCharsContent()){
             unexpectedCharacterContent(characterContentDescriptor.getStartIndex(), element);            
-        }else if(!characterContentDescriptor.isEmpty() && element.allowsChars()){
+        }else if(!characterContentDescriptor.isEmpty() && element.allowsCharsContent()){
             // Content is space or more.
-            // Element allowsDataContent()
+            // Element allowsUnstructuredDataContent()
             //          || allowsValueContent()
             //          || allowsListPatternContent()          
             
@@ -315,57 +267,11 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	
 	
     public void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException{
-        /*boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
-        char[] bufferedContent = charContentBuffer.getCharsArray();
-        boolean isBufferIgnorable = bufferedContent.length == 0 || spaceHandler.isSpace(bufferedContent);
-		if(hasComplexContent){
-            if(!isIgnorable && element.allowsTextContent()){
-                CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
-                cvh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
-                cvh.recycle();
-            }else if(!isIgnorable || !isBufferIgnorable){
-                //unexpectedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), element);
-                // append the content, it could be that the element following is an error            
-                if(chars.length > 0){
-                    charContentBuffer.append(chars, 0, chars.length);
-                }
                 
-                // see that the right location is used in the messages
-                if(charContentLineNumber != -1){
-                    inputStackDescriptor.popCharsContent();
-                    inputStackDescriptor.pushCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
-                }
-                
-                CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
-                cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
-                cvh.recycle();            
-            }
-        }else{
-            if(!element.allowsChars()){
-                if(!isIgnorable || !isBufferIgnorable){
-                    unexpectedCharacterContent(inputStackDescriptor.getCurrentItemInputRecordIndex(), element);
-                }
-                return;
-            }
-            
-            // append the content, it could be that the element following is an error            
-            if(chars.length > 0) charContentBuffer.append(chars, 0, chars.length);
-            
-            // see that the right location is used in the messages
-            if(charContentLineNumber != -1){
-                inputStackDescriptor.popCharsContent();
-                inputStackDescriptor.pushCharsContent(charContentSystemId, charContentPublicId, charContentLineNumber, charContentColumnNumber);
-            }
-            
-            CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
-            cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
-            cvh.recycle();
-        }*/
-        
         boolean isIgnorable = characterContentDescriptor.isEmpty() || characterContentDescriptor.isSpaceOnly();
         if(hasComplexContent){    
             // No previous text buffered, either has been processed, or there was none and the complex content was established based on elemetn content.
-            if(element.allowsTextContent()){
+            if(element.allowsText()){
                 if(!isIgnorable){
                     char[] cc = characterContentDescriptor.getCharArrayContent();
                     setBindText(cc);  
@@ -374,11 +280,11 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
                     
                     inputStackDescriptor.push(characterContentDescriptor.getStartIndex());
                     CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
-                    cvh.handleChars(cc, (CharsActiveType)element, hasComplexContent);
+                    cvh.handleChars(cc, element, hasComplexContent);
                     inputStackDescriptor.pop();
                     cvh.recycle();
                 }
-            }else if(element.allowsChars()){
+            }else if(element.allowsCharsContent()){
                 // Since 
                 //      - hasComplexContent is set to "true" only for ALLOWED elements 
                 //      - restrictions don't allow data and elements in the same context
@@ -394,7 +300,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
                 
                         CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
                         inputStackDescriptor.push(localCharacterContentDescriptor.getStartIndex());
-                        cvh.handleChars(localCharacterContentDescriptor.getCharArrayContent(), (CharsActiveType)element, hasComplexContent);
+                        cvh.handleChars(localCharacterContentDescriptor.getCharArrayContent(), element, hasComplexContent);
                         inputStackDescriptor.pop();
                         cvh.recycle();
                     }
@@ -404,16 +310,16 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
                 
                     CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
                     if(!characterContentDescriptor.isEmpty()) inputStackDescriptor.push(characterContentDescriptor.getStartIndex());
-                    cvh.handleChars(characterContentDescriptor.getCharArrayContent(), (CharsActiveType)element, hasComplexContent);
+                    cvh.handleChars(characterContentDescriptor.getCharArrayContent(), element, hasComplexContent);
                     if(!characterContentDescriptor.isEmpty()) inputStackDescriptor.pop();
                     cvh.recycle();
                 }
             }else{
                 if(!isIgnorable) unexpectedCharacterContent(characterContentDescriptor.getStartIndex(), element);
             }
-        }else if(!isIgnorable && !element.allowsChars()){
+        }else if(!isIgnorable && !element.allowsCharsContent()){
             unexpectedCharacterContent(characterContentDescriptor.getStartIndex(), element);
-        }else if(element.allowsChars()){
+        }else if(element.allowsCharsContent()){
             if(localCharacterContentDescriptor != null){
                 localCharacterContentDescriptor.add(characterContentDescriptor.getAllIndexes());
                 char[] cc = localCharacterContentDescriptor.getCharArrayContent();
@@ -421,7 +327,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
                 
                 inputStackDescriptor.push(localCharacterContentDescriptor.getStartIndex());
                 CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
-                cvh.handleChars(cc, (CharsActiveType)element, hasComplexContent);
+                cvh.handleChars(cc, element, hasComplexContent);
                 inputStackDescriptor.pop();
                 cvh.recycle();
             }else{
@@ -430,7 +336,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
                 
                 if(!characterContentDescriptor.isEmpty())inputStackDescriptor.push(characterContentDescriptor.getStartIndex());
                 CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);                
-                cvh.handleChars(cc, (CharsActiveType)element, hasComplexContent);
+                cvh.handleChars(cc, element, hasComplexContent);
                 if(!characterContentDescriptor.isEmpty())inputStackDescriptor.pop();
                 cvh.recycle();
             }            

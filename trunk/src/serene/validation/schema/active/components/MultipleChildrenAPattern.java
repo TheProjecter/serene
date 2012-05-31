@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import java.util.List;
+
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.AbstractAPattern;
 
@@ -23,9 +25,29 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 public abstract class MultipleChildrenAPattern extends AbstractAPattern{
  	protected APattern[] children; 
+ 	
+ 	boolean allowsElements;
+	boolean allowsAttributes;
+	boolean allowsDatas;
+	boolean allowsValues;	
+	boolean allowsListPatterns;
+	boolean allowsText;
+	
 	MultipleChildrenAPattern(APattern[] children,
+	            boolean allowsElements,
+                boolean allowsAttributes,
+                boolean allowsDatas,
+                boolean allowsValues,	
+                boolean allowsListPatterns,
+                boolean allowsText,
 				ActiveModelRuleHandlerPool ruleHandlerPool){		
 		super(ruleHandlerPool);
+		this.allowsElements = allowsElements;
+	    this.allowsAttributes = allowsAttributes;
+	    this.allowsDatas = allowsDatas;
+	    this.allowsValues = allowsValues;	
+	    this.allowsListPatterns = allowsListPatterns;
+	    this.allowsText = allowsText; 
 		asParent(children);
 	}
 		
@@ -38,6 +60,72 @@ public abstract class MultipleChildrenAPattern extends AbstractAPattern{
 			}
 		}
 	}	
+	
+	
+	
+	public boolean isElementContent(){
+        return allowsElements;
+    }
+	public boolean isAttributeContent(){
+	    return allowsAttributes;
+	}
+	public boolean isDataContent(){
+	    return allowsDatas;
+	}
+	public boolean isValueContent(){
+	    return allowsValues;
+	}
+	public boolean isListPatternContent(){
+	    return allowsListPatterns;
+	}
+	public boolean isTextContent(){
+	    return allowsText;
+	}
+	public boolean isCharsContent(){
+	    return allowsDatas || allowsValues || allowsListPatterns || allowsText;
+	}	
+	public boolean isStructuredDataContent(){
+	    return allowsDatas || allowsValues || allowsListPatterns;
+	}	
+	public boolean isUnstructuredDataContent(){
+	    return allowsDatas || allowsValues;
+	}
+	
+	
+	
+	public void setElementMatches(String ns, String name, List<AElement> elements){
+	    for(APattern child : children){
+	        if(child.isElementContent()) child.setElementMatches(ns, name, elements);
+	    }
+	}
+    public void setAttributeMatches(String ns, String name, List<AAttribute> attributes){
+        for(APattern child : children){
+	        if(child.isAttributeContent()) child.setAttributeMatches(ns, name, attributes);
+	    }
+    }    
+    
+    public void setMatches(List<AText> texts){
+        for(APattern child : children){
+	        if(child.isTextContent()) child.setMatches(texts);
+	    }
+    }    
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns, List<AText> texts){
+        for(APattern child : children){
+	        if(child.isCharsContent()) child.setMatches(datas, values, listPatterns, texts);
+	    }
+    }
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns){
+        for(APattern child : children){
+	        if(child.isStructuredDataContent()) child.setMatches(datas, values, listPatterns);
+	    }
+    }
+    public void setMatches(List<AData> datas, List<AValue> values){
+        for(APattern child : children){
+	        if(child.isUnstructuredDataContent()) child.setMatches(datas, values);
+	    }
+    }
+    
+    
 	
 	public APattern[] getChildren(){
 		return children;

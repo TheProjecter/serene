@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.active.Identifier;
 
 import serene.util.AttributeInfo;
 import serene.util.NameInfo;

@@ -54,47 +54,118 @@ public class AListPattern extends UniqueChildAPattern
                                         StructuredDataActiveTypeItem{
 	ActiveModelStackHandlerPool stackHandlerPool;
 		
-	boolean allowsDataContent;
-	AData[] contextDatas;
 	
-	boolean allowsValueContent;
+	AData[] contextDatas;
+		
 	AValue[] contextValues;
 	
 	ARef[] contextRefs;
 	
 	SListPattern slist;
 	
+	boolean allowsElements;
+	boolean allowsAttributes;
+	boolean allowsDatas;
+	boolean allowsValues;	
+	boolean allowsListPatterns;
+	boolean allowsText;
+	
 	public AListPattern(APattern child,
+	                boolean allowsElements,
+                    boolean allowsAttributes,
+                    boolean allowsDatas,
+                    boolean allowsValues,	
+                    boolean allowsListPatterns,
+                    boolean allowsText,
 					ActiveModelStackHandlerPool stackHandlerPool,
 					ActiveModelRuleHandlerPool ruleHandlerPool,
 					SListPattern slist){
 		super(child, ruleHandlerPool);
+		this.allowsElements = allowsElements;
+	    this.allowsAttributes = allowsAttributes;
+	    this.allowsDatas = allowsDatas;
+	    this.allowsValues = allowsValues;	
+	    this.allowsListPatterns = allowsListPatterns;
+	    this.allowsText = allowsText;
 		this.stackHandlerPool = stackHandlerPool;
 		this.slist = slist;
 	}	
 	
-	public void setContextCache(AData[] contextDatas, AValue[] contextValues, ARef[] contextRefs){
-		this.contextDatas = contextDatas;
-		if(contextDatas != null && contextDatas.length != 0) allowsDataContent = true;
-		
-		this.contextValues = contextValues;
-		if(contextValues != null && contextValues.length != 0) allowsValueContent = true;
-		
-		this.contextRefs = contextRefs;
+	
+	public boolean allowsElements(){
+        return allowsElements;
+    }
+	public boolean allowsAttributes(){
+	    return allowsAttributes;
+	}
+	public boolean allowsDatas(){
+	    return allowsDatas;
+	}
+	public boolean allowsValues(){
+	    return allowsValues;
+	}
+	public boolean allowsListPatterns(){
+	    return allowsListPatterns;
+	}
+	public boolean allowsText(){
+	    return allowsText;
+	}
+	public boolean allowsCharsContent(){
+	    return allowsDatas || allowsValues || allowsListPatterns || allowsText;
+	}	
+	public boolean allowsStructuredDataContent(){
+	    return allowsDatas || allowsValues || allowsListPatterns;
+	}	
+	public boolean allowsUnstructuredDataContent(){
+	    return allowsDatas || allowsValues;
 	}
 	
-	public void assembleRefDefinitions(){
-		if(contextRefs != null)
-			for(int i = 0; i< contextRefs.length; i++){						
-				contextRefs[i].assembleDefinition();						
-				if(!allowsDataContent){
-					allowsDataContent = contextRefs[i].allowsDataContent();
-				}
-				if(!allowsValueContent){
-					allowsValueContent = contextRefs[i].allowsValueContent();
-				}
-			}
+	
+	
+	public void setContentMatches(List<AData> datas, List<AValue> values){
+        if(child.isUnstructuredDataContent()) child.setMatches(datas, values);
 	}
+	
+	
+	
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns, List<AText> texts){
+        listPatterns.add(this);
+    }
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns){
+        listPatterns.add(this);
+    }
+    
+    
+	
+	public boolean isElementContent(){
+        return false;
+    }
+	public boolean isAttributeContent(){
+	    return false;
+	}
+	public boolean isDataContent(){
+	    return false;
+	}
+	public boolean isValueContent(){
+	    return false;
+	}
+	public boolean isListPatternContent(){
+	    return true;
+	}
+	public boolean isTextContent(){
+	    return false;
+	}
+	public boolean isCharsContent(){
+	    return true;
+	}	
+	public boolean isStructuredDataContent(){
+	    return true;
+	}	
+	public boolean isUnstructuredDataContent(){
+	    return false;
+	}
+	
+		
 	
 	//Type
 	//--------------------------------------------------------------------------
@@ -113,44 +184,7 @@ public class AListPattern extends UniqueChildAPattern
 	
 	//DataActiveType
 	//--------------------------------------------------------------------------
-	public boolean allowsChars(){
-		return allowsDataContent 
-				|| allowsValueContent;
-	}
 	
-	public boolean allowsDataContent(){
-		return allowsDataContent;
-	}	
-	public List<AData> getDataMatches(List<AData> dataMatches){	
-		if(!allowsDataContent) return dataMatches;
-		for(AData data: contextDatas){
-			dataMatches.add(data);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsDataContent())
-					dataMatches = ref.getDataMatches(dataMatches);
-			}		
-		}
-		return dataMatches;
-	}
-	
-	public boolean allowsValueContent(){
-		return allowsValueContent;
-	}
-	public List<AValue> getValueMatches(List<AValue> valueMatches){	
-		if(!allowsValueContent) return valueMatches;
-		for(AValue avalue: contextValues){
-			valueMatches.add(avalue);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsValueContent())
-					valueMatches = ref.getValueMatches(valueMatches);
-			}		
-		}
-		return valueMatches;
-	}
 	//--------------------------------------------------------------------------
 	
 	

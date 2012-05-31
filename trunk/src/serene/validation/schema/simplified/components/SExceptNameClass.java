@@ -21,9 +21,11 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
+import serene.validation.schema.Identifier;
+
 import serene.bind.util.DocumentIndexedData;
 
-public class SExceptNameClass extends SExcept{		
+public class SExceptNameClass extends SExcept implements Identifier{		
 	SNameClass child;
 	public SExceptNameClass(SNameClass child,
 			int recordIndex, 
@@ -38,6 +40,13 @@ public class SExceptNameClass extends SExcept{
 			child.setParent(this);
 			child.setChildIndex(0);
 		}
+	}	
+	
+	public boolean matches(String namespace, String name){
+		if(child != null){			
+			if(child.matches(namespace, name)) return false;
+		}
+		return true;
 	}	
 	
 	public SNameClass getChild(){

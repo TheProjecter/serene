@@ -21,12 +21,17 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
+import serene.validation.schema.DefinitionPointer;
+
 import serene.bind.util.DocumentIndexedData;
 
-public class SAttribute extends AbstractMultipleChildrenPattern{
+public class SAttribute extends AbstractMultipleChildrenPattern implements DefinitionPointer{
 	SNameClass nameClass;
 	int defaultValueRecordIndex;
-	public SAttribute(SNameClass nameClass, 
+	
+	int definitionIndex;
+	public SAttribute(int definitionIndex,
+	                            SNameClass nameClass, 
 								SPattern[] children,
                                 int defaultValue,
 								int recordIndex, 
@@ -34,7 +39,12 @@ public class SAttribute extends AbstractMultipleChildrenPattern{
 		super(children, recordIndex, documentIndexedData);
 		this.nameClass = nameClass;
         this.defaultValueRecordIndex = defaultValue;
+        this.definitionIndex = definitionIndex;
 	}	
+	
+	public int getDefinitionIndex(){
+	    return definitionIndex;
+	}
 	
 	public SNameClass getNameClass(){
 		return nameClass;

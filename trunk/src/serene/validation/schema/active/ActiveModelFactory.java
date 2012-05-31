@@ -26,12 +26,9 @@ import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
 import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-public class ActiveModelFactory{	
-	ActiveGrammarModelFactory grammarModelFactory;
-	
-	public ActiveModelFactory(){		
-		grammarModelFactory = new ActiveGrammarModelFactory();
-	}
+import serene.validation.schema.active.components.ActiveComponentBuilder;
+
+public class ActiveModelFactory{
 	
 	public ActiveModel createActiveModel(SimplifiedModel simplifiedModel,		
 										ActiveModelRuleHandlerPool ruleHandlerPool,
@@ -39,9 +36,13 @@ public class ActiveModelFactory{
 										ActiveModelConflictHandlerPool conflictHandlerPool,
 										ActiveModelPool pool){
 				
-		ActiveGrammarModel activeGrammarModel = grammarModelFactory.createActiveGrammarModel(simplifiedModel,
-																								ruleHandlerPool,
-																								stackHandlerPool);
+		ActiveGrammarModel activeGrammarModel = new ActiveGrammarModel(simplifiedModel.getStartElementIndex(),
+                                                            simplifiedModel.getRefDefinitionTopPattern(),		                    
+                                                            simplifiedModel.getElementDefinitions(),
+                                                            simplifiedModel.getAttributeDefinitions(),
+                                                            simplifiedModel.getExceptPatternDefinitions(),
+                                                            new ActiveComponentBuilder(stackHandlerPool,
+                                                                                        ruleHandlerPool));
 		return new ActiveModel(activeGrammarModel,
 							ruleHandlerPool,
 							stackHandlerPool,

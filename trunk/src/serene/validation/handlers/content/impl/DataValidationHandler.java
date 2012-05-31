@@ -34,6 +34,7 @@ import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.APattern;
+import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
@@ -100,17 +101,18 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	    return parent;
 	}
 	
-	public void handleChars(char[] chars, DataActiveType type) throws SAXException{
+	public void handleChars(char[] chars, AListPattern type) throws SAXException{
 	   int dataOffset = -1;  
        int valueOffset = -1;
+       matchHandler.handleCharsMatches(type);
         
-	   if(type.allowsDataContent()){
-		    dataMatches.addAll(matchHandler.getDataMatches(type));						
+	   if(type.allowsDatas()){
+		    dataMatches.addAll(matchHandler.getDataMatches());						
 			dataOffset = 0;
 			matches.addAll(dataMatches);
 		}	
-		if(type.allowsValueContent()){
-			valueMatches.addAll(matchHandler.getValueMatches(type));			
+		if(type.allowsValues()){
+			valueMatches.addAll(matchHandler.getValueMatches());			
 			valueOffset = matches.size();
 			matches.addAll(valueMatches);				
 		}	
@@ -131,17 +133,18 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 		handleAddToParent();
 	}
 		
-	public void handleString(String value, DataActiveType type) throws SAXException{	    	    
+	public void handleString(String value, AListPattern type) throws SAXException{	    	    
 	    int dataOffset = -1;  
         int valueOffset = -1;
+        matchHandler.handleCharsMatches(type);
         
-		if(type.allowsDataContent()){
-			dataMatches.addAll(matchHandler.getDataMatches(type));
+		if(type.allowsDatas()){
+			dataMatches.addAll(matchHandler.getDataMatches());
 			dataOffset = 0;
 			matches.addAll(dataMatches);			
 		}	
-		if(type.allowsValueContent()){
-			valueMatches.addAll(matchHandler.getValueMatches(type));
+		if(type.allowsValues()){
+			valueMatches.addAll(matchHandler.getValueMatches());
 			valueOffset = matches.size();
 			matches.addAll(valueMatches);
 		}

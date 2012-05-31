@@ -216,13 +216,13 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	//**************************************************************************
 	//START PATTERN BUILDING ***************************************************
 	//**************************************************************************	
-	public void buildElement(int recordIndex, DocumentIndexedData documentIndexedData){
-		SElement e = new SElement(getLastContentNameClass(), getLastContentPattern(), recordIndex, documentIndexedData);
+	public void buildElement(int definitionIndex, int recordIndex, DocumentIndexedData documentIndexedData){
+		SElement e = new SElement(definitionIndex, getLastContentNameClass(), getLastContentPattern(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(e);
 	}
-	public void buildAttribute(int defaultValue, int recordIndex, DocumentIndexedData documentIndexedData){
-		SAttribute a = new SAttribute(getLastContentNameClass(), getContentPatterns(), defaultValue, recordIndex, documentIndexedData);
+	public void buildAttribute(int definitionIndex, int defaultValue, int recordIndex, DocumentIndexedData documentIndexedData){
+		SAttribute a = new SAttribute(definitionIndex, getLastContentNameClass(), getContentPatterns(), defaultValue, recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(a);
 	}
@@ -358,8 +358,8 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		clearContent();
 		addToCurrentLevel(enc);
 	}
-	public void buildExceptPattern(int recordIndex, DocumentIndexedData documentIndexedData){
-		SExceptPattern ep = new SExceptPattern(getLastContentPattern(), recordIndex, documentIndexedData);
+	public void buildExceptPattern(int definitionIndex, int recordIndex, DocumentIndexedData documentIndexedData){
+		SExceptPattern ep = new SExceptPattern(definitionIndex, getLastContentPattern(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(ep);
 	}

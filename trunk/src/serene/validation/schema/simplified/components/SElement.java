@@ -24,16 +24,26 @@ import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SNameClass;
 
+import serene.validation.schema.DefinitionPointer;
+
 import serene.bind.util.DocumentIndexedData;
 
-public class SElement extends AbstractUniqueChildPattern{
+public class SElement extends AbstractUniqueChildPattern implements DefinitionPointer{
 	SNameClass nameClass;
-	public SElement(SNameClass nameClass,
+	
+	int definitionIndex;
+	public SElement(int definitionIndex,
+	            SNameClass nameClass,
 				SPattern child,
 				int recordIndex, 
 				DocumentIndexedData documentIndexedData){		
 		super(child, recordIndex, documentIndexedData);
-		this.nameClass  = nameClass;
+		this.nameClass = nameClass;
+		this.definitionIndex = definitionIndex;
+	}
+	
+	public int getDefinitionIndex(){
+	    return definitionIndex;
 	}
 	
 	public SNameClass getNameClass(){

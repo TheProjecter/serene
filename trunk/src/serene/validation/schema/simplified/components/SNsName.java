@@ -35,6 +35,11 @@ public class SNsName extends AbstractWildCard{
 		this.ns = ns;
 	}
 	
+	public boolean matches(String namespace, String name){
+		if(child != null) return ns.equals(namespace) && child.matches(namespace, name);
+		return ns.equals(namespace);
+	}
+	
 	public void accept(SimplifiedComponentVisitor v){
 		v.visit(this);
 	}	

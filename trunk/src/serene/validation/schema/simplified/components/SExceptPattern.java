@@ -21,15 +21,21 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
+import serene.validation.schema.DefinitionPointer;
+
 import serene.bind.util.DocumentIndexedData;
 
-public class SExceptPattern extends SExcept{
+public class SExceptPattern extends SExcept implements DefinitionPointer{
 	SPattern child;
-	public SExceptPattern(SPattern child,
+	
+	int definitionIndex;
+	public SExceptPattern(int definitionIndex,
+	        SPattern child,
 			int recordIndex, 
 			DocumentIndexedData documentIndexedData){
 		super(recordIndex, documentIndexedData);
-		asParent(child);
+		this.definitionIndex = definitionIndex;
+		asParent(child);		
 	}	
 	
 	protected void asParent(SPattern child){
@@ -40,6 +46,10 @@ public class SExceptPattern extends SExcept{
 		}
 	}	
 				
+	public int getDefinitionIndex(){
+	    return definitionIndex;
+	}
+	
 	public SPattern getChild(){
 		return child;
 	}

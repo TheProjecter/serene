@@ -19,9 +19,7 @@ package serene.validation.schema.active.util;
 import java.util.Arrays;
 
 import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ANameClass;
 import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.components.AExceptNameClass;
 
 class LevelIntermediary extends Level{
 	Level parent;
@@ -31,24 +29,17 @@ class LevelIntermediary extends Level{
 		child = new LevelBottom(this);
 	}
 		
-	LevelIntermediary(int ncIndex,
-						int ncSize,
-						ANameClass[] nameClasses,
+	LevelIntermediary(
 						int ptIndex,
 						int ptSize,
 						APattern[] patterns,
-						AExceptNameClass exceptNameClass,
 						AExceptPattern exceptPattern, 
 						Level parent){		
 		super();
-		this.parent = parent;		
-		this.ncIndex = ncIndex;		
-		this.ncSize = ncSize;		
-		this.nameClasses = nameClasses;
+		this.parent = parent;
 		this.ptIndex = ptIndex;
 		this.ptSize = ptSize;	
 		this.patterns = patterns;
-		this.exceptNameClass  = exceptNameClass;
 		this.exceptPattern = exceptPattern;
 		child = new LevelBottom(this);	
 	}

@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import java.util.List;
+
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.ValidationContext;
 
@@ -55,6 +57,34 @@ public class AValue extends DatatypedCharsAPattern{
 		this.svalue = svalue;
 	}
 
+	
+	public boolean isValueContent(){
+	    return true;
+	}
+	public boolean isCharsContent(){
+	    return true;
+	}	
+	public boolean isStructuredDataContent(){
+	    return true;
+	}
+	public boolean isUnstructuredDataContent(){
+	    return true;
+	}
+	
+	
+	
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns, List<AText> texts){
+        values.add(this);
+    }
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns){
+        values.add(this);
+    }
+    public void setMatches(List<AData> datas, List<AValue> values){
+        values.add(this);
+    }
+    
+    
+	
 	public boolean valueMatches(char[] chars, ValidationContext validationContext){
 		Object o1 = datatype.createValue(charContent, validationContext);
         Object o2 = datatype.createValue(new String(chars), validationContext);

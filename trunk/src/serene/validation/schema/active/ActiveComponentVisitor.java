@@ -17,8 +17,6 @@ limitations under the License.
 package serene.validation.schema.active;
 
 import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.components.AExceptNameClass;
-
 
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
@@ -34,16 +32,9 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AGrammar;
 
-
-import serene.validation.schema.active.components.AName;
-import serene.validation.schema.active.components.AAnyName;
-import serene.validation.schema.active.components.ANsName;
-import serene.validation.schema.active.components.AChoiceNameClass;
-
 public interface ActiveComponentVisitor{
 	
 	void visit(AExceptPattern component);
-	void visit(AExceptNameClass component);
 	
 	void visit(AElement component);
 	void visit(AAttribute component);
@@ -58,10 +49,5 @@ public interface ActiveComponentVisitor{
 	void visit(AValue component);
 	void visit(AData component);
 	void visit(AGrammar component);
-	
-	void visit(AName component);
-	void visit(AAnyName component);
-	void visit(ANsName component);
-	void visit(AChoiceNameClass component);	
 	
 }
