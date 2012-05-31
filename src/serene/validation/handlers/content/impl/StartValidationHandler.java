@@ -34,6 +34,7 @@ class StartValidationHandler extends ElementValidationHandler{
 		super();		
 	}
 		
+	
 	public void recycle(){		
 		if(stackHandler != null){
 			stackHandler.recycle();
@@ -57,7 +58,7 @@ class StartValidationHandler extends ElementValidationHandler{
     
     
     public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
-		if(!element.allowsElementContent()){
+		if(!element.allowsElements()){
 			handleUnexpectedElementHandler(namespace, name, restrictToFileName);
             reportContextErrors(restrictToFileName, inputStackDescriptor);
             return pool.getElementDefaultHandler(this);            

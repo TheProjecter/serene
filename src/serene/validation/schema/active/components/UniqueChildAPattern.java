@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import java.util.List;
+
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.AbstractAPattern;
 
@@ -32,6 +34,28 @@ public abstract class UniqueChildAPattern extends AbstractAPattern{
 		asParent(child);
 	}
 		
+	
+	public void setElementMatches(String ns, String name, List<AElement> elements){
+	    if(child.isElementContent()) child.setElementMatches(ns, name, elements);
+	}
+    public void setAttributeMatches(String ns, String name, List<AAttribute> attributes){
+	    if(child.isAttributeContent()) child.setAttributeMatches(ns, name, attributes);
+    }    
+    
+    public void setMatches(List<AText> texts){
+        if(child.isTextContent()) child.setMatches(texts);
+    }    
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns, List<AText> texts){
+        if(child.isCharsContent()) child.setMatches(datas, values, listPatterns, texts);
+    }
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns){
+        if(child.isStructuredDataContent()) child.setMatches(datas, values, listPatterns);
+    }
+    public void setMatches(List<AData> datas, List<AValue> values){
+        if(child.isUnstructuredDataContent()) child.setMatches(datas, values);
+    }
+    
+    
 	protected void asParent(APattern child){		
 		this.child = child;
 		if(child != null){

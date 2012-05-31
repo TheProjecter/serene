@@ -17,7 +17,6 @@ limitations under the License.
 package serene.validation.schema.active.util;
 
 import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ANameClass;
 
 class LevelTop extends Level{
 	

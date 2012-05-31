@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import java.util.List;
+
 import serene.validation.schema.active.components.AbstractAPattern;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
@@ -27,9 +29,60 @@ public abstract class NoChildrenAPattern extends AbstractAPattern{
 		super(ruleHandlerPool);
 	}
 	
+	public void setElementMatches(String ns, String name, List<AElement> elements){
+	    throw new IllegalStateException();
+	}
+    public void setAttributeMatches(String ns, String name, List<AAttribute> attributes){
+	    throw new IllegalStateException();
+    }    
+    
+    public void setMatches(List<AText> texts){
+        throw new IllegalStateException();
+    }    
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns, List<AText> texts){       
+        throw new IllegalStateException();
+    }
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns){
+        throw new IllegalStateException();
+    }
+    public void setMatches(List<AData> datas, List<AValue> values){
+        throw new IllegalStateException();
+    }
+	
 	boolean isInterleaved(){
 		throw new UnsupportedOperationException();
 	}		
+	
+	
+	
+	public boolean isElementContent(){
+        return false;
+    }
+	public boolean isAttributeContent(){
+	    return false;
+	}
+	public boolean isDataContent(){
+	    return false;
+	}
+	public boolean isValueContent(){
+	    return false;
+	}
+	public boolean isListPatternContent(){
+	    return false;
+	}
+	public boolean isTextContent(){
+	    return false;
+	}
+	public boolean isCharsContent(){
+	    return false;
+	}	
+	public boolean isStructuredDataContent(){
+	    return false;
+	}	
+	public boolean isUnstructuredDataContent(){
+	    return false;
+	}
+	
 	public String toString(){
 		String s = "NoChildrenAPattern";
 		return s;

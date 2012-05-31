@@ -19,7 +19,6 @@ package serene.validation.handlers.structure.util;
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.components.AExceptNameClass;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.AChoicePattern;
@@ -34,11 +33,6 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AGrammar;
 
-
-import serene.validation.schema.active.components.AName;
-import serene.validation.schema.active.components.AAnyName;
-import serene.validation.schema.active.components.ANsName;
-import serene.validation.schema.active.components.AChoiceNameClass;
 
 import serene.validation.schema.active.ActiveComponentVisitor;
 
@@ -63,7 +57,7 @@ public class ChildFinder implements ActiveComponentVisitor{
 		
 	}
 	
-	public void visit(AExceptNameClass component){}		
+
 	
 	public void visit(AListPattern list){
 		Rule localParent = list.getParent();		
@@ -114,11 +108,7 @@ public class ChildFinder implements ActiveComponentVisitor{
 		localParent.accept(this);
 	}
 	
-	public void visit(AName component){}
-	public void visit(AAnyName component){}
-	public void visit(ANsName component){}
-	public void visit(AChoiceNameClass component){}	
-	
+
 	public void visit(AElement element){		
 		Rule localParent = element.getParent();		
 		if(parent == localParent){

@@ -499,8 +499,8 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 					message += ".";
 					errorDispatcher.error(new SAXParseException(message, null));
 				}else{
-					//report error define
-                    String reportName = remainingName.substring(0, remainingName.length()-1);//remove marker
+					//report error define					
+                    String reportName = remainingName.substring(0, remainingName.length());//remove marker
 					String message = "Simplification 4.7 error. "
 					+"Included grammar contains no definition with name \""+reportName+"\" to match the content of <"+include.getQName()+"> at "+include.getLocation(restrictToFileName)+":";
 					ArrayList<Definition> defines = overrideDefinitions.get(remainingName);

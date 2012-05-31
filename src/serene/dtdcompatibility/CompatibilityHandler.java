@@ -77,9 +77,9 @@ import serene.validation.schema.active.ActiveModelPool;
 import serene.validation.schema.active.ActiveModel;
 import serene.validation.schema.active.ActiveGrammarModel;
 
+import serene.validation.schema.Identifier;
 
 import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.Identifier;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.APattern;
@@ -459,7 +459,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                     errorDispatcher.error(new AttributeDefaultValueException(message, null));
                 }
                 
-                attributeDefaultValueModel.addAttributeInfo(nameClass, activeModel.getActiveNameClass(element), 
+                attributeDefaultValueModel.addAttributeInfo(nameClass, element.getNameClass(), 
                                                     currentAttributesDVList.toArray(new AttributeInfo[currentAttributesDVList.size()]));
                     
             }            
@@ -541,7 +541,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 isRequiredBranch.add(true);
                 needsOptionalChoice.add(true);
                 
-                ccAttribute.init(grammarModel.getIndex(attribute), attribute);
+                ccAttribute.init(attribute.getDefinitionIndex(), attribute);
                 //inputStackDescriptor.pushAttribute(null, null, -1, -1, null, null, attribute.getQName());
                 simulateInput(attribute);                
                 defaultValueErrorHandler.setAttribute(attribute.getQName(), attribute.getLocation(restrictToFileName));                

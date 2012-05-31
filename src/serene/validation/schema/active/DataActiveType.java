@@ -23,12 +23,9 @@ import serene.validation.schema.active.components.AValue;
 
 import org.relaxng.datatype.ValidationContext;
 
-public interface DataActiveType extends ActiveType{
-	boolean allowsChars();
-	
-	boolean allowsDataContent();	
-	List<AData> getDataMatches(List<AData> charsMatches);
-	
-	boolean allowsValueContent();	
-	List<AValue> getValueMatches(List<AValue> valueMatches);
+public interface DataActiveType extends ActiveType{		
+    void setContentMatches(List<AData> datas, List<AValue> values);
+	boolean allowsDatas();
+	boolean allowsValues();
+    boolean allowsUnstructuredDataContent();	
 }

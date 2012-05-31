@@ -19,7 +19,7 @@ package sereneWrite;
 import serene.validation.schema.active.ActiveComponent;
 
 import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.components.AExceptNameClass;
+
 
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
@@ -35,11 +35,6 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AGrammar;
 
-import serene.validation.schema.active.components.AName;
-import serene.validation.schema.active.components.AAnyName;
-import serene.validation.schema.active.components.ANsName;
-import serene.validation.schema.active.components.AChoiceNameClass;
-
 import serene.validation.schema.active.util.AbstractActiveComponentVisitor;
 
 public class ActiveComponentWriter extends AbstractActiveComponentVisitor{
@@ -48,6 +43,13 @@ public class ActiveComponentWriter extends AbstractActiveComponentVisitor{
 	
 	public void write(ActiveComponent ac, MessageWriter debugWriter){
 		this.debugWriter = debugWriter;
+		debugWriter.write("activeComponentWriter WRITE: ");
+		tab = 0;
+		ac.accept(this);
+	}
+	
+	public void write(ActiveComponent ac){
+		debugWriter = new MessageWriter();
 		debugWriter.write("activeComponentWriter WRITE: ");
 		tab = 0;
 		ac.accept(this);
@@ -68,48 +70,13 @@ public class ActiveComponentWriter extends AbstractActiveComponentVisitor{
 		ActiveComponent child = exceptPattern.getChild();
 		if(child != null) child.accept(this);
 		tab--;
-	}
-	public void visit(AExceptNameClass exceptNameClass){
-		tab++;
-		debugWriter.write(getTabString() + exceptNameClass.toString());
-		ActiveComponent child = exceptNameClass.getChild();
-		if(child != null) child.accept(this);		
-		tab--;
-	}
-		
-	public void visit(AName name){
-		tab++;
-		debugWriter.write(getTabString() + name.toString());
-		tab--;
-	}
-	public void visit(AAnyName anyName){
-		tab++;
-		debugWriter.write(getTabString() + anyName.toString());
-		ActiveComponent child = anyName.getChild();
-		if(child != null) child.accept(this);
-		tab--;
-	}
-	public void visit(ANsName nsName){
-		tab++;
-		debugWriter.write(getTabString() + nsName.toString());
-		ActiveComponent child = nsName.getChild();
-		if(child != null) child.accept(this);
-		tab--;
-	}
-	public void visit(AChoiceNameClass choice){
-		tab++;
-		debugWriter.write(getTabString() + choice.toString());
-		ActiveComponent[] children = choice.getChildren();
-		if(children != null) next(children);
-		tab--;
 	}	
 	
 		
 	public void visit(AElement element){
 		tab++;
 		debugWriter.write(getTabString() + element.toString());
-		ActiveComponent nameClass = element.getNameClass();
-		if(nameClass != null) nameClass.accept(this);
+		
 		ActiveComponent child = element.getChild();
 		if(child != null) child.accept(this);	
 		tab--;
@@ -117,8 +84,7 @@ public class ActiveComponentWriter extends AbstractActiveComponentVisitor{
 	public void visit(AAttribute attribute){
 		tab++;
 		debugWriter.write(getTabString() + attribute.toString());
-		ActiveComponent nameClass = attribute.getNameClass();
-		if(nameClass != null) nameClass.accept(this);		
+		
 		ActiveComponent child = attribute.getChild();
 		if(child != null) child.accept(this);		
 		tab--;

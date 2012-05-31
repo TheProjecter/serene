@@ -40,6 +40,10 @@ public class SName extends SNameClass{
 		this.addedBySimplification = addedBySimplification;
 	}
 		
+	public boolean matches(String namespace, String name){		
+		return ns.equals(namespace) && localPart.equals(name);
+	}
+	
 	public void accept(SimplifiedComponentVisitor v){
 		v.visit(this);
 	}	

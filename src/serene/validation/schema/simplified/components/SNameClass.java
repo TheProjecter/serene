@@ -16,9 +16,11 @@ limitations under the License.
 
 package serene.validation.schema.simplified.components;
 
+import serene.validation.schema.Identifier;
+
 import serene.bind.util.DocumentIndexedData;
 
-public abstract class SNameClass extends AbstractSimplifiedComponent{	
+public abstract class SNameClass extends AbstractSimplifiedComponent implements Identifier{	
 		
 	public SNameClass(int recordIndex, 
 			DocumentIndexedData documentIndexedData){

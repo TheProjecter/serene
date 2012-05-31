@@ -22,6 +22,8 @@ import org.relaxng.datatype.DatatypeLibrary;
 
 import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.components.SElement;
+import serene.validation.schema.simplified.components.SExceptPattern;
 
 import sereneWrite.SimplifiedComponentWriter;
 
@@ -29,16 +31,30 @@ public class SimplifiedModel{
     
 	SPattern[] startTopPattern;
 	SPattern[] refDefinitionTopPattern;
+	
+	int startElementIndex;
+    SElement[] selements;
+    SAttribute[] sattributes;
+    SExceptPattern[] sexceptPatterns;
 
 	RecursionModel recursionModel;
 	
 	public SimplifiedModel(SPattern[] startTopPattern,
 								SPattern[] refDefinitionTopPattern,
+								int startElementIndex,
+								SElement[] selements,
+								SAttribute[] sattributes,
+								SExceptPattern[] sexceptPatterns,
 								RecursionModel recursionModel){
 		this.startTopPattern = startTopPattern;
 		this.refDefinitionTopPattern = refDefinitionTopPattern;
 		this.recursionModel = recursionModel;
-		
+	
+		this.startElementIndex = startElementIndex;
+        this.selements = selements;
+        this.sattributes = sattributes;
+        this.sexceptPatterns = sexceptPatterns;
+        
 		/*SimplifiedComponentWriter scw = new SimplifiedComponentWriter();
 		for(SPattern stp : startTopPattern){
 		    scw.write(stp);
@@ -53,12 +69,29 @@ public class SimplifiedModel{
 	public SPattern[] getRefDefinitionTopPattern(){
 		return refDefinitionTopPattern;
 	}
-	    
+	 
+	public int getStartElementIndex(){
+	    return startElementIndex;
+	}
+	
+	public SElement[] getElementDefinitions(){
+	    return selements;
+	}
+	
+	public SAttribute[] getAttributeDefinitions(){
+	    return sattributes;
+	}
+	
+	public SExceptPattern[] getExceptPatternDefinitions(){
+	    return sexceptPatterns;
+	}
+	
 	public RecursionModel getRecursionModel(){
 		return recursionModel;
 	}
 	
 	public boolean hasRecursions(){
 		return recursionModel.hasRecursions();
-	}
+	}	
+	
 }

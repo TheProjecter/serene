@@ -17,6 +17,7 @@ limitations under the License.
 package serene.validation.schema.active.components;
 
 import java.util.Map;
+import java.util.List;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.components.SAttribute;
@@ -26,9 +27,6 @@ import serene.validation.schema.active.RuleVisitor;
 import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.ActiveGrammarModel;
 
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.ANameClass;
-import serene.validation.schema.active.components.NamedActiveTypeItem;
 
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
@@ -43,16 +41,20 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
+import serene.validation.schema.Identifier;
+
 import serene.bind.util.Queue;
 
-public class AAttribute extends MarkupAPattern  implements NamedActiveTypeItem{
+public class AAttribute extends MarkupAPattern{
     protected SAttribute sattribute;	
 	public AAttribute(int index,
+	        Identifier identifier,
 				ActiveGrammarModel grammarModel,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
 				SAttribute sattribute){		
 		super(index,
+		        identifier,
 				null, 
 				grammarModel,  
 				stackHandlerPool, 
@@ -61,47 +63,46 @@ public class AAttribute extends MarkupAPattern  implements NamedActiveTypeItem{
 	}	
 	
 	
-	//ActiveNameClassPointer
-	//--------------------------------------------------------------------------
-	//int getNameClassIndex() super
-	public ANameClass getNameClass(){
-		return grammarModel.getAttributeNameClass(index);
-	}  
-	//--------------------------------------------------------------------------
+	public boolean isAttributeContent(){
+	    return true;
+	}
 	
+	
+    public void setContentMatches(List<AText> texts){
+        if(child.isTextContent()) child.setMatches(texts);
+    }    
+    public void setContentMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns, List<AText> texts){
+        if(child.isCharsContent()) child.setMatches(datas, values, listPatterns, texts);
+    }
+    public void setContentMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns){
+        if(child.isStructuredDataContent()) child.setMatches(datas, values, listPatterns);
+    }
+    public void setContentMatches(List<AData> datas, List<AValue> values){
+        if(child.isUnstructuredDataContent()) child.setMatches(datas, values);
+	}
+	
+	
+	
+    public void setAttributeMatches(String ns, String name, List<AAttribute> attributes){
+	    if(identifier.matches(ns, name)) attributes.add(this);
+    } 
+    
 	//ActiveDefinitionPointer
 	//--------------------------------------------------------------------------
 	//int getDefinitionIndex()super
-	//void assembleDefinition() super
-	//void releaseDefinition() super	
+	public void assembleDefinition(){
+		asParent(grammarModel.getAttributeDefinitionTopPattern(index));
+	}
+	public void releaseDefinition(){
+		if(child != null){
+			child.setReleased();
+			grammarModel.recycleAttributeDefinitionTopPattern(index, child);
+			child = null;
+		}	
+	}
 	//--------------------------------------------------------------------------
-	protected void setDefinition(){
-		definition = grammarModel.getAttributeDefinition(index);
-		asParent(definition.getTopPattern());
-	}
-	protected void assembleRefDefinitions(){
-		if(contextRefs != null)
-			for(int i = 0; i< contextRefs.length; i++){						
-				contextRefs[i].assembleDefinition();		
-				
-				if(!allowsDataContent){
-					allowsDataContent = contextRefs[i].allowsDataContent();
-				}
-				if(!allowsValueContent){
-					allowsValueContent = contextRefs[i].allowsValueContent();
-				}
-				if(!allowsListPatternContent){
-					allowsListPatternContent = contextRefs[i].allowsListPatternContent();
-				}
-				if(!allowsTextContent){
-					allowsTextContent = contextRefs[i].allowsTextContent();
-				}
-			}
-		if(allowsListPatternContent)
-			for(int i = 0; i < contextListPatterns.length; i++){
-				contextListPatterns[i].assembleRefDefinitions();
-			}
-	}
+	
+	
 	
 	//resetContextCache() super
 	//releaseRefDefinitions() super
@@ -122,7 +123,7 @@ public class AAttribute extends MarkupAPattern  implements NamedActiveTypeItem{
 	
 	//DataActiveType
 	//--------------------------------------------------------------------------
-	//boolean allowsDataContent() super
+	//boolean allowsUnstructuredDataContent() super
 	//List<AData> getDataMatches(String value) super	
 	//boolean allowsValueContent() super
 	//List<AValue> getValueMatches(String value) super
@@ -139,14 +140,6 @@ public class AAttribute extends MarkupAPattern  implements NamedActiveTypeItem{
 	//boolean allowsTextContent() super
 	//List<AText> getTextPatterns() super
 	//--------------------------------------------------------------------------
-	
-	//NamedActiveTypeItem
-	//--------------------------------------------------------------------------
-	public boolean nameClassMatches(String namespace, String name){
-		return grammarModel.getAttributeNameClass(index).matches(namespace, name);
-	} 
-	//--------------------------------------------------------------------------
-	
 	
 	public String getQName(){
 		return sattribute.getQName();
@@ -191,7 +184,7 @@ public class AAttribute extends MarkupAPattern  implements NamedActiveTypeItem{
 	}
 	
 	public String toString(){
-		String s = "AAttribute "+getNameClass()+" "+index+ " min "+minOccurs+" max "+maxOccurs;		
+		String s = "AAttribute "+identifier+" "+index+ " min "+minOccurs+" max "+maxOccurs;		
 		return s;
 	}
 	

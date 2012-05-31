@@ -19,22 +19,16 @@ package serene.validation.schema.active.util;
 import java.util.Arrays;
 
 import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ANameClass;
-import serene.validation.schema.active.components.AExceptNameClass;
+
 import serene.validation.schema.active.components.AExceptPattern;
 
 public abstract class Level{	
 	Level child;
 	
-	ANameClass[] nameClasses;
-	int ncIndex;
-	int ncSize;
-	
+
 	APattern[] patterns;
 	int ptIndex;
 	int ptSize;
-		
-	AExceptNameClass exceptNameClass;
 	
 	AExceptPattern exceptPattern;
 	
@@ -44,9 +38,6 @@ public abstract class Level{
 		ptSize = 1;
 		patterns = new APattern[ptSize];
 		
-		ncIndex = -1;
-		ncSize = 1;
-		nameClasses = new ANameClass[ncSize];		
 	}
 		
 	public static Level getTopInstance(){
@@ -95,53 +86,6 @@ public abstract class Level{
 	
 	
 	
-	public void add(ANameClass nc){
-		if(++ncIndex == ncSize){
-			ANameClass[] increased = new ANameClass[++ncSize];
-			System.arraycopy(nameClasses, 0, increased, 0, ncIndex);
-			nameClasses = increased;
-		}
-		nameClasses[ncIndex] = nc;		
-	}
-	public void add(ANameClass[] nc){
-		int length = nc.length;
-		if(ncIndex + length >= ncSize){
-			ncSize += length;
-			ANameClass[] increased = new ANameClass[ncSize];
-			System.arraycopy(nameClasses, 0, increased, 0, ncIndex+1);
-			nameClasses = increased;
-		}
-		System.arraycopy(nc, 0, nameClasses, ncIndex+1, length);
-	}
-	public ANameClass[] getNameClasses(){
-		if(ncIndex == -1)return null;
-		return Arrays.copyOf(nameClasses, ncIndex+1);		
-	}
-	public ANameClass getLastNameClass(){
-		if(ncIndex < 0) return null;
-		return nameClasses[ncIndex];
-	}	
-	public int getNameClassesCount(){
-		return ncIndex+1;
-	}
-	void clearNameClasses(){			
-		ncIndex = -1;
-		Arrays.fill(nameClasses, null);
-	}
-	
-
-			
-	
-	public void add(AExceptNameClass enc){
-		this.exceptNameClass = enc;
-	}		
-	public AExceptNameClass getExceptNameClass(){
-		return exceptNameClass;
-	}	
-	void clearExceptNameClass(){
-		exceptNameClass = null;
-	}	
-	
 	
 	public void add(AExceptPattern ep){
 		this.exceptPattern = ep;
@@ -156,9 +100,7 @@ public abstract class Level{
 	
 	public void clear(){
 		if(ptIndex>=0)clearPatterns();
-		if(ncIndex>=0)clearNameClasses();
 		exceptPattern = null;
-		exceptNameClass = null;		
 	}
 	
 	public void clearAll(){
@@ -169,9 +111,7 @@ public abstract class Level{
 	abstract String allToString();	
 	
 	protected String componentsToString(){
-		return "nameClasses "+ncIndex+" "+Arrays.toString( nameClasses)
-		+"patterns"+ptIndex+" "+ Arrays.toString(patterns)	
-		+ exceptNameClass
+		return "patterns"+ptIndex+" "+ Arrays.toString(patterns)	
 		+ exceptPattern;
 	} 
 }

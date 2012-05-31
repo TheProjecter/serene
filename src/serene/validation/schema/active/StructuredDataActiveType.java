@@ -18,9 +18,12 @@ package serene.validation.schema.active;
 
 import java.util.List;
 
+import serene.validation.schema.active.components.AData;
+import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AListPattern;
 
 public interface StructuredDataActiveType extends DataActiveType{
-	boolean allowsListPatternContent();	
-	List<AListPattern> getListPatterns(List<AListPattern> listPatterns);
+    void setContentMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns);
+	boolean allowsListPatterns();
+    boolean allowsStructuredDataContent();	
 }

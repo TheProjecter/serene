@@ -43,6 +43,15 @@ public class SChoiceNameClass extends SNameClass{
 		}
 	}	
 	
+	public boolean matches(String namespace, String name){
+		if(children != null){
+			for(SNameClass child : children){
+				if(child.matches(namespace, name)) return true;
+			}
+		}
+		return false;
+	}		
+	
 	public SNameClass[] getChildren(){
 		return children;
 	}	

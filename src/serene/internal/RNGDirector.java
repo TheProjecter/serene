@@ -18,6 +18,7 @@ limitations under the License.
 package serene.internal;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 
 import javax.xml.XMLConstants;
 
@@ -40,13 +41,14 @@ import serene.validation.schema.simplified.SimplifiedModel;
 import serene.bind.AttributeTaskFactory;
 import serene.bind.ElementTaskFactory;
 
+import serene.util.ObjectIntHashMap;
 
 import serene.Constants;
 
 
 class RNGDirector{
     //********************
-    // ref indexing
+    // ref elementIndexing
     //********************
     final int PATTERN = 0;
     final int PARAM = 1;
@@ -79,6 +81,12 @@ class RNGDirector{
 	SPattern includeStartTopPattern;
 	SPattern externalRefStartTopPattern;
 	SPattern[] refDefinitionTopPattern;
+	
+	ArrayList<SElement> selements;
+	int elementIndex;
+	
+	ArrayList<SAttribute> sattributes;
+	int attributeIndex;
 	
 	/*
 	private SAttribute ns;
@@ -127,12 +135,22 @@ class RNGDirector{
         nativeLibrary = datatypeLibraryFactory.createDatatypeLibrary("");      
         	    
         internalIndexedData = new InternalIndexedData();
+        
+        
+        selements = new ArrayList<SElement>();
+        sattributes = new ArrayList<SAttribute>();
 	}
 	
 	
 	void createModels(SimplifiedComponentBuilder builder)  throws DatatypeException{
 		this.builder = builder;
 		
+		selements.clear();
+		elementIndex = 0;
+	
+		sattributes.clear();
+		attributeIndex = 0;
+	
 		refDefinitionTopPattern = new SPattern[DEFINITION_TOP_PATTERN_COUNT];
 		needsStartTask = new HashMap<SElement, Object>();
 		endElementTaskFactory = new HashMap<SElement, RNGParseElementTaskFactory>();
@@ -170,26 +188,49 @@ class RNGDirector{
 	SimplifiedModel getRNGModel(){
 		SPattern[] start = {rngStartTopPattern};
         
+		SElement startElement = new SElement(elementIndex, null, rngStartTopPattern, -1, null);
+        selements.add(startElement);        
 		SimplifiedModel s = new SimplifiedModel(start,
 									refDefinitionTopPattern,
+									elementIndex,
+									selements.toArray(new SElement[selements.size()]),
+									sattributes.toArray(new SAttribute[sattributes.size()]),
+									null,
 									null);
+		elementIndex++;
         return s;
 	}
 	
 	SimplifiedModel getIncludeModel(){
 		SPattern[] start = {includeStartTopPattern};
         
-		return new SimplifiedModel(start,
-									refDefinitionTopPattern,									
+		SElement startElement = new SElement(elementIndex, null, includeStartTopPattern, -1, null);
+        selements.add(startElement);     
+		SimplifiedModel s = new SimplifiedModel(start,
+									refDefinitionTopPattern,
+									elementIndex,
+									selements.toArray(new SElement[selements.size()]),
+									sattributes.toArray(new SAttribute[sattributes.size()]),
+									null,
 									null);
+		elementIndex++;
+		return s;
 	}
 	
 	SimplifiedModel getExternalRefModel(){
 		SPattern[] start = {externalRefStartTopPattern};
         
-		return new SimplifiedModel(start,
+		SElement startElement = new SElement(elementIndex, null, externalRefStartTopPattern, -1, null);
+        selements.add(startElement);    
+		SimplifiedModel s = new SimplifiedModel(start,
 									refDefinitionTopPattern,
+									elementIndex,
+									selements.toArray(new SElement[selements.size()]),
+									sattributes.toArray(new SAttribute[sattributes.size()]),
+									null,
 									null);
+		elementIndex++;
+		return s;
 	}
 	
 	RNGParseBindingPool getBindingModelPool(){
@@ -295,21 +336,25 @@ class RNGDirector{
             builder.buildGroup( InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT, internalIndexedData, false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
             builder.buildName(XMLConstants.RELAXNG_NS_URI, "element", InternalIndexedData.ELEMENT_NI_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
         }builder.endLevel();
-        builder.buildElement(InternalIndexedData.ELEMENT_NI_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
+        builder.buildElement(elementIndex++, InternalIndexedData.ELEMENT_NI_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
         
         SElement e = (SElement)builder.getCurrentPattern();
         needsStartTask.put(e, null);
         endElementTaskFactory.put(e, new ElementWithNameInstanceTaskFactory());
+        
+        selements.add(e);
     }
     private void nameQNameAttributeForElement()  throws DatatypeException{
         builder.startLevel();{
             builder.buildName("","name", InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
             builder.buildData(internalLibrary.createDatatype("QName"),InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE_VALUE, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
         }builder.endLevel();
-        builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
+        builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
         
         SAttribute qName = (SAttribute)builder.getCurrentPattern();
         attributeTaskFactory.put(qName, nameAttributeTaskFactory);
+
+        sattributes.add(qName);
     }
     //**************************************************************************
     
@@ -329,11 +374,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "element", InternalIndexedData.ELEMENT_NC_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
 		}builder.endLevel();		
-		builder.buildElement(InternalIndexedData.ELEMENT_NC_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.ELEMENT_NC_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new ElementWithNameClassTaskFactory());
+		
+        selements.add(e);
 	}	
 	private void nameClassPatternPlus(){		
 		builder.startLevel();{
@@ -371,11 +418,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT, internalIndexedData, false   /* "attributes and elements group","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "attribute", InternalIndexedData.ATTRIBUTE_NC_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
 		}builder.endLevel();		
-		builder.buildElement(InternalIndexedData.ATTRIBUTE_NC_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.ATTRIBUTE_NC_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new AttributeWithNameClassTaskFactory());
+		
+        selements.add(e);
 	}
 	private void nameClassPatternSquare(){
 		builder.startLevel();{
@@ -413,21 +462,25 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "attribute", InternalIndexedData.ATTRIBUTE_NI_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
 		}builder.endLevel();
-		builder.buildElement( InternalIndexedData.ATTRIBUTE_NI_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.ATTRIBUTE_NI_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new AttributeWithNameInstanceTaskFactory());
+		
+        selements.add(e);
 	}
 	private void nameQNameAttributeForAttribute()  throws DatatypeException{
         builder.startLevel();{
 			builder.buildName("","name", InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
 			builder.buildData(internalLibrary.createDatatype("QName"), InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE_VALUE, internalIndexedData     /*"data","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
 		}builder.endLevel();
-		builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
+		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
         
 		SAttribute qName = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(qName, nameAttributeTaskFactory);
+
+        sattributes.add(qName);
     }
     private void patternSquare(){				
 		builder.startLevel();{
@@ -472,11 +525,13 @@ class RNGDirector{
 			builder.buildGroup( InternalIndexedData.GROUP_ELEMENT_CONTENT, internalIndexedData, false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: group"*/);			
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "group", InternalIndexedData.GROUP_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: group"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.GROUP_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: group"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.GROUP_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: group"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new GroupTaskFactory());
+		
+        selements.add(e);
 	}
 	
 	
@@ -507,12 +562,14 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: interleave"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "interleave", InternalIndexedData.INTERLEAVE_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: interleave"*/);
 		}builder.endLevel();
-		builder.buildElement( InternalIndexedData.INTERLEAVE_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: interleave"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.INTERLEAVE_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: interleave"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new InterleaveTaskFactory());
-	}		
+		
+        selements.add(e);
+    }
 	
 	
 	
@@ -542,11 +599,13 @@ class RNGDirector{
 			builder.buildGroup( InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT, internalIndexedData, false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "choice",InternalIndexedData.CHOICE_PATTERN_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.CHOICE_PATTERN_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.CHOICE_PATTERN_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new ChoicePatternTaskFactory());
+		
+        selements.add(e);
 	}
 	
 	
@@ -577,11 +636,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.OPTIONAL_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: optional"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "optional",  InternalIndexedData.OPTIONAL_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: optional"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.OPTIONAL_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: optional"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.OPTIONAL_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: optional"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new OptionalTaskFactory());
+		
+        selements.add(e);
 	}
 	
 	
@@ -612,11 +673,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "zeroOrMore", InternalIndexedData.ZERO_OR_MORE_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.ZERO_OR_MORE_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);	
+		builder.buildElement(elementIndex++, InternalIndexedData.ZERO_OR_MORE_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);	
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new ZeroOrMoreTaskFactory());
+		
+        selements.add(e);
 	}
 	
 	
@@ -647,11 +710,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "oneOrMore", InternalIndexedData.ONE_OR_MORE_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.ONE_OR_MORE_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.ONE_OR_MORE_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new OneOrMoreTaskFactory());
+		
+        selements.add(e);
 	}
 	
 	
@@ -682,11 +747,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.LIST_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: list"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "list", InternalIndexedData.LIST_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: list"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.LIST_ELEMENT, internalIndexedData   /*"element","RELAXNG Specification 3.Full Syntax: list"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.LIST_ELEMENT, internalIndexedData   /*"element","RELAXNG Specification 3.Full Syntax: list"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new ListPatternTaskFactory());
+		
+        selements.add(e);
 	}
 	
 	
@@ -717,11 +784,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.MIXED_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: mixed"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "mixed", InternalIndexedData.MIXED_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: mixed"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.MIXED_ELEMENT, internalIndexedData   /*"element","RELAXNG Specification 3.Full Syntax: mixed"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.MIXED_ELEMENT, internalIndexedData   /*"element","RELAXNG Specification 3.Full Syntax: mixed"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new MixedTaskFactory());
+		
+        selements.add(e);
 	}
 	
 	
@@ -745,19 +814,22 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.REF_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: ref"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "ref", InternalIndexedData.REF_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: ref"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.REF_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: ref"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.REF_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: ref"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new RefTaskFactory());
+		
+        selements.add(e);
 	}
 	private void nameNCNameAttributeForRef()  throws DatatypeException{
         builder.startLevel();{
 			builder.buildName("","name", InternalIndexedData.REF_ELEMENT_CONTENT_NAME_ATTRIBUTE_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);				
 			builder.buildData(internalLibrary.createDatatype("NCName"), InternalIndexedData.REF_ELEMENT_CONTENT_NAME_ATTRIBUTE_VALUE, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 		}builder.endLevel();
-		builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.REF_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
+		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.REF_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 		SAttribute ncName = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(ncName, nameAttributeTaskFactory);
+		sattributes.add(ncName);
     }
     
 	
@@ -781,19 +853,23 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.PARENT_REF_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: parentRef"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "parentRef", InternalIndexedData.PARENT_REF_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: parentRef"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.PARENT_REF_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: parentRef"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.PARENT_REF_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: parentRef"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new ParentRefTaskFactory());
+		
+        selements.add(e);
 	}
 	private void nameNCNameAttributeForParentRef()  throws DatatypeException{
         builder.startLevel();{
 			builder.buildName("","name", InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_NAME_ATTRIBUTE_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);				
 			builder.buildData(internalLibrary.createDatatype("NCName"), InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_NAME_ATTRIBUTE_VALUE, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 		}builder.endLevel();
-		builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
+		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 		SAttribute ncName = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(ncName, nameAttributeTaskFactory);
+
+        sattributes.add(ncName);
     }
 	
 	
@@ -815,10 +891,12 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.EMPTY_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: empty"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "empty", InternalIndexedData.EMPTY_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: empty"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.EMPTY_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: empty"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.EMPTY_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: empty"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new EmptyTaskFactory());
+		
+        selements.add(e);
 	}
 	
 	
@@ -841,10 +919,12 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.TEXT_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: text"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "text",  InternalIndexedData.TEXT_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: text"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.TEXT_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: text"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.TEXT_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: text"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new TextTaskFactory());
+		
+        selements.add(e);
 	}
 	
 	
@@ -860,9 +940,11 @@ class RNGDirector{
                         builder.buildName("","type", InternalIndexedData.VALUE_ELEMENT_CONTENT_TYPE_ATTRIBUTE_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: type attribute"*/);				
                         builder.buildData(internalLibrary.createDatatype("NCName"), InternalIndexedData.VALUE_ELEMENT_CONTENT_TYPE_ATTRIBUTE_VALUE, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: type attribute"*/);
                     }builder.endLevel();
-                    builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.VALUE_ELEMENT_CONTENT_TYPE_ATTRIBUTE, internalIndexedData   /*"attribute","RELAXNG Specification 3.Full Syntax: type attribute"*/);
+                    builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.VALUE_ELEMENT_CONTENT_TYPE_ATTRIBUTE, internalIndexedData   /*"attribute","RELAXNG Specification 3.Full Syntax: type attribute"*/);
                     SAttribute type = (SAttribute)builder.getCurrentPattern();
-                    attributeTaskFactory.put(type, typeTaskFactory);                    
+                    attributeTaskFactory.put(type, typeTaskFactory);
+
+                    sattributes.add(type);                    
                 }builder.endLevel();				
                 builder.buildOptional(InternalIndexedData.VALUE_ELEMENT_CONTENT_TYPE_ATTRIBUTE_SQUARE, internalIndexedData  /*"optional","RELAXNG Specification 3.Full Syntax: type attribute"*/);
 				
@@ -874,10 +956,12 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.VALUE_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and text group","RELAXNG Specification 3.Full Syntax: value"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "value",  InternalIndexedData.VALUE_ELEMENT_NAME, internalIndexedData, false    /*"name","RELAXNG Specification 3.Full Syntax: value"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.VALUE_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: value"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.VALUE_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: value"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new ValueTaskFactory());
+		
+        selements.add(e);
 	}
 	
 	
@@ -891,9 +975,11 @@ class RNGDirector{
                     builder.buildName("","type", InternalIndexedData.DATA_ELEMENT_CONTENT_TYPE_ATTRIBUTE_NAME, internalIndexedData, false     /*"name","RELAXNG Specification 3.Full Syntax: type attribute"*/);
                     builder.buildData(internalLibrary.createDatatype("NCName"), InternalIndexedData.DATA_ELEMENT_CONTENT_TYPE_ATTRIBUTE_VALUE, internalIndexedData      /*"data","RELAXNG Specification 3.Full Syntax: type attribute"*/);
                 }builder.endLevel();
-                builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.DATA_ELEMENT_CONTENT_TYPE_ATTRIBUTE, internalIndexedData   /*"attribute","RELAXNG Specification 3.Full Syntax: type attribute"*/);
+                builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.DATA_ELEMENT_CONTENT_TYPE_ATTRIBUTE, internalIndexedData   /*"attribute","RELAXNG Specification 3.Full Syntax: type attribute"*/);
                 SAttribute type = (SAttribute)builder.getCurrentPattern();
                 attributeTaskFactory.put(type, typeTaskFactory);
+
+                sattributes.add(type);
 				
 				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.DATA_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData     /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: data"*/);
 				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.DATA_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData     /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: data"*/);
@@ -903,11 +989,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.DATA_ELEMENT_CONTENT, internalIndexedData, false      /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: data"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "data", InternalIndexedData.DATA_ELEMENT_NAME, internalIndexedData, false   /* "name","RELAXNG Specification 3.Full Syntax: data"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.DATA_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: data"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.DATA_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: data"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new DataTaskFactory());
+		
+        selements.add(e);
 	}
 	private void paramStarExceptPatternSquare() throws DatatypeException{
 		builder.startLevel();{
@@ -951,10 +1039,12 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT, internalIndexedData, false    /*"attributes group","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "notAllowed", InternalIndexedData.NOT_ALLOWED_ELEMENT_NAME, internalIndexedData, false    /*"name","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.NOT_ALLOWED_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.NOT_ALLOWED_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new NotAllowedTaskFactory());
+		
+        selements.add(e);
 	}
 	
 	
@@ -978,19 +1068,23 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: externalRef"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "externalRef", InternalIndexedData.EXTERNAL_REF_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: externalRef"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.EXTERNAL_REF_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: externalRef"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.EXTERNAL_REF_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: externalRef"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new ExternalRefTaskFactory());
+		
+        selements.add(e);
 	}
 	private void hrefAttributeExternalRef()  throws DatatypeException{
         builder.startLevel();{
 			builder.buildName("","href", InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_HREF_ATTRIBUTE_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: href attribute"*/);
 			builder.buildData(internalLibrary.createDatatype("hrefURI"), InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_HREF_ATTRIBUTE_VALUE, internalIndexedData  /* "data","RELAXNG Specification 3.Full Syntax: href attribute"*/);
 		}builder.endLevel();
-		builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_HREF_ATTRIBUTE, internalIndexedData  /* "attribute","RELAXNG Specification 3.Full Syntax: href attribute"*/);
+		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_HREF_ATTRIBUTE, internalIndexedData  /* "attribute","RELAXNG Specification 3.Full Syntax: href attribute"*/);
 		SAttribute  href = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(href, hrefTaskFactory);
+
+        sattributes.add(href);
     }
 	
 	
@@ -1008,12 +1102,14 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.GRAMMAR_ELEMENT_CONTENT, internalIndexedData, false    /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: grammar"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "grammar", InternalIndexedData.GRAMMAR_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: grammar"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.GRAMMAR_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: grammar"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.GRAMMAR_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: grammar"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		includeStartTopPattern = e;
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new GrammarTaskFactory());
+		
+        selements.add(e);
 	}		
 	private void grammarContentStarForGrammar(){				
 		builder.startLevel();{
@@ -1055,20 +1151,24 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.PARAM_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and text group","RELAXNG Specification 3.Full Syntax: param"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "param", InternalIndexedData.PARAM_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: param"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.PARAM_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: param"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.PARAM_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: param"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new ParamTaskFactory());
 		refDefinitionTopPattern[PARAM] = e;
+		
+        selements.add(e);
 	}
 	private void nameNCNameAttributeForParam()  throws DatatypeException{
         builder.startLevel();{
 			builder.buildName("","name", InternalIndexedData.PARAM_ELEMENT_CONTENT_NAME_ATTRIBUTE_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 			builder.buildData(internalLibrary.createDatatype("NCName"), InternalIndexedData.PARAM_ELEMENT_CONTENT_NAME_ATTRIBUTE_VALUE, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 		}builder.endLevel();
-		builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.PARAM_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
+		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.PARAM_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 		SAttribute  ncName = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(ncName, nameAttributeTaskFactory);
+
+        sattributes.add(ncName);
     }
 	
     //<except>pattern+</except>
@@ -1098,12 +1198,14 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "except", InternalIndexedData.EXCEPT_PATTERN_ELEMENT_NAME, internalIndexedData, false    /*"name","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.EXCEPT_PATTERN_ELEMENT, internalIndexedData   /*"element","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.EXCEPT_PATTERN_ELEMENT, internalIndexedData   /*"element","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new ExceptPatternTaskFactory());
 		refDefinitionTopPattern[EXCEPT_PATTERN] = e;
+		
+        selements.add(e);
 	}
 	//**************************************************************************
 	//END PATTERN RELATED METHODS **********************************************
@@ -1142,11 +1244,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.DIV_GC_ELEMENT_CONTENT, internalIndexedData, false     /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "div", InternalIndexedData.DIV_GC_ELEMENT_NAME, internalIndexedData, false    /*"name","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.DIV_GC_ELEMENT, internalIndexedData   /*"element","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.DIV_GC_ELEMENT, internalIndexedData   /*"element","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new DivGrammarContentTaskFactory());
+		
+        selements.add(e);
 	}
 	private void grammarContentStarForDiv(){				
 		builder.startLevel();{
@@ -1180,11 +1284,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.INCLUDE_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: include"*/);			
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "include",  InternalIndexedData.INCLUDE_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: include"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.INCLUDE_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: include"*/);		
+		builder.buildElement(elementIndex++, InternalIndexedData.INCLUDE_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: include"*/);		
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new IncludeTaskFactory());
+		
+        selements.add(e);
 	}
 	private void includeContentStarForInclude(){				
 		builder.startLevel();{
@@ -1206,9 +1312,11 @@ class RNGDirector{
 			builder.buildName("","href", InternalIndexedData.INCLUDE_ELEMENT_CONTENT_HREF_ATTRIBUTE_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: href attribute"*/);
 			builder.buildData(internalLibrary.createDatatype("hrefURI"), InternalIndexedData.INCLUDE_ELEMENT_CONTENT_HREF_ATTRIBUTE_VALUE, internalIndexedData  /* "data","RELAXNG Specification 3.Full Syntax: href attribute"*/);
 		}builder.endLevel();
-		builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_HREF_ATTRIBUTE, internalIndexedData  /* "attribute","RELAXNG Specification 3.Full Syntax: href attribute"*/);
+		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_HREF_ATTRIBUTE, internalIndexedData  /* "attribute","RELAXNG Specification 3.Full Syntax: href attribute"*/);
 		SAttribute href = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(href, hrefTaskFactory);
+
+        sattributes.add(href);
     }    
     
     private void defineIncludeContent() throws DatatypeException{
@@ -1238,11 +1346,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.DIV_IC_ELEMENT_CONTENT, internalIndexedData, false    /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: div in include context"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "div", InternalIndexedData.DIV_IC_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: div in include context"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.DIV_IC_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: div in include context"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.DIV_IC_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: div in include context"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new DivIncludeContentTaskFactory());
+		
+        selements.add(e);
 	}
 	private void includeContentStarForDiv(){				
 		builder.startLevel();{
@@ -1287,12 +1397,14 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.START_ELEMENT_CONTENT, internalIndexedData, false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: start"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "start", InternalIndexedData.START_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: start"*/);
 		}builder.endLevel();
-		builder.buildElement( InternalIndexedData.START_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: start"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.START_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: start"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new StartTaskFactory());
         refDefinitionTopPattern[START] = e;
+        
+        selements.add(e);
     }
     private void combineAttributeSquareForStart() throws DatatypeException{
 		builder.startLevel();{
@@ -1300,9 +1412,11 @@ class RNGDirector{
                 builder.buildName("","combine", InternalIndexedData.START_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: combine attribute"*/);
                 builder.buildData(internalLibrary.createDatatype("combine"), InternalIndexedData.START_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_VALUE, internalIndexedData    /*"value","RELAXNG Specification 3.Full Syntax: combine attribute"*/);
             }builder.endLevel();
-            builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.START_ELEMENT_CONTENT_COMBINE_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: combine attribute"*/);
+            builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.START_ELEMENT_CONTENT_COMBINE_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: combine attribute"*/);
             SAttribute combine = (SAttribute)builder.getCurrentPattern();
             attributeTaskFactory.put(combine, combineTaskFactory);
+
+            sattributes.add(combine);
 		}builder.endLevel();				
 		builder.buildOptional(InternalIndexedData.START_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_SQUARE, internalIndexedData   /*"optional","RELAXNG Specification 3.Full Syntax: start"*/);
 	}
@@ -1338,21 +1452,25 @@ class RNGDirector{
 			builder.buildGroup( InternalIndexedData.DEFINE_ELEMENT_CONTENT, internalIndexedData, false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: define"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "define", InternalIndexedData.DEFINE_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: define"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.DEFINE_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: define"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.DEFINE_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: define"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new DefineTaskFactory());        	
         refDefinitionTopPattern[DEFINE] = e;
+        
+        selements.add(e);
     }
     private void nameNCNameAttributeForDefine()  throws DatatypeException{
         builder.startLevel();{
 			builder.buildName("","name", InternalIndexedData.DEFINE_ELEMENT_CONTENT_NAME_ATTRIBUTE_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: define"*/);
 			builder.buildData(internalLibrary.createDatatype("NCName"), InternalIndexedData.DEFINE_ELEMENT_CONTENT_NAME_ATTRIBUTE_VALUE, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: define"*/);
 		}builder.endLevel();
-		builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.DEFINE_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: define"*/);
+		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.DEFINE_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: define"*/);
 		SAttribute ncName = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(ncName, nameAttributeTaskFactory);
+
+        sattributes.add(ncName);
     }
     private void combineAttributeSquareForDefine() throws DatatypeException{
 		builder.startLevel();{
@@ -1360,9 +1478,11 @@ class RNGDirector{
                 builder.buildName("","combine", InternalIndexedData.DEFINE_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: define"*/);
                 builder.buildData(internalLibrary.createDatatype("combine"), InternalIndexedData.DEFINE_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_VALUE, internalIndexedData    /*"value","RELAXNG Specification 3.Full Syntax: define"*/);
             }builder.endLevel();
-            builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.DEFINE_ELEMENT_CONTENT_COMBINE_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: define"*/);
+            builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.DEFINE_ELEMENT_CONTENT_COMBINE_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: define"*/);
             SAttribute combine = (SAttribute)builder.getCurrentPattern();
             attributeTaskFactory.put(combine, combineTaskFactory);
+
+            sattributes.add(combine);
 		}builder.endLevel();				
 		builder.buildOptional(InternalIndexedData.DEFINE_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_SQUARE, internalIndexedData   /*"optional","RELAXNG Specification 3.Full Syntax: start"*/);
 	}
@@ -1399,10 +1519,12 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.NAME_ELEMENT_CONTENT, internalIndexedData, false    /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: name"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "name", InternalIndexedData.NAME_ELEMENT_NAME, internalIndexedData, false     /*"name","RELAXNG Specification 3.Full Syntax: name"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.NAME_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: name"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.NAME_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: name"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new NameTaskFactory());
+		
+        selements.add(e);
 	}
 	
 	private void anyName() throws DatatypeException{
@@ -1418,11 +1540,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.ANY_NAME_ELEMENT_CONTENT, internalIndexedData, false     /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: anyName"*/);			
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "anyName", InternalIndexedData.ANY_NAME_ELEMENT_NAME, internalIndexedData, false    /*"name","RELAXNG Specification 3.Full Syntax: anyName"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.ANY_NAME_ELEMENT, internalIndexedData     /*"element","RELAXNG Specification 3.Full Syntax: anyName"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.ANY_NAME_ELEMENT, internalIndexedData     /*"element","RELAXNG Specification 3.Full Syntax: anyName"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new AnyNameTaskFactory());
+		
+        selements.add(e);
 	}
 	private void exceptNameClassSquareForAnyName() throws DatatypeException{	
 		builder.startLevel();{
@@ -1454,11 +1578,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.NS_NAME_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: nsName"*/);			
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "nsName",InternalIndexedData.NS_NAME_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: nsName"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.NS_NAME_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: nsName"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.NS_NAME_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: nsName"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new NsNameTaskFactory());
+		
+        selements.add(e);
 	}
 	private void exceptNameClassSquareForNsName() throws DatatypeException{	
 		builder.startLevel();{
@@ -1490,11 +1616,13 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "choice", InternalIndexedData.CHOICE_NC_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.CHOICE_NC_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.CHOICE_NC_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new ChoiceNameClassTaskFactory());
+		
+        selements.add(e);
 	}	
 	private void nameClassPlusForChoice(){				
 		builder.startLevel();{
@@ -1535,12 +1663,14 @@ class RNGDirector{
 			builder.buildGroup(InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT, internalIndexedData, false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "except", InternalIndexedData.EXCEPT_NC_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
 		}builder.endLevel();
-		builder.buildElement( InternalIndexedData.EXCEPT_NC_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.EXCEPT_NC_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new ExceptNameClassTaskFactory());
         refDefinitionTopPattern[EXCEPT_NAME_CLASS] = e;
+        
+        selements.add(e);
     }
     
     private void nameClassPlusForExcept(){				
@@ -1572,9 +1702,11 @@ class RNGDirector{
                 builder.buildName("","ns", InternalIndexedData.NS_ATTRIBUTE_NAME, internalIndexedData, false    /*"name","RELAXNG Specification 3.Full Syntax: ns attribute"*/);	
                 builder.buildData(nativeLibrary.createDatatype("token"), InternalIndexedData.NS_ATTRIBUTE_VALUE, internalIndexedData    /*"data","RELAXNG Specification 3.Full Syntax: ns attribute"*/);
             }builder.endLevel();
-            builder.buildAttribute(InternalIndexedData.NO_RECORD,  InternalIndexedData.NS_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: ns attribute"*/);
+            builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD,  InternalIndexedData.NS_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: ns attribute"*/);
             SAttribute ns = (SAttribute)builder.getCurrentPattern();
             attributeTaskFactory.put(ns, nsTaskFactory);
+
+            sattributes.add(ns);
         }builder.endLevel();				
         builder.buildOptional(InternalIndexedData.NS_ATTRIBUTE_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: ns attribute"*/);
         
@@ -1588,9 +1720,11 @@ class RNGDirector{
                 builder.buildName("","datatypeLibrary", InternalIndexedData.DL_ATTRIBUTE_NAME, internalIndexedData, false     /*"name","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute"*/);
                 builder.buildData(internalLibrary.createDatatype("datatypeLibraryURI"), InternalIndexedData.DL_ATTRIBUTE_VALUE, internalIndexedData     /*"data","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute"*/);
             }builder.endLevel();
-            builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.DL_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute"*/);
+            builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.DL_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute"*/);
             SAttribute datatypeLibrary = (SAttribute)builder.getCurrentPattern();
             attributeTaskFactory.put(datatypeLibrary, datatypeLibraryTaskFactory);
+
+            sattributes.add(datatypeLibrary);
         }builder.endLevel();				
         builder.buildOptional(InternalIndexedData.DL_ATTRIBUTE_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute"*/);
     
@@ -1610,12 +1744,14 @@ class RNGDirector{
 		    anyNameExceptRNG();
 			anyContentForForeign();			
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.FOREIGN_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: foreign element"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.FOREIGN_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: foreign element"*/);
 		
         SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);        
 		endElementTaskFactory.put(e, new ForeignElementTaskFactory());
 		refDefinitionTopPattern[FOREIGN_ELEMENT] = e;
+		
+        selements.add(e);
 	}
 	private void anyNameExceptRNG(){
 		builder.startLevel();{
@@ -1646,12 +1782,14 @@ class RNGDirector{
 			anyContentForAny();
 			builder.buildAnyName(InternalIndexedData.ANY_ELEMENT_NAME, internalIndexedData /*"anyName","RELAXNG Specification 3.Full Syntax: any element"*/);
 		}builder.endLevel();
-		builder.buildElement(InternalIndexedData.ANY_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: any element"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.ANY_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: any element"*/);
 		
         SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);        
 		endElementTaskFactory.put(e, new ForeignElementTaskFactory());
 		refDefinitionTopPattern[ANY_ELEMENT] = e;
+		
+        selements.add(e);
 	}
 	private void anyContentForAny(){		
 		builder.startLevel();{
@@ -1672,9 +1810,11 @@ class RNGDirector{
 				anyNameExceptNullOrRNG();	
 				builder.buildText(InternalIndexedData.FOREIGN_ATTRIBUTE_VALUE, internalIndexedData, false  /*"text","RELAXNG Specification 3.Full Syntax: foreign attribute"*/);
 			}builder.endLevel();
-			builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.FOREIGN_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: foreign attribute"*/);
+			builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.FOREIGN_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: foreign attribute"*/);
             SAttribute foreign = (SAttribute)builder.getCurrentPattern();
 			attributeTaskFactory.put(foreign, foreignAttributeTaskFactory);
+
+            sattributes.add(foreign);
 		}builder.endLevel();				
 		builder.buildZeroOrMore(InternalIndexedData.FOREIGN_ATTRIBUTE_STAR, internalIndexedData /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign attribute"*/);
         
@@ -1702,9 +1842,11 @@ class RNGDirector{
 			builder.buildAnyName(InternalIndexedData.ANY_ATTRIBUTE_NAME, internalIndexedData /*"anyName","RELAXNG Specification 3.Full Syntax: any attribute"*/);
 			builder.buildText(InternalIndexedData.ANY_ATTRIBUTE_VALUE, internalIndexedData, false   /*"text","RELAXNG Specification 3.Full Syntax: any attribute"*/);
 		}builder.endLevel();
-		builder.buildAttribute(InternalIndexedData.NO_RECORD, InternalIndexedData.ANY_ATTRIBUTE, internalIndexedData /*"attribute","RELAXNG Specification 3.Full Syntax: any attribute"*/);
+		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.ANY_ATTRIBUTE, internalIndexedData /*"attribute","RELAXNG Specification 3.Full Syntax: any attribute"*/);
         SAttribute any = (SAttribute)builder.getCurrentPattern();
         refDefinitionTopPattern[ANY_ATTRIBUTE] = any;
+
+        sattributes.add(any);
     }
     //**************************************************************************
 	//END FOREIGN ELEMENTS METHODS *********************************************

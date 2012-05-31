@@ -23,9 +23,6 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.components.SElement;
 
 import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ANameClass;
-import serene.validation.schema.active.components.NamedActiveTypeItem;
 
 import serene.validation.schema.active.RuleVisitor;
 import serene.validation.schema.active.ActiveComponentVisitor;
@@ -43,28 +40,27 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 
+import serene.validation.schema.Identifier;
+
 import serene.validation.handlers.error.ErrorCatcher;
 
 //import sereneWrite.ActiveComponentWriter;
 
 public class AElement extends MarkupAPattern 
-					implements AttributesType, ElementContentType, NamedActiveTypeItem{	
-	boolean allowsElementContent;	 	
-	AElement[] contextElements;
+					implements AttributesType, ElementContentType{
 	
-	boolean allowsAttributes;
-	AAttribute[] contextAttributes;
-	 
 	//ActiveComponentWriter acw;
 	
 	SElement selement;
 	
 	public AElement(int index,
+	            Identifier identifier,
 				ActiveGrammarModel grammarModel,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
 				SElement selement){		
 		super(index,
+		        identifier,
 				null, 
 				grammarModel, 
 				stackHandlerPool, 
@@ -74,76 +70,53 @@ public class AElement extends MarkupAPattern
 		//acw = new ActiveComponentWriter();
 		
 	}
-		
 	
 	
-	//ActiveNameClassPointer
-	//--------------------------------------------------------------------------
-	//int getNameClassIndex() super
-	public ANameClass getNameClass(){
-		return grammarModel.getElementNameClass(index);
-	}  
-	//--------------------------------------------------------------------------
+	public void setElementContentMatches(String ns, String name, List<AElement> elements){
+	    if(child.isElementContent()) child.setElementMatches(ns, name, elements);
+	}
+    public void setAttributeContentMatches(String ns, String name, List<AAttribute> attributes){
+	    if(child.isAttributeContent()) child.setAttributeMatches(ns, name, attributes);
+    }    
+    
+    public void setContentMatches(List<AText> texts){
+        if(child.isTextContent()) child.setMatches(texts);
+    }    
+    public void setContentMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns, List<AText> texts){
+        if(child.isCharsContent()) child.setMatches(datas, values, listPatterns, texts);
+    }
+    public void setContentMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns){
+        if(child.isStructuredDataContent()) child.setMatches(datas, values, listPatterns);
+    }
+    public void setContentMatches(List<AData> datas, List<AValue> values){
+        if(child.isUnstructuredDataContent()) child.setMatches(datas, values);
+	}
 	
+	
+	
+	public void setElementMatches(String ns, String name, List<AElement> elements){
+	    if(identifier.matches(ns, name)) elements.add(this);
+	}
+    
+    
+	public boolean isElementContent(){
+        return true;
+    }
+    
 	//ActiveDefinitionPointer
 	//--------------------------------------------------------------------------
 	//int getDefinitionIndex() super
-	// void assembleDefinition() super
-	// void releaseDefinition() super
+	public void assembleDefinition(){
+		asParent(grammarModel.getElementDefinitionTopPattern(index));
+	}
+	public void releaseDefinition(){
+		if(child != null){
+			child.setReleased();
+			grammarModel.recycleElementDefinitionTopPattern(index, child);
+			child = null;
+		}	
+	}
 	//--------------------------------------------------------------------------
-	protected void setDefinition(){
-		definition = grammarModel.getElementDefinition(index);
-		asParent(definition.getTopPattern());
-	}
-	protected void setContextCache(){
-		super.setContextCache();
-		contextElements = definition.getElements();
-		if(contextElements != null && contextElements.length != 0) allowsElementContent = true;
-		
-		contextAttributes = definition.getAttributes();
-		if(contextAttributes != null && contextAttributes.length != 0) allowsAttributes = true;	
-		
-	}
-	protected void assembleRefDefinitions(){
-		if(contextRefs != null)
-			for(int i = 0; i< contextRefs.length; i++){						
-				contextRefs[i].assembleDefinition();			
-				if(!allowsDataContent){
-					allowsDataContent = contextRefs[i].allowsDataContent();
-				}
-				if(!allowsValueContent){
-					allowsValueContent = contextRefs[i].allowsValueContent();
-				}
-				if(!allowsListPatternContent){
-					allowsListPatternContent = contextRefs[i].allowsListPatternContent();
-				}
-				if(!allowsTextContent){
-					allowsTextContent = contextRefs[i].allowsTextContent();
-				}
-				if(!allowsElementContent){
-					allowsElementContent = contextRefs[i].allowsElementContent();
-				}
-				if(!allowsAttributes){
-					allowsAttributes = contextRefs[i].allowsAttributes();
-				}
-			}
-		if(allowsListPatternContent){
-			for(int i = 0; i < contextListPatterns.length; i++){
-				contextListPatterns[i].assembleRefDefinitions();
-			}
-		}
-	}
-	
-	protected void resetContextCache(){
-		super.resetContextCache();
-		allowsElementContent = false;
-		contextElements = null;
-		
-		allowsAttributes = false;		
-		contextAttributes = null;
-	}	
-	//releaseRefDefinitions() super
-	
 	
 	
 	//Type
@@ -158,7 +131,7 @@ public class AElement extends MarkupAPattern
 	
 	//DataActiveType
 	//--------------------------------------------------------------------------
-	//boolean allowsDataContent() super
+	//boolean allowsUnstructuredDataContent() super
 	//List<AData> getDataMatches(String value) super	
 	//boolean allowsValueContent() super
 	//List<AValue> getValueMatches(String value) super
@@ -179,66 +152,16 @@ public class AElement extends MarkupAPattern
 	
 	//AttributesType
 	//--------------------------------------------------------------------------	
-	public boolean allowsAttributes(){
-		return allowsAttributes;
-	}
-	public List<AAttribute> getAttributeMatches(String namespace, String name, List<AAttribute> matches){
-		if(!allowsAttributes) return matches;
-		if(contextAttributes != null){
-			for(AAttribute descendent : contextAttributes){				
-				if(descendent.nameClassMatches(namespace, name)){
-					matches.add(descendent);
-				}
-			}
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsAttributes())
-					matches = ref.getAttributeMatches(namespace, name, matches);
-			}		
-		}
-		return matches;
-	}
+	
 	//--------------------------------------------------------------------------
 	
 	
 	//ElementContentType
 	//--------------------------------------------------------------------------
-	public boolean allowsElementContent(){
-		return allowsElementContent;
-	}
-	public List<AElement> getElementMatches(String namespace, String name, List<AElement> matches){			
-		if(!allowsElementContent) return matches;
-		//System.out.println(Arrays.toString(contextRefs));
-		//System.out.println(toString()+"\t\t start "+matches);
-		if(contextElements != null){
-			for(AElement descendent : contextElements){				
-				if(descendent.nameClassMatches(namespace, name)){
-					matches.add(descendent);
-				}
-			}
-		}
-		//System.out.println(toString()+"\t\t direct "+matches);
-		if(contextRefs != null){	
-			for(ARef ref : contextRefs){
-				if(ref.allowsElementContent())
-					matches = ref.getElementMatches(namespace, name, matches);
-			}		
-		}
-		//System.out.println(toString()+"\t\t ref "+matches);
-		return matches;
-	}	
+		
 	//--------------------------------------------------------------------------
 	
-	
-	//NamedActiveTypeItem
-	//--------------------------------------------------------------------------
-	public boolean nameClassMatches(String namespace, String name){	
-		return grammarModel.getElementNameClass(index).matches(namespace, name);
-	} 
-	//--------------------------------------------------------------------------
-	
-	
+		
 	public String getQName(){
 		return selement.getQName();
 	}
@@ -278,7 +201,7 @@ public class AElement extends MarkupAPattern
 	}	
 	public String toString(){
 		//String s = "AElement "+hashCode()+" " + getNameClass()+" "+index+ " min "+minOccurs+" max "+maxOccurs;
-		String s = "AElement  " + getNameClass()+" "+index+ " min "+minOccurs+" max "+maxOccurs;
+		String s = "AElement  " + identifier+" "+index+ " min "+minOccurs+" max "+maxOccurs;
 		return s;
 	}
 	

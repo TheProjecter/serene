@@ -24,8 +24,6 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.CharsActiveType;
 import serene.validation.schema.active.ActiveDefinitionPointer;
-import serene.validation.schema.active.ActiveNameClassPointer;
-import serene.validation.schema.active.ActiveDefinition;
 import serene.validation.schema.active.ActiveGrammarModel;
 import serene.validation.schema.active.components.APattern;
 
@@ -38,36 +36,24 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
+import serene.validation.schema.Identifier;
+
 import org.relaxng.datatype.ValidationContext;
 
 public abstract class MarkupAPattern extends UniqueChildAPattern
-									implements ActiveNameClassPointer,
-												ActiveDefinitionPointer,
-												CharsActiveType{
-	APattern child;
+									implements ActiveDefinitionPointer,
+												CharsActiveType,
+												NamedActiveTypeItem{
 	
 	protected int index;
 	    
 	protected ActiveGrammarModel grammarModel;	
 	protected ActiveModelStackHandlerPool stackHandlerPool;
 	
-    ActiveDefinition definition;
-	
-	boolean allowsDataContent;
-	AData[] contextDatas;
-	
-	boolean allowsValueContent;
-	AValue[] contextValues;
-	
-	boolean allowsListPatternContent;
-	AListPattern[] contextListPatterns;
-	
-	boolean allowsTextContent;
-	AText[] contextTexts;
-			
-	ARef[] contextRefs;	
+    Identifier identifier;
 	
 	public MarkupAPattern(int index,
+	            Identifier identifier,
 				APattern child,
 				ActiveGrammarModel grammarModel,
 				ActiveModelStackHandlerPool stackHandlerPool,
@@ -76,80 +62,92 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 		this.index = index;
 		this.grammarModel = grammarModel;		
 		this.stackHandlerPool = stackHandlerPool;
+		this.identifier = identifier;
         
-        allowsDataContent = false;
-        allowsValueContent = false;
-        allowsListPatternContent = false;        
-        allowsTextContent = false;
 	}
 	
-	//ActiveNameClassPointer
-	//--------------------------------------------------------------------------
-	public int getNameClassIndex(){
-		return index;
-	}      
-	//getNameClass() subclasses  
-	//--------------------------------------------------------------------------
+	public Identifier getIdentifier(){
+	    return identifier;
+	}
+	
+	public boolean identifierMatches(String ns, String name){
+	    return identifier.matches(ns, name);
+	}
+	
+	public boolean allowsElements(){
+	    if(child == null) return false;
+        return child.isElementContent();
+    }
+	public boolean allowsAttributes(){
+	    if(child == null) return false;
+	    return child.isAttributeContent();
+	}
+	public boolean allowsDatas(){
+	    if(child == null) return false;
+	    return child.isDataContent();
+	}
+	public boolean allowsValues(){
+	    if(child == null) return false;
+	    return child.isValueContent();
+	}
+	public boolean allowsListPatterns(){
+	    if(child == null) return false;
+	    return child.isListPatternContent();
+	}
+	public boolean allowsText(){
+	    if(child == null) return false;
+	    return child.isTextContent();
+	}
+	public boolean allowsCharsContent(){
+	    if(child == null) return false;
+	    return child.isCharsContent();
+	}	
+	public boolean allowsStructuredDataContent(){
+	    if(child == null) return false;
+	    return child.isStructuredDataContent();
+	}	
+	public boolean allowsUnstructuredDataContent(){
+	    if(child == null) return false;
+	    return child.isUnstructuredDataContent();
+	}
+	
+	
+	public boolean isElementContent(){
+        return false;
+    }
+	public boolean isAttributeContent(){
+	    return false;
+	}
+	public boolean isDataContent(){
+	    return false;
+	}
+	public boolean isValueContent(){
+	    return false;
+	}
+	public boolean isListPatternContent(){
+	    return false;
+	}
+	public boolean isTextContent(){
+	    return false;
+	}
+	public boolean isCharsContent(){
+	    return false;
+	}	
+	public boolean isStructuredDataContent(){
+	    return false;
+	}	
+	public boolean isUnstructuredDataContent(){
+	    return false;
+	}	
+	
 	
 	//ActiveDefinitionPointer
 	//--------------------------------------------------------------------------
 	public int getDefinitionIndex(){		
 		return index;
-	}  
-	public void assembleDefinition(){		
-		setDefinition();
-		setContextCache();
-		assembleRefDefinitions();				
-	}
-	public void releaseDefinition(){
-		if(child != null){
-			AbstractAPattern achild = (AbstractAPattern)child;
-			achild.setParent(null);
-			achild.setChildIndex(-1);		
-			child = null;
-		}
-		releaseRefDefinitions();
-		resetContextCache();		
-		definition.recycle();
-	}
+	} 	
 	//--------------------------------------------------------------------------
-	protected abstract void setDefinition();
-	protected void setContextCache(){
-		contextRefs = definition.getRefs();
-		
-		contextDatas = definition.getDatas();
-		if(contextDatas != null && contextDatas.length != 0) allowsDataContent = true;
-		
-		contextValues = definition.getValues();
-		if(contextValues != null && contextValues.length != 0) allowsValueContent = true;
-        
-		contextListPatterns = definition.getListPatterns();		
-		if(contextListPatterns != null && contextListPatterns.length != 0) allowsListPatternContent = true;
-		
-		contextTexts = definition.getTexts();
-		if(contextTexts != null && contextTexts.length != 0) allowsTextContent = true;
-	}
-	protected abstract void assembleRefDefinitions();
 	
-	protected void resetContextCache(){		
-		allowsDataContent = false;
-		contextDatas = null;
-		
-		allowsValueContent = false;
-		contextValues = null;
-		
-		allowsListPatternContent = false;
-		contextListPatterns = null;
-		
-		allowsTextContent = false;
-		contextTexts = null;
-		
-	}
-	protected void releaseRefDefinitions(){
-		for(int i = 0; i< contextRefs.length; i++){						
-			contextRefs[i].releaseDefinition();
-		}	
-	}	
 	
 	
 	//Type
@@ -169,96 +167,20 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 	
 	//DataActiveType
 	//--------------------------------------------------------------------------
-	public boolean allowsChars(){
-        /*System.out.println("ALLOWS CHARS "+toString());
-        System.out.println("ALLOWS CHARS allowsDataContent "+allowsDataContent);
-        System.out.println("ALLOWS CHARS allowsValueContent "+allowsValueContent);
-        System.out.println("ALLOWS CHARS allowsListPatternContent "+allowsListPatternContent);
-        System.out.println("ALLOWS CHARS allowsTextContent "+allowsTextContent);
-        System.out.println("ALLOWS CHARS child "+child);*/
-		return allowsDataContent 
-				|| allowsValueContent 
-				|| allowsListPatternContent
-				|| allowsTextContent;
-	}
 	
-	
-	public boolean allowsDataContent(){
-		return allowsDataContent;
-	}	
-	public List<AData> getDataMatches(List<AData> dataMatches){	
-		if(!allowsDataContent) return dataMatches;
-		for(AData data: contextDatas){
-			dataMatches.add(data);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsDataContent())
-					dataMatches = ref.getDataMatches(dataMatches);
-			}		
-		}
-		return dataMatches;
-	}
-	
-	public boolean allowsValueContent(){
-		return allowsValueContent;
-	}
-	public List<AValue> getValueMatches(List<AValue> valueMatches){	
-		if(!allowsValueContent) return valueMatches;
-		for(AValue avalue: contextValues){
-			valueMatches.add(avalue);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsValueContent())
-					valueMatches = ref.getValueMatches(valueMatches);
-			}		
-		}
-		return valueMatches;
-	}
 	//--------------------------------------------------------------------------
 	
 	
 	//StructuredDataActiveType
 	//--------------------------------------------------------------------------
-	public boolean allowsListPatternContent(){
-		return allowsListPatternContent;
-	}	
-	public List<AListPattern> getListPatterns(List<AListPattern> listPatterns){
-		if(!allowsListPatternContent) return listPatterns;
-		for(AListPattern listPattern: contextListPatterns){
-			listPatterns.add(listPattern);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsListPatternContent())
-					listPatterns = ref.getListPatterns(listPatterns);
-			}		
-		}
-		return listPatterns;
-	}
+	
 	//--------------------------------------------------------------------------
 	
 	
 	
 	//CharsActiveType
 	//--------------------------------------------------------------------------
-	public boolean allowsTextContent(){
-		return allowsTextContent;
-	}	
-	public List<AText> getTexts(List<AText> texts){
-		if(!allowsTextContent) return texts;
-		for(AText text: contextTexts){
-			texts.add(text);
-		}
-		if(contextRefs != null){			 
-			for(ARef ref : contextRefs){
-				if(ref.allowsTextContent())
-					texts = ref.getTexts(texts);
-			}		
-		}
-		return texts;
-	}
+	
 	//--------------------------------------------------------------------------
     
     boolean isChildBranchRequired(AbstractAPattern child){

@@ -78,12 +78,12 @@ class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler
     
     void validateValue(String value) throws SAXException{
         stackHandler = attribute.getStackHandler(errorCatcher);
-		if(!attribute.allowsChars()){
+		/*if(!attribute.allowsCharsContent()){
 			errorCatcher.unexpectedAttributeValue(inputStackDescriptor.getCurrentItemInputRecordIndex(), attribute);
 			return;
-		}
+		}*/
 		CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, errorCatcher);
-		cvh.handleString(value, (CharsActiveType)attribute, false);	
+		cvh.handleString(value, attribute, false);	
         cvh.recycle();
         stackHandler.endValidation();
 		stackHandler.recycle();

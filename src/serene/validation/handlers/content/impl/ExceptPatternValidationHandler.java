@@ -93,7 +93,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
         return parent;
     }
     
-    public void handleChars(char[] chars, StructuredDataActiveType context) throws SAXException{
+    public void handleChars(char[] chars, AExceptPattern context) throws SAXException{
         stackHandler = exceptPattern.getStackHandler(this);
         
         StructuredDataValidationHandler sdvh = pool.getStructuredDataValidationHandler(this, this, this);
@@ -108,7 +108,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
         
     }
 	
-	public void handleString(String value, StructuredDataActiveType context) throws SAXException{
+	public void handleString(String value, AExceptPattern context) throws SAXException{
 	    stackHandler = exceptPattern.getStackHandler(this);
 	    
 	    StructuredDataValidationHandler sdvh = pool.getStructuredDataValidationHandler(this, this, this);

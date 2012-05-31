@@ -33,6 +33,7 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AListPattern;
+import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.AText;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
@@ -41,8 +42,8 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 public class MatchHandler{
 	
-	List<AElement> elementMatches;
-	List<AAttribute> attributeMatches;
+	List<AElement> elementMatches;	
+	List<AAttribute> attributeMatches; 
 	
 	List<AData> datas;
 	List<AValue> values;
@@ -55,13 +56,15 @@ public class MatchHandler{
 	boolean recognizeOutOfContext;
 	
 	public MatchHandler(){
-		elementMatches = new ArrayList<AElement>();
+		elementMatches = new ArrayList<AElement>();		
 		attributeMatches = new ArrayList<AAttribute>();
+		
 		datas = new ArrayList<AData>();
 		values = new ArrayList<AValue>();
 		listPatterns = new ArrayList<AListPattern>();
 		texts = new ArrayList<AText>();
 
+		
         unexpectedMatches = new ArrayList<SimplifiedComponent>();		
 	}	
 	
@@ -81,37 +84,94 @@ public class MatchHandler{
 		return unexpectedMatches;
 	}
 	
-	public List<AElement> matchElement(String namespace, String name, ElementContentType type){		
+	public List<AElement> matchElement(String namespace, String name, AElement type){		
 		elementMatches.clear();		
-		elementMatches = type.getElementMatches(namespace, name, elementMatches);	
+		/*elementMatches = type.getElementMatches(namespace, name, elementMatches);*/
+		
+		type.setElementContentMatches(namespace, name, elementMatches);
 		return elementMatches;		
 	}
 	
-	public List<AAttribute> matchAttribute(String namespace, String name, AttributesType type){		
+	public List<AAttribute> matchAttribute(String namespace, String name, AElement type){		
 		attributeMatches.clear();
-		attributeMatches = type.getAttributeMatches(namespace, name, attributeMatches);	
+		/*attributeMatches = type.getAttributeMatches(namespace, name, attributeMatches);*/
+		type.setAttributeContentMatches(namespace, name, attributeMatches);
 		return attributeMatches;		
 	}
 		
-	public List<AData> getDataMatches(DataActiveType type){
+	
+	public void handleCharsMatches(AElement type){
+	    datas.clear();
+	    values.clear();
+	    listPatterns.clear();
+	    texts.clear();
+	    type.setContentMatches(datas, values, listPatterns, texts);
+	}
+	
+	public void handleCharsMatches(AAttribute type){
+	    datas.clear();
+	    values.clear();
+	    listPatterns.clear();
+	    texts.clear();
+	    type.setContentMatches(datas, values, listPatterns, texts);
+	}
+	
+	public void handleCharsMatches(AListPattern type){
+	    datas.clear();
+	    values.clear();
+	    type.setContentMatches(datas, values);
+	}
+	
+	public void handleCharsMatches(AExceptPattern type){
+	    datas.clear();
+	    values.clear();
+	    listPatterns.clear();
+	    type.setContentMatches(datas, values, listPatterns);
+	}
+	
+	public void handleTextMatches(AElement type){
+	    texts.clear();
+	    type.setContentMatches(texts);
+	}
+	
+	public void handleTextMatches(AAttribute type){
+	    texts.clear();
+	    type.setContentMatches(texts);
+	}
+	
+	public List<AData> getDataMatches(){
+		return datas;
+	}
+	public List<AValue> getValueMatches(){		
+		return values;
+	}	
+	public List<AText> getTextMatches(){
+		return texts;
+		
+	}
+	public List<AListPattern> getListPatternMatches(){
+		return listPatterns;
+	}
+	
+	/*public List<AData> getDataMatches(DataActiveType type){
 		datas.clear();
 		datas = type.getDataMatches(datas);
 		return datas;
-	}
-	public List<AValue> getValueMatches(DataActiveType type){
+	}*/
+	/*public List<AValue> getValueMatches(DataActiveType type){
 		values.clear();
 		values = type.getValueMatches(values);		
 		return values;
-	}	
-	public List<AText> getTextMatches(CharsActiveType type){
+	}*/	
+	/*public List<AText> getTextMatches(CharsActiveType type){
 		texts.clear();
 		texts = type.getTexts(texts);
 		return texts;
 		
-	}
-	public List<AListPattern> getListPatternMatches(StructuredDataActiveType type){
+	}*/
+	/*public List<AListPattern> getListPatternMatches(StructuredDataActiveType type){
 		listPatterns.clear();
-		listPatterns = type.getListPatterns(listPatterns);
+		listPatterns = type.getListPatterns(listPatterns);*/
 		/*for(AListPattern listPattern : listPatterns){
 			if(listPatternTester == null)listPatternTester = new ListPatternTester(debugWriter);
 			if(charsMatches.size() == 0){
@@ -123,7 +183,7 @@ public class MatchHandler{
 					listPatterns.remove(listPattern);
 				}
 			}
-		}*/
+		}*//*
 		return listPatterns;
-	}
+	}*/
 }

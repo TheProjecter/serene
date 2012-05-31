@@ -17,7 +17,7 @@ limitations under the License.
 package serene.validation.schema.active.util;
 
 import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ANameClass;
+
 
 class LevelBottom extends Level{
 	Level parent;
@@ -38,13 +38,10 @@ class LevelBottom extends Level{
 	}
 	
 	public Level getLevelDown(){
-		Level intermediary = new LevelIntermediary(ncIndex,
-													ncSize,
-													nameClasses,
+		Level intermediary = new LevelIntermediary(
 													ptIndex,
 													ptSize,
 													patterns,
-													exceptNameClass,
 													exceptPattern,
 													parent);
 		parent.setChild(intermediary);

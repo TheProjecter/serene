@@ -49,5 +49,5 @@ public interface Rule extends ActiveComponent{
 	//Group	
 	MinimalReduceHandler getStructureHandler(IntList reduceCountList, IntList startedCountList, ErrorCatcher errorCatcher, MinimalReduceStackHandler stackHandler);
 	MaximalReduceHandler getStructureHandler(IntList reduceCountList, IntList startedCountList, ErrorCatcher errorCatcher, MaximalReduceStackHandler stackHandler);
-	
+	   
 }

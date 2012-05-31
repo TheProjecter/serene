@@ -38,6 +38,10 @@ public abstract class AbstractAPattern extends AbstractRule implements APattern{
 		maxOccurs = 1;
 	}
 		
+	public void setReleased(){
+	    parent = null;
+	    childIndex = -1;
+	}
 	public void setMinOccurs(int minOccurs){
 		this.minOccurs = minOccurs;
 	}

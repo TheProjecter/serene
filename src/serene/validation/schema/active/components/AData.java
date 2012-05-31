@@ -16,6 +16,9 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
+import java.util.List;
+
+
 import org.relaxng.datatype.Datatype;
 
 import serene.validation.schema.simplified.components.SData;
@@ -48,6 +51,33 @@ public class AData extends DatatypedCharsAPattern{
 		asParent(exceptPattern);
 	}
 	
+	
+	public boolean isDataContent(){
+	    return true;
+	}
+	public boolean isCharsContent(){
+	    return true;
+	}
+	public boolean isStructuredDataContent(){
+	    return true;
+	}	
+	public boolean isUnstructuredDataContent(){
+	    return true;
+	}
+	
+	
+	
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns, List<AText> texts){
+        datas.add(this);
+    }
+    public void setMatches(List<AData> datas, List<AValue> values, List<AListPattern> listPatterns){
+        datas.add(this);
+    }
+    public void setMatches(List<AData> datas, List<AValue> values){
+        datas.add(this);
+    }
+    
+    
 	protected void asParent(AExceptPattern exceptPattern){		
 		this.exceptPattern = exceptPattern;
 		if(exceptPattern != null){		

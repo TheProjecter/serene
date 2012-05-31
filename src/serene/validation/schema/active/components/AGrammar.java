@@ -38,13 +38,64 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 public class AGrammar extends UniqueChildAPattern implements AInnerPattern{	
 	SGrammar sgrammar;
+	
+	boolean allowsElements;
+	boolean allowsAttributes;
+	boolean allowsDatas;
+	boolean allowsValues;	
+	boolean allowsListPatterns;
+	boolean allowsText;
+	
 	public AGrammar(APattern child,
+	            boolean allowsElements,
+                boolean allowsAttributes,
+                boolean allowsDatas,
+                boolean allowsValues,	
+                boolean allowsListPatterns,
+                boolean allowsText,
 				ActiveModelRuleHandlerPool ruleHandlerPool,
 				SGrammar sgrammar){
 		super(child, ruleHandlerPool);
+		this.allowsElements = allowsElements;
+	    this.allowsAttributes = allowsAttributes;
+	    this.allowsDatas = allowsDatas;
+	    this.allowsValues = allowsValues;	
+	    this.allowsListPatterns = allowsListPatterns;
+	    this.allowsText = allowsText;
 		this.sgrammar = sgrammar;
 	}
 		
+	
+		
+	public boolean isElementContent(){
+        return allowsElements;
+    }
+	public boolean isAttributeContent(){
+	    return allowsAttributes;
+	}
+	public boolean isDataContent(){
+	    return allowsDatas;
+	}
+	public boolean isValueContent(){
+	    return allowsValues;
+	}
+	public boolean isListPatternContent(){
+	    return allowsListPatterns;
+	}
+	public boolean isTextContent(){
+	    return allowsText;
+	}
+	public boolean isCharsContent(){
+	    return allowsDatas || allowsValues || allowsListPatterns || allowsText;
+	}	
+	public boolean isStructuredDataContent(){
+	    return allowsDatas || allowsValues || allowsListPatterns;
+	}	
+	public boolean isUnstructuredDataContent(){
+	    return allowsDatas || allowsValues;
+	}
+	
+	
 	public boolean isRequiredContent(){
 		if(minOccurs == 0) return false;
 		if(child != null)

@@ -75,6 +75,7 @@ public class FileHandler extends WriteHandler{
 	}
 	
 	public void close(){
+	    if(fileWriter == null) return;
 		try{
 			fileWriter.close();
 		}catch(Exception e){

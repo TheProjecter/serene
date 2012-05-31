@@ -95,10 +95,11 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	    return parent;
 	}
 	
-    public void handleChars(char[] chars, CharsActiveType type, boolean isComplexContent) throws SAXException{
+    public void handleChars(char[] chars, AElement type, boolean isComplexContent) throws SAXException{
         if(isComplexContent){// when true, it means element siblings are certainly present, all data would result in errors anyway
-            if(type.allowsTextContent()){			
-                matches.addAll(matchHandler.getTextMatches(type));
+            if(type.allowsText()){		
+                matchHandler.handleTextMatches(type);
+                matches.addAll(matchHandler.getTextMatches());
                 handleAddToParent();
                 return;
             }
@@ -108,25 +109,26 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
         int valueOffset = -1; 	    
         int listOffset = -1;    
         int textOffset = -1;
-	    
-        if(type.allowsDataContent()){
-		    dataMatches.addAll(matchHandler.getDataMatches(type));						
+	    matchHandler.handleCharsMatches(type);
+	    	    
+        if(type.allowsDatas()){
+		    dataMatches.addAll(matchHandler.getDataMatches());						
 			dataOffset = 0;
 			matches.addAll(dataMatches);
 		}	
-		if(type.allowsValueContent()){
-			valueMatches.addAll(matchHandler.getValueMatches(type));			
+		if(type.allowsValues()){
+			valueMatches.addAll(matchHandler.getValueMatches());			
 			valueOffset = matches.size();
 			matches.addAll(valueMatches);				
 		}	
-		if(type.allowsListPatternContent()){
-			listMatches.addAll(matchHandler.getListPatternMatches(type));
+		if(type.allowsListPatterns()){
+			listMatches.addAll(matchHandler.getListPatternMatches());
 			listOffset = matches.size();
 			matches.addAll(listMatches);	
 		}
-		if(type.allowsTextContent()){			
+		if(type.allowsText()){			
 		    textOffset = matches.size();
-            matches.addAll(matchHandler.getTextMatches(type));            
+            matches.addAll(matchHandler.getTextMatches());            
         }
 		
 		if(dataMatches != null && dataMatches.size() > 0){
@@ -150,10 +152,11 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 		handleAddToParent();		
 	}
 	
-	public void handleString(String value, CharsActiveType type, boolean isComplexContent) throws SAXException{
+	public void handleString(String value, AAttribute type, boolean isComplexContent) throws SAXException{
 	    if(isComplexContent){
-            if(type.allowsTextContent()){			
-                matches.addAll(matchHandler.getTextMatches(type));
+            if(type.allowsText()){			
+                matchHandler.handleTextMatches(type);
+                matches.addAll(matchHandler.getTextMatches());
                 handleAddToParent();
                 return;
             }	            
@@ -163,25 +166,26 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
         int valueOffset = -1; 	    
         int listOffset = -1;    
         int textOffset = -1;
+        matchHandler.handleCharsMatches(type);
         
-        if(type.allowsDataContent()){
-		    dataMatches.addAll(matchHandler.getDataMatches(type));						
+        if(type.allowsDatas()){
+		    dataMatches.addAll(matchHandler.getDataMatches());						
 			dataOffset = 0;
 			matches.addAll(dataMatches);
 		}	
-		if(type.allowsValueContent()){
-			valueMatches.addAll(matchHandler.getValueMatches(type));			
+		if(type.allowsValues()){
+			valueMatches.addAll(matchHandler.getValueMatches());			
 			valueOffset = matches.size();
 			matches.addAll(valueMatches);				
 		}	
-		if(type.allowsListPatternContent()){
-			listMatches.addAll(matchHandler.getListPatternMatches(type));
+		if(type.allowsListPatterns()){
+			listMatches.addAll(matchHandler.getListPatternMatches());
 			listOffset = matches.size();
 			matches.addAll(listMatches);	
 		}
-		if(type.allowsTextContent()){			
+		if(type.allowsText()){			
 		    textOffset = matches.size();
-            matches.addAll(matchHandler.getTextMatches(type));            
+            matches.addAll(matchHandler.getTextMatches());            
         }
 		
 		if(dataMatches != null && dataMatches.size() > 0){

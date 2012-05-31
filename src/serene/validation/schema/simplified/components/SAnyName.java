@@ -32,6 +32,11 @@ public class SAnyName extends AbstractWildCard{
 		super(child, recordIndex, documentIndexedData);
 	}
 		
+	public boolean matches(String namespace, String name){
+		if(child != null) return child.matches(namespace, name);
+		return true;
+	}	
+	
 	public void accept(SimplifiedComponentVisitor v){
 		v.visit(this);
 	}	

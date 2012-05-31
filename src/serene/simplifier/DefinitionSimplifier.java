@@ -50,6 +50,9 @@ import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 
 import serene.validation.schema.simplified.components.SPattern;
+import serene.validation.schema.simplified.components.SElement;
+import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.components.SExceptPattern;
 
 import serene.internal.InternalRNGFactory;
 
@@ -133,7 +136,15 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		
 		pool.recycle(this);
 	}
-	void simplify(ArrayList<Definition> definitions) throws SAXException{        
+	void simplify(ArrayList<Definition> definitions,
+                ArrayList<SElement> selements,
+                ArrayList<SAttribute> sattributes,
+                ArrayList<SExceptPattern> sexceptPatterns) throws SAXException{
+    
+        this.selements = selements;	
+	    this.sattributes = sattributes;
+	    this.sexceptPatterns = sexceptPatterns;
+    
 		emptyChild = false;
         emptyComponent = null;
 		notAllowedChild = false;

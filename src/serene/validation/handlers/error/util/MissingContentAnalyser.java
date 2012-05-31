@@ -24,7 +24,6 @@ import java.util.Comparator;
 import java.util.Collections;
 
 import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.components.AExceptNameClass;
 
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
@@ -39,11 +38,6 @@ import serene.validation.schema.active.components.ARef;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AGrammar;
-
-import serene.validation.schema.active.components.AName;
-import serene.validation.schema.active.components.AAnyName;
-import serene.validation.schema.active.components.ANsName;
-import serene.validation.schema.active.components.AChoiceNameClass;
 
 import serene.validation.schema.active.components.APattern;
 
@@ -168,22 +162,7 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
 	public void visit(AExceptPattern exceptAPattern){
 		throw new IllegalStateException();
 	}
-	public void visit(AExceptNameClass exceptANameClass){
-		throw new IllegalStateException();		
-	}
-		
-	public void visit(AName component){
-	    throw new IllegalStateException();
-	}
-	public void visit(AAnyName anyName){
-		throw new IllegalStateException();
-	}
-	public void visit(ANsName nsName){
-		throw new IllegalStateException();
-	}
-	public void visit(AChoiceNameClass choice){
-		throw new IllegalStateException();
-	}	
+
 	
 	
 	public void visit(AElement element){		
@@ -335,22 +314,7 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         public void visit(AExceptPattern exceptAPattern){
             throw new IllegalStateException();
         }
-        public void visit(AExceptNameClass exceptANameClass){
-            throw new IllegalStateException();		
-        }
-            
-        public void visit(AName component){
-            throw new IllegalStateException();
-        }
-        public void visit(AAnyName anyName){
-            throw new IllegalStateException();
-        }
-        public void visit(ANsName nsName){
-            throw new IllegalStateException();
-        }
-        public void visit(AChoiceNameClass choice){
-            throw new IllegalStateException();
-        }	
+
         
         
         public void visit(AElement element){		
