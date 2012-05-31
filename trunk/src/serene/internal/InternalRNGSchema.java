@@ -34,20 +34,23 @@ import serene.SchemaModel;
 //			ValidatorHandler - thread unsafe
 
 
-public class InternalRNGSchema extends BaseSchema{		
+class InternalRNGSchema extends BaseSchema{		
     boolean level1DocumentationElement;	
     boolean restrictToFileName;
+    boolean processEmbededSchematron;
     RNGParseBindingPool bindingPool;
 	public InternalRNGSchema(boolean secureProcessing,
                     boolean level1DocumentationElement,
                     boolean restrictToFileName,
                     boolean optimizedForResourceSharing,
+                    boolean processEmbededSchematron,
                     SchemaModel schemaModel,
                     RNGParseBindingPool bindingPool){
 		super(secureProcessing, optimizedForResourceSharing, schemaModel);
         this.level1DocumentationElement = level1DocumentationElement;
         this.restrictToFileName = restrictToFileName;
         this.bindingPool = bindingPool;
+        this.processEmbededSchematron = processEmbededSchematron;
 	}
     
     public Validator newValidator(){
@@ -62,6 +65,7 @@ public class InternalRNGSchema extends BaseSchema{
 										bindingPool,
                                         level1DocumentationElement,
                                         restrictToFileName,
-                                        optimizedForResourceSharing);
+                                        optimizedForResourceSharing,
+                                        processEmbededSchematron);
 	}    
 }

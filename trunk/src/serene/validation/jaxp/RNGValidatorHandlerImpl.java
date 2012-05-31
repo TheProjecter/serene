@@ -71,7 +71,7 @@ import serene.util.SpaceCharsHandler;
 
 import serene.Constants;
 
-public class ValidatorHandlerImpl extends ValidatorHandler{    
+public class RNGValidatorHandlerImpl extends ValidatorHandler{    
 	ContentHandler contentHandler;	
 	LSResourceResolver lsResourceResolver;
 	TypeInfoProvider typeInfoProvider;
@@ -113,7 +113,7 @@ public class ValidatorHandlerImpl extends ValidatorHandler{
     DocumentContext documentContext;
     
     final boolean noModification = true;
-	public ValidatorHandlerImpl(boolean secureProcessing,                            
+	public RNGValidatorHandlerImpl(boolean secureProcessing,                            
                             boolean namespacePrefixes,
                             boolean level1AttributeDefaultValue,
                             boolean level2AttributeDefaultValue,

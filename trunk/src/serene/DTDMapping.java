@@ -17,8 +17,10 @@ limitations under the License.
 package serene;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.xml.sax.DTDHandler;
+import org.xml.sax.SAXException;
 
 public class DTDMapping implements DTDHandler{
     HashMap<String, NotationDeclaration> notationDeclarations;
@@ -53,5 +55,19 @@ public class DTDMapping implements DTDHandler{
     public void merge(DTDMapping other){
         entityDeclarations.putAll(other.entityDeclarations);
         notationDeclarations.putAll(other.notationDeclarations);
+    }
+    
+    void transferMappings(DTDHandler dh) throws SAXException{
+        Set<String> names = entityDeclarations.keySet();
+        for(String name : names){
+            NotationDeclaration nd = notationDeclarations.get(name);
+            dh.notationDecl(name, nd.getPublicId(), nd.getSystemId());
+        }
+        
+        names = notationDeclarations.keySet();
+        for(String name : names){
+            EntityDeclaration ed = entityDeclarations.get(name);
+            dh.unparsedEntityDecl(name, ed.getPublicId(), ed.getSystemId(), ed.getNotationName());
+        }
     }
 }

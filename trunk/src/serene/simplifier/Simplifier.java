@@ -165,6 +165,7 @@ abstract class Simplifier implements SimplifyingVisitor{
     boolean level1AttributeIdType;
 	boolean replaceMissingDatatypeLibrary;
     boolean restrictToFileName;
+    boolean processEmbededSchematron;
 
 	//ParsedComponentWriter pcw;
 	
@@ -188,11 +189,14 @@ abstract class Simplifier implements SimplifyingVisitor{
     
     public void setLevel1AttributeIdType(boolean value){
         level1AttributeIdType = value;
-    }
-    
+    }    
     public void setRestrictToFileName(boolean restrictToFileName){
         this.restrictToFileName = restrictToFileName;
     }    
+    public void setProcessEmbededSchematron(boolean processEmbededSchematron){
+        this.processEmbededSchematron = processEmbededSchematron;
+    }
+    
 	public void visit(Include include){
 		throw new IllegalStateException();
 	}
@@ -1548,7 +1552,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         attributeContext = oldAttributeContext;		
 	}
 	public void visit(Ref ref) throws SAXException{
-        String name = ref.getName() == null ? "*" : ref.getName().trim()+'*';        
+        String name = ref.getName() == null ? "*" : ref.getName().trim();        
 		ArrayList<Definition> definitions = getReferencedDefinition(currentGrammar, name);
 		
 		if(definitions == null){
@@ -1652,7 +1656,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         attributeContext = oldAttributeContext;
 	}
 	public void visit(ParentRef parentRef) throws SAXException{
-        String name = parentRef.getName() == null ? "*" : parentRef.getName().trim()+'*';        
+        String name = parentRef.getName() == null ? "*" : parentRef.getName().trim();        
 		ArrayList<Definition> definitions = getReferencedDefinition(previousGrammars.peek(), name);
         
 		if(definitions == null){

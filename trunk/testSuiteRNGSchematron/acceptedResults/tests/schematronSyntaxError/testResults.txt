@@ -1,0 +1,9 @@
+
+
+TESTED SCHEMA D:\sereneProject\dev\testSuiteRNGSchematron\tests\schematronSyntaxError\schema.rng
+
+null:-1:-1 Reference error: A diagnostic "Error" has been referenced but is not declared
+
+null:-1:-1 Reference error: A diagnostic "in" has been referenced but is not declared
+
+null:-1:-1 Reference error: A diagnostic "sum" has been referenced but is not declared

@@ -1,0 +1,13 @@
+
+
+TESTED SCHEMA D:\sereneProject\dev\testSuiteRNGSchematron\tests\externalRef\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/dev/testSuiteRNGSchematron/tests/externalRef/document1.xml:14:1 Error in Schematron pattern "Numbers",  rule context "//bar".
+Failed assertion: "Content of <sum> represents the sum of the contents of <bar1> and <bar2>.".
+Location: /root/bar.
+Test: number(bar1) + number(bar2) = number(sum).
+Diagnostics: Error_in_sum: expected 1 found 2.
