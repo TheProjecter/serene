@@ -3,6 +3,10 @@
 = Custom Datatype Libraries =
 <br>
 
+==Serene 0.6.2==
+
+No changes with this release.
+
 ==Serene 0.6.1==
 
 No changes with this release.
