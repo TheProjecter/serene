@@ -1,0 +1,20 @@
+#summary ISO Schematron Support.
+
+=ISO Schematron Support=
+<br>
+
+Starting with release *0.6.2*, Serene introduces support for ISO Schematron. This includes support for pure Schematron schemas, as well as support for Schematron markup embedded in the RELAX NG schemas and is based on the official ISO Schematron implementation for XSLT 1.0 and XSLT 2.0 from *{{{http://www.schematron.com}}}* written by Rick Jelliffe, using the skeleton based on Oliver Becker's work.
+
+Validation using pure Schematron schemas can be done through the JAXP interface by obtaining a {{{javax.xml.validation.Schema}}} object from the {{{javax.xml.validation.SchemaFactory}}} using the Schematron namespace URI, {{{http://purl.oclc.org/dsdl/schematron}}}. For Schematron markup embedded in the RELAX NG, the feature {{{http://serenerng.com/features/processEmbededSchematron}}} must be set to true in the {{{SchemaFactory}}} before obtaining a {{{Schema}}} object for RELAX NG using its namespace URI, {{{http://relaxng.org/ns/structure/1.0}}}.
+
+For embeding in RELAX NG, Serene supports the following Schematron elements: {{{schema}}}, {{{pattern}}}, {{{rule}}} and {{{diagnostics}}}. During parsing all the {{{rule}}} elements embedded directly in one RELAX NG document are grouped in one, internally generated, {{{pattern}}}. In a similar way, all the {{{pattern}}} elements are grouped in one {{{schema}}}. This will also contain the {{{diagnostics}}} element, if present, and will have the default query language binding, as per ISO Schematron specification. When several {{{schema}}} elements are used, they may have different query language bindings within the same RELAX NG document.
+
+The extraction of the embedded elements is done during parsing by recognizing input from the Schematron namespace and dispatching SAX events to a chain of transformations usign the following stylesheets: {{{iso_dsdl_include.xsl}}}, {{{iso_abstract_expand.xsl}}} and {{{iso_svrl_for_xslt1.xsl}}}, or {{{iso_svrl_for_xslt2.xsl}}}, depending on the query binding language. One compiled Schematron schema is created for every RELAX NG document. When using the RELAX NG include element, the Schematron markup found in any overriden definitions will not be represented in the compiled Schematron schema.
+
+The validation is done by dispatching SAX events to each of the Schematron validating transformers. Error processing can be done using the JAXP's {{{javax.xml.validation.ErrorHandler}}}. Error messages are parsed from the SVRL documents resulted from the validating transformation for every failed assert and successful report. The information consists of pattern name, or id if any present, rule context, assert or report text, location, test and diagnostics, if any present, as seen in the following example:
+
+<code>file:///D:/sereneProject/dev/testSuiteRNGSchematron/tests/externalRef/document1.xml:14:1 Error in Schematron pattern "Numbers", rule context "//bar".
+Failed assertion: "Content of {{{<sum>}}} represents the sum of the contents of {{{<bar1>}}} and {{{<bar2>}}}.".
+Location: /root/bar.
+Test: number(bar1) + number(bar2) = number(sum).
+Diagnostics: Error_in_sum: expected 1 found 2. </code>
