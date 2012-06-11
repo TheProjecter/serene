@@ -1,4 +1,5 @@
 #summary ISO Schematron Support.
+#labels Featured
 
 =ISO Schematron Support=
 <br>
