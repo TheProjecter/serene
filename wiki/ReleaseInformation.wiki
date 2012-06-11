@@ -6,6 +6,10 @@
 
 This page contains general release information. See additional wiki pages for details.
 
+==Serene 0.6.2==
+
+This release introduces support for ISO Schematron. Pure Schematron schemas are supported as well as Schematron markup embedded in RELAX NG schemas. 
+
 ==Serene 0.6.1==
 
 This release has been extensively reviewed and refactored in order to improve performance. Some bugs were fixed, messages were slightly tweaked, one feature was added. 
