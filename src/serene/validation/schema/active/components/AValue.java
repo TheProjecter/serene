@@ -57,6 +57,14 @@ public class AValue extends DatatypedCharsAPattern{
 		this.svalue = svalue;
 	}
 
+	public int getMinOccurs(){
+	    return svalue.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return svalue.getMaxOccurs();
+	}
+	
 	
 	public boolean isValueContent(){
 	    return true;
@@ -138,6 +146,6 @@ public class AValue extends DatatypedCharsAPattern{
 	}
 	
 	public String toString(){
-		return "AValue datatype "+datatype+ " min "+minOccurs+" max "+maxOccurs+" /"+charContent+"/";
+		return "AValue datatype "+datatype+ " min "+getMinOccurs()+" max "+getMaxOccurs()+" /"+charContent+"/";
 	}
 }

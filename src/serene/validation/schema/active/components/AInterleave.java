@@ -101,13 +101,12 @@ public abstract class AInterleave extends MultipleChildrenAPattern implements AC
 	}
 	
 	boolean hasMultipleCardinality(){
-		if(maxOccurs > 1 || maxOccurs == UNBOUNDED)return true;
+		if(getMaxOccurs() > 1 || getMaxOccurs() == UNBOUNDED)return true;
 		if(parent instanceof AbstractAPattern) return ((AbstractAPattern)parent).transmitsMultipleCardinality();
 		return false;
 	}
 	boolean requiresDoubleHandler(){
-		return hasMultipleCardinality() && parent instanceof AbstractAPattern && ((AbstractAPattern)parent).isInterleaved();
-	
+		return hasMultipleCardinality() && parent instanceof AbstractAPattern && ((AbstractAPattern)parent).isInterleaved();	
 	}
 	public StructureHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){		
 		if(requiresDoubleHandler()){
@@ -150,7 +149,7 @@ public abstract class AInterleave extends MultipleChildrenAPattern implements AC
 	}	
 	
 	public String toString(){
-		String s = "AInterleave"+ " min "+minOccurs+" max "+maxOccurs
+		String s = "AInterleave"+ " min "+getMinOccurs()+" max "+getMaxOccurs()
 					+" saturation "+saturationIndicator+ " satisfaction "+satisfactionIndicator;		
 		return s;
 	}

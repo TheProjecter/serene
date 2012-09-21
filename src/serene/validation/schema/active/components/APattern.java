@@ -28,8 +28,6 @@ import serene.validation.handlers.error.ErrorCatcher;
 public interface APattern extends Rule{	
 	public static final int UNBOUNDED = -1;
 	
-	void setMinOccurs(int minOccurs);
-	void setMaxOccurs(int maxOccurs);
 	int getMinOccurs();
 	int getMaxOccurs();
 	

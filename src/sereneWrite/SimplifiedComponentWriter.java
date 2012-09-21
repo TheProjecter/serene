@@ -26,9 +26,6 @@ import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SZeroOrMore;
-import serene.validation.schema.simplified.components.SOneOrMore;
-import serene.validation.schema.simplified.components.SOptional;
 import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SListPattern;
 import serene.validation.schema.simplified.components.SEmpty;
@@ -152,27 +149,6 @@ public class SimplifiedComponentWriter extends AbstractSimplifiedComponentVisito
 		debugWriter.write(getTabString() + group.toString());
 		SimplifiedComponent[] children = group.getChildren();
 		if(children != null) next(children);
-		tab--;
-	}
-	public void visit(SZeroOrMore zeroOrMore){
-		tab++;
-		debugWriter.write(getTabString() + zeroOrMore.toString());
-		SimplifiedComponent child = zeroOrMore.getChild();
-		if(child != null) child.accept(this);
-		tab--;
-	}
-	public void visit(SOneOrMore oneOrMore){
-		tab++;
-		debugWriter.write(getTabString() + oneOrMore.toString());
-		SimplifiedComponent child = oneOrMore.getChild();
-		if(child != null) child.accept(this);
-		tab--;
-	}
-	public void visit(SOptional optional){
-		tab++;
-		debugWriter.write(getTabString() + optional.toString());
-		SimplifiedComponent child = optional.getChild();
-		if(child != null) child.accept(this);
 		tab--;
 	}
 	public void visit(SMixed mixed){

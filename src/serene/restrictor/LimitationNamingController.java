@@ -16,26 +16,14 @@ limitations under the License.
 
 package serene.restrictor;
 
-/*
-import java.util.ArrayList;
-
-import org.xml.sax.SAXException;
-
-import serene.util.IntList;
-
-*/
 
 import serene.util.IntStack;
 
 import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SGroup;
 import serene.validation.schema.simplified.components.SChoicePattern;
-import serene.validation.schema.simplified.components.SOptional;
-import serene.validation.schema.simplified.components.SOneOrMore;
-import serene.validation.schema.simplified.components.SZeroOrMore;
 
 
 import serene.validation.handlers.error.ErrorDispatcher;
@@ -91,7 +79,7 @@ abstract class LimitationNamingController extends NamingController{
 		compositorRelevance.push(IRELEVANT);
 	}	
 	
-	void start(SOneOrMore oneOrMore){
+	void startMultipleCardinality(){
 		if(compositorRelevance.peek() == RELEVANT){
 			cardinalityRelevance.push(RELEVANT);
 		}else{
@@ -99,13 +87,6 @@ abstract class LimitationNamingController extends NamingController{
 		}
 	}
 	
-	void start(SZeroOrMore zeroOrMore){
-		if(compositorRelevance.peek() == RELEVANT){
-			cardinalityRelevance.push(RELEVANT);
-		}else{
-			cardinalityRelevance.push(IRELEVANT);
-		}
-	}
 
 	void end(SInterleave interleave){
 		namedPatterns.add(null);
@@ -138,10 +119,7 @@ abstract class LimitationNamingController extends NamingController{
 	}
 	
 	
-	void end(SOneOrMore oneOrMore){
+	void endMultipleCardinality(){
 		cardinalityRelevance.pop();
 	}
-	void end(SZeroOrMore zeroOrMore){
-		cardinalityRelevance.pop();
-	}		
 }

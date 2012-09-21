@@ -88,7 +88,15 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 			}
 		}
 	}	
-		
+
+	public int getMinOccurs(){
+	    return sgroup.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return sgroup.getMaxOccurs();
+	}
+	
 	public int getSatisfactionIndicator(){
 		return satisfactionIndicator;
 	}
@@ -122,7 +130,7 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 	}	
 	
 	boolean hasMultipleCardinality(){
-		if(maxOccurs > 1 || maxOccurs == UNBOUNDED)return true;
+		if(getMaxOccurs() > 1 || getMaxOccurs() == UNBOUNDED)return true;
 		if(parent instanceof AbstractAPattern) return ((AbstractAPattern)parent).transmitsMultipleCardinality();
 		return false;
 	}
@@ -158,8 +166,8 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 	}
 		
 	public String toString(){
-		//String s = "AGroup "+hashCode()+ " min "+minOccurs+" max "+maxOccurs;		
-		String s = "AGroup  min "+minOccurs+" max "+maxOccurs;
+		//String s = "AGroup "+hashCode()+ " min "+getMinOccurs()+" max "+getMaxOccurs();		
+		String s = "AGroup  min "+getMinOccurs()+" max "+getMaxOccurs();
 		return s;
 	}
 }

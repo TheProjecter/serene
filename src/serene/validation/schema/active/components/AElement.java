@@ -71,6 +71,13 @@ public class AElement extends MarkupAPattern
 		
 	}
 	
+	public int getMinOccurs(){
+	    return selement.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return selement.getMaxOccurs();
+	}
 	
 	public void setElementContentMatches(String ns, String name, List<AElement> elements){
 	    if(child.isElementContent()) child.setElementMatches(ns, name, elements);
@@ -200,8 +207,8 @@ public class AElement extends MarkupAPattern
 		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
 	}	
 	public String toString(){
-		//String s = "AElement "+hashCode()+" " + getNameClass()+" "+index+ " min "+minOccurs+" max "+maxOccurs;
-		String s = "AElement  " + identifier+" "+index+ " min "+minOccurs+" max "+maxOccurs;
+		//String s = "AElement "+hashCode()+" " + getNameClass()+" "+index+ " min "+getMinOccurs()+" max "+getMaxOccurs();
+		String s = "AElement  " + identifier+" "+index+ " min "+getMinOccurs()+" max "+getMaxOccurs();
 		return s;
 	}
 	

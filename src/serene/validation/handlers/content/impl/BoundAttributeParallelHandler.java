@@ -109,20 +109,13 @@ class BoundAttributeParallelHandler extends AttributeParallelHandler{
             if(uniqueSample == null ){
                 isQualifiedSample = !candidatesConflictHandler.isDisqualified(0);
                 uniqueSample = individualHandler;
-                //if(uniqueSample instanceof ValidatingEEH)((ValidatingEEH)uniqueSample).setCommon(candidatesConflictErrorHandler);
                 ComparableEEH parent = uniqueSample.getParentHandler();
                 if(parent instanceof ValidatingEEH)((ValidatingEEH)parent).setContextErrorHandlerIndex(ValidatingEEH.COMMON);
             }else{
                 if(!individualHandler.functionalEquivalent(uniqueSample)){
                     state = boundConflict;
-                    //if(uniqueSample instanceof ValidatingEEH)((ValidatingEEH)uniqueSample).restorePreviousHandler();
                     reset();
-                }else if(!isQualifiedSample && !candidatesConflictHandler.isDisqualified(individualHandlers.size())){
-                    //if(uniqueSample instanceof ValidatingEEH){
-                        //((ValidatingEEH)uniqueSample).restorePreviousHandler();
-                        //((ValidatingEEH)individualHandler).setCommon(candidatesConflictErrorHandler);
-                    //}
-                    
+                }else if(!isQualifiedSample && !candidatesConflictHandler.isDisqualified(individualHandlers.size())){                    
                     ComparableEEH sampleParent = uniqueSample.getParentHandler();
                     if(sampleParent instanceof ValidatingEEH)((ValidatingEEH)sampleParent).restorePreviousHandler();
                     ComparableEEH parent = individualHandler.getParentHandler();

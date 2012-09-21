@@ -26,7 +26,9 @@ import serene.util.IntList;
 import serene.util.ObjectIntHashMap;
 import serene.util.SereneArrayList;
 
-import serene.validation.schema.simplified.components.SPattern;
+import serene.validation.schema.simplified.SimplifiedPattern;
+
+//import serene.validation.schema.simplified.components.SimplifiedPattern;
 import serene.validation.schema.simplified.components.SNameClass;
 
 import serene.validation.schema.simplified.components.SExceptPattern;
@@ -38,9 +40,6 @@ import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SZeroOrMore;
-import serene.validation.schema.simplified.components.SOneOrMore;
-import serene.validation.schema.simplified.components.SOptional;
 import serene.validation.schema.simplified.components.SListPattern;
 import serene.validation.schema.simplified.components.SEmpty;
 import serene.validation.schema.simplified.components.SText;
@@ -73,8 +72,8 @@ import serene.restrictor.util.DataPath;
 */
 public class RController implements RestrictingVisitor{
 	
-	SPattern[] topPatterns;
-	SPattern[] definitionTopPatterns;
+	SimplifiedPattern[] topPatterns;
+	SimplifiedPattern[] definitionTopPatterns;
 	int definitionCount;
 		
 	IntList handledDefinitions;
@@ -106,7 +105,7 @@ public class RController implements RestrictingVisitor{
 	
 	int contentType;//7.2
 	
-	SereneArrayList<SPattern> texts;
+	SereneArrayList<SimplifiedPattern> texts;
 	boolean choiceContext;
 	boolean choiceContainsText;
 	
@@ -134,7 +133,7 @@ public class RController implements RestrictingVisitor{
 		listsPath = new Stack<SListPattern>();
 		dataPath = new DataPath();
 		
-		texts = new SereneArrayList<SPattern>();
+		texts = new SereneArrayList<SimplifiedPattern>();
 	}
 	
 	public void setRestrictToFileName(boolean restrictToFileName){
@@ -148,7 +147,7 @@ public class RController implements RestrictingVisitor{
 	public void control(SimplifiedModel simplifiedModel)throws SAXException{		
 		init(simplifiedModel);		
 		if(topPatterns != null && topPatterns.length != 0){//to catch situations where start element was missing
-			for(SPattern topPattern : topPatterns){
+			for(SimplifiedPattern topPattern : topPatterns){
 				if(topPattern != null){
                     open();
                     topPattern.accept(this);
@@ -276,30 +275,20 @@ public class RController implements RestrictingVisitor{
 	public void visit(SElement element) throws SAXException{		
 		if(attributeContext){
 			// error 7.1.1	
-			String message = "Restrictions 7.1.1 error. Forbiden path:"
-			+"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation(restrictToFileName)
-			+"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+".";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));			
+			reportError711(element);			
 		}
 		if(listContext){
 			// error 7.1.3
-			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
-			+"\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName)+".";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			reportError713(element);
 		}
 		if(exceptPatternContext714){
 			// error 7.1.4
-			ArrayList<SimplifiedComponent> path = dataPath.peek();
-			String message = "Restrictions 7.1.4 error. Forbiden path: ";
-			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
-			}
-			message += "\n<"+element.getQName()+"> at "+element.getLocation(restrictToFileName);
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(element.hasCardinalityElement())reportCardinalityElementError714(element);
+			else reportError714(element);
+		}
+		if(startContext && element.hasCardinalityElement()){
+			// error 7.1.5
+			reportCardinalityElementError715(element);
 		}
 		
 		boolean oldAttributeContext = attributeContext;
@@ -399,23 +388,12 @@ public class RController implements RestrictingVisitor{
 	public void visit(SAttribute attribute)throws SAXException{
 		if(attributeContext){
 			// error 7.1.1	
-			String message = "Restrictions 7.1.1 error. Forbiden path:"
-			+"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation(restrictToFileName)
-			+"\n<"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+".";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			reportError711(attribute);
 		}		
 		if(moreMultiChildrenContext){
             if(hasSeveralChildren){
                 // error 7.1.2
-                ArrayList<SPattern> path = morePath.peek();
-                String message = "Restrictions 7.1.2 error. Forbiden path: ";
-                for(int i = 0; i < path.size(); i++){
-                    message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
-                }
-                message += "\n<"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName);
-                //System.out.println(message);
-                errorDispatcher.error(new SAXParseException(message, null));
+                reportError712(attribute);
             }else{
                  moreAttributeContext = true;
             }
@@ -424,30 +402,26 @@ public class RController implements RestrictingVisitor{
             else moreAttributeContext = false;
         }        
         
-		if(listContext){// error 7.1.3
-			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
-			+"\n<"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+".";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+        if(attribute.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+            moreAttributeContext = true;
+            morePath.pushMultipleCardinalityPattern(attribute);
+            elementLimitationNamingController.startMultipleCardinality();
+            attributeLimitationNamingController.startMultipleCardinality();            
+        }
+        
+		if(listContext){
+		    // error 7.1.3
+			reportError713(attribute);
 		}
 		if(exceptPatternContext714){
 			// error 7.1.4
-			ArrayList<SimplifiedComponent> path = dataPath.peek();
-			String message = "Restrictions 7.1.4 error. Forbiden path: ";
-			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
-			}
-			message += "\n<"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName);
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(attribute.hasCardinalityElement())reportCardinalityElementError714(attribute);
+			else reportError714(attribute);
 		}
 		if(startContext){
 			// error 7.1.5
-			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName)+" is not expected as start of the schema.";
-			//System.out.println(" 1 "+message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(attribute.hasCardinalityElement())reportCardinalityElementError715(attribute);
+			else reportError715(attribute);
 		}
 		
 		boolean oldMoreAttributeContext = moreAttributeContext;
@@ -460,11 +434,7 @@ public class RController implements RestrictingVisitor{
 		
 		if(reportInfiniteNameClass){
 			//error 7.3
-			String message = "Restrictions 7.3 error. "
-			+" Attribute <"+attribute.getQName()+"> at "+attribute.getLocation(restrictToFileName) 
-			+" uses infinite name class without being repeated.";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			reportError73(attribute);
 			
 		}		
 		reportInfiniteNameClass = oldReportInfiniteNameClass;		
@@ -526,11 +496,26 @@ public class RController implements RestrictingVisitor{
 		if(texts.size() > textsOffset)texts.removeTail(textsOffset);
 		
 		contentType = ContentType.EMPTY;
+		
+		if(attribute.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    morePath.pop();
+            elementLimitationNamingController.endMultipleCardinality();
+            attributeLimitationNamingController.endMultipleCardinality();
+        }
 	}
 	
 	//------------------
 	//  !!! subclass !!!
 	public void visit(SChoicePattern choice)throws SAXException{
+	    if(exceptPatternContext714 && choice.hasCardinalityElement()){
+			// error 7.1.4
+			reportCardinalityElementError714(choice);
+		}
+		if(startContext && choice.hasCardinalityElement()){
+			// error 7.1.5
+			reportCardinalityElementError715(choice);
+		}
+		
 		elementNamingController.start(choice);
 		attributeNamingController.start(choice);
 		
@@ -542,6 +527,23 @@ public class RController implements RestrictingVisitor{
 		
 		boolean oldChoiceContainsText = choiceContainsText;
 		choiceContainsText = false;
+		
+		boolean oldMoreContext = moreContext;
+		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
+		if(choice.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    moreContext = true;	
+		    morePath.pushMultipleCardinalityPattern(choice);
+		    if(moreInterleaveContext) moreInterleaveMoreContext = true;
+		    elementLimitationNamingController.startMultipleCardinality();
+            attributeLimitationNamingController.startMultipleCardinality();            
+		}
+		
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		boolean oldStartContext = startContext;
+		if(choice.hasCardinalityElement()){
+		    exceptPatternContext714 = false;
+		    startContext = false;
+		}
 
 		SimplifiedComponent[] children = choice.getChildren();		
 		if(children != null) {
@@ -563,7 +565,19 @@ public class RController implements RestrictingVisitor{
 		if(choiceContainsText)texts.add(choice);
 		
 		choiceContext = oldChoiceContext;
-		choiceContainsText = oldChoiceContainsText;		
+		choiceContainsText = oldChoiceContainsText;
+
+        if(choice.hasCardinalityElement()){
+		    exceptPatternContext714 = oldExceptPatternContext714;
+		    startContext = oldStartContext;
+		}
+        if(choice.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    moreContext = oldMoreContext;	
+		    morePath.pop();
+		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;		 
+            elementLimitationNamingController.endMultipleCardinality();
+            attributeLimitationNamingController.endMultipleCardinality();
+		}		
 	}
 	//  !!! subclass !!!
 	//------------------
@@ -571,32 +585,20 @@ public class RController implements RestrictingVisitor{
 	public void visit(SInterleave interleave)throws SAXException{
 		if(listContext){
 			// error 7.1.3
-			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
-			+"\n<"+interleave.getQName()+"> at "+interleave.getLocation(restrictToFileName)+".";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			reportError713(interleave);
 		}
 		if(exceptPatternContext714){
 			// error 7.1.4
-			ArrayList<SimplifiedComponent> path = dataPath.peek();
-			String message = "Restrictions 7.1.4 error. Forbiden path: ";
-			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
-			}
-			message += "\n<"+interleave.getQName()+"> at "+interleave.getLocation(restrictToFileName);
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(interleave.hasCardinalityElement())reportCardinalityElementError714(interleave);
+			else reportError714(interleave);
 		}
 		
 		boolean oldStartContext = startContext;
 		if(startContext && interleave.getChildrenCount() > 1){
 			startContext = false;
 			// error 7.1.5
-			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+interleave.getQName()+"> at "+interleave.getLocation(restrictToFileName)+" is not expected as start of the schema.";
-			//System.out.println(" 2 "+message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(interleave.hasCardinalityElement())reportCardinalityElementError715(interleave);
+			else reportError715(interleave);
 		}
 		
 		boolean oldMoreContext = moreContext;
@@ -609,6 +611,14 @@ public class RController implements RestrictingVisitor{
         if(interleave.getChildrenCount() > 1)hasSeveralChildren = true;
         else hasSeveralChildren = false;
         
+        if(interleave.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+            moreContext = true;
+            morePath.pushMultipleCardinalityPattern(interleave);
+            elementLimitationNamingController.startMultipleCardinality();
+            attributeLimitationNamingController.startMultipleCardinality();
+            if(moreInterleaveContext) moreInterleaveMoreContext = true;
+        }        
+		
 		if(moreContext){            
 			moreMultiChildrenContext = true;
 			morePath.push(interleave);
@@ -618,19 +628,21 @@ public class RController implements RestrictingVisitor{
 				// Serene limitation
 				//System.out.println("Serene DOES NOT SUPPORT "+interleave);
 				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
-				ArrayList<SPattern> path = morePath.doublePeek();
-				for(int i = 0; i < path.size(); i++){
+				ArrayList<SimplifiedPattern> path = morePath.doublePeek();
+				message += "\n"+path.get(0).getCardinalityElementQName()+" at "+path.get(0).getCardinalityElementLocation(restrictToFileName);
+				for(int i = 1; i < path.size(); i++){
 					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
 				}
 				path = morePath.peek();
-				for(int i = 0; i < path.size(); i++){
+				message += "\n"+path.get(0).getCardinalityElementQName()+" at "+path.get(0).getCardinalityElementLocation(restrictToFileName);
+				for(int i = 1; i < path.size(); i++){
 					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
 				}			
 				message += ".";		
 				//System.out.println(message);
 				errorDispatcher.error(new SAXParseException(message, null));
 				moreInterleaveMoreContext = false;			
-			}
+			}		
 		}		
 		
 		boolean oldListContext = listContext;		
@@ -647,7 +659,7 @@ public class RController implements RestrictingVisitor{
 		elementLimitationNamingController.start(interleave);
 		attributeLimitationNamingController.start(interleave);
 		
-		SPattern[] children = interleave.getChildren();
+		SimplifiedPattern[] children = interleave.getChildren();
 		if(children != null){
 			if(listContext){
 				next(children);
@@ -684,41 +696,30 @@ public class RController implements RestrictingVisitor{
 		if(textsCount > 1){
 			// report error 7.4
 			// remove all the records starting with offset
-			String message = "Restrictions error 7.4. "
-			+ "Several text patterns in the context of <"+interleave.getQName()+"> at "+interleave.getLocation(restrictToFileName)+":";
-			int last = texts.size()-1;
-			for(int i = textsOffset; i < texts.size(); i++){
-				SPattern text = texts.get(i);
-				message += "\n<"+text.getQName()+"> at "+text.getLocation(restrictToFileName);
-			}
-			message += ".";			
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			reportError74(textsOffset, interleave);
 			texts.removeTail(textsOffset);
 		}
+		
+		if(interleave.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    morePath.pop();
+            elementLimitationNamingController.endMultipleCardinality();
+            attributeLimitationNamingController.endMultipleCardinality();
+        }
 	}
 	public void visit(SGroup group) throws SAXException{
 	    //System.out.println("R CONTROLLER VISIT Element <"+group.getQName()+"> at "+group.getLocation(restrictToFileName));
 		if(exceptPatternContext714){
 			// error 7.1.4
-			ArrayList<SimplifiedComponent> path = dataPath.peek();
-			String message = "Restrictions 7.1.4 error. Forbiden path: ";
-			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
-			}
-			message += "\n<"+group.getQName()+"> at "+group.getLocation(restrictToFileName);
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(group.hasCardinalityElement())reportCardinalityElementError714(group);
+			else reportError714(group);
 		}
 		
 		boolean oldStartContext = startContext;
 		if(startContext && group.getChildrenCount() > 1){
 			startContext = false;
 			// error 7.1.5
-			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+group.getQName()+"> at "+group.getLocation(restrictToFileName)+" is not expected as start of the schema.";
-			//System.out.println(" 3 "+message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(group.hasCardinalityElement())reportCardinalityElementError715(group);
+			else reportError715(group);
 		}
 		
 		
@@ -732,6 +733,14 @@ public class RController implements RestrictingVisitor{
         if(group.getChildrenCount() > 1)hasSeveralChildren = true;
         else hasSeveralChildren = false;
         
+        if(group.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+            moreContext = true;
+            morePath.pushMultipleCardinalityPattern(group);
+            elementLimitationNamingController.startMultipleCardinality();
+            attributeLimitationNamingController.startMultipleCardinality();
+            if(moreInterleaveContext) moreInterleaveMoreContext = true;
+        }
+        
 		if(moreContext){
 			moreMultiChildrenContext = true;
 			morePath.push(group);
@@ -740,19 +749,21 @@ public class RController implements RestrictingVisitor{
 				// Serene limitation
 				// System.out.println("Serene DOES NOT SUPPORT "+group);
 				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
-				ArrayList<SPattern> path = morePath.doublePeek();
-				for(int i = 0; i < path.size(); i++){
+				ArrayList<SimplifiedPattern> path = morePath.doublePeek();
+				message += "\n"+path.get(0).getCardinalityElementQName()+" at "+path.get(0).getCardinalityElementLocation(restrictToFileName);
+				for(int i = 1; i < path.size(); i++){
 					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
 				}
 				path = morePath.peek();
-				for(int i = 0; i < path.size(); i++){
+				message += "\n"+path.get(0).getCardinalityElementQName()+" at "+path.get(0).getCardinalityElementLocation(restrictToFileName);
+				for(int i = 1; i < path.size(); i++){
 					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
 				}			
 				message += ".";		
 				//System.out.println(message);
 				errorDispatcher.error(new SAXParseException(message, null));
 				moreInterleaveMoreContext = false;			
-			}
+			}			
 		}		
 		
 		boolean oldExceptPatternContext714 = exceptPatternContext714;
@@ -764,7 +775,7 @@ public class RController implements RestrictingVisitor{
 		elementLimitationNamingController.start(group);
 		attributeLimitationNamingController.start(group);
 		
-		SPattern[] children = group.getChildren();
+		SimplifiedPattern[] children = group.getChildren();
 		if(children != null){
 			if(listContext){
 				next(children);
@@ -795,30 +806,17 @@ public class RController implements RestrictingVisitor{
 		
 		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
+		
+		if(group.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    morePath.pop();
+            elementLimitationNamingController.endMultipleCardinality();
+            attributeLimitationNamingController.endMultipleCardinality();
+        }
 	}
 	
 	//------------------
 	//  !!! subclass !!!
-	public void visit(SZeroOrMore zeroOrMore)throws SAXException{
-		if(exceptPatternContext714){
-			// error 7.1.4
-			ArrayList<SimplifiedComponent> path = dataPath.peek();
-			String message = "Restrictions 7.1.4 error. Forbiden path: ";
-			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
-			}
-			message += "\n<"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation(restrictToFileName);
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
-		}
-		if(startContext){
-			// error 7.1.5
-			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+zeroOrMore.getQName()+"> at "+zeroOrMore.getLocation(restrictToFileName)+" is not expected as start of the schema.";
-			//System.out.println(" 4 "+message);
-			errorDispatcher.error(new SAXParseException(message, null));
-		}
-		
+	/*public void visit(SZeroOrMore zeroOrMore)throws SAXException{		
 		boolean oldMoreContext = moreContext;
 		moreContext = true;
 		morePath.push(zeroOrMore);
@@ -850,29 +848,12 @@ public class RController implements RestrictingVisitor{
 			
 		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
-	}
+	}*/
 	//  !!! subclass !!!
 	//------------------
 	
-	public void visit(SOneOrMore oneOrMore)throws SAXException{
-		if(exceptPatternContext714){
-			// error 7.1.4
-			ArrayList<SimplifiedComponent> path = dataPath.peek();
-			String message = "Restrictions 7.1.4 error. Forbiden path: ";
-			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
-			}
-			message += "\n<"+oneOrMore.getQName()+"> at "+oneOrMore.getLocation(restrictToFileName);
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
-		}
-		if(startContext){
-			// error 7.1.5
-			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+oneOrMore.getQName()+"> at "+oneOrMore.getLocation(restrictToFileName)+" is not expected as start of the schema.";
-			//System.out.println(" 5 "+message);
-			errorDispatcher.error(new SAXParseException(message, null));
-		}
+	/*public void visit(SOneOrMore oneOrMore)throws SAXException{
+		
 		
 		boolean oldMoreContext = moreContext;
 		moreContext = true;
@@ -905,29 +886,11 @@ public class RController implements RestrictingVisitor{
 				
 		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
-	}
+	}*/
 	
 	//------------------
 	//  !!! subclass !!!
-	public void visit(SOptional optional)throws SAXException{
-		if(exceptPatternContext714){
-			// error 7.1.4
-			ArrayList<SimplifiedComponent> path = dataPath.peek();
-			String message = "Restrictions 7.1.4 error. Forbiden path: ";
-			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
-			}
-			message += "\n<"+optional.getQName()+"> at "+optional.getLocation(restrictToFileName);
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
-		}
-		if(startContext){
-			// error 7.1.5
-			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+optional.getQName()+"> at "+optional.getLocation(restrictToFileName)+" is not expected as start of the schema.";
-			//System.out.println(" 6 "+message);
-			errorDispatcher.error(new SAXParseException(message, null));
-		}
+	/*public void visit(SOptional optional)throws SAXException{
 		
 		boolean oldExceptPatternContext714 = exceptPatternContext714;
 		exceptPatternContext714 = false;
@@ -940,36 +903,24 @@ public class RController implements RestrictingVisitor{
 		
 		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
-	}
+	}*/
 	//  !!! subclass !!!
 	//------------------
 	
 	public void visit(SMixed mixed) throws SAXException{
 		if(listContext){
 			// error 7.1.3
-			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
-			+"\n<"+mixed.getQName()+"> at "+mixed.getLocation(restrictToFileName)+".";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			reportError713(mixed);
 		}
 		if(exceptPatternContext714){
 			// error 7.1.4
-			ArrayList<SimplifiedComponent> path = dataPath.peek();
-			String message = "Restrictions 7.1.4 error. Forbiden path: ";
-			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
-			}
-			message += "\n<"+mixed.getQName()+"> at "+mixed.getLocation(restrictToFileName);
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(mixed.hasCardinalityElement())reportCardinalityElementError714(mixed);
+			else reportError714(mixed);
 		}
 		if(startContext){
 			// error 7.1.5
-			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+mixed.getQName()+"> at "+mixed.getLocation(restrictToFileName)+" is not expected as start of the schema.";
-			//System.out.println(" 7 "+message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(mixed.hasCardinalityElement())reportCardinalityElementError715(mixed);
+			else reportError715(mixed);
 		}
 		
 		
@@ -981,6 +932,13 @@ public class RController implements RestrictingVisitor{
 		boolean oldMoreInterleaveContext = moreInterleaveContext;
 		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
 		
+		if(mixed.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+            moreContext = true;
+            morePath.pushMultipleCardinalityPattern(mixed);
+            elementLimitationNamingController.startMultipleCardinality();
+            attributeLimitationNamingController.startMultipleCardinality();
+            if(moreInterleaveContext) moreInterleaveMoreContext = true;
+        }
 		
 		if(moreContext){
 			moreMultiChildrenContext = true;
@@ -991,19 +949,21 @@ public class RController implements RestrictingVisitor{
 				// Serene limitation
 				//System.out.println("Serene DOES NOT SUPPORT "+mixed);
 				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
-				ArrayList<SPattern> path = morePath.doublePeek();
-				for(int i = 0; i < path.size(); i++){
+				ArrayList<SimplifiedPattern> path = morePath.doublePeek();
+				message += "\n"+path.get(0).getCardinalityElementQName()+" at "+path.get(0).getCardinalityElementLocation(restrictToFileName);
+				for(int i = 1; i < path.size(); i++){
 					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
 				}
 				path = morePath.peek();
-				for(int i = 0; i < path.size(); i++){
+				message += "\n"+path.get(0).getCardinalityElementQName()+" at "+path.get(0).getCardinalityElementLocation(restrictToFileName);
+				for(int i = 1; i < path.size(); i++){
 					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
 				}			
 				message += ".";		
 				//System.out.println(message);
 				errorDispatcher.error(new SAXParseException(message, null));
 				moreInterleaveMoreContext = false;			
-			}
+			}			
 		}		
 				
 		boolean oldListContext = listContext;		
@@ -1023,7 +983,7 @@ public class RController implements RestrictingVisitor{
 		elementLimitationNamingController.start(mixed);
 		attributeLimitationNamingController.start(mixed);
 		
-		SPattern child = mixed.getChild();
+		SimplifiedPattern child = mixed.getChild();
 		if(child != null){
 			if(listContext){
 				child.accept(this);
@@ -1060,60 +1020,39 @@ public class RController implements RestrictingVisitor{
 			// report error 7.4
 			// add default text of current mixed at the end			
 			// remove all the records starting with offset
-			String message = "Restrictions error 7.4. "
-			+ "Several text patterns in the context of <"+mixed.getQName()+"> at "+mixed.getLocation(restrictToFileName)+":";
-			int last = texts.size()-1;
-			for(int i = textsOffset; i < texts.size(); i++){
-				SPattern text = texts.get(i);
-				message += "\n<"+text.getQName()+"> at "+text.getLocation(restrictToFileName);
-			}			
-			message += "\ndefault text pattern of <"+mixed.getQName()+"> at "+mixed.getLocation(restrictToFileName)+".";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
-			
+			reportError74(textsOffset, mixed);
 			texts.removeTail(textsOffset);						
 		}else if(choiceContext){
 			choiceContainsText = true;
 		}else{
 			texts.add(mixed);
 		}
+		
+		if(mixed.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    morePath.pop();
+            elementLimitationNamingController.endMultipleCardinality();
+            attributeLimitationNamingController.endMultipleCardinality();
+        }
 	}	
 	
 	public void visit(SListPattern list) throws SAXException{
 		if(listContext){
 			// error 7.1.3
-			String message = "Restrictions 7.1.3 error. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
-			+"\n<"+list.getQName()+"> at "+list.getLocation(restrictToFileName)+".";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			reportError713(list);
 		}
 		if(exceptPatternContext714){
 			// error 7.1.4
-			ArrayList<SimplifiedComponent> path = dataPath.peek();
-			String message = "Restrictions 7.1.4 error. Forbiden path: ";
-			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
-			}
-			message += "\n<"+list.getQName()+"> at "+list.getLocation(restrictToFileName);
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(list.hasCardinalityElement())reportCardinalityElementError714(list);
+			else reportError714(list);
 		}
 		if(startContext){
 			// error 7.1.5
-			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+list.getQName()+"> at "+list.getLocation(restrictToFileName)+" is not expected as start of the schema.";
-			//System.out.println(" 8 "+message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(list.hasCardinalityElement())reportCardinalityElementError715(list);
+			else reportError715(list);
 		}
 		if((moreContext || moreMultiChildrenContext) && !(listContext || exceptPatternContext72)){
             // error 7.2 simple content type repeated in the context
-			String message = "Restrictions 7.2 error. "
-			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation(restrictToFileName)+":"
-			+ "\n<"+list.getQName()+"> at "+list.getLocation(restrictToFileName)			
-			+".";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			reportError72(list);
         }
         
 		boolean oldListContext = listContext;		
@@ -1122,6 +1061,16 @@ public class RController implements RestrictingVisitor{
 		boolean oldExceptPatternContext714 = exceptPatternContext714;
 		exceptPatternContext714 = false;
         
+		boolean oldMoreContext = moreContext;
+		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
+		if(list.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    moreContext = true;
+		    morePath.pushMultipleCardinalityPattern(list);
+		    if(moreInterleaveContext) moreInterleaveMoreContext = true;
+		    elementLimitationNamingController.startMultipleCardinality();
+			attributeLimitationNamingController.startMultipleCardinality();
+		}
+		
         boolean oldExceptPatternContext72 = exceptPatternContext72;
 		exceptPatternContext72 = false;
 		
@@ -1141,25 +1090,25 @@ public class RController implements RestrictingVisitor{
 		listsPath.pop();
 		
 		contentType = ContentType.SIMPLE;
+		
+		if(list.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    moreContext = oldMoreContext;	
+		    morePath.pop();
+		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
+		    elementLimitationNamingController.endMultipleCardinality();
+			attributeLimitationNamingController.endMultipleCardinality();
+		}
 	}	
 	public void visit(SEmpty empty) throws SAXException{
 		if(exceptPatternContext714){
 			// error 7.1.4
-			ArrayList<SimplifiedComponent> path = dataPath.peek();
-			String message = "Restrictions 7.1.4 error. Forbiden path: ";
-			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
-			}
-			message += "\n<"+empty.getQName()+"> at "+empty.getLocation(restrictToFileName);
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(empty.hasCardinalityElement())reportCardinalityElementError714(empty);
+			else reportError714(empty);
 		}
 		if(startContext){
 			// error 7.1.5
-			String message = "Restrictions 7.1.5 error. "
-			+"The start of schema <"+empty.getQName()+"> at "+empty.getLocation(restrictToFileName)+" is not expected to result in an <empty> component.";
-			//System.out.println(" 9 "+message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(empty.hasCardinalityElement())reportCardinalityElementError715(empty);
+			else reportError715(empty);
 		}
 		if(attributeContext){
 			// Serene limitation
@@ -1174,29 +1123,17 @@ public class RController implements RestrictingVisitor{
 	public void visit(SText text) throws SAXException{
 		if(listContext){
 			// error 7.1.3
-			String message = "Restrictions 7.1.3. Forbiden path:"
-			+"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
-			+"\n<"+text.getQName()+"> at "+text.getLocation(restrictToFileName)+".";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			reportError713(text);
 		}
 		if(exceptPatternContext714){
 			// error 7.1.4
-			ArrayList<SimplifiedComponent> path = dataPath.peek();
-			String message = "Restrictions 7.1.4 error. Forbiden path: ";
-			for(int i = 0; i < path.size(); i++){
-				message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
-			}
-			message += "\n<"+text.getQName()+"> at "+text.getLocation(restrictToFileName);
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(text.hasCardinalityElement())reportCardinalityElementError714(text);
+			else reportError714(text);
 		}
 		if(startContext){
 			// error 7.1.5
-			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+text.getQName()+"> at "+text.getLocation(restrictToFileName)+" is not expected as start of the schema.";
-			//System.out.println(" 10 "+message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(text.hasCardinalityElement())reportCardinalityElementError715(text);
+			else reportError715(text);
 		}
 		
 		if(choiceContext){
@@ -1212,58 +1149,104 @@ public class RController implements RestrictingVisitor{
 	//------------------
 	//  !!! subclass !!!
 	public void visit(SRef ref)throws SAXException{
+	    if(exceptPatternContext714 && ref.hasCardinalityElement()){
+			// error 7.1.4
+			reportCardinalityElementError714(ref);
+		}
+		if(startContext && ref.hasCardinalityElement()){
+			// error 7.1.5
+			reportCardinalityElementError715(ref);
+		}
+		
 		int index = ref.getDefinitionIndex();
         if(index < 0) return;
 		if(handledDefinitions.contains(index)){
             contentType = definitionsContentTypes.get(definitionTopPatterns[index]);
             return;
         }
+		
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		boolean oldStartContext = startContext;
+		if(ref.hasCardinalityElement()){
+		    exceptPatternContext714 = false;
+		    startContext = false;
+		}
+		
+		boolean oldMoreContext = moreContext;
+		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
+		if(ref.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    moreContext = true;
+		    morePath.pushMultipleCardinalityPattern(ref);
+		    if(moreInterleaveContext) moreInterleaveMoreContext = true;
+		    elementLimitationNamingController.startMultipleCardinality();
+			attributeLimitationNamingController.startMultipleCardinality();
+		}
+		
+				
 		definitionTopPatterns[index].accept(this);
 		handledDefinitions.add(index);
         definitionsContentTypes.put(definitionTopPatterns[index], contentType);
+        
+        
+        if(ref.hasCardinalityElement()){
+		    exceptPatternContext714 = oldExceptPatternContext714;
+		    startContext = oldStartContext;
+		}
+		
+		if(ref.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    moreContext = oldMoreContext;
+		    morePath.pop();		    
+		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
+		    elementLimitationNamingController.endMultipleCardinality();
+			attributeLimitationNamingController.endMultipleCardinality();
+		}
 	}	
 	//  !!! subclass !!!
 	//------------------
 	
 	public void visit(SValue value) throws SAXException{
+	    if(exceptPatternContext714 && value.hasCardinalityElement()){
+			// error 7.1.4
+			reportCardinalityElementError714(value);
+		}
 		if(startContext){
 			// error 7.1.5
-			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+value.getQName()+"> at "+value.getLocation(restrictToFileName)+" is not expected as start of the schema.";
-			//System.out.println(" 11 "+message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(value.hasCardinalityElement())reportCardinalityElementError715(value);
+			else reportError715(value);
 		}
         if((moreContext || moreMultiChildrenContext) && !(listContext || exceptPatternContext72)){
             // error 7.2 simple content type repeated in the context
-			String message = "Restrictions 7.2 error. "
-			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation(restrictToFileName)+":"
-			+ "\n<"+value.getQName()+"> at "+value.getLocation(restrictToFileName)			
-			+".";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			reportError72(value);
         }
 		contentType = ContentType.SIMPLE;
 	}
 	public void visit(SData data)throws SAXException{
+	    if(exceptPatternContext714 && data.hasCardinalityElement()){
+			// error 7.1.4
+			reportCardinalityElementError714(data);
+		}
 		if(startContext){
 			// error 7.1.5
-			String message = "Restrictions 7.1.5 error. "
-			+"Element <"+data.getQName()+"> at "+data.getLocation(restrictToFileName)+" is not expected as start of the schema.";
-			//System.out.println(" 13 "+message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			if(data.hasCardinalityElement())reportCardinalityElementError715(data);
+			else reportError715(data);
 		}
 		if((moreContext || moreMultiChildrenContext) && !(listContext || exceptPatternContext72)){
             // error 7.2 simple content type repeated in the context
-			String message = "Restrictions 7.2 error. "
-			+"Repeated simple content type in the context of <"+morePath.peekItem().getQName()+"> at "+morePath.peekItem().getLocation(restrictToFileName)+":"
-			+ "\n<"+data.getQName()+"> at "+data.getLocation(restrictToFileName)			
-			+".";
-			//System.out.println(message);
-			errorDispatcher.error(new SAXParseException(message, null));
+			reportError72(data);
         }
         
 		boolean oldStartContext = startContext;
 		startContext = false;
+		
+		boolean oldMoreContext = moreContext;
+		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
+		if(data.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    moreContext = true;
+		    morePath.pushMultipleCardinalityPattern(data);
+		    if(moreInterleaveContext) moreInterleaveMoreContext = true;
+		    elementLimitationNamingController.startMultipleCardinality();
+			attributeLimitationNamingController.startMultipleCardinality();
+		}
 		
 		dataPath.push(data);
 
@@ -1275,15 +1258,101 @@ public class RController implements RestrictingVisitor{
 		dataPath.pop();
 		
 		contentType = ContentType.SIMPLE;
+		
+		if(data.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    moreContext = oldMoreContext;	
+		    morePath.pop();
+		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
+		    elementLimitationNamingController.endMultipleCardinality();
+			attributeLimitationNamingController.endMultipleCardinality();
+		}
 	}	
 	public void visit(SGrammar grammar)throws SAXException{
+	    if(exceptPatternContext714 && grammar.hasCardinalityElement()){
+			// error 7.1.4
+			reportCardinalityElementError714(grammar);
+		}
+		if(startContext && grammar.hasCardinalityElement()){
+			// error 7.1.5
+			reportCardinalityElementError715(grammar);
+		}
+		
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		boolean oldStartContext = startContext;
+		if(grammar.hasCardinalityElement()){
+		    exceptPatternContext714 = false;
+		    startContext = false;
+		}
+		
+		boolean oldMoreContext = moreContext;
+		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
+		if(grammar.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    moreContext = true;
+		    morePath.pushMultipleCardinalityPattern(grammar);
+		    if(moreInterleaveContext) moreInterleaveMoreContext = true;
+		    elementLimitationNamingController.startMultipleCardinality();
+			attributeLimitationNamingController.startMultipleCardinality();
+		}
+		
 		SimplifiedComponent child = grammar.getChild();
 		if(child != null) child.accept(this);
+		
+		if(grammar.hasCardinalityElement()){
+		    exceptPatternContext714 = oldExceptPatternContext714;
+		    startContext = oldStartContext;
+		}
+		
+		if(grammar.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    moreContext = oldMoreContext;	
+		    morePath.pop();
+		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
+		    elementLimitationNamingController.endMultipleCardinality();
+			attributeLimitationNamingController.endMultipleCardinality();
+		}
 	}
 	
 	public void visit(SDummy dummy)throws SAXException{
+	    if(exceptPatternContext714 && dummy.hasCardinalityElement()){
+			// error 7.1.4
+			reportCardinalityElementError714(dummy);
+		}
+		if(startContext && dummy.hasCardinalityElement()){
+			// error 7.1.5
+			reportCardinalityElementError715(dummy);
+		}
+		
+		boolean oldExceptPatternContext714 = exceptPatternContext714;
+		boolean oldStartContext = startContext;
+		if(dummy.hasCardinalityElement()){
+		    exceptPatternContext714 = false;
+		    startContext = false;
+		}
+		
+		boolean oldMoreContext = moreContext;
+		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
+		if(dummy.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    moreContext = true;
+		    morePath.pushMultipleCardinalityPattern(dummy);
+		    if(moreInterleaveContext) moreInterleaveMoreContext = true;
+		    elementLimitationNamingController.startMultipleCardinality();
+			attributeLimitationNamingController.startMultipleCardinality();
+		}
+		
 		SimplifiedComponent[] children = dummy.getChildren();
 		if(children != null) next(children);
+		
+		if(dummy.hasCardinalityElement()){
+		    exceptPatternContext714 = oldExceptPatternContext714;
+		    startContext = oldStartContext;
+		}
+		
+		if(dummy.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		    moreContext = oldMoreContext;	
+		    morePath.pop();
+		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
+		    elementLimitationNamingController.endMultipleCardinality();
+			attributeLimitationNamingController.endMultipleCardinality();
+		}
 	}	
 
 		
@@ -1292,4 +1361,107 @@ public class RController implements RestrictingVisitor{
 			child.accept(this);
 		}
 	}
+	
+	protected void reportError711(SimplifiedPattern p) throws SAXException{
+	    String message = "Restrictions 7.1.1 error. Forbiden path:"
+        +"\n<"+attributesPath.peek().getQName()+"> at "+attributesPath.peek().getLocation(restrictToFileName)
+        +"\n<"+p.getQName()+"> at "+p.getLocation(restrictToFileName)+".";
+        //System.out.println(message);
+        errorDispatcher.error(new SAXParseException(message, null));
+	}
+	
+	protected void reportError712(SimplifiedPattern p) throws SAXException{
+	    ArrayList<SimplifiedPattern> path = morePath.peek();
+        String message = "Restrictions 7.1.2 error. Forbiden path: ";
+        message += "\n<"+path.get(0).getCardinalityElementQName()+"> at "+path.get(0).getCardinalityElementLocation(restrictToFileName);
+        for(int i = 1; i < path.size(); i++){
+            message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
+        }
+        message += "\n<"+p.getQName()+"> at "+p.getLocation(restrictToFileName);
+        //System.out.println(message);
+        errorDispatcher.error(new SAXParseException(message, null));
+	}
+	
+	protected void reportError713(SimplifiedPattern p) throws SAXException{
+	    String message = "Restrictions 7.1.3 error. Forbiden path:"
+        +"\n<"+listsPath.peek().getQName()+"> at "+listsPath.peek().getLocation(restrictToFileName)
+        +"\n<"+p.getQName()+"> at "+p.getLocation(restrictToFileName)+".";
+        //System.out.println(message);
+        errorDispatcher.error(new SAXParseException(message, null));
+	}
+	
+	protected void reportError714(SimplifiedPattern p) throws SAXException{
+	    ArrayList<SimplifiedComponent> path = dataPath.peek();
+        String message = "Restrictions 7.1.4 error. Forbiden path: ";
+        for(int i = 0; i < path.size(); i++){
+            message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
+        }
+        message += "\n<"+p.getQName()+"> at "+p.getLocation(restrictToFileName);
+        //System.out.println(message);
+        errorDispatcher.error(new SAXParseException(message, null));
+	}
+	
+	protected void reportError715(SimplifiedPattern p) throws SAXException{
+        String message = "Restrictions 7.1.5 error. "
+        +"Element <"+p.getQName()+"> at "+p.getLocation(restrictToFileName)+" is not expected as start of the schema.";
+        //System.out.println(" 2 "+message);
+        errorDispatcher.error(new SAXParseException(message, null));	    
+	}
+	
+	protected void reportError715(SEmpty e) throws SAXException{
+        String message = "Restrictions 7.1.5 error. "
+        +"The start of schema <"+e.getQName()+"> at "+e.getLocation(restrictToFileName)+" is not expected to result in an <empty> component.";
+        //System.out.println(" 9 "+message);
+        errorDispatcher.error(new SAXParseException(message, null));	    
+	}
+	
+	
+	protected void reportCardinalityElementError714(SimplifiedPattern p) throws SAXException{
+	    ArrayList<SimplifiedComponent> path = dataPath.peek();
+        String message = "Restrictions 7.1.4 error. Forbiden path: ";
+        for(int i = 0; i < path.size(); i++){
+            message += "\n<"+path.get(i).getQName()+"> at "+path.get(i).getLocation(restrictToFileName); 
+        }
+        message += "\n<"+p.getCardinalityElementQName()+"> at "+p.getCardinalityElementLocation(restrictToFileName);
+        //System.out.println(message);
+        errorDispatcher.error(new SAXParseException(message, null));
+	}
+	
+	protected void reportCardinalityElementError715(SimplifiedPattern p) throws SAXException{
+        String message = "Restrictions 7.1.5 error. "
+        +"Element <"+p.getCardinalityElementQName()+"> at "+p.getCardinalityElementLocation(restrictToFileName)+" is not expected as start of the schema.";
+        //System.out.println(" 2 "+message);
+        errorDispatcher.error(new SAXParseException(message, null));	    
+	}
+	
+	protected void reportError72(SimplifiedPattern p) throws SAXException{
+	    SimplifiedPattern c = morePath.peek().get(0);
+        String message = "Restrictions 7.2 error. "        
+        +"Repeated simple content type in the context of <"+c.getCardinalityElementQName()+"> at "+c.getCardinalityElementLocation(restrictToFileName)+":"
+        + "\n<"+p.getQName()+"> at "+p.getLocation(restrictToFileName)			
+        +".";
+        //System.out.println(message);
+        errorDispatcher.error(new SAXParseException(message, null));	    
+	}
+	
+	protected void reportError73(SAttribute a) throws SAXException{
+	    String message = "Restrictions 7.3 error. "
+        +" Attribute <"+a.getQName()+"> at "+a.getLocation(restrictToFileName) 
+        +" uses infinite name class without being repeated.";
+        //System.out.println(message);
+        errorDispatcher.error(new SAXParseException(message, null));
+    }
+    
+    protected void reportError74(int textsOffset, SimplifiedPattern p) throws SAXException{//might be able to replace with interleave
+        String message = "Restrictions 7.4 error. "
+        + "Several text patterns in the context of <"+p.getQName()+"> at "+p.getLocation(restrictToFileName)+":";
+        int last = texts.size()-1;
+        for(int i = textsOffset; i < texts.size(); i++){
+            SimplifiedPattern text = texts.get(i);
+            message += "\n<"+text.getQName()+"> at "+text.getLocation(restrictToFileName);
+        }
+        message += ".";			
+        //System.out.println(message);
+        errorDispatcher.error(new SAXParseException(message, null));        
+    }
 }

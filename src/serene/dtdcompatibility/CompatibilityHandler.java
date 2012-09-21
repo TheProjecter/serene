@@ -37,7 +37,7 @@ import serene.restrictor.ControllerPool;
 import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.RestrictingVisitor;
 
-import serene.validation.schema.simplified.components.SPattern;
+import serene.validation.schema.simplified.SimplifiedPattern;
 import serene.validation.schema.simplified.components.SNameClass;
 
 import serene.validation.schema.simplified.components.SExceptPattern;
@@ -48,9 +48,6 @@ import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SZeroOrMore;
-import serene.validation.schema.simplified.components.SOneOrMore;
-import serene.validation.schema.simplified.components.SOptional;
 import serene.validation.schema.simplified.components.SListPattern;
 import serene.validation.schema.simplified.components.SEmpty;
 import serene.validation.schema.simplified.components.SText;
@@ -116,8 +113,8 @@ import serene.util.NameInfo;
 import serene.bind.util.DocumentIndexedData;
 
 public class CompatibilityHandler implements RestrictingVisitor{
-    SPattern[] startTopPattern;
-	SPattern[] refDefinitionTopPattern;
+    SimplifiedPattern[] startTopPattern;
+	SimplifiedPattern[] refDefinitionTopPattern;
     RecursionModel recursionModel;
         
     boolean level1AttributeDefaultValue;
@@ -147,7 +144,10 @@ public class CompatibilityHandler implements RestrictingVisitor{
     // for attribute default value
     boolean defaultedAttributeContent; // for element level handling: handle choices, required branches, name 
     boolean defaultedAttributeContext; // for datatype: report context dependent   
-    boolean controlAlternative;// for choice handling 
+    boolean controlAlternative;// for choice handling
+    // TODO What is controlAlternative actually doing and why do you turn it off 
+    // inside cardinality elements? Also some clarification needed for hasAlternative 
+    // in the presence of optional and zeroOrMore. 
     boolean hasAlternative;// for choice handling
     boolean hasName; // for name class control
     
@@ -292,7 +292,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             currentAttributeIdTypesList = new IntList();
         }
         
-        for(SPattern start : startTopPattern){
+        for(SimplifiedPattern start : startTopPattern){
             start.accept(this);
         }
         if(optimizedForResourceSharing)activeModel.recycle();
@@ -384,9 +384,23 @@ public class CompatibilityHandler implements RestrictingVisitor{
         if(child == null){
             ArrayList<SAttribute> attributesList = new ArrayList<SAttribute>();
             //simetryController = new CompetitionSimetryController(controllerPool, errorDispatcher, debugWriter);
-            simetryController.control(element, attributesList);           
+            simetryController.control(element, attributesList);
+            if(controlAlternative && element.getMinOccurs() == 0) hasAlternative = true;
             return;
         }
+        
+        
+        boolean controlAlternativeMemo = false;
+		int cardinalityAttributesOffset = -1;
+		if(element.hasCardinalityElement()){		    
+            if(controlAlternative){
+                controlAlternativeMemo = controlAlternative;
+                controlAlternative = false;
+            }
+            if(element.getMinOccurs() == 0){
+                cardinalityAttributesOffset = currentAttributesList.size();                
+            }
+		}
         
         boolean defaultedAttributeContextMemo = defaultedAttributeContext;
         boolean defaultedAttributeContentMemo = defaultedAttributeContent;
@@ -522,15 +536,53 @@ public class CompatibilityHandler implements RestrictingVisitor{
             idTypeAttributeContent = idTypeAttributeContentMemo;            
             currentIdAttributesList = idAttributeListsStack.pop();
             currentAttributeIdTypesList = attributeIdTypeListsStack.pop();
-        }       
+        }   
+        
+        if(element.hasCardinalityElement()){		    
+            if(controlAlternativeMemo){
+                controlAlternative = controlAlternativeMemo;
+            }
+            if(element.getMinOccurs() == 0){
+                for(;cardinalityAttributesOffset < isRequiredBranch.size(); cardinalityAttributesOffset++){
+                    isRequiredBranch.set(cardinalityAttributesOffset, false);
+                } 
+                if(controlAlternative) hasAlternative = true;
+            }
+		}
 	}	
 	public void visit(SAttribute attribute)throws SAXException{
+	    boolean controlAlternativeMemo = false;
+		int cardinalityAttributesOffset = -1;
+		if(attribute.hasCardinalityElement()){		    
+            if(controlAlternative){
+                controlAlternativeMemo = controlAlternative;
+                controlAlternative = false;
+            }
+            if(attribute.getMinOccurs() == 0){
+                cardinalityAttributesOffset = currentAttributesList.size();                
+            }
+		}
+		
         currentAttributesList.add(attribute);
         		
 		SimplifiedComponent[] children = attribute.getChildren();
         
-        if(children == null) return;        
-		if(children.length > 1) return; // syntax error
+			
+        if(children == null || children.length > 1){// syntax error        
+            if(attribute.hasCardinalityElement()){		    
+                if(controlAlternativeMemo){
+                    controlAlternative = controlAlternativeMemo;
+                }
+                if(attribute.getMinOccurs() == 0){
+                    for(;cardinalityAttributesOffset < isRequiredBranch.size(); cardinalityAttributesOffset++){
+                        isRequiredBranch.set(cardinalityAttributesOffset, false);
+                    }
+                    if(controlAlternative) hasAlternative = true;
+                }
+            }
+            return; 
+        }
+            
         
         String defaultValue = null;
         boolean defaultedAttributeContextMemo = defaultedAttributeContext;
@@ -640,6 +692,18 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 idTypeAttributeContent = idTypeAttributeContentMemo;
             }
         }
+        
+		if(attribute.hasCardinalityElement()){		    
+            if(controlAlternativeMemo){
+                controlAlternative = controlAlternativeMemo;
+            }
+            if(attribute.getMinOccurs() == 0){
+                for(;cardinalityAttributesOffset < isRequiredBranch.size(); cardinalityAttributesOffset++){
+                    isRequiredBranch.set(cardinalityAttributesOffset, false);
+                }
+                if(controlAlternative) hasAlternative = true;
+            }
+		}
 	}
 	private void simulateInput(SAttribute attribute){
 	    DocumentIndexedData did = attribute.getDocumentIndexedData();
@@ -657,9 +721,24 @@ public class CompatibilityHandler implements RestrictingVisitor{
 	
     
 	public void visit(SChoicePattern choice)throws SAXException{
-		SimplifiedComponent[] children = choice.getChildren();
-        if(children == null)return;
+		SimplifiedComponent[] children = choice.getChildren();	
+        if(children == null){
+            if(controlAlternative && choice.getMinOccurs() == 0) hasAlternative = true;
+            return;
+        }
         
+        boolean controlAlternativeMemo = false;
+		int cardinalityAttributesOffset = -1;
+		if(choice.hasCardinalityElement()){		    
+            if(controlAlternative){
+                controlAlternativeMemo = controlAlternative;
+                controlAlternative = false;
+            }
+            if(choice.getMinOccurs() == 0){
+                cardinalityAttributesOffset = currentAttributesList.size();                
+            }
+		}
+		
         int attributesOffset;        
         
         if(level1AttributeDefaultValue){
@@ -697,11 +776,31 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 child.accept(this); 
             }
         }
+        
+        if(choice.hasCardinalityElement()){		    
+            if(controlAlternativeMemo){
+                controlAlternative = controlAlternativeMemo;
+            }
+            if(choice.getMinOccurs() == 0){
+                for(;cardinalityAttributesOffset < isRequiredBranch.size(); cardinalityAttributesOffset++){
+                    isRequiredBranch.set(cardinalityAttributesOffset, false);
+                }
+                if(controlAlternative) hasAlternative = true;
+            }
+		}
 	}
 	public void visit(SInterleave interleave)throws SAXException{
 		SimplifiedComponent[] children = interleave.getChildren();
-        if(children == null)return;
+        if(children == null){
+            if(controlAlternative && interleave.getMinOccurs() == 0) hasAlternative = true;
+            return;
+        }
         
+        int cardinalityAttributesOffset = -1;
+		if(interleave.getMinOccurs() == 0){
+            cardinalityAttributesOffset = currentAttributesList.size();
+		}
+		
         boolean controlAlternativeMemo = false;
         if(controlAlternative){
             controlAlternativeMemo = controlAlternative;
@@ -713,11 +812,26 @@ public class CompatibilityHandler implements RestrictingVisitor{
         if(controlAlternativeMemo){
             controlAlternative = controlAlternativeMemo;
         }
+        
+        if(interleave.getMinOccurs() == 0){
+            for(;cardinalityAttributesOffset < isRequiredBranch.size(); cardinalityAttributesOffset++){
+                isRequiredBranch.set(cardinalityAttributesOffset, false);
+            }
+            if(controlAlternative) hasAlternative = true;
+		}
 	}
 	public void visit(SGroup group)throws SAXException{
 		SimplifiedComponent[] children = group.getChildren();		
-        if(children == null) return;
-        
+        if(children == null){
+            if(controlAlternative && group.getMinOccurs() == 0) hasAlternative = true;
+            return;
+        }
+                
+		int cardinalityAttributesOffset = -1;
+		if(group.getMinOccurs() == 0){
+            cardinalityAttributesOffset = currentAttributesList.size();
+		}
+		
         boolean controlAlternativeMemo = false;
         if(controlAlternative){
             controlAlternativeMemo = controlAlternative;
@@ -729,72 +843,52 @@ public class CompatibilityHandler implements RestrictingVisitor{
         if(controlAlternativeMemo){
             controlAlternative = controlAlternativeMemo;
         }
-	}
-	public void visit(SZeroOrMore zeroOrMore)throws SAXException{
-		SimplifiedComponent child = zeroOrMore.getChild();
-        if(child == null) return;
         
-        boolean controlAlternativeMemo = false;
-        int attributesOffset = currentAttributesList.size();
-        if(controlAlternative){
-            controlAlternativeMemo = controlAlternative;
-            controlAlternative = false;
-        }
-		child.accept(this);
-        if(controlAlternativeMemo){
-            controlAlternative = controlAlternativeMemo;
-        }
-        for(;attributesOffset < isRequiredBranch.size(); attributesOffset++){
-            isRequiredBranch.set(attributesOffset, false);
-        }
-	}
-	public void visit(SOneOrMore oneOrMore)throws SAXException{
-		SimplifiedComponent child = oneOrMore.getChild();
-        if(child == null) return;
-        boolean controlAlternativeMemo = false;
-        if(controlAlternative){
-            controlAlternativeMemo = controlAlternative;
-            controlAlternative = false;
-        }
-		child.accept(this);
-        if(controlAlternativeMemo){
-            controlAlternative = controlAlternativeMemo;
-        }
-	}
-	public void visit(SOptional optional)throws SAXException{
-		SimplifiedComponent child = optional.getChild();
-        if(child == null) return;
-        
-        int attributesOffset = currentAttributesList.size();
-        boolean controlAlternativeMemo = false;
-        if(controlAlternative){
-            controlAlternativeMemo = controlAlternative;
-            controlAlternative = false;
-        }
-		child.accept(this);
-        if(controlAlternativeMemo){
-            controlAlternative = controlAlternativeMemo;
-        }
-        for(;attributesOffset < isRequiredBranch.size(); attributesOffset++){
-            isRequiredBranch.set(attributesOffset, false);
+        if(group.getMinOccurs() == 0){
+            for(;cardinalityAttributesOffset < isRequiredBranch.size(); cardinalityAttributesOffset++){
+                isRequiredBranch.set(cardinalityAttributesOffset, false);
+            }
+            if(controlAlternative) hasAlternative = true;
         }
 	}
 	public void visit(SMixed mixed)throws SAXException{
 		SimplifiedComponent child = mixed.getChild();
-        if(child == null) return;
+        if(child == null) {
+            if(controlAlternative && mixed.getMinOccurs() == 0) hasAlternative = true;
+            return;
+        }
+                
+		int cardinalityAttributesOffset = -1;
+		if(mixed.getMinOccurs() == 0){
+            cardinalityAttributesOffset = currentAttributesList.size();
+		}
+		
         boolean controlAlternativeMemo = false;
         if(controlAlternative){
             controlAlternativeMemo = controlAlternative;
             controlAlternative = false;
         }
 		child.accept(this);
+		
         if(controlAlternativeMemo){
             controlAlternative = controlAlternativeMemo;
         }
+        if(mixed.getMinOccurs() == 0){
+            for(;cardinalityAttributesOffset < isRequiredBranch.size(); cardinalityAttributesOffset++){
+                isRequiredBranch.set(cardinalityAttributesOffset, false);
+            }
+            if(controlAlternative) hasAlternative = true;
+        }
+        
 	}	
 	public void visit(SListPattern list)throws SAXException{
+	    // TODO review, might need the same handling as data 
 		SimplifiedComponent child = list.getChild();
-        if(child == null) return;
+        if(child == null) {
+            if(controlAlternative && list.getMinOccurs() == 0) hasAlternative = true;
+            return;
+        }
+        
         boolean controlAlternativeMemo = false;
         if(controlAlternative){
             controlAlternativeMemo = controlAlternative;
@@ -818,13 +912,44 @@ public class CompatibilityHandler implements RestrictingVisitor{
 	public void visit(SNotAllowed notAllowed){}
 	public void visit(SRef ref)throws SAXException{        
         if(recursionModel.isRecursiveReference(ref)){
+            if(controlAlternative && ref.getMinOccurs() == 0) hasAlternative = true;
             return;
         }
+        		
         int index = ref.getDefinitionIndex(); 
-        if(index < 0) return;
-        SPattern defTopPattern = refDefinitionTopPattern[index];
+        if(index < 0){
+            if(controlAlternative && ref.getMinOccurs() == 0) hasAlternative = true;
+            return;
+        }
+                
+        boolean controlAlternativeMemo = false;
+		int cardinalityAttributesOffset = -1;
+		if(ref.hasCardinalityElement()){		    
+            if(controlAlternative){
+                controlAlternativeMemo = controlAlternative;
+                controlAlternative = false;
+            }
+            if(ref.getMinOccurs() == 0){
+                cardinalityAttributesOffset = currentAttributesList.size();
+            }
+		}
+				
+        SimplifiedPattern defTopPattern = refDefinitionTopPattern[index];
         if(defTopPattern != null)defTopPattern.accept(this);
+        
+        if(ref.hasCardinalityElement()){		    
+            if(controlAlternativeMemo){
+                controlAlternative = controlAlternativeMemo;
+            }
+            if(ref.getMinOccurs() == 0){
+                for(;cardinalityAttributesOffset < isRequiredBranch.size(); cardinalityAttributesOffset++){
+                    isRequiredBranch.set(cardinalityAttributesOffset, false);
+                }
+                if(controlAlternative) hasAlternative = true;
+            }
+		}
     }
+    
 	public void visit(SValue value)throws SAXException{
         if(defaultedAttributeContext){
             Datatype datatype = value.getDatatype();
@@ -848,7 +973,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
         }
     }    
     
-	public void visit(SData data)throws SAXException{	
+	public void visit(SData data)throws SAXException{	        
 		if(defaultedAttributeContext){
             Datatype datatype = data.getDatatype();
             if(datatype.isContextDependent()){
@@ -871,14 +996,49 @@ public class CompatibilityHandler implements RestrictingVisitor{
         }
 	}	
 	public void visit(SGrammar grammar)throws SAXException{
+	    boolean controlAlternativeMemo = false;
+		int cardinalityAttributesOffset = -1;
+		
+		if(grammar.hasCardinalityElement()){		    
+            if(controlAlternative){
+                controlAlternativeMemo = controlAlternative;
+                controlAlternative = false;
+            }
+            if(grammar.getMinOccurs() == 0){
+                cardinalityAttributesOffset = currentAttributesList.size();                
+            }
+		}
+		
 		SimplifiedComponent child = grammar.getChild();
 		if(child != null) child.accept(this);
+		
+		if(grammar.hasCardinalityElement()){		    
+            if(controlAlternativeMemo){
+                controlAlternative = controlAlternativeMemo;
+            }
+            if(grammar.getMinOccurs() == 0){
+                for(;cardinalityAttributesOffset < isRequiredBranch.size(); cardinalityAttributesOffset++){
+                    isRequiredBranch.set(cardinalityAttributesOffset, false);
+                }
+                if(controlAlternative) hasAlternative = true;
+            }
+		}
 	}
     
     
     public void visit(SDummy dummy)throws SAXException{
 		SimplifiedComponent[] children = dummy.getChildren();
-        if(children == null) return;
+        if(children == null){
+            if(controlAlternative && dummy.getMinOccurs() == 0) hasAlternative = true;
+            return;
+        }
+        
+        
+		int cardinalityAttributesOffset = -1;
+		if(dummy.getMinOccurs() == 0){
+            cardinalityAttributesOffset = currentAttributesList.size();
+		}
+		
         boolean controlAlternativeMemo = false;
         if(controlAlternative){
             controlAlternativeMemo = controlAlternative;
@@ -887,6 +1047,14 @@ public class CompatibilityHandler implements RestrictingVisitor{
 		next(children);
         if(controlAlternativeMemo){
             controlAlternative = controlAlternativeMemo;
+        }
+        
+        
+        if(dummy.getMinOccurs() == 0){
+            for(;cardinalityAttributesOffset < isRequiredBranch.size(); cardinalityAttributesOffset++){
+                isRequiredBranch.set(cardinalityAttributesOffset, false);
+            }
+            if(controlAlternative) hasAlternative = true;
         }
 	}
 		

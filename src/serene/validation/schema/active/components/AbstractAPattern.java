@@ -29,20 +29,20 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 public abstract class AbstractAPattern extends AbstractRule implements APattern{	
 	
 	
-	protected int minOccurs;
-	protected int maxOccurs;
+	/*protected int minOccurs;
+	protected int maxOccurs;*/
 	
 	public AbstractAPattern(ActiveModelRuleHandlerPool ruleHandlerPool){		
 		super(ruleHandlerPool);
-		minOccurs = 1;
-		maxOccurs = 1;
+		/*minOccurs = 1;
+		maxOccurs = 1;*/
 	}
 		
 	public void setReleased(){
 	    parent = null;
 	    childIndex = -1;
 	}
-	public void setMinOccurs(int minOccurs){
+	/*public void setMinOccurs(int minOccurs){
 		this.minOccurs = minOccurs;
 	}
 	public void setMaxOccurs(int maxOccurs){
@@ -55,25 +55,25 @@ public abstract class AbstractAPattern extends AbstractRule implements APattern{
 	
 	public int getMaxOccurs(){
 		return maxOccurs;
-	}
+	}*/
 	
 	public ParticleHandler getParticleHandler(ChildEventHandler ceh, ErrorCatcher ec){
 		return ruleHandlerPool.getParticleHandler(ceh, this, ec);
 	}
 	
 	public boolean isRequiredContent(){        
-		return minOccurs > 0;
+		return getMinOccurs() > 0;
 	}
 	   
     public boolean isRequiredBranch(){
-        if( minOccurs == 0) return false;
+        if( getMinOccurs() == 0) return false;
         if(parent == null) return true;
         if(!(parent instanceof AbstractAPattern)) return true;
         return ((AbstractAPattern)parent).isChildBranchRequired(this);
     }
     
     boolean isChildBranchRequired(AbstractAPattern child){
-        if( minOccurs == 0) return false;
+        if( getMinOccurs() == 0) return false;
         if(parent == null) return true;
         if(!(parent instanceof AbstractAPattern)) return true;
         return ((AbstractAPattern)parent).isChildBranchRequired(this);

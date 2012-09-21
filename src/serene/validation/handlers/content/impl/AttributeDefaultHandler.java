@@ -31,8 +31,6 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.DatatypedActiveTypeItem;
 
-import serene.validation.schema.simplified.components.SPattern;
-
 import serene.validation.handlers.match.MatchHandler;
 
 import serene.validation.handlers.stack.StackHandler;

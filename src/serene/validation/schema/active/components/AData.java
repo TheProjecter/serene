@@ -52,6 +52,14 @@ public class AData extends DatatypedCharsAPattern{
 	}
 	
 	
+	public int getMinOccurs(){
+	    return sdata.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return sdata.getMaxOccurs();
+	}
+	
 	public boolean isDataContent(){
 	    return true;
 	}
@@ -128,6 +136,6 @@ public class AData extends DatatypedCharsAPattern{
 	}
 	
 	public String toString(){
-		return "AData datatype "+datatype+ " min "+minOccurs+" max "+maxOccurs+"  ";
+		return "AData datatype "+datatype+ " min "+getMinOccurs()+" max "+getMaxOccurs()+"  ";
 	}
 }

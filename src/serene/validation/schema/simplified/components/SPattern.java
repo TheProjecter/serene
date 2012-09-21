@@ -18,9 +18,84 @@ package serene.validation.schema.simplified.components;
 
 import serene.bind.util.DocumentIndexedData;
 
-public abstract class SPattern extends AbstractSimplifiedComponent{	
+
+import serene.validation.schema.simplified.SimplifiedPattern;
+
+abstract class SPattern extends AbstractSimplifiedComponent implements SimplifiedPattern{
+    int minOccurs;
+    int maxOccurs;
+
+    int cardinalityElementRecordIndex;
+	DocumentIndexedData cardinalityElementDID;
+    boolean hasCardinalityElement;	
+
 	public SPattern(int recordIndex, 
 			DocumentIndexedData documentIndexedData){		
 		super(recordIndex, documentIndexedData);
+		minOccurs = 1;
+		maxOccurs = 1;
+		hasCardinalityElement = false;
+	}
+	
+	public int getMinOccurs(){
+	    return minOccurs;
+	}
+	public int getMaxOccurs(){
+	    return maxOccurs;
+	}
+	
+	void setOneOrMore(int recordIndex, DocumentIndexedData documentIndexedData){
+	    maxOccurs = UNBOUNDED; 
+	    cardinalityElementRecordIndex = recordIndex;
+	    cardinalityElementDID = documentIndexedData;
+	    hasCardinalityElement = true;
+	}
+	
+	void setZeroOrMore(int recordIndex, DocumentIndexedData documentIndexedData){
+	    minOccurs = 0;
+	    maxOccurs = UNBOUNDED;
+	    cardinalityElementRecordIndex = recordIndex;
+	    cardinalityElementDID = documentIndexedData;
+	    hasCardinalityElement = true;
+	}
+	
+	void setOptional(int recordIndex, DocumentIndexedData documentIndexedData){
+	    minOccurs = 0;
+	    cardinalityElementRecordIndex = recordIndex;
+	    cardinalityElementDID = documentIndexedData;
+	    hasCardinalityElement = true;
+	}
+	
+	
+	public boolean hasCardinalityElement(){
+	    return hasCardinalityElement;
+	}
+	
+	public int getCardinalityElementRecordIndex(){
+	    return cardinalityElementRecordIndex;
+	}
+	
+	public DocumentIndexedData getCardinalityElementDocumentIndexedData(){
+	    return cardinalityElementDID;
+	}
+	
+	
+	public String getCardinalityElementQName(){
+		return cardinalityElementDID.getItemDescription(cardinalityElementRecordIndex);
+	}
+	public String getCardinalityElementLocation(boolean restrictToFileName){
+	    String si = cardinalityElementDID.getSystemId(cardinalityElementRecordIndex);
+	    int ln = cardinalityElementDID.getLineNumber(cardinalityElementRecordIndex);
+	    if(ln == DocumentIndexedData.UNKNOWN){
+	        if(si == null || !restrictToFileName)return si;
+	        return getRestrictedSystemId(si);
+	    }
+	    
+	    int cn = cardinalityElementDID.getColumnNumber(cardinalityElementRecordIndex);
+	    
+        if(si == null || !restrictToFileName){
+            return si+":"+ln+":"+cn;
+        }
+        return getRestrictedSystemId(si)+":"+ln+":"+cn;
 	}
 }	

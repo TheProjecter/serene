@@ -21,22 +21,22 @@ import java.util.HashSet;
 
 import serene.util.IntList;
 
-import serene.validation.schema.simplified.components.SPattern;
+import serene.validation.schema.simplified.SimplifiedPattern;
 import serene.validation.schema.simplified.components.SRef;
 
 public class RecursionModel{
-	Set<SPattern> recursiveReferences;
+	Set<SimplifiedPattern> recursiveReferences;
 	IntList recursiveDefinitionIndexes;
 	
 	public RecursionModel(){
-		recursiveReferences = new HashSet<SPattern>();
+		recursiveReferences = new HashSet<SimplifiedPattern>();
 		recursiveDefinitionIndexes = new IntList();
 	}
 	
 	public void add(int definitionIndex){
 		recursiveDefinitionIndexes.add(definitionIndex);
 	}	
-	public void add(SPattern pattern){
+	public void add(SimplifiedPattern pattern){
 		recursiveReferences.add(pattern);
 	} 
 	

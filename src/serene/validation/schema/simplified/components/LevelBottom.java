@@ -14,12 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package serene.validation.schema.simplified.util;
+package serene.validation.schema.simplified.components;
 
 import java.util.Arrays;
 
-import serene.validation.schema.simplified.components.SPattern;
-import serene.validation.schema.simplified.components.SNameClass;
 
 class LevelBottom extends Level{
 	Level parent;	

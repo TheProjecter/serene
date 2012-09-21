@@ -28,13 +28,14 @@ import org.relaxng.datatype.DatatypeException;
 
 import serene.datatype.DatatypeLibraryFinder;
 
+import serene.validation.schema.simplified.SimplifiedPattern;
+
 import serene.validation.schema.simplified.SimplifiedComponent;
-import serene.validation.schema.simplified.components.SPattern;
 //import serene.validation.schema.simplified.components.NameClass;
 import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SAttribute;
 
-import serene.validation.schema.simplified.SimplifiedComponentBuilder;
+import serene.validation.schema.simplified.components.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.SimplifiedModel;
 
 
@@ -77,10 +78,10 @@ class RNGDirector{
 	
 	
 	SimplifiedComponentBuilder builder;
-	SPattern rngStartTopPattern;
-	SPattern includeStartTopPattern;
-	SPattern externalRefStartTopPattern;
-	SPattern[] refDefinitionTopPattern;
+	SimplifiedPattern rngStartTopPattern;
+	SimplifiedPattern includeStartTopPattern;
+	SimplifiedPattern externalRefStartTopPattern;
+	SimplifiedPattern[] refDefinitionTopPattern;
 	
 	ArrayList<SElement> selements;
 	int elementIndex;
@@ -151,7 +152,7 @@ class RNGDirector{
 		sattributes.clear();
 		attributeIndex = 0;
 	
-		refDefinitionTopPattern = new SPattern[DEFINITION_TOP_PATTERN_COUNT];
+		refDefinitionTopPattern = new SimplifiedPattern[DEFINITION_TOP_PATTERN_COUNT];
 		needsStartTask = new HashMap<SElement, Object>();
 		endElementTaskFactory = new HashMap<SElement, RNGParseElementTaskFactory>();
 		attributeTaskFactory = new HashMap<SAttribute, RNGParseAttributeTaskFactory>();
@@ -186,7 +187,7 @@ class RNGDirector{
 	}
 	
 	SimplifiedModel getRNGModel(){
-		SPattern[] start = {rngStartTopPattern};
+		SimplifiedPattern[] start = {rngStartTopPattern};
         
 		SElement startElement = new SElement(elementIndex, null, rngStartTopPattern, -1, null);
         selements.add(startElement);        
@@ -202,7 +203,7 @@ class RNGDirector{
 	}
 	
 	SimplifiedModel getIncludeModel(){
-		SPattern[] start = {includeStartTopPattern};
+		SimplifiedPattern[] start = {includeStartTopPattern};
         
 		SElement startElement = new SElement(elementIndex, null, includeStartTopPattern, -1, null);
         selements.add(startElement);     
@@ -218,7 +219,7 @@ class RNGDirector{
 	}
 	
 	SimplifiedModel getExternalRefModel(){
-		SPattern[] start = {externalRefStartTopPattern};
+		SimplifiedPattern[] start = {externalRefStartTopPattern};
         
 		SElement startElement = new SElement(elementIndex, null, externalRefStartTopPattern, -1, null);
         selements.add(startElement);    
@@ -266,7 +267,7 @@ class RNGDirector{
 	private void startGrammar(){
 		builder.startBuild();	
 		builder.buildRef(PATTERN, InternalIndexedData.REF_PATTERN, internalIndexedData);			
-		SPattern r = builder.getCurrentPattern();
+		SimplifiedPattern r = builder.getCurrentPattern();
 		rngStartTopPattern = r;
 		externalRefStartTopPattern = r;		
 	}
@@ -316,12 +317,12 @@ class RNGDirector{
                     builder.startLevel();{
                         builder.buildRef(PATTERN,InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_PATTERN, internalIndexedData /*"pattern","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
                     }builder.endLevel();
-                    builder.buildOneOrMore(InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);			
+                    builder.oneOrMore(InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);			
                     
                     builder.startLevel();{
                         builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
                     }builder.endLevel();
-                    builder.buildZeroOrMore(InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
+                    builder.zeroOrMore(InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
                     
                 }builder.endLevel();				
                 builder.buildInterleave(InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);		
@@ -389,14 +390,14 @@ class RNGDirector{
 				builder.startLevel();{
 					builder.buildRef(PATTERN, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_PATTERN, internalIndexedData  /*"pattern","RELAXNG Specification 3.Full Syntax: element with name class child"*/);						
 				}builder.endLevel();
-				builder.buildOneOrMore(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: element with name class child"*/);				
+				builder.oneOrMore(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: element with name class child"*/);				
 			}builder.endLevel();
 			builder.buildGroup(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_NAME_CLASS_PATTERN_GROUP, internalIndexedData, false   /*"group of name class and pattern elements","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
 			
 			builder.startLevel();{
                 builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
             }builder.endLevel();
-            builder.buildZeroOrMore(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
+            builder.zeroOrMore(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
             
 		}builder.endLevel();				
 		builder.buildInterleave(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData  /*"interleaving of name class and pattern elements group with foreign elements","RELAXNG Specification 3.Full Syntax: element with name class child"*/);		
@@ -433,14 +434,14 @@ class RNGDirector{
 				builder.startLevel();{
 					builder.buildRef(PATTERN, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);						
 				}builder.endLevel();
-				builder.buildOptional(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_PATTERN_SQUARE, internalIndexedData  /*"optional","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
+				builder.optional(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_PATTERN_SQUARE, internalIndexedData  /*"optional","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
 			}builder.endLevel();
 			builder.buildGroup(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_NAME_CLASS_PATTERN_GROUP, internalIndexedData, false   /*"group of name class and pattern elements","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
 			
 			builder.startLevel();{
                 builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
             }builder.endLevel();
-            builder.buildZeroOrMore(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
+            builder.zeroOrMore(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
             
 		}builder.endLevel();				
 		builder.buildInterleave(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData  /*"interleaving of name class and pattern elements group with foreign elements","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);		
@@ -487,12 +488,12 @@ class RNGDirector{
 			builder.startLevel();{
 				builder.buildRef(PATTERN,InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_PATTERN, internalIndexedData  /*"pattern","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
 			}builder.endLevel();
-			builder.buildOptional(InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_PATTERN_SQUARE, internalIndexedData  /*"optional","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
+			builder.optional(InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_PATTERN_SQUARE, internalIndexedData  /*"optional","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
 			
 			builder.startLevel();{
                 builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
             }builder.endLevel();
-            builder.buildZeroOrMore(InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
+            builder.zeroOrMore(InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
             
 		}builder.endLevel();				
 		builder.buildInterleave(InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData  /*"interleaving of pattern element and foreign elements","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);	
@@ -507,12 +508,12 @@ class RNGDirector{
                     builder.startLevel();{
                         builder.buildRef(PATTERN, InternalIndexedData.GROUP_ELEMENT_CONTENT_PATTERN, internalIndexedData /*"pattern","RELAXNG Specification 3.Full Syntax: group"*/);
                     }builder.endLevel();
-                    builder.buildOneOrMore(InternalIndexedData.GROUP_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData /*"oneOrMore","RELAXNG Specification 3.Full Syntax: group"*/);			
+                    builder.oneOrMore(InternalIndexedData.GROUP_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData /*"oneOrMore","RELAXNG Specification 3.Full Syntax: group"*/);			
                     
                     builder.startLevel();{
                         builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.GROUP_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: group"*/);
                     }builder.endLevel();
-                    builder.buildZeroOrMore(InternalIndexedData.GROUP_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: group"*/);
+                    builder.zeroOrMore(InternalIndexedData.GROUP_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: group"*/);
                     
                 }builder.endLevel();				
                 builder.buildInterleave(InternalIndexedData.GROUP_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData  /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: group"*/);		
@@ -544,12 +545,12 @@ class RNGDirector{
                     builder.startLevel();{
                         builder.buildRef(PATTERN,  InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: interleave"*/);
                     }builder.endLevel();
-                    builder.buildOneOrMore(InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: interleave"*/);			
+                    builder.oneOrMore(InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: interleave"*/);			
                     
                     builder.startLevel();{
                         builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: interleave"*/);
                     }builder.endLevel();
-                    builder.buildZeroOrMore(InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: interleave"*/);
+                    builder.zeroOrMore(InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: interleave"*/);
                     
                 }builder.endLevel();				
                 builder.buildInterleave(InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);		
@@ -581,12 +582,12 @@ class RNGDirector{
                     builder.startLevel();{
                         builder.buildRef(PATTERN, InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_PATTERN, internalIndexedData  /*"pattern","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
                     }builder.endLevel();
-                    builder.buildOneOrMore(InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);			
+                    builder.oneOrMore(InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);			
                     
                     builder.startLevel();{
                         builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
                     }builder.endLevel();
-                    builder.buildZeroOrMore(InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
+                    builder.zeroOrMore(InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
                     
                 }builder.endLevel();				
                 builder.buildInterleave(InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData  /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);		
@@ -618,12 +619,12 @@ class RNGDirector{
                     builder.startLevel();{
                         builder.buildRef(PATTERN, InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_PATTERN, internalIndexedData    /*"pattern","RELAXNG Specification 3.Full Syntax: optional"*/);
                     }builder.endLevel();
-                    builder.buildOneOrMore(InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData    /*"oneOrMore","RELAXNG Specification 3.Full Syntax: optional"*/);			
+                    builder.oneOrMore(InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData    /*"oneOrMore","RELAXNG Specification 3.Full Syntax: optional"*/);			
                     
                     builder.startLevel();{
                         builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: optional"*/);
                     }builder.endLevel();
-                    builder.buildZeroOrMore(InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: optional"*/);
+                    builder.zeroOrMore(InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: optional"*/);
                     
                 }builder.endLevel();				
                 builder.buildInterleave(InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData    /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: optional"*/);		
@@ -655,12 +656,12 @@ class RNGDirector{
                     builder.startLevel();{
                         builder.buildRef(PATTERN, InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
                     }builder.endLevel();
-                    builder.buildOneOrMore(InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);			
+                    builder.oneOrMore(InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);			
                     
                     builder.startLevel();{
                         builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
                     }builder.endLevel();
-                    builder.buildZeroOrMore(InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
+                    builder.zeroOrMore(InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
                     
                 }builder.endLevel();				
                 builder.buildInterleave(InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);		
@@ -692,12 +693,12 @@ class RNGDirector{
                     builder.startLevel();{
                         builder.buildRef(PATTERN, InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
                     }builder.endLevel();
-                    builder.buildOneOrMore(InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);			
+                    builder.oneOrMore(InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);			
                     
                     builder.startLevel();{
                         builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
                     }builder.endLevel();
-                    builder.buildZeroOrMore(InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
+                    builder.zeroOrMore(InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
                     
                 }builder.endLevel();				
                 builder.buildInterleave(InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);		
@@ -729,12 +730,12 @@ class RNGDirector{
                     builder.startLevel();{
                         builder.buildRef(PATTERN, InternalIndexedData.LIST_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: list"*/);
                     }builder.endLevel();
-                    builder.buildOneOrMore(InternalIndexedData.LIST_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: list"*/);			
+                    builder.oneOrMore(InternalIndexedData.LIST_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: list"*/);			
                     
                     builder.startLevel();{
                         builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.LIST_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: list"*/);
                     }builder.endLevel();
-                    builder.buildZeroOrMore(InternalIndexedData.LIST_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: list"*/);
+                    builder.zeroOrMore(InternalIndexedData.LIST_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: list"*/);
                     
                 }builder.endLevel();				
                 builder.buildInterleave(InternalIndexedData.LIST_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: list"*/);		
@@ -766,12 +767,12 @@ class RNGDirector{
                     builder.startLevel();{
                         builder.buildRef(PATTERN, InternalIndexedData.MIXED_ELEMENT_CONTENT_PATTERN, internalIndexedData  /*"pattern","RELAXNG Specification 3.Full Syntax: mixed"*/);
                     }builder.endLevel();
-                    builder.buildOneOrMore(InternalIndexedData.MIXED_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: mixed"*/);			
+                    builder.oneOrMore(InternalIndexedData.MIXED_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: mixed"*/);			
                     
                     builder.startLevel();{
                         builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.MIXED_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: mixed"*/);
                     }builder.endLevel();
-                    builder.buildZeroOrMore(InternalIndexedData.MIXED_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: mixed"*/);
+                    builder.zeroOrMore(InternalIndexedData.MIXED_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: mixed"*/);
                     
                 }builder.endLevel();				
                 builder.buildInterleave(InternalIndexedData.MIXED_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: mixed"*/);		
@@ -808,7 +809,7 @@ class RNGDirector{
                 builder.startLevel();{
                     builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.REF_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: ref"*/);
                 }builder.endLevel();
-                builder.buildZeroOrMore(InternalIndexedData.REF_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: ref"*/);
+                builder.zeroOrMore(InternalIndexedData.REF_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: ref"*/);
                 
 			}builder.endLevel();
 			builder.buildGroup(InternalIndexedData.REF_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: ref"*/);
@@ -847,7 +848,7 @@ class RNGDirector{
                 builder.startLevel();{
                     builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: parentRef"*/);
                 }builder.endLevel();
-                builder.buildZeroOrMore(InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: parentRef"*/);
+                builder.zeroOrMore(InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: parentRef"*/);
                 
 			}builder.endLevel();
 			builder.buildGroup(InternalIndexedData.PARENT_REF_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: parentRef"*/);
@@ -885,7 +886,7 @@ class RNGDirector{
                 builder.startLevel();{
                     builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.EMPTY_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: emppty"*/);
                 }builder.endLevel();
-                builder.buildZeroOrMore(InternalIndexedData.EMPTY_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: empty"*/);
+                builder.zeroOrMore(InternalIndexedData.EMPTY_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: empty"*/);
                 
 			}builder.endLevel();
 			builder.buildGroup(InternalIndexedData.EMPTY_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: empty"*/);
@@ -913,7 +914,7 @@ class RNGDirector{
                 builder.startLevel();{
                     builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.TEXT_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: text"*/);
                 }builder.endLevel();
-                builder.buildZeroOrMore(InternalIndexedData.TEXT_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: text"*/);
+                builder.zeroOrMore(InternalIndexedData.TEXT_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: text"*/);
                 
 			}builder.endLevel();
 			builder.buildGroup(InternalIndexedData.TEXT_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: text"*/);
@@ -946,7 +947,7 @@ class RNGDirector{
 
                     sattributes.add(type);                    
                 }builder.endLevel();				
-                builder.buildOptional(InternalIndexedData.VALUE_ELEMENT_CONTENT_TYPE_ATTRIBUTE_SQUARE, internalIndexedData  /*"optional","RELAXNG Specification 3.Full Syntax: type attribute"*/);
+                builder.optional(InternalIndexedData.VALUE_ELEMENT_CONTENT_TYPE_ATTRIBUTE_SQUARE, internalIndexedData  /*"optional","RELAXNG Specification 3.Full Syntax: type attribute"*/);
 				
 				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.VALUE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: value"*/);
 				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.VALUE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: value"*/);
@@ -1003,18 +1004,18 @@ class RNGDirector{
 				builder.startLevel();{
 					builder.buildRef(PARAM, InternalIndexedData.DATA_ELEMENT_CONTENT_PARAM, internalIndexedData     /*"param","RELAXNG Specification 3.Full Syntax: data"*/);
 				}builder.endLevel();
-				builder.buildZeroOrMore(InternalIndexedData.DATA_ELEMENT_CONTENT_PARAM_STAR, internalIndexedData     /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: data"*/);
+				builder.zeroOrMore(InternalIndexedData.DATA_ELEMENT_CONTENT_PARAM_STAR, internalIndexedData     /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: data"*/);
 				builder.startLevel();{
 					builder.buildRef(EXCEPT_PATTERN,InternalIndexedData.DATA_ELEMENT_CONTENT_EXCEPT_PATTERN, internalIndexedData     /*"exceptPattern","RELAXNG Specification 3.Full Syntax: data"*/);
 				}builder.endLevel();
-				builder.buildOptional(InternalIndexedData.DATA_ELEMENT_CONTENT_EXCEPT_PATTERN_SQUARE, internalIndexedData     /*"optional","RELAXNG Specification 3.Full Syntax: data"*/);
+				builder.optional(InternalIndexedData.DATA_ELEMENT_CONTENT_EXCEPT_PATTERN_SQUARE, internalIndexedData     /*"optional","RELAXNG Specification 3.Full Syntax: data"*/);
 			}builder.endLevel();
 			builder.buildGroup(InternalIndexedData.DATA_ELEMENT_CONTENT_PARAM_EXCEPT_PATTERN_GROUP, internalIndexedData, false      /*"group of param and except elements","RELAXNG Specification 3.Full Syntax: data"*/);
     
             builder.startLevel();{
                 builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.DATA_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData     /*"foreignElement","RELAXNG Specification 3.Full Syntax: data"*/);
             }builder.endLevel();
-            builder.buildZeroOrMore(InternalIndexedData.DATA_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData     /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: data"*/);
+            builder.zeroOrMore(InternalIndexedData.DATA_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData     /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: data"*/);
             
 		}builder.endLevel();
 		builder.buildInterleave(InternalIndexedData.DATA_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData     /*"interleave param and except elements group with foreign elements","RELAXNG Specification 3.Full Syntax: data"*/);					
@@ -1033,7 +1034,7 @@ class RNGDirector{
                 builder.startLevel();{
                     builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
                 }builder.endLevel();
-                builder.buildZeroOrMore(InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
+                builder.zeroOrMore(InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
                 
 			}builder.endLevel();
 			builder.buildGroup(InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT, internalIndexedData, false    /*"attributes group","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
@@ -1062,7 +1063,7 @@ class RNGDirector{
                 builder.startLevel();{
                     builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: externalRef"*/);
                 }builder.endLevel();
-                builder.buildZeroOrMore(InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: externalRef"*/);
+                builder.zeroOrMore(InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: externalRef"*/);
                                 
 			}builder.endLevel();
 			builder.buildGroup(InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: externalRef"*/);
@@ -1116,12 +1117,12 @@ class RNGDirector{
 			builder.startLevel();{
 				builder.buildRef(GRAMMAR_CONTENT, InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_GC, internalIndexedData   /*"grammarContent","RELAXNG Specification 3.Full Syntax: grammar content"*/);
 			}builder.endLevel();
-			builder.buildZeroOrMore(InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_GC_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: grammar content"*/);
+			builder.zeroOrMore(InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_GC_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: grammar content"*/);
 			
             builder.startLevel();{
                 builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: grammar content"*/);
             }builder.endLevel();
-            builder.buildZeroOrMore(InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: grammar content"*/);
+            builder.zeroOrMore(InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: grammar content"*/);
             
 		}builder.endLevel();				
 		builder.buildInterleave(InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_FOR_GC, internalIndexedData   /*"interleaving of grammar content elements with foreign elements","RELAXNG Specification 3.Full Syntax: grammar content"*/);	
@@ -1180,12 +1181,12 @@ class RNGDirector{
                     builder.startLevel();{
                         builder.buildRef(PATTERN, InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
                     }builder.endLevel();
-                    builder.buildOneOrMore(InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);			
+                    builder.oneOrMore(InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);			
                     
                     builder.startLevel();{
                         builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
                     }builder.endLevel();
-                    builder.buildZeroOrMore(InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
+                    builder.zeroOrMore(InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
                     
                 }builder.endLevel();				
                 builder.buildInterleave(InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
@@ -1257,12 +1258,12 @@ class RNGDirector{
 			builder.startLevel();{
 				builder.buildRef(GRAMMAR_CONTENT, InternalIndexedData.DIV_GC_ELEMENT_CONTENT_GC, internalIndexedData   /*"grammarContent","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
 			}builder.endLevel();
-			builder.buildZeroOrMore(InternalIndexedData.DIV_GC_ELEMENT_CONTENT_GC_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
+			builder.zeroOrMore(InternalIndexedData.DIV_GC_ELEMENT_CONTENT_GC_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
 			
             builder.startLevel();{
                 builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.DIV_GC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
             }builder.endLevel();
-            builder.buildZeroOrMore(InternalIndexedData.DIV_GC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
+            builder.zeroOrMore(InternalIndexedData.DIV_GC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
             
 		}builder.endLevel();				
 		builder.buildInterleave(InternalIndexedData.DIV_GC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_FOR_GC, internalIndexedData   /*"interleaving of grammar content elements with foreign elements","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);	
@@ -1297,12 +1298,12 @@ class RNGDirector{
 			builder.startLevel();{
 				builder.buildRef(INCLUDE_CONTENT, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_IC, internalIndexedData   /*"includeContent","RELAXNG Specification 3.Full Syntax: include content"*/);
 			}builder.endLevel();
-			builder.buildZeroOrMore(InternalIndexedData.INCLUDE_ELEMENT_CONTENT_IC_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: include content"*/);
+			builder.zeroOrMore(InternalIndexedData.INCLUDE_ELEMENT_CONTENT_IC_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: include content"*/);
     
             builder.startLevel();{
                 builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: include content"*/);
             }builder.endLevel();
-            builder.buildZeroOrMore(InternalIndexedData.INCLUDE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: include content"*/);
+            builder.zeroOrMore(InternalIndexedData.INCLUDE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: include content"*/);
             
 		}builder.endLevel();				
 		builder.buildInterleave(InternalIndexedData.INCLUDE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_FOR_IC, internalIndexedData   /*"interleaving of include content elements with foreign elements","RELAXNG Specification 3.Full Syntax: include content"*/);	
@@ -1359,12 +1360,12 @@ class RNGDirector{
 			builder.startLevel();{
 				builder.buildRef(INCLUDE_CONTENT, InternalIndexedData.DIV_IC_ELEMENT_CONTENT_IC, internalIndexedData   /*"includeContent","RELAXNG Specification 3.Full Syntax: include content"*/);
 			}builder.endLevel();
-			builder.buildZeroOrMore(InternalIndexedData.DIV_IC_ELEMENT_CONTENT_IC_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: include content"*/);
+			builder.zeroOrMore(InternalIndexedData.DIV_IC_ELEMENT_CONTENT_IC_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: include content"*/);
     
             builder.startLevel();{
                 builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.DIV_IC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: include content"*/);
             }builder.endLevel();
-            builder.buildZeroOrMore(InternalIndexedData.DIV_IC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: include content"*/);
+            builder.zeroOrMore(InternalIndexedData.DIV_IC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: include content"*/);
             
 		}builder.endLevel();				
 		builder.buildInterleave(InternalIndexedData.DIV_IC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_FOR_IC, internalIndexedData   /*"interleaving of include content elements with foreign elements","RELAXNG Specification 3.Full Syntax: include content"*/);	
@@ -1382,7 +1383,7 @@ class RNGDirector{
                     builder.startLevel();{
                         builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.START_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: pattern"*/);
                     }builder.endLevel();
-                    builder.buildZeroOrMore(InternalIndexedData.START_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: pattern"*/);
+                    builder.zeroOrMore(InternalIndexedData.START_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: pattern"*/);
                     
                 }builder.endLevel();
                 builder.buildInterleave(InternalIndexedData.START_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern element and foreign elements","RELAXNG Specification 3.Full Syntax: pattern"*/);
@@ -1418,7 +1419,7 @@ class RNGDirector{
 
             sattributes.add(combine);
 		}builder.endLevel();				
-		builder.buildOptional(InternalIndexedData.START_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_SQUARE, internalIndexedData   /*"optional","RELAXNG Specification 3.Full Syntax: start"*/);
+		builder.optional(InternalIndexedData.START_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_SQUARE, internalIndexedData   /*"optional","RELAXNG Specification 3.Full Syntax: start"*/);
 	}
 	
 	
@@ -1431,12 +1432,12 @@ class RNGDirector{
                     builder.startLevel();{
                         builder.buildRef(PATTERN, InternalIndexedData.DEFINE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: define"*/);
                     }builder.endLevel();
-                    builder.buildOneOrMore(InternalIndexedData.DEFINE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: define"*/);			
+                    builder.oneOrMore(InternalIndexedData.DEFINE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: define"*/);			
                     
                     builder.startLevel();{
                         builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.DEFINE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: define"*/);
                     }builder.endLevel();
-                    builder.buildZeroOrMore(InternalIndexedData.DEFINE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: define"*/);
+                    builder.zeroOrMore(InternalIndexedData.DEFINE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: define"*/);
                     
                 }builder.endLevel();				
                 builder.buildInterleave(InternalIndexedData.DEFINE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: define"*/);
@@ -1484,7 +1485,7 @@ class RNGDirector{
 
             sattributes.add(combine);
 		}builder.endLevel();				
-		builder.buildOptional(InternalIndexedData.DEFINE_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_SQUARE, internalIndexedData   /*"optional","RELAXNG Specification 3.Full Syntax: start"*/);
+		builder.optional(InternalIndexedData.DEFINE_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_SQUARE, internalIndexedData   /*"optional","RELAXNG Specification 3.Full Syntax: start"*/);
 	}
 	//**************************************************************************
 	//END DEFINITIONS METHODS **************************************************
@@ -1553,12 +1554,12 @@ class RNGDirector{
 			builder.startLevel();{
 				builder.buildRef(EXCEPT_NAME_CLASS, InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_EXCEPT_NC, internalIndexedData    /*"except name class","RELAXNG Specification 3.Full Syntax: except in name class context"*/);			
 			}builder.endLevel();
-			builder.buildOptional(InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_EXCEPT_NC_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: optional"*/);
+			builder.optional(InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_EXCEPT_NC_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: optional"*/);
     
             builder.startLevel();{
                 builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: TODO"*/);
             }builder.endLevel();
-            builder.buildZeroOrMore(InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: TODO"*/);
+            builder.zeroOrMore(InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: TODO"*/);
             
 		}builder.endLevel();
 		// TODO move
@@ -1591,12 +1592,12 @@ class RNGDirector{
 			builder.startLevel();{
 				builder.buildRef(EXCEPT_NAME_CLASS, InternalIndexedData.NS_NAME_ELEMENT_CONTENT_EXCEPT_NC, internalIndexedData    /*"except name class","RELAXNG Specification 3.Full Syntax: except in name class context"*/);			
 			}builder.endLevel();
-			builder.buildOptional(InternalIndexedData.NS_NAME_ELEMENT_CONTENT_EXCEPT_NC_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: optional"*/);
+			builder.optional(InternalIndexedData.NS_NAME_ELEMENT_CONTENT_EXCEPT_NC_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: optional"*/);
     
             builder.startLevel();{
                 builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.NS_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: TODO"*/);
             }builder.endLevel();
-            builder.buildZeroOrMore(InternalIndexedData.NS_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: TODO"*/);
+            builder.zeroOrMore(InternalIndexedData.NS_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: TODO"*/);
             
 		}builder.endLevel();
 		// TODO move
@@ -1629,12 +1630,12 @@ class RNGDirector{
 			builder.startLevel();{
 				builder.buildRef(NAME_CLASS, InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_NC, internalIndexedData  /*"nameClass","RELAXNG Specification 3.Full Syntax: name class"*/);
 			}builder.endLevel();
-			builder.buildOneOrMore(InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_NC_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
+			builder.oneOrMore(InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_NC_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
 			
 			builder.startLevel();{
                 builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: foreign element"*/);
             }builder.endLevel();
-            builder.buildZeroOrMore(InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign element"*/);
+            builder.zeroOrMore(InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign element"*/);
 		}builder.endLevel();				
 		builder.buildInterleave(InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_NC, internalIndexedData  /*"interleaving of name class elements with foreign elements","RELAXNG Specification 3.Full Syntax: name class content"*/);	
 	}
@@ -1678,12 +1679,12 @@ class RNGDirector{
 			builder.startLevel();{
 				builder.buildRef(NAME_CLASS, InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_NC, internalIndexedData  /*"nameClass","RELAXNG Specification 3.Full Syntax: name class"*/);
 			}builder.endLevel();
-			builder.buildOneOrMore(InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_NC_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
+			builder.oneOrMore(InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_NC_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
 			
 			builder.startLevel();{
                 builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: foreign element"*/);
             }builder.endLevel();
-            builder.buildZeroOrMore(InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign element"*/);
+            builder.zeroOrMore(InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign element"*/);
 		}builder.endLevel();				
 		builder.buildInterleave(InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_NC, internalIndexedData  /*"interleaving of name class elements with foreign elements","RELAXNG Specification 3.Full Syntax: name class content"*/);	
 	}
@@ -1708,7 +1709,7 @@ class RNGDirector{
 
             sattributes.add(ns);
         }builder.endLevel();				
-        builder.buildOptional(InternalIndexedData.NS_ATTRIBUTE_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: ns attribute"*/);
+        builder.optional(InternalIndexedData.NS_ATTRIBUTE_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: ns attribute"*/);
         
         refDefinitionTopPattern[NS_ATTRIBUTE] = builder.getCurrentPattern();
 	}
@@ -1726,7 +1727,7 @@ class RNGDirector{
 
             sattributes.add(datatypeLibrary);
         }builder.endLevel();				
-        builder.buildOptional(InternalIndexedData.DL_ATTRIBUTE_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute"*/);
+        builder.optional(InternalIndexedData.DL_ATTRIBUTE_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute"*/);
     
         refDefinitionTopPattern[DL_ATTRIBUTE] = builder.getCurrentPattern();
     }
@@ -1773,7 +1774,7 @@ class RNGDirector{
 			}builder.endLevel();
 			builder.buildChoicePattern(InternalIndexedData.FOREIGN_ELEMENT_CONTENT_CHOICE, internalIndexedData, false   /*"choice","RELAXNG Specification 3.Full Syntax: any content"*/);
 		}builder.endLevel();
-		builder.buildZeroOrMore(InternalIndexedData.FOREIGN_ELEMENT_CONTENT_CHOICE_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: any content"*/);
+		builder.zeroOrMore(InternalIndexedData.FOREIGN_ELEMENT_CONTENT_CHOICE_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: any content"*/);
 	}
 	
 	private void defineAnyElement(){
@@ -1800,7 +1801,7 @@ class RNGDirector{
 			}builder.endLevel();
 			builder.buildChoicePattern(InternalIndexedData.ANY_ELEMENT_CONTENT_CHOICE, internalIndexedData, false   /*"choice","RELAXNG Specification 3.Full Syntax: any content"*/);
 		}builder.endLevel();
-		builder.buildZeroOrMore(InternalIndexedData.ANY_ELEMENT_CONTENT_CHOICE_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: any content"*/);
+		builder.zeroOrMore(InternalIndexedData.ANY_ELEMENT_CONTENT_CHOICE_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: any content"*/);
 	}
 	
 	private void defineForeignAttributes(){
@@ -1816,9 +1817,9 @@ class RNGDirector{
 
             sattributes.add(foreign);
 		}builder.endLevel();				
-		builder.buildZeroOrMore(InternalIndexedData.FOREIGN_ATTRIBUTE_STAR, internalIndexedData /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign attribute"*/);
+		builder.zeroOrMore(InternalIndexedData.FOREIGN_ATTRIBUTE_STAR, internalIndexedData /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign attribute"*/);
         
-        SPattern p = builder.getCurrentPattern();
+        SimplifiedPattern p = builder.getCurrentPattern();
         refDefinitionTopPattern[FOREIGN_ATTRIBUTES] = p;
     }
 	private void anyNameExceptNullOrRNG(){

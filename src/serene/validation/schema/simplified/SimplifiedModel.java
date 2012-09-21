@@ -20,7 +20,6 @@ import java.util.ArrayList;
 
 import org.relaxng.datatype.DatatypeLibrary;
 
-import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SExceptPattern;
@@ -29,8 +28,8 @@ import sereneWrite.SimplifiedComponentWriter;
 
 public class SimplifiedModel{
     
-	SPattern[] startTopPattern;
-	SPattern[] refDefinitionTopPattern;
+	SimplifiedPattern[] startTopPattern;
+	SimplifiedPattern[] refDefinitionTopPattern;
 	
 	int startElementIndex;
     SElement[] selements;
@@ -39,8 +38,8 @@ public class SimplifiedModel{
 
 	RecursionModel recursionModel;
 	
-	public SimplifiedModel(SPattern[] startTopPattern,
-								SPattern[] refDefinitionTopPattern,
+	public SimplifiedModel(SimplifiedPattern[] startTopPattern,
+								SimplifiedPattern[] refDefinitionTopPattern,
 								int startElementIndex,
 								SElement[] selements,
 								SAttribute[] sattributes,
@@ -56,17 +55,17 @@ public class SimplifiedModel{
         this.sexceptPatterns = sexceptPatterns;
         
 		/*SimplifiedComponentWriter scw = new SimplifiedComponentWriter();
-		for(SPattern stp : startTopPattern){
+		for(SimplifiedPattern stp : startTopPattern){
 		    scw.write(stp);
 		}*/		
 	}
 	
     
-	public SPattern[] getStartTopPattern(){
+	public SimplifiedPattern[] getStartTopPattern(){
 		return startTopPattern;
 	}
 	
-	public SPattern[] getRefDefinitionTopPattern(){
+	public SimplifiedPattern[] getRefDefinitionTopPattern(){
 		return refDefinitionTopPattern;
 	}
 	 

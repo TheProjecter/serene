@@ -62,6 +62,13 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 	}
 	
 	
+	public int getMinOccurs(){
+	    return sref.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return sref.getMaxOccurs();
+	}
 		
 	public boolean isElementContent(){
         if(child == null) return false;
@@ -106,7 +113,7 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 	* This means the method can only be used during validation.
 	*/
 	public boolean isRequiredContent(){
-		if(minOccurs == 0) return false;		
+		if(getMinOccurs() == 0) return false;	
 		return child.isRequiredContent();
 	}
 	
@@ -218,14 +225,8 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 		return false;
 	}	
 	
-	boolean transmitsMultipleOccurrence(){
-		if(maxOccurs > 1 || maxOccurs == UNBOUNDED)return true;
-		if(parent instanceof AbstractAPattern)return ((AbstractAPattern)parent).isInterleaved();
-		return false;
-	}	
-	
 	public String toString(){
-		String s = "ARef \""+index+"\""+ " min "+minOccurs+" max "+maxOccurs;
+		String s = "ARef \""+index+"\""+ " min "+getMinOccurs()+" max "+getMaxOccurs();
 		return s;
 	}
 }

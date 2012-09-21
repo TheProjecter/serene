@@ -30,7 +30,27 @@ public class SText extends AbstractNoChildrenPattern{
 				boolean addedBySimplification){
 		super(recordIndex, documentIndexedData);
 		this.addedBySimplification = addedBySimplification;
+		minOccurs = 0;
+		maxOccurs = UNBOUNDED;	
 	}	
+	
+	void setOneOrMore(int recordIndex, DocumentIndexedData documentIndexedData){
+	    cardinalityElementRecordIndex = recordIndex;
+	    cardinalityElementDID = documentIndexedData;
+	    hasCardinalityElement = true;
+	}
+	
+	void setZeroOrMore(int recordIndex, DocumentIndexedData documentIndexedData){
+	    cardinalityElementRecordIndex = recordIndex;
+	    cardinalityElementDID = documentIndexedData;
+	    hasCardinalityElement = true;
+	}
+	
+	void setOptional(int recordIndex, DocumentIndexedData documentIndexedData){
+	    cardinalityElementRecordIndex = recordIndex;
+	    cardinalityElementDID = documentIndexedData;
+	    hasCardinalityElement = true;
+	}
 		
 	public String getQName(){
 	    if(addedBySimplification) return "text added by "+documentIndexedData.getLocalName(recordIndex)+" simplification";

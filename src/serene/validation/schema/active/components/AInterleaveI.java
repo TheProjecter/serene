@@ -47,6 +47,15 @@ public class AInterleaveI extends AInterleave{
 		this.sinterleave = sinterleave;
 	}	
 	
+	
+	public int getMinOccurs(){
+	    return sinterleave.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return sinterleave.getMaxOccurs();
+	}
+	
 	public String getQName(){
 		return sinterleave.getQName();
 	}

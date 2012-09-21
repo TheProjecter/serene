@@ -65,6 +65,13 @@ public class AGrammar extends UniqueChildAPattern implements AInnerPattern{
 		this.sgrammar = sgrammar;
 	}
 		
+    public int getMinOccurs(){
+	    return sgrammar.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return sgrammar.getMaxOccurs();
+	}
 	
 		
 	public boolean isElementContent(){
@@ -97,7 +104,7 @@ public class AGrammar extends UniqueChildAPattern implements AInnerPattern{
 	
 	
 	public boolean isRequiredContent(){
-		if(minOccurs == 0) return false;
+		if(getMinOccurs() == 0) return false;
 		if(child != null)
 			return child.isRequiredContent();
 		return false;		
@@ -141,14 +148,8 @@ public class AGrammar extends UniqueChildAPattern implements AInnerPattern{
 		return false;
 	}	
 	
-	boolean transmitsMultipleOccurrence(){
-		if(maxOccurs > 1 || maxOccurs == UNBOUNDED)return true;
-		if(parent instanceof AbstractAPattern)return ((AbstractAPattern)parent).isInterleaved();
-		return false;
-	}
-	
 	public String toString(){
-		String s = "AGrammar"+ " min "+minOccurs+" max "+maxOccurs;		
+		String s = "AGrammar"+ " min "+getMinOccurs()+" max "+getMaxOccurs();		
 		return s;
 	}
 

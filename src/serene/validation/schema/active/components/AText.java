@@ -35,11 +35,18 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 public abstract class AText extends CharsAPattern{
 	public AText(ActiveModelRuleHandlerPool ruleHandlerPool){
 		super(ruleHandlerPool);
-		minOccurs = 0;
-		maxOccurs = UNBOUNDED;
+		/*minOccurs = 0;
+		maxOccurs = UNBOUNDED;*/
 		
 	}	
 	
+	public int getMinOccurs(){
+	    return 0;
+	}
+	
+	public int getMaxOccurs(){
+	    return UNBOUNDED;
+	}
 	
 	public boolean isTextContent(){
 	    return true;
@@ -77,7 +84,7 @@ public abstract class AText extends CharsAPattern{
 	}
 	
 	public String toString(){
-		String s = "AText"+ " min "+minOccurs+" max "+maxOccurs;		
+		String s = "AText"+ " min "+getMinOccurs()+" max "+getMaxOccurs();		
 		return s;
 	}
 }
