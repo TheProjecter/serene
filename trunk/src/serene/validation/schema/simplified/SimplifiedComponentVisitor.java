@@ -33,7 +33,6 @@ import serene.validation.schema.simplified.components.SRef;
 import serene.validation.schema.simplified.components.SData;
 import serene.validation.schema.simplified.components.SValue;
 import serene.validation.schema.simplified.components.SGrammar;
-import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SDummy;
 
 
@@ -52,7 +51,6 @@ public interface SimplifiedComponentVisitor{
 	void visit(SChoicePattern component);
 	void visit(SInterleave component);
 	void visit(SGroup component);
-	void visit(SMixed component);
 	void visit(SListPattern component);
 	void visit(SEmpty component);
 	void visit(SText component);

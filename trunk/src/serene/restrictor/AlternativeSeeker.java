@@ -32,7 +32,6 @@ import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SListPattern;
 import serene.validation.schema.simplified.components.SEmpty;
 import serene.validation.schema.simplified.components.SText;
@@ -140,10 +139,6 @@ class AlternativeSeeker implements SimplifiedComponentVisitor{
 		SimplifiedComponent[] children = group.getChildren();
 		if(children != null) next(children);
 	}
-	public void visit(SMixed mixed){
-		SimplifiedComponent child = mixed.getChild();
-		if(child != null) child.accept(this);
-	}	
 	public void visit(SListPattern list){
 		SimplifiedComponent child = list.getChild();
 		if(child != null) child.accept(this);

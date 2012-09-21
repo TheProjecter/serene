@@ -135,4 +135,8 @@ public class CharacterContentDescriptor implements Reusable{
         }      
         return result;
     }
+    
+    public String toString(){
+        return "CharacterContentDescriptor content=["+new String(getCharArrayContent())+"]";
+    }
 }

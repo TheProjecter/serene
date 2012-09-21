@@ -23,7 +23,6 @@ import serene.validation.schema.simplified.components.SNameClass;
 import serene.validation.schema.simplified.SimplifiedPattern;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SGroup;
 
 import serene.validation.handlers.error.ErrorDispatcher;

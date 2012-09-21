@@ -19,11 +19,11 @@ package serene.validation.schema.active.components;
 import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import serene.validation.schema.simplified.components.SMixed;
+import serene.validation.schema.simplified.components.SInterleave;
 
 public class AInterleaveM extends AInterleave{
     
-	SMixed smixed;
+	SInterleave sinterleave;
 	
 	public AInterleaveM(APattern[] children,
 	            boolean allowsElements,
@@ -34,7 +34,7 @@ public class AInterleaveM extends AInterleave{
                 boolean allowsText,
 				ActiveModelStackHandlerPool stackHandlerPool,
 				ActiveModelRuleHandlerPool ruleHandlerPool, 
-				SMixed smixed){		
+				SInterleave sinterleave){		
 		super(children, 
 		        allowsElements,
                 allowsAttributes,
@@ -44,31 +44,30 @@ public class AInterleaveM extends AInterleave{
                 allowsText,
                 stackHandlerPool, 
                 ruleHandlerPool);
-		this.smixed = smixed;
+		this.sinterleave = sinterleave;
 	}	
 	
 	public int getMinOccurs(){
-	    return smixed.getMinOccurs();
+	    return sinterleave.getMinOccurs();
 	}
 	
 	public int getMaxOccurs(){
-	    return smixed.getMaxOccurs();
+	    return sinterleave.getMaxOccurs();
 	}
 	
 	public String getQName(){
-		return smixed.getQName();
+		return sinterleave.getQName();
 	}
 	
 	public String getLocation(boolean restrictToFileName){
-		return smixed.getLocation(restrictToFileName);
+		return sinterleave.getLocation(restrictToFileName);
 	}	
     
     public int functionalEquivalenceCode(){
-        return smixed.hashCode();
+        return sinterleave.hashCode();
     }   
     
-    public SMixed getCorrespondingSimplifiedComponent(){
-        return smixed;
+    public SInterleave getCorrespondingSimplifiedComponent(){
+        return sinterleave;
     }
-    
 }

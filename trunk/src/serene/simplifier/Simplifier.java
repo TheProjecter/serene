@@ -1443,7 +1443,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = mixed.getChildren();
 		
 		if(children == null) {
-			builder.buildMixed(mixed.getRecordIndex(), mixed.getDocumentIndexedData());
+			builder.buildInterleave(mixed.getRecordIndex(), mixed.getDocumentIndexedData());
             patternChild = true;			
 			return;
 		}
@@ -1499,8 +1499,9 @@ abstract class Simplifier implements SimplifyingVisitor{
 		if(builder.getCurrentPatternsCount() > 1){
 			builder.buildReplacementGroup(mixed.getRecordIndex(), mixed.getDocumentIndexedData(), true);
 		}		
+		builder.buildText(mixed.getRecordIndex(), mixed.getDocumentIndexedData(), true);
 		builder.endLevel();
-		builder.buildMixed(mixed.getRecordIndex(), mixed.getDocumentIndexedData());
+		builder.buildInterleave(mixed.getRecordIndex(), mixed.getDocumentIndexedData());
 		
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;

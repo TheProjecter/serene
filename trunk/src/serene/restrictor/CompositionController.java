@@ -29,7 +29,6 @@ import serene.validation.schema.simplified.SimplifiedPattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SGroup;
 import serene.validation.schema.simplified.components.SChoicePattern;
-import serene.validation.schema.simplified.components.SMixed;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -75,7 +74,6 @@ abstract class CompositionController implements Reusable{
 	}
 	
 	abstract void start(SInterleave interleave);
-	abstract void start(SMixed mixed);
 	abstract void start(SGroup group);
 	abstract void start(SChoicePattern choice);
 		
@@ -83,7 +81,6 @@ abstract class CompositionController implements Reusable{
 	
 	
 	abstract void end(SInterleave interleave);
-	abstract void end(SMixed mixed);
 	abstract void end(SGroup group);
 	abstract void end(SChoicePattern choice);
 	

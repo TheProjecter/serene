@@ -2,11 +2,11 @@
 
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\interleaveText74\schema.rng
 
-null:-1:-1 Restrictions error 7.4. Several text patterns in the context of <rng:mixed> at schema.rng:30:16:
+null:-1:-1 Restrictions 7.4 error. Several text patterns in the context of <rng:mixed> at schema.rng:30:16:
 <rng:text> at schema.rng:33:18
-default text pattern of <rng:mixed> at schema.rng:30:16.
+<text added by mixed simplification> at schema.rng:30:16.
 
-null:-1:-1 Restrictions error 7.4. Several text patterns in the context of <rng:interleave> at schema.rng:28:20:
+null:-1:-1 Restrictions 7.4 error. Several text patterns in the context of <rng:interleave> at schema.rng:28:20:
 <rng:text> at schema.rng:29:16
 <rng:text> at schema.rng:38:17
 <rng:text> at schema.rng:40:17

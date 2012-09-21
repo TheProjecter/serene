@@ -28,7 +28,6 @@ import serene.util.IntStack;
 import serene.validation.schema.simplified.components.SNameClass;
 import serene.validation.schema.simplified.SimplifiedPattern;
 import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SGroup;
 import serene.validation.schema.simplified.components.SChoicePattern;
 
@@ -77,12 +76,6 @@ abstract class NamingController extends CompositionController{
 	}
 	
 	void end(SInterleave interleave){
-		namedPatterns.add(null);
-		nameClasses.add(null);
-		compositors.add(END_COMPOSITOR);
-		compositorPatterns.add(null);
-	}
-	void end(SMixed mixed){
 		namedPatterns.add(null);
 		nameClasses.add(null);
 		compositors.add(END_COMPOSITOR);

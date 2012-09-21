@@ -35,7 +35,6 @@ import serene.validation.schema.simplified.components.SRef;
 import serene.validation.schema.simplified.components.SData;
 import serene.validation.schema.simplified.components.SValue;
 import serene.validation.schema.simplified.components.SGrammar;
-import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SDummy;
 
 
@@ -54,7 +53,6 @@ public interface RestrictingVisitor{
 	void visit(SChoicePattern component) throws SAXException;
 	void visit(SInterleave component) throws SAXException;
 	void visit(SGroup component) throws SAXException;
-	void visit(SMixed component) throws SAXException;
 	void visit(SListPattern component) throws SAXException;
 	void visit(SEmpty component) throws SAXException;
 	void visit(SText component) throws SAXException;

@@ -16,16 +16,16 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
-import serene.validation.schema.simplified.components.SMixed;
+import serene.validation.schema.simplified.components.SText;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 public class ATextM extends AText{
-	SMixed smixed;
+	SText stext;
 	public ATextM(ActiveModelRuleHandlerPool ruleHandlerPool, 
-	            SMixed smixed){
+	            SText stext){
 		super(ruleHandlerPool);
-		this.smixed = smixed;
+		this.stext = stext;
 		/*minOccurs = 0;
 		maxOccurs = UNBOUNDED;*/		
 	}	
@@ -39,18 +39,18 @@ public class ATextM extends AText{
 	}*/
 	
 	public String getQName(){
-		return smixed.getQName();
+		return stext.getQName();
 	}
 	
 	public String getLocation(boolean restrictToFileName){
-		return smixed.getLocation(restrictToFileName);
+		return stext.getLocation(restrictToFileName);
 	}	
     
     public int functionalEquivalenceCode(){
-        return smixed.hashCode();
+        return stext.hashCode();
     }   
     
-    public SMixed getCorrespondingSimplifiedComponent(){
-        return smixed;
+    public SText getCorrespondingSimplifiedComponent(){
+        return stext;
     }
 }

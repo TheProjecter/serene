@@ -56,7 +56,6 @@ import serene.validation.schema.simplified.components.SRef;
 import serene.validation.schema.simplified.components.SData;
 import serene.validation.schema.simplified.components.SValue;
 import serene.validation.schema.simplified.components.SGrammar;
-import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SDummy;
 
 import serene.validation.schema.simplified.components.SName;
@@ -851,36 +850,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             if(controlAlternative) hasAlternative = true;
         }
 	}
-	public void visit(SMixed mixed)throws SAXException{
-		SimplifiedComponent child = mixed.getChild();
-        if(child == null) {
-            if(controlAlternative && mixed.getMinOccurs() == 0) hasAlternative = true;
-            return;
-        }
-                
-		int cardinalityAttributesOffset = -1;
-		if(mixed.getMinOccurs() == 0){
-            cardinalityAttributesOffset = currentAttributesList.size();
-		}
-		
-        boolean controlAlternativeMemo = false;
-        if(controlAlternative){
-            controlAlternativeMemo = controlAlternative;
-            controlAlternative = false;
-        }
-		child.accept(this);
-		
-        if(controlAlternativeMemo){
-            controlAlternative = controlAlternativeMemo;
-        }
-        if(mixed.getMinOccurs() == 0){
-            for(;cardinalityAttributesOffset < isRequiredBranch.size(); cardinalityAttributesOffset++){
-                isRequiredBranch.set(cardinalityAttributesOffset, false);
-            }
-            if(controlAlternative) hasAlternative = true;
-        }
-        
-	}	
+
 	public void visit(SListPattern list)throws SAXException{
 	    // TODO review, might need the same handling as data 
 		SimplifiedComponent child = list.getChild();

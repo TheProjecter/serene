@@ -36,7 +36,6 @@ import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SListPattern;
 import serene.validation.schema.simplified.components.SEmpty;
 import serene.validation.schema.simplified.components.SText;
@@ -349,7 +348,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
         currentAllowsDatas = allowsDatas;
         currentAllowsValues = allowsValues;
         currentAllowsListPatterns = allowsListPatterns;
-        currentAllowsText = allowsListPatterns;
+        currentAllowsText = allowsText;
 	}
 	public void visit(SInterleave interleave){
 	    boolean allowsElements = false;
@@ -386,7 +385,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
         currentAllowsDatas = allowsDatas;
         currentAllowsValues = allowsValues;
         currentAllowsListPatterns = allowsListPatterns;
-        currentAllowsText = allowsListPatterns;
+        currentAllowsText = allowsText;
 	}
 	public void visit(SGroup group){
 		boolean allowsElements = false;
@@ -423,25 +422,9 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
         currentAllowsDatas = allowsDatas;
         currentAllowsValues = allowsValues;
         currentAllowsListPatterns = allowsListPatterns;
-        currentAllowsText = allowsListPatterns;
+        currentAllowsText = allowsText;
 	}
-	public void visit(SMixed mixed){	    
-		builder.startLevel();
-		SimplifiedComponent child = mixed.getChild();
-		if(child != null) next(child);
-		builder.buildText(mixed);		
-		builder.endLevel();			
-		
-		currentAllowsText = true;
-		
-		builder.buildInterleave(currentAllowsElements,
-                            currentAllowsAttributes,
-                            currentAllowsDatas,
-                            currentAllowsValues,	
-                            currentAllowsListPatterns,
-                            currentAllowsText,
-                            mixed);
-	}	
+	
 	public void visit(SListPattern list){	    
 		SimplifiedComponent child = list.getChild();
 		if(child != null) nextLevel(child);

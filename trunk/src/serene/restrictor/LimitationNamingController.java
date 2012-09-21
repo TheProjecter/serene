@@ -21,7 +21,6 @@ import serene.util.IntStack;
 
 import serene.validation.schema.simplified.components.SNameClass;
 import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SGroup;
 import serene.validation.schema.simplified.components.SChoicePattern;
 
@@ -52,13 +51,6 @@ abstract class LimitationNamingController extends NamingController{
 		compositorPatterns.add(interleave);
 		compositorRelevance.push(RELEVANT);
 	}
-	void start(SMixed mixed){
-		namedPatterns.add(null);
-		nameClasses.add(null);
-		compositors.add(ALLOW_OVERLAP_COMPOSITOR);		
-		compositorPatterns.add(mixed);
-		compositorRelevance.push(RELEVANT);
-	}	
 	void start(SGroup group){
 		namedPatterns.add(null);
 		nameClasses.add(null);
@@ -89,13 +81,6 @@ abstract class LimitationNamingController extends NamingController{
 	
 
 	void end(SInterleave interleave){
-		namedPatterns.add(null);
-		nameClasses.add(null);
-		compositors.add(END_COMPOSITOR);
-		compositorPatterns.add(null);
-		compositorRelevance.pop();
-	}
-	void end(SMixed mixed){
 		namedPatterns.add(null);
 		nameClasses.add(null);
 		compositors.add(END_COMPOSITOR);

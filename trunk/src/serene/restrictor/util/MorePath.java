@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import serene.validation.schema.simplified.SimplifiedPattern;
 import serene.validation.schema.simplified.components.SGroup;
 import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SMixed;
 
 
 public class MorePath{
@@ -91,15 +90,7 @@ public class MorePath{
 		path.add(i);
 	}
 	
-	public void push(SMixed m){
-		ArrayList<SimplifiedPattern> path = pathes.get(size-1);
-		if(path == null){
-			throw new IllegalStateException();
-		}
-		
-		path.add(m);
-	}
-	
+
 	public SimplifiedPattern popItem(){
 		ArrayList<SimplifiedPattern> path = pathes.get(size-1);
 		if(path == null){
