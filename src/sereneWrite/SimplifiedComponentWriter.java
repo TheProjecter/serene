@@ -26,7 +26,6 @@ import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SListPattern;
 import serene.validation.schema.simplified.components.SEmpty;
 import serene.validation.schema.simplified.components.SText;
@@ -151,13 +150,6 @@ public class SimplifiedComponentWriter extends AbstractSimplifiedComponentVisito
 		if(children != null) next(children);
 		tab--;
 	}
-	public void visit(SMixed mixed){
-		tab++;
-		debugWriter.write(getTabString() + mixed.toString());
-		SimplifiedComponent child = mixed.getChild();
-		if(child != null) child.accept(this);
-		tab--;
-	}	
 	public void visit(SListPattern list){
 		tab++;
 		debugWriter.write(getTabString() + list.toString());

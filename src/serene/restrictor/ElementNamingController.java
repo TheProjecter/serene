@@ -23,7 +23,6 @@ import serene.validation.schema.simplified.components.SNameClass;
 import serene.validation.schema.simplified.SimplifiedPattern;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SGroup;
 
 
@@ -52,14 +51,7 @@ class ElementNamingController extends NamingController{
 		compositors.add(FORBID_OVERLAP_COMPOSITOR);	
 		compositorPatterns.add(interleave);
 	}
-	
-	void start(SMixed mixed){
-		nameClasses.add(null);
-		namedPatterns.add(null);
-		compositors.add(FORBID_OVERLAP_COMPOSITOR);	
-		compositorPatterns.add(mixed);
-	}
-	
+		
 	void start(SGroup group){
 		nameClasses.add(null);
 		namedPatterns.add(null);

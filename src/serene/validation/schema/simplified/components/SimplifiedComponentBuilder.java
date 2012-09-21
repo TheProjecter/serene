@@ -252,11 +252,6 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		clearCurrentPatterns();
 		addToCurrentLevel(c);	
 	}
-	public void buildMixed(int recordIndex, DocumentIndexedData documentIndexedData){
-		SMixed o = new SMixed(getLastContentPattern(), recordIndex, documentIndexedData);
-		clearContent();
-		addToCurrentLevel(o);
-	}
 	public void buildListPattern(int recordIndex, DocumentIndexedData documentIndexedData){
 		SListPattern lp = new SListPattern(getLastContentPattern(), recordIndex, documentIndexedData);
 		clearContent();

@@ -26,7 +26,6 @@ import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SListPattern;
 import serene.validation.schema.simplified.components.SEmpty;
 import serene.validation.schema.simplified.components.SText;
@@ -129,9 +128,6 @@ public class OverlapController implements SimplifiedComponentVisitor, Reusable{
 	public void visit(SGroup group){
 		throw new IllegalStateException();
 	}
-	public void visit(SMixed mixed){
-		throw new IllegalStateException();
-	}	
 	public void visit(SListPattern list){
 		throw new IllegalStateException();
 	}	

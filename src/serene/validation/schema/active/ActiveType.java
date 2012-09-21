@@ -36,6 +36,7 @@ public interface ActiveType extends Rule{
 	
 	StackHandler getStackHandler(ErrorCatcher ec);	
 	ConcurrentStackHandler getStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher);	
+	
 	/*ConcurrentStackHandler getStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher, Queue targetQueue, int targetEntry,  Map<AElement, Queue> candidateQueues);
 	ConcurrentStackHandler getStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher, String value, Queue queue, int entry, Map<AAttribute, AttributeBinder> attributeBinders);
 	StackHandler getStackHandler(StackHandler originalHandler, int candidatesCount, ExternalConflictHandler conflictHandler, ErrorCatcher errorCatcher);

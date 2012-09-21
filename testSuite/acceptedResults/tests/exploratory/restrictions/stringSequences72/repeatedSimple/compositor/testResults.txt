@@ -2,10 +2,10 @@
 
 TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\stringSequences72\repeatedSimple\compositor\schema.rng
 
-null:-1:-1 Restrictions 7.2 error. Repeated simple content type in the context of <group> at schema.rng:4:16:
+null:-1:-1 Restrictions 7.2 error. Repeated simple content type in the context of <oneOrMore> at schema.rng:3:16:
 <value> at schema.rng:5:20.
 
-null:-1:-1 Restrictions 7.2 error. Repeated simple content type in the context of <group> at schema.rng:4:16:
+null:-1:-1 Restrictions 7.2 error. Repeated simple content type in the context of <oneOrMore> at schema.rng:3:16:
 <value> at schema.rng:6:20.
 
 null:-1:-1 Restrictions 7.2 error. In the context of <group> at schema.rng:4:16 several children result in simple content types: 

@@ -35,7 +35,6 @@ import serene.validation.schema.simplified.components.SRef;
 import serene.validation.schema.simplified.components.SData;
 import serene.validation.schema.simplified.components.SValue;
 import serene.validation.schema.simplified.components.SGrammar;
-import serene.validation.schema.simplified.components.SMixed;
 
 import serene.validation.schema.simplified.components.SName;
 import serene.validation.schema.simplified.components.SAnyName;
@@ -223,7 +222,7 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 		addToCurrentLevel(i);
 		return i;
 	}
-	public AInterleave buildInterleave(boolean allowsElements,
+	/*public AInterleave buildInterleave(boolean allowsElements,
                             boolean allowsAttributes,
                             boolean allowsDatas,
                             boolean allowsValues,	
@@ -243,7 +242,7 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 		clearContent();
 		addToCurrentLevel(i);
 		return i;
-	}
+	}*/
 	public AChoicePattern buildChoicePattern(boolean allowsElements,
                                 boolean allowsAttributes,
                                 boolean allowsDatas,
@@ -305,11 +304,11 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 		addToCurrentLevel(t);
 		return t;
 	}
-	public AText buildText(SMixed simplifiedComponent){
+	/*public AText buildText(SText simplifiedComponent){
 		AText t = new ATextM(ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(t);
 		return t;
-	}
+	}*/
 	public AValue buildValue(String ns, Datatype datatype, String charContent, ActiveGrammarModel model, SValue simplifiedComponent){
 		AValue v = new AValue(ns, datatype, charContent, model, ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(v);

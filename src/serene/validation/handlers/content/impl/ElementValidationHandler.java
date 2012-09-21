@@ -266,31 +266,7 @@ class ElementValidationHandler extends ValidatingEEH
 	}
 	
 	public void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{
-        /*
-        boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);
-        if(!isIgnorable && element.allowsTextContent()){
-            hasComplexContent = true;
-            CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
-            cvh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
-            cvh.recycle();
-        }else if(!isIgnorable && !element.allowsCharsContent()){
-            unexpectedCharacterContent(inputStackDescriptor.getCurrentItemInputRecordIndex(), element);
-        }else{
-            // element.allowsUnstructuredDataContent()
-            //  || element.allowsValueContent()
-            //  || element.allowsListPatternContent()
-            
-            // append the content, it could be that the element following is an error
-            if(chars.length > 0){            
-                charContentBuffer.append(chars, 0, chars.length);
-                if(charContentLineNumber == -1 ){
-                    charContentSystemId = inputStackDescriptor.getSystemId();
-                    charContentPublicId = inputStackDescriptor.getPublicId();
-                    charContentLineNumber = inputStackDescriptor.getLineNumber();
-                    charContentColumnNumber = inputStackDescriptor.getColumnNumber();
-                }
-            }
-        } */
+       
         boolean isIgnorable = characterContentDescriptor.isEmpty() || characterContentDescriptor.isSpaceOnly();
         if(!isIgnorable && element.allowsText()){
             hasComplexContent = true;
@@ -315,67 +291,9 @@ class ElementValidationHandler extends ValidatingEEH
             localCharacterContentDescriptor.add(characterContentDescriptor.getAllIndexes());
         }
 	}
-	public void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException {	
-        /*boolean isIgnorable = chars.length == 0 || spaceHandler.isSpace(chars);            
-        char[] bufferedContent = charContentBuffer.getCharsArray();
-        boolean isBufferIgnorable = bufferedContent.length == 0 || spaceHandler.isSpace(bufferedContent);
-		if(hasComplexContent){            
-            if(!isIgnorable && element.allowsTextContent()){
-                CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
-                cvh.handleChars(chars, (CharsActiveType)element, hasComplexContent);
-                cvh.recycle();
-            }else if(!isIgnorable || !isBufferIgnorable){
-                //unexpectedCharacterContent(inputStackDescriptor.getSystemId(), inputStackDescriptor.getLineNumber(), inputStackDescriptor.getColumnNumber(), element);
-                // append the content, it could be that the element following is an error            
-                if(chars.length > 0){
-                    charContentBuffer.append(chars, 0, chars.length);
-                }
-                
-                // see that the right location is used in the messages
-                if(charContentLineNumber != -1){
-                    inputStackDescriptor.popCharsContent();
-                    inputStackDescriptor.pushCharsContent(new String(chars),// TODO review!!!
-                                                            charContentSystemId, 
-                                                            charContentPublicId, 
-                                                            charContentLineNumber, 
-                                                            charContentColumnNumber);
-                }
-                
-                CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
-                cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
-                cvh.recycle();
-            }
-        }else{
-            if(!element.allowsCharsContent()){
-                if(!isIgnorable || !isBufferIgnorable){
-                    unexpectedCharacterContent(inputStackDescriptor.getCurrentItemInputRecordIndex(), element);
-                }
-                return;
-            }
-            
-            // append the content, it could be that the element following is an error            
-            if(chars.length > 0){
-                charContentBuffer.append(chars, 0, chars.length);
-            }
-            
-            // see that the right location is used in the messages
-            if(charContentLineNumber != -1){
-                inputStackDescriptor.popCharsContent();
-                inputStackDescriptor.pushCharsContent(new String(chars),// TODO review!!!
-                                                            charContentSystemId, 
-                                                            charContentPublicId, 
-                                                            charContentLineNumber, 
-                                                            charContentColumnNumber);
-            }
-            
-            CharactersValidationHandler cvh = pool.getCharactersValidationHandler(this, this, this);
-            cvh.handleChars(charContentBuffer.getCharsArray(), (CharsActiveType)element, hasComplexContent);
-            cvh.recycle();            
-        }*/
-        
-        
+	public void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException {     
         boolean isIgnorable = characterContentDescriptor.isEmpty() || characterContentDescriptor.isSpaceOnly();
-        if(hasComplexContent){ 
+        if(hasComplexContent){
             // No previous text buffered, either has been processed, or there was none and the complex content was established based on elemetn content.
             if(element.allowsText()){
                 if(!isIgnorable){
