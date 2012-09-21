@@ -26,9 +26,6 @@ import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SZeroOrMore;
-import serene.validation.schema.simplified.components.SOneOrMore;
-import serene.validation.schema.simplified.components.SOptional;
 import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SListPattern;
 import serene.validation.schema.simplified.components.SEmpty;
@@ -96,15 +93,6 @@ abstract class NameClassOverlapController implements SimplifiedComponentVisitor{
 		throw new IllegalStateException();
 	}
 	public void visit(SGroup group){
-		throw new IllegalStateException();
-	}
-	public void visit(SZeroOrMore zeroOrMore){
-		throw new IllegalStateException();
-	}
-	public void visit(SOneOrMore oneOrMore){
-		throw new IllegalStateException();
-	}
-	public void visit(SOptional optional){
 		throw new IllegalStateException();
 	}
 	public void visit(SMixed mixed){

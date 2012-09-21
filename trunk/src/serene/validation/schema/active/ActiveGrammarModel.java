@@ -27,7 +27,7 @@ import org.relaxng.datatype.DatatypeException;
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
-import serene.validation.schema.simplified.components.SPattern;
+import serene.validation.schema.simplified.SimplifiedPattern;
 import serene.validation.schema.simplified.components.SExceptPattern;
 import serene.validation.schema.simplified.components.SExceptNameClass;
 
@@ -36,9 +36,6 @@ import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SZeroOrMore;
-import serene.validation.schema.simplified.components.SOneOrMore;
-import serene.validation.schema.simplified.components.SOptional;
 import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SListPattern;
 import serene.validation.schema.simplified.components.SEmpty;
@@ -71,7 +68,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
 	int startElementIndex;
 	AElement startElement;
 	
-	SPattern[] refOriginalTopPatterns;
+	SimplifiedPattern[] refOriginalTopPatterns;
 	APattern[][] refDefinitionTopPattern;
 	int[] refDefinitionTopPatternFree;
 	
@@ -103,7 +100,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
     boolean isBuilding;
 	
 	ActiveGrammarModel(int startElementIndex,
-	                SPattern[] refOriginalTopPatterns,
+	                SimplifiedPattern[] refOriginalTopPatterns,
 	                SElement[] originalElementDefinitions,
 	                SAttribute[] originalAttributeDefinitions,
 	                SExceptPattern[] originalExceptPatternDefinitions,
@@ -199,7 +196,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
     
     public APattern getElementDefinitionTopPattern(int definitionIndex){
         if(elementDefinitionTopPatternFree[definitionIndex] == 0){
-            SPattern top = originalElementDefinitions[definitionIndex].getChild(); 
+            SimplifiedPattern top = originalElementDefinitions[definitionIndex].getChild(); 
             if(top == null)return null;
             return createDefinitionTopPattern(top);
         }else{
@@ -218,7 +215,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
     
     public APattern getAttributeDefinitionTopPattern(int definitionIndex){
         if(attributeDefinitionTopPatternFree[definitionIndex] == 0){
-            SPattern top = originalAttributeDefinitions[definitionIndex].getChild(0);// TODO review this 
+            SimplifiedPattern top = originalAttributeDefinitions[definitionIndex].getChild(0);// TODO review this 
             if(top == null)return null;
             return createDefinitionTopPattern(top);
         }else{
@@ -238,7 +235,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
     
     public APattern getExceptPatternDefinitionTopPattern(int definitionIndex){
         if(exceptPatternDefinitionTopPatternFree[definitionIndex] == 0){
-            SPattern top = originalExceptPatternDefinitions[definitionIndex].getChild(); 
+            SimplifiedPattern top = originalExceptPatternDefinitions[definitionIndex].getChild(); 
             if(top == null)return null;
             return createDefinitionTopPattern(top);
         }else{
@@ -256,7 +253,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
     }
     
     
-    APattern createDefinitionTopPattern(SPattern originalTopPattern){
+    APattern createDefinitionTopPattern(SimplifiedPattern originalTopPattern){
         
         boolean telescope = false; 
         boolean oldIsBuilding = isBuilding;
@@ -427,25 +424,6 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
         currentAllowsValues = allowsValues;
         currentAllowsListPatterns = allowsListPatterns;
         currentAllowsText = allowsListPatterns;
-	}
-	public void visit(SZeroOrMore zeroOrMore){
-		SimplifiedComponent child = zeroOrMore.getChild();
-		if(child != null) next(child);
-		APattern achild = builder.getCurrentPattern();
-		achild.setMinOccurs(0);
-		achild.setMaxOccurs(APattern.UNBOUNDED);
-	}
-	public void visit(SOneOrMore oneOrMore){
-		SimplifiedComponent child = oneOrMore.getChild();
-		if(child != null) next(child);
-		APattern achild = builder.getCurrentPattern();
-		achild.setMaxOccurs(APattern.UNBOUNDED);
-	}
-	public void visit(SOptional optional){
-		SimplifiedComponent child = optional.getChild();
-		if(child != null) next(child);
-		APattern achild = builder.getCurrentPattern();
-		achild.setMinOccurs(0);
 	}
 	public void visit(SMixed mixed){	    
 		builder.startLevel();

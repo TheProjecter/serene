@@ -32,7 +32,6 @@ import serene.SchemaModel;
 import serene.validation.schema.ValidationModel;
 import serene.validation.schema.ValidationModelImpl;
 
-import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.SimplifiedModel;
 
 

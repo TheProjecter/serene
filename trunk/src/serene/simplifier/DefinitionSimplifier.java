@@ -47,9 +47,8 @@ import serene.validation.schema.parsed.Start;
 
 import serene.validation.schema.simplified.RecursionModel;
 import serene.validation.schema.simplified.SimplifiedModel;
-import serene.validation.schema.simplified.SimplifiedComponentBuilder;
+import serene.validation.schema.simplified.SimplifiedPattern;
 
-import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SExceptPattern;
@@ -75,7 +74,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		nullCombine = new IntList();		
 		//pcw = new ParsedComponentWriter();
         
-        currentDefinitionTopPatterns = new ArrayList<SPattern>();
+        currentDefinitionTopPatterns = new ArrayList<SimplifiedPattern>();
 	}
 	
 	public void setReplaceMissingDatatypeLibrary(boolean value){
@@ -85,7 +84,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 	void init(Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,	
 			Map<ExternalRef, URI> externalRefs,
 			Map<URI, ParsedModel> docParsedModels,
-			ArrayList<SPattern> definitionTopPatterns,
+			ArrayList<SimplifiedPattern> definitionTopPatterns,
 			NamespaceInheritanceHandler namespaceInheritanceHandler,	
 			Map<ParsedComponent, String> componentAsciiDL,
 			Map<String, DatatypeLibrary> asciiDlDatatypeLibrary,
@@ -233,22 +232,22 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		// they were not built, so combine can be handled directly
 		if(combine != null){
 			if(combine.equals("choice")){
-				builder.buildChoicePattern(currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]), allRecordIndexes, allDocumentIndexedData, true);
+				builder.buildChoicePattern(currentDefinitionTopPatterns.toArray(new SimplifiedPattern[currentDefinitionTopPatterns.size()]), allRecordIndexes, allDocumentIndexedData, true);
 			}else if(combine.equals("interleave")){
-				builder.buildInterleave(currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]), allRecordIndexes, allDocumentIndexedData, true);
+				builder.buildInterleave(currentDefinitionTopPatterns.toArray(new SimplifiedPattern[currentDefinitionTopPatterns.size()]), allRecordIndexes, allDocumentIndexedData, true);
 			}
 		}else{
-			SPattern[] p = currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]);
+			SimplifiedPattern[] p = currentDefinitionTopPatterns.toArray(new SimplifiedPattern[currentDefinitionTopPatterns.size()]);
 			builder.clearContent();
 			builder.addAllToCurrentLevel(p);
 		}
 	}
 	
-	SPattern getCurrentPattern(){
+	SimplifiedPattern getCurrentPattern(){
 		return builder.getCurrentPattern();
 	}
 	
-	SPattern[] getAllCurrentPatterns(){
+	SimplifiedPattern[] getAllCurrentPatterns(){
 		return builder.getAllCurrentPatterns();
 	}
 	

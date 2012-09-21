@@ -26,11 +26,19 @@ public class ATextT extends AText{
 	            SText stext){
 		super(ruleHandlerPool);
 		this.stext = stext;
-		minOccurs = 0;
-		maxOccurs = UNBOUNDED;
+		/*minOccurs = 0;
+		maxOccurs = UNBOUNDED;*/
 		
 	}	
 			
+	/*public int getMinOccurs(){
+	    return stext.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return stext.getMaxOccurs();
+	}*/
+	
 	
 	public String getQName(){
 		return stext.getQName();

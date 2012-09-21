@@ -37,6 +37,16 @@ public class AEmpty extends NoChildrenAPattern{
 	public AEmpty(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent sempty){
 		super(ruleHandlerPool);
 		this.sempty = sempty;
+	}
+
+    public int getMinOccurs(){
+	    //return sempty.getMinOccurs();
+	    return 1;
+	}
+	
+	public int getMaxOccurs(){
+	    //return sempty.getMaxOccurs();
+	    return 1;
 	}	
 		
 	public boolean isRequiredContent(){
@@ -85,7 +95,7 @@ public class AEmpty extends NoChildrenAPattern{
 	
 		
 	public String toString(){
-		String s = "AEmpty"+ " min "+minOccurs+" max "+maxOccurs;		
+		String s = "AEmpty"+ " min "+getMinOccurs()+" max "+getMaxOccurs();		
 		return s;
 	}
 }

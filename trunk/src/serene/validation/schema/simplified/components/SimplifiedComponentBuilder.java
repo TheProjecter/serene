@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 
-package serene.validation.schema.simplified;
+package serene.validation.schema.simplified.components;
 
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -24,37 +24,7 @@ import org.relaxng.datatype.Datatype;
 
 import serene.validation.schema.ComponentBuilder;
 
-import serene.validation.schema.simplified.components.SExceptPattern;
-import serene.validation.schema.simplified.components.SExceptNameClass;
-import serene.validation.schema.simplified.components.SPattern;
-import serene.validation.schema.simplified.components.SNameClass;
-
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
-import serene.validation.schema.simplified.components.SChoicePattern;
-import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SZeroOrMore;
-import serene.validation.schema.simplified.components.SOneOrMore;
-import serene.validation.schema.simplified.components.SOptional;
-import serene.validation.schema.simplified.components.SMixed;
-import serene.validation.schema.simplified.components.SListPattern;
-import serene.validation.schema.simplified.components.SEmpty;
-import serene.validation.schema.simplified.components.SText;
-import serene.validation.schema.simplified.components.SNotAllowed;
-import serene.validation.schema.simplified.components.SRef;
-import serene.validation.schema.simplified.components.SData;
-import serene.validation.schema.simplified.components.SValue;
-import serene.validation.schema.simplified.components.SGrammar;
-import serene.validation.schema.simplified.components.SDummy;
-
-
-import serene.validation.schema.simplified.components.SName;
-import serene.validation.schema.simplified.components.SAnyName;
-import serene.validation.schema.simplified.components.SNsName;
-import serene.validation.schema.simplified.components.SChoiceNameClass;
-
-import serene.validation.schema.simplified.util.Level;
+import serene.validation.schema.simplified.SimplifiedPattern;
 
 import serene.bind.util.DocumentIndexedData;
 import serene.util.IntList;
@@ -98,11 +68,16 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 	public void addToCurrentLevel(SPattern p){
 		level.add(p);
 	}
-	public void addAllToCurrentLevel(SPattern[] p){
-		
-		level.add(p);
-		
+	public void addAllToCurrentLevel(SPattern[] p){		
+		level.add(p);		
 	}
+	public void addAllToCurrentLevel(SimplifiedPattern[] p){
+	    if(p == null) return;
+		for(int i =0; i < p.length; i++){
+		    if(p[i] != null)addToCurrentLevel((SPattern)p[i]);
+		}		
+	}
+	
 	public SPattern[] getAllCurrentPatterns(){
 		return level.getPatterns();
 	}	
@@ -242,8 +217,16 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		clearContent();
 		addToCurrentLevel(i);
 	}
-    public void buildInterleave(SPattern[] children, IntList allRecordIndexes, ArrayList<DocumentIndexedData> allDocumentIndexedData, boolean addedBySimplification){
-		SInterleave i = new SInterleave(children, allRecordIndexes, allDocumentIndexedData, addedBySimplification);
+    public void buildInterleave(SimplifiedPattern[] children, IntList allRecordIndexes, ArrayList<DocumentIndexedData> allDocumentIndexedData, boolean addedBySimplification){
+        SPattern[] c = null;
+        if(children != null){
+            int l = children.length;
+            c = new SPattern[children.length];
+            for(int i = 0; i < l; i++){
+                if(children[i] != null) c[i] = (SPattern)children[i];
+            }
+        }
+		SInterleave i = new SInterleave(c, allRecordIndexes, allDocumentIndexedData, addedBySimplification);
 		addToCurrentLevel(i);	
 	}
 	public void buildChoicePattern(int recordIndex, DocumentIndexedData documentIndexedData, boolean addedBySimplification){
@@ -251,8 +234,16 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		clearContent();
 		addToCurrentLevel(cp);
 	}
-    public void buildChoicePattern(SPattern[] children, IntList allRecordIndexes, ArrayList<DocumentIndexedData> allDocumentIndexedData, boolean addedBySimplification){
-		SChoicePattern cp = new SChoicePattern(children, allRecordIndexes, allDocumentIndexedData, addedBySimplification);		
+    public void buildChoicePattern(SimplifiedPattern[] children, IntList allRecordIndexes, ArrayList<DocumentIndexedData> allDocumentIndexedData, boolean addedBySimplification){
+        SPattern[] c = null;
+        if(children != null){
+            int l = children.length;
+            c = new SPattern[children.length];
+            for(int i = 0; i < l; i++){
+                if(children[i] != null) c[i] = (SPattern)children[i];
+            }
+        }
+		SChoicePattern cp = new SChoicePattern(c, allRecordIndexes, allDocumentIndexedData, addedBySimplification);		
 		addToCurrentLevel(cp);
 	}
     public void buildReplacementChoicePattern(int recordIndex, DocumentIndexedData documentIndexedData, boolean addedBySimplification){
@@ -265,21 +256,6 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		SMixed o = new SMixed(getLastContentPattern(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(o);
-	}
-	public void buildOptional(int recordIndex, DocumentIndexedData documentIndexedData){
-		SOptional o = new SOptional(getLastContentPattern(), recordIndex, documentIndexedData);
-		clearContent();
-		addToCurrentLevel(o);
-	}
-	public void buildZeroOrMore(int recordIndex, DocumentIndexedData documentIndexedData){
-		SZeroOrMore zom = new SZeroOrMore(getLastContentPattern(), recordIndex, documentIndexedData);
-		clearContent();
-		addToCurrentLevel(zom);
-	}
-	public void buildOneOrMore(int recordIndex, DocumentIndexedData documentIndexedData){
-		SOneOrMore oom = new SOneOrMore(getLastContentPattern(), recordIndex, documentIndexedData);
-		clearContent();		
-		addToCurrentLevel(oom);
 	}
 	public void buildListPattern(int recordIndex, DocumentIndexedData documentIndexedData){
 		SListPattern lp = new SListPattern(getLastContentPattern(), recordIndex, documentIndexedData);
@@ -369,5 +345,25 @@ public class SimplifiedComponentBuilder implements ComponentBuilder{
 		SDummy d = new SDummy(getContentPatterns(), recordIndex, documentIndexedData);
 		clearContent();
 		addToCurrentLevel(d);
-	}		
+	}	
+
+
+    public void oneOrMore(int recordIndex, DocumentIndexedData documentIndexedData){
+        SPattern p = getLastContentPattern();
+        p.setOneOrMore(recordIndex, documentIndexedData);
+        clearContent();
+        addToCurrentLevel(p);
+    }
+    public void zeroOrMore(int recordIndex, DocumentIndexedData documentIndexedData){
+        SPattern p = getLastContentPattern();
+        p.setZeroOrMore(recordIndex, documentIndexedData);
+        clearContent();
+        addToCurrentLevel(p);
+    }	
+    public void optional(int recordIndex, DocumentIndexedData documentIndexedData){
+        SPattern p = getLastContentPattern();
+        p.setOptional(recordIndex, documentIndexedData);
+        clearContent();
+        addToCurrentLevel(p);
+    }	    
 }  

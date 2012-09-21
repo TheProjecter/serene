@@ -90,6 +90,15 @@ public class AListPattern extends UniqueChildAPattern
 		this.stackHandlerPool = stackHandlerPool;
 		this.slist = slist;
 	}	
+
+
+    public int getMinOccurs(){
+	    return slist.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return slist.getMaxOccurs();
+	}
 	
 	
 	public boolean allowsElements(){
@@ -225,7 +234,7 @@ public class AListPattern extends UniqueChildAPattern
 		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
 	}	
 	public String toString(){
-		String s = "List"+ " min "+minOccurs+" max "+maxOccurs;		
+		String s = "List"+ " min "+getMinOccurs()+" max "+getMaxOccurs();		
 		return s;
 	}
 	

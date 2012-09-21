@@ -37,6 +37,14 @@ public class ANotAllowed extends NoChildrenAPattern{
 	public ANotAllowed(ActiveModelRuleHandlerPool ruleHandlerPool, SNotAllowed snotAllowed){
 		super(ruleHandlerPool);
 		this.snotAllowed = snotAllowed;
+	}
+
+    public int getMinOccurs(){
+	    return snotAllowed.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return snotAllowed.getMaxOccurs();
 	}	
 	
 	public String getQName(){
@@ -73,7 +81,7 @@ public class ANotAllowed extends NoChildrenAPattern{
 		throw new UnsupportedOperationException("TODO");
 	}
 	public String toString(){
-		String s = "ANotAllowed"+ " min "+minOccurs+" max "+maxOccurs;		
+		String s = "ANotAllowed"+ " min "+getMinOccurs()+" max "+getMaxOccurs();		
 		return s;
 	}
 }

@@ -61,7 +61,14 @@ public class AAttribute extends MarkupAPattern{
 				ruleHandlerPool);		
 		this.sattribute = sattribute;
 	}	
+
+    public int getMinOccurs(){
+	    return sattribute.getMinOccurs();
+	}
 	
+	public int getMaxOccurs(){
+	    return sattribute.getMaxOccurs();
+	}	
 	
 	public boolean isAttributeContent(){
 	    return true;
@@ -184,7 +191,7 @@ public class AAttribute extends MarkupAPattern{
 	}
 	
 	public String toString(){
-		String s = "AAttribute "+identifier+" "+index+ " min "+minOccurs+" max "+maxOccurs;		
+		String s = "AAttribute "+identifier+" "+index+ " min "+getMinOccurs()+" max "+getMaxOccurs();		
 		return s;
 	}
 	

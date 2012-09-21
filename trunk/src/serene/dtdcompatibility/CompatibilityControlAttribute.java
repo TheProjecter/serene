@@ -44,7 +44,7 @@ class CompatibilityControlAttribute extends AAttribute{
     }
     
     public String toString(){
-		String s = "CompatibilityControlAttribute "+getIdentifier()+" "+index+ " min "+minOccurs+" max "+maxOccurs;		
+		String s = "CompatibilityControlAttribute "+getIdentifier()+" "+index+ " min "+getMinOccurs()+" max "+getMaxOccurs();		
 		return s;
 	}
 }

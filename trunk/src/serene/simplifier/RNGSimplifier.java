@@ -50,9 +50,8 @@ import serene.validation.schema.parsed.ExternalRef;
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.RecursionModel;
 import serene.validation.schema.simplified.SimplifiedModel;
-import serene.validation.schema.simplified.SimplifiedComponentBuilder;
+import serene.validation.schema.simplified.SimplifiedPattern;
 
-import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SRef;
 import serene.validation.schema.simplified.components.SElement;
 import serene.validation.schema.simplified.components.SAttribute;
@@ -89,7 +88,7 @@ public class RNGSimplifier extends Simplifier{
 				
 		previousGrammars = new Stack<Grammar>();
 		
-		definitionTopPatterns = new ArrayList<SPattern>();
+		definitionTopPatterns = new ArrayList<SimplifiedPattern>();
 		referencePath = new IntStack();		
 		definitionEmptyChild = new BooleanList();
 		definitionNotAllowedChild = new BooleanList();
@@ -178,7 +177,7 @@ public class RNGSimplifier extends Simplifier{
 		
         
 		simplify();
-		SPattern[] simplifiedTopPattern = builder.getAllCurrentPatterns();
+		SimplifiedPattern[] simplifiedTopPattern = builder.getAllCurrentPatterns();
 		if(simplifiedTopPattern == null){
             if(emptyChild){
                 // for the 7.1.5 restrictions on start
@@ -199,7 +198,7 @@ public class RNGSimplifier extends Simplifier{
         }
         selements.add(startElement); 
 		SimplifiedModel simplifiedModel = new SimplifiedModel(simplifiedTopPattern, 
-											definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]),
+											definitionTopPatterns.toArray(new SimplifiedPattern[definitionTopPatterns.size()]),
 											selements.size()-1,
 											selements.toArray(new SElement[selements.size()]),
 											sattributes.toArray(new SAttribute[sattributes.size()]),
@@ -255,7 +254,7 @@ public class RNGSimplifier extends Simplifier{
 		
         
 		simplify();
-		SPattern[] simplifiedTopPattern = builder.getAllCurrentPatterns();
+		SimplifiedPattern[] simplifiedTopPattern = builder.getAllCurrentPatterns();
 		if(simplifiedTopPattern == null){
             if(emptyChild){
                 // for the 7.1.5 restrictions on start
@@ -277,7 +276,7 @@ public class RNGSimplifier extends Simplifier{
         }
         selements.add(startElement);   
 		SimplifiedModel simplifiedModel = new SimplifiedModel(simplifiedTopPattern, 
-											definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]),
+											definitionTopPatterns.toArray(new SimplifiedPattern[definitionTopPatterns.size()]),
 											selements.size()-1,
 											selements.toArray(new SElement[selements.size()]),
 											sattributes.toArray(new SAttribute[sattributes.size()]),

@@ -20,9 +20,7 @@ import org.xml.sax.SAXException;
 
 import serene.validation.schema.simplified.RestrictingVisitor;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
-
-import serene.validation.schema.simplified.components.SPattern;
-import serene.validation.schema.simplified.components.SNameClass;
+import serene.validation.schema.simplified.SimplifiedPattern;
 
 import serene.validation.schema.DefinitionPointer;
 
@@ -38,6 +36,16 @@ public class SElement extends AbstractUniqueChildPattern implements DefinitionPo
 				int recordIndex, 
 				DocumentIndexedData documentIndexedData){		
 		super(child, recordIndex, documentIndexedData);
+		this.nameClass = nameClass;
+		this.definitionIndex = definitionIndex;
+	}
+	
+	public SElement(int definitionIndex,
+	            SNameClass nameClass,
+				SimplifiedPattern child,
+				int recordIndex, 
+				DocumentIndexedData documentIndexedData){		
+		super((SPattern)child, recordIndex, documentIndexedData);
 		this.nameClass = nameClass;
 		this.definitionIndex = definitionIndex;
 	}

@@ -34,7 +34,7 @@ import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AData;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
-import serene.validation.schema.simplified.components.SPattern;
+import serene.validation.schema.simplified.SimplifiedPattern;
 import serene.validation.schema.simplified.components.SNameClass;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SElement;
@@ -290,7 +290,7 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
     }
 	//--------------------------------------------------------------------------
     
-    public void contextDependentDatatypeError(SPattern pattern){
+    public void contextDependentDatatypeError(SimplifiedPattern pattern){
 		String message = "DTD compatibility error. Attribute definition <"+qName+"> at "+getLocation(location)+" cannot have a default value."
                         +" Context dependent datatype at <"+pattern.getQName()+"> at "+pattern.getLocation(restrictToFileName)+".";
         errorMessages.add(message);

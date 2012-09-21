@@ -17,6 +17,8 @@ limitations under the License.
 
 package serene.simplifier;
 
+import java.util.Arrays;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -94,10 +96,10 @@ import serene.validation.schema.parsed.ForeignComponent;
 
 import serene.validation.schema.simplified.RecursionModel;
 import serene.validation.schema.simplified.SimplifiedModel;
-import serene.validation.schema.simplified.SimplifiedComponentBuilder;
+import serene.validation.schema.simplified.SimplifiedPattern;
 
+import serene.validation.schema.simplified.components.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.components.SPattern;
 import serene.validation.schema.simplified.components.SRef;
 import serene.validation.schema.simplified.components.SAttribute;
 import serene.validation.schema.simplified.components.SElement;
@@ -119,7 +121,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 	Map<ExternalRef, URI> externalRefs;
 	Map<URI, ParsedModel> docParsedModels;
 	
-	ArrayList<SPattern> definitionTopPatterns;
+	ArrayList<SimplifiedPattern> definitionTopPatterns;
 		
 	Map<ParsedComponent, String> componentAsciiDL;
 	Map<String, DatatypeLibrary> asciiDlDatatypeLibrary;
@@ -140,7 +142,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 	Grammar currentGrammar;
 	Stack<Grammar> previousGrammars;
     
-    ArrayList<SPattern> currentDefinitionTopPatterns;
+    ArrayList<SimplifiedPattern> currentDefinitionTopPatterns;
 	
 	boolean emptyChild;
 	ParsedComponent emptyComponent;
@@ -494,7 +496,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}		
 		builder.endLevel();
         
-        SPattern p = builder.getLastContentPattern();
+        SimplifiedPattern p = builder.getLastContentPattern();
         if( p != null){
             currentDefinitionTopPatterns.add(p);
             builder.clearContent();
@@ -561,9 +563,9 @@ abstract class Simplifier implements SimplifyingVisitor{
         		
 		builder.endLevel();
 		
-        SPattern[] sChildren = builder.getContentPatterns();
+        SimplifiedPattern[] sChildren = builder.getContentPatterns();
         if(sChildren != null){
-            for(SPattern sChild : sChildren){
+            for(SimplifiedPattern sChild : sChildren){
                 currentDefinitionTopPatterns.add(sChild);
             }
             builder.clearContent();
@@ -1169,11 +1171,11 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = zeroOrMore.getChildren();
 		
 		if(children == null) {
-			builder.buildZeroOrMore(zeroOrMore.getRecordIndex(), zeroOrMore.getDocumentIndexedData());
+			//builder.zeroOrMore(zeroOrMore.getRecordIndex(), zeroOrMore.getDocumentIndexedData());
             patternChild = true;			
 			return;
 		}
-        
+        		
         boolean oldAttributeContext = attributeContext;
         attributeContext = false;
         
@@ -1222,12 +1224,12 @@ abstract class Simplifier implements SimplifyingVisitor{
             attributeContext = oldAttributeContext;
 			return;
 		}
-		
+				
 		if(builder.getCurrentPatternsCount() > 1){
 			builder.buildReplacementGroup(zeroOrMore.getRecordIndex(), zeroOrMore.getDocumentIndexedData(), true);
 		}	
 		builder.endLevel();
-		builder.buildZeroOrMore(zeroOrMore.getRecordIndex(), zeroOrMore.getDocumentIndexedData());
+		builder.zeroOrMore(zeroOrMore.getRecordIndex(), zeroOrMore.getDocumentIndexedData());
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -1237,7 +1239,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = oneOrMore.getChildren();
 		
 		if(children == null) {
-			builder.buildOneOrMore(oneOrMore.getRecordIndex(), oneOrMore.getDocumentIndexedData());
+			//builder.oneOrMore(oneOrMore.getRecordIndex(), oneOrMore.getDocumentIndexedData());
             patternChild = true;			
 			return;
 		}
@@ -1294,7 +1296,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			builder.buildReplacementGroup(oneOrMore.getRecordIndex(), oneOrMore.getDocumentIndexedData(), true);
 		}		
 		builder.endLevel();
-		builder.buildOneOrMore(oneOrMore.getRecordIndex(), oneOrMore.getDocumentIndexedData());
+		builder.oneOrMore(oneOrMore.getRecordIndex(), oneOrMore.getDocumentIndexedData());
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -1305,7 +1307,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = optional.getChildren();
 		
 		if(children == null) {
-			builder.buildOptional(optional.getRecordIndex(), optional.getDocumentIndexedData());
+			//builder.optional(optional.getRecordIndex(), optional.getDocumentIndexedData());
             patternChild = true;			
 			return;
 		}
@@ -1364,7 +1366,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			builder.buildReplacementGroup(optional.getRecordIndex(), optional.getDocumentIndexedData(), true);
 		}		
 		builder.endLevel();
-		builder.buildOptional(optional.getRecordIndex(), optional.getDocumentIndexedData());
+		builder.optional(optional.getRecordIndex(), optional.getDocumentIndexedData());
 		    
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
@@ -1572,7 +1574,7 @@ abstract class Simplifier implements SimplifyingVisitor{
        
 		nextLevel(docTopPattern);
 		
-		SPattern topPattern = builder.getLastContentPattern();				
+		SimplifiedPattern topPattern = builder.getLastContentPattern();				
 		definitionTopPatterns.set(index, topPattern);
 		builder.clearContent();
 				
@@ -1675,7 +1677,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                 sexceptPatterns);
 		        
         
-		SPattern topPattern = ds.getCurrentPattern();
+		SimplifiedPattern topPattern = ds.getCurrentPattern();
 		definitionTopPatterns.set(index, topPattern);
 		
 		emptyChild = ds.getEmptyChild();
@@ -1779,7 +1781,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                 sattributes,
                 sexceptPatterns);
 		
-		SPattern topPattern = ds.getCurrentPattern();
+		SimplifiedPattern topPattern = ds.getCurrentPattern();
 		definitionTopPatterns.set(index, topPattern);
 		
 		emptyChild = ds.getEmptyChild();
@@ -2083,7 +2085,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             return;
         }
 		
-		SPattern[] topPattern = ds.getAllCurrentPatterns();
+		SimplifiedPattern[] topPattern = ds.getAllCurrentPatterns();
         
         ds.recycle();
 		

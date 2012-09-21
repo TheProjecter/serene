@@ -25,14 +25,11 @@ import serene.util.IntList;
 import serene.util.IntStack;
 
 import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.components.SPattern;
+import serene.validation.schema.simplified.SimplifiedPattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SGroup;
 import serene.validation.schema.simplified.components.SChoicePattern;
 import serene.validation.schema.simplified.components.SMixed;
-import serene.validation.schema.simplified.components.SOptional;
-import serene.validation.schema.simplified.components.SOneOrMore;
-import serene.validation.schema.simplified.components.SZeroOrMore;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -52,7 +49,7 @@ abstract class CompositionController implements Reusable{
 	*/
 	IntList compositors;
 	
-	ArrayList<SPattern> compositorPatterns;
+	ArrayList<SimplifiedPattern> compositorPatterns;
 	
 	/**
 	* Stack of compositor ids created on the fly during overlap control that
@@ -61,7 +58,7 @@ abstract class CompositionController implements Reusable{
 	* compositor and determines whether or not it is necessary to test.
 	*/
 	IntStack compositorPath;	
-	Stack<SPattern> compositorPatternPath;
+	Stack<SimplifiedPattern> compositorPatternPath;
 		
 	ControllerPool pool;
 	
@@ -72,19 +69,17 @@ abstract class CompositionController implements Reusable{
 		this.pool = pool;
 		
 		compositors = new IntList();
-		compositorPatterns = new ArrayList<SPattern>();
+		compositorPatterns = new ArrayList<SimplifiedPattern>();
 		compositorPath = new IntStack();
-		compositorPatternPath = new Stack<SPattern>();
+		compositorPatternPath = new Stack<SimplifiedPattern>();
 	}
 	
 	abstract void start(SInterleave interleave);
 	abstract void start(SMixed mixed);
 	abstract void start(SGroup group);
 	abstract void start(SChoicePattern choice);
-	
-	abstract void start(SOptional optional);
-	abstract void start(SOneOrMore oneOrMore);
-	abstract void start(SZeroOrMore zeroOrMore);
+		
+	abstract void startMultipleCardinality();
 	
 	
 	abstract void end(SInterleave interleave);
@@ -92,9 +87,7 @@ abstract class CompositionController implements Reusable{
 	abstract void end(SGroup group);
 	abstract void end(SChoicePattern choice);
 	
-	abstract void end(SOptional optional);
-	abstract void end(SOneOrMore oneOrMore);
-	abstract void end(SZeroOrMore zeroOrMore);
+	abstract void endMultipleCardinality();
 	
 	abstract void control() throws SAXException;
 }

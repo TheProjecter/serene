@@ -26,14 +26,11 @@ import serene.util.IntList;
 import serene.util.IntStack;
 
 import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.components.SPattern;
+import serene.validation.schema.simplified.SimplifiedPattern;
 import serene.validation.schema.simplified.components.SInterleave;
 import serene.validation.schema.simplified.components.SMixed;
 import serene.validation.schema.simplified.components.SGroup;
 import serene.validation.schema.simplified.components.SChoicePattern;
-import serene.validation.schema.simplified.components.SOptional;
-import serene.validation.schema.simplified.components.SOneOrMore;
-import serene.validation.schema.simplified.components.SZeroOrMore;
 
 
 import serene.validation.handlers.error.ErrorDispatcher;
@@ -57,7 +54,7 @@ abstract class NamingController extends CompositionController{
 	* in order to detect overlap. They are added to the list in parallel to the  
 	* name classes.
 	*/
-	ArrayList<SPattern> namedPatterns;
+	ArrayList<SimplifiedPattern> namedPatterns;
 		
 	OverlapController overlapController; 
 	
@@ -67,20 +64,15 @@ abstract class NamingController extends CompositionController{
 		super(pool, errorDispatcher);
 		
 		nameClasses = new ArrayList<SNameClass>();
-		namedPatterns = new ArrayList<SPattern>();
+		namedPatterns = new ArrayList<SimplifiedPattern>();
 	}
 	
     public void setRestrictToFileName(boolean value){
         restrictToFileName = value;
     }
     
-	void start(SOptional optional){
-		throw new IllegalStateException();
-	}
-	void start(SOneOrMore oneOrMore){
-		throw new IllegalStateException();
-	}
-	void start(SZeroOrMore zeroOrMore){
+
+	void startMultipleCardinality(){
 		throw new IllegalStateException();
 	}
 	
@@ -110,22 +102,16 @@ abstract class NamingController extends CompositionController{
 		compositorPatterns.add(null);
 	}
 		
-	void add(SPattern np, SNameClass nc){
+	void add(SimplifiedPattern np, SNameClass nc){
 		namedPatterns.add(np);
 		nameClasses.add(nc);
 		compositors.add(NO_COMPOSITOR);
 		compositorPatterns.add(null);
 	}
 
-	void end(SOptional optional){
+	void endMultipleCardinality(){
 		throw new IllegalStateException();
 	}
-	void end(SOneOrMore oneOrMore){
-		throw new IllegalStateException();
-	}
-	void end(SZeroOrMore zeroOrMore){
-		throw new IllegalStateException();
-	}	
 
 	
 	void control() throws SAXException{
@@ -169,7 +155,7 @@ abstract class NamingController extends CompositionController{
 		compositorPath.clear();
 		for(int i = 0; i < index; i++){
 			int compositor = compositors.get(i);
-			SPattern compositorPattern = compositorPatterns.get(i);
+			SimplifiedPattern compositorPattern = compositorPatterns.get(i);
 			if( compositor == ALLOW_OVERLAP_COMPOSITOR
 				|| compositor == FORBID_OVERLAP_COMPOSITOR){
 				compositorPath.push(compositor);
@@ -181,5 +167,5 @@ abstract class NamingController extends CompositionController{
 		}
 	}	
 	
-	abstract void reportError(SPattern context, int i, int j) throws SAXException; 
+	abstract void reportError(SimplifiedPattern context, int i, int j) throws SAXException; 
 }

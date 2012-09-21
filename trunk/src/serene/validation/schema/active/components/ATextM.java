@@ -26,11 +26,17 @@ public class ATextM extends AText{
 	            SMixed smixed){
 		super(ruleHandlerPool);
 		this.smixed = smixed;
-		minOccurs = 0;
-		maxOccurs = UNBOUNDED;
-		
+		/*minOccurs = 0;
+		maxOccurs = UNBOUNDED;*/		
 	}	
 			
+	/*public int getMinOccurs(){
+	    return smixed.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return smixed.getMaxOccurs();
+	}*/
 	
 	public String getQName(){
 		return smixed.getQName();

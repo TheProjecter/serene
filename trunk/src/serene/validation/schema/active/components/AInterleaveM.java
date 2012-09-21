@@ -47,6 +47,14 @@ public class AInterleaveM extends AInterleave{
 		this.smixed = smixed;
 	}	
 	
+	public int getMinOccurs(){
+	    return smixed.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return smixed.getMaxOccurs();
+	}
+	
 	public String getQName(){
 		return smixed.getQName();
 	}

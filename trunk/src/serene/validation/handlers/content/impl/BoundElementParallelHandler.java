@@ -86,28 +86,6 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 		state.add(individualHandler);			
 	}
 	
-	/*public void qNameBinding(){
-		throw new UnsupportedOperationException();
-	}	
-	public void startLocationBinding(){
-		throw new UnsupportedOperationException();
-	}
-	public void endLocationBinding(){
-		throw new UnsupportedOperationException();
-	}	
-	public void characterContentBinding(char[] chars){
-		throw new UnsupportedOperationException();
-	}
-	public void elementTasksBinding(){
-		int individualHandlersCount = individualHandlers.size();
-		for(int i = 0; i < individualHandlersCount; i++){
-			ComparableEEH ih = individualHandlers.get(i);
-			if(//!candidatesConflictHandler.isDisqualified(i) &&
-				ih instanceof BoundElementHandler){
-			((BoundElementHandler)ih).elementTasksBinding();
-			}
-		}
-	}*/
 	
 	public void startElementBinding(){
 	    throw new IllegalStateException();
@@ -118,15 +96,7 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 	}
 	
 	public void endElementBinding(){
-	    ((BoundState)state).endElementBinding();
-		/*int individualHandlersCount = individualHandlers.size();
-		for(int i = 0; i < individualHandlersCount; i++){
-			ComparableEEH ih = individualHandlers.get(i);
-			if(//!candidatesConflictHandler.isDisqualified(i) &&
-				ih instanceof BoundElementHandler){
-			((BoundElementHandler)ih).endElementBinding();
-			}
-		}*/
+	    ((BoundState)state).endElementBinding();		
 	}
 	
 	public Queue getQueue(){
@@ -190,29 +160,13 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 			individualHandlers.add(individualHandler);				
 		}
 		
-		BoundElementCommonHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance, boolean restrictToFileName) throws SAXException{			
-			/*ElementParallelHandler next = pool.getElementParallelHandler(candidatesConflictHandler, candidatesConflictErrorHandler, instance, bindingModel, queue, queuePool);
-			for(int i = 0; i < individualHandlers.size(); i++){	
-				next.add(individualHandlers.get(i).handleStartElement(qName, namespace, name, restrictToFileName));			
-			}	
-			return next;*/
-			BoundElementCommonHandler next = pool.getBoundElementCommonHandler(candidatesConflictHandler, individualHandlers.size(), instance, bindingModel, queue, queuePool);
+		BoundElementCommonHandler handleStartElement(String qName, String namespace, String name, ElementParallelHandler instance, boolean restrictToFileName) throws SAXException{		
+		    BoundElementCommonHandler next = pool.getBoundElementCommonHandler(candidatesConflictHandler, individualHandlers.size(), instance, bindingModel, queue, queuePool);
 			next.add(uniqueSample.handleStartElement(qName, namespace, name, restrictToFileName));
 			return next;
 		}
         void handleAttributes(Attributes attributes, Locator locator) throws SAXException{
-            uniqueSample.handleAttributes(attributes, locator);
-            /*if(uniqueSample instanceof ValidatingEEH){
-                for(int i = 0; i < individualHandlers.size(); i++){
-                    if(!candidatesConflictHandler.isDisqualified(i)
-                        && !individualHandlers.get(i).equals(uniqueSample)){
-                        ValidatingEEH handler = (ValidatingEEH)individualHandlers.get(i);
-                        handler.setContextErrorHandlerIndex(DEFAULT);
-                        handler.handleAttributes(attributes, locator);
-                        handler.restorePreviousHandler();
-                    }
-                }			
-            }*/
+            uniqueSample.handleAttributes(attributes, locator);            
 		}
         
 		// Used by: 
@@ -226,7 +180,6 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 		void handleEndElement(boolean restrictToFileName, Locator locator) throws SAXException{
 			validateContext();
 			reportContextErrors(restrictToFileName, locator);
-			/*elementTasksBinding();*/
 			endElementBinding();			
 			validateInContext();
 		}
@@ -292,45 +245,27 @@ class BoundElementParallelHandler extends ElementParallelHandler implements Boun
 		}
 		void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{
 			uniqueSample.handleInnerCharacters(characterContentDescriptor, characterContentDescriptorPool);
-            /*if(uniqueSample instanceof BoundElementHandler){
-                for(int i = 0; i < individualHandlers.size(); i++){
-                    if(!candidatesConflictHandler.isDisqualified(i)
-                        && !individualHandlers.get(i).equals(uniqueSample)){
-                        ((BoundElementHandler)individualHandlers.get(i)).characterContentBinding();
-                    }
-                }			
-            }*/
 		}
         void handleLastCharacters(CharacterContentDescriptor characterContentDescriptor) throws SAXException{
 			uniqueSample.handleLastCharacters(characterContentDescriptor);
-            /*if(uniqueSample instanceof BoundElementHandler){
-                for(int i = 0; i < individualHandlers.size(); i++){
-                    if(!candidatesConflictHandler.isDisqualified(i)
-                        && !individualHandlers.get(i).equals(uniqueSample)){
-                        ((BoundElementHandler)individualHandlers.get(i)).characterContentBinding();
-                    }
-                }			
-            }*/			
 		}
 		
-		void endElementBinding(){
-		    //if(uniqueSample instanceof BoundElementHandler){// which it should always be		        
-		        BoundElementHandler sample = (BoundElementHandler)uniqueSample;
-		        		        
-		        sample.endElementBinding();
-		        		        
-		        int endEntryIndex = sample.getQueueEndEntryIndex();
-		        if(endEntryIndex == -1) return;// it means sample hasn't done any binding, happens for Concurrent when ambiguous or unresolved and it's ok, it will be handled in conflict handling
-		        int startEntryIndex = sample.getQueueStartEntryIndex();
-		        Queue qq = sample.getQueue();
-		        
-		        for(int i = 0; i < individualHandlers.size(); i++){
-                    if(//!candidatesConflictHandler.isDisqualified(i) && 
-                        individualHandlers.get(i) != uniqueSample){
-                        ((BoundElementHandler)individualHandlers.get(i)).queuecoppy(qq, startEntryIndex, endEntryIndex);
-                    }
+		void endElementBinding(){		        
+            BoundElementHandler sample = (BoundElementHandler)uniqueSample;
+                            
+            sample.endElementBinding();
+                            
+            int endEntryIndex = sample.getQueueEndEntryIndex();
+            if(endEntryIndex == -1) return;// it means sample hasn't done any binding, happens for Concurrent when ambiguous or unresolved and it's ok, it will be handled in conflict handling
+            int startEntryIndex = sample.getQueueStartEntryIndex();
+            Queue qq = sample.getQueue();
+            
+            for(int i = 0; i < individualHandlers.size(); i++){
+                if(//!candidatesConflictHandler.isDisqualified(i) && 
+                    individualHandlers.get(i) != uniqueSample){
+                    ((BoundElementHandler)individualHandlers.get(i)).queuecoppy(qq, startEntryIndex, endEntryIndex);
                 }
-		    //}
+            }
 		}
 		
 		public String toString(){

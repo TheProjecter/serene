@@ -57,8 +57,16 @@ public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerP
 		this.schoicePattern = schoicePattern;
 	}
 
+	public int getMinOccurs(){
+	    return schoicePattern.getMinOccurs();
+	}
+	
+	public int getMaxOccurs(){
+	    return schoicePattern.getMaxOccurs();
+	}
+	
 	public boolean isRequiredContent(){
-		if(minOccurs == 0) return false;		
+		if(getMinOccurs() == 0) return false;		
 		for(int i = 0; i < children.length; i++){
 			if(!children[i].isRequiredContent())return false;
 		}
@@ -108,14 +116,9 @@ public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerP
 		return ruleHandlerPool.getMaximalReduceHandler(this, errorCatcher, parent, stackHandler);
 	}
 	
-	boolean transmitsMultipleOccurrence(){
-		if(maxOccurs > 1 || maxOccurs == UNBOUNDED)return true;
-		if(parent instanceof AbstractAPattern)return ((AbstractAPattern)parent).isInterleaved();
-		return false;
-	}
 	
 	public String toString(){
-		String s = "AChoicePattern"+ " min "+minOccurs+" max "+maxOccurs;
+		String s = "AChoicePattern"+ " min "+getMinOccurs()+" max "+getMaxOccurs();
 		return s;
 	}
 }
