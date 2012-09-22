@@ -21,8 +21,6 @@ import java.util.HashMap;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.components.AAttribute;
-
 import serene.validation.handlers.content.BoundAttributeHandler;
 
 import serene.validation.handlers.match.AttributeMatchPath;
@@ -42,9 +40,9 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 		super();		
 	}
 
-	void init(List<AttributeMatchPath> candidateDefinitionPathes, ElementValidationHandler parent, BindingModel bindingModel, Queue queue, int entry){
+	void init(List<AttributeMatchPath> cdp, ElementValidationHandler parent, BindingModel bindingModel, Queue queue, int entry){
 		this.parent = parent;
-		this.candidateDefinitionPathes = candidateDefinitionPathes; 
+		this.candidateDefinitionPathes.addAll(cdp); 
 		for(int i = 0; i < candidateDefinitionPathes.size(); i++){						
 			// To each candidate set an ConflictErrorHandler that knows the ExternalConflictHandler
 			// and the candidate index. Errors will not be handled and reported.
@@ -70,6 +68,13 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 		}
 		localCandidatesConflictHandler.clear();
 		candidates.clear();
+		
+		if(!isShifted){
+		    for(AttributeMatchPath amp : candidateDefinitionPathes){
+		        amp.recycle();
+		    }
+		}
+		candidateDefinitionPathes.clear();
 		pool.recycle(this);
 	}
 	
@@ -91,12 +96,16 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 	}
 
 	void validateInContext(){
+	    isShifted = true;
 		int candidatesCount = candidates.size();		
 		int qualifiedCount = candidatesCount - localCandidatesConflictHandler.getDisqualifiedCount();		
 		if(qualifiedCount == 0){		
 			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitionPathes, temporaryMessageStorage, value, queue, entry, bindingModel);
 		}else if(qualifiedCount == 1){			
 			AttributeMatchPath qAttributeMatchPath = candidateDefinitionPathes.get(localCandidatesConflictHandler.getNextQualified(0));
+			for(AttributeMatchPath mp : candidateDefinitionPathes){
+			    if(mp != qAttributeMatchPath)mp.recycle();
+			}
 			parent.addAttribute(qAttributeMatchPath);
 		}else if(qualifiedCount > 1){			
 			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitionPathes, localCandidatesConflictHandler.getDisqualified(), temporaryMessageStorage, value, queue, entry, bindingModel);

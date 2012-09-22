@@ -56,6 +56,7 @@ public abstract class BaseSchema extends Schema{
 	protected ConflictHandlerPool conflictHandlerPool;
 	protected RuleHandlerPool ruleHandlerPool;
 	
+	
     public BaseSchema(boolean secureProcessing,
                     boolean optimizedForResourceSharing,
                     SchemaModel schemaModel){

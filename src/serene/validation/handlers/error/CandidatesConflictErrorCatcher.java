@@ -22,17 +22,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.BitSet;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AListPattern;
-
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SRule;
 import serene.validation.schema.simplified.SPattern;
@@ -129,7 +118,7 @@ interface CandidatesConflictErrorCatcher extends ErrorType{
     
 	void unexpectedCharacterContent(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SElement elementDefinition);
     
-	void unexpectedAttributeValue(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AAttribute attributeDefinition);
+	void unexpectedAttributeValue(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SAttribute attributeDefinition);
     
 	void unresolvedCharacterContent(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions);
         

@@ -29,9 +29,6 @@ import org.relaxng.datatype.DatatypeException;
 
 import serene.SchemaModel;
 
-import serene.validation.schema.ValidationModel;
-import serene.validation.schema.ValidationModelImpl;
-
 import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.SimplifiedModel;
 
@@ -86,9 +83,8 @@ public abstract class InternalRNGFactory{
 		//or created on the spot
 		// TODO see that you add the unexpected and the unknown nodes somehow
 		// here or in the builder, whereever you see fit
-		// they have to be added to all elements, including empty		
-		ValidationModel vm = new ValidationModelImpl(null, rngModel, optimizedForResourceSharing); 
-        SchemaModel sm = new SchemaModel(vm, null); 
+		// they have to be added to all elements, including empty	 
+        SchemaModel sm = new SchemaModel(null, rngModel, null); 
 		InternalRNGSchema schema = new InternalRNGSchema(false,
                                         level1DocumentationElement,                                        
                                         restrictToFileName,
@@ -100,9 +96,8 @@ public abstract class InternalRNGFactory{
 	}
 	
 	public InternalRNGSchema getExternalRefSchema(){	
-	    if(externalRefModel == null) externalRefModel = rngDirector.getExternalRefModel();
-		ValidationModel vm = new ValidationModelImpl(null, externalRefModel, optimizedForResourceSharing); 
-        SchemaModel sm = new SchemaModel(vm, null);
+	    if(externalRefModel == null) externalRefModel = rngDirector.getExternalRefModel(); 
+        SchemaModel sm = new SchemaModel(null, externalRefModel, null);
 		InternalRNGSchema schema = new InternalRNGSchema(false,
                                         level1DocumentationElement,
                                         restrictToFileName,
@@ -114,9 +109,8 @@ public abstract class InternalRNGFactory{
 	}
 	
 	public InternalRNGIncludeSchema getIncludeSchema(){	
-	    if(includeModel == null) includeModel = rngDirector.getIncludeModel();
-		ValidationModel vm = new ValidationModelImpl(null, includeModel, optimizedForResourceSharing); 
-        SchemaModel sm = new SchemaModel(vm, null);
+	    if(includeModel == null) includeModel = rngDirector.getIncludeModel(); 
+        SchemaModel sm = new SchemaModel(null, includeModel, null);
 		InternalRNGIncludeSchema schema = new InternalRNGIncludeSchema(false,
                                         level1DocumentationElement,
                                         restrictToFileName,

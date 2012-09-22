@@ -20,17 +20,6 @@ import java.util.List;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AListPattern;
-
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SRule;
 import serene.validation.schema.simplified.SPattern;
@@ -79,7 +68,7 @@ public interface ErrorCatcher extends ErrorType{
 	void attributeValueExceptedError(int inputRecordIndex, SData charsDefinition);
 	
 	void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition);
-	void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition);
+	void unexpectedAttributeValue(int inputRecordIndex, SAttribute attributeDefinition);
 	
 	void unresolvedCharacterContent(int inputRecordIndex, SPattern[] possibleDefinitions);
 	void unresolvedAttributeValue(int inputRecordIndex, SPattern[] possibleDefinitions);

@@ -19,8 +19,6 @@ package serene.validation.handlers.content.impl;
 import java.util.List;
 import java.util.BitSet;
 
-import serene.validation.schema.active.components.AAttribute;
-
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.match.AttributeMatchPath;

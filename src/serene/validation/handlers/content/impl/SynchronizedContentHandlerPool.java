@@ -22,7 +22,6 @@ import javax.xml.validation.ValidatorHandler;
 
 import serene.bind.BindingPool;
 
-import serene.validation.schema.active.ActiveModelPool;
 
 public class SynchronizedContentHandlerPool extends ContentHandlerPool{
 	private static volatile SynchronizedContentHandlerPool instance; 

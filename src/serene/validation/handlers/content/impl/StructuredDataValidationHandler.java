@@ -21,19 +21,6 @@ import java.util.ArrayList;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.DataActiveType;
-import serene.validation.schema.active.StructuredDataActiveType;
-import serene.validation.schema.active.components.StructuredDataActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.AListPattern;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AExceptPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SRule;
@@ -227,6 +214,9 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
                         }
                     }
                 }
+                for(StructuredDataMatchPath sdmp : matchPathes){
+                    sdmp.recycle();
+                }
 	        }else{
 	            structuredDataContentTypeHandler.addStructuredData(matchPathes, externalConflictHandler.getDisqualified(), temporaryMessageStorage);
 	        }
@@ -418,7 +408,7 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, SAttribute attributeDefinition){
 		throw new IllegalStateException();
 	}
 	

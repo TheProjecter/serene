@@ -18,8 +18,6 @@ package serene.validation.handlers.content.impl;
 
 import java.util.List;
 
-import serene.validation.schema.active.components.AElement;
-
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 import serene.validation.handlers.error.ConflictMessageReporter;
 

@@ -24,16 +24,6 @@ import serene.bind.util.Queue;
 import serene.bind.BindingModel;
 
 import serene.validation.handlers.stack.StackHandler;
-/*import serene.validation.handlers.stack.util.PathHandler;*/
-
-/*import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.ActiveType;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;*/
 
 import serene.validation.schema.simplified.Type;
 import serene.validation.schema.simplified.SRule;
@@ -90,8 +80,11 @@ public class ContextStackHandler  implements  StackHandler{
 		topHandler.recycle();
 		topHandler = null;
 		currentHandler = null;
-		// TODO recycle
-		currentPath = null;
+		
+		if(currentPath != null){
+		    currentPath.recycle();
+		    currentPath = null;
+		}
 		
 		pool.recycle(this);			
 	}
@@ -290,39 +283,13 @@ public class ContextStackHandler  implements  StackHandler{
 		//System.out.println(currentHandler);
 		//System.out.println(topHandler);
 		
-		/*SRule parent  = item.getParent();*/
-		
-		
-		/*if(currentHandler != topHandler){
-			//Deactivate currentHandler until its rule is ancestor of the item.
-			//No need to check for topHandler again since all types can have 
-			//only one child.			
-			SRule currentRule = currentHandler.getRule();			
-			while(!item.isInContext(currentRule)){
-				currentHandler.deactivate();				
-				if(isCurrentHandlerReseted){
-					isCurrentHandlerReseted = false;
-				}
-				currentRule = currentHandler.getRule();
-			}						
-		}*/
 		
 		int currentRuleIndexInPath = -1;
 		while(currentRuleIndexInPath < 0){
             currentRuleIndexInPath = getCurrentRuleIndexInPath(elementPath);
         }
-        activatePath(/*currentRuleIndexInPath,*/ elementPath);
-        
-        
-		/*pathHandler.activatePath(currentHandler, parent);
-		StructureHandler result = pathHandler.getBottomHandler();
-        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
-            setCurrentHandler(item);
-            return;
-        }
-        currentHandler = result;
-		expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();*/
-	}
+        activatePath(/*currentRuleIndexInPath,*/ elementPath);        
+    }
 
 
 	/**
@@ -335,30 +302,6 @@ public class ContextStackHandler  implements  StackHandler{
 		//System.out.println(item);
 		//System.out.println(currentHandler);
 		//System.out.println(topHandler);
-		
-		/*Rule parent  = item.getParent();
-		
-		if(currentHandler != topHandler){
-			//Deactivate currentHandler until its rule is ancestor of the item.
-			//No need to check for topHandler again since all types can have 
-			//only one child.			
-			SRule currentRule = currentHandler.getRule();			
-			while(!item.isInContext(currentRule)){
-				currentHandler.deactivate();				
-				if(isCurrentHandlerReseted){
-					isCurrentHandlerReseted = false;
-				}
-				currentRule = currentHandler.getRule();
-			}			
-		}
-		pathHandler.activatePath(currentHandler, parent);
-		StructureHandler result = pathHandler.getBottomHandler();
-        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
-            setCurrentHandler(item);
-            return;
-        }
-        currentHandler = result;
-		expectedOrderHandlingCount = 0;*/
 		
 		int currentRuleIndexInPath = -1;
 		while(currentRuleIndexInPath < 0){
@@ -378,30 +321,6 @@ public class ContextStackHandler  implements  StackHandler{
 		//System.out.println(currentHandler);
 		//System.out.println(topHandler);
 		
-		/*Rule parent  = item.getParent();
-		
-		if(currentHandler != topHandler){
-			//Deactivate currentHandler until its rule is ancestor of the item.
-			//No need to check for topHandler again since all types can have 
-			//only one child.			
-			Rule currentRule = currentHandler.getRule();			
-			while(!item.isInContext(currentRule)){
-				currentHandler.deactivate();				
-				if(isCurrentHandlerReseted){
-					isCurrentHandlerReseted = false;
-				}
-				currentRule = currentHandler.getRule();
-			}			
-		}
-		pathHandler.activatePath(currentHandler, parent);
-		StructureHandler result = pathHandler.getBottomHandler();
-        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
-            setCurrentHandler(item);
-            return;
-        }
-        currentHandler = result;
-		expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();*/
-		
 		int currentRuleIndexInPath = -1;
 		while(currentRuleIndexInPath < 0){
             currentRuleIndexInPath = getCurrentRuleIndexInPath(charsPath);
@@ -415,17 +334,7 @@ public class ContextStackHandler  implements  StackHandler{
 	// expectedOrderHandlingCount. In that case some mechanism to know when this 
 	// is 0 due to nature of the pattern for which the handler is set is needed.
 	void setCurrentHandler(SPattern pattern){	
-		/*// System.out.println(currentHandler);
-		// System.out.println(topHandler);		
-		Rule parent  = pattern.getParent();
-		pathHandler.activatePath(currentHandler, parent);
-		StructureHandler result = pathHandler.getBottomHandler();
-        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
-            setCurrentHandler(pattern);
-            return;
-        }
-        currentHandler = result;*/
-        
+		
         StructureHandler s = topHandler;
 	    for(int i = currentPath.size()-2; i >= 0; i--){
 	        SRule r = currentPath.get(i);	        
@@ -476,6 +385,9 @@ public class ContextStackHandler  implements  StackHandler{
 	        }	        	 
 	    }
 	    currentHandler = s;
+	    if(currentPath != null){
+	        currentPath.recycle();
+	    }	    
 	    currentPath = path;
 	}
 		
@@ -499,6 +411,9 @@ public class ContextStackHandler  implements  StackHandler{
 	        }	        	 
 	    }
 	    currentHandler = s;
+	    if(currentPath != null){
+	        currentPath.recycle();
+	    }
 	    currentPath = path;
 	}
 	

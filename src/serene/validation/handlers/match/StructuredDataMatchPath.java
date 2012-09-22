@@ -21,6 +21,7 @@ public abstract class StructuredDataMatchPath extends CharsMatchPath{
         super(pool);
     }
     
+    public abstract StructuredDataMatchPath getCopy();
     public boolean isRequiredBranch(){
         for(int i = 0; i < lastIndex; i++){//last record is type, do not question
             if(!list[i].isRequired())return false;

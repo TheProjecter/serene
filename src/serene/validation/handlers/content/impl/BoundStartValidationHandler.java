@@ -23,14 +23,11 @@ import java.util.List;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.components.AElement;
 
 import serene.bind.util.Queue;
 import serene.bind.BindingModel;
 import serene.bind.util.QueuePool;
 import serene.bind.DocumentTask;
-
-import serene.validation.schema.active.components.AElement;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SElement;
@@ -121,6 +118,7 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
             return pool.getElementDefaultHandler(this);
         }
 		List<ElementMatchPath> elementMatchPathes = matchHandler.matchElement(namespace, name, element);
+		
 		int matchCount = elementMatchPathes.size();
 		if(matchCount == 0){
 			handleUnexpectedElementHandler(namespace, name, restrictToFileName);
@@ -130,7 +128,7 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
 			BoundElementValidationHandler next = pool.getElementValidationHandler(elementMatchPathes.get(0), this, bindingModel, queue, queuePool);
 			return next;
 		}else{	
-			BoundElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList<ElementMatchPath>(elementMatchPathes), this, bindingModel, queue, queuePool);
+			BoundElementConcurrentHandler next = pool.getElementConcurrentHandler(elementMatchPathes, this, bindingModel, queue, queuePool);
 			return next;
 		}		
 	}

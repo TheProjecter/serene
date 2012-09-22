@@ -24,7 +24,6 @@ import org.xml.sax.Attributes;
 
 import serene.util.CharsBuffer;
 
-import serene.validation.schema.active.components.AElement;
 
 import serene.validation.handlers.content.ElementEventHandler;
 

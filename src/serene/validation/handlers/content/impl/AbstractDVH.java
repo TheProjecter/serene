@@ -25,14 +25,6 @@ import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 
-/*import serene.validation.schema.active.DataActiveType;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.components.APattern;*/
-
 import serene.validation.schema.simplified.SPattern;
 import serene.validation.schema.simplified.DataType;
 import serene.validation.schema.simplified.SData;

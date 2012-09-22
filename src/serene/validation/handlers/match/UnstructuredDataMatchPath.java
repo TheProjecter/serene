@@ -20,4 +20,6 @@ public abstract class UnstructuredDataMatchPath extends StructuredDataMatchPath{
     UnstructuredDataMatchPath(MatchPathPool pool){
         super(pool);
     }
+    
+    public abstract UnstructuredDataMatchPath getCopy();
 }

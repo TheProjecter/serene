@@ -17,14 +17,6 @@ limitations under the License.
 package serene.validation.handlers.structure;
 
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-
-
 import serene.validation.schema.simplified.SRule;
 import serene.validation.schema.simplified.SPattern;
 import serene.validation.schema.simplified.SAttribute;
@@ -99,6 +91,8 @@ public class TypeHandler extends StructureHandler{
 	public StructureHandler getChildHandler(SRule child, MatchPath path){
 		//if(!child.getParent().equals(rule)) throw new IllegalArgumentException();
 		
+		/*System.out.println("TYPE HANDLER GET CHILD HANDLER child="+child+"    path="+path);
+		System.out.println("TYPE HANDLER GET CHILD HANDLER rule="+rule);*/
 		boolean missing = true;
 		for(int i = 0; i < rule.getChildrenCount(); i++){
 		    if(rule.getChild(i) == child)missing = false;
@@ -109,6 +103,7 @@ public class TypeHandler extends StructureHandler{
 		if(childStructureHandler == null) childStructureHandler = pool.getStructureHandler(child, path, errorCatcher, this, stackHandler);
 		return childStructureHandler;
 	}	
+	
 	public SRule getRule(){
 		return rule;
 	}

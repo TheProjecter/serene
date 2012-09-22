@@ -16,8 +16,6 @@ limitations under the License.
 
 package serene.validation.handlers.structure;
 
-/*import serene.validation.schema.active.components.AInterleave;*/
-
 import serene.validation.schema.simplified.SInterleave;
 import serene.validation.schema.simplified.SMultipleChildrenPattern;
 

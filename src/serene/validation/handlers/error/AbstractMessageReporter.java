@@ -18,8 +18,6 @@ package serene.validation.handlers.error;
 
 import java.util.BitSet;
 
-import serene.validation.schema.active.components.AElement;
-
 import serene.validation.schema.simplified.SElement;
 
 public abstract class AbstractMessageReporter implements MessageReporter{

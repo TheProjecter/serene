@@ -19,7 +19,6 @@ package serene.validation.handlers.error;
 import org.xml.sax.SAXException;
 import org.xml.sax.Locator;
 
-import serene.validation.schema.active.components.AElement;
 
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 

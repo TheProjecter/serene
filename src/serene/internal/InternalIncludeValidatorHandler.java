@@ -59,9 +59,7 @@ import serene.validation.schema.parsed.Pattern;
 import serene.validation.schema.parsed.Grammar;
 import serene.validation.schema.parsed.Definition;
 
-import serene.validation.schema.active.ActiveModel;
-
-import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.simplified.SimplifiedModel;
 
 import serene.validation.handlers.match.MatchHandler;
 
@@ -143,7 +141,7 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
 	//ValidatorRuleHandlerPool structureHandlerPool;
 	ValidatorErrorHandlerPool errorHandlerPool;
 	
-	SchemaModel schemaModel;
+	SimplifiedModel simplifiedModel;
 							
 	SpaceCharsHandler spaceHandler;
 	MatchHandler matchHandler;
@@ -156,7 +154,6 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
 	DocumentContext documentContext;
 	
 	ElementEventHandler elementHandler;	
-	ActiveModel activeModel;
 		
 	//int count = 0;
     
@@ -184,7 +181,7 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
 	                        ValidatorStackHandlerPool stackHandlerPool,
 	                        ValidatorRuleHandlerPool structureHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
-							SchemaModel schemaModel,
+							SimplifiedModel simplifiedModel,
                             RNGParseBindingPool bindingPool,
                             boolean level1DocumentationElement,
                             boolean restrictToFileName,
@@ -193,7 +190,7 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
 		this.eventHandlerPool = eventHandlerPool;	
 		this.errorHandlerPool = errorHandlerPool;
 		
-		this.schemaModel = schemaModel;
+		this.simplifiedModel = simplifiedModel;
 							
 		
         this.level1DocumentationElement = level1DocumentationElement;
@@ -207,7 +204,7 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
         //this.structureHandlerPool = structureHandlerPool;
         
         
-        matchHandler  = new MatchHandler();
+        matchHandler  = new MatchHandler(simplifiedModel);
 		spaceHandler = new SpaceCharsHandler();					
         documentContext = new DocumentContext();
         
@@ -238,13 +235,8 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
         eventHandlerPool.fill();
                 	
         bindingModel = bindingPool.getBindingModel();
-        
-        activeModel = schemaModel.getActiveModel(stackHandlerPool,
-                                                    activeInputDescriptor,
-		                                            inputStackDescriptor, 
-													errorDispatcher);
-		if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
-        matchHandler.setActiveModel(activeModel);
+                
+		if(simplifiedModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
         
         /*bindingModel.index(activeModel.getSElementIndexMap(), activeModel.getSAttributeIndexMap());*/
         /*queuePool.index(activeModel.getSAttributeIndexMap());*/        
@@ -252,9 +244,6 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
 	void releaseResources(){
 	    eventHandlerPool.releaseHandlers();
 		errorHandlerPool.releaseHandlers();
-		
-		activeModel.recycle();
-		activeModel = null;
 		
 		bindingModel.recycle();
         bindingModel = null;
@@ -332,7 +321,7 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
             locator.getLineNumber(), 
             locator.getColumnNumber());
         
-		elementHandler = eventHandlerPool.getBoundStartValidationHandler(activeModel.getStartElement().getCorrespondingSimplifiedComponent(), bindingModel, queue, queuePool);
+		elementHandler = eventHandlerPool.getBoundStartValidationHandler(simplifiedModel.getStartElement(), bindingModel, queue, queuePool);
 		
         if(level1DocumentationElement){
             if(documentationElementHandler == null) documentationElementHandler = new DocumentationElementHandler(errorDispatcher);
@@ -579,7 +568,7 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
 	}
 	
 	
-	public void endDocument() throws SAXException{
+	public void endDocument() throws SAXException{	   
 		elementHandler.handleEndElement(restrictToFileName, locator);
 		elementHandler.recycle();
 		elementHandler = null;
@@ -605,7 +594,7 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
 		        closeSchematronSchema();
 		        endSchematronSchema();
 		    }
-		}		
+		}	
 	}
 
 	public void endBinding(){

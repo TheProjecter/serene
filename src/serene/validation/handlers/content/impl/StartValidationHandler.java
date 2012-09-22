@@ -25,7 +25,6 @@ import org.xml.sax.SAXException;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import serene.validation.schema.active.components.AElement;
 
 import serene.validation.schema.simplified.SElement;
 

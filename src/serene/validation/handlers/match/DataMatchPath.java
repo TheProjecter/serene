@@ -28,13 +28,24 @@ public class DataMatchPath extends UnstructuredDataMatchPath{
     DataMatchPath(MatchPathPool pool){
         super(pool);
     }
+     
+    void init(SData match, SRule[] list, int lastIndex){
+        if(lastIndex >= this.list.length)adjustSize(lastIndex);
         
+        System.arraycopy(list, 0, this.list, 0, lastIndex+1);
+        this.match = match;
+        this.lastIndex = lastIndex;
+    }
+            
     public void recycle(){
         lastIndex = -1;
         match = null;
         pool.recycle(this);
     }
     
+    public DataMatchPath getCopy(){
+        return pool.getDataMatchPath(match, list, lastIndex);
+    }
     
     public void addData(SData match){
         this.match = match;

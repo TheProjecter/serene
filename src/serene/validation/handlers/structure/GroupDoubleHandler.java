@@ -16,13 +16,6 @@ limitations under the License.
 
 package serene.validation.handlers.structure;
 
-/*import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AGroup;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.CharsActiveTypeItem;*/
-
-
 import serene.validation.schema.simplified.SRule;
 import serene.validation.schema.simplified.SPattern;
 import serene.validation.schema.simplified.SGroup;
@@ -60,9 +53,7 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 	/*ChildFinder childFinder;*/
 	
 	GroupDoubleHandler original;
-	
-	MatchPath currentPath;
-	
+		
 	GroupDoubleHandler(){
 		super();		
 		minimalStartedCount = new IntList();
@@ -88,8 +79,11 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 		minimalReduceCount.clear();
 		maximalReduceCount.clear();
 		
-		// TODO recycle;
-		currentPath = null;
+		if(currentPath != null){
+		    currentPath.recycle();
+		    currentPath = null;
+		}
+		
 		pool.recycle(this);
 	}
 	
@@ -143,16 +137,19 @@ public class GroupDoubleHandler extends StructureDoubleHandler{
 		    ElementMatchPath hpath = path.getElementHeadPath(rule);
 			minimalReduceStackHandler.shift(hpath);
 			maximalReduceStackHandler.shift(hpath);
+			if(currentPath != null)currentPath.recycle();
 			currentPath = hpath;
 		}else if(path.getItemId() == MatchPath.ATTRIBUTE){
 			AttributeMatchPath hpath = path.getAttributeHeadPath(rule);
 			minimalReduceStackHandler.shift(hpath);
 			maximalReduceStackHandler.shift(hpath);
+			if(currentPath != null)currentPath.recycle();
 			currentPath = hpath;
 		}else if(path.getItemId() == MatchPath.CHARS){
 			CharsMatchPath hpath = path.getCharsHeadPath(rule);
 			minimalReduceStackHandler.shift(hpath);
 			maximalReduceStackHandler.shift(hpath);
+			if(currentPath != null)currentPath.recycle();
 			currentPath = hpath;
 		}else throw new IllegalStateException();
 		handleContentOrder(pattern);

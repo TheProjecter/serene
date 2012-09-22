@@ -28,9 +28,6 @@ import serene.validation.schema.simplified.SPattern;
 
 import serene.validation.handlers.conflict.ElementConflictResolver;
 
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AElement;
-
 import serene.util.IntList;
 
 class StartMessageHandler implements MessageReporter{

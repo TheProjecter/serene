@@ -26,13 +26,6 @@ import serene.validation.schema.simplified.SData;
 import serene.validation.schema.simplified.SExceptPattern;
 import serene.validation.schema.simplified.SListPattern;
 
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.components.AListPattern;
-
 import serene.validation.handlers.match.MatchHandler;
 import serene.validation.handlers.match.ElementMatchPath;
 import serene.validation.handlers.match.AttributeMatchPath;

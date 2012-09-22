@@ -24,16 +24,6 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SListPattern;
 
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AListPattern;
-import serene.validation.schema.active.DataActiveType;
-import serene.validation.schema.active.Rule;
 
 import serene.validation.handlers.content.DataEventHandler;
 import serene.validation.handlers.content.util.InputStackDescriptor;

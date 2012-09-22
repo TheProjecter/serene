@@ -28,13 +28,24 @@ public class ElementMatchPath extends MatchPath{
         super(pool);
         itemId = ELEMENT;
     }
+     
+    void init(SElement match, SRule[] list, int lastIndex){
+        if(lastIndex >= this.list.length)adjustSize(lastIndex);
         
+        System.arraycopy(list, 0, this.list, 0, lastIndex+1);
+        this.match = match;
+        this.lastIndex = lastIndex;
+    }
+            
     public void recycle(){
         lastIndex = -1;
         match = null;
         pool.recycle(this);
     }
     
+    public ElementMatchPath getCopy(){
+        return pool.getElementMatchPath(match, list, lastIndex);
+    }
     
     public void addElement(SElement match){
         this.match = match;

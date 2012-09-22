@@ -19,8 +19,6 @@ package serene.validation.handlers.content.impl;
 import java.util.List;
 import java.util.BitSet;
 
-/*import serene.validation.schema.active.components.StructuredDataActiveTypeItem;*/
-
 import serene.validation.handlers.match.StructuredDataMatchPath;
 
 import serene.validation.handlers.error.TemporaryMessageStorage;

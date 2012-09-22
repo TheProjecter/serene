@@ -58,9 +58,7 @@ import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.parsed.Pattern;
 import serene.validation.schema.parsed.Grammar;
 
-import serene.validation.schema.active.ActiveModel;
-
-import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.simplified.SimplifiedModel;
 
 import serene.validation.handlers.match.MatchHandler;
 
@@ -137,7 +135,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	ValidatorErrorHandlerPool errorHandlerPool;
 	ValidatorStackHandlerPool stackHandlerPool;
 	
-	SchemaModel schemaModel;
+	SimplifiedModel simplifiedModel;
 							
 	SpaceCharsHandler spaceHandler;
 	MatchHandler matchHandler;
@@ -150,7 +148,6 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	DocumentContext documentContext;
 	
 	ElementEventHandler elementHandler;	
-	ActiveModel activeModel;
 		
 	//int count = 0;
     
@@ -178,7 +175,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	                        ValidatorStackHandlerPool stackHandlerPool,
 	                        ValidatorRuleHandlerPool structureHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
-							SchemaModel schemaModel,
+							SimplifiedModel simplifiedModel,
                             RNGParseBindingPool bindingPool,
                             boolean level1DocumentationElement,
                             boolean restrictToFileName,
@@ -187,7 +184,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 		this.eventHandlerPool = eventHandlerPool;	
 		this.errorHandlerPool = errorHandlerPool;
 		
-		this.schemaModel = schemaModel;
+		this.simplifiedModel = simplifiedModel;
 							
 		
         this.level1DocumentationElement = level1DocumentationElement;
@@ -199,7 +196,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         
         this.stackHandlerPool = stackHandlerPool;        
         
-        matchHandler  = new MatchHandler();
+        matchHandler  = new MatchHandler(simplifiedModel);
 		spaceHandler = new SpaceCharsHandler();					
         documentContext = new DocumentContext();
         
@@ -231,23 +228,16 @@ class InternalValidatorHandler extends BoundValidatorHandler{
                 	
         bindingModel = bindingPool.getBindingModel();
         
-        activeModel = schemaModel.getActiveModel(stackHandlerPool,
-                                                    activeInputDescriptor,
-		                                            inputStackDescriptor, 
-													errorDispatcher);
-		if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
-        matchHandler.setActiveModel(activeModel);
-        
+
+		if(simplifiedModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
+        		
         /*bindingModel.index(activeModel.getSElementIndexMap(), activeModel.getSAttributeIndexMap());*/
         /*queuePool.index(activeModel.getSAttributeIndexMap());*/        
 	}
 	void releaseResources(){
 	    eventHandlerPool.releaseHandlers();
 		errorHandlerPool.releaseHandlers();
-		
-		activeModel.recycle();
-		activeModel = null;
-		
+
 		bindingModel.recycle();
         bindingModel = null;
 	}
@@ -324,7 +314,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
             locator.getLineNumber(), 
             locator.getColumnNumber());
         
-		elementHandler = eventHandlerPool.getBoundStartValidationHandler(activeModel.getStartElement().getCorrespondingSimplifiedComponent(), bindingModel, queue, queuePool);
+		elementHandler = eventHandlerPool.getBoundStartValidationHandler(simplifiedModel.getStartElement(), bindingModel, queue, queuePool);
 		
         if(level1DocumentationElement){
             if(documentationElementHandler == null) documentationElementHandler = new DocumentationElementHandler(errorDispatcher);
@@ -528,6 +518,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         
         if(processEmbededSchematron && isQLBSupported && (schematronDepth > 0 | namespaceURI.equals(Constants.SCHEMATRON_NS_URI)))
             endSchematronElement(namespaceURI, localName, qName);
+        
 	}
 	
 	void endSchematronElement(String namespaceURI, 
@@ -565,7 +556,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 		        closeSchematronSchema();
 		        endSchematronSchema();
 		    }
-		}		
+		}
 	}
 
 	public void endBinding(){

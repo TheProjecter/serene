@@ -28,13 +28,25 @@ public class TextMatchPath extends CharsMatchPath{
     TextMatchPath(MatchPathPool pool){
         super(pool);
     }
+     
+    void init(SText match, SRule[] list, int lastIndex){
+        if(lastIndex >= this.list.length)adjustSize(lastIndex);
         
+        System.arraycopy(list, 0, this.list, 0, lastIndex+1);
+        this.match = match;
+        this.lastIndex = lastIndex;
+    }
+            
     public void recycle(){
         lastIndex = -1;
         match = null;
         pool.recycle(this);
     }
     
+    
+    public TextMatchPath getCopy(){
+        return pool.getTextMatchPath(match, list, lastIndex);
+    }
     
     public void addText(SText match){
         this.match = match;

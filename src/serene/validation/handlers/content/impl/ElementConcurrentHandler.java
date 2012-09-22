@@ -25,8 +25,6 @@ import org.xml.sax.Attributes;
 
 import serene.util.CharsBuffer;
 
-import serene.validation.schema.active.components.AElement;
-
 import serene.validation.handlers.content.ElementEventHandler;
 import serene.validation.handlers.content.AttributeEventHandler;
 
@@ -56,14 +54,15 @@ class ElementConcurrentHandler extends CandidatesEEH{
 	
 	ElementConcurrentHandler(){
 		super();		
-		candidates = new ArrayList<ElementValidationHandler>(3);        
+		candidates = new ArrayList<ElementValidationHandler>(3);
+        candidateDefinitionPathes = new ArrayList<ElementMatchPath>(3);        
 		candidatesConflictHandler = new ExternalConflictHandler();
         localCandidatesConflictErrorHandler = new CandidatesConflictErrorHandler(candidatesConflictHandler);
 	}	
 	
-	void init(List<ElementMatchPath> candidateDefinitionPathes, ElementValidationHandler parent){		
+	void init(List<ElementMatchPath> cdp, ElementValidationHandler parent){		
 		this.parent = parent;
-		this.candidateDefinitionPathes = candidateDefinitionPathes;
+		this.candidateDefinitionPathes.addAll(cdp);
         localCandidatesConflictErrorHandler.init(activeInputDescriptor);         
 		init((ContextErrorHandlerManager)parent);		
 		for(int i = 0; i < candidateDefinitionPathes.size(); i++){
@@ -205,6 +204,9 @@ class ElementConcurrentHandler extends CandidatesEEH{
 			parent.addChildElement(candidateDefinitionPathes, contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter());
 		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
 			ElementMatchPath qElementMatchPath = candidateDefinitionPathes.get(candidatesConflictHandler.getNextQualified(0));
+			for(ElementMatchPath mp : candidateDefinitionPathes){
+			    if(mp != qElementMatchPath)mp.recycle();
+			}
 			parent.addChildElement(qElementMatchPath);
 		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
 			// Shift all without errors, hope the parent conflict disqualifies all but one

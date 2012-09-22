@@ -96,9 +96,6 @@ import serene.restrictor.ControllerPool;
 import serene.dtdcompatibility.CompatibilityHandler;
 import serene.dtdcompatibility.DTDCompatibilityModelImpl;
 
-import serene.validation.schema.ValidationModel;
-import serene.validation.schema.ValidationModelImpl;
-
 import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.simplified.SimplifiedModel;
 
@@ -726,7 +723,7 @@ public class RNGSchemaFactory extends SchemaFactory{
         SchemaModel schemaModel = null;
         
 		if(parsedModel == null) {
-			schemaModel = new SchemaModel(new ValidationModelImpl(null, null, optimizedForResourceSharing), new DTDCompatibilityModelImpl(null, null));
+			schemaModel = new SchemaModel(null, null, new DTDCompatibilityModelImpl(null, null));
             RNGSchema schema  = new RNGSchema(false,
                                         namespacePrefixes,
                                         level1AttributeDefaultValue,
@@ -764,9 +761,8 @@ public class RNGSchemaFactory extends SchemaFactory{
 		if(simplifiedModel != null){
             restrictionController.control(simplifiedModel);
             if(errorDispatcher.hasUnrecoverableError()){
-                schemaModel = new SchemaModel(new ValidationModelImpl(null, null, optimizedForResourceSharing), new DTDCompatibilityModelImpl(null, null));
+                schemaModel = new SchemaModel(null, null, new DTDCompatibilityModelImpl(null, null));
             }else{
-                ValidationModel vm = new ValidationModelImpl(parsedModel, simplifiedModel, optimizedForResourceSharing);
                 if(level1AttributeDefaultValue || level1AttributeIdType){
                     if(compatibilityHandler == null){                
                         ValidatorErrorHandlerPool vehp = (ValidatorErrorHandlerPool)validatorHandler.getProperty(Constants.ERROR_HANDLER_POOL_PROPERTY);
@@ -779,13 +775,13 @@ public class RNGSchemaFactory extends SchemaFactory{
                     }
                     if(level1AttributeDefaultValue) compatibilityHandler.setLevel1AttributeDefaultValue(true);
                     if(level1AttributeIdType) compatibilityHandler.setLevel1AttributeIdType(true);
-                    schemaModel = compatibilityHandler.handle(vm);
+                    schemaModel = compatibilityHandler.handle(parsedModel, simplifiedModel);
                 }else{
-                    schemaModel = new SchemaModel(vm, new DTDCompatibilityModelImpl(null, null));
+                    schemaModel = new SchemaModel(parsedModel, simplifiedModel, new DTDCompatibilityModelImpl(null, null));
                 }
             }
         }else{
-            schemaModel = new SchemaModel(new ValidationModelImpl(null, null, optimizedForResourceSharing), new DTDCompatibilityModelImpl(null, null));
+            schemaModel = new SchemaModel(null, null,new DTDCompatibilityModelImpl(null, null));
         }
         
         if(processEmbededSchematron){            
