@@ -30,11 +30,11 @@ import serene.validation.handlers.structure.MaximalReduceHandler;
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public class AEmpty extends NoChildrenAPattern{
 	SimplifiedComponent sempty;
-	public AEmpty(ActiveModelRuleHandlerPool ruleHandlerPool, SimplifiedComponent sempty){
+	public AEmpty(ValidatorRuleHandlerPool ruleHandlerPool, SimplifiedComponent sempty){
 		super(ruleHandlerPool);
 		this.sempty = sempty;
 	}
@@ -85,12 +85,12 @@ public class AEmpty extends NoChildrenAPattern{
 			
 	public MinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*/
 	}
 	
 	public MaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*/
 	}
 	
 		

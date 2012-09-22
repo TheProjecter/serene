@@ -16,9 +16,16 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
 import org.xml.sax.SAXException;
 
 import serene.validation.schema.DefinitionPointer;
+
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.ListPatternMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
 
 import serene.bind.util.DocumentIndexedData;
 
@@ -40,6 +47,44 @@ public class SExceptPattern extends SRule implements DefinitionPointer, Structur
 		asParent(child);		
 	}	
 	
+	public boolean isRequired(){
+	    throw new IllegalStateException();
+	}
+	public boolean isChildRequired(){
+		if(child == null)return false;
+		return child.isRequiredContent();
+	}
+	public boolean isChildRequired(int childIndex){
+	    if(childIndex != 0) throw new IllegalStateException();
+		if(child == null)return false;
+		return child.isRequiredContent();
+	}
+	
+	public void setCharsMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, MatchPathPool matchPathPool){
+        if(child.isStructuredDataContent()){
+            child.setMatchPathes(dataMatchPathes, valueMatchPathes, listPatternMatchPathes, matchPathPool);
+            for(int i = 0; i < dataMatchPathes.size(); i++){
+	            dataMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < valueMatchPathes.size(); i++){
+	            valueMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < listPatternMatchPathes.size(); i++){
+	            listPatternMatchPathes.get(i).add(this);
+	        }
+        }
+    }
+    public void setCharsMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, MatchPathPool matchPathPool){
+        if(child.isUnstructuredDataContent()){
+            child.setMatchPathes(dataMatchPathes, valueMatchPathes, matchPathPool);
+            for(int i = 0; i < dataMatchPathes.size(); i++){
+	            dataMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < valueMatchPathes.size(); i++){
+	            valueMatchPathes.get(i).add(this);
+	        }
+        }
+    }
 	public boolean allowsDatas(){
 	    return allowsDatas;
 	}
@@ -84,8 +129,15 @@ public class SExceptPattern extends SRule implements DefinitionPointer, Structur
 	public int getDefinitionIndex(){
 	    return definitionIndex;
 	}
-	
+	public int getChildrenCount(){
+	    return 1;
+	}
 	public SPattern getChild(){
+		return child;
+	}
+	
+	public SPattern getChild(int childIndex){
+	    if(childIndex != 0) throw new IllegalStateException();
 		return child;
 	}
 	
@@ -93,6 +145,9 @@ public class SExceptPattern extends SRule implements DefinitionPointer, Structur
 		v.visit(this);
 	}	
 	public void accept(RestrictingVisitor v) throws SAXException{
+		v.visit(this);
+	}
+	public void accept(SimplifiedRuleVisitor v){
 		v.visit(this);
 	}
 	public String toString(){

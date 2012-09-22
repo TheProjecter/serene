@@ -16,9 +16,19 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.ListPatternMatchPath;
+import serene.validation.handlers.match.TextMatchPath;
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
+
 import serene.bind.util.DocumentIndexedData;
 
-abstract class SUniqueChildPattern extends SPattern{
+public abstract class SUniqueChildPattern extends SPattern{
 	SPattern child;
 	boolean allowsElements;
 	boolean allowsAttributes;
@@ -63,6 +73,17 @@ abstract class SUniqueChildPattern extends SPattern{
         if(allowsText) parent.setAllowsText();
     }
     
+    public boolean isChildRequired(){
+		if(child == null)return false;
+		return child.isRequiredContent();
+	}
+	
+	public boolean isChildRequired(int childIndex){
+	    if(childIndex != 0) throw new IllegalStateException();
+		if(child == null)return false;
+		return child.isRequiredContent();
+	}
+	
 	void setAllowsElements(){
  	    allowsElements = true;
  	}
@@ -86,6 +107,109 @@ abstract class SUniqueChildPattern extends SPattern{
  	}
  	
  	
+ 	void setElementMatchPathes(String ns, String name, List<ElementMatchPath> pathes, MatchPathPool matchPathPool){
+ 	    int pathesCount = pathes.size();
+ 	    
+ 	    child.setElementMatchPathes(ns, name, pathes, matchPathPool);
+ 	    
+ 	    if(pathesCount < pathes.size()){
+ 	        for(; pathesCount < pathes.size(); pathesCount++){
+ 	            pathes.get(pathesCount).add(this);
+ 	        }
+ 	    }
+ 	}
+ 	void setAttributeMatchPathes(String ns, String name, List<AttributeMatchPath> pathes, MatchPathPool matchPathPool){
+ 	    int pathesCount = pathes.size();
+ 	    
+ 	    child.setAttributeMatchPathes(ns, name, pathes, matchPathPool);
+ 	    
+ 	    if(pathesCount < pathes.size()){
+ 	        for(; pathesCount < pathes.size(); pathesCount++){
+ 	            pathes.get(pathesCount).add(this);
+ 	        }
+ 	    }
+ 	}
+ 	
+ 	void setMatchPathes(List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){
+ 	    int pathesCount = textMatchPathes.size();
+ 	    
+ 	    child.setMatchPathes(textMatchPathes, matchPathPool);
+ 	    
+ 	    if(pathesCount < textMatchPathes.size()){
+ 	        for(; pathesCount < textMatchPathes.size(); pathesCount++){
+ 	            textMatchPathes.get(pathesCount).add(this);
+ 	        }
+ 	    }
+ 	}
+    void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){
+        int dataPathesCount = dataMatchPathes.size();
+        int valuePathesCount = valueMatchPathes.size();
+        int listPatternPathesCount = listPatternMatchPathes.size();
+        int textPathesCount = textMatchPathes.size();
+ 	    
+ 	    child.setMatchPathes(dataMatchPathes, valueMatchPathes, listPatternMatchPathes, textMatchPathes, matchPathPool);
+ 	     	    
+ 	    if(dataPathesCount < dataMatchPathes.size()){
+ 	        for(; dataPathesCount < dataMatchPathes.size(); dataPathesCount++){
+ 	            dataMatchPathes.get(dataPathesCount).add(this);
+ 	        }
+ 	    }
+ 	    if(valuePathesCount < valueMatchPathes.size()){
+ 	        for(; valuePathesCount < valueMatchPathes.size(); valuePathesCount++){
+ 	            valueMatchPathes.get(valuePathesCount).add(this);
+ 	        }
+ 	    }
+ 	    if(listPatternPathesCount < listPatternMatchPathes.size()){
+ 	        for(; listPatternPathesCount < listPatternMatchPathes.size(); listPatternPathesCount++){
+ 	            listPatternMatchPathes.get(listPatternPathesCount).add(this);
+ 	        }
+ 	    }
+ 	    if(textPathesCount < textMatchPathes.size()){
+ 	        for(; textPathesCount < textMatchPathes.size(); textPathesCount++){
+ 	            textMatchPathes.get(textPathesCount).add(this);
+ 	        }
+ 	    }
+    }
+	void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, MatchPathPool matchPathPool){
+        int dataPathesCount = dataMatchPathes.size();
+        int valuePathesCount = valueMatchPathes.size();
+        int listPatternPathesCount = listPatternMatchPathes.size();
+ 	    
+ 	    child.setMatchPathes(dataMatchPathes, valueMatchPathes, listPatternMatchPathes, matchPathPool);
+ 	     	    
+ 	    if(dataPathesCount < dataMatchPathes.size()){
+ 	        for(; dataPathesCount < dataMatchPathes.size(); dataPathesCount++){
+ 	            dataMatchPathes.get(dataPathesCount).add(this);
+ 	        }
+ 	    }
+ 	    if(valuePathesCount < valueMatchPathes.size()){
+ 	        for(; valuePathesCount < valueMatchPathes.size(); valuePathesCount++){
+ 	            valueMatchPathes.get(valuePathesCount).add(this);
+ 	        }
+ 	    }
+ 	    if(listPatternPathesCount < listPatternMatchPathes.size()){
+ 	        for(; listPatternPathesCount < listPatternMatchPathes.size(); listPatternPathesCount++){
+ 	            listPatternMatchPathes.get(listPatternPathesCount).add(this);
+ 	        }
+ 	    }
+    }
+    void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, MatchPathPool matchPathPool){
+        int dataPathesCount = dataMatchPathes.size();
+        int valuePathesCount = valueMatchPathes.size();
+ 	    
+ 	    child.setMatchPathes(dataMatchPathes, valueMatchPathes, matchPathPool);
+ 	     	    
+ 	    if(dataPathesCount < dataMatchPathes.size()){
+ 	        for(; dataPathesCount < dataMatchPathes.size(); dataPathesCount++){
+ 	            dataMatchPathes.get(dataPathesCount).add(this);
+ 	        }
+ 	    }
+ 	    if(valuePathesCount < valueMatchPathes.size()){
+ 	        for(; valuePathesCount < valueMatchPathes.size(); valuePathesCount++){
+ 	            valueMatchPathes.get(valuePathesCount).add(this);
+ 	        }
+ 	    }
+    }
  	boolean isElementContent(){
         return allowsElements;
     }
@@ -124,10 +248,18 @@ abstract class SUniqueChildPattern extends SPattern{
 		}
 	}	
 	
+	public int getChildrenCount(){
+	    return 1;
+	}
 	public SPattern getChild(){
 		return child;
 	}	
 		
+	public SPattern getChild(int childIndex){
+	    if(childIndex != 0) throw new IllegalStateException();
+	    return child;
+	}
+	
 	public String toString(){
 		String s = "Attribute";		
 		return s;

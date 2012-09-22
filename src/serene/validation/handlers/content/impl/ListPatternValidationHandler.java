@@ -22,6 +22,7 @@ import java.util.BitSet;
 import org.xml.sax.SAXException;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SListPattern;
 
 import serene.validation.schema.active.components.DatatypedActiveTypeItem;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
@@ -45,6 +46,8 @@ import serene.util.SpaceCharsHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
+import serene.validation.handlers.match.UnstructuredDataMatchPath;
+
 class ListPatternValidationHandler implements DataEventHandler,
                                         DataContentTypeHandler{
     ValidatorEventHandlerPool pool;
@@ -52,7 +55,7 @@ class ListPatternValidationHandler implements DataEventHandler,
     SpaceCharsHandler spaceHandler;
     
     AbstractSDVH parent;
-    AListPattern listPattern;
+    SListPattern listPattern;
         
     ErrorCatcher errorCatcher;    
     StackHandler stackHandler;
@@ -69,7 +72,7 @@ class ListPatternValidationHandler implements DataEventHandler,
 		this.spaceHandler = spaceHandler; 
 	}
     
-	void init(AListPattern listPattern, AbstractSDVH parent, ErrorCatcher errorCatcher){
+	void init(SListPattern listPattern, AbstractSDVH parent, ErrorCatcher errorCatcher){
         this.listPattern = listPattern;
         this.parent = parent;
         this.errorCatcher = errorCatcher;
@@ -91,7 +94,7 @@ class ListPatternValidationHandler implements DataEventHandler,
         return parent;    
     }
     
-    public void handleChars(char[] chars, AListPattern context) throws SAXException{
+    public void handleChars(char[] chars, SListPattern context) throws SAXException{
         // System.out.println("LIST PATTERN VALIDATION HANDLER chars="+new String(chars)+"  context="+context);
         stackHandler = stackHandlerPool.getContextStackHandler(listPattern, errorCatcher);
         
@@ -112,7 +115,7 @@ class ListPatternValidationHandler implements DataEventHandler,
 		stackHandler = null;
     }
 	
-	public void handleString(String value, AListPattern context) throws SAXException{
+	public void handleString(String value, SListPattern context) throws SAXException{
 	    stackHandler = stackHandlerPool.getContextStackHandler(listPattern, errorCatcher);
 	    
 	    DataValidationHandler dvh = pool.getDataValidationHandler(this, this, errorCatcher);
@@ -135,10 +138,10 @@ class ListPatternValidationHandler implements DataEventHandler,
 	
 //StructuredDataContentTypeHandler
 //==============================================================================
-    public void addData(DatatypedActiveTypeItem data){        
+    public void addData(UnstructuredDataMatchPath data){        
         stackHandler.shift(data);
     }
-	public void addData(List<DatatypedActiveTypeItem> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){	    
+	public void addData(List<UnstructuredDataMatchPath> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){	    
 	    if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, errorCatcher);
@@ -147,7 +150,7 @@ class ListPatternValidationHandler implements DataEventHandler,
 		stackHandler.shiftAllTokenDefinitions(candidateDefinitions, temporaryMessageStorage);
 	}
 	
-	public void addData(List<DatatypedActiveTypeItem> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){	    
+	public void addData(List<UnstructuredDataMatchPath> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){	    
 	    if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, errorCatcher);

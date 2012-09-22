@@ -130,6 +130,7 @@ public class RNGSchema extends BaseSchema{
                                         contentHandlerPool.getValidatorEventHandlerPool(),
                                         conflictHandlerPool.getValidatorConflictHandlerPool(),
                                         stackHandlerPool.getValidatorStackHandlerPool(),
+                                        ruleHandlerPool.getValidatorRuleHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										schemaModel);
 		}
@@ -164,6 +165,7 @@ public class RNGSchema extends BaseSchema{
                                         contentHandlerPool.getValidatorEventHandlerPool(),
                                         conflictHandlerPool.getValidatorConflictHandlerPool(),
                                         stackHandlerPool.getValidatorStackHandlerPool(),
+                                        ruleHandlerPool.getValidatorRuleHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										schemaModel,
 										validatingTransformerHandlers);

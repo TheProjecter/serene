@@ -23,12 +23,16 @@ import java.util.Map;
 
 import serene.util.IntList;
 
-import serene.validation.schema.active.Rule;
+/*import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.ActiveType;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ACompositor;
 import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
+import serene.validation.schema.active.components.AAttribute;*/
+
+import serene.validation.schema.simplified.Type;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SMultipleChildrenPattern;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
@@ -40,14 +44,17 @@ import serene.validation.handlers.stack.ConcurrentStackHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.StructureHandler;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
 import serene.validation.handlers.conflict.ContextConflictsDescriptor;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
+import serene.validation.handlers.match.MatchPath;
+
 import serene.Reusable;
 
-public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler{
+public class ValidatorStackHandlerPool implements Reusable{
 	
 	// int contextStackHCreated;
 	int contextStackHMaxSize;
@@ -88,6 +95,7 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 	
 	InputStackDescriptor inputStackDescriptor;
 	ValidatorConflictHandlerPool conflictHandlerPool;
+	ValidatorRuleHandlerPool structureHandlerPool;
 	
 	public ValidatorStackHandlerPool(StackHandlerPool pool){
 		this.pool = pool;
@@ -106,9 +114,10 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 		pool.recycle(this);
 	}
 	
-	public void fill(InputStackDescriptor inputStackDescriptor, ValidatorConflictHandlerPool conflictHandlerPool){
+	public void fill(InputStackDescriptor inputStackDescriptor, ValidatorConflictHandlerPool conflictHandlerPool, ValidatorRuleHandlerPool structureHandlerPool){
 		this.inputStackDescriptor = inputStackDescriptor;
 		this.conflictHandlerPool = conflictHandlerPool;
+		this.structureHandlerPool = structureHandlerPool;
 		
 		if(pool != null){
 		    pool.fill(this,
@@ -136,19 +145,19 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 		contextStackHFree = contextStackHFillCount;
 		contextStackHMinFree = contextStackHFree;
 		for(int i = 0; i < contextStackHFree; i++){	
-			contextStackH[i].init(inputStackDescriptor, this);
+			contextStackH[i].init(inputStackDescriptor, structureHandlerPool, this);
 		}
 		
 		minimalReduceStackHFree = minimalReduceStackHFillCount;
 		minimalReduceStackHMinFree = minimalReduceStackHFree;
 		for(int i = 0; i < minimalReduceStackHFree; i++){	
-			minimalReduceStackH[i].init(inputStackDescriptor, this);
+			minimalReduceStackH[i].init(inputStackDescriptor, structureHandlerPool, this);
 		}
 		
 		maximalReduceStackHFree = maximalReduceStackHFillCount;
 		maximalReduceStackHMinFree = maximalReduceStackHFree;
 		for(int i = 0; i < maximalReduceStackHFree; i++){	
-			maximalReduceStackH[i].init(inputStackDescriptor, this);
+			maximalReduceStackH[i].init(inputStackDescriptor, structureHandlerPool, this);
 		}
 		
 		candidateStackHFree = candidateStackHFillCount;
@@ -190,11 +199,11 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 		full = false;
 	}
 	
-	public ContextStackHandler getContextStackHandler(ActiveType type, ErrorCatcher ehm){			
+	public ContextStackHandler getContextStackHandler(SRule type, ErrorCatcher ehm){			
 		if(contextStackHFree == 0){
 			// contextStackHCreated++;			
 			ContextStackHandler csh = new ContextStackHandler();	
-			csh.init(inputStackDescriptor, this);
+			csh.init(inputStackDescriptor, structureHandlerPool, this);
 			csh.init(type, ehm);
 			return csh;			
 		}else{
@@ -215,11 +224,11 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 		contextStackH[contextStackHFree++] = csh;
 	}
 	
-	public MinimalReduceStackHandler getMinimalReduceStackHandler(IntList reduceCountList, IntList startedCountList, ACompositor compositor, ErrorCatcher ehm){			
+	public MinimalReduceStackHandler getMinimalReduceStackHandler(IntList reduceCountList, IntList startedCountList, SMultipleChildrenPattern compositor, ErrorCatcher ehm){			
 		if(minimalReduceStackHFree == 0){
 			// minimalReduceStackHCreated++;			
 			MinimalReduceStackHandler csh = new MinimalReduceStackHandler();	
-			csh.init(inputStackDescriptor, this);
+			csh.init(inputStackDescriptor, structureHandlerPool, this);
 			csh.init(reduceCountList, startedCountList, compositor, ehm);
 			return csh;			
 		}else{
@@ -230,11 +239,11 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 		}		
 	}
 	
-	public MinimalReduceStackHandler getMinimalReduceStackHandler(IntList reduceCountList, ACompositor compositor, ErrorCatcher ehm){			
+	public MinimalReduceStackHandler getMinimalReduceStackHandler(IntList reduceCountList, SMultipleChildrenPattern compositor, ErrorCatcher ehm){			
 		if(minimalReduceStackHFree == 0){
 			// minimalReduceStackHCreated++;			
 			MinimalReduceStackHandler csh = new MinimalReduceStackHandler();	
-			csh.init(inputStackDescriptor, this);
+			csh.init(inputStackDescriptor, structureHandlerPool, this);
 			csh.init(reduceCountList, compositor, ehm);
 			return csh;			
 		}else{
@@ -254,11 +263,11 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 		minimalReduceStackH[minimalReduceStackHFree++] = csh;
 	}
 	
-	public MaximalReduceStackHandler getMaximalReduceStackHandler(IntList reduceCountList, IntList startedCountList, ACompositor compositor, ErrorCatcher ehm){			
+	public MaximalReduceStackHandler getMaximalReduceStackHandler(IntList reduceCountList, IntList startedCountList, SMultipleChildrenPattern compositor, ErrorCatcher ehm){			
 		if(maximalReduceStackHFree == 0){
 			// maximalReduceStackHCreated++;			
 			MaximalReduceStackHandler csh = new MaximalReduceStackHandler();	
-			csh.init(inputStackDescriptor, this);
+			csh.init(inputStackDescriptor, structureHandlerPool, this);
 			csh.init(reduceCountList, startedCountList, compositor, ehm);
 			return csh;			
 		}else{
@@ -269,11 +278,11 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 		}		
 	}
 	
-	public MaximalReduceStackHandler getMaximalReduceStackHandler(IntList reduceCountList, ACompositor compositor, ErrorCatcher ehm){			
+	public MaximalReduceStackHandler getMaximalReduceStackHandler(IntList reduceCountList, SMultipleChildrenPattern compositor, ErrorCatcher ehm){			
 		if(maximalReduceStackHFree == 0){
 			// maximalReduceStackHCreated++;			
 			MaximalReduceStackHandler csh = new MaximalReduceStackHandler();	
-			csh.init(inputStackDescriptor, this);
+			csh.init(inputStackDescriptor, structureHandlerPool, this);
 			csh.init(reduceCountList, compositor, ehm);
 			return csh;			
 		}else{
@@ -296,7 +305,8 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 	
 	//copy
 	public CandidateStackHandlerImpl getCandidateStackHandler(StructureHandler topHandler, 
-													Rule currentRule,
+	                                                MatchPath currentPath,
+													SRule currentRule,
 													StackConflictsHandler stackConflictsHandler,
 													ConcurrentStackHandler parent,
 													ContextConflictsDescriptor contextConflictsDescriptor,
@@ -308,6 +318,7 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 			CandidateStackHandlerImpl csh = new CandidateStackHandlerImpl();
 			csh.init(inputStackDescriptor, this);			
 			csh.init(topHandler, 
+			            currentPath,
 						currentRule,
 						stackConflictsHandler,
 						parent,
@@ -317,7 +328,8 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 			return csh;			
 		}else{
 			CandidateStackHandlerImpl csh = candidateStackH[--candidateStackHFree];
-			csh.init(topHandler, 
+			csh.init(topHandler,
+			            currentPath,
 						currentRule,						
 						stackConflictsHandler,
 						parent,
@@ -330,8 +342,9 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 	}
 	
 	//first
-	public CandidateStackHandlerImpl getCandidateStackHandler(StructureHandler topHandler, 
-													Rule currentRule,
+	public CandidateStackHandlerImpl getCandidateStackHandler(StructureHandler topHandler,
+	                                                MatchPath currentPath,
+													SRule currentRule,
 													ConcurrentStackHandler parent,
 													ContextConflictsDescriptor contextConflictsDescriptor,
 													ErrorCatcher errorCatcher){
@@ -341,6 +354,7 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 			CandidateStackHandlerImpl csh = new CandidateStackHandlerImpl();
 			csh.init(inputStackDescriptor, this);			
 			csh.init(topHandler, 
+			            currentPath,
 						currentRule,
 						parent,
 						contextConflictsDescriptor,
@@ -348,7 +362,8 @@ public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler
 			return csh;			
 		}else{
 			CandidateStackHandlerImpl csh = candidateStackH[--candidateStackHFree];
-			csh.init(topHandler, 
+			csh.init(topHandler,
+			            currentPath,
 						currentRule,
 						parent,
 						contextConflictsDescriptor,

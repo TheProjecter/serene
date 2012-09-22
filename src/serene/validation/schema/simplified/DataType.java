@@ -16,7 +16,14 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
+
 public interface DataType extends Type{
+    void setCharsMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, MatchPathPool matchPathPool);
 	boolean allowsDatas();
 	boolean allowsValues();
     boolean allowsUnstructuredDataContent();	

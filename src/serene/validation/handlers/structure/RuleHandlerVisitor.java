@@ -16,47 +16,36 @@ limitations under the License.
 
 package serene.validation.handlers.structure;
 
-import serene.validation.handlers.structure.impl.AttributeHandler;
-import serene.validation.handlers.structure.impl.ChoiceHandler;
-import serene.validation.handlers.structure.impl.ChoiceMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.ChoiceMaximalReduceHandler;
-import serene.validation.handlers.structure.impl.ElementHandler;
-import serene.validation.handlers.structure.impl.ExceptPatternHandler;
-import serene.validation.handlers.structure.impl.GrammarHandler;
-import serene.validation.handlers.structure.impl.GrammarMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.GrammarMaximalReduceHandler;
-import serene.validation.handlers.structure.impl.GroupDoubleHandler;
-import serene.validation.handlers.structure.impl.GroupHandler;
-import serene.validation.handlers.structure.impl.GroupMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.GroupMaximalReduceHandler;
-import serene.validation.handlers.structure.impl.GroupMinimalReduceCountHandler;
-import serene.validation.handlers.structure.impl.GroupMaximalReduceCountHandler;
-import serene.validation.handlers.structure.impl.InterleaveDoubleHandler;
-import serene.validation.handlers.structure.impl.InterleaveMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.InterleaveMaximalReduceHandler;
-import serene.validation.handlers.structure.impl.InterleaveMinimalReduceCountHandler;
-import serene.validation.handlers.structure.impl.InterleaveMaximalReduceCountHandler;
-import serene.validation.handlers.structure.impl.ListPatternHandler;
-import serene.validation.handlers.structure.impl.MInterleaveHandler;
-import serene.validation.handlers.structure.impl.ParticleHandler;
-import serene.validation.handlers.structure.impl.RefHandler;
-import serene.validation.handlers.structure.impl.RefMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.RefMaximalReduceHandler;
-import serene.validation.handlers.structure.impl.UInterleaveHandler;
-import serene.validation.handlers.structure.impl.SInterleaveHandler;
+import serene.validation.handlers.structure.TypeHandler;
+import serene.validation.handlers.structure.ChoiceHandler;
+import serene.validation.handlers.structure.ChoiceMinimalReduceHandler;
+import serene.validation.handlers.structure.ChoiceMaximalReduceHandler;
+import serene.validation.handlers.structure.GroupDoubleHandler;
+import serene.validation.handlers.structure.GroupHandler;
+import serene.validation.handlers.structure.GroupMinimalReduceHandler;
+import serene.validation.handlers.structure.GroupMaximalReduceHandler;
+import serene.validation.handlers.structure.GroupMinimalReduceCountHandler;
+import serene.validation.handlers.structure.GroupMaximalReduceCountHandler;
+import serene.validation.handlers.structure.InterleaveDoubleHandler;
+import serene.validation.handlers.structure.InterleaveMinimalReduceHandler;
+import serene.validation.handlers.structure.InterleaveMaximalReduceHandler;
+import serene.validation.handlers.structure.InterleaveMinimalReduceCountHandler;
+import serene.validation.handlers.structure.InterleaveMaximalReduceCountHandler;
+import serene.validation.handlers.structure.MInterleaveHandler;
+import serene.validation.handlers.structure.ParticleHandler;
+import serene.validation.handlers.structure.IntermediaryPatternHandler;
+import serene.validation.handlers.structure.IntermediaryPatternMinimalReduceHandler;
+import serene.validation.handlers.structure.IntermediaryPatternMaximalReduceHandler;
+import serene.validation.handlers.structure.UInterleaveHandler;
+import serene.validation.handlers.structure.SInterleaveHandler;
 
 
 public interface RuleHandlerVisitor{
 	
-	void visit(AttributeHandler handler);
+	void visit(TypeHandler handler);
 	void visit(ChoiceHandler handler);
 	void visit(ChoiceMinimalReduceHandler handler);
 	void visit(ChoiceMaximalReduceHandler handler);
-	void visit(ElementHandler handler);
-	void visit(ExceptPatternHandler handler);
-	void visit(GrammarHandler handler);
-	void visit(GrammarMinimalReduceHandler handler);
-	void visit(GrammarMaximalReduceHandler handler);
 	void visit(GroupDoubleHandler handler);
 	void visit(GroupHandler handler);
 	void visit(GroupMinimalReduceHandler handler);
@@ -68,12 +57,11 @@ public interface RuleHandlerVisitor{
 	void visit(InterleaveMaximalReduceHandler handler);
 	void visit(InterleaveMinimalReduceCountHandler handler);
 	void visit(InterleaveMaximalReduceCountHandler handler);
-	void visit(ListPatternHandler handler);
 	void visit(MInterleaveHandler handler);
 	void visit(ParticleHandler handler);
-	void visit(RefHandler handler);
-	void visit(RefMinimalReduceHandler handler);
-	void visit(RefMaximalReduceHandler handler);
+	void visit(IntermediaryPatternHandler handler);
+	void visit(IntermediaryPatternMinimalReduceHandler handler);
+	void visit(IntermediaryPatternMaximalReduceHandler handler);
 	void visit(UInterleaveHandler handler);
 	void visit(SInterleaveHandler handler);
 

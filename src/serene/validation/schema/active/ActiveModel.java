@@ -29,7 +29,7 @@ import serene.validation.schema.simplified.SExceptPattern;
 import serene.validation.schema.active.components.AElement;
 
 /*import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;*/
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 /*import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;*/
 
 import serene.validation.handlers.match.MatchHandler;
@@ -49,14 +49,14 @@ public class ActiveModel  implements Reusable{
 
 	ActiveGrammarModel grammarModel;
 		
-	ActiveModelRuleHandlerPool ruleHandlerPool;
+	ValidatorRuleHandlerPool ruleHandlerPool;
 	/*ValidatorStackHandlerPool stackHandlerPool;	
 	ValidatorConflictHandlerPool conflictHandlerPool;*/
 	
 	ActiveModelPool pool;	
 	
 	public ActiveModel(ActiveGrammarModel grammarModel,
-					ActiveModelRuleHandlerPool ruleHandlerPool,
+					ValidatorRuleHandlerPool ruleHandlerPool,
 					/*ValidatorStackHandlerPool stackHandlerPool,
 					ValidatorConflictHandlerPool conflictHandlerPool,*/
 					ActiveModelPool pool){
@@ -121,7 +121,7 @@ public class ActiveModel  implements Reusable{
         return stackHandlerPool;
     }*/
     
-    public ActiveModelRuleHandlerPool getRuleHandlerPool(){
+    public ValidatorRuleHandlerPool getRuleHandlerPool(){
         return ruleHandlerPool;
     }
     

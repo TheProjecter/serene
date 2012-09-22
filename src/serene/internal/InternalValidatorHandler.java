@@ -78,6 +78,8 @@ import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
 
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
+
 import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.DocumentContext;
@@ -174,6 +176,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	InternalValidatorHandler(ValidatorEventHandlerPool eventHandlerPool,
 	                        ValidatorConflictHandlerPool conflictHandlerPool,
 	                        ValidatorStackHandlerPool stackHandlerPool,
+	                        ValidatorRuleHandlerPool structureHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
 							SchemaModel schemaModel,
                             RNGParseBindingPool bindingPool,
@@ -213,8 +216,8 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         // TODO move
         
         conflictHandlerPool.fill(activeInputDescriptor, inputStackDescriptor);
-        stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool);
-        
+        stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool, structureHandlerPool);
+        structureHandlerPool.fill(stackHandlerPool, activeInputDescriptor, inputStackDescriptor);
         
         errorHandlerPool.init(errorDispatcher, activeInputDescriptor);        
         eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, stackHandlerPool, errorHandlerPool);
@@ -321,7 +324,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
             locator.getLineNumber(), 
             locator.getColumnNumber());
         
-		elementHandler = eventHandlerPool.getBoundStartValidationHandler(activeModel.getStartElement(), bindingModel, queue, queuePool);
+		elementHandler = eventHandlerPool.getBoundStartValidationHandler(activeModel.getStartElement().getCorrespondingSimplifiedComponent(), bindingModel, queue, queuePool);
 		
         if(level1DocumentationElement){
             if(documentationElementHandler == null) documentationElementHandler = new DocumentationElementHandler(errorDispatcher);

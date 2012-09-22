@@ -21,7 +21,7 @@ import java.util.List;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.AbstractAPattern;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public abstract class MultipleChildrenAPattern extends AbstractAPattern{
  	protected APattern[] children; 
@@ -40,7 +40,7 @@ public abstract class MultipleChildrenAPattern extends AbstractAPattern{
                 boolean allowsValues,	
                 boolean allowsListPatterns,
                 boolean allowsText,
-				ActiveModelRuleHandlerPool ruleHandlerPool){		
+				ValidatorRuleHandlerPool ruleHandlerPool){		
 		super(ruleHandlerPool);
 		this.allowsElements = allowsElements;
 	    this.allowsAttributes = allowsAttributes;

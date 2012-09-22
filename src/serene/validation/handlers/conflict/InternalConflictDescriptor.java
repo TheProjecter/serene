@@ -16,12 +16,12 @@ limitations under the License.
 
 package serene.validation.handlers.conflict;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.ActiveTypeItem;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
 
 public interface InternalConflictDescriptor{
 
-	boolean isConflictActiveTypeItem(ActiveTypeItem item);	
-	boolean isConflictPathRule(Rule rule);
-	boolean isConflictRule(Rule rule);
+	boolean isConflictTypeItem(SPattern item);	
+	boolean isConflictPathRule(SRule rule);
+	boolean isConflictRule(SRule rule);
 }

@@ -20,13 +20,15 @@ import serene.util.IntList;
 
 import serene.validation.schema.active.components.ACompositor;
 
+
+import serene.validation.schema.simplified.SMultipleChildrenPattern;
+
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.StructureHandler;
 
 public class MinimalReduceStackHandler extends ContextStackHandler{
-	ValidatorStackHandlerPool pool;
 	
 	MinimalReduceStackHandler(){
 		super();
@@ -38,26 +40,25 @@ public class MinimalReduceStackHandler extends ContextStackHandler{
 		topHandler.recycle();
 		topHandler = null;
 		currentHandler = null;
-		recycler.recycle(this);		
+		pool.recycle(this);		
 	}
 		
-	void init(InputStackDescriptor inputStackDescriptor, ValidatorStackHandlerPool pool){
-		this.recycler = pool;
+	/*void init(InputStackDescriptor inputStackDescriptor, ValidatorStackHandlerPool pool){
 		this.pool = pool;
 		this.inputStackDescriptor = inputStackDescriptor;
-	}
+	}*/
 	
-	void init(IntList reduceCountList, ACompositor topPattern, ErrorCatcher errorCatcher){
-		topHandler = topPattern.getStructureHandler(reduceCountList, errorCatcher, this);
+	void init(IntList reduceCountList, SMultipleChildrenPattern topPattern, ErrorCatcher errorCatcher){
+		topHandler = structureHandlerPool.getMinimalReduceCountHandler(topPattern, reduceCountList, errorCatcher, this);
 		currentHandler = topHandler;
-		pathHandler.init(topHandler);		
+		/*pathHandler.init(topHandler);		*/
 	}
 	
-	void init(IntList reduceCountList, IntList startedCountList, ACompositor topPattern, ErrorCatcher errorCatcher){
+	void init(IntList reduceCountList, IntList startedCountList, SMultipleChildrenPattern topPattern, ErrorCatcher errorCatcher){
 		if(topPattern != null){
-			topHandler = topPattern.getStructureHandler(reduceCountList, startedCountList, errorCatcher, this);
+			topHandler = structureHandlerPool.getMinimalReduceCountHandler(topPattern, reduceCountList, startedCountList, errorCatcher, this);
 			currentHandler = topHandler;
-			pathHandler.init(topHandler);
+			/*pathHandler.init(topHandler);*/
 		}
 	}
 	
@@ -78,7 +79,7 @@ public class MinimalReduceStackHandler extends ContextStackHandler{
 	private void setState(StructureHandler topHandler){
 		this.topHandler = topHandler;
 		currentHandler = topHandler;
-		pathHandler.init(topHandler);
+		/*pathHandler.init(topHandler);*/
 	}
 	
 	public String toString(){

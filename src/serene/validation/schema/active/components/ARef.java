@@ -31,15 +31,12 @@ import serene.validation.schema.active.ActiveGrammarModel;
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
-import serene.validation.handlers.structure.impl.RefHandler;
-import serene.validation.handlers.structure.impl.RefMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.RefMaximalReduceHandler;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.ConcurrentStackHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 import org.relaxng.datatype.ValidationContext;
 
@@ -53,7 +50,7 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 	
 	public ARef(int index,
 					ActiveGrammarModel grammarModel,
-					ActiveModelRuleHandlerPool ruleHandlerPool,
+					ValidatorRuleHandlerPool ruleHandlerPool,
 					SRef sref){
 		super(null, ruleHandlerPool);
 		this.index = index;
@@ -209,8 +206,8 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 		rv.visit(this);
 	}
 
-	public RefHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
-		return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, parent, stackHandler);
+	/*public RefHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
+		return ruleHandlerPool.getStructureHandler(this, errorCatcher, parent, stackHandler);
 	}
 	
 	public RefMinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
@@ -218,7 +215,7 @@ public class ARef extends UniqueChildAPattern implements ActiveDefinitionPointer
 	}
 	public RefMaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
 		return ruleHandlerPool.getMaximalReduceHandler(this, errorCatcher, parent, stackHandler);
-	}
+	}*/
 
 	boolean isInterleaved(){
 		if(parent instanceof AbstractAPattern)return ((AbstractAPattern)parent).isInterleaved();

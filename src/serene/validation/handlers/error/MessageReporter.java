@@ -22,7 +22,9 @@ import org.xml.sax.SAXException;
 
 import serene.validation.handlers.conflict.ElementConflictResolver;
 
-import serene.validation.schema.active.components.AElement;
+//import serene.validation.schema.active.components.AElement;
+
+import serene.validation.schema.simplified.SElement;
 
 import serene.util.IntList;
 
@@ -34,12 +36,12 @@ public interface MessageReporter{
     void setReportingContextType(int contextType);
 	void setReportingContextQName(String qName);
 	void setReportingContextLocation(String publicId, String systemId, int lineNumber, int columnNumber);
-	void setReportingContextDefinition(AElement definition);    
+	void setReportingContextDefinition(SElement definition);    
 	void setRestrictToFileName(boolean restrictToFileName);
     
     void setParent(MessageReporter parent);
     
-    void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException;
+    void report(int contextType, String qName, SElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException;
     void report(boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher, String prefix) throws SAXException;
     String getCandidateErrorMessage(String prefix, boolean restrictToFileName);
     String getErrorMessage(String prefix, boolean restrictToFileName);

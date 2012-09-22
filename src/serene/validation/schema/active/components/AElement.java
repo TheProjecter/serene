@@ -30,12 +30,12 @@ import serene.validation.schema.active.ActiveGrammarModel;
 import serene.validation.schema.active.ElementContentType;
 import serene.validation.schema.active.AttributesType;
 
-import serene.validation.handlers.structure.impl.ElementHandler;
+
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
-import serene.validation.handlers.structure.impl.StructureDoubleHandler;
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.StructureDoubleHandler;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
@@ -57,7 +57,7 @@ public class AElement extends MarkupAPattern
 	            Identifier identifier,
 				ActiveGrammarModel grammarModel,
 				/*ValidatorStackHandlerPool stackHandlerPool,*/
-				ActiveModelRuleHandlerPool ruleHandlerPool,
+				ValidatorRuleHandlerPool ruleHandlerPool,
 				SElement selement){		
 		super(index,
 		        identifier,
@@ -158,9 +158,9 @@ public class AElement extends MarkupAPattern
 	
 	//Type
 	//--------------------------------------------------------------------------
-	public ElementHandler getStructureHandler(ErrorCatcher errorCatcher, StackHandler stackHandler){
-		return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);
-	}	
+	/*public ElementHandler getStructureHandler(ErrorCatcher errorCatcher, StackHandler stackHandler){
+		return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);
+	}*/	
 	//StackHandler getStackHandler(ErrorCatcher ec) super
 	//StackHandler getStackHandler(StackHandler originalHandler, int candidatesCount, ErrorCatcher errorCatcher) super
 	//StackHandler getStackHandler(StackHandler originalHandler, int candidatesCount, ExternalConflictHandler conflictHandler, ErrorCatcher errorCatcher) super	
@@ -222,20 +222,20 @@ public class AElement extends MarkupAPattern
 		rv.visit(this);
 	}
 			
-	public ElementHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
+	/*public ElementHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
-	}
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*//*
+	}*/
 	
-	public MinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
+	/*public MinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
-	}
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*//*
+	}*/
 	
-	public MaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
+	/*public MaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
-	}	
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*//*
+	}	*/
 	public String toString(){
 		//String s = "AElement "+hashCode()+" " + getNameClass()+" "+index+ " min "+getMinOccurs()+" max "+getMaxOccurs();
 		String s = "AElement  " + identifier+" "+index+ " min "+getMinOccurs()+" max "+getMaxOccurs();

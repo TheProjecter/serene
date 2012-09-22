@@ -39,6 +39,12 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
@@ -86,25 +92,25 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	
 	
 	// {8}
-	APattern[] misplacedContext;
+	SPattern[] misplacedContext;
 	int[] misplacedStartInputRecordIndex;
-	APattern[][] misplacedDefinition;
+	SPattern[][] misplacedDefinition;
 	int[][][] misplacedInputRecordIndex;
 	int misplacedIndex;
 	
 
 	// {9}
-	Rule[] excessiveContext;
+	SRule[] excessiveContext;
 	int[] excessiveStartInputRecordIndex;
-	APattern[] excessiveDefinition;
+	SPattern[] excessiveDefinition;
 	int[][] excessiveInputRecordIndex;
 	int excessiveIndex;
 	
 	
 	// {10}
-	Rule[] missingContext;
+	SRule[] missingContext;
 	int[] missingStartInputRecordIndex;
-	APattern[] missingDefinition;
+	SPattern[] missingDefinition;
 	int[] missingExpected;
 	int[] missingFound;
 	int[][] missingInputRecordIndex;
@@ -112,97 +118,97 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	
 	
 	// {11}
-	Rule[] illegalContext;
+	SRule[] illegalContext;
 	int[] illegalStartInputRecordIndex;
 	int illegalIndex;
 	
 	// {12 A}
 	int[] unresolvedAmbiguousElementInputRecordIndexEE;
-	AElement[][] unresolvedAmbiguousElementDefinitionEE;
+	SElement[][] unresolvedAmbiguousElementDefinitionEE;
 	int unresolvedAmbiguousElementIndexEE;
 	
 	
 	// {12 U}
 	int[] unresolvedUnresolvedElementInputRecordIndexEE;
-	AElement[][] unresolvedUnresolvedElementDefinitionEE;
+	SElement[][] unresolvedUnresolvedElementDefinitionEE;
 	int unresolvedUnresolvedElementIndexEE;
 
 	// {13}
 	int[] unresolvedAttributeInputRecordIndexEE;
-	AAttribute[][] unresolvedAttributeDefinitionEE;
+	SAttribute[][] unresolvedAttributeDefinitionEE;
 	int unresolvedAttributeIndexEE;
 
 	// {14}
 		
 	// {w1 U}
 	int[] ambiguousUnresolvedElementInputRecordIndexWW;
-	AElement[][] ambiguousUnresolvedElementDefinitionWW;
+	SElement[][] ambiguousUnresolvedElementDefinitionWW;
 	int ambiguousUnresolvedElementIndexWW;
 	
 	
 	// {w1 A}
 	int[] ambiguousAmbiguousElementInputRecordIndexWW;
-	AElement[][] ambiguousAmbiguousElementDefinitionWW;
+	SElement[][] ambiguousAmbiguousElementDefinitionWW;
 	int ambiguousAmbiguousElementIndexWW;
 	
 	
 	// {w2}
 	int[] ambiguousAttributeInputRecordIndexWW;
-	AAttribute[][] ambiguousAttributeDefinitionWW;
+	SAttribute[][] ambiguousAttributeDefinitionWW;
 	int ambiguousAttributeIndexWW;
 	
 
 	// {w3}
 	int[] ambiguousCharsInputRecordIndexWW;
-	CharsActiveTypeItem[][] ambiguousCharsDefinitionWW;
+	SPattern[][] ambiguousCharsDefinitionWW;
 	int ambiguousCharsIndexWW;
 	
 	
 	// {w4}
 	int[] ambiguousAVInputRecordIndexWW;
-	CharsActiveTypeItem[][] ambiguousAVDefinitionWW;
+	SPattern[][] ambiguousAVDefinitionWW;
 	int ambiguousAVIndexWW;
 	
 	
 	// {15}
 	int[] datatypeCharsInputRecordIndex;
-	DatatypedActiveTypeItem[] datatypeCharsDefinition;
+	SPattern[] datatypeCharsDefinition;
 	String datatypeCharsErrorMessage[];
 	int datatypeCharsIndex;
 	
 	
 	// {16}
 	int[] datatypeAVInputRecordIndex;
-	DatatypedActiveTypeItem[] datatypeAVDefinition;
+	SPattern[] datatypeAVDefinition;
 	String datatypeAVErrorMessage[];
 	int datatypeAVIndex;
    
 	
 	// {17}
 	int[] valueCharsInputRecordIndex;
-	AValue[] valueCharsDefinition;
+	SValue[] valueCharsDefinition;
 	int valueCharsIndex;
 	
 	// {18}
 	int[] valueAVInputRecordIndex;
-	AValue[] valueAVDefinition;
+	SValue[] valueAVDefinition;
 	int valueAVIndex;
 	
 	
 	// {19}
 	int[] exceptCharsInputRecordIndex;
-	AData[] exceptCharsDefinition;
+	SData[] exceptCharsDefinition;
 	int exceptCharsIndex;
 	
 	// {20}
 	int[] exceptAVInputRecordIndex;
-	AData[] exceptAVDefinition;
+	SData[] exceptAVDefinition;
 	int exceptAVIndex;
 	
 	
 	// {21}
 	int[] unexpectedCharsInputRecordIndex;
-	AElement[] unexpectedCharsDefinition;
+	SElement[] unexpectedCharsDefinition;
 	int unexpectedCharsIndex;
 	
 	
@@ -214,50 +220,50 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	
 	// {23}
 	int[] unresolvedCharsInputRecordIndexEE;
-	CharsActiveTypeItem[][] unresolvedCharsDefinitionEE;
+	SPattern[][] unresolvedCharsDefinitionEE;
 	int unresolvedCharsIndexEE;
 	
 	
 	// {24}
 	int[] unresolvedAVInputRecordIndexEE;
-	CharsActiveTypeItem[][] unresolvedAVDefinitionEE;
+	SPattern[][] unresolvedAVDefinitionEE;
 	int unresolvedAVIndexEE;
 	
 	
 	// {25}
 	int[] datatypeTokenInputRecordIndex;
-	DatatypedActiveTypeItem[] datatypeTokenDefinition;
+	SPattern[] datatypeTokenDefinition;
 	String datatypeTokenErrorMessage[];
 	int datatypeTokenIndex;
 	
     	
 	// {26}
 	int[] valueTokenInputRecordIndex;
-	AValue[] valueTokenDefinition;
+	SValue[] valueTokenDefinition;
 	int valueTokenIndex;
 	
 	// {27}
 	int[] exceptTokenInputRecordIndex;
-	AData[] exceptTokenDefinition;
+	SData[] exceptTokenDefinition;
 	int exceptTokenIndex;
 	
 	// {28}
 	    
     // {28_1}
 	int[] unresolvedTokenInputRecordIndexLPICE;
-    CharsActiveTypeItem unresolvedTokenDefinitionLPICE[][];
+    SPattern unresolvedTokenDefinitionLPICE[][];
 	int unresolvedTokenIndexLPICE;
     
     // {28_2}
 	int[] ambiguousTokenInputRecordIndexLPICW;
-    CharsActiveTypeItem ambiguousTokenDefinitionLPICW[][];
+    SPattern ambiguousTokenDefinitionLPICW[][];
 	int ambiguousTokenIndexLPICW;
     
 	
 	// {29}
-	Rule[] missingCompositorContentContext;
+	SRule[] missingCompositorContentContext;
 	int[] missingCompositorContentStartInputRecordIndex;
-	APattern[] missingCompositorContentDefinition;
+	SPattern[] missingCompositorContentDefinition;
 	int[] missingCompositorContentExpected;
 	int[] missingCompositorContentFound;
 	int missingCompositorContentIndex;
@@ -462,7 +468,7 @@ public abstract class AbstractMessageHandler  extends AbstractMessageReporter{
 	    throw new IllegalStateException();
     }
     
-    public void report(int reportingContextType, String reportingContextQName, AElement reportingContextDefinition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
+    public void report(int reportingContextType, String reportingContextQName, SElement reportingContextDefinition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
         
         this.reportingContextType = reportingContextType;
         this.reportingContextQName = reportingContextQName;

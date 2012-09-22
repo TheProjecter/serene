@@ -35,6 +35,9 @@ public class SNotAllowed extends SNoChildrenPattern{
 	public void accept(RestrictingVisitor v) throws SAXException{
 		v.visit(this);
 	}
+	public void accept(SimplifiedRuleVisitor v){
+		v.visit(this);
+	}
 	public String toString(){
 		String s = "SNotAllowed";		
 		return s;

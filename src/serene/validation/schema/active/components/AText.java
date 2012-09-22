@@ -30,10 +30,10 @@ import serene.validation.handlers.structure.MaximalReduceHandler;
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public abstract class AText extends CharsAPattern{
-	public AText(ActiveModelRuleHandlerPool ruleHandlerPool){
+	public AText(ValidatorRuleHandlerPool ruleHandlerPool){
 		super(ruleHandlerPool);
 		/*minOccurs = 0;
 		maxOccurs = UNBOUNDED;*/

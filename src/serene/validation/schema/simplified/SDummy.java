@@ -63,6 +63,9 @@ public class SDummy extends SMultipleChildrenPattern{
 	public void accept(RestrictingVisitor v) throws SAXException{
 		v.visit(this);
 	}
+	public void accept(SimplifiedRuleVisitor v){
+		v.visit(this);
+	}
 	public String toString(){
 		String s = "SDummy";		
 		return s;

@@ -32,7 +32,7 @@ import serene.validation.schema.active.components.AAttribute;
 
 public interface ActiveType extends Rule{
 	
-	StructureHandler getStructureHandler(ErrorCatcher errorCatcher, StackHandler stackHandler);
+	/*StructureHandler getStructureHandler(ErrorCatcher errorCatcher, StackHandler stackHandler);*/
 	
 	/*StackHandler getStackHandler(ErrorCatcher ec);	
 	ConcurrentStackHandler getStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher);*/	

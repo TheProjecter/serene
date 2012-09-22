@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import org.relaxng.datatype.Datatype;
 
-import serene.validation.schema.active.components.AAttribute;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
@@ -72,7 +72,7 @@ public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConfl
 		
     public void resolve(ErrorCatcher errorCatcher){
         if(qualified.cardinality() == 0){				
-            AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
+            SAttribute[] definitions = candidateDefinitions.toArray(new SAttribute[candidateDefinitions.size()]);
             errorCatcher.unresolvedAttributeContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
         }else if(qualified.cardinality() == 1){
             int qual = qualified.nextSetBit(0);
@@ -82,9 +82,9 @@ public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConfl
                 temporaryMessageStorage[qual] = null;
             }
             
-            AAttribute attribute = candidateDefinitions.get(qual);
+            SAttribute attribute = candidateDefinitions.get(qual);
             int definitionIndex = attribute.getDefinitionIndex();
-            AttributeTask task = bindingModel.getAttributeTask(attribute.getCorrespondingSimplifiedComponent());
+            AttributeTask task = bindingModel.getAttributeTask(attribute);
             if(task != null){
                 targetQueue.addAttribute(targetEntry, inputRecordIndex, task);
             }
@@ -94,7 +94,7 @@ public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConfl
             }
             
             if(qualified.cardinality()== 0){
-                AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
+                SAttribute[] definitions = candidateDefinitions.toArray(new SAttribute[candidateDefinitions.size()]);
                 errorCatcher.unresolvedAttributeContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             }else if(qualified.cardinality() > 1){
                 int j = 0;
@@ -104,7 +104,7 @@ public class BoundAmbiguousAttributeConflictResolver extends BoundAttributeConfl
                         i--;
                     }
                 }   
-                AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
+                SAttribute[] definitions = candidateDefinitions.toArray(new SAttribute[candidateDefinitions.size()]);
                 errorCatcher.ambiguousAttributeContentWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             }else{
                 int q = qualified.nextSetBit(0);

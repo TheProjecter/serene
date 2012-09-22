@@ -18,14 +18,22 @@ package serene.validation.handlers.stack;
 
 import serene.validation.schema.active.Rule;
 
-import serene.validation.schema.active.components.CharsActiveTypeItem;
+/*import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
+import serene.validation.schema.active.components.AAttribute;*/
+
+
+import serene.validation.schema.simplified.SRule;
 
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
 import serene.validation.handlers.stack.StackHandler;
+
+
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.CharsMatchPath;
 
 public interface CandidateStackHandler extends StackHandler{
 	final int UNINDEXED = -1;
@@ -33,13 +41,13 @@ public interface CandidateStackHandler extends StackHandler{
 	//void init(int candidateIndex, ConcurrentStackHandler parent);	
 	/*InternalConflictResolver getLevelConflictResolver();*/
 	/*int getCandidateIndex();*/	
-	void shift(AElement element, boolean reportExcessive, boolean reportPreviousMisplaced, boolean reportCurrentMisplaced, boolean reportMissing, boolean reportIllegal, boolean reportCompositorContentMissing);
-	void shift(AAttribute attribute, boolean reportExcessive, boolean reportMissing, boolean reportIllegal, boolean reportCompositorContentMissing);
-	void shift(CharsActiveTypeItem chars, boolean reportExcessive, boolean reportPreviousMisplaced, boolean reportCurrentMisplaced, boolean reportMissing, boolean reportIllegal, boolean reportCompositorContentMissing);
+	void shift(ElementMatchPath element, boolean reportExcessive, boolean reportPreviousMisplaced, boolean reportCurrentMisplaced, boolean reportMissing, boolean reportIllegal, boolean reportCompositorContentMissing);
+	void shift(AttributeMatchPath attribute, boolean reportExcessive, boolean reportMissing, boolean reportIllegal, boolean reportCompositorContentMissing);
+	void shift(CharsMatchPath chars, boolean reportExcessive, boolean reportPreviousMisplaced, boolean reportCurrentMisplaced, boolean reportMissing, boolean reportIllegal, boolean reportCompositorContentMissing);
 	
-	void shift(AElement element, Rule[] innerPath, InternalConflictResolver resolver, int definitionCandidateIndex, boolean reportExcessive, boolean reportPreviousMisplaced, boolean reportCurrentMisplaced, boolean reportMissing, boolean reportIllegal, boolean reportCompositorContentMissing);
-	void shift(AAttribute attribute, Rule[] innerPath, InternalConflictResolver resolver, int definitionCandidateIndex, boolean reportExcessive, boolean reportMissing, boolean reportIllegal, boolean reportCompositorContentMissing);
-	void shift(CharsActiveTypeItem chars, Rule[] innerPath, InternalConflictResolver resolver, int definitionCandidateIndex, boolean reportExcessive, boolean reportPreviousMisplaced, boolean reportCurrentMisplaced, boolean reportMissing, boolean reportIllegal, boolean reportCompositorContentMissing);
+	void shift(ElementMatchPath element, SRule[] innerPath, InternalConflictResolver resolver, int definitionCandidateIndex, boolean reportExcessive, boolean reportPreviousMisplaced, boolean reportCurrentMisplaced, boolean reportMissing, boolean reportIllegal, boolean reportCompositorContentMissing);
+	void shift(AttributeMatchPath attribute, SRule[] innerPath, InternalConflictResolver resolver, int definitionCandidateIndex, boolean reportExcessive, boolean reportMissing, boolean reportIllegal, boolean reportCompositorContentMissing);
+	void shift(CharsMatchPath chars, SRule[] innerPath, InternalConflictResolver resolver, int definitionCandidateIndex, boolean reportExcessive, boolean reportPreviousMisplaced, boolean reportCurrentMisplaced, boolean reportMissing, boolean reportIllegal, boolean reportCompositorContentMissing);
 	
 	CandidateStackHandler getCopy();
 		

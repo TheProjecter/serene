@@ -19,7 +19,7 @@ package serene.validation.handlers.error;
 import org.xml.sax.SAXException;
 import org.xml.sax.Locator;
 
-import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.simplified.SElement;
 
 import serene.Reusable;
 
@@ -33,7 +33,7 @@ public interface ContextErrorHandler extends Reusable, ExternalConflictErrorCatc
     
 	int getId();
 	
-	void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator) throws SAXException;
+	void handle(int contextType, String qName, SElement definition, boolean restrictToFileName, Locator locator) throws SAXException;
 	void handle(int contextType, String qName, boolean restrictToFileName, Locator locator) throws SAXException;
 	void discard();
 	void record(int contextType, String qName, boolean restrictToFileName, Locator locator);

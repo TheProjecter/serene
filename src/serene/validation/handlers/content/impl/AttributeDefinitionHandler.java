@@ -21,15 +21,18 @@ import java.util.List;
 import serene.validation.schema.active.components.AAttribute;
 
 import serene.validation.schema.active.components.CharsActiveTypeItem;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.match.MatchHandler;
+import serene.validation.handlers.match.AttributeMatchPath;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 abstract class AttributeDefinitionHandler extends ValidatingAEH 
                                             implements CharsContentTypeHandler{
-    AAttribute attribute;
+    SAttribute attribute;
+    AttributeMatchPath attributeMatchPath;
     
     MatchHandler matchHandler;
 	
@@ -41,7 +44,8 @@ abstract class AttributeDefinitionHandler extends ValidatingAEH
     }
   
     void reset(){       
-		attribute.releaseDefinition();
+		/*attribute.releaseDefinition();*/
+		attributeMatchPath = null;
 		attribute = null;
     }
     boolean functionalEquivalent(ComparableAEH other){

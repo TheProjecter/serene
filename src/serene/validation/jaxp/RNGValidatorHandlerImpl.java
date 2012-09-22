@@ -62,6 +62,9 @@ import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
 
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
+
+
 import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.dtdcompatibility.AttributeDefaultValueHandler;
@@ -129,6 +132,7 @@ public class RNGValidatorHandlerImpl extends ValidatorHandler{
                             ValidatorEventHandlerPool eventHandlerPool,
                             ValidatorConflictHandlerPool conflictHandlerPool,
                             ValidatorStackHandlerPool stackHandlerPool,
+                            ValidatorRuleHandlerPool structureHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
 							SchemaModel schemaModel){		
         this.secureProcessing = secureProcessing;
@@ -161,7 +165,8 @@ public class RNGValidatorHandlerImpl extends ValidatorHandler{
 		characterContentDescriptor = characterContentDescriptorPool.getCharacterContentDescriptor();
 		   
 		conflictHandlerPool.fill(activeInputDescriptor, inputStackDescriptor);
-        stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool);
+        stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool, structureHandlerPool);
+        structureHandlerPool.fill(stackHandlerPool, activeInputDescriptor, inputStackDescriptor);
         
         errorHandlerPool.init(errorDispatcher, activeInputDescriptor);        
         eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, stackHandlerPool, errorHandlerPool);
@@ -274,7 +279,7 @@ public class RNGValidatorHandlerImpl extends ValidatorHandler{
             locator.getPublicId(), 
             locator.getLineNumber(), 
             locator.getColumnNumber());
-		elementHandler = eventHandlerPool.getStartValidationHandler(activeModel.getStartElement());
+		elementHandler = eventHandlerPool.getStartValidationHandler(activeModel.getStartElement().getCorrespondingSimplifiedComponent());
                         
         defaultNamespace = null;
 		prefixNamespaces.clear();

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import serene.validation.schema.active.components.CharsActiveTypeItem;
+import serene.validation.schema.simplified.SPattern;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
@@ -29,11 +29,11 @@ import serene.validation.handlers.error.TemporaryMessageStorage;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 public abstract class CharsConflictResolver extends InternalConflictResolver{	
-    List<CharsActiveTypeItem> candidateDefinitions;
+    List<SPattern> candidateDefinitions;
     TemporaryMessageStorage[] temporaryMessageStorage;  
 	public CharsConflictResolver(){				
 		super();
-		candidateDefinitions = new ArrayList<CharsActiveTypeItem>();
+		candidateDefinitions = new ArrayList<SPattern>();
 	}
 	
 	void init(TemporaryMessageStorage[] temporaryMessageStorage){
@@ -54,12 +54,12 @@ public abstract class CharsConflictResolver extends InternalConflictResolver{
         }
         
     }
-    public void addCandidate(CharsActiveTypeItem candidate){
+    public void addCandidate(SPattern candidate){
         candidateDefinitions.add(candidate);
     }
     
     void reportUnresolvedError(ErrorCatcher errorCatcher){  
-        CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
+        SPattern[] definitions = candidateDefinitions.toArray(new SPattern[candidateDefinitions.size()]);
         //errorCatcher.ambiguousCharsContentErrorsystemId, lineNumber, columnNumber, Arrays.copyOf(definitions, definitions.length));
         if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){
             //only possible within the context of an except pattern			
@@ -74,7 +74,7 @@ public abstract class CharsConflictResolver extends InternalConflictResolver{
     }
     
     void reportAmbiguousWarning(ErrorCatcher errorCatcher){
-        CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);        
+        SPattern[] definitions = candidateDefinitions.toArray(new SPattern[candidateDefinitions.size()]);        
         if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){
             //only possible within the context of an except pattern		
 			errorCatcher.ambiguousCharacterContentWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length)); 

@@ -16,9 +16,20 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
 import org.xml.sax.SAXException;
 
 import serene.bind.util.DocumentIndexedData;
+
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.ListPatternMatchPath;
+import serene.validation.handlers.match.TextMatchPath;
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
+
 
 public class SListPattern extends SUniqueChildPattern implements DataType{
 	public SListPattern(SPattern child, 
@@ -34,7 +45,34 @@ public class SListPattern extends SUniqueChildPattern implements DataType{
         parent.setAllowsListPatterns();
 	}
 	
-	
+	public boolean isRequiredContent(){
+		return minOccurs != 0;
+    }
+    
+	public void setCharsMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, MatchPathPool matchPathPool){
+        if(child.isUnstructuredDataContent()){
+            child.setMatchPathes(dataMatchPathes, valueMatchPathes, matchPathPool);
+            for(int i = 0; i < dataMatchPathes.size(); i++){
+	            dataMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < valueMatchPathes.size(); i++){
+	            valueMatchPathes.get(i).add(this);
+	        }
+        }
+    }
+    
+    
+    void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){
+        ListPatternMatchPath mp = matchPathPool.getListPatternMatchPath();
+        mp.addListPattern(this);
+        listPatternMatchPathes.add(mp);
+    }
+	void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, MatchPathPool matchPathPool){            
+ 	    ListPatternMatchPath mp = matchPathPool.getListPatternMatchPath();
+        mp.addListPattern(this);
+        listPatternMatchPathes.add(mp);
+    }
+    
 	public boolean allowsDatas(){
 	    return allowsDatas;
 	}
@@ -80,6 +118,9 @@ public class SListPattern extends SUniqueChildPattern implements DataType{
 		v.visit(this);
 	}	
 	public void accept(RestrictingVisitor v) throws SAXException{
+		v.visit(this);
+	}
+	public void accept(SimplifiedRuleVisitor v){
 		v.visit(this);
 	}
 	public String toString(){

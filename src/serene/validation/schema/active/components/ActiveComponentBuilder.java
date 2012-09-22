@@ -47,7 +47,7 @@ import serene.validation.schema.simplified.SExceptPattern;
 import serene.validation.schema.active.ActiveGrammarModel;
 
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 import serene.validation.schema.active.util.Level;
 
@@ -69,13 +69,13 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 
 	
 	/*ValidatorStackHandlerPool stackHandlerPool;*/
-	ActiveModelRuleHandlerPool ruleHandlerPool;
+	ValidatorRuleHandlerPool ruleHandlerPool;
 
 	ActiveComponentBuilder parent;
 	ActiveComponentBuilder child;
 	
 	public ActiveComponentBuilder(/*ValidatorStackHandlerPool stackHandlerPool,*/
-										ActiveModelRuleHandlerPool ruleHandlerPool){
+										ValidatorRuleHandlerPool ruleHandlerPool){
 		/*this.stackHandlerPool = stackHandlerPool;*/
 		this.ruleHandlerPool = ruleHandlerPool;
 		
@@ -84,7 +84,7 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 	}
 	
 	public ActiveComponentBuilder(/*ValidatorStackHandlerPool stackHandlerPool,*/
-										ActiveModelRuleHandlerPool ruleHandlerPool,
+										ValidatorRuleHandlerPool ruleHandlerPool,
 										ActiveComponentBuilder parent){
 		/*this.stackHandlerPool = stackHandlerPool;*/
 		this.ruleHandlerPool = ruleHandlerPool;

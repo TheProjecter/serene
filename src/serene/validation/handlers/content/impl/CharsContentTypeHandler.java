@@ -19,12 +19,14 @@ package serene.validation.handlers.content.impl;
 import java.util.List;
 import java.util.BitSet;
 
-import serene.validation.schema.active.components.CharsActiveTypeItem;
+/*import serene.validation.schema.active.components.CharsActiveTypeItem;*/
+
+import serene.validation.handlers.match.CharsMatchPath;
 
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
 interface CharsContentTypeHandler{
-    void addChars(CharsActiveTypeItem attribute);
-    void addChars(List<CharsActiveTypeItem> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
-	void addChars(List<CharsActiveTypeItem> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
+    void addChars(CharsMatchPath attribute);
+    void addChars(List<? extends CharsMatchPath> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
+	void addChars(List<? extends CharsMatchPath> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
 }

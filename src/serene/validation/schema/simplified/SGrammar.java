@@ -66,10 +66,27 @@ public class SGrammar extends SUniqueChildPattern{
 	    return child.isUnstructuredDataContent();
 	}*/
 	
+	
+	public boolean isIntermediary(){
+	    return true;
+	}
+	
+	public boolean isRequiredContent(){
+        if(minOccurs == 0) return false;	
+		return child.isRequiredContent();
+    }
+    
+    public int functionalEquivalenceCode(){
+        return child.hashCode();
+    }   
+    
 	public void accept(SimplifiedComponentVisitor v){
 		v.visit(this);
 	}
 	public void accept(RestrictingVisitor v) throws SAXException{
+		v.visit(this);
+	}
+	public void accept(SimplifiedRuleVisitor v){
 		v.visit(this);
 	}
 	public String toString(){

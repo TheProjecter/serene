@@ -62,6 +62,7 @@ class InternalRNGIncludeSchema extends BaseSchema{
 		return new InternalIncludeValidatorHandler(contentHandlerPool.getValidatorEventHandlerPool(),
 		                                conflictHandlerPool.getValidatorConflictHandlerPool(),
 		                                stackHandlerPool.getValidatorStackHandlerPool(),
+		                                ruleHandlerPool.getValidatorRuleHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										schemaModel,
 										bindingPool,

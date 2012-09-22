@@ -29,11 +29,13 @@ import serene.validation.schema.active.StructuredDataActiveType;
 import serene.validation.schema.active.ActiveComponentVisitor;
 
 
+import serene.validation.schema.simplified.SPattern;
+
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
-import serene.validation.handlers.structure.impl.ExceptPatternHandler;
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.ConcurrentStackHandler;
@@ -67,7 +69,7 @@ public class AExceptPattern extends AbstractRule
 	public AExceptPattern(int index,
 			ActiveGrammarModel grammarModel,
 			/*ValidatorStackHandlerPool stackHandlerPool,*/
-			ActiveModelRuleHandlerPool ruleHandlerPool,
+			ValidatorRuleHandlerPool ruleHandlerPool,
 			SExceptPattern sexceptPattern){
 		super(ruleHandlerPool);
 		this.index = index;
@@ -159,9 +161,9 @@ public class AExceptPattern extends AbstractRule
 	
 	//Type
 	//--------------------------------------------------------------------------
-	public ExceptPatternHandler getStructureHandler(ErrorCatcher errorCatcher, StackHandler stackHandler){
-		return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);
-	}
+	/*public ExceptPatternHandler getStructureHandler(ErrorCatcher errorCatcher, StackHandler stackHandler){
+		return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);
+	}*/
 	
 	/*public StackHandler getStackHandler(ErrorCatcher ec){	
 		return stackHandlerPool.getContextStackHandler(this, ec);
@@ -187,20 +189,25 @@ public class AExceptPattern extends AbstractRule
 		if(child == null)return false;
 		return child.isRequiredContent();
 	}
-	
-	public ExceptPatternHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
-		throw new UnsupportedOperationException();
+	public boolean isChildRequired(int childIndex){
+	    if(childIndex != 0) throw new IllegalStateException();
+		if(child == null)return false;
+		return child.isRequiredContent();
 	}
+	
+	/*public ExceptPatternHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
+		throw new UnsupportedOperationException();
+	}*/
 
-	public MinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
+	/*public MinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
-	}
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*//*
+	}*/
 	
-	public MaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
+	/*public MaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
-	}
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*//*
+	}*/
 	
 	public String toString(){
 		String s = "AExceptPattern ";

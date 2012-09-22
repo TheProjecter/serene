@@ -122,7 +122,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
     boolean level1AttributeIdType;
     boolean restrictToFileName;
     
-    CompatibilityControlAttribute ccAttribute;
+    /*CompatibilityControlAttribute ccAttribute;*/
     DefaultValueAttributeHandler defaultValueHandler;
     
     ActiveModel activeModel;
@@ -227,7 +227,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
     public void setLevel1AttributeDefaultValue(boolean value){
         level1AttributeDefaultValue = value;
         if(level1AttributeDefaultValue){
-            if(ccAttribute == null) ccAttribute = new CompatibilityControlAttribute();
+            /*if(ccAttribute == null) ccAttribute = new CompatibilityControlAttribute();*/
             if(defaultValueHandler == null) defaultValueHandler = eventHandlerPool.getDefaultValueAttributeValidationHandler();  
         }
     }
@@ -263,9 +263,9 @@ public class CompatibilityHandler implements RestrictingVisitor{
             
             attributeDefaultValueModel = new AttributeDefaultValueModel();
             
-            ccAttribute.init(grammarModel,
+            /*ccAttribute.init(grammarModel,
                         /*activeModel.getStackHandlerPool(),*/
-                        activeModel.getRuleHandlerPool());
+                        /*activeModel.getRuleHandlerPool());*/
             
             attributeListsStack.clear();
             isRequiredBranchStack.clear();
@@ -598,11 +598,11 @@ public class CompatibilityHandler implements RestrictingVisitor{
                 isRequiredBranch.add(true);
                 needsOptionalChoice.add(true);
                 
-                ccAttribute.init(attribute.getDefinitionIndex(), attribute);
+                /*ccAttribute.init(attribute.getDefinitionIndex(), attribute);*/
                 //inputStackDescriptor.pushAttribute(null, null, -1, -1, null, null, attribute.getQName());
                 simulateInput(attribute);                
                 defaultValueErrorHandler.setAttribute(attribute.getQName(), attribute.getLocation(restrictToFileName));                
-                defaultValueHandler.init(ccAttribute, defaultValueErrorHandler);
+                defaultValueHandler.init(/*ccAttribute,*/attribute, defaultValueErrorHandler);
                 defaultValueHandler.handleAttribute(defaultValue);
                 defaultValueHandler.reset();
                 inputStackDescriptor.popAttribute();

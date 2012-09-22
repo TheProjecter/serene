@@ -21,16 +21,23 @@ import java.util.List;
 
 import org.xml.sax.SAXException;
 
+import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.DatatypeException;
 import org.relaxng.datatype.ValidationContext;
 
-import serene.validation.schema.active.DataActiveType;
+/*import serene.validation.schema.active.DataActiveType;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.schema.active.components.DatatypedActiveTypeItem;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.components.APattern;
+import serene.validation.schema.active.components.APattern;*/
+
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.DataType;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SExceptPattern;
 
 import serene.validation.handlers.content.EventHandler;
 
@@ -43,6 +50,9 @@ import serene.validation.handlers.error.TemporaryMessageStorage;
 import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.match.MatchHandler;
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.StructuredDataMatchPath;
 
 import serene.util.SpaceCharsHandler;
 
@@ -59,77 +69,115 @@ abstract class AbstractDVH extends AbstractCH implements ErrorCatcher{
         this.spaceHandler = spaceHandler;
 	}
 	
-	void validateData(char[] chars, DataActiveType type, AData dataPattern) throws SAXException{	
+	void validateData(char[] chars, DataType type, DataMatchPath dataPath) throws SAXException{
+	    SData dataPattern = dataPath.getData();
         try{
-            dataPattern.datatypeMatches(chars, validationContext);
-            AExceptPattern exceptPattern = dataPattern.getExceptPattern();
+            Datatype datatype = dataPattern.getDatatype(); 
+            if(datatype == null){
+                if(mustHandleError(chars, dataPath)){
+                    handleError(dataPattern, "No datatype definition.");
+                } 
+                return;
+            }
+            datatype.checkValid(new String(chars), validationContext);
+            SExceptPattern exceptPattern = dataPattern.getExceptPattern(0);
             if(exceptPattern != null){
                 // test the except	
                 ExceptPatternValidationHandler epvh = pool.getExceptPatternValidationHandler(dataPattern, exceptPattern, this, this);
-                exceptPattern.assembleDefinition();
+                /*exceptPattern.assembleDefinition();*/
                 epvh.handleChars(chars, exceptPattern);
-                exceptPattern.releaseDefinition();
+                /*exceptPattern.releaseDefinition();*/
                 epvh.recycle();
             }
         }catch(DatatypeException de){
-            if(mustHandleError(chars, dataPattern)){
+            if(mustHandleError(chars, dataPath)){
                 handleError(dataPattern, de.getMessage());
 			}            
         }
 	}
 	
-	void validateData(String value, DataActiveType type, AData dataPattern) throws SAXException{
+	void validateData(String value, DataType type, DataMatchPath dataPath) throws SAXException{
+	    SData dataPattern = dataPath.getData();
         try{
-            dataPattern.datatypeMatches(value, validationContext);
-            AExceptPattern exceptPattern = dataPattern.getExceptPattern();
+            Datatype datatype = dataPattern.getDatatype(); 
+            if(datatype == null){
+                if(mustHandleError(value.toCharArray(), dataPath)){
+                    handleError(dataPattern, "No datatype definition.");
+                } 
+                return;
+            }
+            datatype.checkValid(value, validationContext);
+            SExceptPattern exceptPattern = dataPattern.getExceptPattern(0);
             if(exceptPattern != null){
                 // test the except					
                 ExceptPatternValidationHandler epvh = pool.getExceptPatternValidationHandler(dataPattern, exceptPattern, this, this);
-                exceptPattern.assembleDefinition();
+                /*exceptPattern.assembleDefinition();*/
                 epvh.handleString(value, exceptPattern);
-                exceptPattern.releaseDefinition();
+                /*exceptPattern.releaseDefinition();*/
                 epvh.recycle();
             }
         }catch(DatatypeException de){
-            if(mustHandleError(value.toCharArray(), dataPattern)){
+            if(mustHandleError(value.toCharArray(), dataPath)){
                 handleError(dataPattern, de.getMessage());
             }
         }	
 	}
 	
-	void validateValue(char[] chars, DataActiveType type, AValue valuePattern){
+	void validateValue(char[] chars, DataType type, ValueMatchPath valuePath){
+	    SValue valuePattern = valuePath.getValue();
         try{
-            valuePattern.datatypeMatches(chars, validationContext);
-            if(!valuePattern.valueMatches(chars, validationContext)){				    
-                if(mustHandleError(chars, valuePattern)){
-                    handleError(valuePattern);									
-                }
+            Datatype datatype = valuePattern.getDatatype(); 
+            if(datatype == null){
+                if(mustHandleError(chars, valuePath)){
+                    handleError(valuePattern, "No datatype definition.");
+                } 
+                return;
             }
-        }catch(DatatypeException de){
-            if(mustHandleError(chars, valuePattern)){
-                handleError(valuePattern, de.getMessage());
-            }
-        }
-	}
-	
-	void validateValue(String value, DataActiveType type, AValue valuePattern){	    
-        try{				
-            valuePattern.datatypeMatches(value, validationContext);
-            if(!valuePattern.valueMatches(value, validationContext)){
-                if(mustHandleError(value.toCharArray(), valuePattern)){
+            datatype.checkValid(new String(chars), validationContext);
+            String charContent = valuePattern.getCharContent();
+            Object o1 = datatype.createValue(charContent, validationContext);
+            Object o2 = datatype.createValue(new String(chars), validationContext);            
+            if(!datatype.sameValue(o1, o2)){
+                if(mustHandleError(chars, valuePath)){
                     handleError(valuePattern);
                 }
             }
         }catch(DatatypeException de){
-            if(mustHandleError(value.toCharArray(), valuePattern)){
+            if(mustHandleError(chars, valuePath)){
                 handleError(valuePattern, de.getMessage());
             }
         }
 	}
 	
-	abstract boolean mustHandleError(char[] chars, APattern pattern);
+	void validateValue(String value, DataType type, ValueMatchPath valuePath){
+        SValue valuePattern = valuePath.getValue();	    
+        try{				
+            Datatype datatype = valuePattern.getDatatype(); 
+            if(datatype == null){
+                if(mustHandleError(value.toCharArray(), valuePath)){
+                    handleError(valuePattern, "No datatype definition.");
+                } 
+                return;
+            }
+            datatype.checkValid(value, validationContext);
+            String charContent = valuePattern.getCharContent();
+            Object o1 = datatype.createValue(charContent, validationContext);
+            Object o2 = datatype.createValue(value, validationContext);            
+            if(!datatype.sameValue(o1, o2)){
+                if(mustHandleError(value.toCharArray(), valuePath)){
+                    handleError(valuePattern);
+                }
+            }
+        }catch(DatatypeException de){
+            if(mustHandleError(value.toCharArray(), valuePath)){
+                handleError(valuePattern, de.getMessage());
+            }
+        }
+	}
 	
-	abstract void handleError(DatatypedActiveTypeItem item, String datatypeErrorMessage);	
-	abstract void handleError(AValue value);
+	abstract boolean mustHandleError(char[] chars, StructuredDataMatchPath path);
+	
+	abstract void handleError(SPattern item, String datatypeErrorMessage);	
+	abstract void handleError(SValue value);
 	
 }

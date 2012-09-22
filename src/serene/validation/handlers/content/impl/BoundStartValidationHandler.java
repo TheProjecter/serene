@@ -33,53 +33,41 @@ import serene.bind.DocumentTask;
 import serene.validation.schema.active.components.AElement;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SElement;
 
 import serene.validation.handlers.error.ContextErrorHandler;
+
+import serene.validation.handlers.match.ElementMatchPath;
 
 class BoundStartValidationHandler extends BoundElementValidationHandler{				
 	BoundStartValidationHandler(){
 		super();		
 	}
 		
+	void init(SElement element, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){
+		this.element = element;		
+		stackHandler = stackHandlerPool.getContextStackHandler(element, this);
+		
+		
+		this.bindingModel = bindingModel;
+		this.queue = queue;
+		this.queuePool = queuePool;
+		
+		startElementBinding();
+		/*queueStartEntry = queue.newRecord();
+		qNameBinding();
+		startLocationBinding();*/
+	}
+	
 	public void recycle(){	
 		if(stackHandler != null){
 			stackHandler.recycle();
 			stackHandler = null;
 		}
 		resetContextErrorHandlerManager();
-		element.releaseDefinition();
+		/*element.releaseDefinition();*/
 		pool.recycle(this);
 	}
-	
-	/*void init(AElement element, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){
-		super.init(element, parent, bindingModel, queue, queuePool);
-		startElementBinding();
-	}*/
-	/*public void qNameBinding(){
-		int definitionIndex = element.getDefinitionIndex();
-		DocumentBinder binder = bindingModel.getDocumentBinder();
-		if(binder != null)binder.bindName(queue, queueStartEntry, inputStackDescriptor.getNamespaceURI(), inputStackDescriptor.getLocalName(),inputStackDescriptor.getItemDescription());
-	}
-	
-	public void startLocationBinding(){
-		int definitionIndex = element.getDefinitionIndex();
-		DocumentBinder binder = bindingModel.getDocumentBinder();
-		if(binder != null)binder.bindLocation(queue, queueStartEntry, inputStackDescriptor.getSystemId()+":"+inputStackDescriptor.getLineNumber()+":"+inputStackDescriptor.getColumnNumber());
-	}
-    
-	public void characterContentBinding(char[] chars){
-		throw new IllegalStateException();		
-	}
-	
-	public void elementTasksBinding(){
-		int queueEndEntry = queue.newRecord();
-		queue.addIndexCorrespondence(queueEndEntry, queueStartEntry);
-		
-		int definitionIndex = element.getDefinitionIndex();
-		DocumentBinder binder = bindingModel.getDocumentBinder();
-		if(binder != null)binder.bindElementTasks(queue, queueEndEntry);
-	}*/
-	
 	
 	public void startElementBinding(){
 	    DocumentTask startTask = bindingModel.getStartDocumentTask();	    
@@ -132,17 +120,17 @@ class BoundStartValidationHandler extends BoundElementValidationHandler{
             reportContextErrors(restrictToFileName, inputStackDescriptor);
             return pool.getElementDefaultHandler(this);
         }
-		List<AElement> elementMatches = matchHandler.matchElement(namespace, name, element);
-		int matchCount = elementMatches.size();
+		List<ElementMatchPath> elementMatchPathes = matchHandler.matchElement(namespace, name, element);
+		int matchCount = elementMatchPathes.size();
 		if(matchCount == 0){
 			handleUnexpectedElementHandler(namespace, name, restrictToFileName);
             reportContextErrors(restrictToFileName, inputStackDescriptor);
             return pool.getElementDefaultHandler(this);
 		}else if(matchCount == 1){			
-			BoundElementValidationHandler next = pool.getElementValidationHandler(elementMatches.get(0), this, bindingModel, queue, queuePool);
+			BoundElementValidationHandler next = pool.getElementValidationHandler(elementMatchPathes.get(0), this, bindingModel, queue, queuePool);
 			return next;
 		}else{	
-			BoundElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList<AElement>(elementMatches), this, bindingModel, queue, queuePool);
+			BoundElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList<ElementMatchPath>(elementMatchPathes), this, bindingModel, queue, queuePool);
 			return next;
 		}		
 	}

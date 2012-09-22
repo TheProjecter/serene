@@ -76,8 +76,8 @@ import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 
 import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
-
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -140,6 +140,7 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
 	
 	ValidatorEventHandlerPool eventHandlerPool;	
 	ValidatorStackHandlerPool stackHandlerPool;
+	//ValidatorRuleHandlerPool structureHandlerPool;
 	ValidatorErrorHandlerPool errorHandlerPool;
 	
 	SchemaModel schemaModel;
@@ -180,7 +181,8 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
     
 	InternalIncludeValidatorHandler(ValidatorEventHandlerPool eventHandlerPool,
 	                        ValidatorConflictHandlerPool conflictHandlerPool,
-	                        ValidatorStackHandlerPool stackHandlerPool, 
+	                        ValidatorStackHandlerPool stackHandlerPool,
+	                        ValidatorRuleHandlerPool structureHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
 							SchemaModel schemaModel,
                             RNGParseBindingPool bindingPool,
@@ -202,6 +204,7 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
         this.processEmbededSchematron = processEmbededSchematron;
         
         this.stackHandlerPool = stackHandlerPool;
+        //this.structureHandlerPool = structureHandlerPool;
         
         
         matchHandler  = new MatchHandler();
@@ -220,8 +223,9 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
         queue = queuePool.getQueue();
         // TODO move
         
-        conflictHandlerPool.fill(activeInputDescriptor, inputStackDescriptor);
-        stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool);
+        conflictHandlerPool.fill(activeInputDescriptor, inputStackDescriptor);        
+        stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool, structureHandlerPool);
+        structureHandlerPool.fill(stackHandlerPool, activeInputDescriptor, inputStackDescriptor);        
         
         errorHandlerPool.init(errorDispatcher, activeInputDescriptor);        
         eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, stackHandlerPool, errorHandlerPool);
@@ -328,7 +332,7 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
             locator.getLineNumber(), 
             locator.getColumnNumber());
         
-		elementHandler = eventHandlerPool.getBoundStartValidationHandler(activeModel.getStartElement(), bindingModel, queue, queuePool);
+		elementHandler = eventHandlerPool.getBoundStartValidationHandler(activeModel.getStartElement().getCorrespondingSimplifiedComponent(), bindingModel, queue, queuePool);
 		
         if(level1DocumentationElement){
             if(documentationElementHandler == null) documentationElementHandler = new DocumentationElementHandler(errorDispatcher);

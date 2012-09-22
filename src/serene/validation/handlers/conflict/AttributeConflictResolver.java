@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import serene.validation.schema.active.components.AAttribute;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
@@ -33,11 +33,11 @@ import serene.validation.handlers.error.TemporaryMessageStorage;
 * number is greater than 1, it reports ambiguous content.   
 */
 public abstract class AttributeConflictResolver extends InternalConflictResolver{
-	List<AAttribute> candidateDefinitions;
+	List<SAttribute> candidateDefinitions;
 	TemporaryMessageStorage[] temporaryMessageStorage;
 	public AttributeConflictResolver(){				
 		super();
-		candidateDefinitions = new ArrayList<AAttribute>();
+		candidateDefinitions = new ArrayList<SAttribute>();
 	}	
 	
 	void init(TemporaryMessageStorage[] temporaryMessageStorage){
@@ -59,7 +59,7 @@ public abstract class AttributeConflictResolver extends InternalConflictResolver
         temporaryMessageStorage = null;
     }
     
-    public void addCandidate(AAttribute candidate){
+    public void addCandidate(SAttribute candidate){
         candidateDefinitions.add(candidate);
     }
         

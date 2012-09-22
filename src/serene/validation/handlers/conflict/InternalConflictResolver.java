@@ -21,10 +21,6 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 

@@ -23,6 +23,8 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.Locator;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SPattern;
 
 import serene.validation.handlers.conflict.ElementConflictResolver;
 
@@ -33,7 +35,7 @@ import serene.util.IntList;
 
 class StartMessageHandler implements MessageReporter{
     
-    AElement start;
+    SElement start;
     
     String unknownFoundQName;
     
@@ -47,7 +49,7 @@ class StartMessageHandler implements MessageReporter{
 	String[] unresolvedAmbiguousElementSystemIdEE;
 	int[] unresolvedAmbiguousElementLineNumberEE;
 	int[] unresolvedAmbiguousElementColumnNumberEE;
-	AElement[][] unresolvedAmbiguousElementDefinitionEE;
+	SElement[][] unresolvedAmbiguousElementDefinitionEE;
 	int unresolvedAmbiguousElementIndexEE;
 	int unresolvedAmbiguousElementSizeEE;
 	
@@ -55,7 +57,7 @@ class StartMessageHandler implements MessageReporter{
 	String[] unresolvedUnresolvedElementSystemIdEE;
 	int[] unresolvedUnresolvedElementLineNumberEE;
 	int[] unresolvedUnresolvedElementColumnNumberEE;
-	AElement[][] unresolvedUnresolvedElementDefinitionEE;
+	SElement[][] unresolvedUnresolvedElementDefinitionEE;
 	int unresolvedUnresolvedElementIndexEE;
 	int unresolvedUnresolvedElementSizeEE;
     
@@ -63,7 +65,7 @@ class StartMessageHandler implements MessageReporter{
 	String[] ambiguousUnresolvedElementSystemIdWW;
 	int[] ambiguousUnresolvedElementLineNumberWW;
 	int[] ambiguousUnresolvedElementColumnNumberWW;
-	AElement[][] ambiguousUnresolvedElementDefinitionWW;
+	SElement[][] ambiguousUnresolvedElementDefinitionWW;
 	int ambiguousUnresolvedElementIndexWW;
 	int ambiguousUnresolvedElementSizeWW;
 	
@@ -71,7 +73,7 @@ class StartMessageHandler implements MessageReporter{
 	String[] ambiguousAmbiguousElementSystemIdWW;
 	int[] ambiguousAmbiguousElementLineNumberWW;
 	int[] ambiguousAmbiguousElementColumnNumberWW;
-	AElement[][] ambiguousAmbiguousElementDefinitionWW;
+	SElement[][] ambiguousAmbiguousElementDefinitionWW;
 	int ambiguousAmbiguousElementIndexWW;
 	int ambiguousAmbiguousElementSizeWW;
     
@@ -139,7 +141,7 @@ class StartMessageHandler implements MessageReporter{
 									String systemId, 
 									int lineNumber, 
 									int columnNumber, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
 
 		if(unresolvedAmbiguousElementSizeEE == 0){
 			unresolvedAmbiguousElementSizeEE = 1;
@@ -148,13 +150,13 @@ class StartMessageHandler implements MessageReporter{
 			unresolvedAmbiguousElementSystemIdEE = new String[unresolvedAmbiguousElementSizeEE];			
 			unresolvedAmbiguousElementLineNumberEE = new int[unresolvedAmbiguousElementSizeEE];
 			unresolvedAmbiguousElementColumnNumberEE = new int[unresolvedAmbiguousElementSizeEE];
-			unresolvedAmbiguousElementDefinitionEE = new AElement[unresolvedAmbiguousElementSizeEE][];
+			unresolvedAmbiguousElementDefinitionEE = new SElement[unresolvedAmbiguousElementSizeEE][];
 		}else if(++unresolvedAmbiguousElementIndexEE == unresolvedAmbiguousElementSizeEE){			
 			String[] increasedQN = new String[++unresolvedAmbiguousElementSizeEE];
 			System.arraycopy(unresolvedAmbiguousElementQNameEE, 0, increasedQN, 0, unresolvedAmbiguousElementIndexEE);
 			unresolvedAmbiguousElementQNameEE = increasedQN;
 			
-			AElement[][] increasedDef = new AElement[unresolvedAmbiguousElementSizeEE][];
+			SElement[][] increasedDef = new SElement[unresolvedAmbiguousElementSizeEE][];
 			System.arraycopy(unresolvedAmbiguousElementDefinitionEE, 0, increasedDef, 0, unresolvedAmbiguousElementIndexEE);
 			unresolvedAmbiguousElementDefinitionEE = increasedDef;
 			
@@ -193,7 +195,7 @@ class StartMessageHandler implements MessageReporter{
                                     String systemId,
                                     int lineNumber,
                                     int columnNumber, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
 		if(unresolvedUnresolvedElementSizeEE == 0){
 			unresolvedUnresolvedElementSizeEE = 1;
 			unresolvedUnresolvedElementIndexEE = 0;	
@@ -201,13 +203,13 @@ class StartMessageHandler implements MessageReporter{
 			unresolvedUnresolvedElementSystemIdEE = new String[unresolvedUnresolvedElementSizeEE];			
 			unresolvedUnresolvedElementLineNumberEE = new int[unresolvedUnresolvedElementSizeEE];
 			unresolvedUnresolvedElementColumnNumberEE = new int[unresolvedUnresolvedElementSizeEE];
-			unresolvedUnresolvedElementDefinitionEE = new AElement[unresolvedUnresolvedElementSizeEE][];
+			unresolvedUnresolvedElementDefinitionEE = new SElement[unresolvedUnresolvedElementSizeEE][];
 		}else if(++unresolvedUnresolvedElementIndexEE == unresolvedUnresolvedElementSizeEE){			
 			String[] increasedQN = new String[++unresolvedUnresolvedElementSizeEE];
 			System.arraycopy(unresolvedUnresolvedElementQNameEE, 0, increasedQN, 0, unresolvedUnresolvedElementIndexEE);
 			unresolvedUnresolvedElementQNameEE = increasedQN;
 			
-			AElement[][] increasedDef = new AElement[unresolvedUnresolvedElementSizeEE][];
+			SElement[][] increasedDef = new SElement[unresolvedUnresolvedElementSizeEE][];
 			System.arraycopy(unresolvedUnresolvedElementDefinitionEE, 0, increasedDef, 0, unresolvedUnresolvedElementIndexEE);
 			unresolvedUnresolvedElementDefinitionEE = increasedDef;
 			
@@ -246,7 +248,7 @@ class StartMessageHandler implements MessageReporter{
                                     String systemId,
                                     int lineNumber,
                                     int columnNumber, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
 		if(ambiguousUnresolvedElementSizeWW == 0){
 			ambiguousUnresolvedElementSizeWW = 1;
 			ambiguousUnresolvedElementIndexWW = 0;	
@@ -254,13 +256,13 @@ class StartMessageHandler implements MessageReporter{
 			ambiguousUnresolvedElementSystemIdWW = new String[ambiguousUnresolvedElementSizeWW];			
 			ambiguousUnresolvedElementLineNumberWW = new int[ambiguousUnresolvedElementSizeWW];
 			ambiguousUnresolvedElementColumnNumberWW = new int[ambiguousUnresolvedElementSizeWW];
-			ambiguousUnresolvedElementDefinitionWW = new AElement[ambiguousUnresolvedElementSizeWW][];
+			ambiguousUnresolvedElementDefinitionWW = new SElement[ambiguousUnresolvedElementSizeWW][];
 		}else if(++ambiguousUnresolvedElementIndexWW == ambiguousUnresolvedElementSizeWW){			
 			String[] increasedQN = new String[++ambiguousUnresolvedElementSizeWW];
 			System.arraycopy(ambiguousUnresolvedElementQNameWW, 0, increasedQN, 0, ambiguousUnresolvedElementIndexWW);
 			ambiguousUnresolvedElementQNameWW = increasedQN;
 			
-			AElement[][] increasedDef = new AElement[ambiguousUnresolvedElementSizeWW][];
+			SElement[][] increasedDef = new SElement[ambiguousUnresolvedElementSizeWW][];
 			System.arraycopy(ambiguousUnresolvedElementDefinitionWW, 0, increasedDef, 0, ambiguousUnresolvedElementIndexWW);
 			ambiguousUnresolvedElementDefinitionWW = increasedDef;
 			
@@ -297,7 +299,7 @@ class StartMessageHandler implements MessageReporter{
                                     String systemId,
                                     int lineNumber,
                                     int columnNumber,
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
 		if(ambiguousAmbiguousElementSizeWW == 0){
 			ambiguousAmbiguousElementSizeWW = 1;
 			ambiguousAmbiguousElementIndexWW = 0;	
@@ -305,13 +307,13 @@ class StartMessageHandler implements MessageReporter{
 			ambiguousAmbiguousElementSystemIdWW = new String[ambiguousAmbiguousElementSizeWW];			
 			ambiguousAmbiguousElementLineNumberWW = new int[ambiguousAmbiguousElementSizeWW];
 			ambiguousAmbiguousElementColumnNumberWW = new int[ambiguousAmbiguousElementSizeWW];
-			ambiguousAmbiguousElementDefinitionWW = new AElement[ambiguousAmbiguousElementSizeWW][];
+			ambiguousAmbiguousElementDefinitionWW = new SElement[ambiguousAmbiguousElementSizeWW][];
 		}else if(++ambiguousAmbiguousElementIndexWW == ambiguousAmbiguousElementSizeWW){			
 			String[] increasedQN = new String[++ambiguousAmbiguousElementSizeWW];
 			System.arraycopy(ambiguousAmbiguousElementQNameWW, 0, increasedQN, 0, ambiguousAmbiguousElementIndexWW);
 			ambiguousAmbiguousElementQNameWW = increasedQN;
 			
-			AElement[][] increasedDef = new AElement[ambiguousAmbiguousElementSizeWW][];
+			SElement[][] increasedDef = new SElement[ambiguousAmbiguousElementSizeWW][];
 			System.arraycopy(ambiguousAmbiguousElementDefinitionWW, 0, increasedDef, 0, ambiguousAmbiguousElementIndexWW);
 			ambiguousAmbiguousElementDefinitionWW = increasedDef;
 			
@@ -377,7 +379,7 @@ class StartMessageHandler implements MessageReporter{
 	public void setReportingContextLocation(String publicId, String systemId, int lineNumber, int columnNumber){
 		throw new IllegalStateException();		
 	}
-	public void setReportingContextDefinition(AElement definition){
+	public void setReportingContextDefinition(SElement definition){
 		throw new IllegalStateException();
 	}
     public void setRestrictToFileName(boolean restrictToFileName){
@@ -388,7 +390,7 @@ class StartMessageHandler implements MessageReporter{
         throw new IllegalStateException();
     }
     
-    public void report(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
+    public void report(int contextType, String qName, SElement definition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
         start = definition;
         
         String errorMessage = getValidationErrorMessage("", restrictToFileName);

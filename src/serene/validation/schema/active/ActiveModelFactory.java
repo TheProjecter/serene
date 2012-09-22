@@ -24,14 +24,14 @@ import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
 
 import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
 /*import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;*/
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 import serene.validation.schema.active.components.ActiveComponentBuilder;
 
 public class ActiveModelFactory{
 	
 	public ActiveModel createActiveModel(SimplifiedModel simplifiedModel,		
-										ActiveModelRuleHandlerPool ruleHandlerPool,
+										ValidatorRuleHandlerPool ruleHandlerPool,
 										/*ValidatorStackHandlerPool stackHandlerPool,
 										ValidatorConflictHandlerPool conflictHandlerPool,*/
 										ActiveModelPool pool){

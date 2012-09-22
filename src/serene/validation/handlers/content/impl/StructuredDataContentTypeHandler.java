@@ -19,12 +19,14 @@ package serene.validation.handlers.content.impl;
 import java.util.List;
 import java.util.BitSet;
 
-import serene.validation.schema.active.components.StructuredDataActiveTypeItem;
+/*import serene.validation.schema.active.components.StructuredDataActiveTypeItem;*/
+
+import serene.validation.handlers.match.StructuredDataMatchPath;
 
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
 interface StructuredDataContentTypeHandler{
-    void addStructuredData(StructuredDataActiveTypeItem data);
-	void addStructuredData(List<StructuredDataActiveTypeItem> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
-	void addStructuredData(List<StructuredDataActiveTypeItem> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
+    void addStructuredData(StructuredDataMatchPath data);
+	void addStructuredData(List<StructuredDataMatchPath> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
+	void addStructuredData(List<StructuredDataMatchPath> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
 }

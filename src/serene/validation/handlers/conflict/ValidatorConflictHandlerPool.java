@@ -29,10 +29,10 @@ import serene.validation.handlers.content.util.ActiveInputDescriptor;
 import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.bind.util.Queue;
 import serene.bind.BindingModel;
@@ -536,7 +536,7 @@ public class ValidatorConflictHandlerPool implements Reusable{
 	                                                                    Queue targetQueue,
 																		int reservationStartEntry,
 																		int reservationEndEntry,
-																		Map<AElement, Queue> candidateQueues){				
+																		Map<SElement, Queue> candidateQueues){				
 		if(boundAmbiguousElementConflictResolverFree == 0){
 			// boundAmbiguousElementConflictResolverCreated++;
 			BoundAmbiguousElementConflictResolver icr = new BoundAmbiguousElementConflictResolver();
@@ -576,7 +576,7 @@ public class ValidatorConflictHandlerPool implements Reusable{
 	                                                                    Queue targetQueue,
 																		int reservationStartEntry,
 																		int reservationEndEntry,
-																		Map<AElement, Queue> candidateQueues){				
+																		Map<SElement, Queue> candidateQueues){				
 		if(boundUnresolvedElementConflictResolverFree == 0){
 			// boundUnresolvedElementConflictResolverCreated++;
 			BoundUnresolvedElementConflictResolver icr = new BoundUnresolvedElementConflictResolver();

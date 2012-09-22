@@ -19,53 +19,65 @@ package serene.validation.handlers.match;
 import java.util.List;
 import java.util.ArrayList;
 
-import serene.validation.schema.active.ElementContentType;
+/*import serene.validation.schema.active.ElementContentType;
 import serene.validation.schema.active.AttributesType;
 import serene.validation.schema.active.DataActiveType;
 import serene.validation.schema.active.StructuredDataActiveType;
-import serene.validation.schema.active.CharsActiveType;
+import serene.validation.schema.active.CharsActiveType;*/
 import serene.validation.schema.active.ActiveModel;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.AExceptPattern;
+/*import serene.validation.schema.active.components.CharsActiveTypeItem;
+import serene.validation.schema.active.components.AExceptPattern;*/
 
-import serene.validation.schema.active.components.AElement;
+/*import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.AListPattern;
 import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.components.AText;
+import serene.validation.schema.active.components.AText;*/
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
+import serene.validation.schema.simplified.SExceptPattern;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SListPattern;
+import serene.validation.schema.simplified.SText;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
 public class MatchHandler{
 	
-	List<AElement> elementMatches;	
-	List<AAttribute> attributeMatches; 
+	List<ElementMatchPath> elementMatchPathes;	
+	List<AttributeMatchPath> attributeMatchPathes; 
 	
-	List<AData> datas;
-	List<AValue> values;
-	List<AListPattern> listPatterns;
-	List<AText> texts;
+	List<DataMatchPath> dataMatchPathes;
+	List<ValueMatchPath> valueMatchPathes;
+	List<ListPatternMatchPath> listPatternMatchPathes;
+	List<TextMatchPath> textMatchPathes;
 	
     ActiveModel activeModel;
     List<SimplifiedComponent> unexpectedMatches;
     
 	boolean recognizeOutOfContext;
 	
+	MatchPathPool matchPathPool;
+	
 	public MatchHandler(){
-		elementMatches = new ArrayList<AElement>();		
-		attributeMatches = new ArrayList<AAttribute>();
+		elementMatchPathes = new ArrayList<ElementMatchPath>();		
+		attributeMatchPathes = new ArrayList<AttributeMatchPath>();
 		
-		datas = new ArrayList<AData>();
-		values = new ArrayList<AValue>();
-		listPatterns = new ArrayList<AListPattern>();
-		texts = new ArrayList<AText>();
+		
+		dataMatchPathes = new ArrayList<DataMatchPath>();
+		valueMatchPathes = new ArrayList<ValueMatchPath>();
+		listPatternMatchPathes = new ArrayList<ListPatternMatchPath>();
+		textMatchPathes = new ArrayList<TextMatchPath>();
 
 		
-        unexpectedMatches = new ArrayList<SimplifiedComponent>();		
+        unexpectedMatches = new ArrayList<SimplifiedComponent>();
+
+        matchPathPool = new MatchPathPool();		
 	}	
 	
     public void setActiveModel(ActiveModel activeModel){
@@ -84,106 +96,75 @@ public class MatchHandler{
 		return unexpectedMatches;
 	}
 	
-	public List<AElement> matchElement(String namespace, String name, AElement type){		
-		elementMatches.clear();		
+	public List<ElementMatchPath> matchElement(String namespace, String name, SElement type){		
+		elementMatchPathes.clear();		
 		/*elementMatches = type.getElementMatches(namespace, name, elementMatches);*/
 		
-		type.setElementContentMatches(namespace, name, elementMatches);
-		return elementMatches;		
+		type.setElementContentMatchPathes(namespace, name, elementMatchPathes, matchPathPool);
+		return elementMatchPathes;		
 	}
 	
-	public List<AAttribute> matchAttribute(String namespace, String name, AElement type){		
-		attributeMatches.clear();
+	public List<AttributeMatchPath> matchAttribute(String namespace, String name, SElement type){		
+		attributeMatchPathes.clear();
 		/*attributeMatches = type.getAttributeMatches(namespace, name, attributeMatches);*/
-		type.setAttributeContentMatches(namespace, name, attributeMatches);
-		return attributeMatches;		
+		type.setAttributeContentMatchPathes(namespace, name, attributeMatchPathes, matchPathPool);
+		return attributeMatchPathes;		
 	}
 		
 	
-	public void handleCharsMatches(AElement type){
-	    datas.clear();
-	    values.clear();
-	    listPatterns.clear();
-	    texts.clear();
-	    type.setContentMatches(datas, values, listPatterns, texts);
+	public void handleCharsMatches(SElement type){
+	    dataMatchPathes.clear();
+	    valueMatchPathes.clear();
+	    listPatternMatchPathes.clear();
+	    textMatchPathes.clear();
+	    type.setCharsMatchPathes(dataMatchPathes, valueMatchPathes, listPatternMatchPathes, textMatchPathes, matchPathPool);
 	}
 	
-	public void handleCharsMatches(AAttribute type){
-	    datas.clear();
-	    values.clear();
-	    listPatterns.clear();
-	    texts.clear();
-	    type.setContentMatches(datas, values, listPatterns, texts);
+	public void handleCharsMatches(SAttribute type){
+	    dataMatchPathes.clear();
+	    valueMatchPathes.clear();
+	    listPatternMatchPathes.clear();
+	    textMatchPathes.clear();
+	    type.setCharsMatchPathes(dataMatchPathes, valueMatchPathes, listPatternMatchPathes, textMatchPathes, matchPathPool);
 	}
 	
-	public void handleCharsMatches(AListPattern type){
-	    datas.clear();
-	    values.clear();
-	    type.setContentMatches(datas, values);
+	public void handleCharsMatches(SListPattern type){
+	    dataMatchPathes.clear();
+	    valueMatchPathes.clear();
+	    type.setCharsMatchPathes(dataMatchPathes, valueMatchPathes, matchPathPool);
 	}
 	
-	public void handleCharsMatches(AExceptPattern type){
-	    datas.clear();
-	    values.clear();
-	    listPatterns.clear();
-	    type.setContentMatches(datas, values, listPatterns);
+	public void handleCharsMatches(SExceptPattern type){
+	    dataMatchPathes.clear();
+	    valueMatchPathes.clear();
+	    listPatternMatchPathes.clear();
+	    type.setCharsMatchPathes(dataMatchPathes, valueMatchPathes, listPatternMatchPathes, matchPathPool);
 	}
 	
-	public void handleTextMatches(AElement type){
-	    texts.clear();
-	    type.setContentMatches(texts);
+	public void handleTextMatches(SElement type){
+	    textMatchPathes.clear();
+	    type.setCharsMatchPathes(textMatchPathes, matchPathPool);
 	}
 	
-	public void handleTextMatches(AAttribute type){
-	    texts.clear();
-	    type.setContentMatches(texts);
+	public void handleTextMatches(SAttribute type){
+	    textMatchPathes.clear();
+	    type.setCharsMatchPathes(textMatchPathes, matchPathPool);
 	}
 	
-	public List<AData> getDataMatches(){
-		return datas;
+	public List<DataMatchPath> getDataMatchPathes(){
+	     return dataMatchPathes;
 	}
-	public List<AValue> getValueMatches(){		
-		return values;
+	
+	public List<ValueMatchPath> getValueMatchPathes(){		
+		return valueMatchPathes;
+	}
+	
+	public List<TextMatchPath> getTextMatchPathes(){
+		return textMatchPathes;
+	}
+	
+	public List<ListPatternMatchPath> getListPatternMatchPathes(){
+		return listPatternMatchPathes;
 	}	
-	public List<AText> getTextMatches(){
-		return texts;
-		
-	}
-	public List<AListPattern> getListPatternMatches(){
-		return listPatterns;
-	}
 	
-	/*public List<AData> getDataMatches(DataActiveType type){
-		datas.clear();
-		datas = type.getDataMatches(datas);
-		return datas;
-	}*/
-	/*public List<AValue> getValueMatches(DataActiveType type){
-		values.clear();
-		values = type.getValueMatches(values);		
-		return values;
-	}*/	
-	/*public List<AText> getTextMatches(CharsActiveType type){
-		texts.clear();
-		texts = type.getTexts(texts);
-		return texts;
-		
-	}*/
-	/*public List<AListPattern> getListPatternMatches(StructuredDataActiveType type){
-		listPatterns.clear();
-		listPatterns = type.getListPatterns(listPatterns);*/
-		/*for(AListPattern listPattern : listPatterns){
-			if(listPatternTester == null)listPatternTester = new ListPatternTester(debugWriter);
-			if(charsMatches.size() == 0){
-				if(!listPatternTester.matches(chars, listPattern, validationContext, errorCatcher)){
-					listPatterns.remove(listPattern);
-				}
-			}else{
-				if(!listPatternTester.matches(chars, listPattern)){
-					listPatterns.remove(listPattern);
-				}
-			}
-		}*//*
-		return listPatterns;
-	}*/
 }

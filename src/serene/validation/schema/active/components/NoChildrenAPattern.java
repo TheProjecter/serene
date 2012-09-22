@@ -20,12 +20,12 @@ import java.util.List;
 
 import serene.validation.schema.active.components.AbstractAPattern;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
 public abstract class NoChildrenAPattern extends AbstractAPattern{ 	 
-	NoChildrenAPattern(ActiveModelRuleHandlerPool ruleHandlerPool){		
+	NoChildrenAPattern(ValidatorRuleHandlerPool ruleHandlerPool){		
 		super(ruleHandlerPool);
 	}
 	

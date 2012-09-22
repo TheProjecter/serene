@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 import org.relaxng.datatype.Datatype;
 
-import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.simplified.SElement;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
@@ -42,7 +42,7 @@ public abstract class BoundElementConflictResolver extends ElementConflictResolv
 	int reservationStartEntry;
     int reservationEndEntry;	
 	
-	Map<AElement, Queue> candidateQueues;
+	Map<SElement, Queue> candidateQueues;
 	
 	public BoundElementConflictResolver(){
 		super();
@@ -53,7 +53,7 @@ public abstract class BoundElementConflictResolver extends ElementConflictResolv
 	        Queue targetQueue,
 			int reservationStartEntry,
 			int reservationEndEntry,
-			Map<AElement, Queue> candidateQueues){    
+			Map<SElement, Queue> candidateQueues){    
 		super.init(conflictMessageReporter);
 		this.bindingModel = bindingModel;
 		this.targetQueue = targetQueue;

@@ -62,6 +62,7 @@ class InternalRNGSchema extends BaseSchema{
 		return new InternalValidatorHandler(contentHandlerPool.getValidatorEventHandlerPool(),
 		                                conflictHandlerPool.getValidatorConflictHandlerPool(),
 		                                stackHandlerPool.getValidatorStackHandlerPool(),
+		                                ruleHandlerPool.getValidatorRuleHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										schemaModel,
 										bindingPool,

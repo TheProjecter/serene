@@ -18,19 +18,19 @@ package serene.validation.handlers.conflict;
 
 import java.util.HashSet;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.ActiveTypeItem;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
 
 public class ContextConflictsDescriptor implements InternalConflictDescriptor{
 	
-	HashSet<ActiveTypeItem> conflictActiveTypeItems;
-	HashSet<Rule> conflictPathRules;
-    HashSet<Rule> conflictPathTops;
+	HashSet<SPattern> conflictActiveTypeItems;
+	HashSet<SRule> conflictPathRules;
+    HashSet<SRule> conflictPathTops;
 	
 	public ContextConflictsDescriptor(){
-		conflictActiveTypeItems = new HashSet<ActiveTypeItem>();
-		conflictPathRules = new HashSet<Rule>();
-        conflictPathTops = new HashSet<Rule>();
+		conflictActiveTypeItems = new HashSet<SPattern>();
+		conflictPathRules = new HashSet<SRule>();
+        conflictPathTops = new HashSet<SRule>();
 	}
 		
 	
@@ -40,7 +40,7 @@ public class ContextConflictsDescriptor implements InternalConflictDescriptor{
         conflictPathTops.clear();
 	}
 	
-	public void record(ActiveTypeItem pattern, Rule[] path){
+	public void record(SPattern pattern, SRule[] path){
 		conflictActiveTypeItems.add(pattern);        
 		for(int i = 0; i < path.length-1; i++){
 			conflictPathRules.add(path[i]);
@@ -49,19 +49,19 @@ public class ContextConflictsDescriptor implements InternalConflictDescriptor{
 	}
 	
 	
-	public boolean isConflictActiveTypeItem(ActiveTypeItem item){
+	public boolean isConflictTypeItem(SPattern item){
 		return conflictActiveTypeItems.contains(item);
 	}
 	
-	public boolean isConflictPathRule(Rule rule){
+	public boolean isConflictPathRule(SRule rule){
 		return conflictPathRules.contains(rule);
 	}
 	
-	public boolean isConflictRule(Rule rule){
+	public boolean isConflictRule(SRule rule){
 		return conflictPathRules.contains(rule) || conflictActiveTypeItems.contains(rule);	
 	}
 	
-    public boolean isConflictPathTop(Rule rule){
+    public boolean isConflictPathTop(SRule rule){
         return conflictPathTops.contains(rule);
     }
 	

@@ -32,6 +32,12 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 public interface ErrorCatcher extends ErrorType{	
 	
@@ -43,49 +49,49 @@ public interface ErrorCatcher extends ErrorType{
 	void unexpectedAttribute(SimplifiedComponent definition, int inputRecordIndex);
 	void unexpectedAmbiguousAttribute(SimplifiedComponent[] possibleDefinition, int inputRecordIndex);
 		
-	void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper);		
-	void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper);
+	void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int inputRecordIndex, SPattern sourceDefinition, SPattern reper);		
+	void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int[] inputRecordIndex, SPattern[] sourceDefinition, SPattern reper);
 		
 		
-	void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex);
-	void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex);
+	void excessiveContent(SRule context, int startInputRecordIndex, SPattern excessiveDefinition, int[] inputRecordIndex);
+	void excessiveContent(SRule context, SPattern excessiveDefinition, int inputRecordIndex);
 
-	void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex);	
-	void illegalContent(Rule context, int startInputRecordIndex);
+	void missingContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found, int[] inputRecordIndex);	
+	void illegalContent(SRule context, int startInputRecordIndex);
 	
-	void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions);
-	void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions);
-	void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions);
+	void unresolvedAmbiguousElementContentError(int inputRecordIndex, SElement[] possibleDefinitions);
+	void unresolvedUnresolvedElementContentError(int inputRecordIndex, SElement[] possibleDefinitions);
+	void unresolvedAttributeContentError(int inputRecordIndex, SAttribute[] possibleDefinitions);
 	
-	void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions);
-	void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions);
-	void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions);
-	void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
-	void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
+	void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions);
+	void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions);
+	void ambiguousAttributeContentWarning(int inputRecordIndex, SAttribute[] possibleDefinitions);
+	void ambiguousCharacterContentWarning(int inputRecordIndex, SPattern[] possibleDefinitions);
+	void ambiguousAttributeValueWarning(int inputRecordIndex, SPattern[] possibleDefinitions);
 		
-    void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);    
-	void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
+    void characterContentDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage);    
+	void attributeValueDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage);
     	
-	void characterContentValueError(int inputRecordIndex, AValue charsDefinition);
-	void attributeValueValueError(int inputRecordIndex, AValue charsDefinition);
+	void characterContentValueError(int inputRecordIndex, SValue charsDefinition);
+	void attributeValueValueError(int inputRecordIndex, SValue charsDefinition);
 	
-	void characterContentExceptedError(int inputRecordIndex, AData charsDefinition);
-	void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition);
+	void characterContentExceptedError(int inputRecordIndex, SData charsDefinition);
+	void attributeValueExceptedError(int inputRecordIndex, SData charsDefinition);
 	
-	void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition);
+	void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition);
 	void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition);
 	
-	void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
-	void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
+	void unresolvedCharacterContent(int inputRecordIndex, SPattern[] possibleDefinitions);
+	void unresolvedAttributeValue(int inputRecordIndex, SPattern[] possibleDefinitions);
 	
-	void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
-	void listTokenValueError(int inputRecordIndex, AValue charsDefinition);
-	void listTokenExceptedError(int inputRecordIndex, AData charsDefinition);
+	void listTokenDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage);
+	void listTokenValueError(int inputRecordIndex, SValue charsDefinition);
+	void listTokenExceptedError(int inputRecordIndex, SData charsDefinition);
 
-    void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
-	void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
+    void unresolvedListTokenInContextError(int inputRecordIndex, SPattern[] possibleDefinitions);
+	void ambiguousListTokenInContextWarning(int inputRecordIndex, SPattern[] possibleDefinitions);
     
-	void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found);
+	void missingCompositorContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found);
 	
 	void internalConflict(ConflictMessageReporter conflictMessageReporter) throws SAXException;
 } 

@@ -20,12 +20,14 @@ import java.util.BitSet;
 
 import serene.validation.schema.active.components.AElement;
 
+import serene.validation.schema.simplified.SElement;
+
 public abstract class AbstractMessageReporter implements MessageReporter{
     MessageReporter parent;// the handler that is supposed to report before this when delayed in a conflict situation
     
     int reportingContextType;// TODO it could probably be removed
 	String reportingContextQName;
-	AElement reportingContextDefinition;
+	SElement reportingContextDefinition;
 	String reportingContextPublicId;
 	String reportingContextSystemId;
 	int reportingContextLineNumber;
@@ -62,7 +64,7 @@ public abstract class AbstractMessageReporter implements MessageReporter{
 		this.reportingContextColumnNumber = reportingContextColumnNumber;		
 	}
 		
-	public void setReportingContextDefinition(AElement reportingContextDefinition){
+	public void setReportingContextDefinition(SElement reportingContextDefinition){
 		this.reportingContextDefinition = reportingContextDefinition;		
 	}
 	public void setRestrictToFileName(boolean restrictToFileName){

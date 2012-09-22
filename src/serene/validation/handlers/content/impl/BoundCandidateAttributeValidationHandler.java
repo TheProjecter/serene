@@ -28,6 +28,9 @@ import serene.validation.handlers.error.ContextErrorHandler;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
+import serene.validation.handlers.match.AttributeMatchPath;
+
+
 import serene.bind.BindingModel;
 import serene.bind.util.Queue;
 import serene.bind.AttributeTask;
@@ -42,8 +45,8 @@ class BoundCandidateAttributeValidationHandler extends CandidateAttributeValidat
 		super();		
 	}
 	
-	void init(AAttribute attribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex, BindingModel bindingModel, Queue queue, int entry){
-		super.init(attribute, parent, conflictHandler, candidateIndex, temporaryMessageStorage);
+	void init(AttributeMatchPath attributeMatchPath, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex, BindingModel bindingModel, Queue queue, int entry){
+		super.init(attributeMatchPath, parent, conflictHandler, candidateIndex, temporaryMessageStorage);
 		this.bindingModel = bindingModel;
 		this.queue = queue;
 		this.entry = entry;
@@ -67,7 +70,7 @@ class BoundCandidateAttributeValidationHandler extends CandidateAttributeValidat
 	}	
 	
 	public void attributeBinding(){		
-		AttributeTask task = bindingModel.getAttributeTask(attribute.getCorrespondingSimplifiedComponent());
+		AttributeTask task = bindingModel.getAttributeTask(attributeMatchPath.getAttribute());
 		// TODO 
 		// Implement checks for if record index is needed. For now, it's ok though,
 		// I know it's needed.

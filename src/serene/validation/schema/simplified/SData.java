@@ -16,13 +16,23 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
 import org.xml.sax.SAXException;
 
 import org.relaxng.datatype.Datatype;
 
 import serene.bind.util.DocumentIndexedData;
 
-public class SData extends SPattern{
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.ListPatternMatchPath;
+import serene.validation.handlers.match.TextMatchPath;
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
+
+public class SData extends SNoChildrenPattern{
     Datatype datatype;
 	SExceptPattern[] exceptPattern; 	
 		
@@ -41,7 +51,24 @@ public class SData extends SPattern{
 	
         parent.setAllowsDatas();
 	}
+		
 	
+    void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){
+        DataMatchPath mp = matchPathPool.getDataMatchPath();
+        mp.addData(this);
+        dataMatchPathes.add(mp);
+    }
+	void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, MatchPathPool matchPathPool){            
+ 	    DataMatchPath mp = matchPathPool.getDataMatchPath();
+        mp.addData(this);
+        dataMatchPathes.add(mp);
+    }
+    void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, MatchPathPool matchPathPool){
+        DataMatchPath mp = matchPathPool.getDataMatchPath();
+        mp.addData(this);
+        dataMatchPathes.add(mp);
+    }
+    
 	boolean isElementContent(){
         return false;
     }
@@ -97,6 +124,9 @@ public class SData extends SPattern{
 		v.visit(this);
 	}
 	public void accept(RestrictingVisitor v) throws SAXException{
+		v.visit(this);
+	}
+	public void accept(SimplifiedRuleVisitor v){
 		v.visit(this);
 	}
 	public String toString(){

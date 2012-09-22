@@ -21,7 +21,7 @@ import java.util.List;
 import serene.validation.schema.active.Rule;
 
 import serene.validation.handlers.structure.ChildEventHandler;
-import serene.validation.handlers.structure.impl.ParticleHandler;
+import serene.validation.handlers.structure.ParticleHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
@@ -33,7 +33,7 @@ public interface APattern extends Rule{
 	
 	void setReleased();
 	
-	ParticleHandler getParticleHandler(ChildEventHandler ceh, ErrorCatcher ec);
+	/*ParticleHandler getParticleHandler(ChildEventHandler ceh, ErrorCatcher ec);*/
 	
 	boolean isRequiredContent();
     boolean isRequiredBranch();

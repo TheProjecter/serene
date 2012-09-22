@@ -18,11 +18,11 @@ package serene.validation.schema.active.components;
 
 import serene.validation.schema.simplified.SText;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public class ATextT extends AText{
 	SText stext;
-	public ATextT(ActiveModelRuleHandlerPool ruleHandlerPool, 
+	public ATextT(ValidatorRuleHandlerPool ruleHandlerPool, 
 	            SText stext){
 		super(ruleHandlerPool);
 		this.stext = stext;

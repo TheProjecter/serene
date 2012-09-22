@@ -30,8 +30,17 @@ import serene.util.CharsBuffer;
 import serene.util.SpaceCharsHandler;
 
 import serene.validation.handlers.match.MatchHandler;
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.CharsMatchPath;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.CharsActiveType;
@@ -89,8 +98,9 @@ class ElementValidationHandler extends ValidatingEEH
 	boolean recognizeOutOfContext;
 	SpaceCharsHandler spaceHandler;
 	
-	AElement element;
-
+	ElementMatchPath elementMatchPath;
+	SElement element;
+	
 	StackHandler stackHandler;
 	ValidatorStackHandlerPool stackHandlerPool;
 		
@@ -117,7 +127,8 @@ class ElementValidationHandler extends ValidatingEEH
 			stackHandler = null;
 		}
 		resetContextErrorHandlerManager();
-		element.releaseDefinition();
+		/*element.releaseDefinition();*/
+		elementMatchPath = null;
 		pool.recycle(this);
 	}
 	
@@ -128,9 +139,10 @@ class ElementValidationHandler extends ValidatingEEH
 		this.stackHandlerPool = stackHandlerPool;
 	}
     
-	void init(AElement element, ElementValidationHandler parent){
-		this.element = element;
-		element.assembleDefinition();
+	void init(ElementMatchPath elementMatchPath, ElementValidationHandler parent){
+		this.elementMatchPath = elementMatchPath;
+		this.element = elementMatchPath.getElement();
+		/*element.assembleDefinition();*/
 		this.parent = parent;
 		init((ContextErrorHandlerManager)parent);
 		stackHandler = stackHandlerPool.getContextStackHandler(element, this);
@@ -148,21 +160,21 @@ class ElementValidationHandler extends ValidatingEEH
 	}
 	
 	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
-		
-		if(!element.allowsElements()) 
+		if(!element.allowsElements()){
 			return getUnexpectedElementHandler(namespace, name);
+	    }
 				
-		List<AElement> elementMatches = matchHandler.matchElement(namespace, name, element);
-		int matchCount = elementMatches.size();
+		List<ElementMatchPath> elementMatchPathes = matchHandler.matchElement(namespace, name, element);
+		int matchCount = elementMatchPathes.size();
 		if(matchCount == 0){
 			return getUnexpectedElementHandler(namespace, name);
 		}else if(matchCount == 1){		
             hasComplexContent = true;
-			ElementValidationHandler next = pool.getElementValidationHandler(elementMatches.get(0), this);				
+			ElementValidationHandler next = pool.getElementValidationHandler(elementMatchPathes.get(0), this);				
 			return next;
 		}else{
             hasComplexContent = true;			
-			ElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList(elementMatches), this);				
+			ElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList(elementMatchPathes), this);				
 			return next;
 		}		
 	}	
@@ -208,15 +220,15 @@ class ElementValidationHandler extends ValidatingEEH
 	ComparableAEH getAttributeHandler(String qName, String namespace, String name){
 		if(!element.allowsAttributes()) 
 			return getUnexpectedAttributeHandler(namespace, name);
-		List<AAttribute> attributeMatches = matchHandler.matchAttribute(namespace, name, element);
-		int matchCount = attributeMatches.size();
+		List<AttributeMatchPath> attributeMatchPathes = matchHandler.matchAttribute(namespace, name, element);
+		int matchCount = attributeMatchPathes.size();
 		if(matchCount == 0){
 			return getUnexpectedAttributeHandler(namespace, name);
 		}else if(matchCount == 1){			
-			AttributeValidationHandler next = pool.getAttributeValidationHandler(attributeMatches.get(0), this, this);				
+			AttributeValidationHandler next = pool.getAttributeValidationHandler(attributeMatchPathes.get(0), this, this);				
 			return next;
 		}else{
-			AttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(new ArrayList<AAttribute>(attributeMatches), this);				
+			AttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(new ArrayList<AttributeMatchPath>(attributeMatchPathes), this);				
 			return next;
 		}		
 	}	
@@ -265,7 +277,7 @@ class ElementValidationHandler extends ValidatingEEH
 	}
 	
 	void validateInContext(){
-		parent.addChildElement(element);
+		parent.addChildElement(elementMatchPath);
 	}
 	
 	public void handleInnerCharacters(CharacterContentDescriptor characterContentDescriptor, CharacterContentDescriptorPool characterContentDescriptorPool) throws SAXException{
@@ -361,63 +373,63 @@ class ElementValidationHandler extends ValidatingEEH
 	
 //ElementContentTypeHandler
 //==============================================================================
-	public void addChildElement(AElement element){
-		stackHandler.shift(element);
+	public void addChildElement(ElementMatchPath elementMatchPath){	    
+		stackHandler.shift(elementMatchPath);
 	}
 	
-	public void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter){
+	public void addChildElement(List<ElementMatchPath> candidateDefinitionPathes, ConflictMessageReporter conflictMessageReporter){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter);
+		stackHandler.shiftAllElements(candidateDefinitionPathes, conflictMessageReporter);
 	}
 	
-	public void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
+	public void addChildElement(List<ElementMatchPath> candidateDefinitionPathes, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter);
+		stackHandler.shiftAllElements(candidateDefinitionPathes, conflictHandler, conflictMessageReporter);
 	}	
 //==============================================================================
 
 
 //AttributeContentTypeHandler
 //==============================================================================
-	public void addAttribute(AAttribute attribute){
-		stackHandler.shift(attribute);
+	public void addAttribute(AttributeMatchPath attributeMatchPath){
+		stackHandler.shift(attributeMatchPath);
 	}
 	
-	public void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){		
+	public void addAttribute(List<AttributeMatchPath> candidateDefinitionPathes, TemporaryMessageStorage[] temporaryMessageStorage){		
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllAttributes(candidateDefinitions, temporaryMessageStorage);
+		stackHandler.shiftAllAttributes(candidateDefinitionPathes, temporaryMessageStorage);
 	}
 	
-	public void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
+	public void addAttribute(List<AttributeMatchPath> candidateDefinitionPathes, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllAttributes(candidateDefinitions, disqualified, temporaryMessageStorage);
+		stackHandler.shiftAllAttributes(candidateDefinitionPathes, disqualified, temporaryMessageStorage);
 	}
 //==============================================================================
 
 	
 //CharsContentTypeHandler
 //==============================================================================
-	public void addChars(CharsActiveTypeItem charsDefinition){		
+	public void addChars(CharsMatchPath charsDefinition){		
 		stackHandler.shift(charsDefinition);
 	}
 	
-	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void addChars(List<? extends CharsMatchPath> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
@@ -426,7 +438,7 @@ class ElementValidationHandler extends ValidatingEEH
 		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, temporaryMessageStorage);
 	}
 	
-	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void addChars(List<? extends CharsMatchPath> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
@@ -507,106 +519,106 @@ class ElementValidationHandler extends ValidatingEEH
 	}
 	
 		
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int inputRecordIndex, SPattern sourceDefinition, SPattern reper){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].misplacedContent(contextDefinition, startInputRecordIndex, definition, inputRecordIndex, sourceDefinition, reper);
 	}
 	
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int[] inputRecordIndex, SPattern[] sourceDefinition, SPattern reper){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].misplacedContent(contextDefinition, startInputRecordIndex, definition, inputRecordIndex, sourceDefinition, reper);
 	}
 		
 	
-	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){
+	public void excessiveContent(SRule context, int startInputRecordIndex, SPattern excessiveDefinition, int[] inputRecordIndex){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].excessiveContent(context, startInputRecordIndex, excessiveDefinition, inputRecordIndex);
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
+	public void excessiveContent(SRule context, SPattern excessiveDefinition, int inputRecordIndex){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].excessiveContent(context, excessiveDefinition, inputRecordIndex);
 	}
 	
-	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
+	public void missingContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found, int[] inputRecordIndex){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].missingContent(context, startInputRecordIndex, definition, expected, found, inputRecordIndex);
 	}
 
-	public void illegalContent(Rule context, int startInputRecordIndex){
+	public void illegalContent(SRule context, int startInputRecordIndex){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].illegalContent(context, startInputRecordIndex);
 	}
 	
-	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
 		contextErrorHandler[contextErrorHandlerIndex].unresolvedAmbiguousElementContentError(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
 		contextErrorHandler[contextErrorHandlerIndex].unresolvedUnresolvedElementContentError(inputRecordIndex, possibleDefinitions);
 	}
 
-	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, SAttribute[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].unresolvedAttributeContentError(inputRecordIndex, possibleDefinitions);
 	}
 
 	
-	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
 		contextErrorHandler[contextErrorHandlerIndex].ambiguousUnresolvedElementContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();		
 		contextErrorHandler[contextErrorHandlerIndex].ambiguousAmbiguousElementContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 
-	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, SAttribute[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].ambiguousAttributeContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 
-	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].ambiguousCharacterContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 
-	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].ambiguousAttributeValueWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].characterContentDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}    
-	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void attributeValueDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].attributeValueDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}    
 	
-	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, SValue charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].characterContentValueError(inputRecordIndex, charsDefinition);
 	}
-	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
+	public void attributeValueValueError(int inputRecordIndex, SValue charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].attributeValueValueError(inputRecordIndex, charsDefinition);
 	}
 	
-	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void characterContentExceptedError(int inputRecordIndex, SData charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].characterContentExceptedError(inputRecordIndex, charsDefinition);
 	}	
-	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, SData charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].attributeValueExceptedError(inputRecordIndex, charsDefinition);
 	}
 	
-	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].unexpectedCharacterContent(inputRecordIndex, elementDefinition);		
 	}	
@@ -615,39 +627,39 @@ class ElementValidationHandler extends ValidatingEEH
 		contextErrorHandler[contextErrorHandlerIndex].unexpectedAttributeValue(inputRecordIndex, attributeDefinition);
 	}
 	
-	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, SPattern[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].unresolvedCharacterContent(inputRecordIndex, possibleDefinitions);
 	}
-	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int inputRecordIndex, SPattern[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].unresolvedAttributeValue(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].listTokenDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}
-	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
+	public void listTokenValueError(int inputRecordIndex, SValue charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].listTokenValueError(inputRecordIndex, charsDefinition);
 	}
-	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void listTokenExceptedError(int inputRecordIndex, SData charsDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].listTokenExceptedError(inputRecordIndex, charsDefinition);
 	}
 	    
-    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int inputRecordIndex, SPattern[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].unresolvedListTokenInContextError(inputRecordIndex, possibleDefinitions);
     }
     
-	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].ambiguousListTokenInContextWarning(inputRecordIndex, possibleDefinitions);
     }
 	
-	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
+	public void missingCompositorContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].missingCompositorContent(context, startInputRecordIndex, definition, expected, found);
 	}

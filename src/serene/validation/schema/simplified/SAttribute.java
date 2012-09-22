@@ -16,7 +16,17 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+import java.util.Arrays;
+
 import org.xml.sax.SAXException;
+
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.ListPatternMatchPath;
+import serene.validation.handlers.match.TextMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
 
 import serene.validation.schema.DefinitionPointer;
 
@@ -46,7 +56,68 @@ public class SAttribute extends SMultipleChildrenPattern implements DefinitionPo
         parent.setAllowsAttributes();
 	}
 	
-	
+	public boolean isRequiredContent(){
+		return minOccurs != 0;
+    }
+    
+	public void setCharsMatchPathes(List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){
+	    //for(SPattern child : children){
+	    if(children[0].isTextContent()){
+	        children[0].setMatchPathes(textMatchPathes, matchPathPool);
+	        for(int i = 0; i < textMatchPathes.size(); i++){
+	            textMatchPathes.get(i).add(this);
+	        }
+	    }
+	    //}
+	}    
+    public void setCharsMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){
+        //for(SPattern child : children){
+        if(children[0].isCharsContent()){
+            children[0].setMatchPathes(dataMatchPathes, valueMatchPathes, listPatternMatchPathes, textMatchPathes, matchPathPool);
+            for(int i = 0; i < dataMatchPathes.size(); i++){
+	            dataMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < valueMatchPathes.size(); i++){
+	            valueMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < listPatternMatchPathes.size(); i++){
+	            listPatternMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < textMatchPathes.size(); i++){
+	            textMatchPathes.get(i).add(this);
+	        }
+        }
+        //}
+    }
+    public void setCharsMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, MatchPathPool matchPathPool){
+        //for(SPattern child : children){
+        if(children[0].isStructuredDataContent()){
+            children[0].setMatchPathes(dataMatchPathes, valueMatchPathes, listPatternMatchPathes, matchPathPool);
+            for(int i = 0; i < dataMatchPathes.size(); i++){
+	            dataMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < valueMatchPathes.size(); i++){
+	            valueMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < listPatternMatchPathes.size(); i++){
+	            listPatternMatchPathes.get(i).add(this);
+	        }
+        }
+        //}
+    }
+    public void setCharsMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, MatchPathPool matchPathPool){
+        //for(SPattern child : children){
+        if(children[0].isUnstructuredDataContent()){
+            children[0].setMatchPathes(dataMatchPathes, valueMatchPathes, matchPathPool);
+            for(int i = 0; i < dataMatchPathes.size(); i++){
+	            dataMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < valueMatchPathes.size(); i++){
+	            valueMatchPathes.get(i).add(this);
+	        }
+        }
+        //}
+    }
 	public boolean allowsDatas(){
 	    return allowsDatas;
 	}
@@ -69,6 +140,14 @@ public class SAttribute extends SMultipleChildrenPattern implements DefinitionPo
 	    return allowsDatas || allowsValues || allowsListPatterns || allowsText;
 	}
 	
+	
+	void setAttributeMatchPathes(String ns, String name, List<AttributeMatchPath> pathes, MatchPathPool matchPathPool){
+ 	    if(nameClass.matches(ns, name)) {
+ 	        AttributeMatchPath mp = matchPathPool.getAttributeMatchPath();
+ 	        mp.addAttribute(this);
+ 	        pathes.add(mp);
+ 	    }
+ 	}
 	boolean isElementContent(){
         return false;
     }
@@ -110,6 +189,9 @@ public class SAttribute extends SMultipleChildrenPattern implements DefinitionPo
 		v.visit(this);
 	}
 	public void accept(RestrictingVisitor v) throws SAXException{
+		v.visit(this);
+	}
+	public void accept(SimplifiedRuleVisitor v){
 		v.visit(this);
 	}
     public String getDefaultValue(){

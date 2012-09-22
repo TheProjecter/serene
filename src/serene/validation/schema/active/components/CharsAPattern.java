@@ -19,10 +19,10 @@ package serene.validation.schema.active.components;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public abstract class CharsAPattern extends NoChildrenAPattern implements CharsActiveTypeItem{ 	 
-	CharsAPattern(ActiveModelRuleHandlerPool ruleHandlerPool){		
+	CharsAPattern(ValidatorRuleHandlerPool ruleHandlerPool){		
 		super(ruleHandlerPool);
 	}
 		

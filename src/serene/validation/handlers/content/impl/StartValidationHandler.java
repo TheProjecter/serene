@@ -27,13 +27,22 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.schema.active.components.AElement;
 
+import serene.validation.schema.simplified.SElement;
+
 import serene.validation.handlers.error.ContextErrorHandler;
 
-class StartValidationHandler extends ElementValidationHandler{				
+import serene.validation.handlers.match.ElementMatchPath;
+
+
+class StartValidationHandler extends ElementValidationHandler{	
 	StartValidationHandler(){
 		super();		
 	}
 		
+	void init(SElement element){
+		this.element = element;
+		stackHandler = stackHandlerPool.getContextStackHandler(element, this);
+	}
 	
 	public void recycle(){		
 		if(stackHandler != null){
@@ -41,7 +50,7 @@ class StartValidationHandler extends ElementValidationHandler{
 			stackHandler = null;
 		}
 		resetContextErrorHandlerManager();
-		element.releaseDefinition();
+		/*element.releaseDefinition();*/
 		pool.recycle(this);
 	}
     
@@ -63,19 +72,19 @@ class StartValidationHandler extends ElementValidationHandler{
             reportContextErrors(restrictToFileName, inputStackDescriptor);
             return pool.getElementDefaultHandler(this);            
         }            
-		List<AElement> elementMatches = matchHandler.matchElement(namespace, name, element);
-		int matchCount = elementMatches.size();
+		List<ElementMatchPath> elementMatchPathes = matchHandler.matchElement(namespace, name, element);
+		int matchCount = elementMatchPathes.size();
 		if(matchCount == 0){
 			handleUnexpectedElementHandler(namespace, name, restrictToFileName);
             reportContextErrors(restrictToFileName, inputStackDescriptor);
             return pool.getElementDefaultHandler(this);   
 		}else if(matchCount == 1){		
             hasComplexContent = true;
-			ElementValidationHandler next = pool.getElementValidationHandler(elementMatches.get(0), this);				
+			ElementValidationHandler next = pool.getElementValidationHandler(elementMatchPathes.get(0), this);				
 			return next;
 		}else{
             hasComplexContent = true;
-			ElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList<AElement>(elementMatches), this);				
+			ElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList<ElementMatchPath>(elementMatchPathes), this);				
 			return next;
 		}		
 	}

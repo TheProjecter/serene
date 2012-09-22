@@ -40,6 +40,12 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 	
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.ContextConflictsDescriptor;
@@ -50,12 +56,18 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.validation.handlers.structure.StructureHandler;
+import serene.validation.handlers.structure.InnerPatternHandler;
 
 import serene.validation.handlers.stack.CandidateStackHandler;
 import serene.validation.handlers.stack.ConcurrentStackHandler;
 import serene.validation.handlers.stack.util.RuleHandlerReplacer;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
+
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.CharsMatchPath;
+import serene.validation.handlers.match.MatchPath;
 
 public class CandidateStackHandlerImpl extends ContextStackHandler 
 								implements CandidateStackHandler, ErrorCatcher{
@@ -64,9 +76,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	StackConflictsHandler stackConflictsHandler;
 	
 	ConcurrentStackHandler parent;	
-	
-	ValidatorStackHandlerPool pool;
-		
+			
 	ErrorCatcher errorCatcher;
 	
 	RuleHandlerReplacer ruleHandlerReplacer;
@@ -113,7 +123,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	*/
 	private boolean reportCompositorContentMissing;
 		
-	Rule[] currentInnerPath;
+	SRule[] currentInnerPath;
 	InternalConflictResolver currentResolver;
 	
 	public CandidateStackHandlerImpl(){
@@ -134,55 +144,76 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 			topHandler = null;
 		}
 		currentHandler = null;
+		// TODO recycle;
+		currentPath = null;
 		
 		stackConflictsHandler.clear();
 	
-		recycler.recycle(this);
+		pool.recycle(this);
 	}
 	
 	// super
-	// void init(InputStackDescriptor inputStackDescriptor, StackHandlerRecycler recycler)
+	// void init(InputStackDescriptor inputStackDescriptor, ValidatorStackHandlerPool pool)
 	void init(InputStackDescriptor inputStackDescriptor, ValidatorStackHandlerPool pool){
-		this.recycler = pool;
 		this.pool = pool;
 		this.inputStackDescriptor = inputStackDescriptor;
 	}
 	
 	// first init
 	void init(StructureHandler originalTopHandler, 
-				Rule currentRule,
+	            MatchPath currentPath,
+				SRule currentRule,
 				ConcurrentStackHandler parent,
 				ContextConflictsDescriptor contextConflictsDescriptor,
 				ErrorCatcher errorCatcher){	
+	    /*reportExcessive = false;		
+		reportPreviousMisplaced = false;				
+		reportCurrentMisplaced = false;		
+		reportMissing = false;
+		reportIllegal = false;
+		reportCompositorContentMissing = false;*/
+	
 		topHandler = originalTopHandler.getCopy(this, this);
-		pathHandler.init(topHandler);		
-		setCurrent(currentRule);		
+		this.currentPath = currentPath;
+		/*pathHandler.init(topHandler);	*/
+		setCurrent(currentRule);			
 		this.parent = parent;
 		this.contextConflictsDescriptor = contextConflictsDescriptor;
 		this.errorCatcher = errorCatcher;
 	}
 
 	// copy init
-	void init(StructureHandler originalTopHandler, 
-				Rule currentRule,
+	void init(StructureHandler originalTopHandler,  
+	            MatchPath currentPath,
+				SRule currentRule,
 				StackConflictsHandler stackConflictsHandler,
 				ConcurrentStackHandler parent,
 				ContextConflictsDescriptor contextConflictsDescriptor,
 				boolean hasDisqualifyingError,
-				ErrorCatcher errorCatcher){		
+				ErrorCatcher errorCatcher){
+	    /*reportExcessive = false;		
+		reportPreviousMisplaced = false;				
+		reportCurrentMisplaced = false;		
+		reportMissing = false;
+		reportIllegal = false;
+		reportCompositorContentMissing = false;*/
+	
+		
 		this.parent = parent;
 		this.contextConflictsDescriptor = contextConflictsDescriptor;
 		this.errorCatcher = errorCatcher;
 		this.stackConflictsHandler.init(stackConflictsHandler);
 		topHandler = originalTopHandler.getCopy(this, this);
 		ruleHandlerReplacer.replaceHandlers(this.stackConflictsHandler, topHandler);
-		pathHandler.init(topHandler);		
+		/*pathHandler.init(topHandler);		*/
+		this.currentPath = currentPath;
 		setCurrent(currentRule);		
 		this.hasDisqualifyingError = hasDisqualifyingError;
 	}	
 	
 	public CandidateStackHandlerImpl getCopy(){
-		return pool.getCandidateStackHandler(topHandler, 
+		return pool.getCandidateStackHandler(topHandler,
+                                            currentPath,		    
 											currentHandler.getRule(), 
 											stackConflictsHandler,
 											parent,
@@ -195,8 +226,8 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		return !stackConflictsHandler.isInactive();
 	}
 	
-	private void setCurrent(Rule currentRule){
-		currentHandler = topHandler;
+	private void setCurrent(SRule currentRule){
+		/*currentHandler = topHandler;
 		if(currentRule != null){
             pathHandler.activatePath(currentHandler, currentRule);
             StructureHandler result = pathHandler.getBottomHandler();
@@ -205,24 +236,53 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
                 return;
             }
             currentHandler = result;
+        }*/    
+        
+        
+        
+        if(currentPath == null){
+            currentHandler = topHandler;
+            return;
+        }
+                
+        int i = currentPath.size()-1;
+        if(currentPath.get(i) == currentRule){
+            currentHandler = topHandler;
+            return;	        
+        }
+        if(currentRule != null){
+            StructureHandler s = topHandler;
+            for(i--; i > 0; i--){
+                SRule r = currentPath.get(i);
+                if(r == currentRule){
+                    currentHandler = s;
+                    return;	        
+                }
+                s = s.getChildHandler(r, currentPath);
+                if(s == null){// null is returned after a ChoiceHandler was reset due to a child that differs from currentChild
+                    setCurrent(currentRule);                	            
+                    return;
+                }
+            }
+            throw new IllegalStateException();
         }
 	}
 	
-	public void shift(AElement element){		
+	public void shift(ElementMatchPath element){		
 		throw new IllegalStateException();
 	}
 	
-	public void shift(AAttribute attribute){		
+	public void shift(AttributeMatchPath attribute){		
 		throw new IllegalStateException();
 	}
 	
-	public void shift(CharsActiveTypeItem chars){		
+	public void shift(CharsMatchPath chars){		
 		throw new IllegalStateException();
 	}
 	
 	
 	
-	public void shift(AElement element, 
+	public void shift(ElementMatchPath element, 
 					boolean reportExcessive, 
 					boolean reportPreviousMisplaced, 
 					boolean reportCurrentMisplaced, 
@@ -231,12 +291,12 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 					boolean reportCompositorContentMissing){
 		setModifyers(reportExcessive, reportPreviousMisplaced, reportCurrentMisplaced, reportMissing, reportIllegal, reportCompositorContentMissing);
 		setCurrentHandler(element);
-		currentHandler.handleChildShiftAndOrder(element, expectedOrderHandlingCount);
+		currentHandler.handleChildShiftAndOrder(element.getElement(), expectedOrderHandlingCount);
 		/*stackConflictsHandler.resolveInactiveConflicts();*/
 	}
 		
-	public void shift(AElement element, 
-					Rule[] innerPath, 
+	public void shift(ElementMatchPath element, 
+					SRule[] innerPath, 
 					InternalConflictResolver resolver,
 					int definitionCandidateIndex, 
 					boolean reportExcessive, 
@@ -248,25 +308,25 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		this.currentInnerPath = innerPath;
 		this.currentResolver = resolver; 
 		setModifyers(reportExcessive, reportPreviousMisplaced, reportCurrentMisplaced, reportMissing, reportIllegal, reportCompositorContentMissing);		
-		stackConflictsHandler.record(element, resolver, definitionCandidateIndex);		
+		stackConflictsHandler.record(element.getElement(), resolver, definitionCandidateIndex);		
 		setCurrentHandler(element, innerPath, resolver);
-		currentHandler.handleChildShift(element, expectedOrderHandlingCount, stackConflictsHandler, resolver);		
+		currentHandler.handleChildShift(element.getElement(), expectedOrderHandlingCount, stackConflictsHandler, resolver);		
 		/*stackConflictsHandler.resolveInactiveConflicts();*/
 	}
 	
-	public void shift(AAttribute attribute, 
+	public void shift(AttributeMatchPath attribute, 
 					boolean reportExcessive, 
 					boolean reportMissing, 
 					boolean reportIllegal, 
 					boolean reportCompositorContentMissing){		
 		setModifyers(reportExcessive, reportMissing, reportIllegal, reportCompositorContentMissing);
 		setCurrentHandler(attribute);
-		currentHandler.handleChildShiftAndOrder(attribute, expectedOrderHandlingCount);		
+		currentHandler.handleChildShiftAndOrder(attribute.getAttribute(), expectedOrderHandlingCount);		
 		/*stackConflictsHandler.resolveInactiveConflicts();*/
 	}
 		
-	public void shift(AAttribute attribute, 
-					Rule[] innerPath, 
+	public void shift(AttributeMatchPath attribute, 
+					SRule[] innerPath, 
 					InternalConflictResolver resolver,
 					int definitionCandidateIndex, 
 					boolean reportExcessive, 
@@ -277,13 +337,13 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		this.currentResolver = resolver;
 		
 		setModifyers(reportExcessive, reportMissing, reportIllegal, reportCompositorContentMissing);		
-		stackConflictsHandler.record(attribute, resolver, definitionCandidateIndex);
+		stackConflictsHandler.record(attribute.getAttribute(), resolver, definitionCandidateIndex);
 		setCurrentHandler(attribute, innerPath, resolver);
-		currentHandler.handleChildShift(attribute, expectedOrderHandlingCount, stackConflictsHandler, resolver);
+		currentHandler.handleChildShift(attribute.getAttribute(), expectedOrderHandlingCount, stackConflictsHandler, resolver);
 		/*stackConflictsHandler.resolveInactiveConflicts();*/
 	}
 	
-	public void shift(CharsActiveTypeItem chars, 
+	public void shift(CharsMatchPath chars, 
 					boolean reportExcessive, 
 					boolean reportPreviousMisplaced, 
 					boolean reportCurrentMisplaced, 
@@ -292,12 +352,12 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 					boolean reportCompositorContentMissing){
 		setModifyers(reportExcessive, reportPreviousMisplaced, reportCurrentMisplaced, reportMissing, reportIllegal, reportCompositorContentMissing);
 		setCurrentHandler(chars);
-		currentHandler.handleChildShiftAndOrder(chars, expectedOrderHandlingCount);
+		currentHandler.handleChildShiftAndOrder(chars.getChars(), expectedOrderHandlingCount);
 		/*stackConflictsHandler.resolveInactiveConflicts();*/
 	}
 	
-	public void shift(CharsActiveTypeItem chars, 
-					Rule[] innerPath, 
+	public void shift(CharsMatchPath chars, 
+					SRule[] innerPath, 
 					InternalConflictResolver resolver,
 					int definitionCandidateIndex, 
 					boolean reportExcessive, 
@@ -309,9 +369,9 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		this.currentInnerPath = innerPath;
 		this.currentResolver = resolver;
 		setModifyers(reportExcessive, reportPreviousMisplaced, reportCurrentMisplaced, reportMissing, reportIllegal, reportCompositorContentMissing);
-		stackConflictsHandler.record(chars, resolver, definitionCandidateIndex);
+		stackConflictsHandler.record(chars.getChars(), resolver, definitionCandidateIndex);
 		setCurrentHandler(chars, innerPath, resolver);
-		currentHandler.handleChildShift(chars, expectedOrderHandlingCount, stackConflictsHandler, resolver);
+		currentHandler.handleChildShift(chars.getChars(), expectedOrderHandlingCount, stackConflictsHandler, resolver);
 		/*stackConflictsHandler.resolveInactiveConflicts();*/
 	}
 	
@@ -355,7 +415,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	}
 	
 	//override	
-	public void reduce(StructureHandler handler){
+	public void reduce(InnerPatternHandler handler){
 		if(!stackConflictsHandler.isConflictRule(handler.getRule())){
 			super.reduce(handler);
 			return;
@@ -365,14 +425,14 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		// no check is performed.		
 		if(!endingValidation && !isActive(handler, currentHandler))throw new IllegalArgumentException();
 		StructureHandler parent = handler.getParentHandler();
-		APattern pattern = (APattern)handler.getRule();		
+		SPattern pattern = handler.getRule();		
 		if(parent.handleChildShift(pattern, handler.getStartInputRecordIndex(), stackConflictsHandler)){
 			parent.closeContentStructure(pattern);// must be last so it doesn't remove location data before error messages
 			currentHandler = parent;
 		}
 	}
 	
-	public void reshift(StructureHandler handler, APattern child){
+	public void reshift(InnerPatternHandler handler, SPattern child){
 		//System.out.println("************** 2");
 		if(!stackConflictsHandler.isConflictRule(child)){
 			super.reshift(handler, child);
@@ -384,7 +444,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		currentHandler.handleChildShift(child, expectedOrderHandlingCount, stackConflictsHandler, currentResolver);
 	}
 	
-	public void validatingReshift(StructureHandler handler, APattern child){
+	public void validatingReshift(InnerPatternHandler handler, SPattern child){
 		//System.out.println("************** 3");
 		if(!stackConflictsHandler.isConflictRule(child)){
 			super.validatingReshift(handler, child);
@@ -408,7 +468,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		isCurrentHandlerReseted = true;
 	}
 		
-	public void blockReduce(StructureHandler handler, int count, APattern pattern, int startInputRecordIndex){
+	public void blockReduce(StructureHandler handler, int count, SPattern pattern, int startInputRecordIndex){
 		//TODO make sure the conflict rule is right
 		if(!stackConflictsHandler.isConflictRule(pattern)){
 			super.blockReduce(handler, count, pattern, startInputRecordIndex);
@@ -432,7 +492,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		}
 		if(shifted)parent.closeContentStructure(pattern);// must be last so it doesn't remove location data before error messages
 	}
-	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int startInputRecordIndex){
+	public void limitReduce(StructureHandler handler, int MIN, int MAX, SPattern pattern, int startInputRecordIndex){
 		//System.out.println("************** 6");
 		//TODO make sure the conflict rule is right
 		if(!stackConflictsHandler.isConflictRule(pattern)){
@@ -467,18 +527,18 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		/*stackConflictsHandler.handleConflicts();*/
 	}	
 	
-	public void endSubtreeValidation(StructureHandler handler){		
+	public void endSubtreeValidation(StructureHandler handler){	
 		endingValidation = true;		
 		handler.handleValidatingReduce();//generates eventual missing content errors, possibly disqualifying			
 		endingValidation = false;
 	}	
 			
-	void setCurrentHandler(AElement item, Rule[] innerPath, InternalConflictResolver resolver){		
+	void setCurrentHandler(ElementMatchPath elementPath, SRule[] innerPath, InternalConflictResolver resolver){		
 		// System.out.println(element);
 		// System.out.println(currentHandler);
 		// System.out.println(topHandler);
 		
-		Rule parent  = item.getParent();
+		/*Rule parent  = item.getParent();
 		
 		if(currentHandler != topHandler){
 			//Deactivate currentHandler until its rule is ancestor of the item.
@@ -501,15 +561,22 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
         }
         currentHandler = result;
 		currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);
-		expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();				
+		expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();	*/
+		
+		int currentRuleIndexInPath = -1;
+		while(currentRuleIndexInPath < 0){
+            currentRuleIndexInPath = getCurrentRuleIndexInPath(elementPath);
+        }
+        activatePath(/*currentRuleIndexInPath,*/ elementPath);
+        currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);
 	}
 
-	void setCurrentHandler(AAttribute item, Rule[] innerPath, InternalConflictResolver resolver){		
+	void setCurrentHandler(AttributeMatchPath attributePath, SRule[] innerPath, InternalConflictResolver resolver){		
 		// System.out.println(element);
 		// System.out.println(currentHandler);
 		// System.out.println(topHandler);
 		
-		Rule parent  = item.getParent();
+		/*Rule parent  = item.getParent();
 		
 		if(currentHandler != topHandler){
 			//Deactivate currentHandler until its rule is ancestor of the item.
@@ -532,15 +599,22 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
         }
         currentHandler = result;
 		currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);
-		expectedOrderHandlingCount = 0;				
+		expectedOrderHandlingCount = 0;		*/
+
+        int currentRuleIndexInPath = -1;
+		while(currentRuleIndexInPath < 0){
+            currentRuleIndexInPath = getCurrentRuleIndexInPath(attributePath);
+        }
+        activatePath(/*currentRuleIndexInPath,*/ attributePath);	
+        currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);
 	}	
 	
-	void setCurrentHandler(CharsActiveTypeItem item, Rule[] innerPath, InternalConflictResolver resolver){		
+	void setCurrentHandler(CharsMatchPath charsPath, SRule[] innerPath, InternalConflictResolver resolver){		
 		// System.out.println(element);
 		// System.out.println(currentHandler);
 		// System.out.println(topHandler);
 		
-		Rule parent  = item.getParent();
+		/*Rule parent  = item.getParent();
 		
 		if(currentHandler != topHandler){
 			//Deactivate currentHandler until its rule is ancestor of the item.
@@ -563,7 +637,15 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
         }
         currentHandler = result;
 		currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);
-		expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();				
+		expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();*/	
+		
+		int currentRuleIndexInPath = -1;
+		while(currentRuleIndexInPath < 0){
+            currentRuleIndexInPath = getCurrentRuleIndexInPath(charsPath);
+        }
+        activatePath(/*currentRuleIndexInPath,*/ charsPath);
+        
+        currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);
 	}
 	
 		
@@ -572,10 +654,10 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	// expectedOrderHandlingCount was set. Possible problem: might need new 
 	// expectedOrderHandlingCount. In that case some mechanism to know when this 
 	// is 0 due to nature of the pattern for which the handler is set is needed.
-	void setCurrentHandler(APattern pattern, Rule[] innerPath, InternalConflictResolver resolver){	
+	void setCurrentHandler(SPattern pattern, SRule[] innerPath, InternalConflictResolver resolver){	
 		// System.out.println(currentHandler);
 		// System.out.println(topHandler);		
-		Rule parent  = pattern.getParent();
+		/*Rule parent  = pattern.getParent();
 		pathHandler.activatePath(currentHandler, parent);
 		StructureHandler result = pathHandler.getBottomHandler();
         if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
@@ -589,7 +671,30 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 				break;
 			}
 		}		
-		//expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();
+		//expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();*/
+		
+		
+		StructureHandler s = topHandler;
+	    for(int i = currentPath.size()-2; i >= 0; i--){	        
+	        SRule r = currentPath.get(i);
+	        if(r == pattern){
+	            currentHandler = s;
+	            for(int j = 0; j < innerPath.length; j++){
+                    if(innerPath[j] == pattern){
+                        currentHandler.setConflict(j+1, innerPath, stackConflictsHandler, resolver);
+                        return;	  
+                    }
+                }
+                currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);// it means the pattern is the conflict pattern and the parent index in the innerPath is 0
+	            return;	        
+	        }
+	        s = s.getChildHandler(r, currentPath);
+	        if(s == null){// null is returned after a ChoiceHandler was reset due to a child that differs from currentChild
+	            setCurrentHandler(pattern, innerPath, resolver);                	            
+	            return;
+	        }	        
+	    }
+	    throw new IllegalStateException();
 	}	
 	
 	public boolean hasDisqualifyingError(){
@@ -633,7 +738,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	}
 	
 		
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int[] inputRecordIndex, SPattern[] sourceDefinition, SPattern reper){
 		if(stackConflictsHandler.isConflictRule(definition)){
 			stackConflictsHandler.disqualify(definition);
 			hasDisqualifyingError = true;
@@ -646,7 +751,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		}
 	}
 	
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int inputRecordIndex, SPattern sourceDefinition, SPattern reper){
 		if(stackConflictsHandler.isConflictRule(sourceDefinition)){
 			stackConflictsHandler.disqualify(sourceDefinition);
 			hasDisqualifyingError = true;
@@ -659,7 +764,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		}
 	}
 	
-	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){
+	public void excessiveContent(SRule context, int startInputRecordIndex, SPattern excessiveDefinition, int[] inputRecordIndex){
 		if(stackConflictsHandler.isConflictRule(excessiveDefinition)){
 			stackConflictsHandler.disqualify(excessiveDefinition);
 			hasDisqualifyingError = true;
@@ -669,7 +774,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		}
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
+	public void excessiveContent(SRule context, SPattern excessiveDefinition, int inputRecordIndex){
 		if(stackConflictsHandler.isConflictRule(excessiveDefinition)){
 			//throw new IllegalStateException(); it could be the last one, processed even disqualified
 		}else if(reportExcessive){	
@@ -678,7 +783,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		}		
 	}
 	
-	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
+	public void missingContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found, int[] inputRecordIndex){
 		if(contextConflictsDescriptor.isConflictRule(definition) || contextConflictsDescriptor.isConflictRule(context)){
 			stackConflictsHandler.disqualify(context);//disqualify all since you don't know which is the real cause
 			hasDisqualifyingError = true;
@@ -688,7 +793,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		}	
 	}
 	
-	public void illegalContent(Rule context, int startInputRecordIndex){
+	public void illegalContent(SRule context, int startInputRecordIndex){
 		if(contextConflictsDescriptor.isConflictRule(context)){
 			stackConflictsHandler.disqualify(context);//disqualify all since you don't know which is the real cause
 			hasDisqualifyingError = true;
@@ -698,100 +803,100 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		}		
 	}
 	
-	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){	    
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){	    
 		// TODO are you sure it is possible?
 		errorCatcher.unresolvedAmbiguousElementContentError(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 		// TODO are you sure it is possible?
 		errorCatcher.unresolvedUnresolvedElementContentError(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, SAttribute[] possibleDefinitions){
 		// TODO are you sure it is possible?
 		errorCatcher.unresolvedAttributeContentError(inputRecordIndex, possibleDefinitions);
 	}
 	
 	
-	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 		// TODO are you sure it is possible?
 		errorCatcher.ambiguousUnresolvedElementContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 		// TODO are you sure it is possible?
 		errorCatcher.ambiguousAmbiguousElementContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, SAttribute[] possibleDefinitions){
 		// TODO are you sure it is possible?
 		errorCatcher.ambiguousAttributeContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 		// TODO are you sure it is possible?
 		errorCatcher.ambiguousCharacterContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 
-	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 		// TODO are you sure it is possible?
 		errorCatcher.ambiguousAttributeValueWarning(inputRecordIndex, possibleDefinitions);
 	}
 
 	
-	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		throw new IllegalStateException();
 	}
-	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		throw new IllegalStateException();
-	}
-	
-	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
-		throw new IllegalStateException();
-	}
-	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
+	public void attributeValueDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		throw new IllegalStateException();
 	}
 	
-	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, SValue charsDefinition){
+		throw new IllegalStateException();
+	}
+	public void attributeValueValueError(int inputRecordIndex, SValue charsDefinition){
+		throw new IllegalStateException();
+	}
+	
+	public void characterContentExceptedError(int inputRecordIndex, SData charsDefinition){
 		throw new IllegalStateException();
 	}	
-	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, SData charsDefinition){
 		throw new IllegalStateException();
 	}
 	
-	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
 		throw new IllegalStateException();
 	}	
 	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
 		throw new IllegalStateException();
 	}
 	
-	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, SPattern[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
-	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
-		throw new IllegalStateException();
-	}
-	
-	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		throw new IllegalStateException();
-	}
-	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
-		throw new IllegalStateException();
-	}
-	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void unresolvedAttributeValue(int inputRecordIndex, SPattern[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void listTokenDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
+		throw new IllegalStateException();
+	}
+	public void listTokenValueError(int inputRecordIndex, SValue charsDefinition){
+		throw new IllegalStateException();
+	}
+	public void listTokenExceptedError(int inputRecordIndex, SData charsDefinition){
+		throw new IllegalStateException();
+	}
+	
+    public void unresolvedListTokenInContextError(int inputRecordIndex, SPattern[] possibleDefinitions){
         throw new IllegalStateException();
     }    
-	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
         throw new IllegalStateException();
     }
-	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
+	public void missingCompositorContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found){
 		if(contextConflictsDescriptor.isConflictRule(definition)){
 			stackConflictsHandler.disqualify(context);//disqualify all since you don't know which is the real cause
 			hasDisqualifyingError = true;

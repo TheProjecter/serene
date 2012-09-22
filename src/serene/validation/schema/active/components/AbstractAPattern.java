@@ -20,11 +20,11 @@ import serene.validation.schema.active.Rule;
 import serene.validation.schema.simplified.SimplifiedComponent;
 
 import serene.validation.handlers.structure.ChildEventHandler;
-import serene.validation.handlers.structure.impl.ParticleHandler;
+import serene.validation.handlers.structure.ParticleHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public abstract class AbstractAPattern extends AbstractRule implements APattern{	
 	
@@ -32,7 +32,7 @@ public abstract class AbstractAPattern extends AbstractRule implements APattern{
 	/*protected int minOccurs;
 	protected int maxOccurs;*/
 	
-	public AbstractAPattern(ActiveModelRuleHandlerPool ruleHandlerPool){		
+	public AbstractAPattern(ValidatorRuleHandlerPool ruleHandlerPool){		
 		super(ruleHandlerPool);
 		/*minOccurs = 1;
 		maxOccurs = 1;*/
@@ -57,9 +57,9 @@ public abstract class AbstractAPattern extends AbstractRule implements APattern{
 		return maxOccurs;
 	}*/
 	
-	public ParticleHandler getParticleHandler(ChildEventHandler ceh, ErrorCatcher ec){
+	/*public ParticleHandler getParticleHandler(ChildEventHandler ceh, ErrorCatcher ec){
 		return ruleHandlerPool.getParticleHandler(ceh, this, ec);
-	}
+	}*/
 	
 	public boolean isRequiredContent(){        
 		return getMinOccurs() > 0;

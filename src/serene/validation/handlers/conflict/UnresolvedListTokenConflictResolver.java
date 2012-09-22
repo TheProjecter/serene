@@ -20,7 +20,7 @@ package serene.validation.handlers.conflict;
 import java.util.List;
 import java.util.Arrays;
 
-import serene.validation.schema.active.components.CharsActiveTypeItem;
+import serene.validation.schema.simplified.SPattern;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
@@ -46,7 +46,7 @@ public class UnresolvedListTokenConflictResolver extends ListTokenConflictResolv
             temporaryMessageStorage[q].transferMessages(errorCatcher);
             temporaryMessageStorage[q] = null;
         }else{
-            CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
+            SPattern[] definitions = candidateDefinitions.toArray(new SPattern[candidateDefinitions.size()]);
             errorCatcher.unresolvedListTokenInContextError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
         }
     }	

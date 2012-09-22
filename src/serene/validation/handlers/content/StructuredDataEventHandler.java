@@ -18,9 +18,9 @@ package serene.validation.handlers.content;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.components.AExceptPattern;
+import serene.validation.schema.simplified.SExceptPattern;
 
 public interface StructuredDataEventHandler extends EventHandler{
-	void handleChars(char[] chars, AExceptPattern context) throws SAXException;	
-	void handleString(String value, AExceptPattern context) throws SAXException;
+	void handleChars(char[] chars, SExceptPattern context) throws SAXException;	
+	void handleString(String value, SExceptPattern context) throws SAXException;
 }

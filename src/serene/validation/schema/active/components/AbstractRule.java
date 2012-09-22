@@ -23,7 +23,7 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.ActiveComponent;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
 
@@ -36,9 +36,9 @@ import serene.validation.handlers.error.ErrorCatcher;
 abstract class AbstractRule extends AbstractActiveComponent implements Rule{
 	protected Rule parent;
 	
-	protected ActiveModelRuleHandlerPool ruleHandlerPool;
+	protected ValidatorRuleHandlerPool ruleHandlerPool;
 	
-	AbstractRule(ActiveModelRuleHandlerPool ruleHandlerPool){
+	AbstractRule(ValidatorRuleHandlerPool ruleHandlerPool){
 		super();
 		this.ruleHandlerPool = ruleHandlerPool; 
 	}

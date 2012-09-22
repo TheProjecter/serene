@@ -35,7 +35,7 @@ import serene.validation.handlers.structure.MaximalReduceHandler;
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public class AValue extends DatatypedCharsAPattern{
 	String ns;
@@ -49,7 +49,7 @@ public class AValue extends DatatypedCharsAPattern{
                     Datatype datatype, 
 					String charContent,
 					ActiveGrammarModel grammarModel, 					
-					ActiveModelRuleHandlerPool ruleHandlerPool,
+					ValidatorRuleHandlerPool ruleHandlerPool,
 					SValue svalue){
 		super(datatype, grammarModel, ruleHandlerPool);
 		this.ns = ns;

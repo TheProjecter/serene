@@ -20,9 +20,11 @@ import java.util.List;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.components.AListPattern;
+/*import serene.validation.schema.active.components.AListPattern;
 import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AValue;
+import serene.validation.schema.active.components.AValue;*/
+
+import serene.validation.schema.simplified.SListPattern;
 
 import serene.validation.handlers.content.StructuredDataEventHandler;
 
@@ -33,13 +35,13 @@ abstract class AbstractSDVH extends AbstractDVH implements ErrorCatcher{
         super();
     }
 	
-	void validateListPattern(char[] chars, AListPattern listPattern) throws SAXException{
+	void validateListPattern(char[] chars, SListPattern listPattern) throws SAXException{
 	    ListPatternValidationHandler lpvh = pool.getListPatternValidationHandler(listPattern, this, this);
 	    lpvh.handleChars(chars, listPattern);
 	    lpvh.recycle();
 	}
 	
-	void validateListPattern(String value, AListPattern listPattern) throws SAXException{		
+	void validateListPattern(String value, SListPattern listPattern) throws SAXException{		
 		ListPatternValidationHandler lpvh = pool.getListPatternValidationHandler(listPattern, this, this);
 	    lpvh.handleString(value, listPattern);
 	    lpvh.recycle(); 		

@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
-import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.simplified.SElement;
 
 import serene.validation.handlers.content.ElementEventHandler;
 

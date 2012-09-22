@@ -44,8 +44,10 @@ import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.CharacterContentDescriptor;
 import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
+import serene.validation.handlers.match.ElementMatchPath;
+
 class ElementConcurrentHandler extends CandidatesEEH{
-	List<AElement> candidateDefinitions;
+	List<ElementMatchPath> candidateDefinitionPathes;
 	List<ElementValidationHandler> candidates;	
 	ExternalConflictHandler candidatesConflictHandler;
     CandidatesConflictErrorHandler localCandidatesConflictErrorHandler;
@@ -59,21 +61,21 @@ class ElementConcurrentHandler extends CandidatesEEH{
         localCandidatesConflictErrorHandler = new CandidatesConflictErrorHandler(candidatesConflictHandler);
 	}	
 	
-	void init(List<AElement> candidateDefinitions, ElementValidationHandler parent){		
+	void init(List<ElementMatchPath> candidateDefinitionPathes, ElementValidationHandler parent){		
 		this.parent = parent;
-		this.candidateDefinitions = candidateDefinitions;
+		this.candidateDefinitionPathes = candidateDefinitionPathes;
         localCandidatesConflictErrorHandler.init(activeInputDescriptor);         
 		init((ContextErrorHandlerManager)parent);		
-		for(int i = 0; i < candidateDefinitions.size(); i++){
-			ElementValidationHandler candidate = pool.getElementValidationHandler(candidateDefinitions.get(i), parent);
+		for(int i = 0; i < candidateDefinitionPathes.size(); i++){
+			ElementValidationHandler candidate = pool.getElementValidationHandler(candidateDefinitionPathes.get(i), parent);
             candidate.setCandidateIndex(i);
             candidate.setCandidate(true);
             candidate.setCandidatesConflictErrorHandler(localCandidatesConflictErrorHandler);
 			candidate.setContextErrorHandlerIndex(CONFLICT);
 			candidates.add(candidate);	
 		}	
-        localCandidatesConflictErrorHandler.setCandidates(candidateDefinitions);
-        candidatesConflictHandler.init(candidateDefinitions.size());
+        localCandidatesConflictErrorHandler.setCandidates(candidateDefinitionPathes);
+        candidatesConflictHandler.init(candidateDefinitionPathes.size());
 	}
 	    
 	public void recycle(){
@@ -81,7 +83,7 @@ class ElementConcurrentHandler extends CandidatesEEH{
 			candidate.recycle();
 		}
 		candidates.clear();	
-		candidateDefinitions.clear();		
+		candidateDefinitionPathes.clear();		
 		candidatesConflictHandler.clear();
         localCandidatesConflictErrorHandler.clear(false);
 		resetContextErrorHandlerManager();
@@ -200,15 +202,15 @@ class ElementConcurrentHandler extends CandidatesEEH{
 			// Why shift, they all have errors already??? 
 			// Maybe the parent actually expects one of them and not shifting 
 			// results in a fake error.		
-			parent.addChildElement(candidateDefinitions, contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter());
+			parent.addChildElement(candidateDefinitionPathes, contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter());
 		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
-			AElement qElement = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
-			parent.addChildElement(qElement);
+			ElementMatchPath qElementMatchPath = candidateDefinitionPathes.get(candidatesConflictHandler.getNextQualified(0));
+			parent.addChildElement(qElementMatchPath);
 		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
 			// Shift all without errors, hope the parent conflict disqualifies all but one
 			ConflictMessageReporter cmr = null;
 			if(contextErrorHandler[contextErrorHandlerIndex] != null) cmr = contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();			
-			parent.addChildElement(candidateDefinitions, candidatesConflictHandler, cmr);
+			parent.addChildElement(candidateDefinitionPathes, candidatesConflictHandler, cmr);
 		}
 	}	
 	
@@ -220,16 +222,16 @@ class ElementConcurrentHandler extends CandidatesEEH{
 			// Why shift, they all have errors already??? 
 			// Maybe the parent actually expects one of them and not shifting 
 			// results in a fake error.		
-			parent.addChildElement(candidateDefinitions, reper.getConflictMessageReporter());
+			parent.addChildElement(candidateDefinitionPathes, reper.getConflictMessageReporter());
 		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
-			AElement qElement = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
-			parent.addChildElement(qElement);
+			ElementMatchPath qElementMatchPath = candidateDefinitionPathes.get(candidatesConflictHandler.getNextQualified(0));
+			parent.addChildElement(qElementMatchPath);
 		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
 			// Shift all without errors, hope the parent conflict disqualifies all but one
 			ConflictMessageReporter cmr = null;
 			/*if(contextErrorHandler[contextErrorHandlerIndex] != null) cmr = contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();*/
 			cmr = reper.getConflictMessageReporter(); 			
-			parent.addChildElement(candidateDefinitions, candidatesConflictHandler, cmr);
+			parent.addChildElement(candidateDefinitionPathes, candidatesConflictHandler, cmr);
 		}
 	}	
 	

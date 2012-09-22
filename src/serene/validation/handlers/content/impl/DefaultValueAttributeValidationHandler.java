@@ -22,6 +22,9 @@ import java.util.BitSet;
 
 import org.xml.sax.SAXException;
 
+import serene.validation.schema.simplified.SAttribute;
+
+
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.CharsActiveType;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
@@ -32,6 +35,7 @@ import serene.validation.handlers.content.CharactersEventHandler;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.match.MatchHandler;
+import serene.validation.handlers.match.CharsMatchPath;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
@@ -59,10 +63,10 @@ class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler
 		this.stackHandlerPool = stackHandlerPool;
 	}
     
-    public void init(AAttribute attribute, ErrorCatcher errorCatcher){       
+    public void init(SAttribute attribute, ErrorCatcher errorCatcher){       
 		this.errorCatcher = errorCatcher;
 		this.attribute = attribute;
-		attribute.assembleDefinition();
+		/*attribute.assembleDefinition();*/
 	}
     
     public void reset(){
@@ -98,11 +102,11 @@ class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler
     
 	// CharactersValidationHandler
 	//==========================================================================
-    public void addChars(CharsActiveTypeItem charsDefinition){
+    public void addChars(CharsMatchPath charsDefinition){
 		stackHandler.shift(charsDefinition);
 	}
 	
-	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void addChars(List<? extends CharsMatchPath> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, errorCatcher);
@@ -111,7 +115,7 @@ class DefaultValueAttributeValidationHandler extends AttributeDefinitionHandler
 		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, temporaryMessageStorage);
 	}
 	
-	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void addChars(List<? extends CharsMatchPath> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, errorCatcher);

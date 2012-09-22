@@ -16,9 +16,19 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
 import org.xml.sax.SAXException;
 
 import serene.bind.util.DocumentIndexedData;
+
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.ListPatternMatchPath;
+import serene.validation.handlers.match.TextMatchPath;
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
 
 public class SText extends SNoChildrenPattern{
 	boolean addedBySimplification;
@@ -38,6 +48,18 @@ public class SText extends SNoChildrenPattern{
 		parent.setAllowsText();
 	}
 	
+	
+	void setMatchPathes(List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){
+ 	    TextMatchPath mp = matchPathPool.getTextMatchPath();
+        mp.addText(this);
+        textMatchPathes.add(mp);
+ 	}
+	void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){
+        TextMatchPath mp = matchPathPool.getTextMatchPath();
+        mp.addText(this);
+        textMatchPathes.add(mp);
+    }
+    
 	public boolean isTextContent(){
 	    return true;
 	}
@@ -72,6 +94,9 @@ public class SText extends SNoChildrenPattern{
 		v.visit(this);
 	}	
 	public void accept(RestrictingVisitor v) throws SAXException{
+		v.visit(this);
+	}
+	public void accept(SimplifiedRuleVisitor v){
 		v.visit(this);
 	}
 	public String toString(){

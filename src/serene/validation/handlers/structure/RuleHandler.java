@@ -16,20 +16,20 @@ limitations under the License.
 
 package serene.validation.handlers.structure;
 
-import  serene.validation.schema.active.Rule;
+import  serene.validation.schema.simplified.SRule;
 
 import serene.validation.handlers.FunctionallyEquivalable;
 
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
-public interface RuleHandler extends FunctionallyEquivalable{
+public abstract class RuleHandler implements FunctionallyEquivalable{
 
-	Rule getRule();
-	boolean isSatisfied();
-	boolean isSaturated();	
-	void accept(RuleHandlerVisitor visitor);
+	public abstract SRule getRule();
+	public abstract boolean isSatisfied();
+	public abstract boolean isSaturated();	
+	public abstract void accept(RuleHandlerVisitor visitor);
 	
-	RuleHandler getOriginal();
+	public abstract RuleHandler getOriginal();
 	
-	void setStackConflictsHandler(StackConflictsHandler stackConflictsHandler);
+	public abstract void setStackConflictsHandler(StackConflictsHandler stackConflictsHandler);
 }
