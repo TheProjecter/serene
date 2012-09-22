@@ -23,8 +23,6 @@ import java.util.Map;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.components.AElement;
-
 import serene.validation.schema.simplified.SElement;
 
 import serene.validation.handlers.error.ContextErrorHandlerManager;
@@ -55,9 +53,9 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 	    queueEndEntry = -1;
 	}
 	
-	void init(List<ElementMatchPath> candidateDefinitionPathes,  BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
+	void init(List<ElementMatchPath> cdp,  BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
 		this.parent = parent;
-		this.candidateDefinitionPathes = candidateDefinitionPathes;
+		this.candidateDefinitionPathes.addAll(cdp);
         localCandidatesConflictErrorHandler.init(activeInputDescriptor); 
 		init((ContextErrorHandlerManager)parent);
 		this.bindingModel = bindingModel;
@@ -185,6 +183,7 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		
 		
 	void validateInContext(){
+	    	    
 	    int conflictResolutionIndex = getConflictResolutionId();
 		if(conflictResolutionIndex == MessageReporter.UNRESOLVED){
 			// Shift all with errors, hope the parent context disqualifies all but 1
@@ -196,6 +195,9 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 			mayRecycleCandidateQueues = false;
 		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
 			ElementMatchPath qElementMatchPath = candidateDefinitionPathes.get(candidatesConflictHandler.getNextQualified(0));
+			for(ElementMatchPath mp : candidateDefinitionPathes){
+			    if(mp != qElementMatchPath)mp.recycle();
+			}
 			parent.addChildElement(qElementMatchPath);
 		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
 			// TODO Maybe a warning
@@ -229,6 +231,9 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 			mayRecycleCandidateQueues = false;
 		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
 			ElementMatchPath qElementMatchPath = candidateDefinitionPathes.get(candidatesConflictHandler.getNextQualified(0));
+			for(ElementMatchPath mp : candidateDefinitionPathes){
+			    if(mp != qElementMatchPath)mp.recycle();
+			}
 			parent.addChildElement(qElementMatchPath);
 		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
 			// TODO Maybe a warning

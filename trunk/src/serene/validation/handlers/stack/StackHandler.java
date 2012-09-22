@@ -26,14 +26,7 @@ import serene.bind.util.Queue;
 import serene.bind.BindingModel;
 
 import serene.validation.handlers.FunctionallyEquivalable;
-/*
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
 
-*/
 import serene.validation.schema.simplified.SPattern;
 import serene.validation.schema.simplified.SElement;
 

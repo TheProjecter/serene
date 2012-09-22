@@ -21,8 +21,6 @@ import java.util.ArrayList;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.components.AAttribute;
-
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
@@ -38,13 +36,16 @@ class AttributeConcurrentHandler extends ValidatingAEH{
     
     
 	List<AttributeMatchPath> candidateDefinitionPathes;
+	boolean isShifted;
 	List<CandidateAttributeValidationHandler> candidates;
 	ExternalConflictHandler localCandidatesConflictHandler;     
 	ValidatorErrorHandlerPool errorHandlerPool;
 	TemporaryMessageStorage[] temporaryMessageStorage;
 	
+	
 	AttributeConcurrentHandler(){
 		super();
+		candidateDefinitionPathes = new ArrayList<AttributeMatchPath>();
 		candidates = new ArrayList<CandidateAttributeValidationHandler>(3);		
 		localCandidatesConflictHandler = new ExternalConflictHandler();
 	}
@@ -56,6 +57,15 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 		localCandidatesConflictHandler.clear();
 		candidates.clear();
 		temporaryMessageStorage = null;
+		
+		if(!isShifted){
+		    for(AttributeMatchPath amp : candidateDefinitionPathes){
+		        amp.recycle();
+		    }
+		}
+		isShifted = false;
+		candidateDefinitionPathes.clear();
+		
 		pool.recycle(this);
 	}
 		
@@ -64,9 +74,9 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 		this.errorHandlerPool = errorHandlerPool;
 	}
 	
-	void init(List<AttributeMatchPath> candidateDefinitionPathes, ElementValidationHandler parent){
+	void init(List<AttributeMatchPath> cdp, ElementValidationHandler parent){
 		this.parent = parent;
-		this.candidateDefinitionPathes = candidateDefinitionPathes; 
+		this.candidateDefinitionPathes.addAll(cdp); 
 		localCandidatesConflictHandler.init(candidateDefinitionPathes.size());
 		temporaryMessageStorage = new TemporaryMessageStorage[candidateDefinitionPathes.size()];
 		
@@ -92,12 +102,16 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 	}
 
 	void validateInContext(){
+	    isShifted = true;
 		int candidatesCount = candidates.size();		
 		int qualifiedCount = candidatesCount - localCandidatesConflictHandler.getDisqualifiedCount();		
 		if(qualifiedCount == 0){		
 			parent.addAttribute(candidateDefinitionPathes, temporaryMessageStorage);
 		}else if(qualifiedCount == 1){
 			AttributeMatchPath qAttributeMatchPath = candidateDefinitionPathes.get(localCandidatesConflictHandler.getNextQualified(0));
+			for(AttributeMatchPath mp : candidateDefinitionPathes){
+			    if(mp != qAttributeMatchPath)mp.recycle();
+			}
 			parent.addAttribute(qAttributeMatchPath);
 			if(temporaryMessageStorage != null){
                 for(int i = 0;  i < temporaryMessageStorage.length; i++){

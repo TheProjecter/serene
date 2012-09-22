@@ -22,17 +22,6 @@ import java.util.BitSet;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.CharsActiveType;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AListPattern;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SRule;
@@ -67,7 +56,7 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
     ElementValidationHandler parent;    
 	
 	ContextErrorHandlerManager contextErrorHandlerManager;
-	
+		
 	AttributeValidationHandler(){
 		super();
 	}
@@ -114,11 +103,11 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
 		cvh.recycle();
 		stackHandler.endValidation();
 		stackHandler.recycle();
-		stackHandler = null;
-                
+		stackHandler = null;                
 	}
 
 	void validateInContext(){
+	    isShifted = true;
 		parent.addAttribute(attributeMatchPath);
 	}
 
@@ -359,7 +348,7 @@ class AttributeValidationHandler extends AttributeDefinitionHandler
 		contextErrorHandler.unexpectedCharacterContent(inputRecordIndex, elementDefinition);
         contextErrorHandler.setCandidate(oldIsCandidate);
 	}	
-	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, SAttribute attributeDefinition){
         ContextErrorHandler contextErrorHandler = contextErrorHandlerManager.getContextErrorHandler();
         boolean oldIsCandidate = contextErrorHandler.isCandidate();
         contextErrorHandler.setCandidate(false);

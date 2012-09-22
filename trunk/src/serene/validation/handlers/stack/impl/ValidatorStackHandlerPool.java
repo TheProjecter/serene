@@ -23,13 +23,6 @@ import java.util.Map;
 
 import serene.util.IntList;
 
-/*import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.ActiveType;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ACompositor;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;*/
-
 import serene.validation.schema.simplified.Type;
 import serene.validation.schema.simplified.SRule;
 import serene.validation.schema.simplified.SMultipleChildrenPattern;

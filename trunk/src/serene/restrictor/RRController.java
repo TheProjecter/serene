@@ -1123,6 +1123,22 @@ public class RRController extends RController{
 					handledDefinitions.add(index);
                     definitionsContentTypes.put(definitionTopPatterns[index], contentType);
 					break handle;
+				}else{
+				    // TODO 
+                    // if not blind recursion and context is restricted for elements
+                    // 7.1.1 attribute
+                    if(attributeContext){
+                        reportError711(ref);
+                    }                    
+                    // 7.1.3 list
+                    if(listContext){
+                        reportError713(ref);
+                    }                    
+                    // 7.1.4 exceptPattern
+                    if(exceptPatternContext714){
+                        reportError714(ref);
+                    }
+                    // report error because ref points to element
 				}
 				if(isRequiredBranch(index)){
 					if(hasAlternative(ref, index)){	
@@ -1192,7 +1208,7 @@ public class RRController extends RController{
             for(int i = 0; i < definitionCount; i++){
                 if(loopOptional.get(i) != null)loopOptional.get(i).pop();
             }
-        }
+        }       
 	}	
 	//  !!! subclass !!!
 	//------------------
@@ -1389,7 +1405,7 @@ public class RRController extends RController{
 	/*public void visit(SElement element) throws SAXException{		
 		if(attributeContext){
 			// error 7.1.1	
-			reportError711(element);			
+			reportError713(element);			
 		}
 		if(listContext){
 			// error 7.1.3

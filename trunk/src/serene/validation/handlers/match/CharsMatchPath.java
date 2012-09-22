@@ -24,6 +24,7 @@ public abstract class CharsMatchPath extends MatchPath{
         itemId = CHARS;
     }
     
+    public abstract CharsMatchPath getCopy();
     public abstract SPattern getChars();
         
 }

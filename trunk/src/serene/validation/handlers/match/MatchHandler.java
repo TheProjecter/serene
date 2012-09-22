@@ -19,24 +19,9 @@ package serene.validation.handlers.match;
 import java.util.List;
 import java.util.ArrayList;
 
-/*import serene.validation.schema.active.ElementContentType;
-import serene.validation.schema.active.AttributesType;
-import serene.validation.schema.active.DataActiveType;
-import serene.validation.schema.active.StructuredDataActiveType;
-import serene.validation.schema.active.CharsActiveType;*/
-import serene.validation.schema.active.ActiveModel;
-/*import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.AExceptPattern;*/
-
-/*import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AListPattern;
-import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.components.AText;*/
-
+import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SNameClass;
 import serene.validation.schema.simplified.SElement;
 import serene.validation.schema.simplified.SAttribute;
 import serene.validation.schema.simplified.SExceptPattern;
@@ -57,14 +42,17 @@ public class MatchHandler{
 	List<ListPatternMatchPath> listPatternMatchPathes;
 	List<TextMatchPath> textMatchPathes;
 	
-    ActiveModel activeModel;
     List<SimplifiedComponent> unexpectedMatches;
     
 	boolean recognizeOutOfContext;
 	
 	MatchPathPool matchPathPool;
 	
-	public MatchHandler(){
+	SimplifiedModel simplifiedModel;
+	
+	public MatchHandler(SimplifiedModel simplifiedModel){
+	    this.simplifiedModel = simplifiedModel;
+	    
 		elementMatchPathes = new ArrayList<ElementMatchPath>();		
 		attributeMatchPathes = new ArrayList<AttributeMatchPath>();
 		
@@ -79,34 +67,43 @@ public class MatchHandler{
 
         matchPathPool = new MatchPathPool();		
 	}	
-	
-    public void setActiveModel(ActiveModel activeModel){
-        this.activeModel = activeModel;
-    }
-	
+			
 	public List<SimplifiedComponent> matchElement(String namespace, String name){
 		unexpectedMatches.clear();
-        activeModel.setSimplifiedElementDefinitions(namespace, name, unexpectedMatches);
+        
+		SElement[] elements = simplifiedModel.getElementDefinitions();
+		if(elements == null) return unexpectedMatches;
+		
+		for(int i = 0; i < elements.length; i++){
+		    SNameClass nc = elements[i].getNameClass(); 
+		    if(nc != null && nc.matches(namespace, name)) unexpectedMatches.add(elements[i]);
+		}
+        
 		return unexpectedMatches;
 	}
 	
 	public List<SimplifiedComponent> matchAttribute(String namespace, String name){
 		unexpectedMatches.clear();
-        activeModel.setSimplifiedAttributeDefinitions(namespace, name, unexpectedMatches);
+        
+		SAttribute[] attributes = simplifiedModel.getAttributeDefinitions();
+		if(attributes == null) return unexpectedMatches;
+		
+		for(int i = 0; i < attributes.length; i++){
+		    if(attributes[i].getNameClass().matches(namespace, name)) unexpectedMatches.add(attributes[i]);
+		}
+		
 		return unexpectedMatches;
 	}
 	
-	public List<ElementMatchPath> matchElement(String namespace, String name, SElement type){		
-		elementMatchPathes.clear();		
-		/*elementMatches = type.getElementMatches(namespace, name, elementMatches);*/
-		
+	
+	public List<ElementMatchPath> matchElement(String namespace, String name, SElement type){
+		elementMatchPathes.clear();	
 		type.setElementContentMatchPathes(namespace, name, elementMatchPathes, matchPathPool);
 		return elementMatchPathes;		
 	}
 	
-	public List<AttributeMatchPath> matchAttribute(String namespace, String name, SElement type){		
+	public List<AttributeMatchPath> matchAttribute(String namespace, String name, SElement type){
 		attributeMatchPathes.clear();
-		/*attributeMatches = type.getAttributeMatches(namespace, name, attributeMatches);*/
 		type.setAttributeContentMatchPathes(namespace, name, attributeMatchPathes, matchPathPool);
 		return attributeMatchPathes;		
 	}

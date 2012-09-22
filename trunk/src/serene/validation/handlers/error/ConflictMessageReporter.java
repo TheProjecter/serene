@@ -24,8 +24,6 @@ import org.xml.sax.SAXParseException;
 
 import serene.validation.handlers.conflict.ElementConflictResolver;
 
-import serene.validation.schema.active.components.AElement;
-
 import serene.validation.schema.simplified.SElement;
 
 import serene.util.IntList;

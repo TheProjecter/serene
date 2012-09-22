@@ -19,7 +19,6 @@ package serene;
 
 import serene.validation.schema.parsed.ParsedModel;
 import serene.validation.schema.simplified.SimplifiedModel;
-import serene.validation.schema.active.ActiveModel;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -35,29 +34,25 @@ import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 import serene.validation.schema.ValidationModel;
 
 public class SchemaModel implements ValidationModel, DTDCompatibilityModel{
-    ValidationModel validationModel;    
+    ParsedModel parsedModel;   
+    SimplifiedModel simplifiedModel;
     DTDCompatibilityModel dtdCompatibilityModel;
-    public SchemaModel(ValidationModel validationModel,
+    public SchemaModel(ParsedModel parsedModel,   
+            SimplifiedModel simplifiedModel,
             DTDCompatibilityModel dtdCompatibilityModel){
-        this.validationModel = validationModel;
+        this.parsedModel = parsedModel;   
+        this.simplifiedModel = simplifiedModel;
         this.dtdCompatibilityModel = dtdCompatibilityModel;        
     }
     
     
     public ParsedModel getParsedModel(){
-        if(validationModel == null) return null;
-        return validationModel.getParsedModel();
+        return parsedModel;
     }
     
     public SimplifiedModel getSimplifiedModel(){
-        if(validationModel == null) return null;
-        return validationModel.getSimplifiedModel();
+        return simplifiedModel;
     }
-    
-    public ActiveModel getActiveModel(ValidatorStackHandlerPool stackHandlerPool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
-        if(validationModel == null) return null;
-        return validationModel.getActiveModel(stackHandlerPool, activeInputDescriptor, inputStackDescriptor, errorDispatcher);
-    }    
     
     public AttributeDefaultValueModel getAttributeDefaultValueModel(){
         if(dtdCompatibilityModel == null) return null;

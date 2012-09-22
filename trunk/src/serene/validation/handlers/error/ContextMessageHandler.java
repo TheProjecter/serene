@@ -27,16 +27,6 @@ import org.xml.sax.SAXException;
 
 import serene.validation.handlers.conflict.ElementConflictResolver;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SRule;
@@ -1220,13 +1210,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
     
-	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, SAttribute attributeDefinition){
         
 		messageTotalCount++;
 		if(unexpectedAVIndex < 0){
 			unexpectedAVIndex = 0;	
 			unexpectedAVInputRecordIndex =new int[initialSize];
-			unexpectedAVDefinition = new AAttribute[initialSize];
+			unexpectedAVDefinition = new SAttribute[initialSize];
 		}else if(++unexpectedAVIndex == unexpectedAVInputRecordIndex.length){
 		    int size = unexpectedAVInputRecordIndex.length + increaseSizeAmount;
 		    
@@ -1234,7 +1224,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(unexpectedAVInputRecordIndex, 0, increasedCN, 0, unexpectedAVIndex);
 			unexpectedAVInputRecordIndex = increasedCN;
 		    
-		    AAttribute[] increasedDef = new AAttribute[size];
+		    SAttribute[] increasedDef = new SAttribute[size];
 			System.arraycopy(unexpectedAVDefinition, 0, increasedDef, 0, unexpectedAVIndex);
 			unexpectedAVDefinition = increasedDef;
 		}

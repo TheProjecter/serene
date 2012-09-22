@@ -18,9 +18,6 @@ package serene.validation.handlers.content.impl;
 
 import java.util.List;
 
-import serene.validation.schema.active.components.AAttribute;
-
-import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.match.MatchHandler;
@@ -33,6 +30,7 @@ abstract class AttributeDefinitionHandler extends ValidatingAEH
                                             implements CharsContentTypeHandler{
     SAttribute attribute;
     AttributeMatchPath attributeMatchPath;
+    boolean isShifted;
     
     MatchHandler matchHandler;
 	
@@ -45,6 +43,10 @@ abstract class AttributeDefinitionHandler extends ValidatingAEH
   
     void reset(){       
 		/*attribute.releaseDefinition();*/
+		if(!isShifted){
+		    if(attributeMatchPath != null) attributeMatchPath.recycle();
+		}
+		isShifted = false;
 		attributeMatchPath = null;
 		attribute = null;
     }

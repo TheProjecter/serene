@@ -63,27 +63,14 @@ import serene.validation.schema.simplified.SAnyName;
 import serene.validation.schema.simplified.SNsName;
 import serene.validation.schema.simplified.SChoiceNameClass;
 
-
 import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.RecursionModel;
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.RestrictingVisitor;
 
-import serene.validation.schema.active.ActiveModelPool;
-import serene.validation.schema.active.ActiveModel;
-import serene.validation.schema.active.ActiveGrammarModel;
-
 import serene.validation.schema.simplified.Identifier;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-
+import serene.validation.schema.parsed.ParsedModel;
 
 import serene.validation.handlers.content.CharactersEventHandler;
 import serene.validation.handlers.content.impl.ContentHandlerPool;
@@ -124,9 +111,6 @@ public class CompatibilityHandler implements RestrictingVisitor{
     
     /*CompatibilityControlAttribute ccAttribute;*/
     DefaultValueAttributeHandler defaultValueHandler;
-    
-    ActiveModel activeModel;
-    ActiveGrammarModel grammarModel;
     
     ValidatorErrorHandlerPool errorHandlerPool;
     ValidatorEventHandlerPool eventHandlerPool;
@@ -246,11 +230,8 @@ public class CompatibilityHandler implements RestrictingVisitor{
         this.optimizedForResourceSharing = optimizedForResourceSharing;
     }
     
-    public SchemaModel handle(ValidationModel validationModel) throws SAXException{     
-        SimplifiedModel simplifiedModel = validationModel.getSimplifiedModel();
-        if(simplifiedModel == null)return new SchemaModel(validationModel, new DTDCompatibilityModelImpl(null, null));
-        activeModel = validationModel.getActiveModel(stackHandlerPool, activeInputDescriptor, inputStackDescriptor, errorDispatcher);
-        grammarModel = activeModel.getGrammarModel();       
+    public SchemaModel handle(ParsedModel parsedModel, SimplifiedModel simplifiedModel) throws SAXException{
+        if(simplifiedModel == null)return new SchemaModel(parsedModel, simplifiedModel, new DTDCompatibilityModelImpl(null, null));
                 
         startTopPattern = simplifiedModel.getStartTopPatterns();
         refDefinitionTopPattern = simplifiedModel.getRefDefinitionTopPatterns();
@@ -300,7 +281,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
         for(SPattern start : startTopPattern){
             start.accept(this);
         }
-        if(optimizedForResourceSharing)activeModel.recycle();
+        
         if(level1AttributeDefaultValue){
             if(errorDispatcher.hasAttributeDefaultValueError()) attributeDefaultValueModel = null;
             else attributeDefaultValueModel.wrapUp();
@@ -318,7 +299,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             else attributeIdTypeModel.wrapUp();
         }
         dtdCompatibilityModel = new DTDCompatibilityModelImpl(attributeDefaultValueModel, attributeIdTypeModel);
-        return new SchemaModel(validationModel, dtdCompatibilityModel);        
+        return new SchemaModel(parsedModel, simplifiedModel, dtdCompatibilityModel);        
     }
     
     private void handleIdRefs() throws SAXException{

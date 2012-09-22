@@ -24,14 +24,6 @@ import java.io.File;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AData;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SRule;
@@ -219,7 +211,7 @@ public class AttributeDefaultValueErrorHandler implements ErrorCatcher{
 	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, SAttribute attributeDefinition){
         String message = "DTD compatibility error. Default value for attribute definition <"+qName+"> at "+getLocation(location)
                         +" does not match attribute pattern."
                         +" Unexpected value.";

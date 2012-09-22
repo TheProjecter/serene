@@ -79,51 +79,22 @@ public abstract class MatchPath  implements Reusable{
 		RangeCheck(index);
 		return list[index];
 	}
-    
-    /*public SRule set(int index, SRule r) {
-		RangeCheck(index);
-	
-		SRule oldValue = list[index];
-		list[index] = r;
-		return oldValue;
-    }*/
-    
+        
     public boolean add(SRule r){
+        /*for(int i = 0; i <= lastIndex; i++){		    
+		    if(list[i] == r){
+		        throw new IllegalStateException();
+		    }
+		        
+		}*/
+		
+		
 		if(++lastIndex == list.length)increaseSize();
+		
 		list[lastIndex] = r;
 		return true;
     }
 
-    /*public boolean remove(SRule r) {
-        if(lastIndex < 0)return false;
-        
-		int index = -1;
-		for(int j = 0; j <= lastIndex; j++){
-			if(r == list[j]){
-				index = j;
-				break;
-			}
-		}
-		if(index == -1)return false;
-		
-		int numMoved = lastIndex - index;
-		if (numMoved > 0)
-			System.arraycopy(list, index+1, list, index,
-					 numMoved);
-		lastIndex--;
-		return  true;
-    }*/
-
-	/*public void removeFromIndex(int index) {
-	    if(index < 0 || index > lastIndex) throw new IllegalArgumentException();
-	    
-	    int numMoved = lastIndex - index;
-		if (numMoved > 0)
-			System.arraycopy(list, index+1, list, index,
-					 numMoved);
-		lastIndex--;
-	}*/
-	
 	public void trimToSize(){
 		SRule[] decreased = new SRule[lastIndex+1];
 		System.arraycopy(list, 0, decreased, 0, lastIndex+1);
@@ -135,22 +106,36 @@ public abstract class MatchPath  implements Reusable{
     }
 	
 	private void increaseSize(){
-		SRule[] increased = new SRule[increaseSizeAmount+list.length];
+		SRule[] increased = new SRule[increaseSizeAmount + list.length];
+		System.arraycopy(list, 0, increased, 0, list.length);
+		list = increased;
+	}
+	
+	void adjustSize(int limit){
+	    int newLength = list.length;
+	    while(limit >= newLength){
+	        newLength += increaseSizeAmount;
+	    }
+	    
+		SRule[] increased = new SRule[newLength];
 		System.arraycopy(list, 0, increased, 0, list.length);
 		list = increased;
 	}
 		
     private void RangeCheck(int index) {
-		if (index >= lastIndex+1)
-	    throw new IndexOutOfBoundsException(
-		"Index: "+index+", Size: "+(lastIndex+1));
+		if (index >= lastIndex+1 || index == -1){
+		    throw new IndexOutOfBoundsException(
+		        "Index: "+index+", Size: "+(lastIndex+1));
+		}
     }
 	
     public int getItemId(){
         return itemId; 
     }
     
-    //Always includes the limit too.
+    public abstract MatchPath getCopy();
+    
+    
     public abstract MatchPath getHeadPath(int to);
     public abstract ElementMatchPath getElementHeadPath(int to);
     public abstract AttributeMatchPath getAttributeHeadPath(int to);

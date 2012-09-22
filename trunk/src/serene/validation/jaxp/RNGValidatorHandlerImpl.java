@@ -42,9 +42,7 @@ import org.w3c.dom.ls.LSResourceResolver;
 import org.relaxng.datatype.ValidationContext;
 
 import serene.SchemaModel;
-import serene.validation.schema.active.ActiveModel;
-
-import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.simplified.SimplifiedModel;
 
 import serene.validation.handlers.match.MatchHandler;
 
@@ -90,6 +88,7 @@ public class RNGValidatorHandlerImpl extends ValidatorHandler{
 	ValidatorStackHandlerPool stackHandlerPool;
 	
 	SchemaModel schemaModel;
+	SimplifiedModel simplifiedModel;
 							
 	SpaceCharsHandler spaceHandler;
 	MatchHandler matchHandler;
@@ -100,7 +99,6 @@ public class RNGValidatorHandlerImpl extends ValidatorHandler{
 	CharacterContentDescriptor characterContentDescriptor;
 		
 	ElementEventHandler elementHandler;	
-	ActiveModel activeModel;
 	
     boolean secureProcessing;
     boolean namespacePrefixes;
@@ -149,11 +147,12 @@ public class RNGValidatorHandlerImpl extends ValidatorHandler{
 		this.errorHandlerPool = errorHandlerPool;				
 		
 		this.schemaModel = schemaModel;
+		this.simplifiedModel = schemaModel.getSimplifiedModel();
 		
 		this.stackHandlerPool = stackHandlerPool;
 		
 		
-		matchHandler  = new MatchHandler();
+		matchHandler  = new MatchHandler(simplifiedModel);
 		spaceHandler = new SpaceCharsHandler();					
         documentContext = new DocumentContext();
         prefixNamespaces = new HashMap<String, String>();
@@ -179,19 +178,13 @@ public class RNGValidatorHandlerImpl extends ValidatorHandler{
 	    errorHandlerPool.fill();
         eventHandlerPool.fill();
         
-        activeModel = schemaModel.getActiveModel(stackHandlerPool,
-                                                    activeInputDescriptor,
-		                                            inputStackDescriptor, 
-													errorDispatcher);
-		if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
-        matchHandler.setActiveModel(activeModel);
+
+		if(simplifiedModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
+
 	}
 	void releaseResources(){
 	    eventHandlerPool.releaseHandlers();
 		errorHandlerPool.releaseHandlers();
-		
-		activeModel.recycle();
-		activeModel = null;
 	}
 	
 	protected void finalize(){	
@@ -279,7 +272,7 @@ public class RNGValidatorHandlerImpl extends ValidatorHandler{
             locator.getPublicId(), 
             locator.getLineNumber(), 
             locator.getColumnNumber());
-		elementHandler = eventHandlerPool.getStartValidationHandler(activeModel.getStartElement().getCorrespondingSimplifiedComponent());
+		elementHandler = eventHandlerPool.getStartValidationHandler(simplifiedModel.getStartElement());
                         
         defaultNamespace = null;
 		prefixNamespaces.clear();

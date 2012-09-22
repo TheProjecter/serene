@@ -18,12 +18,6 @@ package serene.validation.handlers.structure;
 
 import java.util.Arrays;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AInnerPattern;
-import serene.validation.schema.active.components.MultipleChildrenAPattern;
-
-
 import serene.validation.schema.simplified.SRule;
 import serene.validation.schema.simplified.SPattern;
 import serene.validation.schema.simplified.SMultipleChildrenPattern;
@@ -560,7 +554,7 @@ abstract class MaximalReduceCountHandler extends MaximalReduceHandler{
 						int lineNumber, 
 						int columnNumber, 
 						String qName, 
-						APattern pattern){
+						SPattern pattern){
 		/*
 		This is actually a reduce for an occurrence, it must be done only after 
 		the ParticleHandler event was received and interpreted. 

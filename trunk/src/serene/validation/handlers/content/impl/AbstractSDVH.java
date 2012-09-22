@@ -20,10 +20,6 @@ import java.util.List;
 
 import org.xml.sax.SAXException;
 
-/*import serene.validation.schema.active.components.AListPattern;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AValue;*/
-
 import serene.validation.schema.simplified.SListPattern;
 
 import serene.validation.handlers.content.StructuredDataEventHandler;

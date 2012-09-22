@@ -29,11 +29,6 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SElement;
 
-import serene.validation.schema.active.CharsActiveType;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.content.AttributeEventHandler;
@@ -227,7 +222,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 			BoundAttributeValidationHandler next = pool.getAttributeValidationHandler(attributeMatchPathes.get(0), this, this, bindingModel, queue, queueStartEntry);
 			return next;
 		}else{
-			BoundAttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(new ArrayList<AttributeMatchPath>(attributeMatchPathes), this, bindingModel, queue, queueStartEntry);
+			BoundAttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(attributeMatchPathes, this, bindingModel, queue, queueStartEntry);
 			return next;
 		}		
 	}	

@@ -28,17 +28,31 @@ public class AttributeMatchPath extends MatchPath{
         super(pool);
         itemId = ATTRIBUTE;
     }
+     
+    void init(SAttribute match, SRule[] list, int lastIndex){
+        if(lastIndex >= this.list.length)adjustSize(lastIndex);
+        
+        System.arraycopy(list, 0, this.list, 0, lastIndex+1);
+        this.match = match;
+        this.lastIndex = lastIndex;
+    }
         
     public void recycle(){
         lastIndex = -1;
         match = null;
         pool.recycle(this);
+        
     }
     
+    public AttributeMatchPath getCopy(){
+        //return pool.getAttributeMatchPath(match, list, lastIndex);
+        AttributeMatchPath copy = pool.getAttributeMatchPath(match, list, lastIndex);
+        return copy;
+    }
     
-    public void addAttribute(SAttribute match){
+    public void addAttribute(SAttribute match){        
         this.match = match;
-        add(match);
+        add(match);        
     }
     
     public SAttribute getAttribute(){

@@ -18,15 +18,17 @@ package serene.validation.handlers.stack.impl;
 
 import serene.util.IntList;
 
-import serene.validation.schema.active.components.ACompositor;
-
 
 import serene.validation.schema.simplified.SMultipleChildrenPattern;
+import serene.validation.schema.simplified.SRule;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.StructureHandler;
+
+import serene.validation.handlers.match.MatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
 
 public class MaximalReduceStackHandler extends ContextStackHandler{
 	
@@ -40,6 +42,7 @@ public class MaximalReduceStackHandler extends ContextStackHandler{
 		topHandler.recycle();
 		topHandler = null;
 		currentHandler = null;
+		currentPath = null;
 		pool.recycle(this);		
 	}
 	
@@ -80,6 +83,55 @@ public class MaximalReduceStackHandler extends ContextStackHandler{
 		this.topHandler = topHandler;
 		currentHandler = topHandler;
 		/*pathHandler.init(topHandler);*/
+	}
+	
+	
+	void activatePath(MatchPath path){	    
+	    expectedOrderHandlingCount = 0;
+        StructureHandler s = currentHandler;
+        
+        SRule currentRule = currentHandler.getRule();
+        boolean process = false;
+        
+	    for(int i = path.size()-1; i > 0; i--){
+	        SRule r = path.get(i);
+	        if(process){
+	            if(r.specifiesOrder())expectedOrderHandlingCount++;
+	            s = s.getChildHandler(r, path);
+	            if(s == null){// null is returned after a ChoiceHandler was reset due to a child that differs from currentChild
+                    activatePath(path);
+                    return;
+                }
+	        }else if(r == currentRule){
+	            if(r.specifiesOrder())expectedOrderHandlingCount++;
+	            process = true;
+	        }	        	 
+	    }
+	    currentHandler = s;
+	    currentPath = path;
+	}
+		
+	void activatePath(AttributeMatchPath path){	      
+	    expectedOrderHandlingCount = 0;
+        StructureHandler s = currentHandler;
+        
+        SRule currentRule = currentHandler.getRule();
+        boolean process = false;
+        
+	    for(int i = path.size()-1; i > 0; i--){
+	        SRule r = path.get(i);
+	        if(process){
+	            s = s.getChildHandler(r, path);
+	            if(s == null){// null is returned after a ChoiceHandler was reset due to a child that differs from currentChild
+                    activatePath(path);
+                    return;
+                }
+	        }else if(r == currentRule){
+	            process = true;
+	        }	        	 
+	    }
+	    currentHandler = s;
+	    currentPath = path;
 	}
 	
 	public String toString(){

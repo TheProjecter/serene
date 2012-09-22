@@ -20,11 +20,6 @@ import java.util.Arrays;
 
 import serene.util.IntList;
 
-/*import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.AGroup;
-import serene.validation.schema.active.components.AElement;*/
-
 
 import serene.validation.schema.simplified.SPattern;
 import serene.validation.schema.simplified.SGroup;

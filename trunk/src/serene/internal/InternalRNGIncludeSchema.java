@@ -64,7 +64,7 @@ class InternalRNGIncludeSchema extends BaseSchema{
 		                                stackHandlerPool.getValidatorStackHandlerPool(),
 		                                ruleHandlerPool.getValidatorRuleHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
-										schemaModel,
+										schemaModel.getSimplifiedModel(),
 										bindingPool,
                                         level1DocumentationElement,
                                         restrictToFileName,

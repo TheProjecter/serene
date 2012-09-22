@@ -1071,7 +1071,7 @@ public class RController implements RestrictingVisitor{
 		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
 		    elementLimitationNamingController.endMultipleCardinality();
 			attributeLimitationNamingController.endMultipleCardinality();
-		}
+		}		
 	}	
 	//  !!! subclass !!!
 	//------------------

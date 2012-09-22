@@ -22,23 +22,7 @@ import java.util.Arrays;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.Rule;
 
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AChoicePattern;
-import serene.validation.schema.active.components.AInterleave;
-import serene.validation.schema.active.components.AGroup;
-import serene.validation.schema.active.components.ARef;
-import serene.validation.schema.active.components.AGrammar;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AListPattern;
-	
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SRule;
 import serene.validation.schema.simplified.SPattern;
@@ -122,7 +106,8 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	* The messages are the same everywhere, but they need to be reported only once. 
 	*/
 	private boolean reportCompositorContentMissing;
-		
+	
+	
 	SRule[] currentInnerPath;
 	InternalConflictResolver currentResolver;
 	
@@ -144,7 +129,6 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 			topHandler = null;
 		}
 		currentHandler = null;
-		// TODO recycle;
 		currentPath = null;
 		
 		stackConflictsHandler.clear();
@@ -161,7 +145,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	
 	// first init
 	void init(StructureHandler originalTopHandler, 
-	            MatchPath currentPath,
+	            MatchPath currentPathCopy,
 				SRule currentRule,
 				ConcurrentStackHandler parent,
 				ContextConflictsDescriptor contextConflictsDescriptor,
@@ -174,17 +158,18 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		reportCompositorContentMissing = false;*/
 	
 		topHandler = originalTopHandler.getCopy(this, this);
-		this.currentPath = currentPath;
+		this.currentPath = currentPathCopy;
+		
 		/*pathHandler.init(topHandler);	*/
 		setCurrent(currentRule);			
 		this.parent = parent;
 		this.contextConflictsDescriptor = contextConflictsDescriptor;
-		this.errorCatcher = errorCatcher;
+		this.errorCatcher = errorCatcher;		
 	}
 
 	// copy init
 	void init(StructureHandler originalTopHandler,  
-	            MatchPath currentPath,
+	            MatchPath currentPathCopy,
 				SRule currentRule,
 				StackConflictsHandler stackConflictsHandler,
 				ConcurrentStackHandler parent,
@@ -206,14 +191,15 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 		topHandler = originalTopHandler.getCopy(this, this);
 		ruleHandlerReplacer.replaceHandlers(this.stackConflictsHandler, topHandler);
 		/*pathHandler.init(topHandler);		*/
-		this.currentPath = currentPath;
+		currentPath = currentPathCopy;
+		
 		setCurrent(currentRule);		
-		this.hasDisqualifyingError = hasDisqualifyingError;
+		this.hasDisqualifyingError = hasDisqualifyingError;		
 	}	
 	
 	public CandidateStackHandlerImpl getCopy(){
 		return pool.getCandidateStackHandler(topHandler,
-                                            currentPath,		    
+                                            currentPath,  
 											currentHandler.getRule(), 
 											stackConflictsHandler,
 											parent,
@@ -318,7 +304,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 					boolean reportExcessive, 
 					boolean reportMissing, 
 					boolean reportIllegal, 
-					boolean reportCompositorContentMissing){		
+					boolean reportCompositorContentMissing){
 		setModifyers(reportExcessive, reportMissing, reportIllegal, reportCompositorContentMissing);
 		setCurrentHandler(attribute);
 		currentHandler.handleChildShiftAndOrder(attribute.getAttribute(), expectedOrderHandlingCount);		
@@ -376,6 +362,54 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	}
 	
 		
+	void activatePath(MatchPath path){	    
+	    expectedOrderHandlingCount = 0;
+        StructureHandler s = currentHandler;
+        
+        SRule currentRule = currentHandler.getRule();
+        boolean process = false;
+        
+	    for(int i = path.size()-1; i > 0; i--){
+	        SRule r = path.get(i);
+	        if(process){
+	            if(r.specifiesOrder())expectedOrderHandlingCount++;
+	            s = s.getChildHandler(r, path);
+	            if(s == null){// null is returned after a ChoiceHandler was reset due to a child that differs from currentChild
+                    activatePath(path);
+                    return;
+                }
+	        }else if(r == currentRule){
+	            if(r.specifiesOrder())expectedOrderHandlingCount++;
+	            process = true;
+	        }	        	 
+	    }
+	    currentHandler = s;
+	    currentPath = path;
+	}
+		
+	void activatePath(AttributeMatchPath path){
+	    expectedOrderHandlingCount = 0;
+        StructureHandler s = currentHandler;
+        
+        SRule currentRule = currentHandler.getRule();
+        boolean process = false;
+        
+	    for(int i = path.size()-1; i > 0; i--){
+	        SRule r = path.get(i);
+	        if(process){
+	            s = s.getChildHandler(r, path);
+	            if(s == null){// null is returned after a ChoiceHandler was reset due to a child that differs from currentChild
+                    activatePath(path);
+                    return;
+                }
+	        }else if(r == currentRule){
+	            process = true;
+	        }	        	 
+	    }
+	    currentHandler = s;
+	    currentPath = path;
+	}
+	
 	public void transferResolversTo(CandidateStackHandler other){
 		other.transferResolversFrom(stackConflictsHandler);
 	}
@@ -534,35 +568,6 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	}	
 			
 	void setCurrentHandler(ElementMatchPath elementPath, SRule[] innerPath, InternalConflictResolver resolver){		
-		// System.out.println(element);
-		// System.out.println(currentHandler);
-		// System.out.println(topHandler);
-		
-		/*Rule parent  = item.getParent();
-		
-		if(currentHandler != topHandler){
-			//Deactivate currentHandler until its rule is ancestor of the item.
-			//No need to check for topHandler again since all types can have 
-			//only one child.			
-			Rule currentRule = currentHandler.getRule();			
-			while(!item.isInContext(currentRule)){
-				currentHandler.deactivate();				
-				if(isCurrentHandlerReseted){
-					isCurrentHandlerReseted = false;
-				}
-				currentRule = currentHandler.getRule();
-			}			
-		}
-		pathHandler.activatePath(currentHandler, parent);
-		StructureHandler result = pathHandler.getBottomHandler();
-        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
-            setCurrentHandler(item, innerPath, resolver);
-            return;
-        }
-        currentHandler = result;
-		currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);
-		expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();	*/
-		
 		int currentRuleIndexInPath = -1;
 		while(currentRuleIndexInPath < 0){
             currentRuleIndexInPath = getCurrentRuleIndexInPath(elementPath);
@@ -572,36 +577,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	}
 
 	void setCurrentHandler(AttributeMatchPath attributePath, SRule[] innerPath, InternalConflictResolver resolver){		
-		// System.out.println(element);
-		// System.out.println(currentHandler);
-		// System.out.println(topHandler);
-		
-		/*Rule parent  = item.getParent();
-		
-		if(currentHandler != topHandler){
-			//Deactivate currentHandler until its rule is ancestor of the item.
-			//No need to check for topHandler again since all types can have 
-			//only one child.			
-			Rule currentRule = currentHandler.getRule();			
-			while(!item.isInContext(currentRule)){
-				currentHandler.deactivate();				
-				if(isCurrentHandlerReseted){
-					isCurrentHandlerReseted = false;
-				}
-				currentRule = currentHandler.getRule();
-			}			
-		}
-		pathHandler.activatePath(currentHandler, parent);
-		StructureHandler result = pathHandler.getBottomHandler();
-        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
-            setCurrentHandler(item, innerPath, resolver);
-            return;
-        }
-        currentHandler = result;
-		currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);
-		expectedOrderHandlingCount = 0;		*/
-
-        int currentRuleIndexInPath = -1;
+		int currentRuleIndexInPath = -1;
 		while(currentRuleIndexInPath < 0){
             currentRuleIndexInPath = getCurrentRuleIndexInPath(attributePath);
         }
@@ -610,35 +586,6 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	}	
 	
 	void setCurrentHandler(CharsMatchPath charsPath, SRule[] innerPath, InternalConflictResolver resolver){		
-		// System.out.println(element);
-		// System.out.println(currentHandler);
-		// System.out.println(topHandler);
-		
-		/*Rule parent  = item.getParent();
-		
-		if(currentHandler != topHandler){
-			//Deactivate currentHandler until its rule is ancestor of the item.
-			//No need to check for topHandler again since all types can have 
-			//only one child.			
-			Rule currentRule = currentHandler.getRule();			
-			while(!item.isInContext(currentRule)){
-				currentHandler.deactivate();				
-				if(isCurrentHandlerReseted){
-					isCurrentHandlerReseted = false;
-				}
-				currentRule = currentHandler.getRule();
-			}			
-		}
-		pathHandler.activatePath(currentHandler, parent);
-		StructureHandler result = pathHandler.getBottomHandler();
-        if(result == null){ // null is returned after a ChoiceHandler was reset due to a child that differs from currentChild 
-            setCurrentHandler(item, innerPath, resolver);
-            return;
-        }
-        currentHandler = result;
-		currentHandler.setConflict(0, innerPath, stackConflictsHandler, resolver);
-		expectedOrderHandlingCount = pathHandler.getExpectedOrderHandlingCount();*/	
-		
 		int currentRuleIndexInPath = -1;
 		while(currentRuleIndexInPath < 0){
             currentRuleIndexInPath = getCurrentRuleIndexInPath(charsPath);
@@ -869,7 +816,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, SAttribute attributeDefinition){
 		throw new IllegalStateException();
 	}
 	

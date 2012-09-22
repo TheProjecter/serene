@@ -20,8 +20,6 @@ import org.xml.sax.SAXException;
 
 import org.relaxng.datatype.Datatype;
 
-import serene.validation.schema.active.components.AAttribute;
-
 import serene.validation.handlers.content.BoundAttributeHandler;
 
 import serene.validation.handlers.error.ContextErrorHandlerManager;

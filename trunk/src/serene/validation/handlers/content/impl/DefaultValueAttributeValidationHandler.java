@@ -25,10 +25,6 @@ import org.xml.sax.SAXException;
 import serene.validation.schema.simplified.SAttribute;
 
 
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.CharsActiveType;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-
 import serene.validation.handlers.content.DefaultValueAttributeHandler;
 import serene.validation.handlers.content.CharactersEventHandler;
 

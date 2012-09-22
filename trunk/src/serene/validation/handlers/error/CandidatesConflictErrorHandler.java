@@ -25,17 +25,6 @@ import java.util.BitSet;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AListPattern;
-
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SRule;
 import serene.validation.schema.simplified.SPattern;
@@ -745,7 +734,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         recordError(UNEXPECTED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex);	    
 	}
     
-	public void unexpectedAttributeValue(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SAttribute attributeDefinition){
         recordError(UNEXPECTED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex);	    
 	}
     

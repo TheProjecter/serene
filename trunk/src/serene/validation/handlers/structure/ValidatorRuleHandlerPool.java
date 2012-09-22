@@ -18,19 +18,6 @@ package serene.validation.handlers.structure;
 
 import serene.util.IntList;
 
-/*import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.components.MultipleChildrenAPattern;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AChoicePattern;
-import serene.validation.schema.active.components.AGroup;
-import serene.validation.schema.active.components.AInterleave;
-import serene.validation.schema.active.components.AGrammar;
-import serene.validation.schema.active.components.ARef;
-import serene.validation.schema.active.components.AListPattern;*/
-
-
 import serene.validation.schema.simplified.SRule;
 import serene.validation.schema.simplified.SPattern;
 import serene.validation.schema.simplified.SMultipleChildrenPattern;

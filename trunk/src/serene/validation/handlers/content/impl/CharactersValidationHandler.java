@@ -21,18 +21,6 @@ import java.util.ArrayList;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.CharsActiveType;
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.AText;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AListPattern;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.APattern;
-
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SRule;
 import serene.validation.schema.simplified.SPattern;
@@ -433,7 +421,7 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
 		throw new IllegalStateException();
 	}	
-	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, SAttribute attributeDefinition){
 		throw new IllegalStateException();
 	}
 	

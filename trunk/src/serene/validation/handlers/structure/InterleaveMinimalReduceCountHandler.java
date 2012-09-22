@@ -18,10 +18,6 @@ package serene.validation.handlers.structure;
 
 import serene.util.IntList;
 
-/*import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AInterleave;*/
-
-
 import serene.validation.schema.simplified.SPattern;
 import serene.validation.schema.simplified.SInterleave;
 import serene.validation.schema.simplified.SMultipleChildrenPattern;

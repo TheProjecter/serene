@@ -42,19 +42,7 @@ import serene.validation.schema.simplified.SData;
 import serene.validation.schema.simplified.SValue;
 import serene.validation.schema.simplified.SAttribute;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.CharsActiveType;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AListPattern;
 
-	
 import serene.validation.handlers.content.ElementEventHandler;
 import serene.validation.handlers.content.AttributeEventHandler;
 import serene.validation.handlers.content.CharactersEventHandler;
@@ -174,7 +162,7 @@ class ElementValidationHandler extends ValidatingEEH
 			return next;
 		}else{
             hasComplexContent = true;			
-			ElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList(elementMatchPathes), this);				
+			ElementConcurrentHandler next = pool.getElementConcurrentHandler(elementMatchPathes, this);				
 			return next;
 		}		
 	}	
@@ -228,7 +216,7 @@ class ElementValidationHandler extends ValidatingEEH
 			AttributeValidationHandler next = pool.getAttributeValidationHandler(attributeMatchPathes.get(0), this, this);				
 			return next;
 		}else{
-			AttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(new ArrayList<AttributeMatchPath>(attributeMatchPathes), this);				
+			AttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(attributeMatchPathes, this);				
 			return next;
 		}		
 	}	
@@ -622,7 +610,7 @@ class ElementValidationHandler extends ValidatingEEH
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].unexpectedCharacterContent(inputRecordIndex, elementDefinition);		
 	}	
-	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, SAttribute attributeDefinition){
 		if(contextErrorHandler[contextErrorHandlerIndex] == null)setContextErrorHandler();
 		contextErrorHandler[contextErrorHandlerIndex].unexpectedAttributeValue(inputRecordIndex, attributeDefinition);
 	}

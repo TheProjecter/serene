@@ -28,13 +28,24 @@ public class ValueMatchPath extends UnstructuredDataMatchPath{
     ValueMatchPath(MatchPathPool pool){
         super(pool);
     }
+     
+    void init(SValue match, SRule[] list, int lastIndex){
+        if(lastIndex >= this.list.length)adjustSize(lastIndex);
         
+        System.arraycopy(list, 0, this.list, 0, lastIndex+1);
+        this.match = match;
+        this.lastIndex = lastIndex;
+    }
+            
     public void recycle(){
         lastIndex = -1;
         match = null;
         pool.recycle(this);
     }
     
+    public ValueMatchPath getCopy(){
+        return pool.getValueMatchPath(match, list, lastIndex);
+    }
     
     public void addValue(SValue match){
         this.match = match;

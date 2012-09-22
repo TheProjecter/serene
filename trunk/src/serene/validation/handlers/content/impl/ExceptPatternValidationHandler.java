@@ -31,18 +31,6 @@ import serene.validation.schema.simplified.SData;
 import serene.validation.schema.simplified.SValue;
 import serene.validation.schema.simplified.SAttribute;
 
-import serene.validation.schema.active.components.StructuredDataActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AExceptPattern;
-import serene.validation.schema.active.StructuredDataActiveType;
-import serene.validation.schema.active.Rule;
-
 import serene.validation.handlers.content.StructuredDataEventHandler;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
@@ -277,7 +265,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
 		hasError = true;
 	}	
-	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
+	public void unexpectedAttributeValue(int inputRecordIndex, SAttribute attributeDefinition){
 		hasError = true;
 	}
 	

@@ -16,14 +16,6 @@ limitations under the License.
 
 package serene.validation.handlers.structure;
 
-/*import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.CharsActiveTypeItem;*/
-
-
 import serene.validation.schema.simplified.SRule;
 import serene.validation.schema.simplified.SPattern;
 

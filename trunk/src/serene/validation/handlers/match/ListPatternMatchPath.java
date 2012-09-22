@@ -28,13 +28,24 @@ public class ListPatternMatchPath extends StructuredDataMatchPath{
     ListPatternMatchPath(MatchPathPool pool){
         super(pool);
     }
+     
+    void init(SListPattern match, SRule[] list, int lastIndex){
+        if(lastIndex >= this.list.length)adjustSize(lastIndex);
         
+        System.arraycopy(list, 0, this.list, 0, lastIndex+1);
+        this.match = match;
+        this.lastIndex = lastIndex;
+    }
+            
     public void recycle(){
         lastIndex = -1;
         match = null;
         pool.recycle(this);
     }
     
+    public ListPatternMatchPath getCopy(){
+        return pool.getListPatternMatchPath(match, list, lastIndex);
+    }
     
     public void addListPattern(SListPattern match){
         this.match = match;

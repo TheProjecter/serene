@@ -45,7 +45,7 @@ class AttributeParallelHandler extends ValidatingAEH{
         initStates();
     }
             
-    void initStates(){
+    void initStates(){        
         common = new Common();
 		conflict = new Conflict();
         state = common;

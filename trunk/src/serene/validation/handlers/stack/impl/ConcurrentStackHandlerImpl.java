@@ -27,14 +27,6 @@ import org.xml.sax.SAXException;
 import serene.bind.util.Queue;
 import serene.bind.BindingModel;
 
-/*import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.ActiveTypeItem;*/
-
 
 import serene.validation.schema.simplified.SRule;
 import serene.validation.schema.simplified.SPattern;
@@ -46,7 +38,6 @@ import serene.validation.handlers.stack.ConcurrentStackHandler;
 import serene.validation.handlers.stack.StackHandler;
 
 import serene.validation.handlers.stack.util.StackRedundanceHandler;
-/*import serene.validation.handlers.stack.util.ConflictPathMaker;*/
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
@@ -100,6 +91,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 
 	InputStackDescriptor inputStackDescriptor;	
 	
+	MatchPath currentPath;
+	List<MatchPath> currentPathes;
+	
 	ConcurrentStackHandlerImpl(){		
 		candidates = new ArrayList<CandidateStackHandler>();
 		temporary = new ArrayList<CandidateStackHandler>();
@@ -110,6 +104,8 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		
 		stackRedundanceHandler = new StackRedundanceHandler();
 		/*conflictPathMaker = new ConflictPathMaker();*/
+		
+		currentPathes = new ArrayList<MatchPath>();
 	}
 	
 	public void recycle(){		
@@ -126,6 +122,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
         }
         resolvers.clear();
         
+        if(currentPath != null){
+            currentPath.recycle();
+            currentPath = null;
+        }
+        if(!currentPathes.isEmpty()){
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        
 		pool.recycle(this);		
 	}
 	
@@ -140,8 +147,10 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		StructureHandler originalTopHandler = originalHandler.getTopHandler();
 		StructureHandler originalCurrentHandler = originalHandler.getCurrentHandler();		
 		SRule originalCurrentRule = originalCurrentHandler.getRule();
+		MatchPath originalCurrentPath = originalHandler.getCurrentMatchPath();
+		if(originalCurrentPath != null)currentPath = originalCurrentPath.getCopy();
 		CandidateStackHandler candidate = pool.getCandidateStackHandler(originalTopHandler,
-		                                                                originalHandler.getCurrentMatchPath(),
+		                                                                currentPath,
 																		originalCurrentRule,
 																		this,
 																		contextConflictsDescriptor,
@@ -236,6 +245,16 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 				}
 			}
 		}
+		
+		if(currentPath != null){
+            currentPath.recycle();            
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPath = element;
 	}
 	
 	public void shiftAllElements(List<ElementMatchPath> elementDefinitions, ConflictMessageReporter conflictMessageReporter){
@@ -328,6 +347,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}			
 		temporary.clear();
+		
+		if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPathes.addAll(elementDefinitions);
 	}
 	
 	public void shiftAllElements(List<ElementMatchPath> elementDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<SElement, Queue> candidateQueues){
@@ -420,6 +450,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}			
 		temporary.clear();
+		
+		if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPathes.addAll(elementDefinitions);
 	}
 	
 	public void shiftAllElements(List<ElementMatchPath> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
@@ -529,6 +570,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		for(++lastQualifiedIndex; lastQualifiedIndex < elementDefinitions.size(); lastQualifiedIndex++){
 		    resolver.addCandidate(elementDefinitions.get(lastQualifiedIndex).getElement());
 		}
+		
+		if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPathes.addAll(elementDefinitions);
 	}
 	public void shiftAllElements(List<ElementMatchPath> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<SElement, Queue> candidateQueues){
 		reportExcessive = true;
@@ -625,6 +677,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		for(++lastQualifiedIndex; lastQualifiedIndex < elementDefinitions.size(); lastQualifiedIndex++){
 		    resolver.addCandidate(elementDefinitions.get(lastQualifiedIndex).getElement());
 		}
+		
+		if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPathes.addAll(elementDefinitions);
 	}
 	
 		
@@ -658,6 +721,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 				}
 			}
 		}
+		
+		        
+        if(currentPath != null){
+            currentPath.recycle();  
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPath = attribute;
 	}
 			
 	public void shiftAllAttributes(List<AttributeMatchPath> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
@@ -745,6 +819,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}
 		temporary.clear();
+		
+		if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPathes.addAll(attributeDefinitions);
 	}
 	
 	public void shiftAllAttributes(List<AttributeMatchPath> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, BindingModel bindingModel){
@@ -839,6 +924,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}
 		temporary.clear();
+		
+		if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPathes.addAll(attributeDefinitions);
 	}
 	
 	public void shiftAllAttributes(List<AttributeMatchPath> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
@@ -936,6 +1032,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		for(++lastQualifiedIndex; lastQualifiedIndex < attributeDefinitions.size(); lastQualifiedIndex++){
 		    resolver.addCandidate(attributeDefinitions.get(lastQualifiedIndex).getAttribute());
 		}
+		
+		if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPathes.addAll(attributeDefinitions);
 	}
 	
 	public void shiftAllAttributes(List<AttributeMatchPath> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, BindingModel bindingModel){		
@@ -1040,6 +1147,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		for(++lastQualifiedIndex; lastQualifiedIndex < attributeDefinitions.size(); lastQualifiedIndex++){
 		    resolver.addCandidate(attributeDefinitions.get(lastQualifiedIndex).getAttribute());
 		}
+		
+		if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPathes.addAll(attributeDefinitions);
 	} 	
 		 	
 	public void shift(CharsMatchPath chars){
@@ -1075,6 +1193,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 				}
 			}
 		}
+		
+		if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPath = chars;
 	}
 		
 	public void shiftAllCharsDefinitions(List<? extends CharsMatchPath> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
@@ -1167,7 +1296,18 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 				}
 			}
 		}			
-		temporary.clear();		
+		temporary.clear();
+
+        if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPathes.addAll(charsDefinitions);		
 	}
 	public void shiftAllCharsDefinitions(List<? extends CharsMatchPath> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 	    reportExcessive = true;
@@ -1259,6 +1399,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}			
 		temporary.clear();
+		
+		if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPathes.addAll(charsDefinitions);
 	}
     
 	
@@ -1353,6 +1504,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}			
 		temporary.clear();
+		
+		if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPathes.addAll(charsDefinitions);
 	}
 	
 	public void shiftAllTokenDefinitions(List<? extends CharsMatchPath> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
@@ -1457,6 +1619,17 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		for(++lastQualifiedIndex; lastQualifiedIndex < charsDefinitions.size(); lastQualifiedIndex++){
 		    resolver.addCandidate(charsDefinitions.get(lastQualifiedIndex).getChars());
 		}
+		
+		if(currentPath != null){
+            currentPath.recycle();      
+            currentPath = null;
+        }else{
+            for(MatchPath path : currentPathes){
+                path.recycle();
+            }
+            currentPathes.clear();
+        }
+        currentPathes.addAll(charsDefinitions);
 	}
 	
 	public void reduce(InnerPatternHandler handler){

@@ -16,13 +16,6 @@ limitations under the License.
 
 package serene.validation.handlers.structure;
 
-/*import serene.validation.schema.active.components.APattern;
-import serene.validation.schema.active.components.AInterleave;
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.CharsActiveTypeItem;
-*/
-
 import serene.validation.schema.simplified.SPattern;
 import serene.validation.schema.simplified.SInterleave;
 import serene.validation.schema.simplified.SElement;
@@ -49,7 +42,7 @@ import serene.validation.handlers.match.AttributeMatchPath;
 import serene.validation.handlers.match.CharsMatchPath;
 import serene.validation.handlers.match.MatchPath;
 
-public class InterleaveDoubleHandler extends StructureDoubleHandler{
+public class InterleaveDoubleHandler extends StructureDoubleHandler{    
 	InterleaveDoubleHandler original;
 	InterleaveDoubleHandler(){
 		super();
@@ -68,7 +61,12 @@ public class InterleaveDoubleHandler extends StructureDoubleHandler{
 		
 		
 		minimalReduceCount.clear();
-		maximalReduceCount.clear();
+		maximalReduceCount.clear();		
+		
+		if(currentPath != null){
+		    currentPath.recycle();
+		    currentPath = null;
+		}
 		
 		pool.recycle(this);
 	}
@@ -108,14 +106,20 @@ public class InterleaveDoubleHandler extends StructureDoubleHandler{
 		    ElementMatchPath hpath = path.getElementHeadPath(rule);
 			minimalReduceStackHandler.shift(hpath);
 			maximalReduceStackHandler.shift(hpath);
+			if(currentPath != null)currentPath.recycle();
+			currentPath = hpath;
 		}else if(path.getItemId() == MatchPath.ATTRIBUTE){
 			AttributeMatchPath hpath = path.getAttributeHeadPath(rule);
 			minimalReduceStackHandler.shift(hpath);
 			maximalReduceStackHandler.shift(hpath);
+			if(currentPath != null)currentPath.recycle();
+			currentPath = hpath;
 		}else if(path.getItemId() == MatchPath.CHARS){
 			CharsMatchPath hpath = path.getCharsHeadPath(rule);
 			minimalReduceStackHandler.shift(hpath);
 			maximalReduceStackHandler.shift(hpath);
+			if(currentPath != null)currentPath.recycle();
+			currentPath = hpath;
 		}else throw new IllegalStateException();
 		return true;
 	}
