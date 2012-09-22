@@ -20,7 +20,7 @@ import java.util.Map;
 
 import serene.util.AttributeInfo;
 
-import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.SAttribute;
 
 abstract class RNGParseEndElementTask extends RNGParseElementTask{
 	

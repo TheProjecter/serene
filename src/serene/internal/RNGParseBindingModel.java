@@ -24,8 +24,8 @@ import org.xml.sax.SAXNotSupportedException;
 
 import serene.validation.schema.parsed.ParsedComponentBuilder;
 
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.bind.ElementTask;
 import serene.bind.AttributeTask;

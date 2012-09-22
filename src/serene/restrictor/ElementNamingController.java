@@ -19,11 +19,11 @@ package serene.restrictor;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.SimplifiedPattern;
-import serene.validation.schema.simplified.components.SChoicePattern;
-import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SGroup;
+import serene.validation.schema.simplified.SNameClass;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SChoicePattern;
+import serene.validation.schema.simplified.SInterleave;
+import serene.validation.schema.simplified.SGroup;
 
 
 import serene.validation.handlers.error.ErrorDispatcher;
@@ -66,9 +66,9 @@ class ElementNamingController extends NamingController{
 		compositorPatterns.add(choice);
 	}
 
-	void reportError(SimplifiedPattern context, int i, int j) throws SAXException{
-		SimplifiedPattern e1 = namedPatterns.get(i);
-		SimplifiedPattern e2 = namedPatterns.get(j);		
+	void reportError(SPattern context, int i, int j) throws SAXException{
+		SPattern e1 = namedPatterns.get(i);
+		SPattern e2 = namedPatterns.get(j);		
 		// error 7.4
 		String message = "Restrictions 7.4 error. "
 		+"In the context of <"+context.getQName()+"> at "+context.getLocation(restrictToFileName)+" overlaping name classes in elements: "

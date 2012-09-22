@@ -16,7 +16,7 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
-import serene.validation.schema.Identifier;
+import serene.validation.schema.simplified.Identifier;
 
 public interface NamedActiveTypeItem extends ActiveTypeItem{
 	boolean identifierMatches(String namespace, String name);

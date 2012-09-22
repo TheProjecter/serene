@@ -19,8 +19,8 @@ package serene.restrictor.util;
 import java.util.ArrayList;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
-import serene.validation.schema.simplified.components.SData;
-import serene.validation.schema.simplified.components.SExceptPattern;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SExceptPattern;
 
 
 public class DataPath{

@@ -54,10 +54,6 @@ import org.xml.sax.SAXNotSupportedException;
 
 import org.w3c.dom.ls.LSResourceResolver;
 
-import serene.validation.schema.ValidationModel;
-import serene.validation.schema.ValidationModelImpl;
-
-
 import serene.Constants;
 
 import serene.validation.handlers.error.ErrorDispatcher;

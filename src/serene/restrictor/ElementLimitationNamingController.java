@@ -19,12 +19,12 @@ package serene.restrictor;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import serene.validation.schema.simplified.SimplifiedPattern;
+import serene.validation.schema.simplified.SPattern;
 
-import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.components.SChoicePattern;
-import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SGroup;
+import serene.validation.schema.simplified.SNameClass;
+import serene.validation.schema.simplified.SChoicePattern;
+import serene.validation.schema.simplified.SInterleave;
+import serene.validation.schema.simplified.SGroup;
 
 
 import serene.validation.handlers.error.ErrorDispatcher;
@@ -49,9 +49,9 @@ class ElementLimitationNamingController extends LimitationNamingController{
 		pool.recycle(this);		
 	}	
 
-	void reportError(SimplifiedPattern context, int i, int j) throws SAXException{
-		SimplifiedPattern e1 = namedPatterns.get(i);
-		SimplifiedPattern e2 = namedPatterns.get(j);		
+	void reportError(SPattern context, int i, int j) throws SAXException{
+		SPattern e1 = namedPatterns.get(i);
+		SPattern e2 = namedPatterns.get(j);		
 		// error 7.4
 		String message = "Unsupported schema configuration. "
 		+"For the moment serene does not support overlapping name classes in elements in the context of a <group> that has multiple cardinality and is in the context of an <interleave>:"	

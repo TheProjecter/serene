@@ -46,12 +46,14 @@ import serene.validation.schema.parsed.Define;
 import serene.validation.schema.parsed.Start;
 
 import serene.validation.schema.simplified.RecursionModel;
+import serene.validation.schema.simplified.ReferenceModel;
 import serene.validation.schema.simplified.SimplifiedModel;
-import serene.validation.schema.simplified.SimplifiedPattern;
+import serene.validation.schema.simplified.SPattern;
 
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
-import serene.validation.schema.simplified.components.SExceptPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
+import serene.validation.schema.simplified.SExceptPattern;
+import serene.validation.schema.simplified.SPattern;
 
 import serene.internal.InternalRNGFactory;
 
@@ -74,7 +76,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		nullCombine = new IntList();		
 		//pcw = new ParsedComponentWriter();
         
-        currentDefinitionTopPatterns = new ArrayList<SimplifiedPattern>();
+        currentDefinitionTopPatterns = new ArrayList<SPattern>();
 	}
 	
 	public void setReplaceMissingDatatypeLibrary(boolean value){
@@ -84,7 +86,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 	void init(Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,	
 			Map<ExternalRef, URI> externalRefs,
 			Map<URI, ParsedModel> docParsedModels,
-			ArrayList<SimplifiedPattern> definitionTopPatterns,
+			ArrayList<SPattern> definitionTopPatterns,
 			NamespaceInheritanceHandler namespaceInheritanceHandler,	
 			Map<ParsedComponent, String> componentAsciiDL,
 			Map<String, DatatypeLibrary> asciiDlDatatypeLibrary,
@@ -92,6 +94,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 			IntStack referencePath,
 			BooleanList definitionEmptyChild,
 			BooleanList definitionNotAllowedChild,
+			ReferenceModel referenceModel, 
             RecursionModel recursionModel,
 			Grammar currentGrammar,
 			Stack<Grammar> previousGrammars,
@@ -110,6 +113,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		this.referencePath = referencePath;
 		this.definitionEmptyChild = definitionEmptyChild;
 		this.definitionNotAllowedChild = definitionNotAllowedChild;
+		this.referenceModel = referenceModel;
         this.recursionModel = recursionModel;
         
 		this.currentGrammar = currentGrammar;
@@ -135,6 +139,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		
 		pool.recycle(this);
 	}
+	    
 	void simplify(ArrayList<Definition> definitions,
                 ArrayList<SElement> selements,
                 ArrayList<SAttribute> sattributes,
@@ -155,7 +160,7 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		nsNameContext = false;
 		nsNameExceptContext = false;
 		attributeContext = false;
-        		
+                      
 		combine = null;
 		nullCombine.clear();        
 		if(otherCombine != null) otherCombine.clear();
@@ -185,7 +190,9 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
             }
             allRecordIndexes.add(d.getRecordIndex()); 
             allDocumentIndexedData.add(d.getDocumentIndexedData());
-			d.accept(this);
+            
+            d.accept(this);
+			
 		}
 		if(nullCombine.size() > 1){
 			// error 4.17
@@ -232,22 +239,28 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 		// they were not built, so combine can be handled directly
 		if(combine != null){
 			if(combine.equals("choice")){
-				builder.buildChoicePattern(currentDefinitionTopPatterns.toArray(new SimplifiedPattern[currentDefinitionTopPatterns.size()]), allRecordIndexes, allDocumentIndexedData, true);
+				builder.buildChoicePattern(currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]),
+				            allRecordIndexes, 
+                            allDocumentIndexedData, 
+                            true);
 			}else if(combine.equals("interleave")){
-				builder.buildInterleave(currentDefinitionTopPatterns.toArray(new SimplifiedPattern[currentDefinitionTopPatterns.size()]), allRecordIndexes, allDocumentIndexedData, true);
+				builder.buildInterleave(currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]),
+				            allRecordIndexes, 
+                            allDocumentIndexedData, 
+                            true);
 			}
 		}else{
-			SimplifiedPattern[] p = currentDefinitionTopPatterns.toArray(new SimplifiedPattern[currentDefinitionTopPatterns.size()]);
+			SPattern[] p = currentDefinitionTopPatterns.toArray(new SPattern[currentDefinitionTopPatterns.size()]);
 			builder.clearContent();
 			builder.addAllToCurrentLevel(p);
-		}
+		}		
 	}
 	
-	SimplifiedPattern getCurrentPattern(){
+	SPattern getCurrentPattern(){
 		return builder.getCurrentPattern();
 	}
 	
-	SimplifiedPattern[] getAllCurrentPatterns(){
+	SPattern[] getAllCurrentPatterns(){
 		return builder.getAllCurrentPatterns();
 	}
 	

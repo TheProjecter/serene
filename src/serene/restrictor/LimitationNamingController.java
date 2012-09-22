@@ -19,10 +19,10 @@ package serene.restrictor;
 
 import serene.util.IntStack;
 
-import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SChoicePattern;
+import serene.validation.schema.simplified.SNameClass;
+import serene.validation.schema.simplified.SInterleave;
+import serene.validation.schema.simplified.SGroup;
+import serene.validation.schema.simplified.SChoicePattern;
 
 
 import serene.validation.handlers.error.ErrorDispatcher;

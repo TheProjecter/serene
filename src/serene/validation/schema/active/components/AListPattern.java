@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
-import serene.validation.schema.simplified.components.SListPattern;
+import serene.validation.schema.simplified.SListPattern;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.RuleVisitor;
@@ -101,32 +101,14 @@ public class AListPattern extends UniqueChildAPattern
 	}
 	
 	
-	public boolean allowsElements(){
-        return allowsElements;
-    }
-	public boolean allowsAttributes(){
-	    return allowsAttributes;
-	}
 	public boolean allowsDatas(){
-	    return allowsDatas;
+	    return slist.allowsDatas();
 	}
 	public boolean allowsValues(){
-	    return allowsValues;
+	    return slist.allowsValues();
 	}
-	public boolean allowsListPatterns(){
-	    return allowsListPatterns;
-	}
-	public boolean allowsText(){
-	    return allowsText;
-	}
-	public boolean allowsCharsContent(){
-	    return allowsDatas || allowsValues || allowsListPatterns || allowsText;
-	}	
-	public boolean allowsStructuredDataContent(){
-	    return allowsDatas || allowsValues || allowsListPatterns;
-	}	
 	public boolean allowsUnstructuredDataContent(){
-	    return allowsDatas || allowsValues;
+	    return slist.allowsDatas() || slist.allowsValues();
 	}
 	
 	

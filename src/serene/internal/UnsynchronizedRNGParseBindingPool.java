@@ -29,8 +29,8 @@ import serene.bind.ElementTaskFactory;
 import serene.bind.ElementTask;
 import serene.bind.util.Queue;
 
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 

@@ -21,7 +21,7 @@ import org.xml.sax.SAXParseException;
 
 import serene.util.IntList;
 
-import serene.validation.schema.simplified.SimplifiedPattern;
+import serene.validation.schema.simplified.SPattern;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -71,7 +71,7 @@ class ContentTypeController extends ContentType implements Reusable{
 		}
 	}
 	
-	int handle(SimplifiedPattern context, SimplifiedPattern[] children)throws SAXException{
+	int handle(SPattern context, SPattern[] children)throws SAXException{
 		int contentType = EMPTY;
 		if(!simpleContent.isEmpty()){
 			contentType = SIMPLE;
@@ -113,7 +113,7 @@ class ContentTypeController extends ContentType implements Reusable{
 		return contentType;
 	}
 	
-	int handle(SimplifiedPattern context, SimplifiedPattern child, int extraContentType)throws SAXException{//for Mixed			
+	int handle(SPattern context, SPattern child, int extraContentType)throws SAXException{//for Mixed			
 		if(!simpleContent.isEmpty()){
 			// error 7.2 simple and complex content types in the same context
 			String message = "Restrictions 7.2 error. "

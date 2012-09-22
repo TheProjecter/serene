@@ -19,7 +19,7 @@ package serene.validation.schema.active.components;
 import java.util.Map;
 import java.util.List;
 
-import serene.validation.schema.simplified.components.SExceptPattern;
+import serene.validation.schema.simplified.SExceptPattern;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.RuleVisitor;
@@ -85,41 +85,20 @@ public class AExceptPattern extends AbstractRule
 	}	
 		
 
-    public boolean allowsElements(){
-        if(child == null) return false;
-        return child.isElementContent();
-    }
-	public boolean allowsAttributes(){
-	    if(child == null) return false;
-	    return child.isAttributeContent();
-	}
 	public boolean allowsDatas(){
-	    if(child == null) return false;
-	    return child.isDataContent();
+	    return sexceptPattern.allowsDatas();
 	}
 	public boolean allowsValues(){
-	    if(child == null) return false;
-	    return child.isValueContent();
+	    return sexceptPattern.allowsValues();
 	}
 	public boolean allowsListPatterns(){
-	    if(child == null) return false;
-	    return child.isListPatternContent();
-	}
-	public boolean allowsText(){
-	    if(child == null) return false;
-	    return child.isTextContent();
-	}
-	public boolean allowsCharsContent(){
-	    if(child == null) return false;
-	    return allowsDatas() || allowsValues() || allowsListPatterns() || allowsText();
+	    return sexceptPattern.allowsListPatterns();
 	}	
 	public boolean allowsStructuredDataContent(){
-	    if(child == null) return false;
-	    return allowsDatas() || allowsValues() || allowsListPatterns();
+	    return sexceptPattern.allowsStructuredDataContent();
 	}	
 	public boolean allowsUnstructuredDataContent(){
-	    if(child == null) return false;
-	    return allowsDatas() || allowsValues();
+	    return sexceptPattern.allowsUnstructuredDataContent();
 	}	
 	
 	

@@ -35,6 +35,44 @@ public abstract class UniqueChildAPattern extends AbstractAPattern{
 	}
 		
 	
+	public boolean isElementContent(){
+        if(child == null) return false;
+        return child.isElementContent();
+    }
+	public boolean isAttributeContent(){
+	    if(child == null) return false;
+	    return child.isAttributeContent();
+	}
+	public boolean isDataContent(){
+	    if(child == null) return false;
+	    return child.isDataContent();
+	}
+	public boolean isValueContent(){
+	    if(child == null) return false;
+	    return child.isValueContent();
+	}
+	public boolean isListPatternContent(){
+	    if(child == null) return false;
+	    return child.isListPatternContent();
+	}
+	public boolean isTextContent(){
+	    if(child == null) return false;
+	    return child.isTextContent();
+	}
+	public boolean isCharsContent(){
+	    if(child == null) return false;
+	    return child.isCharsContent();
+	}	
+	public boolean isStructuredDataContent(){
+	    if(child == null) return false;
+	    return child.isStructuredDataContent();
+	}	
+	public boolean isUnstructuredDataContent(){
+	    if(child == null) return false;
+	    return child.isUnstructuredDataContent();
+	}
+	
+	
 	public void setElementMatches(String ns, String name, List<AElement> elements){
 	    if(child.isElementContent()) child.setElementMatches(ns, name, elements);
 	}

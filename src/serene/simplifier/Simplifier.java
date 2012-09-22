@@ -94,16 +94,18 @@ import serene.validation.schema.parsed.Start;
 
 import serene.validation.schema.parsed.ForeignComponent;
 
+import serene.validation.schema.simplified.ReferenceModel;
 import serene.validation.schema.simplified.RecursionModel;
 import serene.validation.schema.simplified.SimplifiedModel;
-import serene.validation.schema.simplified.SimplifiedPattern;
+import serene.validation.schema.simplified.SPattern;
 
-import serene.validation.schema.simplified.components.SimplifiedComponentBuilder;
-import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.components.SRef;
-import serene.validation.schema.simplified.components.SAttribute;
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SExceptPattern;
+import serene.validation.schema.simplified.SimplifiedComponentBuilder;
+import serene.validation.schema.simplified.SNameClass;
+import serene.validation.schema.simplified.SRef;
+import serene.validation.schema.simplified.SAttribute;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SExceptPattern;
+import serene.validation.schema.simplified.SPattern;
 
 
 import serene.internal.InternalRNGFactory;
@@ -121,8 +123,9 @@ abstract class Simplifier implements SimplifyingVisitor{
 	Map<ExternalRef, URI> externalRefs;
 	Map<URI, ParsedModel> docParsedModels;
 	
-	ArrayList<SimplifiedPattern> definitionTopPatterns;
-		
+	ArrayList<SPattern> definitionTopPatterns;
+	
+	
 	Map<ParsedComponent, String> componentAsciiDL;
 	Map<String, DatatypeLibrary> asciiDlDatatypeLibrary;
 	
@@ -133,7 +136,7 @@ abstract class Simplifier implements SimplifyingVisitor{
     lists) to keep track of what was already processed. Used to determine 
     recursions and unprocessed definitions.
     */
-	ObjectIntHashMap indexes;
+	ObjectIntHashMap indexes;	
 	IntStack referencePath;
 	BooleanList definitionEmptyChild;
 	BooleanList definitionNotAllowedChild;	
@@ -142,7 +145,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 	Grammar currentGrammar;
 	Stack<Grammar> previousGrammars;
     
-    ArrayList<SimplifiedPattern> currentDefinitionTopPatterns;
+    ArrayList<SPattern> currentDefinitionTopPatterns;
 	
 	boolean emptyChild;
 	ParsedComponent emptyComponent;
@@ -178,6 +181,8 @@ abstract class Simplifier implements SimplifyingVisitor{
 	ArrayList<SAttribute> sattributes;	
 	ArrayList<SExceptPattern> sexceptPatterns;
 	
+	ReferenceModel referenceModel;
+		
 	Simplifier(ErrorDispatcher errorDispatcher){	
 		this.errorDispatcher = errorDispatcher;
 
@@ -233,7 +238,9 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int allowedChildrenCount = 0;
 		int emptyCount = 0;
 		builder.startLevel();
-        boolean oldNotAllowedChild = notAllowedChild;        
+        boolean oldNotAllowedChild = notAllowedChild;     
+
+        
 		for(int i = 0; i < children.length; i++){
 			if(children[i] != null){
                 notAllowedChild = false;
@@ -265,7 +272,9 @@ abstract class Simplifier implements SimplifyingVisitor{
 			builder.buildEmpty(emptyComponent.getRecordIndex(), /*exceptPattern.getRecordIndex(),*/ exceptPattern.getDocumentIndexedData(), true);					
 		}
         if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementChoicePattern(exceptPattern.getRecordIndex(), exceptPattern.getDocumentIndexedData(), true);
+			builder.buildReplacementChoicePattern(exceptPattern.getRecordIndex(), 
+                            exceptPattern.getDocumentIndexedData(), 
+                            true);
 		}
 		builder.endLevel();
 		builder.buildExceptPattern(sexceptPatterns.size(), exceptPattern.getRecordIndex(), exceptPattern.getDocumentIndexedData());
@@ -454,7 +463,8 @@ abstract class Simplifier implements SimplifyingVisitor{
         int emptyCount = 0;
 		int childrenCount = 0;
         boolean oldNotAllowedChild = notAllowedChild;
-        boolean notAllowed = false;        
+        boolean notAllowed = false;   
+
 		for(int i = 0; i < children.length; i++){
 			if(children[i] != null){
                 next(children[i]);
@@ -465,7 +475,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                         emptyCount++;
                         emptyChild = false;
                     }
-                }
+                }                
             }			
 		}		
         if(notAllowed){				
@@ -492,11 +502,13 @@ abstract class Simplifier implements SimplifyingVisitor{
 		}
         
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup(define.getRecordIndex(), define.getDocumentIndexedData(), true);			
+			builder.buildReplacementGroup(define.getRecordIndex(), 
+                            define.getDocumentIndexedData(), 
+                            true);			
 		}		
 		builder.endLevel();
         
-        SimplifiedPattern p = builder.getLastContentPattern();
+        SPattern p = builder.getLastContentPattern();
         if( p != null){
             currentDefinitionTopPatterns.add(p);
             builder.clearContent();
@@ -504,7 +516,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         
         namespaceInheritanceHandler.endXmlnsContext(simplificationContext, define);
         patternChild = false;
-        attributeContext = oldAttributeContext;
+        attributeContext = oldAttributeContext;        
 	}
 	public void visit(Start start)  throws SAXException{
 		ParsedComponent[] children = start.getChildren();
@@ -563,9 +575,9 @@ abstract class Simplifier implements SimplifyingVisitor{
         		
 		builder.endLevel();
 		
-        SimplifiedPattern[] sChildren = builder.getContentPatterns();
+        SPattern[] sChildren = builder.getContentPatterns();
         if(sChildren != null){
-            for(SimplifiedPattern sChild : sChildren){
+            for(SPattern sChild : sChildren){
                 currentDefinitionTopPatterns.add(sChild);
             }
             builder.clearContent();
@@ -580,7 +592,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		ParsedComponent[] children = element.getChildren();		
 		        		
 		if(children == null) {			
-			builder.buildElement(selements.size(), element.getRecordIndex(), element.getDocumentIndexedData());
+			builder.buildElement(selements.size(), element.getRecordIndex(), element.getDocumentIndexedData(), recursionModel);
             patternChild = true;
             notAllowedElement = false;
             SElement e = (SElement)builder.getCurrentPattern();
@@ -588,6 +600,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			return;
 		}	
         
+		
         boolean oldAttributeContext = attributeContext;
         attributeContext = false;
         
@@ -599,6 +612,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int notAllowedCount = 0;
         builder.startLevel();
         boolean oldNotAllowedChild = notAllowedChild;        
+        
 		for(int i = 0; i < children.length; i++){
 			if(children[i] != null){
                 notAllowedChild = false;
@@ -624,6 +638,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             patternChild = true;
             notAllowedElement = true;
             attributeContext = oldAttributeContext;
+            
 			return;
 		}
         if(containsPattern && nonEmptyChildrenCount == 0){
@@ -632,10 +647,12 @@ abstract class Simplifier implements SimplifyingVisitor{
             builder.buildEmpty(emptyComponent.getRecordIndex(), emptyComponent.getDocumentIndexedData(), true);
         }
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup(element.getRecordIndex(), element.getDocumentIndexedData(), true);
+			builder.buildReplacementGroup(element.getRecordIndex(), 
+                            element.getDocumentIndexedData(), 
+                            true);
 		}
 		builder.endLevel();
-		builder.buildElement(selements.size(), element.getRecordIndex(), element.getDocumentIndexedData());
+		builder.buildElement(selements.size(), element.getRecordIndex(), element.getDocumentIndexedData(), recursionModel);
 		SElement e = (SElement)builder.getCurrentPattern();
         selements.add(e);
 		
@@ -643,13 +660,13 @@ abstract class Simplifier implements SimplifyingVisitor{
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
         notAllowedElement = true;
-        attributeContext = oldAttributeContext;
+        attributeContext = oldAttributeContext;        
 	}	
 	public void visit(ElementWithNameInstance element)  throws SAXException{
 		ParsedComponent[] children = element.getChildren();
 		        
 		if(children == null) {
-			builder.buildElement(selements.size(), element.getRecordIndex(), element.getDocumentIndexedData());
+			builder.buildElement(selements.size(), element.getRecordIndex(), element.getDocumentIndexedData(), recursionModel);
             patternChild = true;
             notAllowedElement = false;
             SElement e = (SElement)builder.getCurrentPattern();
@@ -668,9 +685,11 @@ abstract class Simplifier implements SimplifyingVisitor{
         int nonEmptyChildrenCount = 0;
         int notAllowedCount = 0;
         boolean oldNotAllowedChild = notAllowedChild;
+        
 		for(int i = 0; i < children.length; i++){
 			if(children[i] != null){
                 notAllowedChild = false; 
+                                
                 next(children[i]);
                 if(patternChild){
                     nonEmptyChildrenCount++;
@@ -681,7 +700,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                         nonEmptyChildrenCount--;
                         emptyChild = false;
                     }
-                }
+                }                
             }
 		}		
         notAllowedChild = oldNotAllowedChild;
@@ -692,7 +711,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             notAllowedElement = true;
-            attributeContext = oldAttributeContext;
+            attributeContext = oldAttributeContext;            
 			return;
 		}
         if(nonEmptyChildrenCount == 0){
@@ -700,7 +719,9 @@ abstract class Simplifier implements SimplifyingVisitor{
         }
 		
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup(element.getRecordIndex(), element.getDocumentIndexedData(), true);
+			builder.buildReplacementGroup(element.getRecordIndex(), 
+                            element.getDocumentIndexedData(), 
+                            true);
 		}
         
 		String name = element.getName();
@@ -719,14 +740,14 @@ abstract class Simplifier implements SimplifyingVisitor{
 		builder.buildName(ns, localPart, element.getRecordIndex(), element.getDocumentIndexedData(), true);
 		
 		builder.endLevel();
-		builder.buildElement(selements.size(), element.getRecordIndex(), element.getDocumentIndexedData());
+		builder.buildElement(selements.size(), element.getRecordIndex(), element.getDocumentIndexedData(), recursionModel);
 		SElement e = (SElement)builder.getCurrentPattern();
         selements.add(e);
             
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
         notAllowedElement = false;
-        attributeContext = oldAttributeContext;
+        attributeContext = oldAttributeContext;        
 	}    
 	public void visit(AttributeWithNameClass attribute)  throws SAXException{
 		ParsedComponent[] children = attribute.getChildren();		
@@ -745,11 +766,17 @@ abstract class Simplifier implements SimplifyingVisitor{
                 }else{
                     builder.buildAttribute(null, attribute.getQName(), attribute.getLocation());
                 } */               
-                builder.buildAttribute(sattributes.size(), attribute.getDefaultValueRecordIndex(), attribute.getRecordIndex(), attribute.getDocumentIndexedData());
+                builder.buildAttribute(sattributes.size(), 
+                                    attribute.getDefaultValueRecordIndex(),
+                                    attribute.getRecordIndex(), 
+                                    attribute.getDocumentIndexedData());
                 SAttribute a = (SAttribute)builder.getCurrentPattern();
                 sattributes.add(a);
             }else{
-                builder.buildAttribute(sattributes.size(), DocumentIndexedData.NO_RECORD, attribute.getRecordIndex(), attribute.getDocumentIndexedData());
+                builder.buildAttribute(sattributes.size(), 
+                                    DocumentIndexedData.NO_RECORD,
+                                    attribute.getRecordIndex(), 
+                                    attribute.getDocumentIndexedData());
                 SAttribute a = (SAttribute)builder.getCurrentPattern();
                 sattributes.add(a);
             }
@@ -788,13 +815,13 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             notAllowedChild = notAllowed;
             patternChild = true;
-            attributeContext = oldAttributeContext;            
+            attributeContext = oldAttributeContext;
             return;
         }
         notAllowedChild = oldNotAllowedChild;
 		
         if(childrenCount == 0){
-            builder.buildText(attribute.getRecordIndex(), attribute.getDocumentIndexedData(), true);            
+            builder.buildText(attribute.getRecordIndex(), attribute.getDocumentIndexedData(), true);
         }else if(emptyCount == childrenCount){
 			/*
 			Replaced with a limitation placed in restrictions control.
@@ -813,18 +840,24 @@ abstract class Simplifier implements SimplifyingVisitor{
 		        
 		builder.endLevel();
 		if(level1AttributeDefaultValue){
-            builder.buildAttribute(sattributes.size(), attribute.getDefaultValueRecordIndex(), attribute.getRecordIndex(), attribute.getDocumentIndexedData());
+            builder.buildAttribute(sattributes.size(), 
+                                    attribute.getDefaultValueRecordIndex(),
+                                    attribute.getRecordIndex(), 
+                                    attribute.getDocumentIndexedData());
             SAttribute a = (SAttribute)builder.getCurrentPattern();
             sattributes.add(a);
         }else{
-            builder.buildAttribute(sattributes.size(), DocumentIndexedData.NO_RECORD, attribute.getRecordIndex(), attribute.getDocumentIndexedData());
+            builder.buildAttribute(sattributes.size(), 
+                                    DocumentIndexedData.NO_RECORD,
+                                    attribute.getRecordIndex(), 
+                                    attribute.getDocumentIndexedData());
             SAttribute a = (SAttribute)builder.getCurrentPattern();
             sattributes.add(a);
         }
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
-        attributeContext = oldAttributeContext;
+        attributeContext = oldAttributeContext;        
 	}
 	public void visit(AttributeWithNameInstance attribute)  throws SAXException{
 		ParsedComponent[] children = attribute.getChildren();		
@@ -864,11 +897,17 @@ abstract class Simplifier implements SimplifyingVisitor{
 			builder.buildName(ns, localPart, attribute.getRecordIndex(), attribute.getDocumentIndexedData(), true);
 			builder.endLevel();
 			if(level1AttributeDefaultValue){
-                builder.buildAttribute(sattributes.size(), attribute.getDefaultValueRecordIndex(), attribute.getRecordIndex(), attribute.getDocumentIndexedData());
+                builder.buildAttribute(sattributes.size(),                    
+                                    attribute.getDefaultValueRecordIndex(),
+                                    attribute.getRecordIndex(), 
+                                    attribute.getDocumentIndexedData());
                 SAttribute a = (SAttribute)builder.getCurrentPattern();
                 sattributes.add(a);                
             }else{
-                builder.buildAttribute(sattributes.size(), DocumentIndexedData.NO_RECORD, attribute.getRecordIndex(), attribute.getDocumentIndexedData());
+                builder.buildAttribute(sattributes.size(), 
+                                    DocumentIndexedData.NO_RECORD,
+                                    attribute.getRecordIndex(), 
+                                    attribute.getDocumentIndexedData());
                 SAttribute a = (SAttribute)builder.getCurrentPattern();
                 sattributes.add(a);
             }
@@ -877,6 +916,8 @@ abstract class Simplifier implements SimplifyingVisitor{
 			return;
 		}
         
+		
+
         boolean oldAttributeContext = attributeContext;
         attributeContext = true;
         
@@ -895,7 +936,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                         emptyCount++;
                         emptyChild = false;
                     }
-                }
+                }              
             }	
 		}		
         if(notAllowed){		
@@ -906,13 +947,14 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             notAllowedChild = notAllowed;
             patternChild = true;
-            attributeContext = oldAttributeContext;            
+            attributeContext = oldAttributeContext;  
+            
             return;
         }
         notAllowedChild = oldNotAllowedChild;
         
 		if(childrenCount == 0){
-            builder.buildText(attribute.getRecordIndex(), attribute.getDocumentIndexedData(), true);            
+            builder.buildText(attribute.getRecordIndex(), attribute.getDocumentIndexedData(), true);
         }else if(emptyCount == childrenCount){
 			/*
 			Replaced with a limitation placed in restrictions control.
@@ -957,11 +999,17 @@ abstract class Simplifier implements SimplifyingVisitor{
 		
 		builder.endLevel();
 		if(level1AttributeDefaultValue){
-            builder.buildAttribute(sattributes.size(), attribute.getDefaultValueRecordIndex(), attribute.getRecordIndex(), attribute.getDocumentIndexedData());
+            builder.buildAttribute(sattributes.size(), 
+                                    attribute.getDefaultValueRecordIndex(),
+                                    attribute.getRecordIndex(), 
+                                    attribute.getDocumentIndexedData());
             SAttribute a = (SAttribute)builder.getCurrentPattern();
             sattributes.add(a);
         }else{
-            builder.buildAttribute(sattributes.size(), DocumentIndexedData.NO_RECORD, attribute.getRecordIndex(), attribute.getDocumentIndexedData());
+            builder.buildAttribute(sattributes.size(), 
+                                    DocumentIndexedData.NO_RECORD,
+                                    attribute.getRecordIndex(), 
+                                    attribute.getDocumentIndexedData());
             SAttribute a = (SAttribute)builder.getCurrentPattern();
             sattributes.add(a);
         }
@@ -973,7 +1021,9 @@ abstract class Simplifier implements SimplifyingVisitor{
 	public void visit(ChoicePattern choice)  throws SAXException{
 		ParsedComponent[] children = choice.getChildren();	
 		if(children == null){
-			builder.buildChoicePattern(choice.getRecordIndex(), choice.getDocumentIndexedData(), false);
+			builder.buildChoicePattern(choice.getRecordIndex(), 
+			                        choice.getDocumentIndexedData(),
+			                        false);
             patternChild = true;
 			return;
 		}
@@ -991,9 +1041,11 @@ abstract class Simplifier implements SimplifyingVisitor{
         notAllowedChild = false;
         int childrenCount = 0;
 		int notAllowedChildrenCount = 0;
-		int emptyCount = 0;		
+		int emptyCount = 0;	
+		
 		for(int i = 0; i < children.length; i++){            
 			if(children[i] != null){
+			    
                 next(children[i]);
                 if(patternChild){
                     childrenCount++;
@@ -1005,7 +1057,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                         emptyCount++;
                         emptyChild = false;
                     }
-                }
+                }                
             }			
 		}		
 		if(notAllowedChildrenCount == childrenCount){						
@@ -1015,7 +1067,8 @@ abstract class Simplifier implements SimplifyingVisitor{
 			emptyChild = false;
             patternChild = true;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
-            attributeContext = oldAttributeContext; 
+            attributeContext = oldAttributeContext;
+            
 			return;
 		}
         notAllowedChild = oldNotAllowedChild;
@@ -1027,23 +1080,27 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
+            
 			return;
 		}
 		if(emptyCount > 0){
 			builder.buildEmpty(emptyComponent.getRecordIndex(), emptyComponent.getDocumentIndexedData(), true);
 		}
 		builder.endLevel();
-		builder.buildChoicePattern(choice.getRecordIndex(), choice.getDocumentIndexedData(), false);
+		builder.buildChoicePattern(choice.getRecordIndex(), 
+                            choice.getDocumentIndexedData(), 
+                            false);
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
-        attributeContext = oldAttributeContext;
+        attributeContext = oldAttributeContext;        
 	}
 	public void visit(Interleave interleave) throws SAXException{
 		ParsedComponent[] children = interleave.getChildren();
 		
 		if(children == null) {
-			builder.buildInterleave(interleave.getRecordIndex(), interleave.getDocumentIndexedData());
+			builder.buildInterleave(interleave.getRecordIndex(), 
+			                        interleave.getDocumentIndexedData());
             patternChild = true;			
 			return;
 		}
@@ -1060,6 +1117,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         boolean notAllowed = false;       
 		int emptyCount = 0;
 		int childrenCount = 0;
+		
 		for(int i = 0; i < children.length; i++){
 			if(children[i] != null){
                 notAllowedChild = false;
@@ -1071,7 +1129,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                         emptyCount++;
                         emptyChild = false;
                     }
-                }
+                }                
             }			
 		}		
         if(notAllowed){				
@@ -1081,7 +1139,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             emptyChild = false;
             patternChild = true;
             attributeContext = oldAttributeContext;
-            if(prefixMapping != null) endXmlnsContext(prefixMapping);
+            if(prefixMapping != null) endXmlnsContext(prefixMapping);            
             return;
         }
         notAllowedChild = oldNotAllowedChild;
@@ -1092,22 +1150,25 @@ abstract class Simplifier implements SimplifyingVisitor{
 			emptyComponent = interleave;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
-            attributeContext = oldAttributeContext;
+            attributeContext = oldAttributeContext;            
 			return;
 		}	
 		
 		builder.endLevel();
-		builder.buildInterleave(interleave.getRecordIndex(), interleave.getDocumentIndexedData());
+		builder.buildInterleave(interleave.getRecordIndex(), 
+                            interleave.getDocumentIndexedData());
 		
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
-        attributeContext = oldAttributeContext;
+        attributeContext = oldAttributeContext;        
 	}
 	public void visit(Group group)  throws SAXException{
 		ParsedComponent[] children = group.getChildren();
 		
 		if(children == null) {
-			builder.buildGroup(group.getRecordIndex(), group.getDocumentIndexedData(), false);
+			builder.buildGroup(group.getRecordIndex(), 
+                                group.getDocumentIndexedData(), 
+                                false);
             patternChild = true;			
 			return;
 		}
@@ -1124,9 +1185,11 @@ abstract class Simplifier implements SimplifyingVisitor{
         boolean notAllowed = false;       
 		int emptyCount = 0;
 		int childrenCount = 0;
+		
 		for(int i = 0; i < children.length; i++){
 			if(children[i] != null){
                 notAllowedChild = false;
+                                               
                 next(children[i]);
                 if(patternChild){
                     childrenCount++;
@@ -1135,7 +1198,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                         emptyCount++;
                         emptyChild = false;
                     }
-                }
+                }                
             }			
 		}		
         if(notAllowed){				
@@ -1146,6 +1209,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             patternChild = true;
             attributeContext = oldAttributeContext;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
+            
             return;
         }
         notAllowedChild = oldNotAllowedChild;
@@ -1157,15 +1221,18 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
+            
 			return;
 		}
 		
 		builder.endLevel();
-		builder.buildGroup(group.getRecordIndex(), group.getDocumentIndexedData(), false);
+		builder.buildGroup(group.getRecordIndex(), 
+                            group.getDocumentIndexedData(), 
+                            false);
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
-        attributeContext = oldAttributeContext;
+        attributeContext = oldAttributeContext;       
 	}
 	public void visit(ZeroOrMore zeroOrMore)  throws SAXException{
 		ParsedComponent[] children = zeroOrMore.getChildren();
@@ -1188,9 +1255,11 @@ abstract class Simplifier implements SimplifyingVisitor{
         boolean notAllowed = false;       
 		int emptyCount = 0;
 		int childrenCount = 0;
+				
 		for(int i = 0; i < children.length; i++){
 			if(children[i] != null){
                 notAllowedChild = false;
+                
                 next(children[i]);
                 if(patternChild){
                     childrenCount++;
@@ -1211,6 +1280,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
+            
             return;
         }
         notAllowedChild = oldNotAllowedChild;
@@ -1222,18 +1292,21 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
+            
 			return;
 		}
 				
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup(zeroOrMore.getRecordIndex(), zeroOrMore.getDocumentIndexedData(), true);
+			builder.buildReplacementGroup(zeroOrMore.getRecordIndex(), 
+                            zeroOrMore.getDocumentIndexedData(), 
+                            true);
 		}	
 		builder.endLevel();
 		builder.zeroOrMore(zeroOrMore.getRecordIndex(), zeroOrMore.getDocumentIndexedData());
         
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
-        attributeContext = oldAttributeContext;
+        attributeContext = oldAttributeContext;        
 	}
 	public void visit(OneOrMore oneOrMore)  throws SAXException{
 		ParsedComponent[] children = oneOrMore.getChildren();
@@ -1256,9 +1329,11 @@ abstract class Simplifier implements SimplifyingVisitor{
         boolean notAllowed = false;       
 		int emptyCount = 0;
 		int childrenCount = 0;
+				
 		for(int i = 0; i < children.length; i++){
 			if(children[i] != null){
                 notAllowedChild = false;
+                               
                 next(children[i]);
                 if(patternChild){
                     childrenCount++;
@@ -1278,6 +1353,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             patternChild = true;
             attributeContext = oldAttributeContext;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
+            
             return;
         }
         notAllowedChild = oldNotAllowedChild;
@@ -1289,18 +1365,21 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
+            
 			return;
 		}
 		
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup(oneOrMore.getRecordIndex(), oneOrMore.getDocumentIndexedData(), true);
+			builder.buildReplacementGroup(oneOrMore.getRecordIndex(), 
+                            oneOrMore.getDocumentIndexedData(), 
+                            true);
 		}		
 		builder.endLevel();
 		builder.oneOrMore(oneOrMore.getRecordIndex(), oneOrMore.getDocumentIndexedData());
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
-        attributeContext = oldAttributeContext;
+        attributeContext = oldAttributeContext;        
 	}
     
 	public void visit(Optional optional)  throws SAXException{
@@ -1324,9 +1403,11 @@ abstract class Simplifier implements SimplifyingVisitor{
         boolean notAllowed = false;       
 		int emptyCount = 0;
 		int childrenCount = 0;
+		
 		for(int i = 0; i < children.length; i++){
 			if(children[i] != null){
                 notAllowedChild = false;
+                               
                 next(children[i]);
                 if(patternChild){
                     childrenCount++;
@@ -1335,7 +1416,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                         emptyCount++;
                         emptyChild = false;
                     }
-                }
+                }                
             }			
 		}
        
@@ -1348,6 +1429,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             patternChild = true;
             attributeContext = oldAttributeContext;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
+            
             return;
         }
         notAllowedChild = oldNotAllowedChild;
@@ -1359,25 +1441,29 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
+            
 			return;
 		}
 		
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup(optional.getRecordIndex(), optional.getDocumentIndexedData(), true);
+			builder.buildReplacementGroup(optional.getRecordIndex(), 
+                            optional.getDocumentIndexedData(), 
+                            true);
 		}		
 		builder.endLevel();
 		builder.optional(optional.getRecordIndex(), optional.getDocumentIndexedData());
 		    
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
-        attributeContext = oldAttributeContext;
+        attributeContext = oldAttributeContext;        
 	}	
 	public void visit(ListPattern list)  throws SAXException{
 		ParsedComponent[] children = list.getChildren();
 		
 		if(children == null) {
-			builder.buildListPattern(list.getRecordIndex(), list.getDocumentIndexedData());
-            patternChild = true;			
+			builder.buildListPattern(list.getRecordIndex(), 
+                            list.getDocumentIndexedData());
+            patternChild = true;
 			return;
 		}
         
@@ -1393,9 +1479,11 @@ abstract class Simplifier implements SimplifyingVisitor{
         boolean notAllowed = false;       
 		int emptyCount = 0;
 		int childrenCount = 0;
+				 
 		for(int i = 0; i < children.length; i++){
 			if(children[i] != null){
                 notAllowedChild = false;
+                
                 next(children[i]);
                 if(patternChild){
                     childrenCount++;
@@ -1404,7 +1492,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                         emptyCount++;
                         emptyChild = false;
                     }
-                }
+                }                
             }			
 		}		
         if(notAllowed){				
@@ -1415,6 +1503,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             patternChild = true;
             attributeContext = oldAttributeContext;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
+                 
             return;
         }
         notAllowedChild = oldNotAllowedChild;
@@ -1426,25 +1515,30 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
+            
 			return;
 		}
 		
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup(list.getRecordIndex(), list.getDocumentIndexedData(), true);
+			builder.buildReplacementGroup(list.getRecordIndex(), 
+                            list.getDocumentIndexedData(),
+                            true);
 		}		
 		builder.endLevel();
-		builder.buildListPattern(list.getRecordIndex(), list.getDocumentIndexedData());
+		builder.buildListPattern(list.getRecordIndex(), 
+                            list.getDocumentIndexedData());
 		        
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
-        attributeContext = oldAttributeContext;
+        attributeContext = oldAttributeContext;        
 	}	
 	public void visit(Mixed mixed)  throws SAXException{
 		ParsedComponent[] children = mixed.getChildren();
 		
 		if(children == null) {
-			builder.buildInterleave(mixed.getRecordIndex(), mixed.getDocumentIndexedData());
-            patternChild = true;			
+			builder.buildInterleave(mixed.getRecordIndex(), 
+			                        mixed.getDocumentIndexedData());
+            patternChild = true;	
 			return;
 		}
         
@@ -1460,9 +1554,11 @@ abstract class Simplifier implements SimplifyingVisitor{
         boolean notAllowed = false;       
 		int emptyCount = 0;
 		int childrenCount = 0;
+		      
 		for(int i = 0; i < children.length; i++){
 			if(children[i] != null){
                 notAllowedChild = false;
+                                               
                 next(children[i]);
                 if(patternChild){
                     childrenCount++;
@@ -1482,6 +1578,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             patternChild = true;
             attributeContext = oldAttributeContext;
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
+                 
             return;
         }
         notAllowedChild = oldNotAllowedChild;
@@ -1493,19 +1590,23 @@ abstract class Simplifier implements SimplifyingVisitor{
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
+                 
 			return;
 		}
 		
 		if(builder.getCurrentPatternsCount() > 1){
-			builder.buildReplacementGroup(mixed.getRecordIndex(), mixed.getDocumentIndexedData(), true);
+			builder.buildReplacementGroup(mixed.getRecordIndex(), 
+                            mixed.getDocumentIndexedData(), 
+                            true);
 		}		
 		builder.buildText(mixed.getRecordIndex(), mixed.getDocumentIndexedData(), true);
 		builder.endLevel();
-		builder.buildInterleave(mixed.getRecordIndex(), mixed.getDocumentIndexedData());
+		builder.buildInterleave(mixed.getRecordIndex(), 
+                            mixed.getDocumentIndexedData());
 		
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
-        attributeContext = oldAttributeContext;
+        attributeContext = oldAttributeContext;        
 	}	
 	
 	public void visit(Empty empty){
@@ -1528,7 +1629,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			// ? error ?
 			// or was that reported already
 			// YES it was
-            builder.buildRef(-1, externalRef.getRecordIndex(), externalRef.getDocumentIndexedData());
+            builder.buildRef(null, -1, null, externalRef.getRecordIndex(), externalRef.getDocumentIndexedData());
             patternChild = true;
 			return;
 		}
@@ -1538,12 +1639,11 @@ abstract class Simplifier implements SimplifyingVisitor{
         Map<String, String> prefixMapping = externalRef.getXmlns();
         if(prefixMapping != null) startXmlnsContext(prefixMapping);
         
-		int index = indexes.get(docTopPattern);
+		int index = indexes.get(docTopPattern);	
 		if(index != indexes.getNullValue()){			
 			if(referencePath.contains(index)){
-				builder.buildRef(index, externalRef.getRecordIndex(), externalRef.getDocumentIndexedData());				
-				recursionModel.add(builder.getCurrentPattern());
-				if(!recursionModel.isRecursiveDefinition(index)) recursionModel.add(index);
+				SRef sref = builder.buildRef(index, referenceModel, externalRef.getRecordIndex(), externalRef.getDocumentIndexedData());				
+				recursionModel.add(sref);
                 if(prefixMapping != null) endXmlnsContext(prefixMapping);
                 patternChild = true;
                 attributeContext = oldAttributeContext;
@@ -1557,7 +1657,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                 attributeContext = oldAttributeContext;
                 return;
             }
-			builder.buildRef(index, externalRef.getRecordIndex(), externalRef.getDocumentIndexedData());
+			builder.buildRef(definitionTopPatterns.get(index), index, referenceModel, externalRef.getRecordIndex(), externalRef.getDocumentIndexedData());
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
@@ -1575,7 +1675,7 @@ abstract class Simplifier implements SimplifyingVisitor{
        
 		nextLevel(docTopPattern);
 		
-		SimplifiedPattern topPattern = builder.getLastContentPattern();				
+		SPattern topPattern = builder.getLastContentPattern();				
 		definitionTopPatterns.set(index, topPattern);
 		builder.clearContent();
 				
@@ -1590,7 +1690,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             attributeContext = oldAttributeContext;
             return;
         }
-		builder.buildRef(index, externalRef.getRecordIndex(), externalRef.getDocumentIndexedData());
+		builder.buildRef(topPattern, index, referenceModel, externalRef.getRecordIndex(), externalRef.getDocumentIndexedData());
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
         attributeContext = oldAttributeContext;		
@@ -1605,7 +1705,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 				+"No correspoding definition was found for element <"+ref.getQName()+"> at "+ref.getLocation(restrictToFileName)+".";
 			
 			errorDispatcher.error(new SAXParseException(message, null));
-            builder.buildRef(-1, ref.getRecordIndex(), ref.getDocumentIndexedData());
+            builder.buildRef(null, -1, null, ref.getRecordIndex(), ref.getDocumentIndexedData());
             patternChild = true;
 			return;
 		}
@@ -1620,9 +1720,8 @@ abstract class Simplifier implements SimplifyingVisitor{
 		
 		if(index != indexes.getNullValue()){
 			if(referencePath.contains(index)){
-				builder.buildRef(index, ref.getRecordIndex(), ref.getDocumentIndexedData());
-				recursionModel.add(builder.getCurrentPattern());
-				if(!recursionModel.isRecursiveDefinition(index)) recursionModel.add(index);
+				SRef sref = builder.buildRef(index, referenceModel, ref.getRecordIndex(), ref.getDocumentIndexedData());
+				recursionModel.add(sref);
                 if(prefixMapping != null) endXmlnsContext(prefixMapping);
                 patternChild = true;
                 attributeContext = oldAttributeContext;
@@ -1636,7 +1735,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                 attributeContext = oldAttributeContext;
                 return;
             }
-			builder.buildRef(index, ref.getRecordIndex(), ref.getDocumentIndexedData());
+			builder.buildRef(definitionTopPatterns.get(index), index, referenceModel, ref.getRecordIndex(), ref.getDocumentIndexedData());
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
@@ -1664,6 +1763,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			referencePath,
 			definitionEmptyChild,
 			definitionNotAllowedChild,
+			referenceModel,
 			recursionModel,			
 			currentGrammar,
 			previousGrammars,
@@ -1678,7 +1778,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                 sexceptPatterns);
 		        
         
-		SimplifiedPattern topPattern = ds.getCurrentPattern();
+		SPattern topPattern = ds.getCurrentPattern();
 		definitionTopPatterns.set(index, topPattern);
 		
 		emptyChild = ds.getEmptyChild();
@@ -1686,7 +1786,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         
 		notAllowedChild = ds.getNotAllowedChild();
 		definitionNotAllowedChild.set(index, notAllowedChild);
-        
+        		
         ds.recycle();
         
 		referencePath.pop();
@@ -1697,7 +1797,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             attributeContext = oldAttributeContext;
             return;
         }
-		builder.buildRef(index, ref.getRecordIndex(), ref.getDocumentIndexedData());	
+		builder.buildRef(topPattern, index, referenceModel, ref.getRecordIndex(), ref.getDocumentIndexedData());	
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
         attributeContext = oldAttributeContext;
@@ -1711,7 +1811,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			String message = "Simplification 4.18 error. "
 				+"No correspoding definition was found for element <"+parentRef.getQName()+"> at "+parentRef.getLocation(restrictToFileName)+".";
 			errorDispatcher.error(new SAXParseException(message, null));
-            builder.buildRef(-1, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
+            builder.buildRef(null, -1, null, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
             patternChild = true;
 			return;
 		}
@@ -1725,9 +1825,8 @@ abstract class Simplifier implements SimplifyingVisitor{
 		int index = indexes.get(definitions);
 		if(index != indexes.getNullValue()){			
 			if(referencePath.contains(index)){
-				builder.buildRef(index, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
-				recursionModel.add(builder.getCurrentPattern());
-				if(!recursionModel.isRecursiveDefinition(index)) recursionModel.add(index);
+				SRef sref = builder.buildRef(index, referenceModel, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
+				recursionModel.add(sref);
                 if(prefixMapping != null) endXmlnsContext(prefixMapping);
                 patternChild = true;
                 attributeContext = oldAttributeContext;
@@ -1741,7 +1840,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                 attributeContext = oldAttributeContext;
                 return;
             }
-			builder.buildRef(index, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
+			builder.buildRef(definitionTopPatterns.get(index), index, referenceModel, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
             attributeContext = oldAttributeContext;
@@ -1769,6 +1868,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			referencePath,
 			definitionEmptyChild,
 			definitionNotAllowedChild,
+			referenceModel,
 			recursionModel,			
 			currentGrammar,
 			previousGrammars,
@@ -1782,7 +1882,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                 sattributes,
                 sexceptPatterns);
 		
-		SimplifiedPattern topPattern = ds.getCurrentPattern();
+		SPattern topPattern = ds.getCurrentPattern();
 		definitionTopPatterns.set(index, topPattern);
 		
 		emptyChild = ds.getEmptyChild();
@@ -1790,7 +1890,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		
 		notAllowedChild = ds.getNotAllowedChild();
 		definitionNotAllowedChild.set(index, notAllowedChild);
-		       
+		  		
         ds.recycle();       
         
 		referencePath.pop();
@@ -1801,7 +1901,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             attributeContext = oldAttributeContext;
             return;
         }
-		builder.buildRef(index, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
+		builder.buildRef(topPattern, index, referenceModel, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
         if(prefixMapping != null) endXmlnsContext(prefixMapping);
         patternChild = true;
         attributeContext = oldAttributeContext;		
@@ -1856,7 +1956,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 		builder.buildValue(ns, datatype, value.getCharacterContent(), value.getRecordIndex(), value.getDocumentIndexedData());
 	}
 	
-	public void visit(Data data)  throws SAXException{
+	public void visit(Data data)  throws SAXException{	    
 		ParsedComponent[] children = data.getChildren();
 		
         Map<String, String> prefixMapping = data.getXmlns();
@@ -1875,8 +1975,8 @@ abstract class Simplifier implements SimplifyingVisitor{
 		attributeContext = oldAttributeContext;
 		
 		String type = data.getType();
-		String asciiDL;
-		if(type == null){
+		String asciiDL;		
+		if(type == null){		    
 			type = Constants.TOKEN_DT;
 			asciiDL = Constants.NATIVE_DATATYPE_LIBRARY;
 		}else{			
@@ -2029,7 +2129,8 @@ abstract class Simplifier implements SimplifyingVisitor{
 			errorDispatcher.error(new SAXParseException(message, null));            
             simplifyUnreachableDefines(grammar, start);
             if(grammar.getParent() != null){
-                builder.buildGrammar(grammar.getRecordIndex(), grammar.getDocumentIndexedData());
+                builder.buildGrammar(grammar.getRecordIndex(), 
+                                    grammar.getDocumentIndexedData());
                 patternChild = true;
             }            
 			return;
@@ -2056,6 +2157,7 @@ abstract class Simplifier implements SimplifyingVisitor{
 			referencePath,
 			definitionEmptyChild,
 			definitionNotAllowedChild,
+			referenceModel,
 			recursionModel,			
 			currentGrammar,
 			previousGrammars,
@@ -2069,6 +2171,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                 sexceptPatterns);		
 		
 		notAllowedChild = ds.getNotAllowedChild();
+		
 		if(notAllowedChild){
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
             patternChild = true;
@@ -2086,7 +2189,7 @@ abstract class Simplifier implements SimplifyingVisitor{
             return;
         }
 		
-		SimplifiedPattern[] topPattern = ds.getAllCurrentPatterns();
+		SPattern[] topPattern = ds.getAllCurrentPatterns();
         
         ds.recycle();
 		
@@ -2096,7 +2199,8 @@ abstract class Simplifier implements SimplifyingVisitor{
 			builder.startLevel();
 			builder.addAllToCurrentLevel(topPattern);
 			builder.endLevel();
-			builder.buildGrammar(grammar.getRecordIndex(), grammar.getDocumentIndexedData());
+			builder.buildGrammar(grammar.getRecordIndex(), 
+                            grammar.getDocumentIndexedData());
             
             currentGrammar = previousGrammars.pop();
             if(prefixMapping != null) endXmlnsContext(prefixMapping);
@@ -2128,6 +2232,7 @@ abstract class Simplifier implements SimplifyingVisitor{
                     referencePath,
                     definitionEmptyChild,
                     definitionNotAllowedChild,
+                    referenceModel,
                     recursionModel,			
                     grammar,
                     previousGrammars,

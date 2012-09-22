@@ -18,25 +18,25 @@ package serene.restrictor.util;
 
 import java.util.ArrayList;
 
-import serene.validation.schema.simplified.SimplifiedPattern;
-import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SInterleave;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SGroup;
+import serene.validation.schema.simplified.SInterleave;
 
 
 public class MorePath{
-	ArrayList<ArrayList<SimplifiedPattern>> pathes;
+	ArrayList<ArrayList<SPattern>> pathes;
 	int size;
 	
 	public MorePath(){
-		pathes = new ArrayList<ArrayList<SimplifiedPattern>>();
+		pathes = new ArrayList<ArrayList<SPattern>>();
 		size = 0;
 	}
 	
 	
 	/*public void push(SZeroOrMore more){
-		ArrayList<SimplifiedPattern> path;
+		ArrayList<SPattern> path;
 		if(pathes.size() < ++size){
-			path = new ArrayList<SimplifiedPattern>();
+			path = new ArrayList<SPattern>();
 			pathes.add(path);
 		}else{
 			path = pathes.get(size-1);
@@ -47,9 +47,9 @@ public class MorePath{
 	}
 	
 	public void push(SOneOrMore more){
-		ArrayList<SimplifiedPattern> path;
+		ArrayList<SPattern> path;
 		if(pathes.size() < ++size){
-			path = new ArrayList<SimplifiedPattern>();
+			path = new ArrayList<SPattern>();
 			pathes.add(path);
 		}else{
 			path = pathes.get(size-1);
@@ -59,10 +59,10 @@ public class MorePath{
 		path.add(more);
 	}*/
 	
-	public void pushMultipleCardinalityPattern(SimplifiedPattern p){
-	    ArrayList<SimplifiedPattern> path;
+	public void pushMultipleCardinalityPattern(SPattern p){
+	    ArrayList<SPattern> path;
 		if(pathes.size() < ++size){
-			path = new ArrayList<SimplifiedPattern>();
+			path = new ArrayList<SPattern>();
 			pathes.add(path);
 		}else{
 			path = pathes.get(size-1);
@@ -73,7 +73,7 @@ public class MorePath{
 	}
 	
 	public void push(SGroup g){
-		ArrayList<SimplifiedPattern> path = pathes.get(size-1);
+		ArrayList<SPattern> path = pathes.get(size-1);
 		if(path == null){
 			throw new IllegalStateException();
 		}
@@ -82,7 +82,7 @@ public class MorePath{
 	}
 	
 	public void push(SInterleave i){
-		ArrayList<SimplifiedPattern> path = pathes.get(size-1);
+		ArrayList<SPattern> path = pathes.get(size-1);
 		if(path == null){
 			throw new IllegalStateException();
 		}
@@ -91,31 +91,31 @@ public class MorePath{
 	}
 	
 
-	public SimplifiedPattern popItem(){
-		ArrayList<SimplifiedPattern> path = pathes.get(size-1);
+	public SPattern popItem(){
+		ArrayList<SPattern> path = pathes.get(size-1);
 		if(path == null){
 			throw new IllegalStateException();
 		}		
 		return path.remove(path.size()-1);
 	}
     
-    public SimplifiedPattern peekItem(){
-		ArrayList<SimplifiedPattern> path = pathes.get(size-1);
+    public SPattern peekItem(){
+		ArrayList<SPattern> path = pathes.get(size-1);
 		if(path == null){
 			throw new IllegalStateException();
 		}		
 		return path.get(path.size()-1);
 	}
 		
-	public ArrayList<SimplifiedPattern> pop(){		
+	public ArrayList<SPattern> pop(){		
 		return pathes.get(--size);
 	}
 	
-	public ArrayList<SimplifiedPattern> peek(){
+	public ArrayList<SPattern> peek(){
 		return pathes.get(size-1);
 	}
 	
-	public ArrayList<SimplifiedPattern> doublePeek(){
+	public ArrayList<SPattern> doublePeek(){
 		return pathes.get(size-2);
 	}
 	

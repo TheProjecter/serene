@@ -19,7 +19,7 @@ package serene.dtdcompatibility;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import serene.validation.schema.simplified.components.SNameClass;
+import serene.validation.schema.simplified.SNameClass;
 
 import serene.util.AttributeInfo;
 import serene.util.NameInfo;

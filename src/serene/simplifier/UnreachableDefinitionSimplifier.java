@@ -158,7 +158,7 @@ class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
 			return;
 		}
 		
-        builder.buildRef(-1, ref.getRecordIndex(), ref.getDocumentIndexedData());
+        builder.buildRef(null, -1, null, ref.getRecordIndex(), ref.getDocumentIndexedData()); // TODO review this
         patternChild = true;
 	}
     
@@ -175,7 +175,7 @@ class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
 			return;
 		}
         
-        builder.buildRef(-1, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData());
+        builder.buildRef(null, -1, null, parentRef.getRecordIndex(), parentRef.getDocumentIndexedData()); // TODO review this
         patternChild = true;        		
 	}
 }

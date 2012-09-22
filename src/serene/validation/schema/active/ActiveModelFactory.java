@@ -37,7 +37,7 @@ public class ActiveModelFactory{
 										ActiveModelPool pool){
 				
 		ActiveGrammarModel activeGrammarModel = new ActiveGrammarModel(simplifiedModel.getStartElementIndex(),
-                                                            simplifiedModel.getRefDefinitionTopPattern(),		                    
+                                                            simplifiedModel.getRefDefinitionTopPatterns(),		                    
                                                             simplifiedModel.getElementDefinitions(),
                                                             simplifiedModel.getAttributeDefinitions(),
                                                             simplifiedModel.getExceptPatternDefinitions(),

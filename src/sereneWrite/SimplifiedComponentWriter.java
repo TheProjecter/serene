@@ -18,28 +18,28 @@ package sereneWrite;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import serene.validation.schema.simplified.components.SExceptPattern;
-import serene.validation.schema.simplified.components.SExceptNameClass;
+import serene.validation.schema.simplified.SExceptPattern;
+import serene.validation.schema.simplified.SExceptNameClass;
 
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
-import serene.validation.schema.simplified.components.SChoicePattern;
-import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SListPattern;
-import serene.validation.schema.simplified.components.SEmpty;
-import serene.validation.schema.simplified.components.SText;
-import serene.validation.schema.simplified.components.SNotAllowed;
-import serene.validation.schema.simplified.components.SRef;
-import serene.validation.schema.simplified.components.SData;
-import serene.validation.schema.simplified.components.SValue;
-import serene.validation.schema.simplified.components.SGrammar;
-import serene.validation.schema.simplified.components.SDummy;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
+import serene.validation.schema.simplified.SChoicePattern;
+import serene.validation.schema.simplified.SInterleave;
+import serene.validation.schema.simplified.SGroup;
+import serene.validation.schema.simplified.SListPattern;
+import serene.validation.schema.simplified.SEmpty;
+import serene.validation.schema.simplified.SText;
+import serene.validation.schema.simplified.SNotAllowed;
+import serene.validation.schema.simplified.SRef;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SGrammar;
+import serene.validation.schema.simplified.SDummy;
 
-import serene.validation.schema.simplified.components.SName;
-import serene.validation.schema.simplified.components.SAnyName;
-import serene.validation.schema.simplified.components.SNsName;
-import serene.validation.schema.simplified.components.SChoiceNameClass;
+import serene.validation.schema.simplified.SName;
+import serene.validation.schema.simplified.SAnyName;
+import serene.validation.schema.simplified.SNsName;
+import serene.validation.schema.simplified.SChoiceNameClass;
 
 import serene.validation.schema.simplified.util.AbstractSimplifiedComponentVisitor;
 

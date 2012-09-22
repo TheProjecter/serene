@@ -28,33 +28,33 @@ import serene.util.IntList;
 import serene.util.IntStack;
 import serene.util.BooleanStack;
 
-import serene.validation.schema.simplified.SimplifiedPattern;
+import serene.validation.schema.simplified.SPattern;
 
-import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.components.SExceptPattern;
-import serene.validation.schema.simplified.components.SExceptNameClass;
-
-
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
-import serene.validation.schema.simplified.components.SChoicePattern;
-import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SListPattern;
-import serene.validation.schema.simplified.components.SEmpty;
-import serene.validation.schema.simplified.components.SText;
-import serene.validation.schema.simplified.components.SNotAllowed;
-import serene.validation.schema.simplified.components.SRef;
-import serene.validation.schema.simplified.components.SData;
-import serene.validation.schema.simplified.components.SValue;
-import serene.validation.schema.simplified.components.SGrammar;
-import serene.validation.schema.simplified.components.SDummy;
+import serene.validation.schema.simplified.SNameClass;
+import serene.validation.schema.simplified.SExceptPattern;
+import serene.validation.schema.simplified.SExceptNameClass;
 
 
-import serene.validation.schema.simplified.components.SName;
-import serene.validation.schema.simplified.components.SAnyName;
-import serene.validation.schema.simplified.components.SNsName;
-import serene.validation.schema.simplified.components.SChoiceNameClass;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
+import serene.validation.schema.simplified.SChoicePattern;
+import serene.validation.schema.simplified.SInterleave;
+import serene.validation.schema.simplified.SGroup;
+import serene.validation.schema.simplified.SListPattern;
+import serene.validation.schema.simplified.SEmpty;
+import serene.validation.schema.simplified.SText;
+import serene.validation.schema.simplified.SNotAllowed;
+import serene.validation.schema.simplified.SRef;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SGrammar;
+import serene.validation.schema.simplified.SDummy;
+
+
+import serene.validation.schema.simplified.SName;
+import serene.validation.schema.simplified.SAnyName;
+import serene.validation.schema.simplified.SNsName;
+import serene.validation.schema.simplified.SChoiceNameClass;
 
 import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.RecursionModel;
@@ -101,7 +101,7 @@ public class RRController extends RController{
 		init(simplifiedModel);
 		
 		if(topPatterns != null && topPatterns.length != 0){//to catch situations where start element was missing
-			for(SimplifiedPattern topPattern : topPatterns){
+			for(SPattern topPattern : topPatterns){
 				if(topPattern != null){
                     open();
                     topPattern.accept(this);
@@ -384,7 +384,7 @@ public class RRController extends RController{
             }
         }
 		
-        if(attribute.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+        if(attribute.getMaxOccurs() == SPattern.UNBOUNDED){
             moreAttributeContext = true;
             morePath.pushMultipleCardinalityPattern(attribute);
             elementLimitationNamingController.startMultipleCardinality();
@@ -479,7 +479,7 @@ public class RRController extends RController{
 		
 		contentType = ContentType.EMPTY;
 		
-		if(attribute.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(attribute.getMaxOccurs() == SPattern.UNBOUNDED){
 		    morePath.pop();
             elementLimitationNamingController.endMultipleCardinality();
             attributeLimitationNamingController.endMultipleCardinality();
@@ -526,7 +526,7 @@ public class RRController extends RController{
 		
 		boolean oldMoreContext = moreContext;
 		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
-		if(choice.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(choice.getMaxOccurs() == SPattern.UNBOUNDED){
 		    moreContext = true;	
 		    morePath.pushMultipleCardinalityPattern(choice);
 		    if(moreInterleaveContext) moreInterleaveMoreContext = true;
@@ -567,7 +567,7 @@ public class RRController extends RController{
 		    exceptPatternContext714 = oldExceptPatternContext714;
 		    startContext = oldStartContext;
 		}
-        if(choice.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+        if(choice.getMaxOccurs() == SPattern.UNBOUNDED){
 		    moreContext = oldMoreContext;	
 		    morePath.pop();
 		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;		 
@@ -622,7 +622,7 @@ public class RRController extends RController{
         if(interleave.getChildrenCount() > 1)hasSeveralChildren = true;
         else hasSeveralChildren = false;
         
-        if(interleave.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+        if(interleave.getMaxOccurs() == SPattern.UNBOUNDED){
             moreContext = true;
             morePath.pushMultipleCardinalityPattern(interleave);
             elementLimitationNamingController.startMultipleCardinality();
@@ -639,7 +639,7 @@ public class RRController extends RController{
 				// Serene limitation
 				//System.out.println("Serene DOES NOT SUPPORT "+interleave);
 				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
-				ArrayList<SimplifiedPattern> path = morePath.doublePeek();
+				ArrayList<SPattern> path = morePath.doublePeek();
 				message += "\n"+path.get(0).getCardinalityElementQName()+" at "+path.get(0).getCardinalityElementLocation(restrictToFileName);
 				for(int i = 1; i < path.size(); i++){
 					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
@@ -670,7 +670,7 @@ public class RRController extends RController{
 		elementLimitationNamingController.start(interleave);
 		attributeLimitationNamingController.start(interleave);
 		
-		SimplifiedPattern[] children = interleave.getChildren();
+		SPattern[] children = interleave.getChildren();
 		if(children != null){
 			if(listContext){
 				next(children);
@@ -711,7 +711,7 @@ public class RRController extends RController{
 			texts.removeTail(textsOffset);
 		}
 		
-		if(interleave.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(interleave.getMaxOccurs() == SPattern.UNBOUNDED){
 		    morePath.pop();
             elementLimitationNamingController.endMultipleCardinality();
             attributeLimitationNamingController.endMultipleCardinality();
@@ -756,7 +756,7 @@ public class RRController extends RController{
         if(group.getChildrenCount() > 1)hasSeveralChildren = true;
         else hasSeveralChildren = false;
         
-        if(group.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+        if(group.getMaxOccurs() == SPattern.UNBOUNDED){
             moreContext = true;
             morePath.pushMultipleCardinalityPattern(group);
             elementLimitationNamingController.startMultipleCardinality();
@@ -772,7 +772,7 @@ public class RRController extends RController{
 				// Serene limitation
 				// System.out.println("Serene DOES NOT SUPPORT "+group);
 				String message = "Unsupported schema configuration. For the moment serene does not support <group> or <interleave> with multiple cardinality in the context of an <interleave> with multiple cardinality, path: ";
-				ArrayList<SimplifiedPattern> path = morePath.doublePeek();
+				ArrayList<SPattern> path = morePath.doublePeek();
 				message += "\n"+path.get(0).getCardinalityElementQName()+" at "+path.get(0).getCardinalityElementLocation(restrictToFileName);
 				for(int i = 1; i < path.size(); i++){
 					message += "\n"+path.get(i).getQName()+" at "+path.get(i).getLocation(restrictToFileName); 
@@ -798,7 +798,7 @@ public class RRController extends RController{
 		elementLimitationNamingController.start(group);
 		attributeLimitationNamingController.start(group);
 		
-		SimplifiedPattern[] children = group.getChildren();
+		SPattern[] children = group.getChildren();
 		if(children != null){
 			if(listContext){
 				next(children);
@@ -830,7 +830,7 @@ public class RRController extends RController{
 		exceptPatternContext714 = oldExceptPatternContext714;
 		startContext = oldStartContext;
 		
-		if(group.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(group.getMaxOccurs() == SPattern.UNBOUNDED){
 		    morePath.pop();
             elementLimitationNamingController.endMultipleCardinality();
             attributeLimitationNamingController.endMultipleCardinality();
@@ -971,7 +971,7 @@ public class RRController extends RController{
         
 		boolean oldMoreContext = moreContext;
 		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
-		if(list.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(list.getMaxOccurs() == SPattern.UNBOUNDED){
 		    moreContext = true;
 		    morePath.pushMultipleCardinalityPattern(list);
 		    if(moreInterleaveContext) moreInterleaveMoreContext = true;
@@ -999,7 +999,7 @@ public class RRController extends RController{
 		
 		contentType = ContentType.SIMPLE;
 		
-		if(list.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(list.getMaxOccurs() == SPattern.UNBOUNDED){
 		    moreContext = oldMoreContext;	
 		    morePath.pop();
 		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
@@ -1096,7 +1096,7 @@ public class RRController extends RController{
 		
 		boolean oldMoreContext = moreContext;
 		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
-		if(ref.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(ref.getMaxOccurs() == SPattern.UNBOUNDED){
 		    moreContext = true;
 		    morePath.pushMultipleCardinalityPattern(ref);
 		    if(moreInterleaveContext) moreInterleaveMoreContext = true;
@@ -1180,7 +1180,7 @@ public class RRController extends RController{
 		    startContext = oldStartContext;
 		}
 		
-		if(ref.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(ref.getMaxOccurs() == SPattern.UNBOUNDED){
 		    moreContext = oldMoreContext;
 		    morePath.pop();		    
 		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
@@ -1239,7 +1239,7 @@ public class RRController extends RController{
 		
 		boolean oldMoreContext = moreContext;
 		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
-		if(data.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(data.getMaxOccurs() == SPattern.UNBOUNDED){
 		    moreContext = true;
 		    morePath.pushMultipleCardinalityPattern(data);
 		    if(moreInterleaveContext) moreInterleaveMoreContext = true;
@@ -1258,7 +1258,7 @@ public class RRController extends RController{
 		
 		contentType = ContentType.SIMPLE;
 		
-		if(data.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(data.getMaxOccurs() == SPattern.UNBOUNDED){
 		    moreContext = oldMoreContext;	
 		    morePath.pop();
 		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
@@ -1297,7 +1297,7 @@ public class RRController extends RController{
 		
 		boolean oldMoreContext = moreContext;
 		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
-		if(grammar.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(grammar.getMaxOccurs() == SPattern.UNBOUNDED){
 		    moreContext = true;
 		    morePath.pushMultipleCardinalityPattern(grammar);
 		    if(moreInterleaveContext) moreInterleaveMoreContext = true;
@@ -1313,7 +1313,7 @@ public class RRController extends RController{
 		    startContext = oldStartContext;
 		}
 		
-		if(grammar.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(grammar.getMaxOccurs() == SPattern.UNBOUNDED){
 		    moreContext = oldMoreContext;	
 		    morePath.pop();
 		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;
@@ -1353,7 +1353,7 @@ public class RRController extends RController{
 		
 		boolean oldMoreContext = moreContext;
 		boolean oldMoreInterleaveMoreContext = moreInterleaveMoreContext;
-		if(dummy.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(dummy.getMaxOccurs() == SPattern.UNBOUNDED){
 		    moreContext = true;
 		    morePath.pushMultipleCardinalityPattern(dummy);
 		    if(moreInterleaveContext) moreInterleaveMoreContext = true;
@@ -1369,7 +1369,7 @@ public class RRController extends RController{
 		    startContext = oldStartContext;
 		}
 		
-		if(dummy.getMaxOccurs() == SimplifiedPattern.UNBOUNDED){
+		if(dummy.getMaxOccurs() == SPattern.UNBOUNDED){
 		    moreContext = oldMoreContext;	
 		    morePath.pop();
 		    moreInterleaveMoreContext = oldMoreInterleaveMoreContext;

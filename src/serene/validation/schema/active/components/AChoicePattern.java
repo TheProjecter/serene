@@ -21,7 +21,7 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.RuleVisitor;
 
-import serene.validation.schema.simplified.components.SChoicePattern;
+import serene.validation.schema.simplified.SChoicePattern;
 
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
@@ -57,6 +57,34 @@ public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerP
 		this.schoicePattern = schoicePattern;
 	}
 
+	/*public boolean isElementContent(){
+        return schoicePattern.isElementContent();
+    }
+	public boolean isAttributeContent(){
+	    return schoicePattern.isAttributeContent();
+	}
+	public boolean isDataContent(){
+	    return schoicePattern.isDataContent();
+	}
+	public boolean isValueContent(){
+	    return schoicePattern.isValueContent();
+	}
+	public boolean isListPatternContent(){
+	    return schoicePattern.isListPatternContent();
+	}
+	public boolean isTextContent(){
+	    return schoicePattern.isTextContent();
+	}
+	public boolean isCharsContent(){
+	    return schoicePattern.isCharsContent();
+	}	
+	public boolean isStructuredDataContent(){
+	    return schoicePattern.isStructuredDataContent();
+	}	
+	public boolean isUnstructuredDataContent(){
+	    return schoicePattern.isUnstructuredDataContent();
+	}*/
+	
 	public int getMinOccurs(){
 	    return schoicePattern.getMinOccurs();
 	}

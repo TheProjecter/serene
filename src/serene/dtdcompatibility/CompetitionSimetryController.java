@@ -23,9 +23,9 @@ import org.xml.sax.SAXException;
 import serene.restrictor.OverlapController;
 import serene.restrictor.ControllerPool;
 
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
-import serene.validation.schema.simplified.components.SNameClass;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
+import serene.validation.schema.simplified.SNameClass;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 

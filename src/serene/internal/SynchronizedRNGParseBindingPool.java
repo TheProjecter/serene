@@ -28,8 +28,8 @@ import serene.bind.AttributeTaskFactory;
 import serene.bind.ElementTaskFactory;
 import serene.bind.ElementTask;
 
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.schema.parsed.ParsedComponentBuilder;
 

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Arrays;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
-import serene.validation.schema.simplified.components.SRef;
+import serene.validation.schema.simplified.SRef;
 
 import serene.validation.schema.active.RuleVisitor;
 import serene.validation.schema.active.ActiveComponentVisitor;

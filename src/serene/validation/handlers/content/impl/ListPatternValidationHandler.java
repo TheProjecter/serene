@@ -89,6 +89,7 @@ class ListPatternValidationHandler implements DataEventHandler,
     }
     
     public void handleChars(char[] chars, AListPattern context) throws SAXException{
+        // System.out.println("LIST PATTERN VALIDATION HANDLER chars="+new String(chars)+"  context="+context);
         stackHandler = listPattern.getStackHandler(errorCatcher);
         
         DataValidationHandler dvh = pool.getDataValidationHandler(this, this, errorCatcher);        

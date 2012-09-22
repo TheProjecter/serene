@@ -46,6 +46,7 @@ public class IntList{
 	}
     
     public boolean contains(int i){
+        if (lastIndex < 0)return false;
 		for(int j = 0; j <= lastIndex; j++){
 			if(i == list[j])return true;
 		}
@@ -103,6 +104,8 @@ public class IntList{
     }*/
 	
     public boolean remove(int i) {
+        if(lastIndex < 0)return false;
+        
 		int index = -1;
 		for(int j = 0; j <= lastIndex; j++){
 			if(i == list[j]){

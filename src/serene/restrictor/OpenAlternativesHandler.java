@@ -24,7 +24,7 @@ import java.util.Set;
 import serene.util.IntStack;
 import serene.util.IntList;
 
-import serene.validation.schema.simplified.components.SRef;
+import serene.validation.schema.simplified.SRef;
 
 class OpenAlternativesHandler{
 	int definitionCount;

@@ -36,7 +36,7 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.schema.Identifier;
+import serene.validation.schema.simplified.Identifier;
 
 import org.relaxng.datatype.ValidationContext;
 
@@ -74,44 +74,7 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 	    return identifier.matches(ns, name);
 	}
 	
-	public boolean allowsElements(){
-	    if(child == null) return false;
-        return child.isElementContent();
-    }
-	public boolean allowsAttributes(){
-	    if(child == null) return false;
-	    return child.isAttributeContent();
-	}
-	public boolean allowsDatas(){
-	    if(child == null) return false;
-	    return child.isDataContent();
-	}
-	public boolean allowsValues(){
-	    if(child == null) return false;
-	    return child.isValueContent();
-	}
-	public boolean allowsListPatterns(){
-	    if(child == null) return false;
-	    return child.isListPatternContent();
-	}
-	public boolean allowsText(){
-	    if(child == null) return false;
-	    return child.isTextContent();
-	}
-	public boolean allowsCharsContent(){
-	    if(child == null) return false;
-	    return child.isCharsContent();
-	}	
-	public boolean allowsStructuredDataContent(){
-	    if(child == null) return false;
-	    return child.isStructuredDataContent();
-	}	
-	public boolean allowsUnstructuredDataContent(){
-	    if(child == null) return false;
-	    return child.isUnstructuredDataContent();
-	}
-	
-	
+		
 	public boolean isElementContent(){
         return false;
     }

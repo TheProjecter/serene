@@ -24,11 +24,11 @@ import org.xml.sax.SAXException;
 import serene.util.IntList;
 import serene.util.IntStack;
 
-import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.SimplifiedPattern;
-import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SChoicePattern;
+import serene.validation.schema.simplified.SNameClass;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SInterleave;
+import serene.validation.schema.simplified.SGroup;
+import serene.validation.schema.simplified.SChoicePattern;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -48,7 +48,7 @@ abstract class CompositionController implements Reusable{
 	*/
 	IntList compositors;
 	
-	ArrayList<SimplifiedPattern> compositorPatterns;
+	ArrayList<SPattern> compositorPatterns;
 	
 	/**
 	* Stack of compositor ids created on the fly during overlap control that
@@ -57,7 +57,7 @@ abstract class CompositionController implements Reusable{
 	* compositor and determines whether or not it is necessary to test.
 	*/
 	IntStack compositorPath;	
-	Stack<SimplifiedPattern> compositorPatternPath;
+	Stack<SPattern> compositorPatternPath;
 		
 	ControllerPool pool;
 	
@@ -68,9 +68,9 @@ abstract class CompositionController implements Reusable{
 		this.pool = pool;
 		
 		compositors = new IntList();
-		compositorPatterns = new ArrayList<SimplifiedPattern>();
+		compositorPatterns = new ArrayList<SPattern>();
 		compositorPath = new IntStack();
-		compositorPatternPath = new Stack<SimplifiedPattern>();
+		compositorPatternPath = new Stack<SPattern>();
 	}
 	
 	abstract void start(SInterleave interleave);

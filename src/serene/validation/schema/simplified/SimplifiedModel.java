@@ -20,34 +20,29 @@ import java.util.ArrayList;
 
 import org.relaxng.datatype.DatatypeLibrary;
 
-import serene.validation.schema.simplified.components.SAttribute;
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SExceptPattern;
-
 import sereneWrite.SimplifiedComponentWriter;
 
-public class SimplifiedModel{
+public class SimplifiedModel{	
     
-	SimplifiedPattern[] startTopPattern;
-	SimplifiedPattern[] refDefinitionTopPattern;
-	
 	int startElementIndex;
     SElement[] selements;
     SAttribute[] sattributes;
     SExceptPattern[] sexceptPatterns;
 
+    SPattern[] startTopPatterns;
+    ReferenceModel referenceModel;
 	RecursionModel recursionModel;
 	
-	public SimplifiedModel(SimplifiedPattern[] startTopPattern,
-								SimplifiedPattern[] refDefinitionTopPattern,
-								int startElementIndex,
+	public SimplifiedModel(int startElementIndex,
 								SElement[] selements,
 								SAttribute[] sattributes,
 								SExceptPattern[] sexceptPatterns,
+								SPattern[] startTopPatterns,
+								ReferenceModel referenceModel,
 								RecursionModel recursionModel){
-		this.startTopPattern = startTopPattern;
-		this.refDefinitionTopPattern = refDefinitionTopPattern;
+	    this.startTopPatterns = startTopPatterns;
 		this.recursionModel = recursionModel;
+		this.referenceModel = referenceModel;
 	
 		this.startElementIndex = startElementIndex;
         this.selements = selements;
@@ -55,23 +50,34 @@ public class SimplifiedModel{
         this.sexceptPatterns = sexceptPatterns;
         
 		/*SimplifiedComponentWriter scw = new SimplifiedComponentWriter();
-		for(SimplifiedPattern stp : startTopPattern){
+		for(SPattern stp : startTopPattern){
 		    scw.write(stp);
 		}*/		
+		
+		if(recursionModel != null && recursionModel.hasRecursions())
+	        recursionModel.adjustCach();
 	}
 	
-    
-	public SimplifiedPattern[] getStartTopPattern(){
-		return startTopPattern;
-	}
 	
-	public SimplifiedPattern[] getRefDefinitionTopPattern(){
-		return refDefinitionTopPattern;
+	public SPattern[] getStartTopPatterns(){
+		return startTopPatterns;
+	}
+    	
+	public SPattern[] getRefDefinitionTopPatterns(){
+		return referenceModel.getRefDefinitionTopPatterns();
 	}
 	 
+	public SPattern getRefDefinitionTopPattern(int index){
+		return referenceModel.getRefDefinitionTopPattern(index);
+	}
+	
 	public int getStartElementIndex(){
 	    return startElementIndex;
 	}
+	
+	public SElement getStartElement(){
+	    return selements[startElementIndex];
+	}	
 	
 	public SElement[] getElementDefinitions(){
 	    return selements;

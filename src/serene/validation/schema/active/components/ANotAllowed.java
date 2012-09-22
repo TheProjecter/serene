@@ -21,7 +21,7 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.RuleVisitor;
 
-import serene.validation.schema.simplified.components.SNotAllowed;
+import serene.validation.schema.simplified.SNotAllowed;
 
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;

@@ -28,14 +28,17 @@ import org.relaxng.datatype.DatatypeException;
 
 import serene.datatype.DatatypeLibraryFinder;
 
-import serene.validation.schema.simplified.SimplifiedPattern;
-
+import serene.validation.schema.simplified.ReferenceModel;
+import serene.validation.schema.simplified.RecursionModel;
+import serene.validation.schema.simplified.SPattern;
 import serene.validation.schema.simplified.SimplifiedComponent;
-//import serene.validation.schema.simplified.components.NameClass;
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
+//import serene.validation.schema.simplified.NameClass;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
+import serene.validation.schema.simplified.SRef;
 
-import serene.validation.schema.simplified.components.SimplifiedComponentBuilder;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SimplifiedComponentBuilder;
 import serene.validation.schema.simplified.SimplifiedModel;
 
 
@@ -52,22 +55,49 @@ class RNGDirector{
     // ref elementIndexing
     //********************
     final int PATTERN = 0;
+    //SPattern patternDefinitionTopPattern;
+    
     final int PARAM = 1;
+    //SPattern paramDefinitionTopPattern;
+    
     final int EXCEPT_PATTERN = 2;
+    //SPattern exceptPatternDefinitionTopPattern;
+    
     final int GRAMMAR_CONTENT = 3;
+    //SPattern grammarContentDefinitionTopPattern;
+    
     final int INCLUDE_CONTENT = 4;
+    //SPattern includeContentDefinitionTopPattern;
+    
     final int START = 5;
+    //SPattern startDefinitionTopPattern;
+    
     final int DEFINE = 6;
+    //SPattern defineDefinitionTopPattern;
+    
     final int NAME_CLASS = 7;
+    //SPattern nameClassDefinitionTopPattern;
+    
     final int EXCEPT_NAME_CLASS = 8;
+    //SPattern exceptNameClassDefinitionTopPattern;
     
     final int NS_ATTRIBUTE = 9;
+    //SPattern nsAttributeDefinitionTopPattern;
+    
     final int DL_ATTRIBUTE = 10;
+    //SPattern dlAttributeDefinitionTopPattern;
+    
     final int FOREIGN_ATTRIBUTES = 11;
+    //SPattern foreignAttributesDefinitionTopPattern;
     
     final int FOREIGN_ELEMENT = 12;
+    //SPattern foreignElementDefinitionTopPattern;
+    
     final int ANY_ELEMENT = 13;
+    //SPattern anyElementDefinitionTopPattern;
+    
     final int ANY_ATTRIBUTE = 14;
+    //SPattern anyAttributeDefinitionTopPattern;
     
     final int DEFINITION_TOP_PATTERN_COUNT = 15;
     
@@ -78,10 +108,10 @@ class RNGDirector{
 	
 	
 	SimplifiedComponentBuilder builder;
-	SimplifiedPattern rngStartTopPattern;
-	SimplifiedPattern includeStartTopPattern;
-	SimplifiedPattern externalRefStartTopPattern;
-	SimplifiedPattern[] refDefinitionTopPattern;
+	SPattern rngStartTopPattern;
+	SPattern includeStartTopPattern;
+	SPattern externalRefStartTopPattern;
+	SPattern[] refDefinitionTopPattern;
 	
 	ArrayList<SElement> selements;
 	int elementIndex;
@@ -117,6 +147,8 @@ class RNGDirector{
     
     InternalIndexedData internalIndexedData;
 	
+    ReferenceModel referenceModel;
+    RecursionModel recursionModel;
 	RNGDirector(boolean needsSynchronizedBindingPool){
 		this.needsSynchronizedBindingPool = needsSynchronizedBindingPool;
                 
@@ -139,20 +171,19 @@ class RNGDirector{
         
         
         selements = new ArrayList<SElement>();
-        sattributes = new ArrayList<SAttribute>();
-	}
-	
+        sattributes = new ArrayList<SAttribute>();   
+	}	
 	
 	void createModels(SimplifiedComponentBuilder builder)  throws DatatypeException{
-		this.builder = builder;
-		
+	    this.builder = builder;
+	    
 		selements.clear();
 		elementIndex = 0;
 	
 		sattributes.clear();
 		attributeIndex = 0;
 	
-		refDefinitionTopPattern = new SimplifiedPattern[DEFINITION_TOP_PATTERN_COUNT];
+		refDefinitionTopPattern = new SPattern[DEFINITION_TOP_PATTERN_COUNT];
 		needsStartTask = new HashMap<SElement, Object>();
 		endElementTaskFactory = new HashMap<SElement, RNGParseElementTaskFactory>();
 		attributeTaskFactory = new HashMap<SAttribute, RNGParseAttributeTaskFactory>();
@@ -166,70 +197,79 @@ class RNGDirector{
 		hrefTaskFactory = new HrefTaskFactory();
 		foreignAttributeTaskFactory = new ForeignAttributeTaskFactory();
         
-		startGrammar();
 		
-		definePattern();
-		defineParam();
-		defineExceptPattern();
-		defineGrammarContent();
-		defineIncludeContent();
-		defineStart();
-		defineDefine();
-		defineNameClass();
-		defineExceptNameClass();
+        referenceModel = new ReferenceModel();     
+        recursionModel = new RecursionModel();
+						
+        
+		defineAnyAttribute();
+		defineAnyElement();
+		defineForeignAttributes();
+		defineForeignElement();
 		
 		defineOptionalNsAttribute();
 		defineOptionalDlAttribute();
-		defineForeignAttributes();
-		defineForeignElement();
-		defineAnyElement();
-		defineAnyAttribute();	
+		
+		defineExceptNameClass();
+		defineNameClass();
+				
+		defineParam();
+		definePattern();				
+		defineExceptPattern();
+		defineStart();
+		defineDefine();
+		defineGrammarContent();
+		defineIncludeContent();
+		
+		startGrammar();
+		
+		referenceModel.init(refDefinitionTopPattern);
 	}
 	
 	SimplifiedModel getRNGModel(){
-		SimplifiedPattern[] start = {rngStartTopPattern};
+		SPattern[] start = {rngStartTopPattern};
         
-		SElement startElement = new SElement(elementIndex, null, rngStartTopPattern, -1, null);
+		SElement startElement = new SElement(elementIndex, null, rngStartTopPattern, -1, null, recursionModel);
         selements.add(startElement);        
-		SimplifiedModel s = new SimplifiedModel(start,
-									refDefinitionTopPattern,
-									elementIndex,
+		SimplifiedModel s = new SimplifiedModel(elementIndex,
 									selements.toArray(new SElement[selements.size()]),
 									sattributes.toArray(new SAttribute[sattributes.size()]),
 									null,
-									null);
+									start,
+									referenceModel,
+									recursionModel);
 		elementIndex++;
         return s;
 	}
 	
 	SimplifiedModel getIncludeModel(){
-		SimplifiedPattern[] start = {includeStartTopPattern};
+		SPattern[] start = {includeStartTopPattern};
         
-		SElement startElement = new SElement(elementIndex, null, includeStartTopPattern, -1, null);
+		SElement startElement = new SElement(elementIndex, null, includeStartTopPattern, -1, null, recursionModel);
         selements.add(startElement);     
-		SimplifiedModel s = new SimplifiedModel(start,
-									refDefinitionTopPattern,
-									elementIndex,
+		SimplifiedModel s = new SimplifiedModel(elementIndex,
 									selements.toArray(new SElement[selements.size()]),
 									sattributes.toArray(new SAttribute[sattributes.size()]),
 									null,
-									null);
+									start,
+									referenceModel,
+									recursionModel);
 		elementIndex++;
 		return s;
 	}
 	
 	SimplifiedModel getExternalRefModel(){
-		SimplifiedPattern[] start = {externalRefStartTopPattern};
+		SPattern[] start = {externalRefStartTopPattern};
         
-		SElement startElement = new SElement(elementIndex, null, externalRefStartTopPattern, -1, null);
+		SElement startElement = new SElement(elementIndex, null, externalRefStartTopPattern, -1, null, recursionModel);
         selements.add(startElement);    
-		SimplifiedModel s = new SimplifiedModel(start,
-									refDefinitionTopPattern,
-									elementIndex,
+		SimplifiedModel s = new SimplifiedModel(elementIndex,
 									selements.toArray(new SElement[selements.size()]),
 									sattributes.toArray(new SAttribute[sattributes.size()]),
 									null,
-									null);
+									start,
+									referenceModel,
+									recursionModel);
 		elementIndex++;
 		return s;
 	}
@@ -266,8 +306,8 @@ class RNGDirector{
 	
 	private void startGrammar(){
 		builder.startBuild();	
-		builder.buildRef(PATTERN, InternalIndexedData.REF_PATTERN, internalIndexedData);			
-		SimplifiedPattern r = builder.getCurrentPattern();
+		SRef r = builder.buildRef(refDefinitionTopPattern[PATTERN], PATTERN, referenceModel, InternalIndexedData.REF_PATTERN, internalIndexedData);			
+		
 		rngStartTopPattern = r;
 		externalRefStartTopPattern = r;		
 	}
@@ -297,8 +337,9 @@ class RNGDirector{
 			externalRef();			
 			grammar();
 		}builder.endLevel();
-		builder.buildChoicePattern(InternalIndexedData.DEFINE_PATTERN, internalIndexedData, false);	
-		refDefinitionTopPattern[PATTERN] = builder.getCurrentPattern();
+		refDefinitionTopPattern[PATTERN] = builder.buildChoicePattern(InternalIndexedData.DEFINE_PATTERN, 
+		                        internalIndexedData, 
+		                        false);	
 	}	
 	
 	
@@ -315,29 +356,32 @@ class RNGDirector{
             builder.startLevel();{				
                 builder.startLevel();{
                     builder.startLevel();{
-                        builder.buildRef(PATTERN,InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_PATTERN, internalIndexedData /*"pattern","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
+                        recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_PATTERN, internalIndexedData /*"pattern","RELAXNG Specification 3.Full Syntax: element with name attribute"*/));
                     }builder.endLevel();
                     builder.oneOrMore(InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);			
                     
                     builder.startLevel();{
-                        builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
+                        builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
                     }builder.endLevel();
                     builder.zeroOrMore(InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
                     
                 }builder.endLevel();				
-                builder.buildInterleave(InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);		
+                builder.buildInterleave(InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);		
                 
                 nameQNameAttributeForElement();
                 
-                builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
-                builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
-                builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
+                builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
+                builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
                 
             }builder.endLevel();
-            builder.buildGroup( InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT, internalIndexedData, false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
+            builder.buildGroup(InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
             builder.buildName(XMLConstants.RELAXNG_NS_URI, "element", InternalIndexedData.ELEMENT_NI_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
         }builder.endLevel();
-        builder.buildElement(elementIndex++, InternalIndexedData.ELEMENT_NI_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
+        builder.buildElement(elementIndex++, InternalIndexedData.ELEMENT_NI_ELEMENT, internalIndexedData, recursionModel /*"element","RELAXNG Specification 3.Full Syntax: element with name attribute"*/);
         
         SElement e = (SElement)builder.getCurrentPattern();
         needsStartTask.put(e, null);
@@ -350,7 +394,10 @@ class RNGDirector{
             builder.buildName("","name", InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
             builder.buildData(internalLibrary.createDatatype("QName"),InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE_VALUE, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
         }builder.endLevel();
-        builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
+        builder.buildAttribute(attributeIndex++,
+                                InternalIndexedData.NO_RECORD,
+                                InternalIndexedData.ELEMENT_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE, 
+                                internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
         
         SAttribute qName = (SAttribute)builder.getCurrentPattern();
         attributeTaskFactory.put(qName, nameAttributeTaskFactory);
@@ -367,15 +414,17 @@ class RNGDirector{
 			builder.startLevel();{				
 				nameClassPatternPlus();
 								
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
+			builder.buildGroup(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "element", InternalIndexedData.ELEMENT_NC_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
 		}builder.endLevel();		
-		builder.buildElement(elementIndex++, InternalIndexedData.ELEMENT_NC_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.ELEMENT_NC_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -386,21 +435,24 @@ class RNGDirector{
 	private void nameClassPatternPlus(){		
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(NAME_CLASS, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_NAME_CLASS, internalIndexedData  /*"nameClass","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
+			builder.buildRef(refDefinitionTopPattern[NAME_CLASS], NAME_CLASS, referenceModel, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_NAME_CLASS, internalIndexedData  /*"nameClass","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
 				builder.startLevel();{
-					builder.buildRef(PATTERN, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_PATTERN, internalIndexedData  /*"pattern","RELAXNG Specification 3.Full Syntax: element with name class child"*/);						
+					recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_PATTERN, internalIndexedData  /*"pattern","RELAXNG Specification 3.Full Syntax: element with name class child"*/));						
 				}builder.endLevel();
 				builder.oneOrMore(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: element with name class child"*/);				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_NAME_CLASS_PATTERN_GROUP, internalIndexedData, false   /*"group of name class and pattern elements","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
+			builder.buildGroup(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_NAME_CLASS_PATTERN_GROUP, 
+		                        internalIndexedData, 
+		                        false   /*"group of name class and pattern elements","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
 			
 			builder.startLevel();{
-                builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
             }builder.endLevel();
             builder.zeroOrMore(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: element with name class child"*/);
             
 		}builder.endLevel();				
-		builder.buildInterleave(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData  /*"interleaving of name class and pattern elements group with foreign elements","RELAXNG Specification 3.Full Syntax: element with name class child"*/);		
+		builder.buildInterleave(InternalIndexedData.ELEMENT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData  /*"interleaving of name class and pattern elements group with foreign elements","RELAXNG Specification 3.Full Syntax: element with name class child"*/);		
 	}
 	//**************************************************************************
 	
@@ -411,15 +463,17 @@ class RNGDirector{
 			builder.startLevel();{				
 				nameClassPatternSquare();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
 								
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT, internalIndexedData, false   /* "attributes and elements group","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
+			builder.buildGroup(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /* "attributes and elements group","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "attribute", InternalIndexedData.ATTRIBUTE_NC_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
 		}builder.endLevel();		
-		builder.buildElement(elementIndex++, InternalIndexedData.ATTRIBUTE_NC_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.ATTRIBUTE_NC_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -430,21 +484,24 @@ class RNGDirector{
 	private void nameClassPatternSquare(){
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(NAME_CLASS, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_NAME_CLASS, internalIndexedData    /*"nameClass","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
+				builder.buildRef(refDefinitionTopPattern[NAME_CLASS], NAME_CLASS, referenceModel, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_NAME_CLASS, internalIndexedData    /*"nameClass","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
 				builder.startLevel();{
-					builder.buildRef(PATTERN, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);						
+					recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/));						
 				}builder.endLevel();
 				builder.optional(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_PATTERN_SQUARE, internalIndexedData  /*"optional","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_NAME_CLASS_PATTERN_GROUP, internalIndexedData, false   /*"group of name class and pattern elements","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
+			builder.buildGroup(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_NAME_CLASS_PATTERN_GROUP, 
+		                        internalIndexedData, 
+		                        false   /*"group of name class and pattern elements","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
 			
 			builder.startLevel();{
-                builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
             }builder.endLevel();
             builder.zeroOrMore(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);
             
 		}builder.endLevel();				
-		builder.buildInterleave(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData  /*"interleaving of name class and pattern elements group with foreign elements","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);		
+		builder.buildInterleave(InternalIndexedData.ATTRIBUTE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData  /*"interleaving of name class and pattern elements group with foreign elements","RELAXNG Specification 3.Full Syntax: attribute with name class child"*/);		
 	}
 	
 	
@@ -455,15 +512,17 @@ class RNGDirector{
 				nameQNameAttributeForAttribute();
 				patternSquare();	
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
+			builder.buildGroup(InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "attribute", InternalIndexedData.ATTRIBUTE_NI_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.ATTRIBUTE_NI_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.ATTRIBUTE_NI_ELEMENT, internalIndexedData, recursionModel    /*"element","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -476,7 +535,10 @@ class RNGDirector{
 			builder.buildName("","name", InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
 			builder.buildData(internalLibrary.createDatatype("QName"), InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE_VALUE, internalIndexedData     /*"data","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
 		}builder.endLevel();
-		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
+		builder.buildAttribute(attributeIndex++, 
+		                        InternalIndexedData.NO_RECORD,
+		                        InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_NAME_ATTRIBUTE, 
+                                internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with QName value"*/);
         
 		SAttribute qName = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(qName, nameAttributeTaskFactory);
@@ -486,17 +548,18 @@ class RNGDirector{
     private void patternSquare(){				
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(PATTERN,InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_PATTERN, internalIndexedData  /*"pattern","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
+				recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_PATTERN, internalIndexedData  /*"pattern","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/));
 			}builder.endLevel();
 			builder.optional(InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_PATTERN_SQUARE, internalIndexedData  /*"optional","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
 			
 			builder.startLevel();{
-                builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
             }builder.endLevel();
             builder.zeroOrMore(InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);
             
 		}builder.endLevel();				
-		builder.buildInterleave(InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData  /*"interleaving of pattern element and foreign elements","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);	
+		builder.buildInterleave(InternalIndexedData.ATTRIBUTE_NI_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData  /*"interleaving of pattern element and foreign elements","RELAXNG Specification 3.Full Syntax: attribute with name attribute"*/);	
 	}
     
     
@@ -506,27 +569,30 @@ class RNGDirector{
 			builder.startLevel();{				
 				builder.startLevel();{
                     builder.startLevel();{
-                        builder.buildRef(PATTERN, InternalIndexedData.GROUP_ELEMENT_CONTENT_PATTERN, internalIndexedData /*"pattern","RELAXNG Specification 3.Full Syntax: group"*/);
+                        recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.GROUP_ELEMENT_CONTENT_PATTERN, internalIndexedData /*"pattern","RELAXNG Specification 3.Full Syntax: group"*/));
                     }builder.endLevel();
                     builder.oneOrMore(InternalIndexedData.GROUP_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData /*"oneOrMore","RELAXNG Specification 3.Full Syntax: group"*/);			
                     
                     builder.startLevel();{
-                        builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.GROUP_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: group"*/);
+                        builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.GROUP_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: group"*/);
                     }builder.endLevel();
                     builder.zeroOrMore(InternalIndexedData.GROUP_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: group"*/);
                     
                 }builder.endLevel();				
-                builder.buildInterleave(InternalIndexedData.GROUP_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData  /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: group"*/);		
+                builder.buildInterleave(InternalIndexedData.GROUP_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData  /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: group"*/);		
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.GROUP_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: group"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.GROUP_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: group"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.GROUP_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: group"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.GROUP_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: group"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.GROUP_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: group"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.GROUP_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: group"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup( InternalIndexedData.GROUP_ELEMENT_CONTENT, internalIndexedData, false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: group"*/);			
+			builder.buildGroup(InternalIndexedData.GROUP_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: group"*/);			
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "group", InternalIndexedData.GROUP_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: group"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.GROUP_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: group"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.GROUP_ELEMENT, internalIndexedData, recursionModel /*"element","RELAXNG Specification 3.Full Syntax: group"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -543,27 +609,30 @@ class RNGDirector{
 			builder.startLevel();{				
 				builder.startLevel();{
                     builder.startLevel();{
-                        builder.buildRef(PATTERN,  InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: interleave"*/);
+                        recursionModel.add(builder.buildRef(PATTERN,  referenceModel, InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: interleave"*/));
                     }builder.endLevel();
                     builder.oneOrMore(InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: interleave"*/);			
                     
                     builder.startLevel();{
-                        builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: interleave"*/);
+                        builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: interleave"*/);
                     }builder.endLevel();
                     builder.zeroOrMore(InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: interleave"*/);
                     
                 }builder.endLevel();				
-                builder.buildInterleave(InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);		
+                builder.buildInterleave(InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);		
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: interleave"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: interleave"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: interleave"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: interleave"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: interleave"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: interleave"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: interleave"*/);
+			builder.buildGroup(InternalIndexedData.INTERLEAVE_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: interleave"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "interleave", InternalIndexedData.INTERLEAVE_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: interleave"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.INTERLEAVE_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: interleave"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.INTERLEAVE_ELEMENT, internalIndexedData, recursionModel /*"element","RELAXNG Specification 3.Full Syntax: interleave"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -580,27 +649,30 @@ class RNGDirector{
 			builder.startLevel();{				
 				builder.startLevel();{
                     builder.startLevel();{
-                        builder.buildRef(PATTERN, InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_PATTERN, internalIndexedData  /*"pattern","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
+                        recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_PATTERN, internalIndexedData  /*"pattern","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/));
                     }builder.endLevel();
                     builder.oneOrMore(InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);			
                     
                     builder.startLevel();{
-                        builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
+                        builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
                     }builder.endLevel();
                     builder.zeroOrMore(InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
                     
                 }builder.endLevel();				
-                builder.buildInterleave(InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData  /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);		
+                builder.buildInterleave(InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData  /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);		
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup( InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT, internalIndexedData, false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
+			builder.buildGroup(InternalIndexedData.CHOICE_PATTERN_ELEMENT_CONTENT,
+		                        internalIndexedData, 
+		                        false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "choice",InternalIndexedData.CHOICE_PATTERN_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.CHOICE_PATTERN_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.CHOICE_PATTERN_ELEMENT, internalIndexedData, recursionModel /*"element","RELAXNG Specification 3.Full Syntax: choice in pattern context"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -617,27 +689,30 @@ class RNGDirector{
 			builder.startLevel();{				
 				builder.startLevel();{
                     builder.startLevel();{
-                        builder.buildRef(PATTERN, InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_PATTERN, internalIndexedData    /*"pattern","RELAXNG Specification 3.Full Syntax: optional"*/);
+                        recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_PATTERN, internalIndexedData    /*"pattern","RELAXNG Specification 3.Full Syntax: optional"*/));
                     }builder.endLevel();
                     builder.oneOrMore(InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData    /*"oneOrMore","RELAXNG Specification 3.Full Syntax: optional"*/);			
                     
                     builder.startLevel();{
-                        builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: optional"*/);
+                        builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: optional"*/);
                     }builder.endLevel();
                     builder.zeroOrMore(InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: optional"*/);
                     
                 }builder.endLevel();				
-                builder.buildInterleave(InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData    /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: optional"*/);		
+                builder.buildInterleave(InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData    /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: optional"*/);		
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData    /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: optional"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData    /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: optional"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData    /*"foreign attributes","RELAXNG Specification 3.Full Syntax: optional"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData    /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: optional"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData    /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: optional"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.OPTIONAL_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData    /*"foreign attributes","RELAXNG Specification 3.Full Syntax: optional"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.OPTIONAL_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: optional"*/);
+			builder.buildGroup(InternalIndexedData.OPTIONAL_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: optional"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "optional",  InternalIndexedData.OPTIONAL_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: optional"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.OPTIONAL_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: optional"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.OPTIONAL_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: optional"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -654,27 +729,30 @@ class RNGDirector{
 			builder.startLevel();{				
 				builder.startLevel();{
                     builder.startLevel();{
-                        builder.buildRef(PATTERN, InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
+                        recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/));
                     }builder.endLevel();
                     builder.oneOrMore(InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);			
                     
                     builder.startLevel();{
-                        builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
+                        builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
                     }builder.endLevel();
                     builder.zeroOrMore(InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
                     
                 }builder.endLevel();				
-                builder.buildInterleave(InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);		
+                builder.buildInterleave(InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);		
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
+			builder.buildGroup(InternalIndexedData.ZERO_OR_MORE_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "zeroOrMore", InternalIndexedData.ZERO_OR_MORE_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.ZERO_OR_MORE_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);	
+		builder.buildElement(elementIndex++, InternalIndexedData.ZERO_OR_MORE_ELEMENT, internalIndexedData, recursionModel /*"element","RELAXNG Specification 3.Full Syntax: zeroOrMore"*/);	
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -691,27 +769,30 @@ class RNGDirector{
 			builder.startLevel();{				
 				builder.startLevel();{
                     builder.startLevel();{
-                        builder.buildRef(PATTERN, InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
+                        recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: oneOrMore"*/));
                     }builder.endLevel();
                     builder.oneOrMore(InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);			
                     
                     builder.startLevel();{
-                        builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
+                        builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
                     }builder.endLevel();
                     builder.zeroOrMore(InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
                     
                 }builder.endLevel();				
-                builder.buildInterleave(InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);		
+                builder.buildInterleave(InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);		
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
+			builder.buildGroup(InternalIndexedData.ONE_OR_MORE_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "oneOrMore", InternalIndexedData.ONE_OR_MORE_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.ONE_OR_MORE_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.ONE_OR_MORE_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -728,27 +809,30 @@ class RNGDirector{
 			builder.startLevel();{				
 				builder.startLevel();{
                     builder.startLevel();{
-                        builder.buildRef(PATTERN, InternalIndexedData.LIST_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: list"*/);
+                        recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.LIST_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: list"*/));
                     }builder.endLevel();
                     builder.oneOrMore(InternalIndexedData.LIST_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: list"*/);			
                     
                     builder.startLevel();{
-                        builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.LIST_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: list"*/);
+                        builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.LIST_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: list"*/);
                     }builder.endLevel();
                     builder.zeroOrMore(InternalIndexedData.LIST_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: list"*/);
                     
                 }builder.endLevel();				
-                builder.buildInterleave(InternalIndexedData.LIST_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: list"*/);		
+                builder.buildInterleave(InternalIndexedData.LIST_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: list"*/);		
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.LIST_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: list"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.LIST_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: list"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.LIST_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: list"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.LIST_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: list"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.LIST_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: list"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.LIST_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: list"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.LIST_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: list"*/);
+			builder.buildGroup(InternalIndexedData.LIST_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: list"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "list", InternalIndexedData.LIST_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: list"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.LIST_ELEMENT, internalIndexedData   /*"element","RELAXNG Specification 3.Full Syntax: list"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.LIST_ELEMENT, internalIndexedData, recursionModel   /*"element","RELAXNG Specification 3.Full Syntax: list"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -765,27 +849,30 @@ class RNGDirector{
 			builder.startLevel();{				
 				builder.startLevel();{
                     builder.startLevel();{
-                        builder.buildRef(PATTERN, InternalIndexedData.MIXED_ELEMENT_CONTENT_PATTERN, internalIndexedData  /*"pattern","RELAXNG Specification 3.Full Syntax: mixed"*/);
+                        recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.MIXED_ELEMENT_CONTENT_PATTERN, internalIndexedData  /*"pattern","RELAXNG Specification 3.Full Syntax: mixed"*/));
                     }builder.endLevel();
                     builder.oneOrMore(InternalIndexedData.MIXED_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: mixed"*/);			
                     
                     builder.startLevel();{
-                        builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.MIXED_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: mixed"*/);
+                        builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.MIXED_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: mixed"*/);
                     }builder.endLevel();
                     builder.zeroOrMore(InternalIndexedData.MIXED_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: mixed"*/);
                     
                 }builder.endLevel();				
-                builder.buildInterleave(InternalIndexedData.MIXED_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: mixed"*/);		
+                builder.buildInterleave(InternalIndexedData.MIXED_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: mixed"*/);		
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.MIXED_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: mixed"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.MIXED_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: mixed"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.MIXED_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: mixed"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.MIXED_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: mixed"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.MIXED_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: mixed"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.MIXED_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: mixed"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.MIXED_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: mixed"*/);
+			builder.buildGroup(InternalIndexedData.MIXED_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: mixed"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "mixed", InternalIndexedData.MIXED_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: mixed"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.MIXED_ELEMENT, internalIndexedData   /*"element","RELAXNG Specification 3.Full Syntax: mixed"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.MIXED_ELEMENT, internalIndexedData, recursionModel   /*"element","RELAXNG Specification 3.Full Syntax: mixed"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -802,20 +889,22 @@ class RNGDirector{
 			builder.startLevel();{				
 				nameNCNameAttributeForRef();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.REF_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: ref"*/);				
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.REF_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: ref"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.REF_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: ref"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.REF_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: ref"*/);				
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.REF_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: ref"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.REF_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: ref"*/);
 				
                 builder.startLevel();{
-                    builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.REF_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: ref"*/);
+                    builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.REF_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: ref"*/);
                 }builder.endLevel();
                 builder.zeroOrMore(InternalIndexedData.REF_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: ref"*/);
                 
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.REF_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: ref"*/);
+			builder.buildGroup(InternalIndexedData.REF_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes group","RELAXNG Specification 3.Full Syntax: ref"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "ref", InternalIndexedData.REF_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: ref"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.REF_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: ref"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.REF_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: ref"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new RefTaskFactory());
@@ -827,7 +916,10 @@ class RNGDirector{
 			builder.buildName("","name", InternalIndexedData.REF_ELEMENT_CONTENT_NAME_ATTRIBUTE_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);				
 			builder.buildData(internalLibrary.createDatatype("NCName"), InternalIndexedData.REF_ELEMENT_CONTENT_NAME_ATTRIBUTE_VALUE, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 		}builder.endLevel();
-		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.REF_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
+		builder.buildAttribute(attributeIndex++, 
+		                        InternalIndexedData.NO_RECORD,
+		                        InternalIndexedData.REF_ELEMENT_CONTENT_NAME_ATTRIBUTE, 
+                                internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 		SAttribute ncName = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(ncName, nameAttributeTaskFactory);
 		sattributes.add(ncName);
@@ -841,20 +933,22 @@ class RNGDirector{
 			builder.startLevel();{				
 				nameNCNameAttributeForParentRef();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: parentRef"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: parentRef"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: parentRef"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: parentRef"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: parentRef"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: parentRef"*/);
 				
                 builder.startLevel();{
-                    builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: parentRef"*/);
+                    builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: parentRef"*/);
                 }builder.endLevel();
                 builder.zeroOrMore(InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: parentRef"*/);
                 
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.PARENT_REF_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: parentRef"*/);
+			builder.buildGroup(InternalIndexedData.PARENT_REF_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes group","RELAXNG Specification 3.Full Syntax: parentRef"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "parentRef", InternalIndexedData.PARENT_REF_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: parentRef"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.PARENT_REF_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: parentRef"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.PARENT_REF_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: parentRef"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new ParentRefTaskFactory());
@@ -866,7 +960,10 @@ class RNGDirector{
 			builder.buildName("","name", InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_NAME_ATTRIBUTE_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);				
 			builder.buildData(internalLibrary.createDatatype("NCName"), InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_NAME_ATTRIBUTE_VALUE, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 		}builder.endLevel();
-		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
+		builder.buildAttribute(attributeIndex++, 
+		                        InternalIndexedData.NO_RECORD, 
+		                        InternalIndexedData.PARENT_REF_ELEMENT_CONTENT_NAME_ATTRIBUTE, 
+                                internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 		SAttribute ncName = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(ncName, nameAttributeTaskFactory);
 
@@ -879,20 +976,22 @@ class RNGDirector{
 		builder.startLevel();{
 			builder.startLevel();{
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.EMPTY_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: empty"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.EMPTY_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: empty"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.EMPTY_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: empty"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.EMPTY_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: empty"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.EMPTY_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: empty"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.EMPTY_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: empty"*/);
 				
                 builder.startLevel();{
-                    builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.EMPTY_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: emppty"*/);
+                    builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.EMPTY_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: emppty"*/);
                 }builder.endLevel();
                 builder.zeroOrMore(InternalIndexedData.EMPTY_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: empty"*/);
                 
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.EMPTY_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: empty"*/);
+			builder.buildGroup(InternalIndexedData.EMPTY_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes group","RELAXNG Specification 3.Full Syntax: empty"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "empty", InternalIndexedData.EMPTY_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: empty"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.EMPTY_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: empty"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.EMPTY_ELEMENT, internalIndexedData, recursionModel /*"element","RELAXNG Specification 3.Full Syntax: empty"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new EmptyTaskFactory());
@@ -907,20 +1006,22 @@ class RNGDirector{
 		builder.startLevel();{
 			builder.startLevel();{
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.TEXT_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: text"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.TEXT_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: text"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.TEXT_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: text"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.TEXT_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: text"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.TEXT_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: text"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.TEXT_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: text"*/);
 				
                 builder.startLevel();{
-                    builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.TEXT_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: text"*/);
+                    builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.TEXT_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: text"*/);
                 }builder.endLevel();
                 builder.zeroOrMore(InternalIndexedData.TEXT_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: text"*/);
                 
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.TEXT_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: text"*/);
+			builder.buildGroup(InternalIndexedData.TEXT_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes group","RELAXNG Specification 3.Full Syntax: text"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "text",  InternalIndexedData.TEXT_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: text"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.TEXT_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: text"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.TEXT_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: text"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new TextTaskFactory());
@@ -941,7 +1042,10 @@ class RNGDirector{
                         builder.buildName("","type", InternalIndexedData.VALUE_ELEMENT_CONTENT_TYPE_ATTRIBUTE_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: type attribute"*/);				
                         builder.buildData(internalLibrary.createDatatype("NCName"), InternalIndexedData.VALUE_ELEMENT_CONTENT_TYPE_ATTRIBUTE_VALUE, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: type attribute"*/);
                     }builder.endLevel();
-                    builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.VALUE_ELEMENT_CONTENT_TYPE_ATTRIBUTE, internalIndexedData   /*"attribute","RELAXNG Specification 3.Full Syntax: type attribute"*/);
+                    builder.buildAttribute(attributeIndex++, 
+                                            InternalIndexedData.NO_RECORD,
+                                            InternalIndexedData.VALUE_ELEMENT_CONTENT_TYPE_ATTRIBUTE, 
+                                            internalIndexedData   /*"attribute","RELAXNG Specification 3.Full Syntax: type attribute"*/);
                     SAttribute type = (SAttribute)builder.getCurrentPattern();
                     attributeTaskFactory.put(type, typeTaskFactory);
 
@@ -949,15 +1053,15 @@ class RNGDirector{
                 }builder.endLevel();				
                 builder.optional(InternalIndexedData.VALUE_ELEMENT_CONTENT_TYPE_ATTRIBUTE_SQUARE, internalIndexedData  /*"optional","RELAXNG Specification 3.Full Syntax: type attribute"*/);
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.VALUE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: value"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.VALUE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: value"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.VALUE_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: value"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.VALUE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: value"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.VALUE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: value"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.VALUE_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: value"*/);
 				
 			}builder.endLevel();
 			builder.buildGroup(InternalIndexedData.VALUE_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and text group","RELAXNG Specification 3.Full Syntax: value"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "value",  InternalIndexedData.VALUE_ELEMENT_NAME, internalIndexedData, false    /*"name","RELAXNG Specification 3.Full Syntax: value"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.VALUE_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: value"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.VALUE_ELEMENT, internalIndexedData, recursionModel    /*"element","RELAXNG Specification 3.Full Syntax: value"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new ValueTaskFactory());
@@ -976,21 +1080,26 @@ class RNGDirector{
                     builder.buildName("","type", InternalIndexedData.DATA_ELEMENT_CONTENT_TYPE_ATTRIBUTE_NAME, internalIndexedData, false     /*"name","RELAXNG Specification 3.Full Syntax: type attribute"*/);
                     builder.buildData(internalLibrary.createDatatype("NCName"), InternalIndexedData.DATA_ELEMENT_CONTENT_TYPE_ATTRIBUTE_VALUE, internalIndexedData      /*"data","RELAXNG Specification 3.Full Syntax: type attribute"*/);
                 }builder.endLevel();
-                builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.DATA_ELEMENT_CONTENT_TYPE_ATTRIBUTE, internalIndexedData   /*"attribute","RELAXNG Specification 3.Full Syntax: type attribute"*/);
+                builder.buildAttribute(attributeIndex++, 
+                                        InternalIndexedData.NO_RECORD, 
+                                        InternalIndexedData.DATA_ELEMENT_CONTENT_TYPE_ATTRIBUTE, 
+                                        internalIndexedData   /*"attribute","RELAXNG Specification 3.Full Syntax: type attribute"*/);
                 SAttribute type = (SAttribute)builder.getCurrentPattern();
                 attributeTaskFactory.put(type, typeTaskFactory);
 
                 sattributes.add(type);
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.DATA_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData     /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: data"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.DATA_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData     /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: data"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.DATA_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData     /*"foreign attributes","RELAXNG Specification 3.Full Syntax: data"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.DATA_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData     /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: data"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.DATA_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData     /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: data"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.DATA_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData     /*"foreign attributes","RELAXNG Specification 3.Full Syntax: data"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.DATA_ELEMENT_CONTENT, internalIndexedData, false      /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: data"*/);
+			builder.buildGroup(InternalIndexedData.DATA_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false      /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: data"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "data", InternalIndexedData.DATA_ELEMENT_NAME, internalIndexedData, false   /* "name","RELAXNG Specification 3.Full Syntax: data"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.DATA_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: data"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.DATA_ELEMENT, internalIndexedData, recursionModel    /*"element","RELAXNG Specification 3.Full Syntax: data"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -1002,23 +1111,27 @@ class RNGDirector{
 		builder.startLevel();{
 			builder.startLevel();{
 				builder.startLevel();{
-					builder.buildRef(PARAM, InternalIndexedData.DATA_ELEMENT_CONTENT_PARAM, internalIndexedData     /*"param","RELAXNG Specification 3.Full Syntax: data"*/);
+					builder.buildRef(refDefinitionTopPattern[PARAM], PARAM, referenceModel, InternalIndexedData.DATA_ELEMENT_CONTENT_PARAM, internalIndexedData     /*"param","RELAXNG Specification 3.Full Syntax: data"*/);
 				}builder.endLevel();
 				builder.zeroOrMore(InternalIndexedData.DATA_ELEMENT_CONTENT_PARAM_STAR, internalIndexedData     /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: data"*/);
 				builder.startLevel();{
-					builder.buildRef(EXCEPT_PATTERN,InternalIndexedData.DATA_ELEMENT_CONTENT_EXCEPT_PATTERN, internalIndexedData     /*"exceptPattern","RELAXNG Specification 3.Full Syntax: data"*/);
+					builder.buildRef(refDefinitionTopPattern[EXCEPT_PATTERN], EXCEPT_PATTERN, referenceModel, InternalIndexedData.DATA_ELEMENT_CONTENT_EXCEPT_PATTERN, internalIndexedData     /*"exceptPattern","RELAXNG Specification 3.Full Syntax: data"*/);
 				}builder.endLevel();
 				builder.optional(InternalIndexedData.DATA_ELEMENT_CONTENT_EXCEPT_PATTERN_SQUARE, internalIndexedData     /*"optional","RELAXNG Specification 3.Full Syntax: data"*/);
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.DATA_ELEMENT_CONTENT_PARAM_EXCEPT_PATTERN_GROUP, internalIndexedData, false      /*"group of param and except elements","RELAXNG Specification 3.Full Syntax: data"*/);
+			builder.buildGroup(InternalIndexedData.DATA_ELEMENT_CONTENT_PARAM_EXCEPT_PATTERN_GROUP, 
+		                        internalIndexedData, 
+		                        false      /*"group of param and except elements","RELAXNG Specification 3.Full Syntax: data"*/);
     
             builder.startLevel();{
-                builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.DATA_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData     /*"foreignElement","RELAXNG Specification 3.Full Syntax: data"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.DATA_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData     /*"foreignElement","RELAXNG Specification 3.Full Syntax: data"*/);
             }builder.endLevel();
-            builder.zeroOrMore(InternalIndexedData.DATA_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData     /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: data"*/);
+            builder.zeroOrMore(InternalIndexedData.DATA_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, 
+		                        internalIndexedData     /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: data"*/);
             
 		}builder.endLevel();
-		builder.buildInterleave(InternalIndexedData.DATA_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData     /*"interleave param and except elements group with foreign elements","RELAXNG Specification 3.Full Syntax: data"*/);					
+		builder.buildInterleave(InternalIndexedData.DATA_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData     /*"interleave param and except elements group with foreign elements","RELAXNG Specification 3.Full Syntax: data"*/);					
 	}	
 	
 	
@@ -1027,20 +1140,22 @@ class RNGDirector{
 		builder.startLevel();{
 			builder.startLevel();{
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
 				
                 builder.startLevel();{
-                    builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
+                    builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
                 }builder.endLevel();
                 builder.zeroOrMore(InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
                 
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT, internalIndexedData, false    /*"attributes group","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
+			builder.buildGroup(InternalIndexedData.NOT_ALLOWED_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false    /*"attributes group","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "notAllowed", InternalIndexedData.NOT_ALLOWED_ELEMENT_NAME, internalIndexedData, false    /*"name","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.NOT_ALLOWED_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.NOT_ALLOWED_ELEMENT, internalIndexedData, recursionModel    /*"element","RELAXNG Specification 3.Full Syntax: notAllowed"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new NotAllowedTaskFactory());
@@ -1056,20 +1171,22 @@ class RNGDirector{
 			builder.startLevel();{
 				hrefAttributeExternalRef();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: externalRef"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: externalRef"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: externalRef"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: externalRef"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: externalRef"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: externalRef"*/);
             
                 builder.startLevel();{
-                    builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: externalRef"*/);
+                    builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: externalRef"*/);
                 }builder.endLevel();
                 builder.zeroOrMore(InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: externalRef"*/);
                                 
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes group","RELAXNG Specification 3.Full Syntax: externalRef"*/);
+			builder.buildGroup(InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes group","RELAXNG Specification 3.Full Syntax: externalRef"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "externalRef", InternalIndexedData.EXTERNAL_REF_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: externalRef"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.EXTERNAL_REF_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: externalRef"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.EXTERNAL_REF_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: externalRef"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new ExternalRefTaskFactory());
@@ -1081,7 +1198,10 @@ class RNGDirector{
 			builder.buildName("","href", InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_HREF_ATTRIBUTE_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: href attribute"*/);
 			builder.buildData(internalLibrary.createDatatype("hrefURI"), InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_HREF_ATTRIBUTE_VALUE, internalIndexedData  /* "data","RELAXNG Specification 3.Full Syntax: href attribute"*/);
 		}builder.endLevel();
-		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_HREF_ATTRIBUTE, internalIndexedData  /* "attribute","RELAXNG Specification 3.Full Syntax: href attribute"*/);
+		builder.buildAttribute(attributeIndex++, 
+		                        InternalIndexedData.NO_RECORD, 
+		                        InternalIndexedData.EXTERNAL_REF_ELEMENT_CONTENT_HREF_ATTRIBUTE, 
+                                internalIndexedData  /* "attribute","RELAXNG Specification 3.Full Syntax: href attribute"*/);
 		SAttribute  href = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(href, hrefTaskFactory);
 
@@ -1095,15 +1215,17 @@ class RNGDirector{
 			builder.startLevel();{				
 				grammarContentStarForGrammar();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: grammar"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: grammar"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData /*"foreign attributes","RELAXNG Specification 3.Full Syntax: grammar"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: grammar"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: grammar"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData /*"foreign attributes","RELAXNG Specification 3.Full Syntax: grammar"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.GRAMMAR_ELEMENT_CONTENT, internalIndexedData, false    /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: grammar"*/);
+			builder.buildGroup(InternalIndexedData.GRAMMAR_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false    /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: grammar"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "grammar", InternalIndexedData.GRAMMAR_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: grammar"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.GRAMMAR_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: grammar"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.GRAMMAR_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: grammar"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		includeStartTopPattern = e;
@@ -1115,12 +1237,12 @@ class RNGDirector{
 	private void grammarContentStarForGrammar(){				
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(GRAMMAR_CONTENT, InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_GC, internalIndexedData   /*"grammarContent","RELAXNG Specification 3.Full Syntax: grammar content"*/);
+				builder.buildRef(refDefinitionTopPattern[GRAMMAR_CONTENT], GRAMMAR_CONTENT, referenceModel, InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_GC, internalIndexedData   /*"grammarContent","RELAXNG Specification 3.Full Syntax: grammar content"*/);
 			}builder.endLevel();
 			builder.zeroOrMore(InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_GC_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: grammar content"*/);
 			
             builder.startLevel();{
-                builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: grammar content"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: grammar content"*/);
             }builder.endLevel();
             builder.zeroOrMore(InternalIndexedData.GRAMMAR_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: grammar content"*/);
             
@@ -1144,17 +1266,18 @@ class RNGDirector{
 				
 				nameNCNameAttributeForParam();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.PARAM_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: param"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.PARAM_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: param"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.PARAM_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: param"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.PARAM_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: param"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.PARAM_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: param"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.PARAM_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: param"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.PARAM_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and text group","RELAXNG Specification 3.Full Syntax: param"*/);
+			builder.buildGroup(InternalIndexedData.PARAM_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes and text group","RELAXNG Specification 3.Full Syntax: param"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "param", InternalIndexedData.PARAM_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: param"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.PARAM_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: param"*/);
-		
-		SElement e = (SElement)builder.getCurrentPattern();
+		SElement e = builder.buildElement(elementIndex++, InternalIndexedData.PARAM_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: param"*/);		
+		 
 		endElementTaskFactory.put(e, new ParamTaskFactory());
 		refDefinitionTopPattern[PARAM] = e;
 		
@@ -1165,7 +1288,10 @@ class RNGDirector{
 			builder.buildName("","name", InternalIndexedData.PARAM_ELEMENT_CONTENT_NAME_ATTRIBUTE_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 			builder.buildData(internalLibrary.createDatatype("NCName"), InternalIndexedData.PARAM_ELEMENT_CONTENT_NAME_ATTRIBUTE_VALUE, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 		}builder.endLevel();
-		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.PARAM_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
+		builder.buildAttribute(attributeIndex++, 
+		                        InternalIndexedData.NO_RECORD, 
+		                        InternalIndexedData.PARAM_ELEMENT_CONTENT_NAME_ATTRIBUTE, 
+                                internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: name attribute with NCName value"*/);
 		SAttribute  ncName = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(ncName, nameAttributeTaskFactory);
 
@@ -1179,29 +1305,31 @@ class RNGDirector{
 			builder.startLevel();{				
 				builder.startLevel();{
                     builder.startLevel();{
-                        builder.buildRef(PATTERN, InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
+                        recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: except in pattern context"*/));
                     }builder.endLevel();
                     builder.oneOrMore(InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);			
                     
                     builder.startLevel();{
-                        builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
+                        builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
                     }builder.endLevel();
                     builder.zeroOrMore(InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
                     
                 }builder.endLevel();				
-                builder.buildInterleave(InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
+                builder.buildInterleave(InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
+			builder.buildGroup(InternalIndexedData.EXCEPT_PATTERN_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "except", InternalIndexedData.EXCEPT_PATTERN_ELEMENT_NAME, internalIndexedData, false    /*"name","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.EXCEPT_PATTERN_ELEMENT, internalIndexedData   /*"element","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
+		SElement e = builder.buildElement(elementIndex++, InternalIndexedData.EXCEPT_PATTERN_ELEMENT, internalIndexedData, recursionModel   /*"element","RELAXNG Specification 3.Full Syntax: except in pattern context"*/);
 		
-		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new ExceptPatternTaskFactory());
 		refDefinitionTopPattern[EXCEPT_PATTERN] = e;
@@ -1221,14 +1349,15 @@ class RNGDirector{
 		builder.startBuild();
 		builder.startLevel();{
 		    
-		    builder.buildRef(START, InternalIndexedData.DEFINE_GRAMMAR_CONTENT_START, internalIndexedData   /*"start","RELAXNG Specification 3.Full Syntax: start"*/);
-			builder.buildRef(DEFINE, InternalIndexedData.DEFINE_GRAMMAR_CONTENT_DEFINE, internalIndexedData   /*"define","RELAXNG Specification 3.Full Syntax: define"*/);
+		    builder.buildRef(refDefinitionTopPattern[START], START, referenceModel, InternalIndexedData.DEFINE_GRAMMAR_CONTENT_START, internalIndexedData   /*"start","RELAXNG Specification 3.Full Syntax: start"*/);
+			builder.buildRef(refDefinitionTopPattern[DEFINE], DEFINE, referenceModel, InternalIndexedData.DEFINE_GRAMMAR_CONTENT_DEFINE, internalIndexedData   /*"define","RELAXNG Specification 3.Full Syntax: define"*/);
 			
 			divGrammarContent();
 			include();
 		}builder.endLevel();
-		builder.buildChoicePattern(InternalIndexedData.DEFINE_GRAMMAR_CONTENT, internalIndexedData, false);		
-		refDefinitionTopPattern[GRAMMAR_CONTENT] = builder.getCurrentPattern();
+		refDefinitionTopPattern[GRAMMAR_CONTENT] = builder.buildChoicePattern(InternalIndexedData.DEFINE_GRAMMAR_CONTENT, 
+		                        internalIndexedData, 
+		                        false);		
 	}
 	//<div> grammarContent* </div>
 	private void divGrammarContent() throws DatatypeException{
@@ -1237,15 +1366,17 @@ class RNGDirector{
 				
 				grammarContentStarForDiv();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.DIV_GC_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData    /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.DIV_GC_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData    /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.DIV_GC_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData    /*"foreign attributes","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.DIV_GC_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData    /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.DIV_GC_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData    /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.DIV_GC_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData    /*"foreign attributes","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.DIV_GC_ELEMENT_CONTENT, internalIndexedData, false     /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
+			builder.buildGroup(InternalIndexedData.DIV_GC_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false     /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "div", InternalIndexedData.DIV_GC_ELEMENT_NAME, internalIndexedData, false    /*"name","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.DIV_GC_ELEMENT, internalIndexedData   /*"element","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.DIV_GC_ELEMENT, internalIndexedData, recursionModel   /*"element","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -1256,17 +1387,18 @@ class RNGDirector{
 	private void grammarContentStarForDiv(){				
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(GRAMMAR_CONTENT, InternalIndexedData.DIV_GC_ELEMENT_CONTENT_GC, internalIndexedData   /*"grammarContent","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
+				recursionModel.add(builder.buildRef(GRAMMAR_CONTENT, referenceModel, InternalIndexedData.DIV_GC_ELEMENT_CONTENT_GC, internalIndexedData   /*"grammarContent","RELAXNG Specification 3.Full Syntax: div in grammar context"*/));
 			}builder.endLevel();
 			builder.zeroOrMore(InternalIndexedData.DIV_GC_ELEMENT_CONTENT_GC_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
 			
             builder.startLevel();{
-                builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.DIV_GC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.DIV_GC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
             }builder.endLevel();
             builder.zeroOrMore(InternalIndexedData.DIV_GC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);
             
 		}builder.endLevel();				
-		builder.buildInterleave(InternalIndexedData.DIV_GC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_FOR_GC, internalIndexedData   /*"interleaving of grammar content elements with foreign elements","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);	
+		builder.buildInterleave(InternalIndexedData.DIV_GC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_FOR_GC, 
+		                        internalIndexedData   /*"interleaving of grammar content elements with foreign elements","RELAXNG Specification 3.Full Syntax: div in grammar context"*/);	
 	}
 	
 	//<include href="anyURI"> includeContent* </include> 
@@ -1277,15 +1409,17 @@ class RNGDirector{
 				includeContentStarForInclude();
 				hrefAttributeInclude();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: include"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: include"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: include"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: include"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: include"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: include"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.INCLUDE_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: include"*/);			
+			builder.buildGroup(InternalIndexedData.INCLUDE_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: include"*/);			
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "include",  InternalIndexedData.INCLUDE_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: include"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.INCLUDE_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: include"*/);		
+		builder.buildElement(elementIndex++, InternalIndexedData.INCLUDE_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: include"*/);		
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -1296,24 +1430,28 @@ class RNGDirector{
 	private void includeContentStarForInclude(){				
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(INCLUDE_CONTENT, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_IC, internalIndexedData   /*"includeContent","RELAXNG Specification 3.Full Syntax: include content"*/);
+				builder.buildRef(refDefinitionTopPattern[INCLUDE_CONTENT], INCLUDE_CONTENT, referenceModel, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_IC, internalIndexedData   /*"includeContent","RELAXNG Specification 3.Full Syntax: include content"*/);
 			}builder.endLevel();
 			builder.zeroOrMore(InternalIndexedData.INCLUDE_ELEMENT_CONTENT_IC_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: include content"*/);
     
             builder.startLevel();{
-                builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: include content"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: include content"*/);
             }builder.endLevel();
             builder.zeroOrMore(InternalIndexedData.INCLUDE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: include content"*/);
             
 		}builder.endLevel();				
-		builder.buildInterleave(InternalIndexedData.INCLUDE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_FOR_IC, internalIndexedData   /*"interleaving of include content elements with foreign elements","RELAXNG Specification 3.Full Syntax: include content"*/);	
+		builder.buildInterleave(InternalIndexedData.INCLUDE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_FOR_IC, 
+		                        internalIndexedData   /*"interleaving of include content elements with foreign elements","RELAXNG Specification 3.Full Syntax: include content"*/);	
 	}
 	private void hrefAttributeInclude()  throws DatatypeException{
         builder.startLevel();{
 			builder.buildName("","href", InternalIndexedData.INCLUDE_ELEMENT_CONTENT_HREF_ATTRIBUTE_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: href attribute"*/);
 			builder.buildData(internalLibrary.createDatatype("hrefURI"), InternalIndexedData.INCLUDE_ELEMENT_CONTENT_HREF_ATTRIBUTE_VALUE, internalIndexedData  /* "data","RELAXNG Specification 3.Full Syntax: href attribute"*/);
 		}builder.endLevel();
-		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.INCLUDE_ELEMENT_CONTENT_HREF_ATTRIBUTE, internalIndexedData  /* "attribute","RELAXNG Specification 3.Full Syntax: href attribute"*/);
+		builder.buildAttribute(attributeIndex++,
+                                InternalIndexedData.NO_RECORD,
+                                InternalIndexedData.INCLUDE_ELEMENT_CONTENT_HREF_ATTRIBUTE, 
+                                internalIndexedData  /* "attribute","RELAXNG Specification 3.Full Syntax: href attribute"*/);
 		SAttribute href = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(href, hrefTaskFactory);
 
@@ -1324,13 +1462,13 @@ class RNGDirector{
 		builder.startBuild();
 		builder.startLevel();{
 		    
-			builder.buildRef(START, InternalIndexedData.DEFINE_INCLUDE_CONTENT_START, internalIndexedData   /*"start","RELAXNG Specification 3.Full Syntax: start"*/);
-			builder.buildRef(DEFINE, InternalIndexedData.DEFINE_INCLUDE_CONTENT_DEFINE, internalIndexedData   /*"define","RELAXNG Specification 3.Full Syntax: define"*/);
+			builder.buildRef(refDefinitionTopPattern[START], START, referenceModel, InternalIndexedData.DEFINE_INCLUDE_CONTENT_START, internalIndexedData   /*"start","RELAXNG Specification 3.Full Syntax: start"*/);
+			builder.buildRef(refDefinitionTopPattern[DEFINE], DEFINE, referenceModel, InternalIndexedData.DEFINE_INCLUDE_CONTENT_DEFINE, internalIndexedData   /*"define","RELAXNG Specification 3.Full Syntax: define"*/);
 						
 			divIncludeContent();
 		}builder.endLevel();
-		builder.buildChoicePattern(InternalIndexedData.DEFINE_INCLUDE_CONTENT, internalIndexedData, false);		
-		refDefinitionTopPattern[INCLUDE_CONTENT] = builder.getCurrentPattern();
+		refDefinitionTopPattern[INCLUDE_CONTENT] = builder.buildChoicePattern(InternalIndexedData.DEFINE_INCLUDE_CONTENT, internalIndexedData, false);		
+		
 	}	
 	
 	//<div> includeContent* </div>
@@ -1339,15 +1477,17 @@ class RNGDirector{
 			builder.startLevel();{				
 				includeContentStarForDiv();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.DIV_IC_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: div in include context"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.DIV_IC_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: div in include context"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.DIV_IC_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: div in include context"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.DIV_IC_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: div in include context"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.DIV_IC_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: div in include context"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.DIV_IC_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: div in include context"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.DIV_IC_ELEMENT_CONTENT, internalIndexedData, false    /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: div in include context"*/);
+			builder.buildGroup(InternalIndexedData.DIV_IC_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false    /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: div in include context"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "div", InternalIndexedData.DIV_IC_ELEMENT_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: div in include context"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.DIV_IC_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: div in include context"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.DIV_IC_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: div in include context"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -1358,17 +1498,18 @@ class RNGDirector{
 	private void includeContentStarForDiv(){				
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(INCLUDE_CONTENT, InternalIndexedData.DIV_IC_ELEMENT_CONTENT_IC, internalIndexedData   /*"includeContent","RELAXNG Specification 3.Full Syntax: include content"*/);
+				recursionModel.add(builder.buildRef(INCLUDE_CONTENT, referenceModel, InternalIndexedData.DIV_IC_ELEMENT_CONTENT_IC, internalIndexedData   /*"includeContent","RELAXNG Specification 3.Full Syntax: include content"*/));
 			}builder.endLevel();
 			builder.zeroOrMore(InternalIndexedData.DIV_IC_ELEMENT_CONTENT_IC_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: include content"*/);
     
             builder.startLevel();{
-                builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.DIV_IC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: include content"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.DIV_IC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: include content"*/);
             }builder.endLevel();
             builder.zeroOrMore(InternalIndexedData.DIV_IC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: include content"*/);
             
 		}builder.endLevel();				
-		builder.buildInterleave(InternalIndexedData.DIV_IC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_FOR_IC, internalIndexedData   /*"interleaving of include content elements with foreign elements","RELAXNG Specification 3.Full Syntax: include content"*/);	
+		builder.buildInterleave(InternalIndexedData.DIV_IC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_FOR_IC, 
+		                        internalIndexedData   /*"interleaving of include content elements with foreign elements","RELAXNG Specification 3.Full Syntax: include content"*/);	
 	}
 		
 	//<start [combine="method"]>pattern</start>
@@ -1378,29 +1519,31 @@ class RNGDirector{
 			builder.startLevel();{				
 				
 			    builder.startLevel();{
-                    builder.buildRef(PATTERN,  InternalIndexedData.START_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: pattern"*/);
+                    builder.buildRef(refDefinitionTopPattern[PATTERN], PATTERN,  referenceModel, InternalIndexedData.START_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: pattern"*/);
                     
                     builder.startLevel();{
-                        builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.START_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: pattern"*/);
+                        builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.START_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: pattern"*/);
                     }builder.endLevel();
                     builder.zeroOrMore(InternalIndexedData.START_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: pattern"*/);
                     
                 }builder.endLevel();
-                builder.buildInterleave(InternalIndexedData.START_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern element and foreign elements","RELAXNG Specification 3.Full Syntax: pattern"*/);
+                builder.buildInterleave(InternalIndexedData.START_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData   /*"interleaving of pattern element and foreign elements","RELAXNG Specification 3.Full Syntax: pattern"*/);
                 
 				combineAttributeSquareForStart();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.START_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: start"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.START_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: start"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.START_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: start"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.START_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: start"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.START_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: start"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.START_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: start"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.START_ELEMENT_CONTENT, internalIndexedData, false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: start"*/);
+			builder.buildGroup(InternalIndexedData.START_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: start"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "start", InternalIndexedData.START_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: start"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.START_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: start"*/);
+		SElement e = builder.buildElement(elementIndex++, InternalIndexedData.START_ELEMENT, internalIndexedData, recursionModel /*"element","RELAXNG Specification 3.Full Syntax: start"*/);
 		
-		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new StartTaskFactory());
         refDefinitionTopPattern[START] = e;
@@ -1413,7 +1556,10 @@ class RNGDirector{
                 builder.buildName("","combine", InternalIndexedData.START_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: combine attribute"*/);
                 builder.buildData(internalLibrary.createDatatype("combine"), InternalIndexedData.START_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_VALUE, internalIndexedData    /*"value","RELAXNG Specification 3.Full Syntax: combine attribute"*/);
             }builder.endLevel();
-            builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.START_ELEMENT_CONTENT_COMBINE_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: combine attribute"*/);
+            builder.buildAttribute(attributeIndex++, 
+                                    InternalIndexedData.NO_RECORD, 
+                                    InternalIndexedData.START_ELEMENT_CONTENT_COMBINE_ATTRIBUTE, 
+                                    internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: combine attribute"*/);
             SAttribute combine = (SAttribute)builder.getCurrentPattern();
             attributeTaskFactory.put(combine, combineTaskFactory);
 
@@ -1430,32 +1576,34 @@ class RNGDirector{
 			builder.startLevel();{
 				builder.startLevel();{
                     builder.startLevel();{
-                        builder.buildRef(PATTERN, InternalIndexedData.DEFINE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: define"*/);
+                        builder.buildRef(refDefinitionTopPattern[PATTERN], PATTERN, referenceModel, InternalIndexedData.DEFINE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: define"*/);
                     }builder.endLevel();
                     builder.oneOrMore(InternalIndexedData.DEFINE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: define"*/);			
                     
                     builder.startLevel();{
-                        builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.DEFINE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: define"*/);
+                        builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.DEFINE_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: define"*/);
                     }builder.endLevel();
                     builder.zeroOrMore(InternalIndexedData.DEFINE_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: define"*/);
                     
                 }builder.endLevel();				
-                builder.buildInterleave(InternalIndexedData.DEFINE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: define"*/);
+                builder.buildInterleave(InternalIndexedData.DEFINE_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE, 
+		                        internalIndexedData   /*"interleaving of pattern elements with foreign elements","RELAXNG Specification 3.Full Syntax: define"*/);
 				
                 nameNCNameAttributeForDefine();
 				combineAttributeSquareForDefine();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.DEFINE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: define"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.DEFINE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: define"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.DEFINE_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: define"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.DEFINE_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: define"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.DEFINE_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: define"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.DEFINE_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: define"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup( InternalIndexedData.DEFINE_ELEMENT_CONTENT, internalIndexedData, false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: define"*/);
+			builder.buildGroup(InternalIndexedData.DEFINE_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: define"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "define", InternalIndexedData.DEFINE_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: define"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.DEFINE_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: define"*/);
+		SElement e = builder.buildElement(elementIndex++, InternalIndexedData.DEFINE_ELEMENT, internalIndexedData, recursionModel /*"element","RELAXNG Specification 3.Full Syntax: define"*/);
 		
-		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new DefineTaskFactory());        	
         refDefinitionTopPattern[DEFINE] = e;
@@ -1467,7 +1615,10 @@ class RNGDirector{
 			builder.buildName("","name", InternalIndexedData.DEFINE_ELEMENT_CONTENT_NAME_ATTRIBUTE_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: define"*/);
 			builder.buildData(internalLibrary.createDatatype("NCName"), InternalIndexedData.DEFINE_ELEMENT_CONTENT_NAME_ATTRIBUTE_VALUE, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: define"*/);
 		}builder.endLevel();
-		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.DEFINE_ELEMENT_CONTENT_NAME_ATTRIBUTE, internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: define"*/);
+		builder.buildAttribute(attributeIndex++, 
+		                        InternalIndexedData.NO_RECORD, 
+		                        InternalIndexedData.DEFINE_ELEMENT_CONTENT_NAME_ATTRIBUTE, 
+                                internalIndexedData  /*"attribute","RELAXNG Specification 3.Full Syntax: define"*/);
 		SAttribute ncName = (SAttribute)builder.getCurrentPattern();
 		attributeTaskFactory.put(ncName, nameAttributeTaskFactory);
 
@@ -1479,7 +1630,10 @@ class RNGDirector{
                 builder.buildName("","combine", InternalIndexedData.DEFINE_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_NAME, internalIndexedData, false   /*"name","RELAXNG Specification 3.Full Syntax: define"*/);
                 builder.buildData(internalLibrary.createDatatype("combine"), InternalIndexedData.DEFINE_ELEMENT_CONTENT_COMBINE_ATTRIBUTE_VALUE, internalIndexedData    /*"value","RELAXNG Specification 3.Full Syntax: define"*/);
             }builder.endLevel();
-            builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.DEFINE_ELEMENT_CONTENT_COMBINE_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: define"*/);
+            builder.buildAttribute(attributeIndex++, 
+                                    InternalIndexedData.NO_RECORD, 
+                                    InternalIndexedData.DEFINE_ELEMENT_CONTENT_COMBINE_ATTRIBUTE, 
+                                    internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: define"*/);
             SAttribute combine = (SAttribute)builder.getCurrentPattern();
             attributeTaskFactory.put(combine, combineTaskFactory);
 
@@ -1503,8 +1657,9 @@ class RNGDirector{
 			nsName();
 			choiceNameClass();
 		}builder.endLevel();
-		builder.buildChoicePattern(InternalIndexedData.DEFINE_NAME_CLASS, internalIndexedData, false);
-		refDefinitionTopPattern[NAME_CLASS] = builder.getCurrentPattern();
+		refDefinitionTopPattern[NAME_CLASS] = builder.buildChoicePattern(InternalIndexedData.DEFINE_NAME_CLASS, 
+		                        internalIndexedData, 
+		                        false);
 	}
 	
 	private void name() throws DatatypeException{
@@ -1512,15 +1667,17 @@ class RNGDirector{
 			builder.startLevel();{				
 				builder.buildData(internalLibrary.createDatatype("QName"), InternalIndexedData.NAME_ELEMENT_CONTENT_DATA, internalIndexedData   /*"data","RELAXNG Specification 3.Full Syntax: name"*/);
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.NAME_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: name"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.NAME_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: name"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.NAME_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: name"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.NAME_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: name"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.NAME_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData   /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: name"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.NAME_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: name"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.NAME_ELEMENT_CONTENT, internalIndexedData, false    /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: name"*/);
+			builder.buildGroup(InternalIndexedData.NAME_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false    /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: name"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "name", InternalIndexedData.NAME_ELEMENT_NAME, internalIndexedData, false     /*"name","RELAXNG Specification 3.Full Syntax: name"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.NAME_ELEMENT, internalIndexedData    /*"element","RELAXNG Specification 3.Full Syntax: name"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.NAME_ELEMENT, internalIndexedData, recursionModel    /*"element","RELAXNG Specification 3.Full Syntax: name"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		endElementTaskFactory.put(e, new NameTaskFactory());
@@ -1533,15 +1690,17 @@ class RNGDirector{
 			builder.startLevel();{				
 				exceptNameClassSquareForAnyName();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData    /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: anyName"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData    /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: anyName"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData    /*"foreign attributes","RELAXNG Specification 3.Full Syntax: anyName"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData    /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: anyName"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData    /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: anyName"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData    /*"foreign attributes","RELAXNG Specification 3.Full Syntax: anyName"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.ANY_NAME_ELEMENT_CONTENT, internalIndexedData, false     /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: anyName"*/);			
+			builder.buildGroup(InternalIndexedData.ANY_NAME_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false     /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: anyName"*/);			
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "anyName", InternalIndexedData.ANY_NAME_ELEMENT_NAME, internalIndexedData, false    /*"name","RELAXNG Specification 3.Full Syntax: anyName"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.ANY_NAME_ELEMENT, internalIndexedData     /*"element","RELAXNG Specification 3.Full Syntax: anyName"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.ANY_NAME_ELEMENT, internalIndexedData, recursionModel     /*"element","RELAXNG Specification 3.Full Syntax: anyName"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -1552,18 +1711,19 @@ class RNGDirector{
 	private void exceptNameClassSquareForAnyName() throws DatatypeException{	
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(EXCEPT_NAME_CLASS, InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_EXCEPT_NC, internalIndexedData    /*"except name class","RELAXNG Specification 3.Full Syntax: except in name class context"*/);			
+				builder.buildRef(refDefinitionTopPattern[EXCEPT_NAME_CLASS], EXCEPT_NAME_CLASS, referenceModel, InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_EXCEPT_NC, internalIndexedData    /*"except name class","RELAXNG Specification 3.Full Syntax: except in name class context"*/);			
 			}builder.endLevel();
 			builder.optional(InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_EXCEPT_NC_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: optional"*/);
     
             builder.startLevel();{
-                builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: TODO"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: TODO"*/);
             }builder.endLevel();
             builder.zeroOrMore(InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: TODO"*/);
             
 		}builder.endLevel();
 		// TODO move
-		builder.buildInterleave(InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_EXCEPT_NC, internalIndexedData    /*"interleaving of except element with foreign elements","RELAXNG Specification 3.Full Syntax: infinite name class content"*/);
+		builder.buildInterleave(InternalIndexedData.ANY_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_EXCEPT_NC, 
+		                        internalIndexedData    /*"interleaving of except element with foreign elements","RELAXNG Specification 3.Full Syntax: infinite name class content"*/);
 	}
 	
 	private void nsName() throws DatatypeException{
@@ -1571,15 +1731,17 @@ class RNGDirector{
 			builder.startLevel();{				
 				exceptNameClassSquareForNsName();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.NS_NAME_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: nsName"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.NS_NAME_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: nsName"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.NS_NAME_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: nsName"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.NS_NAME_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: nsName"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.NS_NAME_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: nsName"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.NS_NAME_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: nsName"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.NS_NAME_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: nsName"*/);			
+			builder.buildGroup(InternalIndexedData.NS_NAME_ELEMENT_CONTENT,
+		                        internalIndexedData, 
+		                        false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: nsName"*/);			
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "nsName",InternalIndexedData.NS_NAME_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: nsName"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.NS_NAME_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: nsName"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.NS_NAME_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: nsName"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -1590,18 +1752,19 @@ class RNGDirector{
 	private void exceptNameClassSquareForNsName() throws DatatypeException{	
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(EXCEPT_NAME_CLASS, InternalIndexedData.NS_NAME_ELEMENT_CONTENT_EXCEPT_NC, internalIndexedData    /*"except name class","RELAXNG Specification 3.Full Syntax: except in name class context"*/);			
+				builder.buildRef(refDefinitionTopPattern[EXCEPT_NAME_CLASS], EXCEPT_NAME_CLASS, referenceModel, InternalIndexedData.NS_NAME_ELEMENT_CONTENT_EXCEPT_NC, internalIndexedData    /*"except name class","RELAXNG Specification 3.Full Syntax: except in name class context"*/);			
 			}builder.endLevel();
 			builder.optional(InternalIndexedData.NS_NAME_ELEMENT_CONTENT_EXCEPT_NC_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: optional"*/);
     
             builder.startLevel();{
-                builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.NS_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: TODO"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.NS_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData    /*"foreignElement","RELAXNG Specification 3.Full Syntax: TODO"*/);
             }builder.endLevel();
             builder.zeroOrMore(InternalIndexedData.NS_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData    /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: TODO"*/);
             
 		}builder.endLevel();
 		// TODO move
-		builder.buildInterleave(InternalIndexedData.NS_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_EXCEPT_NC, internalIndexedData    /*"interleaving of except element with foreign elements","RELAXNG Specification 3.Full Syntax: infinite name class content"*/);
+		builder.buildInterleave(InternalIndexedData.NS_NAME_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_EXCEPT_NC, 
+		                        internalIndexedData    /*"interleaving of except element with foreign elements","RELAXNG Specification 3.Full Syntax: infinite name class content"*/);
 	}
 	
 	private void choiceNameClass() throws DatatypeException{
@@ -1609,15 +1772,17 @@ class RNGDirector{
 			builder.startLevel();{	
 				nameClassPlusForChoice();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData  /*"foreign attributes","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
 								
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT, internalIndexedData, false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
+			builder.buildGroup(InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false   /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "choice", InternalIndexedData.CHOICE_NC_ELEMENT_NAME, internalIndexedData, false  /*"name","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.CHOICE_NC_ELEMENT, internalIndexedData  /*"element","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
+		builder.buildElement(elementIndex++, InternalIndexedData.CHOICE_NC_ELEMENT, internalIndexedData, recursionModel  /*"element","RELAXNG Specification 3.Full Syntax: choice in name class context"*/);
 		
 		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
@@ -1628,16 +1793,17 @@ class RNGDirector{
 	private void nameClassPlusForChoice(){				
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(NAME_CLASS, InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_NC, internalIndexedData  /*"nameClass","RELAXNG Specification 3.Full Syntax: name class"*/);
+				recursionModel.add(builder.buildRef(NAME_CLASS, referenceModel, InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_NC, internalIndexedData  /*"nameClass","RELAXNG Specification 3.Full Syntax: name class"*/));
 			}builder.endLevel();
 			builder.oneOrMore(InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_NC_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
 			
 			builder.startLevel();{
-                builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: foreign element"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: foreign element"*/);
             }builder.endLevel();
             builder.zeroOrMore(InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign element"*/);
 		}builder.endLevel();				
-		builder.buildInterleave(InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_NC, internalIndexedData  /*"interleaving of name class elements with foreign elements","RELAXNG Specification 3.Full Syntax: name class content"*/);	
+		builder.buildInterleave(InternalIndexedData.CHOICE_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_NC, 
+		                        internalIndexedData  /*"interleaving of name class elements with foreign elements","RELAXNG Specification 3.Full Syntax: name class content"*/);	
 	}
 	//**************************************************************************
 	//END NAME CLASS METHODS ***************************************************
@@ -1656,17 +1822,18 @@ class RNGDirector{
 			    
 				nameClassPlusForExcept();
 				
-				builder.buildRef(NS_ATTRIBUTE, InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
-				builder.buildRef(DL_ATTRIBUTE, InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
-				builder.buildRef(FOREIGN_ATTRIBUTES, InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
+				builder.buildRef(refDefinitionTopPattern[NS_ATTRIBUTE], NS_ATTRIBUTE, referenceModel, InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_NS_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
+				builder.buildRef(refDefinitionTopPattern[DL_ATTRIBUTE], DL_ATTRIBUTE, referenceModel, InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_DL_ATTRIBUTE, internalIndexedData  /*"optional attributes datatypeLibrary and ns","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
+				builder.buildRef(refDefinitionTopPattern[FOREIGN_ATTRIBUTES], FOREIGN_ATTRIBUTES, referenceModel, InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_FOREIGN_ATTRIBUTES, internalIndexedData   /*"foreign attributes","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
 				
 			}builder.endLevel();
-			builder.buildGroup(InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT, internalIndexedData, false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
+			builder.buildGroup(InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT, 
+		                        internalIndexedData, 
+		                        false  /*"attributes and elements group","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
 			builder.buildName(XMLConstants.RELAXNG_NS_URI, "except", InternalIndexedData.EXCEPT_NC_ELEMENT_NAME, internalIndexedData, false /*"name","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.EXCEPT_NC_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
+		SElement e = builder.buildElement(elementIndex++, InternalIndexedData.EXCEPT_NC_ELEMENT, internalIndexedData, recursionModel /*"element","RELAXNG Specification 3.Full Syntax: except in name class context"*/);
 		
-		SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);
 		endElementTaskFactory.put(e, new ExceptNameClassTaskFactory());
         refDefinitionTopPattern[EXCEPT_NAME_CLASS] = e;
@@ -1677,16 +1844,17 @@ class RNGDirector{
     private void nameClassPlusForExcept(){				
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(NAME_CLASS, InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_NC, internalIndexedData  /*"nameClass","RELAXNG Specification 3.Full Syntax: name class"*/);
+				recursionModel.add(builder.buildRef(NAME_CLASS, referenceModel, InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_NC, internalIndexedData  /*"nameClass","RELAXNG Specification 3.Full Syntax: name class"*/));
 			}builder.endLevel();
 			builder.oneOrMore(InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_NC_PLUS, internalIndexedData  /*"oneOrMore","RELAXNG Specification 3.Full Syntax: oneOrMore"*/);
 			
 			builder.startLevel();{
-                builder.buildRef(FOREIGN_ELEMENT, InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: foreign element"*/);
+                builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData  /*"foreignElement","RELAXNG Specification 3.Full Syntax: foreign element"*/);
             }builder.endLevel();
             builder.zeroOrMore(InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_STAR, internalIndexedData  /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign element"*/);
 		}builder.endLevel();				
-		builder.buildInterleave(InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_NC, internalIndexedData  /*"interleaving of name class elements with foreign elements","RELAXNG Specification 3.Full Syntax: name class content"*/);	
+		builder.buildInterleave(InternalIndexedData.EXCEPT_NC_ELEMENT_CONTENT_FOREIGN_ELEMENT_INTERLEAVE_NC, 
+		                        internalIndexedData  /*"interleaving of name class elements with foreign elements","RELAXNG Specification 3.Full Syntax: name class content"*/);	
 	}
 	//**************************************************************************
 	//END EXCEPT NAME CLASS METHODS ********************************************
@@ -1703,15 +1871,17 @@ class RNGDirector{
                 builder.buildName("","ns", InternalIndexedData.NS_ATTRIBUTE_NAME, internalIndexedData, false    /*"name","RELAXNG Specification 3.Full Syntax: ns attribute"*/);	
                 builder.buildData(nativeLibrary.createDatatype("token"), InternalIndexedData.NS_ATTRIBUTE_VALUE, internalIndexedData    /*"data","RELAXNG Specification 3.Full Syntax: ns attribute"*/);
             }builder.endLevel();
-            builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD,  InternalIndexedData.NS_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: ns attribute"*/);
-            SAttribute ns = (SAttribute)builder.getCurrentPattern();
+            SAttribute ns = builder.buildAttribute(attributeIndex++, 
+                                    InternalIndexedData.NO_RECORD,  
+                                    InternalIndexedData.NS_ATTRIBUTE, 
+                                    internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: ns attribute"*/);
+            
             attributeTaskFactory.put(ns, nsTaskFactory);
-
             sattributes.add(ns);
+            refDefinitionTopPattern[NS_ATTRIBUTE] = ns; 
         }builder.endLevel();				
         builder.optional(InternalIndexedData.NS_ATTRIBUTE_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: ns attribute"*/);
         
-        refDefinitionTopPattern[NS_ATTRIBUTE] = builder.getCurrentPattern();
 	}
 	
 	private void defineOptionalDlAttribute()  throws DatatypeException{
@@ -1721,15 +1891,18 @@ class RNGDirector{
                 builder.buildName("","datatypeLibrary", InternalIndexedData.DL_ATTRIBUTE_NAME, internalIndexedData, false     /*"name","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute"*/);
                 builder.buildData(internalLibrary.createDatatype("datatypeLibraryURI"), InternalIndexedData.DL_ATTRIBUTE_VALUE, internalIndexedData     /*"data","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute"*/);
             }builder.endLevel();
-            builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.DL_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute"*/);
-            SAttribute datatypeLibrary = (SAttribute)builder.getCurrentPattern();
+            SAttribute datatypeLibrary = builder.buildAttribute(attributeIndex++, 
+                                    InternalIndexedData.NO_RECORD, 
+                                    InternalIndexedData.DL_ATTRIBUTE, 
+                                    internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute"*/);
+            
             attributeTaskFactory.put(datatypeLibrary, datatypeLibraryTaskFactory);
-
             sattributes.add(datatypeLibrary);
+            refDefinitionTopPattern[DL_ATTRIBUTE] = datatypeLibrary;
         }builder.endLevel();				
         builder.optional(InternalIndexedData.DL_ATTRIBUTE_SQUARE, internalIndexedData    /*"optional","RELAXNG Specification 3.Full Syntax: datatypeLibrary attribute"*/);
     
-        refDefinitionTopPattern[DL_ATTRIBUTE] = builder.getCurrentPattern();
+        
     }
     //**************************************************************************
 	//END COMMON ATTRIBUTES METHODS ********************************************
@@ -1745,9 +1918,8 @@ class RNGDirector{
 		    anyNameExceptRNG();
 			anyContentForForeign();			
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.FOREIGN_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: foreign element"*/);
+		SElement e = builder.buildElement(elementIndex++, InternalIndexedData.FOREIGN_ELEMENT, internalIndexedData, recursionModel /*"element","RELAXNG Specification 3.Full Syntax: foreign element"*/);
 		
-        SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);        
 		endElementTaskFactory.put(e, new ForeignElementTaskFactory());
 		refDefinitionTopPattern[FOREIGN_ELEMENT] = e;
@@ -1768,11 +1940,13 @@ class RNGDirector{
 	private void anyContentForForeign(){		
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(ANY_ATTRIBUTE, InternalIndexedData.FOREIGN_ELEMENT_CONTENT_ANY_ATTRIBUTE, internalIndexedData   /*"any attribute","RELAXNG Specification 3.Full Syntax: any attribute"*/);
+				builder.buildRef(refDefinitionTopPattern[ANY_ATTRIBUTE], ANY_ATTRIBUTE, referenceModel, InternalIndexedData.FOREIGN_ELEMENT_CONTENT_ANY_ATTRIBUTE, internalIndexedData   /*"any attribute","RELAXNG Specification 3.Full Syntax: any attribute"*/);
 				builder.buildText(InternalIndexedData.FOREIGN_ELEMENT_CONTENT_TEXT, internalIndexedData, false    /*"text","RELAXNG Specification 3.Full Syntax: text"*/);
-				builder.buildRef(ANY_ELEMENT, InternalIndexedData.FOREIGN_ELEMENT_CONTENT_ANY_ELEMENT, internalIndexedData   /*"anyElement","RELAXNG Specification 3.Full Syntax: any element"*/);
+				builder.buildRef(refDefinitionTopPattern[ANY_ELEMENT], ANY_ELEMENT, referenceModel, InternalIndexedData.FOREIGN_ELEMENT_CONTENT_ANY_ELEMENT, internalIndexedData   /*"anyElement","RELAXNG Specification 3.Full Syntax: any element"*/);
 			}builder.endLevel();
-			builder.buildChoicePattern(InternalIndexedData.FOREIGN_ELEMENT_CONTENT_CHOICE, internalIndexedData, false   /*"choice","RELAXNG Specification 3.Full Syntax: any content"*/);
+			builder.buildChoicePattern(InternalIndexedData.FOREIGN_ELEMENT_CONTENT_CHOICE, 
+		                        internalIndexedData, 
+		                        false   /*"choice","RELAXNG Specification 3.Full Syntax: any content"*/);
 		}builder.endLevel();
 		builder.zeroOrMore(InternalIndexedData.FOREIGN_ELEMENT_CONTENT_CHOICE_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: any content"*/);
 	}
@@ -1783,9 +1957,8 @@ class RNGDirector{
 			anyContentForAny();
 			builder.buildAnyName(InternalIndexedData.ANY_ELEMENT_NAME, internalIndexedData /*"anyName","RELAXNG Specification 3.Full Syntax: any element"*/);
 		}builder.endLevel();
-		builder.buildElement(elementIndex++, InternalIndexedData.ANY_ELEMENT, internalIndexedData /*"element","RELAXNG Specification 3.Full Syntax: any element"*/);
+		SElement e = builder.buildElement(elementIndex++, InternalIndexedData.ANY_ELEMENT, internalIndexedData, recursionModel /*"element","RELAXNG Specification 3.Full Syntax: any element"*/);
 		
-        SElement e = (SElement)builder.getCurrentPattern();
 		needsStartTask.put(e, null);        
 		endElementTaskFactory.put(e, new ForeignElementTaskFactory());
 		refDefinitionTopPattern[ANY_ELEMENT] = e;
@@ -1795,11 +1968,13 @@ class RNGDirector{
 	private void anyContentForAny(){		
 		builder.startLevel();{
 			builder.startLevel();{
-				builder.buildRef(ANY_ATTRIBUTE, InternalIndexedData.ANY_ELEMENT_CONTENT_ANY_ATTRIBUTE, internalIndexedData   /*"any attribute","RELAXNG Specification 3.Full Syntax: any attribute"*/);
+				builder.buildRef(refDefinitionTopPattern[ANY_ATTRIBUTE], ANY_ATTRIBUTE, referenceModel, InternalIndexedData.ANY_ELEMENT_CONTENT_ANY_ATTRIBUTE, internalIndexedData   /*"any attribute","RELAXNG Specification 3.Full Syntax: any attribute"*/);
 				builder.buildText(InternalIndexedData.ANY_ELEMENT_CONTENT_TEXT, internalIndexedData, false    /*"text","RELAXNG Specification 3.Full Syntax: text"*/);
-				builder.buildRef(ANY_ELEMENT, InternalIndexedData.ANY_ELEMENT_CONTENT_ANY_ELEMENT, internalIndexedData   /*"anyElement","RELAXNG Specification 3.Full Syntax: any element"*/);
+				recursionModel.add(builder.buildRef(ANY_ELEMENT, referenceModel, InternalIndexedData.ANY_ELEMENT_CONTENT_ANY_ELEMENT, internalIndexedData   /*"anyElement","RELAXNG Specification 3.Full Syntax: any element"*/));
 			}builder.endLevel();
-			builder.buildChoicePattern(InternalIndexedData.ANY_ELEMENT_CONTENT_CHOICE, internalIndexedData, false   /*"choice","RELAXNG Specification 3.Full Syntax: any content"*/);
+			builder.buildChoicePattern(InternalIndexedData.ANY_ELEMENT_CONTENT_CHOICE, 
+		                        internalIndexedData, 
+		                        false   /*"choice","RELAXNG Specification 3.Full Syntax: any content"*/);
 		}builder.endLevel();
 		builder.zeroOrMore(InternalIndexedData.ANY_ELEMENT_CONTENT_CHOICE_STAR, internalIndexedData   /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: any content"*/);
 	}
@@ -1811,16 +1986,16 @@ class RNGDirector{
 				anyNameExceptNullOrRNG();	
 				builder.buildText(InternalIndexedData.FOREIGN_ATTRIBUTE_VALUE, internalIndexedData, false  /*"text","RELAXNG Specification 3.Full Syntax: foreign attribute"*/);
 			}builder.endLevel();
-			builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.FOREIGN_ATTRIBUTE, internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: foreign attribute"*/);
-            SAttribute foreign = (SAttribute)builder.getCurrentPattern();
+			SAttribute foreign = builder.buildAttribute(attributeIndex++, 
+			                        InternalIndexedData.NO_RECORD, 
+			                        InternalIndexedData.FOREIGN_ATTRIBUTE, 
+                                    internalIndexedData    /*"attribute","RELAXNG Specification 3.Full Syntax: foreign attribute"*/);
+            
 			attributeTaskFactory.put(foreign, foreignAttributeTaskFactory);
-
             sattributes.add(foreign);
+            refDefinitionTopPattern[FOREIGN_ATTRIBUTES] = foreign;
 		}builder.endLevel();				
 		builder.zeroOrMore(InternalIndexedData.FOREIGN_ATTRIBUTE_STAR, internalIndexedData /*"zeroOrMore","RELAXNG Specification 3.Full Syntax: foreign attribute"*/);
-        
-        SimplifiedPattern p = builder.getCurrentPattern();
-        refDefinitionTopPattern[FOREIGN_ATTRIBUTES] = p;
     }
 	private void anyNameExceptNullOrRNG(){
 		builder.startLevel();{
@@ -1843,10 +2018,12 @@ class RNGDirector{
 			builder.buildAnyName(InternalIndexedData.ANY_ATTRIBUTE_NAME, internalIndexedData /*"anyName","RELAXNG Specification 3.Full Syntax: any attribute"*/);
 			builder.buildText(InternalIndexedData.ANY_ATTRIBUTE_VALUE, internalIndexedData, false   /*"text","RELAXNG Specification 3.Full Syntax: any attribute"*/);
 		}builder.endLevel();
-		builder.buildAttribute(attributeIndex++, InternalIndexedData.NO_RECORD, InternalIndexedData.ANY_ATTRIBUTE, internalIndexedData /*"attribute","RELAXNG Specification 3.Full Syntax: any attribute"*/);
-        SAttribute any = (SAttribute)builder.getCurrentPattern();
+		SAttribute any = builder.buildAttribute(attributeIndex++, 
+		                        InternalIndexedData.NO_RECORD, 
+		                        InternalIndexedData.ANY_ATTRIBUTE, 
+                                internalIndexedData /*"attribute","RELAXNG Specification 3.Full Syntax: any attribute"*/);
+        
         refDefinitionTopPattern[ANY_ATTRIBUTE] = any;
-
         sattributes.add(any);
     }
     //**************************************************************************
