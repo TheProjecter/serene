@@ -39,6 +39,12 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 public class ContextMessageHandler  extends AbstractMessageHandler implements ExternalConflictErrorCatcher{	
     
@@ -231,28 +237,28 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
     
 	
-	public void misplacedContent(APattern contextDefinition, 
+	public void misplacedContent(SPattern contextDefinition, 
 											int startInputRecordIndex,
-											APattern definition, 
+											SPattern definition, 
 											int inputRecordIndex,
-											APattern sourceDefinition, //not stored, only used for internal conflict handling
-											APattern reper){//not stored, only used for internal conflict handling
+											SPattern sourceDefinition, //not stored, only used for internal conflict handling
+											SPattern reper){//not stored, only used for internal conflict handling
         if(misplacedIndex < 0){
 		    misplacedIndex = 0;
 		    
 		    //create arrays for everything
 		    //record everything
 		    
-		    misplacedContext = new APattern[initialSize];
+		    misplacedContext = new SPattern[initialSize];
             misplacedStartInputRecordIndex = new int[initialSize];
-            misplacedDefinition = new APattern[initialSize][];
+            misplacedDefinition = new SPattern[initialSize][];
             misplacedInputRecordIndex = new int[initialSize][][];
                         
             misplacedContext[misplacedIndex] = contextDefinition;
             misplacedStartInputRecordIndex[misplacedIndex] = startInputRecordIndex;
             activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
             
-            misplacedDefinition[misplacedIndex] = new APattern[1];
+            misplacedDefinition[misplacedIndex] = new SPattern[1];
             misplacedDefinition[misplacedIndex][0] = definition;
             
             misplacedInputRecordIndex[misplacedIndex] = new int[1][];
@@ -284,7 +290,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 					
 					int oldLength = misplacedDefinition[i].length;	
 					
-					APattern[] increasedDef = new APattern[oldLength+1];					
+					SPattern[] increasedDef = new SPattern[oldLength+1];					
 					System.arraycopy(misplacedDefinition[i], 0, increasedDef, 0, oldLength);
 					misplacedDefinition[i] = increasedDef;
 					
@@ -307,7 +313,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			messageTotalCount++;
 			if(++misplacedIndex == misplacedContext.length){			    
-                APattern[] increasedCDef = new APattern[misplacedIndex+increaseSizeAmount];
+                SPattern[] increasedCDef = new SPattern[misplacedIndex+increaseSizeAmount];
                 System.arraycopy(misplacedContext, 0, increasedCDef, 0, misplacedIndex);
                 misplacedContext = increasedCDef;               
                 
@@ -315,7 +321,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
                 System.arraycopy(misplacedStartInputRecordIndex, 0, increasedSIRI, 0, misplacedIndex);
                 misplacedStartInputRecordIndex = increasedSIRI;
                 
-                APattern[][] increasedDef = new APattern[misplacedIndex+increaseSizeAmount][];
+                SPattern[][] increasedDef = new SPattern[misplacedIndex+increaseSizeAmount][];
                 System.arraycopy(misplacedDefinition, 0, increasedDef, 0, misplacedIndex);
                 misplacedDefinition = increasedDef;
                  
@@ -329,7 +335,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
             misplacedStartInputRecordIndex[misplacedIndex] = startInputRecordIndex;
             activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
             
-            misplacedDefinition[misplacedIndex] = new APattern[1];
+            misplacedDefinition[misplacedIndex] = new SPattern[1];
             misplacedDefinition[misplacedIndex][0] = definition;
             
             misplacedInputRecordIndex[misplacedIndex] = new int[1][];
@@ -339,12 +345,12 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		}
 	}
 	
-    public void misplacedContent(APattern contextDefinition,  
+    public void misplacedContent(SPattern contextDefinition,  
 											int startInputRecordIndex,
-											APattern definition,
+											SPattern definition,
 											int[] inputRecordIndex,
-											APattern[] sourceDefinition, 
-											APattern reper){//not stored, only used for internal conflict handling
+											SPattern[] sourceDefinition, 
+											SPattern reper){//not stored, only used for internal conflict handling
 		
 		if(misplacedIndex < 0){
 		    misplacedIndex = 0;
@@ -352,16 +358,16 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		    //create arrays for everything
 		    //record everything
 		    
-		    misplacedContext = new APattern[initialSize];
+		    misplacedContext = new SPattern[initialSize];
             misplacedStartInputRecordIndex = new int[initialSize];
-            misplacedDefinition = new APattern[initialSize][];
+            misplacedDefinition = new SPattern[initialSize][];
             misplacedInputRecordIndex = new int[initialSize][][];
                         
             misplacedContext[misplacedIndex] = contextDefinition;
             misplacedStartInputRecordIndex[misplacedIndex] = startInputRecordIndex;
             activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
             
-            misplacedDefinition[misplacedIndex] = new APattern[1];
+            misplacedDefinition[misplacedIndex] = new SPattern[1];
             misplacedDefinition[misplacedIndex][0] = definition;
             
             misplacedInputRecordIndex[misplacedIndex] = new int[1][];
@@ -393,7 +399,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 					
 					int oldLength = misplacedDefinition[i].length;	
 					
-					APattern[] increasedDef = new APattern[oldLength+1];					
+					SPattern[] increasedDef = new SPattern[oldLength+1];					
 					System.arraycopy(misplacedDefinition[i], 0, increasedDef, 0, oldLength);
 					misplacedDefinition[i] = increasedDef;
 					
@@ -415,7 +421,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			
 			messageTotalCount++;
 			if(++misplacedIndex == misplacedContext.length){			    
-                APattern[] increasedCDef = new APattern[misplacedIndex+increaseSizeAmount];
+                SPattern[] increasedCDef = new SPattern[misplacedIndex+increaseSizeAmount];
                 System.arraycopy(misplacedContext, 0, increasedCDef, 0, misplacedIndex);
                 misplacedContext = increasedCDef;               
                 
@@ -423,7 +429,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
                 System.arraycopy(misplacedStartInputRecordIndex, 0, increasedSIRI, 0, misplacedIndex);
                 misplacedStartInputRecordIndex = increasedSIRI;
                 
-                APattern[][] increasedDef = new APattern[misplacedIndex+increaseSizeAmount][];
+                SPattern[][] increasedDef = new SPattern[misplacedIndex+increaseSizeAmount][];
                 System.arraycopy(misplacedDefinition, 0, increasedDef, 0, misplacedIndex);
                 misplacedDefinition = increasedDef;
                  
@@ -437,7 +443,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
             misplacedStartInputRecordIndex[misplacedIndex] = startInputRecordIndex;
             activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
             
-            misplacedDefinition[misplacedIndex] = new APattern[1];
+            misplacedDefinition[misplacedIndex] = new SPattern[1];
             misplacedDefinition[misplacedIndex][0] = definition;
             
             misplacedInputRecordIndex[misplacedIndex] = new int[1][];
@@ -462,19 +468,19 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }	
 			
 	
-	public void excessiveContent(Rule context, int startInputRecordIndex, APattern definition, int[] inputRecordIndex){
+	public void excessiveContent(SRule context, int startInputRecordIndex, SPattern definition, int[] inputRecordIndex){
 		
 		messageTotalCount++;
 		if(excessiveIndex < 0){
 			excessiveIndex = 0;
-			excessiveContext = new APattern[initialSize];		
+			excessiveContext = new SPattern[initialSize];		
 			excessiveStartInputRecordIndex = new int[initialSize];
-			excessiveDefinition = new APattern[initialSize];
+			excessiveDefinition = new SPattern[initialSize];
 			excessiveInputRecordIndex = new int[initialSize][];		
 		}else if(++excessiveIndex == excessiveContext.length){
 		    int newSize = excessiveIndex+increaseSizeAmount;
 		    
-		    APattern[] increasedEC = new APattern[newSize];
+		    SPattern[] increasedEC = new SPattern[newSize];
 			System.arraycopy(excessiveContext, 0, increasedEC, 0, excessiveIndex);
 			excessiveContext = increasedEC;
 			
@@ -482,7 +488,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(excessiveStartInputRecordIndex, 0, increasedSLN, 0, excessiveIndex);
 			excessiveStartInputRecordIndex = increasedSLN;
 			
-			APattern[] increasedED = new APattern[newSize];
+			SPattern[] increasedED = new SPattern[newSize];
 			System.arraycopy(excessiveDefinition, 0, increasedED, 0, excessiveIndex);
 			excessiveDefinition = increasedED;
 			
@@ -497,7 +503,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 		excessiveInputRecordIndex[excessiveIndex] = inputRecordIndex;
 		activeInputDescriptor.registerClientForRecord(inputRecordIndex, 0, inputRecordIndex.length, this);
 	}   
-	public void excessiveContent(Rule context, APattern definition, int inputRecordIndex){
+	public void excessiveContent(SRule context, SPattern definition, int inputRecordIndex){
         boolean recorded = false;
 		for(int i = 0; i <= excessiveIndex; i++){
 			if(excessiveContext[i].equals(context) &&
@@ -532,25 +538,25 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
 
 
-    public void missingContent(Rule context,  
+    public void missingContent(SRule context,  
 								int startInputRecordIndex,								 
-								APattern definition, 
+								SPattern definition, 
 								int expected, 
 								int found, 
 								int[] inputRecordIndex){
         messageTotalCount++;
 		if(missingIndex < 0){
 			missingIndex = 0;
-			missingContext = new APattern[initialSize];			
+			missingContext = new SPattern[initialSize];			
 			missingStartInputRecordIndex = new int[initialSize];
-			missingDefinition = new APattern[initialSize];
+			missingDefinition = new SPattern[initialSize];
 			missingExpected = new int[initialSize];
 			missingFound = new int[initialSize];		
 			missingInputRecordIndex = new int[initialSize][];		
 		}else if(++missingIndex == missingContext.length){
 		    int newSize = missingIndex+increaseSizeAmount;
 		    
-		    APattern[] increasedEC = new APattern[newSize];
+		    SPattern[] increasedEC = new SPattern[newSize];
 			System.arraycopy(missingContext, 0, increasedEC, 0, missingIndex);
 			missingContext = increasedEC;
 			
@@ -558,7 +564,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(missingStartInputRecordIndex, 0, increasedSIRI, 0, missingIndex);
 			missingStartInputRecordIndex = increasedSIRI;
 			
-			APattern[] increasedED = new APattern[newSize];
+			SPattern[] increasedED = new SPattern[newSize];
 			System.arraycopy(missingDefinition, 0, increasedED, 0, missingIndex);
 			missingDefinition = increasedED;
 			
@@ -604,16 +610,16 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
     
     
-    public void illegalContent(Rule context, 
+    public void illegalContent(SRule context, 
 	                        int startInputRecordIndex){
         messageTotalCount++;
 		if(illegalIndex < 0){
 			illegalIndex = 0;
-			illegalContext = new APattern[initialSize];
+			illegalContext = new SPattern[initialSize];
 			illegalStartInputRecordIndex = new int[initialSize];					
 		}else if(++illegalIndex == illegalContext.length){
 		    int size = illegalIndex + increaseSizeAmount;
-			APattern[] increasedEC = new APattern[size];
+			SPattern[] increasedEC = new SPattern[size];
 			System.arraycopy(illegalContext, 0, increasedEC, 0, illegalIndex);
 			illegalContext = increasedEC;
 			
@@ -638,13 +644,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
     
 	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
         
 		messageTotalCount++;
 		if(unresolvedAmbiguousElementIndexEE < 0){
 			unresolvedAmbiguousElementIndexEE = 0;	
 			unresolvedAmbiguousElementInputRecordIndexEE =new int[initialSize];
-			unresolvedAmbiguousElementDefinitionEE = new AElement[initialSize][];
+			unresolvedAmbiguousElementDefinitionEE = new SElement[initialSize][];
 		}else if(++unresolvedAmbiguousElementIndexEE == unresolvedAmbiguousElementInputRecordIndexEE.length){
 		    int size = unresolvedAmbiguousElementInputRecordIndexEE.length + increaseSizeAmount;
 		    
@@ -652,7 +658,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(unresolvedAmbiguousElementInputRecordIndexEE, 0, increasedCN, 0, unresolvedAmbiguousElementIndexEE);
 			unresolvedAmbiguousElementInputRecordIndexEE = increasedCN;
 		    
-		    AElement[][] increasedDef = new AElement[size][];
+		    SElement[][] increasedDef = new SElement[size][];
 			System.arraycopy(unresolvedAmbiguousElementDefinitionEE, 0, increasedDef, 0, unresolvedAmbiguousElementIndexEE);
 			unresolvedAmbiguousElementDefinitionEE = increasedDef;
 		}
@@ -676,13 +682,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
     
     public void unresolvedUnresolvedElementContentError(int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
         
 		messageTotalCount++;
 		if(unresolvedUnresolvedElementIndexEE < 0){
 			unresolvedUnresolvedElementIndexEE = 0;	
 			unresolvedUnresolvedElementInputRecordIndexEE =new int[initialSize];
-			unresolvedUnresolvedElementDefinitionEE = new AElement[initialSize][];
+			unresolvedUnresolvedElementDefinitionEE = new SElement[initialSize][];
 		}else if(++unresolvedUnresolvedElementIndexEE == unresolvedUnresolvedElementInputRecordIndexEE.length){
 		    int size = unresolvedUnresolvedElementInputRecordIndexEE.length + increaseSizeAmount;
 		    
@@ -690,7 +696,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(unresolvedUnresolvedElementInputRecordIndexEE, 0, increasedCN, 0, unresolvedUnresolvedElementIndexEE);
 			unresolvedUnresolvedElementInputRecordIndexEE = increasedCN;
 		    
-		    AElement[][] increasedDef = new AElement[size][];
+		    SElement[][] increasedDef = new SElement[size][];
 			System.arraycopy(unresolvedUnresolvedElementDefinitionEE, 0, increasedDef, 0, unresolvedUnresolvedElementIndexEE);
 			unresolvedUnresolvedElementDefinitionEE = increasedDef;
 		}
@@ -714,13 +720,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
     
 	public void unresolvedAttributeContentError(int inputRecordIndex, 
-									AAttribute[] possibleDefinitions){
+									SAttribute[] possibleDefinitions){
         
 		messageTotalCount++;
 		if(unresolvedAttributeIndexEE < 0){
 			unresolvedAttributeIndexEE = 0;	
 			unresolvedAttributeInputRecordIndexEE =new int[initialSize];
-			unresolvedAttributeDefinitionEE = new AAttribute[initialSize][];
+			unresolvedAttributeDefinitionEE = new SAttribute[initialSize][];
 		}else if(++unresolvedAttributeIndexEE == unresolvedAttributeInputRecordIndexEE.length){
 		    int size = unresolvedAttributeInputRecordIndexEE.length + increaseSizeAmount;
 		    
@@ -728,7 +734,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(unresolvedAttributeInputRecordIndexEE, 0, increasedCN, 0, unresolvedAttributeIndexEE);
 			unresolvedAttributeInputRecordIndexEE = increasedCN;
 		    
-		    AAttribute[][] increasedDef = new AAttribute[size][];
+		    SAttribute[][] increasedDef = new SAttribute[size][];
 			System.arraycopy(unresolvedAttributeDefinitionEE, 0, increasedDef, 0, unresolvedAttributeIndexEE);
 			unresolvedAttributeDefinitionEE = increasedDef;
 		}
@@ -752,13 +758,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 	
 	
 	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
         
         messageTotalCount++;
 		if(ambiguousUnresolvedElementIndexWW < 0){
 			ambiguousUnresolvedElementIndexWW = 0;	
 			ambiguousUnresolvedElementInputRecordIndexWW =new int[initialSize];
-			ambiguousUnresolvedElementDefinitionWW = new AElement[initialSize][];
+			ambiguousUnresolvedElementDefinitionWW = new SElement[initialSize][];
 		}else if(++ambiguousUnresolvedElementIndexWW == ambiguousUnresolvedElementInputRecordIndexWW.length){
 		    int size = ambiguousUnresolvedElementInputRecordIndexWW.length + increaseSizeAmount;
 		    
@@ -766,7 +772,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(ambiguousUnresolvedElementInputRecordIndexWW, 0, increasedCN, 0, ambiguousUnresolvedElementIndexWW);
 			ambiguousUnresolvedElementInputRecordIndexWW = increasedCN;
 		    
-		    AElement[][] increasedDef = new AElement[size][];
+		    SElement[][] increasedDef = new SElement[size][];
 			System.arraycopy(ambiguousUnresolvedElementDefinitionWW, 0, increasedDef, 0, ambiguousUnresolvedElementIndexWW);
 			ambiguousUnresolvedElementDefinitionWW = increasedDef;
 		}
@@ -790,13 +796,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
     
     public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
         
         messageTotalCount++;
 		if(ambiguousAmbiguousElementIndexWW < 0){
 			ambiguousAmbiguousElementIndexWW = 0;	
 			ambiguousAmbiguousElementInputRecordIndexWW =new int[initialSize];
-			ambiguousAmbiguousElementDefinitionWW = new AElement[initialSize][];
+			ambiguousAmbiguousElementDefinitionWW = new SElement[initialSize][];
 		}else if(++ambiguousAmbiguousElementIndexWW == ambiguousAmbiguousElementInputRecordIndexWW.length){
 		    int size = ambiguousAmbiguousElementInputRecordIndexWW.length + increaseSizeAmount;
 		    
@@ -804,7 +810,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(ambiguousAmbiguousElementInputRecordIndexWW, 0, increasedCN, 0, ambiguousAmbiguousElementIndexWW);
 			ambiguousAmbiguousElementInputRecordIndexWW = increasedCN;
 		    
-		    AElement[][] increasedDef = new AElement[size][];
+		    SElement[][] increasedDef = new SElement[size][];
 			System.arraycopy(ambiguousAmbiguousElementDefinitionWW, 0, increasedDef, 0, ambiguousAmbiguousElementIndexWW);
 			ambiguousAmbiguousElementDefinitionWW = increasedDef;
 		}
@@ -827,13 +833,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
         
 	public void ambiguousAttributeContentWarning(int inputRecordIndex, 
-									AAttribute[] possibleDefinitions){
+									SAttribute[] possibleDefinitions){
         
 		messageTotalCount++;
 		if(ambiguousAttributeIndexWW < 0){
 			ambiguousAttributeIndexWW = 0;	
 			ambiguousAttributeInputRecordIndexWW =new int[initialSize];
-			ambiguousAttributeDefinitionWW = new AAttribute[initialSize][];
+			ambiguousAttributeDefinitionWW = new SAttribute[initialSize][];
 		}else if(++ambiguousAttributeIndexWW == ambiguousAttributeInputRecordIndexWW.length){
 		    int size = ambiguousAttributeInputRecordIndexWW.length + increaseSizeAmount;
 		    
@@ -841,7 +847,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(ambiguousAttributeInputRecordIndexWW, 0, increasedCN, 0, ambiguousAttributeIndexWW);
 			ambiguousAttributeInputRecordIndexWW = increasedCN;
 		    
-		    AAttribute[][] increasedDef = new AAttribute[size][];
+		    SAttribute[][] increasedDef = new SAttribute[size][];
 			System.arraycopy(ambiguousAttributeDefinitionWW, 0, increasedDef, 0, ambiguousAttributeIndexWW);
 			ambiguousAttributeDefinitionWW = increasedDef;
 		}
@@ -865,13 +871,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 	
     
 	public void ambiguousCharacterContentWarning(int inputRecordIndex, 
-									CharsActiveTypeItem[] possibleDefinitions){
+									SPattern[] possibleDefinitions){
         
 		messageTotalCount++;
 		if(ambiguousCharsIndexWW < 0){
 			ambiguousCharsIndexWW = 0;	
 			ambiguousCharsInputRecordIndexWW =new int[initialSize];
-			ambiguousCharsDefinitionWW = new CharsActiveTypeItem[initialSize][];
+			ambiguousCharsDefinitionWW = new SPattern[initialSize][];
 		}else if(++ambiguousCharsIndexWW == ambiguousCharsInputRecordIndexWW.length){
 		    int size = ambiguousCharsInputRecordIndexWW.length + increaseSizeAmount;
 		    
@@ -879,7 +885,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(ambiguousCharsInputRecordIndexWW, 0, increasedCN, 0, ambiguousCharsIndexWW);
 			ambiguousCharsInputRecordIndexWW = increasedCN;
 		    
-		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+		    SPattern[][] increasedDef = new SPattern[size][];
 			System.arraycopy(ambiguousCharsDefinitionWW, 0, increasedDef, 0, ambiguousCharsIndexWW);
 			ambiguousCharsDefinitionWW = increasedDef;
 		}
@@ -903,13 +909,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 	
     
 	public void ambiguousAttributeValueWarning(int inputRecordIndex, 
-									CharsActiveTypeItem[] possibleDefinitions){
+									SPattern[] possibleDefinitions){
         
 		messageTotalCount++;
 		if(ambiguousAVIndexWW < 0){
 			ambiguousAVIndexWW = 0;	
 			ambiguousAVInputRecordIndexWW =new int[initialSize];
-			ambiguousAVDefinitionWW = new CharsActiveTypeItem[initialSize][];
+			ambiguousAVDefinitionWW = new SPattern[initialSize][];
 		}else if(++ambiguousAVIndexWW == ambiguousAVInputRecordIndexWW.length){
 		    int size = ambiguousAVInputRecordIndexWW.length + increaseSizeAmount;
 		    
@@ -917,7 +923,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(ambiguousAVInputRecordIndexWW, 0, increasedCN, 0, ambiguousAVIndexWW);
 			ambiguousAVInputRecordIndexWW = increasedCN;
 		    
-		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+		    SPattern[][] increasedDef = new SPattern[size][];
 			System.arraycopy(ambiguousAVDefinitionWW, 0, increasedDef, 0, ambiguousAVIndexWW);
 			ambiguousAVDefinitionWW = increasedDef;
 		}
@@ -942,12 +948,12 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
 	
     // {15}
-	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
         messageTotalCount++;
 		if(datatypeCharsIndex < 0){
 			datatypeCharsIndex = 0;	
 			datatypeCharsInputRecordIndex =new int[initialSize];
-			datatypeCharsDefinition = new DatatypedActiveTypeItem[initialSize];
+			datatypeCharsDefinition = new SPattern[initialSize];
 			datatypeCharsErrorMessage = new String[initialSize];
 		}else if(++datatypeCharsIndex == datatypeCharsInputRecordIndex.length){
 		    int size = datatypeCharsInputRecordIndex.length + increaseSizeAmount;
@@ -956,7 +962,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(datatypeCharsInputRecordIndex, 0, increasedCN, 0, datatypeCharsIndex);
 			datatypeCharsInputRecordIndex = increasedCN;
 		    
-		    DatatypedActiveTypeItem[] increasedDef = new DatatypedActiveTypeItem[size];
+		    SPattern[] increasedDef = new SPattern[size];
 			System.arraycopy(datatypeCharsDefinition, 0, increasedDef, 0, datatypeCharsIndex);
 			datatypeCharsDefinition = increasedDef;
 			
@@ -986,13 +992,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
      
     
     //{16}
-	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void attributeValueDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
         
 		messageTotalCount++;
 		if(datatypeAVIndex < 0){
 			datatypeAVIndex = 0;	
 			datatypeAVInputRecordIndex =new int[initialSize];
-			datatypeAVDefinition = new DatatypedActiveTypeItem[initialSize];
+			datatypeAVDefinition = new SPattern[initialSize];
 			datatypeAVErrorMessage = new String[initialSize];
 		}else if(++datatypeAVIndex == datatypeAVInputRecordIndex.length){
 		    int size = datatypeAVInputRecordIndex.length + increaseSizeAmount;
@@ -1001,7 +1007,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(datatypeAVInputRecordIndex, 0, increasedCN, 0, datatypeAVIndex);
 			datatypeAVInputRecordIndex = increasedCN;
 		    
-		    DatatypedActiveTypeItem[] increasedDef = new DatatypedActiveTypeItem[size];
+		    SPattern[] increasedDef = new SPattern[size];
 			System.arraycopy(datatypeAVDefinition, 0, increasedDef, 0, datatypeAVIndex);
 			datatypeAVDefinition = increasedDef;
 			
@@ -1030,13 +1036,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
         
         
-	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, SValue charsDefinition){
         		
 		messageTotalCount++;
 		if(valueCharsIndex < 0){
 			valueCharsIndex = 0;	
 			valueCharsInputRecordIndex =new int[initialSize];
-			valueCharsDefinition = new AValue[initialSize];
+			valueCharsDefinition = new SValue[initialSize];
 		}else if(++valueCharsIndex == valueCharsInputRecordIndex.length){
 		    int size = valueCharsInputRecordIndex.length + increaseSizeAmount;
 		    
@@ -1044,7 +1050,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(valueCharsInputRecordIndex, 0, increasedCN, 0, valueCharsIndex);
 			valueCharsInputRecordIndex = increasedCN;
 		    
-		    AValue[] increasedDef = new AValue[size];
+		    SValue[] increasedDef = new SValue[size];
 			System.arraycopy(valueCharsDefinition, 0, increasedDef, 0, valueCharsIndex);
 			valueCharsDefinition = increasedDef;
 		}
@@ -1067,13 +1073,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
     
-	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
+	public void attributeValueValueError(int inputRecordIndex, SValue charsDefinition){
         
 		messageTotalCount++;
 		if(valueAVIndex < 0){
 			valueAVIndex = 0;	
 			valueAVInputRecordIndex =new int[initialSize];
-			valueAVDefinition = new AValue[initialSize];
+			valueAVDefinition = new SValue[initialSize];
 		}else if(++valueAVIndex == valueAVInputRecordIndex.length){
 		    int size = valueAVInputRecordIndex.length + increaseSizeAmount;
 		    
@@ -1081,7 +1087,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(valueAVInputRecordIndex, 0, increasedCN, 0, valueAVIndex);
 			valueAVInputRecordIndex = increasedCN;
 		    
-		    AValue[] increasedDef = new AValue[size];
+		    SValue[] increasedDef = new SValue[size];
 			System.arraycopy(valueAVDefinition, 0, increasedDef, 0, valueAVIndex);
 			valueAVDefinition = increasedDef;
 		}
@@ -1104,13 +1110,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
     
-	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void characterContentExceptedError(int inputRecordIndex, SData charsDefinition){
         
 		messageTotalCount++;
 		if(exceptCharsIndex < 0){
 			exceptCharsIndex = 0;	
 			exceptCharsInputRecordIndex =new int[initialSize];
-			exceptCharsDefinition = new AData[initialSize];
+			exceptCharsDefinition = new SData[initialSize];
 		}else if(++exceptCharsIndex == exceptCharsInputRecordIndex.length){
 		    int size = exceptCharsInputRecordIndex.length + increaseSizeAmount;
 		    
@@ -1118,7 +1124,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(exceptCharsInputRecordIndex, 0, increasedCN, 0, exceptCharsIndex);
 			exceptCharsInputRecordIndex = increasedCN;
 		    
-		    AData[] increasedDef = new AData[size];
+		    SData[] increasedDef = new SData[size];
 			System.arraycopy(exceptCharsDefinition, 0, increasedDef, 0, exceptCharsIndex);
 			exceptCharsDefinition = increasedDef;
 		}
@@ -1141,13 +1147,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
     
-	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, SData charsDefinition){
         
 		messageTotalCount++;
 		if(exceptAVIndex < 0){
 			exceptAVIndex = 0;	
 			exceptAVInputRecordIndex =new int[initialSize];
-			exceptAVDefinition = new AData[initialSize];
+			exceptAVDefinition = new SData[initialSize];
 		}else if(++exceptAVIndex == exceptAVInputRecordIndex.length){
 		    int size = exceptAVInputRecordIndex.length + increaseSizeAmount;
 		    
@@ -1155,7 +1161,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(exceptAVInputRecordIndex, 0, increasedCN, 0, exceptAVIndex);
 			exceptAVInputRecordIndex = increasedCN;
 		    
-		    AData[] increasedDef = new AData[size];
+		    SData[] increasedDef = new SData[size];
 			System.arraycopy(exceptAVDefinition, 0, increasedDef, 0, exceptAVIndex);
 			exceptAVDefinition = increasedDef;
 		}
@@ -1177,13 +1183,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         exceptAVIndex = -1;
     }
     
-	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
         
 		messageTotalCount++;
 		if(unexpectedCharsIndex < 0){
 			unexpectedCharsIndex = 0;	
 			unexpectedCharsInputRecordIndex =new int[initialSize];
-			unexpectedCharsDefinition = new AElement[initialSize];
+			unexpectedCharsDefinition = new SElement[initialSize];
 		}else if(++unexpectedCharsIndex == unexpectedCharsInputRecordIndex.length){
 		    int size = unexpectedCharsInputRecordIndex.length + increaseSizeAmount;
 		    
@@ -1191,7 +1197,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(unexpectedCharsInputRecordIndex, 0, increasedCN, 0, unexpectedCharsIndex);
 			unexpectedCharsInputRecordIndex = increasedCN;
 		    
-		    AElement[] increasedDef = new AElement[size];
+		    SElement[] increasedDef = new SElement[size];
 			System.arraycopy(unexpectedCharsDefinition, 0, increasedDef, 0, unexpectedCharsIndex);
 			unexpectedCharsDefinition = increasedDef;
 		}
@@ -1250,13 +1256,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         unexpectedAVIndex = -1;
     }
     
-	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, SPattern[] possibleDefinitions){
                 
 		messageTotalCount++;
 		if(unresolvedCharsIndexEE < 0){
 			unresolvedCharsIndexEE = 0;	
 			unresolvedCharsInputRecordIndexEE =new int[initialSize];
-			unresolvedCharsDefinitionEE = new CharsActiveTypeItem[initialSize][];
+			unresolvedCharsDefinitionEE = new SPattern[initialSize][];
 		}else if(++unresolvedCharsIndexEE == unresolvedCharsInputRecordIndexEE.length){
 		    int size = unresolvedCharsInputRecordIndexEE.length + increaseSizeAmount;
 		    
@@ -1264,7 +1270,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(unresolvedCharsInputRecordIndexEE, 0, increasedCN, 0, unresolvedCharsIndexEE);
 			unresolvedCharsInputRecordIndexEE = increasedCN;
 		    
-		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+		    SPattern[][] increasedDef = new SPattern[size][];
 			System.arraycopy(unresolvedCharsDefinitionEE, 0, increasedDef, 0, unresolvedCharsIndexEE);
 			unresolvedCharsDefinitionEE = increasedDef;
 		}
@@ -1287,13 +1293,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
 	// {24}
-	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int inputRecordIndex, SPattern[] possibleDefinitions){
         
 		messageTotalCount++;
 		if(unresolvedAVIndexEE < 0){
 			unresolvedAVIndexEE = 0;	
 			unresolvedAVInputRecordIndexEE =new int[initialSize];
-			unresolvedAVDefinitionEE = new CharsActiveTypeItem[initialSize][];
+			unresolvedAVDefinitionEE = new SPattern[initialSize][];
 		}else if(++unresolvedAVIndexEE == unresolvedAVInputRecordIndexEE.length){
 		    int size = unresolvedAVInputRecordIndexEE.length + increaseSizeAmount;
 		    
@@ -1301,7 +1307,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(unresolvedAVInputRecordIndexEE, 0, increasedCN, 0, unresolvedAVIndexEE);
 			unresolvedAVInputRecordIndexEE = increasedCN;
 		    
-		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+		    SPattern[][] increasedDef = new SPattern[size][];
 			System.arraycopy(unresolvedAVDefinitionEE, 0, increasedDef, 0, unresolvedAVIndexEE);
 			unresolvedAVDefinitionEE = increasedDef;
 		}
@@ -1325,13 +1331,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
     
     // {25}
-	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
         	    
 		messageTotalCount++;
 		if(datatypeTokenIndex < 0){
 			datatypeTokenIndex = 0;	
 			datatypeTokenInputRecordIndex =new int[initialSize];
-			datatypeTokenDefinition = new DatatypedActiveTypeItem[initialSize];
+			datatypeTokenDefinition = new SPattern[initialSize];
 			datatypeTokenErrorMessage = new String[initialSize];
 		}else if(++datatypeTokenIndex == datatypeTokenInputRecordIndex.length){
 		    int size = datatypeTokenInputRecordIndex.length + increaseSizeAmount;
@@ -1340,7 +1346,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(datatypeTokenInputRecordIndex, 0, increasedCN, 0, datatypeTokenIndex);
 			datatypeTokenInputRecordIndex = increasedCN;
 		    
-		    DatatypedActiveTypeItem[] increasedDef = new DatatypedActiveTypeItem[size];
+		    SPattern[] increasedDef = new SPattern[size];
 			System.arraycopy(datatypeTokenDefinition, 0, increasedDef, 0, datatypeTokenIndex);
 			datatypeTokenDefinition = increasedDef;
 			
@@ -1369,13 +1375,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
         
-	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
+	public void listTokenValueError(int inputRecordIndex, SValue charsDefinition){
         
 		messageTotalCount++;
 		if(valueTokenIndex < 0){
 			valueTokenIndex = 0;	
 			valueTokenInputRecordIndex =new int[initialSize];
-			valueTokenDefinition = new AValue[initialSize];
+			valueTokenDefinition = new SValue[initialSize];
 		}else if(++valueTokenIndex == valueTokenInputRecordIndex.length){
 		    int size = valueTokenInputRecordIndex.length + increaseSizeAmount;
 		    
@@ -1383,7 +1389,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(valueTokenInputRecordIndex, 0, increasedCN, 0, valueTokenIndex);
 			valueTokenInputRecordIndex = increasedCN;
 		    
-		    AValue[] increasedDef = new AValue[size];
+		    SValue[] increasedDef = new SValue[size];
 			System.arraycopy(valueTokenDefinition, 0, increasedDef, 0, valueTokenIndex);
 			valueTokenDefinition = increasedDef;
 		}
@@ -1406,13 +1412,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
     
-	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void listTokenExceptedError(int inputRecordIndex, SData charsDefinition){
         
 		messageTotalCount++;
 		if(exceptTokenIndex < 0){
 			exceptTokenIndex = 0;	
 			exceptTokenInputRecordIndex =new int[initialSize];
-			exceptTokenDefinition = new AData[initialSize];
+			exceptTokenDefinition = new SData[initialSize];
 		}else if(++exceptTokenIndex == exceptTokenInputRecordIndex.length){
 		    int size = exceptTokenInputRecordIndex.length + increaseSizeAmount;
 		    
@@ -1420,7 +1426,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(exceptTokenInputRecordIndex, 0, increasedCN, 0, exceptTokenIndex);
 			exceptTokenInputRecordIndex = increasedCN;
 		    
-		    AData[] increasedDef = new AData[size];
+		    SData[] increasedDef = new SData[size];
 			System.arraycopy(exceptTokenDefinition, 0, increasedDef, 0, exceptTokenIndex);
 			exceptTokenDefinition = increasedDef;
 		}
@@ -1442,13 +1448,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
         exceptTokenIndex = -1;
     }
     	    
-    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int inputRecordIndex, SPattern[] possibleDefinitions){
         
 		messageTotalCount++;
 		if(unresolvedTokenIndexLPICE < 0){
 			unresolvedTokenIndexLPICE = 0;	
 			unresolvedTokenInputRecordIndexLPICE =new int[initialSize];
-			unresolvedTokenDefinitionLPICE = new CharsActiveTypeItem[initialSize][];
+			unresolvedTokenDefinitionLPICE = new SPattern[initialSize][];
 		}else if(++unresolvedTokenIndexLPICE == unresolvedTokenInputRecordIndexLPICE.length){
 		    int size = unresolvedTokenInputRecordIndexLPICE.length + increaseSizeAmount;
 		    
@@ -1456,7 +1462,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(unresolvedTokenInputRecordIndexLPICE, 0, increasedCN, 0, unresolvedTokenIndexLPICE);
 			unresolvedTokenInputRecordIndexLPICE = increasedCN;
 		    
-		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+		    SPattern[][] increasedDef = new SPattern[size][];
 			System.arraycopy(unresolvedTokenDefinitionLPICE, 0, increasedDef, 0, unresolvedTokenIndexLPICE);
 			unresolvedTokenDefinitionLPICE = increasedDef;
 		}
@@ -1480,13 +1486,13 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     
     
     
-    public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void ambiguousListTokenInContextWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
         
 		messageTotalCount++;
 		if(ambiguousTokenIndexLPICW < 0){
 			ambiguousTokenIndexLPICW = 0;	
 			ambiguousTokenInputRecordIndexLPICW =new int[initialSize];
-			ambiguousTokenDefinitionLPICW = new CharsActiveTypeItem[initialSize][];
+			ambiguousTokenDefinitionLPICW = new SPattern[initialSize][];
 		}else if(++ambiguousTokenIndexLPICW == ambiguousTokenInputRecordIndexLPICW.length){
 		    int size = ambiguousTokenInputRecordIndexLPICW.length + increaseSizeAmount;
 		    
@@ -1494,7 +1500,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(ambiguousTokenInputRecordIndexLPICW, 0, increasedCN, 0, ambiguousTokenIndexLPICW);
 			ambiguousTokenInputRecordIndexLPICW = increasedCN;
 		    
-		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+		    SPattern[][] increasedDef = new SPattern[size][];
 			System.arraycopy(ambiguousTokenDefinitionLPICW, 0, increasedDef, 0, ambiguousTokenIndexLPICW);
 			ambiguousTokenDefinitionLPICW = increasedDef;
 		}
@@ -1517,23 +1523,23 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
     }
     
     
-	public void missingCompositorContent(Rule context, 
+	public void missingCompositorContent(SRule context, 
 								int startInputRecordIndex,								 
-								APattern definition, 
+								SPattern definition, 
 								int expected, 
 								int found){
         
 		if(missingCompositorContentIndex < 0){
 			missingCompositorContentIndex = 0;
-			missingCompositorContentContext = new APattern[initialSize];
+			missingCompositorContentContext = new SPattern[initialSize];
 			missingCompositorContentStartInputRecordIndex = new int[initialSize];
-			missingCompositorContentDefinition = new APattern[initialSize];
+			missingCompositorContentDefinition = new SPattern[initialSize];
 			missingCompositorContentExpected = new int[initialSize];
 			missingCompositorContentFound = new int[initialSize];			
 		}else if(++missingCompositorContentIndex == missingCompositorContentContext.length){
 		    int size = missingCompositorContentIndex+ increaseSizeAmount;
 		    
-			APattern[] increasedEC = new APattern[size];
+			SPattern[] increasedEC = new SPattern[size];
 			System.arraycopy(missingCompositorContentContext, 0, increasedEC, 0, missingCompositorContentIndex);
 			missingCompositorContentContext = increasedEC;
 			
@@ -1541,7 +1547,7 @@ public class ContextMessageHandler  extends AbstractMessageHandler implements Ex
 			System.arraycopy(missingCompositorContentStartInputRecordIndex, 0, increasedSCN, 0, missingCompositorContentIndex);
 			missingCompositorContentStartInputRecordIndex = increasedSCN;
 			
-			APattern[] increasedED = new APattern[size];
+			SPattern[] increasedED = new SPattern[size];
 			System.arraycopy(missingCompositorContentDefinition, 0, increasedED, 0, missingCompositorContentIndex);
 			missingCompositorContentDefinition = increasedED;
 			

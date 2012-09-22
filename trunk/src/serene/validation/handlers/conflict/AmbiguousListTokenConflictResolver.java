@@ -21,7 +21,7 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Arrays;
 
-import serene.validation.schema.active.components.CharsActiveTypeItem;
+import serene.validation.schema.simplified.SPattern;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.TemporaryMessageStorage;
@@ -51,7 +51,7 @@ public class AmbiguousListTokenConflictResolver extends ListTokenConflictResolve
 	
 	public void resolve(ErrorCatcher errorCatcher){
         if(qualified.cardinality() == 0){
-            CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
+            SPattern[] definitions = candidateDefinitions.toArray(new SPattern[candidateDefinitions.size()]);
             errorCatcher.unresolvedListTokenInContextError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));            
         }else if(qualified.cardinality() > 1){ 
             int j = 0;
@@ -61,7 +61,7 @@ public class AmbiguousListTokenConflictResolver extends ListTokenConflictResolve
                     i--;
                 }
             }
-            CharsActiveTypeItem[] definitions = candidateDefinitions.toArray(new CharsActiveTypeItem[candidateDefinitions.size()]);
+            SPattern[] definitions = candidateDefinitions.toArray(new SPattern[candidateDefinitions.size()]);
             errorCatcher.ambiguousListTokenInContextWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
         }else{
             int q = qualified.nextSetBit(0);

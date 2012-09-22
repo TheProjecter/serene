@@ -34,6 +34,12 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
@@ -50,98 +56,98 @@ interface CandidatesConflictErrorCatcher extends ErrorType{
 	void unexpectedAmbiguousAttribute(int candidateIndex, int functionalEquivalenceCode, SimplifiedComponent[] possibleDefinitions, int inputRecordIndex);
     
 	void misplacedContent(int candidateIndex, int functionalEquivalenceCode, 
-                                            APattern contextDefinition, 
+                                            SPattern contextDefinition, 
 											int startInputRecordIndex, 
-											APattern definition, 
+											SPattern definition, 
 											int inputRecordIndex,
-											APattern sourceDefinition, 
-											APattern reper);
+											SPattern sourceDefinition, 
+											SPattern reper);
     void misplacedContent(int candidateIndex, int functionalEquivalenceCode, 
-                                            APattern contextDefinition,
+                                            SPattern contextDefinition,
 											int startInputRecordIndex,
-											APattern definition,
+											SPattern definition,
 											int[] inputRecordIndex,
-											APattern[] sourceDefinition, 
-											APattern reper);
+											SPattern[] sourceDefinition, 
+											SPattern reper);
 			
 	
 	void excessiveContent(int candidateIndex, int functionalEquivalenceCode, 
-                                    Rule context,
+                                    SRule context,
 									int startInputRecordIndex,
-									APattern definition, 
+									SPattern definition, 
 									int[] inputRecordIndex);
     
 	void excessiveContent(int candidateIndex, int functionalEquivalenceCode, 
-                                Rule context, 
-								APattern definition,
+                                SRule context, 
+								SPattern definition,
 								int inputRecordIndex);    
     
 	void unresolvedAmbiguousElementContentError(int candidateIndex, int functionalEquivalenceCode, 
                                     int inputRecordIndex, 
-									AElement[] possibleDefinitions);
+									SElement[] possibleDefinitions);
 	
 	void unresolvedUnresolvedElementContentError(int candidateIndex, int functionalEquivalenceCode, 
                                     int inputRecordIndex, 
-									AElement[] possibleDefinitions);
+									SElement[] possibleDefinitions);
     
 	void unresolvedAttributeContentError(int candidateIndex, int functionalEquivalenceCode, 
                                     int inputRecordIndex, 
-									AAttribute[] possibleDefinitions);
+									SAttribute[] possibleDefinitions);
 		
 
-    void ambiguousUnresolvedElementContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AElement[] possibleDefinitions);
-    void ambiguousAmbiguousElementContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AElement[] possibleDefinitions);
-	void ambiguousAttributeContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AAttribute[] possibleDefinitions);
-	void ambiguousCharacterContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
-	void ambiguousAttributeValueWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);	
+    void ambiguousUnresolvedElementContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SElement[] possibleDefinitions);
+    void ambiguousAmbiguousElementContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SElement[] possibleDefinitions);
+	void ambiguousAttributeContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SAttribute[] possibleDefinitions);
+	void ambiguousCharacterContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions);
+	void ambiguousAttributeValueWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions);	
 	
 	void missingContent(int candidateIndex, int functionalEquivalenceCode,
-                                Rule context, 
+                                SRule context, 
 								int startInputRecordIndex,						 
-								APattern definition, 
+								SPattern definition, 
 								int expected, 
 								int found,
 								int[] inputRecordIndex);
     
 	void illegalContent(int candidateIndex, int functionalEquivalenceCode, 
-                            Rule context, 
+                            SRule context, 
                             int startInputRecordIndex);
         
 		
-	void characterContentDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
+	void characterContentDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage);
         
-	void attributeValueDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
+	void attributeValueDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage);
         
         
-	void characterContentValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition);
+	void characterContentValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SValue charsDefinition);
     
-	void attributeValueValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition);
+	void attributeValueValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SValue charsDefinition);
         
-	void characterContentExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition);
+	void characterContentExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SData charsDefinition);
     
-	void attributeValueExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition);
+	void attributeValueExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SData charsDefinition);
     
-	void unexpectedCharacterContent(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AElement elementDefinition);
+	void unexpectedCharacterContent(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SElement elementDefinition);
     
 	void unexpectedAttributeValue(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AAttribute attributeDefinition);
     
-	void unresolvedCharacterContent(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
+	void unresolvedCharacterContent(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions);
         
-	void unresolvedAttributeValue(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
+	void unresolvedAttributeValue(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions);
         
-	void listTokenDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage);
+	void listTokenDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage);
         
-	void listTokenValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition);
+	void listTokenValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SValue charsDefinition);
     
-	void listTokenExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition);
+	void listTokenExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SData charsDefinition);
             
-    void unresolvedListTokenInContextError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
-    void ambiguousListTokenInContextWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions);
+    void unresolvedListTokenInContextError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions);
+    void ambiguousListTokenInContextWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions);
     
 	void missingCompositorContent(int candidateIndex, int functionalEquivalenceCode, 
-                                Rule context, 
+                                SRule context, 
 								int startInputRecordIndex,								 
-								APattern definition, 
+								SPattern definition, 
 								int expected, 
 								int found);
 }

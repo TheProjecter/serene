@@ -16,7 +16,15 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.ListPatternMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
+
 public interface StructuredDataType extends DataType{
+    void setCharsMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, MatchPathPool matchPathPool);
 	boolean allowsListPatterns();
     boolean allowsStructuredDataContent();	
 }

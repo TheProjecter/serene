@@ -19,6 +19,5 @@ package serene.validation.handlers.structure;
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.AInnerPattern;
 
-public interface MaximalReduceHandler extends LimitHandler{
-	MaximalReduceHandler getChildHandler(Rule child);	
+public abstract class MaximalReduceHandler extends LimitHandler{
 }

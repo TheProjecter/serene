@@ -26,12 +26,12 @@ import serene.validation.schema.active.RuleVisitor;
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
-import serene.validation.handlers.structure.impl.InterleaveHandler;
-import serene.validation.handlers.structure.impl.InterleaveMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.InterleaveMaximalReduceHandler;
-import serene.validation.handlers.structure.impl.InterleaveMinimalReduceCountHandler;
-import serene.validation.handlers.structure.impl.InterleaveMaximalReduceCountHandler;
-import serene.validation.handlers.structure.impl.InterleaveDoubleHandler;
+import serene.validation.handlers.structure.InterleaveHandler;
+import serene.validation.handlers.structure.InterleaveMinimalReduceHandler;
+import serene.validation.handlers.structure.InterleaveMaximalReduceHandler;
+import serene.validation.handlers.structure.InterleaveMinimalReduceCountHandler;
+import serene.validation.handlers.structure.InterleaveMaximalReduceCountHandler;
+import serene.validation.handlers.structure.InterleaveDoubleHandler;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
@@ -40,7 +40,7 @@ import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public abstract class AInterleave extends MultipleChildrenAPattern implements ACompositor{	
 	
@@ -57,7 +57,7 @@ public abstract class AInterleave extends MultipleChildrenAPattern implements AC
                 boolean allowsListPatterns,
                 boolean allowsText,
 				/*ValidatorStackHandlerPool stackHandlerPool,*/
-				ActiveModelRuleHandlerPool ruleHandlerPool){		
+				ValidatorRuleHandlerPool ruleHandlerPool){		
 		super(children, 
 		        allowsElements,
                 allowsAttributes,
@@ -69,7 +69,7 @@ public abstract class AInterleave extends MultipleChildrenAPattern implements AC
 		/*this.stackHandlerPool = stackHandlerPool;*/
 	}		
 	
-	protected void asParent(APattern[] children){		
+	public void asParent(APattern[] children){		
 		this.children = children;
 		satisfactionIndicator = 0;
 		saturationIndicator = 0;
@@ -108,7 +108,7 @@ public abstract class AInterleave extends MultipleChildrenAPattern implements AC
 	boolean requiresDoubleHandler(){
 		return hasMultipleCardinality() && parent instanceof AbstractAPattern && ((AbstractAPattern)parent).isInterleaved();	
 	}
-	public StructureHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){		
+	/*public StructureHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){		
 		if(requiresDoubleHandler()){
 			return getDoubleHandler(errorCatcher, parent, stackHandler);
 		}
@@ -121,28 +121,27 @@ public abstract class AInterleave extends MultipleChildrenAPattern implements AC
 			ih = ruleHandlerPool.getUInterleaveHandler(this, errorCatcher, parent, stackHandler);
 		}
 		return ih;
-	}
+	}*/
 	
-	public InterleaveMinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
+	/*public InterleaveMinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
 		return ruleHandlerPool.getMinimalReduceHandler(this, errorCatcher, parent, stackHandler);
 	}
 	public InterleaveMaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
 		return ruleHandlerPool.getMaximalReduceHandler(this, errorCatcher, parent, stackHandler);
-	}
+	}*/
 	
-	InterleaveDoubleHandler getDoubleHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
-		InterleaveDoubleHandler sih = ruleHandlerPool.getStructureDoubleHandler(this, errorCatcher, parent, stackHandler/*, stackHandlerPool*/);		
+	/*InterleaveDoubleHandler getDoubleHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
+		InterleaveDoubleHandler sih = ruleHandlerPool.getStructureDoubleHandler(this, errorCatcher, parent, stackHandler*//*, stackHandlerPool*//*);		
 		return sih;
-	}
+	}*/
 	
-
 	
-	public InterleaveMinimalReduceCountHandler getStructureHandler(IntList minimalReduceCount, ErrorCatcher errorCatcher, MinimalReduceStackHandler stackHandler){
+	/*public InterleaveMinimalReduceCountHandler getStructureHandler(IntList minimalReduceCount, ErrorCatcher errorCatcher, MinimalReduceStackHandler stackHandler){
 		return ruleHandlerPool.getMinimalReduceCountHandler(minimalReduceCount, this, errorCatcher, stackHandler);
 	}
 	public InterleaveMaximalReduceCountHandler getStructureHandler(IntList maximalReduceCount, ErrorCatcher errorCatcher, MaximalReduceStackHandler stackHandler){
 		return ruleHandlerPool.getMaximalReduceCountHandler(maximalReduceCount, this, errorCatcher, stackHandler);
-	}
+	}*/
 	
 	boolean isInterleaved(){
 		return true;

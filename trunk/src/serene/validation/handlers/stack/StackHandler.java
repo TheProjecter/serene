@@ -26,12 +26,17 @@ import serene.bind.util.Queue;
 import serene.bind.BindingModel;
 
 import serene.validation.handlers.FunctionallyEquivalable;
-
+/*
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.schema.active.components.DatatypedActiveTypeItem;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
+
+*/
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
@@ -40,6 +45,12 @@ import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.structure.StructureHandler;
+import serene.validation.handlers.structure.InnerPatternHandler;
+
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.CharsMatchPath;
+import serene.validation.handlers.match.MatchPath;
 
 public interface StackHandler extends FunctionallyEquivalable{	
 	// TODO 
@@ -47,30 +58,30 @@ public interface StackHandler extends FunctionallyEquivalable{
 	// See that you identify it and put it in it's place. 
 	// It might also be necessary to make sure you set the right type of handler
 	// to the concrete structure handlers.
-	void shift(AElement element);	
-	void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter);	
-	void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<AElement, Queue> candidateQueues);	
-	void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter);
-	void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<AElement, Queue> candidateQueues);
+	void shift(ElementMatchPath element);	
+	void shiftAllElements(List<ElementMatchPath> elementDefinitions, ConflictMessageReporter conflictMessageReporter);	
+	void shiftAllElements(List<ElementMatchPath> elementDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<SElement, Queue> candidateQueues);	
+	void shiftAllElements(List<ElementMatchPath> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter);
+	void shiftAllElements(List<ElementMatchPath> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<SElement, Queue> candidateQueues);
 	
-	void shift(AAttribute attribute);	
-	void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
-	void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, BindingModel bindingModel);
-	void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
-	void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, BindingModel bindingModel);
+	void shift(AttributeMatchPath attribute);	
+	void shiftAllAttributes(List<AttributeMatchPath> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
+	void shiftAllAttributes(List<AttributeMatchPath> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, BindingModel bindingModel);
+	void shiftAllAttributes(List<AttributeMatchPath> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
+	void shiftAllAttributes(List<AttributeMatchPath> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, BindingModel bindingModel);
 	
-	void shift(CharsActiveTypeItem chars);	
-	void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
-	void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
+	void shift(CharsMatchPath chars);	
+	void shiftAllCharsDefinitions(List<? extends CharsMatchPath> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
+	void shiftAllCharsDefinitions(List<? extends CharsMatchPath> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
     
-	void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
-	void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
+	void shiftAllTokenDefinitions(List<? extends CharsMatchPath> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
+	void shiftAllTokenDefinitions(List<? extends CharsMatchPath> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
 	
-	void reduce(StructureHandler handler);
+	void reduce(InnerPatternHandler handler);
 	
-	void reshift(StructureHandler handler, APattern child);
+	void reshift(InnerPatternHandler handler, SPattern child);
 	
-	void validatingReshift(StructureHandler handler, APattern child);
+	void validatingReshift(InnerPatternHandler handler, SPattern child);
 	
 	void reset(StructureHandler handler);
 	
@@ -80,7 +91,7 @@ public interface StackHandler extends FunctionallyEquivalable{
 	* one by one, setting every time the StructureHandler corresponding to the
 	* pattern.
 	*/
-	void blockReduce(StructureHandler handler, int count, APattern pattern, int startInputRecordIndex);
+	void blockReduce(StructureHandler handler, int count, SPattern pattern, int startInputRecordIndex);
 	
 	/**
 	* It is used for certain compositors that use limit handling for their children
@@ -91,7 +102,7 @@ public interface StackHandler extends FunctionallyEquivalable{
 	* this will throw an UnsupportedOperationException error because here it not
 	* shifting all the occurrences might introduce errors.  
 	*/
-	void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int startInputRecordIndex);
+	void limitReduce(StructureHandler handler, int MIN, int MAX, SPattern pattern, int startInputRecordIndex);
 	
 	
 	/**
@@ -112,6 +123,8 @@ public interface StackHandler extends FunctionallyEquivalable{
 		
 	StructureHandler getTopHandler();
 	StructureHandler getCurrentHandler();	
+	MatchPath getCurrentMatchPath();
+	
 	/**
 	* To be called from deactivate when the current handler must not be ended 
 	* before another one can start, that is in the context of an interleave,

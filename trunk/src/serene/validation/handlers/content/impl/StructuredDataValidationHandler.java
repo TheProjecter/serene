@@ -36,6 +36,13 @@ import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.AExceptPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SExceptPattern;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.content.StructuredDataEventHandler;
 
@@ -45,28 +52,33 @@ import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 import serene.validation.handlers.error.ErrorCatcher;
 
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.ListPatternMatchPath;
+import serene.validation.handlers.match.StructuredDataMatchPath;
+
 class StructuredDataValidationHandler extends AbstractSDVH implements StructuredDataEventHandler{
     ExceptPatternValidationHandler parent;        
     StructuredDataContentTypeHandler structuredDataContentTypeHandler;
     ErrorCatcher contextErrorCatcher;
     
-    ArrayList<AData> dataMatches;
-    ArrayList<AValue> valueMatches;
-	ArrayList<AListPattern> listMatches;
-    ArrayList<StructuredDataActiveTypeItem> matches;
+    ArrayList<DataMatchPath> dataMatchPathes;
+    ArrayList<ValueMatchPath> valueMatchPathes;
+	ArrayList<ListPatternMatchPath> listMatchPathes;
+    ArrayList<StructuredDataMatchPath> matchPathes;
     
     ErrorCatcher currentErrorCatcher;
-    // Index of the processed candidate in the total matches list.
+    // Index of the processed candidate in the total matchPathes list.
     // Used for the list pattern validation and error reporting.
     int currentIndex;
     
     StructuredDataValidationHandler(){
         super();
         
-        dataMatches = new ArrayList<AData>();
-        valueMatches = new ArrayList<AValue>();
-	    listMatches = new ArrayList<AListPattern>();
-        matches = new ArrayList<StructuredDataActiveTypeItem>();   
+        dataMatchPathes = new ArrayList<DataMatchPath>();
+        valueMatchPathes = new ArrayList<ValueMatchPath>();
+	    listMatchPathes = new ArrayList<ListPatternMatchPath>();
+        matchPathes = new ArrayList<StructuredDataMatchPath>();
         
         currentIndex = -1;
     }
@@ -80,10 +92,10 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
     void reset(){
         super.reset(); 
         
-        dataMatches.clear();
-        valueMatches.clear();
-	    listMatches.clear();
-	    matches.clear();
+	    dataMatchPathes.clear();
+        valueMatchPathes.clear();
+	    listMatchPathes.clear();
+	    matchPathes.clear();
 	    
 	    if(currentErrorCatcher != null)currentErrorCatcher = null;
 	    currentIndex = -1;
@@ -98,88 +110,88 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	    return parent;
 	}
 	
-    public void handleChars(char[] chars, AExceptPattern type) throws SAXException{				
+    public void handleChars(char[] chars, SExceptPattern type) throws SAXException{				
         int dataOffset = -1;    
         int valueOffset = -1; 	    
         int listOffset = -1;        
         matchHandler.handleCharsMatches(type);
         
         if(type.allowsDatas()){
-		    dataMatches.addAll(matchHandler.getDataMatches());						
+		    dataMatchPathes.addAll(matchHandler.getDataMatchPathes());						
 			dataOffset = 0;
-			matches.addAll(dataMatches);
+			matchPathes.addAll(dataMatchPathes);
 		}	
-		if(type.allowsValues()){		    
-			valueMatches.addAll(matchHandler.getValueMatches());			
-			valueOffset = matches.size();
-			matches.addAll(valueMatches);				
+		if(type.allowsValues()){
+			valueMatchPathes.addAll(matchHandler.getValueMatchPathes());			
+			valueOffset = matchPathes.size();
+			matchPathes.addAll(valueMatchPathes);				
 		}	
 		if(type.allowsListPatterns()){
-			listMatches.addAll(matchHandler.getListPatternMatches());
-			listOffset = matches.size();
-			matches.addAll(listMatches);	
+			listMatchPathes.addAll(matchHandler.getListPatternMatchPathes());
+			listOffset = matchPathes.size();
+			matchPathes.addAll(listMatchPathes);	
 		}
 		
-		if(dataMatches != null && dataMatches.size() > 0){
-		    for(int i = 0; i < dataMatches.size(); i++){
+		if(dataMatchPathes != null && dataMatchPathes.size() > 0){
+		    for(int i = 0; i < dataMatchPathes.size(); i++){
 			    currentIndex = i + dataOffset;
-			    validateData(chars, type, dataMatches.get(i));
+			    validateData(chars, type, dataMatchPathes.get(i));
 			}
 		}
-        if(valueMatches != null && valueMatches.size() > 0){	
-            for(int i = 0; i < valueMatches.size(); i++){
+        if(valueMatchPathes != null && valueMatchPathes.size() > 0){	
+            for(int i = 0; i < valueMatchPathes.size(); i++){
 			    currentIndex = i + valueOffset;
-			    validateValue(chars, type, valueMatches.get(i));
+			    validateValue(chars, type, valueMatchPathes.get(i));
 			}
 		}
-		if(listMatches != null && listMatches.size() > 0){	
-		    for(int i = 0; i < listMatches.size(); i++){ 
+		if(listMatchPathes != null && listMatchPathes.size() > 0){	
+		    for(int i = 0; i < listMatchPathes.size(); i++){ 
 			    currentIndex = i + listOffset;
-			    validateListPattern(chars, listMatches.get(i));
+			    validateListPattern(chars, listMatchPathes.get(i).getListPattern());
 			}
 		}
 		
 		handleAddToParent();
 	}
 	
-	public void handleString(String value, AExceptPattern type) throws SAXException{
+	public void handleString(String value, SExceptPattern type) throws SAXException{
 	    int dataOffset = -1;    
         int valueOffset = -1; 	    
         int listOffset = -1;
         matchHandler.handleCharsMatches(type);
         
         if(type.allowsDatas()){
-		    dataMatches.addAll(matchHandler.getDataMatches());						
+		    dataMatchPathes.addAll(matchHandler.getDataMatchPathes());						
 			dataOffset = 0;
-			matches.addAll(dataMatches);
+			matchPathes.addAll(dataMatchPathes);
 		}	
 		if(type.allowsValues()){
-			valueMatches.addAll(matchHandler.getValueMatches());			
-			valueOffset = matches.size();
-			matches.addAll(valueMatches);				
+			valueMatchPathes.addAll(matchHandler.getValueMatchPathes());			
+			valueOffset = matchPathes.size();
+			matchPathes.addAll(valueMatchPathes);				
 		}	
 		if(type.allowsListPatterns()){
-			listMatches.addAll(matchHandler.getListPatternMatches());
-			listOffset = matches.size();
-			matches.addAll(listMatches);	
+			listMatchPathes.addAll(matchHandler.getListPatternMatchPathes());
+			listOffset = matchPathes.size();
+			matchPathes.addAll(listMatchPathes);	
 		}
 		
-		if(dataMatches != null && dataMatches.size() > 0){
-		    for(int i = 0; i < dataMatches.size(); i++){
+		if(dataMatchPathes != null && dataMatchPathes.size() > 0){
+		    for(int i = 0; i < dataMatchPathes.size(); i++){
 			    currentIndex = i + dataOffset;
-			    validateData(value, type, dataMatches.get(i));
+			    validateData(value, type, dataMatchPathes.get(i));
 			}
 		}
-        if(valueMatches != null && valueMatches.size() > 0){	
-            for(int i = 0; i < valueMatches.size(); i++){
+        if(valueMatchPathes != null && valueMatchPathes.size() > 0){	
+            for(int i = 0; i < valueMatchPathes.size(); i++){
 			    currentIndex = i + valueOffset;
-			    validateValue(value, type, valueMatches.get(i));
+			    validateValue(value, type, valueMatchPathes.get(i));
 			}
 		}
-		if(listMatches != null && listMatches.size() > 0){	
-		    for(int i = 0; i < listMatches.size(); i++){
+		if(listMatchPathes != null && listMatchPathes.size() > 0){	
+		    for(int i = 0; i < listMatchPathes.size(); i++){ 
 			    currentIndex = i + listOffset;
-			    validateListPattern(value, listMatches.get(i));
+			    validateListPattern(value, listMatchPathes.get(i).getListPattern());
 			}
 		}
 		
@@ -187,8 +199,8 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	}	
 	
 	void handleAddToParent(){
-	    if(matches.size() == 1){
-	        structuredDataContentTypeHandler.addStructuredData(matches.get(0));
+	    if(matchPathes.size() == 1){
+	        structuredDataContentTypeHandler.addStructuredData(matchPathes.get(0));
 	        if(temporaryMessageStorage != null) {	            
                 for(int i = 0; i < temporaryMessageStorage.length; i++){                    
                     if(temporaryMessageStorage[i] != null){
@@ -198,11 +210,15 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
                 }
             }
 	    }else{
-	        int matchesCount = matches.size();		
-	        int qualifiedCount = matchesCount - externalConflictHandler.getDisqualifiedCount();        
+	        int matchPathesCount = matchPathes.size();		
+	        int qualifiedCount = matchPathesCount - externalConflictHandler.getDisqualifiedCount();        
 	        if(qualifiedCount == 0){
-	            // it's error, no need for details, the report will come from except anyway 
-	            parent.unresolvedCharacterContent(inputStackDescriptor.getCurrentItemInputRecordIndex(), matches.toArray(new CharsActiveTypeItem[matches.size()]));
+	            // it's error, no need for details, the report will come from except anyway
+	            SPattern[] items = new SPattern[matchPathes.size()];
+	            for(int i = 0; i < items.length; i++){
+	                items[i] = matchPathes.get(i).getChars();
+	            }
+	            parent.unresolvedCharacterContent(inputStackDescriptor.getCurrentItemInputRecordIndex(), items);
 	            if(temporaryMessageStorage != null) {	            
                     for(int i = 0; i < temporaryMessageStorage.length; i++){                    
                         if(temporaryMessageStorage[i] != null){
@@ -212,15 +228,15 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
                     }
                 }
 	        }else{
-	            structuredDataContentTypeHandler.addStructuredData(matches, externalConflictHandler.getDisqualified(), temporaryMessageStorage);
+	            structuredDataContentTypeHandler.addStructuredData(matchPathes, externalConflictHandler.getDisqualified(), temporaryMessageStorage);
 	        }
 	    }
 	}
 	
-	boolean mustHandleError(char[] chars, APattern pattern){
+	boolean mustHandleError(char[] chars, StructuredDataMatchPath path){
 	    //TODO review this
 	    /*if(inputStackDescriptor.getItemId() == InputStackDescriptor.CHARACTER_CONTENT){
-			if(matches.size() == 1){
+			if(matchPathes.size() == 1){
 			    if(pattern.isRequiredBranch())return true;
 			    return !(chars.length == 0 || spaceHandler.isSpace(chars));
             }
@@ -234,7 +250,7 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	}
 	
 	
-	void handleError(DatatypedActiveTypeItem item, String datatypeErrorMessage){	    
+	void handleError(SPattern item, String datatypeErrorMessage){	    
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 	    
@@ -252,7 +268,7 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 		}		
 	}	
 	
-	void handleError(AValue value){
+	void handleError(SValue value){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 	    
@@ -271,10 +287,10 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	}
 	
 	void setCurrentErrorCatcher(){
-	    if(matches.size() == 1){
+	    if(matchPathes.size() == 1){
 	        currentErrorCatcher = contextErrorCatcher;
 	    }else{
-	        if(temporaryMessageStorage == null) temporaryMessageStorage = new TemporaryMessageStorage[matches.size()];
+	        if(temporaryMessageStorage == null) temporaryMessageStorage = new TemporaryMessageStorage[matchPathes.size()];
 	        if(temporaryMessageStorage[currentIndex] == null){
                 temporaryMessageStorage[currentIndex] = new TemporaryMessageStorage();
                 temporaryMessageStorage[currentIndex].init(activeInputDescriptor);
@@ -304,142 +320,142 @@ class StructuredDataValidationHandler extends AbstractSDVH implements Structured
 	}
 	
 		
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int inputRecordIndex, SPattern sourceDefinition, SPattern reper){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.misplacedContent(contextDefinition, inputRecordIndex, definition, inputRecordIndex, sourceDefinition, reper);
 	}
 		
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int[] inputRecordIndex, SPattern[] sourceDefinition, SPattern reper){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.misplacedContent(contextDefinition, startInputRecordIndex, definition, inputRecordIndex, sourceDefinition, reper);
 	}
 	
 		
-	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){
+	public void excessiveContent(SRule context, int startInputRecordIndex, SPattern excessiveDefinition, int[] inputRecordIndex){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.excessiveContent(context, startInputRecordIndex, excessiveDefinition, inputRecordIndex);
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
+	public void excessiveContent(SRule context, SPattern excessiveDefinition, int inputRecordIndex){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.excessiveContent(context, excessiveDefinition, inputRecordIndex);
 	}
 	
-	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
+	public void missingContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found, int[] inputRecordIndex){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.missingContent(context, startInputRecordIndex, definition, expected, found, inputRecordIndex);
 	}
 	
-	public void illegalContent(Rule context, int startInputRecordIndex){
+	public void illegalContent(SRule context, int startInputRecordIndex){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.illegalContent(context, startInputRecordIndex);
 	}
 		
-	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 
-    public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+    public void unresolvedUnresolvedElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, SAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
 	
-	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, SAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.ambiguousCharacterContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.ambiguousAttributeValueWarning(inputRecordIndex, possibleDefinitions);
 	}
 		
-	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		throw new IllegalStateException();
 	}
-	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		throw new IllegalStateException();
-	}
-	
-	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
-		throw new IllegalStateException();
-	}
-	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
+	public void attributeValueDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		throw new IllegalStateException();
 	}
 	
-	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, SValue charsDefinition){
+		throw new IllegalStateException();
+	}
+	public void attributeValueValueError(int inputRecordIndex, SValue charsDefinition){
+		throw new IllegalStateException();
+	}
+	
+	public void characterContentExceptedError(int inputRecordIndex, SData charsDefinition){
 		throw new IllegalStateException();
 	}	
-	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, SData charsDefinition){
 		throw new IllegalStateException();
 	}
 	
-	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
 		throw new IllegalStateException();
 	}	
 	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
 		throw new IllegalStateException();
 	}
 	
-	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, SPattern[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
-	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int inputRecordIndex, SPattern[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.listTokenDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}
-	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
+	public void listTokenValueError(int inputRecordIndex, SValue charsDefinition){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.listTokenValueError(inputRecordIndex, charsDefinition);
 	}
-	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void listTokenExceptedError(int inputRecordIndex, SData charsDefinition){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.listTokenExceptedError(inputRecordIndex, charsDefinition);
 	}
 	
-	public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedListTokenInContextError(int inputRecordIndex, SPattern[] possibleDefinitions){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.unresolvedListTokenInContextError(inputRecordIndex, possibleDefinitions);
     }    
-	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.ambiguousListTokenInContextWarning(inputRecordIndex, possibleDefinitions);
     }
-	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
+	public void missingCompositorContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found){
 	    externalConflictHandler.disqualify(currentIndex);
 	    setCurrentErrorCatcher();
 		currentErrorCatcher.missingCompositorContent(context, startInputRecordIndex, definition, expected, found);

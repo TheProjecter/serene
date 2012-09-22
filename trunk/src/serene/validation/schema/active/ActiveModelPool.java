@@ -28,13 +28,13 @@ import serene.validation.handlers.stack.impl.StackHandlerPool;
 import serene.validation.handlers.stack.impl.SynchronizedStackHandlerPool;
 import serene.validation.handlers.stack.impl.UnsynchronizedStackHandlerPool;
 
-import serene.validation.handlers.structure.impl.RuleHandlerPool;
-import serene.validation.handlers.structure.impl.SynchronizedRuleHandlerPool;
-import serene.validation.handlers.structure.impl.UnsynchronizedRuleHandlerPool;
+import serene.validation.handlers.structure.RuleHandlerPool;
+import serene.validation.handlers.structure.SynchronizedRuleHandlerPool;
+import serene.validation.handlers.structure.UnsynchronizedRuleHandlerPool;
 
 import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 
 import serene.validation.handlers.error.ErrorDispatcher;
@@ -86,7 +86,7 @@ public class ActiveModelPool{
 		if(modelFree == 0){			
 			/*ValidatorConflictHandlerPool conflict = conflictHandlerPool.getValidatorConflictHandlerPool();
 			ValidatorStackHandlerPool stack = stackHandlerPool.getValidatorStackHandlerPool();*/
-			ActiveModelRuleHandlerPool rule = ruleHandlerPool.getActiveModelRuleHandlerPool();
+			ValidatorRuleHandlerPool rule = ruleHandlerPool.getValidatorRuleHandlerPool();
 			ActiveModel model = modelFactory.createActiveModel(simplifiedModel, 
 															rule,
 															/*stack,

@@ -18,9 +18,9 @@ package serene.validation.handlers.content;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.components.AListPattern;
+import serene.validation.schema.simplified.SListPattern;
 
 public interface DataEventHandler extends EventHandler{	
-	void handleChars(char[] chars, AListPattern context) throws SAXException;	
-	void handleString(String value, AListPattern context) throws SAXException;
+	void handleChars(char[] chars, SListPattern context) throws SAXException;	
+	void handleString(String value, SListPattern context) throws SAXException;
 }

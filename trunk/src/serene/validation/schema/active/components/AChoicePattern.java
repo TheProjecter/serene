@@ -26,14 +26,14 @@ import serene.validation.schema.simplified.SChoicePattern;
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
-import serene.validation.handlers.structure.impl.ChoiceHandler;
-import serene.validation.handlers.structure.impl.ChoiceMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.ChoiceMaximalReduceHandler;
+import serene.validation.handlers.structure.ChoiceHandler;
+import serene.validation.handlers.structure.ChoiceMinimalReduceHandler;
+import serene.validation.handlers.structure.ChoiceMaximalReduceHandler;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerPattern{
     SChoicePattern schoicePattern;
@@ -44,7 +44,7 @@ public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerP
                 boolean allowsValues,	
                 boolean allowsListPatterns,
                 boolean allowsText,
-				ActiveModelRuleHandlerPool ruleHandlerPool,
+				ValidatorRuleHandlerPool ruleHandlerPool,
 				SChoicePattern schoicePattern){		
 		super(children, 
 		        allowsElements,
@@ -133,8 +133,8 @@ public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerP
 		rv.visit(this);
 	}
 		
-	public ChoiceHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
-		return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, parent, stackHandler);
+	/*public ChoiceHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
+		return ruleHandlerPool.getStructureHandler(this, errorCatcher, parent, stackHandler);
 	}
 		
 	public ChoiceMinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
@@ -143,7 +143,7 @@ public class AChoicePattern extends MultipleChildrenAPattern  implements AInnerP
 	public ChoiceMaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
 		return ruleHandlerPool.getMaximalReduceHandler(this, errorCatcher, parent, stackHandler);
 	}
-	
+	*/
 	
 	public String toString(){
 		String s = "AChoicePattern"+ " min "+getMinOccurs()+" max "+getMaxOccurs();

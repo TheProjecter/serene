@@ -27,6 +27,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SElement;
 
 import serene.validation.schema.active.CharsActiveType;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
@@ -46,6 +47,9 @@ import serene.validation.handlers.error.TemporaryMessageStorage;
 import serene.validation.handlers.error.ConflictMessageReporter; 
 
 import serene.validation.handlers.stack.StackHandler; 
+
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
 
 import serene.bind.BindingModel;
 import serene.bind.ElementTask;
@@ -72,8 +76,8 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	    queueEndEntry = -1;
 	}
 	
-	void init(AElement element, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){
-		super.init(element, parent);
+	void init(ElementMatchPath elementMatchPath, BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){
+		super.init(elementMatchPath, parent);
 		this.bindingModel = bindingModel;
 		this.queue = queue;
 		this.queuePool = queuePool;
@@ -97,7 +101,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 			stackHandler = null;
 		}
 		resetContextErrorHandlerManager();
-		element.releaseDefinition();
+		/*element.releaseDefinition();*/
 				
 		bindingModel = null;
 		//queue.recycle();
@@ -111,7 +115,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	}
 	
 	public void startElementBinding(){
-	    ElementTask startTask = bindingModel.getStartElementTask(element.getCorrespondingSimplifiedComponent());	    
+	    ElementTask startTask = bindingModel.getStartElementTask(element);	    
 	    int recordIndex = inputStackDescriptor.getCurrentItemInputRecordIndex();
 	    // TODO 
 	    // Here needsStartElementInputData should be checked, but it should be 
@@ -149,7 +153,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	}
 	
 	public void endElementBinding(){
-	    ElementTask endTask = bindingModel.getEndElementTask(element.getCorrespondingSimplifiedComponent());
+	    ElementTask endTask = bindingModel.getEndElementTask(element);
 	    queueEndEntry = queue.addEndElement(queueStartEntry, endTask);
 	}
 	
@@ -178,11 +182,12 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
     }
 	
 	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
+	    
 		if(!element.allowsElements()) {
 			return getUnexpectedElementHandler(namespace, name);
 		}
 				
-		List<AElement> elementMatches = matchHandler.matchElement(namespace, name, element);
+		List<ElementMatchPath> elementMatches = matchHandler.matchElement(namespace, name, element);
 		int matchCount = elementMatches.size();
 		if(matchCount == 0){
 			return getUnexpectedElementHandler(namespace, name);
@@ -190,7 +195,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 			BoundElementValidationHandler next = pool.getElementValidationHandler(elementMatches.get(0), this, bindingModel, queue, queuePool);
 			return next;
 		}else{
-			BoundElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList<AElement>(elementMatches), this, bindingModel, queue, queuePool);
+			BoundElementConcurrentHandler next = pool.getElementConcurrentHandler(new ArrayList<ElementMatchPath>(elementMatches), this, bindingModel, queue, queuePool);
 			return next;
 		}		
 	}
@@ -214,15 +219,15 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
     ComparableAEH getAttributeHandler(String qName, String namespace, String name){
 		if(!element.allowsAttributes()) 
 			return getUnexpectedAttributeHandler(namespace, name);
-		List<AAttribute> attributeMatches = matchHandler.matchAttribute(namespace, name, element);
-		int matchCount = attributeMatches.size();
+		List<AttributeMatchPath> attributeMatchPathes = matchHandler.matchAttribute(namespace, name, element);
+		int matchCount = attributeMatchPathes.size();
 		if(matchCount == 0){
 			return getUnexpectedAttributeHandler(namespace, name);
 		}else if(matchCount == 1){			
-			BoundAttributeValidationHandler next = pool.getAttributeValidationHandler(attributeMatches.get(0), this, this, bindingModel, queue, queueStartEntry);
+			BoundAttributeValidationHandler next = pool.getAttributeValidationHandler(attributeMatchPathes.get(0), this, this, bindingModel, queue, queueStartEntry);
 			return next;
 		}else{
-			BoundAttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(new ArrayList<AAttribute>(attributeMatches), this, bindingModel, queue, queueStartEntry);
+			BoundAttributeConcurrentHandler next = pool.getAttributeConcurrentHandler(new ArrayList<AttributeMatchPath>(attributeMatchPathes), this, bindingModel, queue, queueStartEntry);
 			return next;
 		}		
 	}	
@@ -368,37 +373,37 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	// Only used when conflict exists and is unsolved and it is possible that
 	// in context validation would lead to the resolution of the conflict and 
 	// the binding can happen.
-	void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<AElement, Queue> candidateQueues){
+	void addChildElement(List<ElementMatchPath> candidateDefinitionPathes, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<SElement, Queue> candidateQueues){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter, bindingModel, targetQueue, reservationStartEntry, reservationEndEntry, candidateQueues);
+		stackHandler.shiftAllElements(candidateDefinitionPathes, conflictMessageReporter, bindingModel, targetQueue, reservationStartEntry, reservationEndEntry, candidateQueues);
 	}
-	void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, BindingModel bindingModel){
+	void addAttribute(List<AttributeMatchPath> candidateDefinitionPathes, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, BindingModel bindingModel){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllAttributes(candidateDefinitions, temporaryMessageStorage, value, queue, entry, bindingModel);
+		stackHandler.shiftAllAttributes(candidateDefinitionPathes, temporaryMessageStorage, value, queue, entry, bindingModel);
 	}
-	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry,  Map<AElement, Queue> candidateQueues){
+	void addChildElement(List<ElementMatchPath> candidateDefinitionPathes, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry,  Map<SElement, Queue> candidateQueues){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter, bindingModel, targetQueue, reservationStartEntry, reservationEndEntry, candidateQueues);
+		stackHandler.shiftAllElements(candidateDefinitionPathes, conflictHandler, conflictMessageReporter, bindingModel, targetQueue, reservationStartEntry, reservationEndEntry, candidateQueues);
 	}
-	void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, BindingModel bindingModel){
+	void addAttribute(List<AttributeMatchPath> candidateDefinitionPathes, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, BindingModel bindingModel){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
-		stackHandler.shiftAllAttributes(candidateDefinitions, disqualified, temporaryMessageStorage, value, queue, entry, bindingModel);
+		stackHandler.shiftAllAttributes(candidateDefinitionPathes, disqualified, temporaryMessageStorage, value, queue, entry, bindingModel);
 	}
 	
 	public String toString(){

@@ -35,9 +35,9 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
-import serene.validation.handlers.structure.impl.ListPatternHandler;
-import serene.validation.handlers.structure.impl.StructureValidationHandler;
-import serene.validation.handlers.structure.impl.StructureDoubleHandler;
+
+import serene.validation.handlers.structure.StructureHandler;
+import serene.validation.handlers.structure.StructureDoubleHandler;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.ConcurrentStackHandler;
@@ -45,7 +45,7 @@ import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 import org.relaxng.datatype.ValidationContext;
 
@@ -78,7 +78,7 @@ public class AListPattern extends UniqueChildAPattern
                     boolean allowsListPatterns,
                     boolean allowsText,
 					/*ValidatorStackHandlerPool stackHandlerPool,*/
-					ActiveModelRuleHandlerPool ruleHandlerPool,
+					ValidatorRuleHandlerPool ruleHandlerPool,
 					SListPattern slist){
 		super(child, ruleHandlerPool);
 		this.allowsElements = allowsElements;
@@ -160,9 +160,9 @@ public class AListPattern extends UniqueChildAPattern
 	
 	//Type
 	//--------------------------------------------------------------------------
-	public ListPatternHandler getStructureHandler(ErrorCatcher errorCatcher, StackHandler stackHandler){
-		return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);
-	}
+	/*public ListPatternHandler getStructureHandler(ErrorCatcher errorCatcher, StackHandler stackHandler){
+		return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);
+	}*/
 	
 	/*public StackHandler getStackHandler(ErrorCatcher ec){	
 		return stackHandlerPool.getContextStackHandler(this, ec);
@@ -208,12 +208,12 @@ public class AListPattern extends UniqueChildAPattern
 	
 	public MinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*/
 	}
 	
 	public MaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*/
 	}	
 	public String toString(){
 		String s = "List"+ " min "+getMinOccurs()+" max "+getMaxOccurs();		

@@ -16,6 +16,12 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
+
 public interface ElementContentType extends Type{
+    void setElementContentMatchPathes(String ns, String name, List<ElementMatchPath> pathes, MatchPathPool matchPathPool);
 	boolean allowsElements();		
 }

@@ -20,26 +20,33 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.BitSet;
+import java.util.Arrays;
 
 import org.xml.sax.SAXException;
 
 import serene.bind.util.Queue;
 import serene.bind.BindingModel;
 
-import serene.validation.schema.active.Rule;
+/*import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.AElement;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.schema.active.components.DatatypedActiveTypeItem;
-import serene.validation.schema.active.components.ActiveTypeItem;
+import serene.validation.schema.active.components.ActiveTypeItem;*/
+
+
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.stack.CandidateStackHandler;
 import serene.validation.handlers.stack.ConcurrentStackHandler;
 import serene.validation.handlers.stack.StackHandler;
 
 import serene.validation.handlers.stack.util.StackRedundanceHandler;
-import serene.validation.handlers.stack.util.ConflictPathMaker;
+/*import serene.validation.handlers.stack.util.ConflictPathMaker;*/
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
@@ -61,6 +68,12 @@ import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.structure.StructureHandler;
+import serene.validation.handlers.structure.InnerPatternHandler;
+
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.CharsMatchPath;
+import serene.validation.handlers.match.MatchPath;
 
 public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 	
@@ -73,7 +86,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 	ContextConflictsDescriptor contextConflictsDescriptor; 	
 	ValidatorConflictHandlerPool conflictHandlerPool;
 		 	
-	ConflictPathMaker conflictPathMaker;
+	/*ConflictPathMaker conflictPathMaker;*/
 	StackRedundanceHandler stackRedundanceHandler;	
 	
 	ErrorCatcher errorCatcher;
@@ -96,7 +109,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		contextConflictsDescriptor = new ContextConflictsDescriptor();
 		
 		stackRedundanceHandler = new StackRedundanceHandler();
-		conflictPathMaker = new ConflictPathMaker();
+		/*conflictPathMaker = new ConflictPathMaker();*/
 	}
 	
 	public void recycle(){		
@@ -126,8 +139,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 	void init(StackHandler originalHandler, ErrorCatcher errorCatcher){		
 		StructureHandler originalTopHandler = originalHandler.getTopHandler();
 		StructureHandler originalCurrentHandler = originalHandler.getCurrentHandler();		
-		Rule originalCurrentRule = originalCurrentHandler.getRule();
+		SRule originalCurrentRule = originalCurrentHandler.getRule();
 		CandidateStackHandler candidate = pool.getCandidateStackHandler(originalTopHandler,
+		                                                                originalHandler.getCurrentMatchPath(),
 																		originalCurrentRule,
 																		this,
 																		contextConflictsDescriptor,
@@ -176,7 +190,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 	public StructureHandler getCurrentHandler(){		
 		throw new IllegalStateException();
 	}
-		
+	public MatchPath getCurrentMatchPath(){
+	    throw new IllegalStateException();
+	}	
 		
 	public StackRedundanceHandler getStackRedundanceHandler(){
 		return stackRedundanceHandler;
@@ -187,7 +203,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 	}
 		
 	
-	public void shift(AElement element){
+	public void shift(ElementMatchPath element){
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
 		reportCurrentMisplaced = true;
@@ -222,7 +238,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		}
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter){
+	public void shiftAllElements(List<ElementMatchPath> elementDefinitions, ConflictMessageReporter conflictMessageReporter){
 			
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -239,19 +255,22 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		ElementConflictResolver resolver = conflictHandlerPool.getUnresolvedElementConflictResolver(conflictMessageReporter);		
 		resolvers.add(resolver);		
 		
-		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
-		recordInConflictDescriptor(elementDefinitions, innerPathes);
+		SRule[][] innerPathes = getInnerPathes(elementDefinitions);
+		for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(elementDefinitions.get(i).getElement(), innerPathes[i]);
+	    }	
 		int lastQualifiedIndex = elementDefinitions.size()-1;
 		    
-		for(int i = 0; i < lastQualifiedIndex; i++){				
-			AElement element = elementDefinitions.get(i);			
+		for(int i = 0; i < lastQualifiedIndex; i++){
+		    ElementMatchPath elementPath = elementDefinitions.get(i);
+			SElement element = elementPath.getElement();			
 			resolver.addCandidate(element);			
 			
 			for(int j = 0; j < temporary.size(); j++){
 				CandidateStackHandler temp = temporary.get(j);
 				if(temp != null){
 					CandidateStackHandler candidate = temp.getCopy();
-					candidate.shift(element, 
+					candidate.shift(elementPath, 
 									innerPathes[i],
 									resolver, 
 									i,
@@ -277,14 +296,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}			
 		}
 		
-		AElement element = elementDefinitions.get(lastQualifiedIndex);
+		ElementMatchPath elementPath = elementDefinitions.get(lastQualifiedIndex);
+		SElement element = elementPath.getElement();
 		
 		resolver.addCandidate(element);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
-				temp.shift(element,
+				temp.shift(elementPath,
 								innerPathes[lastQualifiedIndex],
 								resolver, 
 								lastQualifiedIndex,
@@ -310,7 +330,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<AElement, Queue> candidateQueues){
+	public void shiftAllElements(List<ElementMatchPath> elementDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<SElement, Queue> candidateQueues){
 			
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -327,19 +347,22 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		BoundElementConflictResolver resolver = conflictHandlerPool.getBoundUnresolvedElementConflictResolver(conflictMessageReporter, bindingModel, targetQueue, reservationStartEntry, reservationEndEntry, candidateQueues);		
 		resolvers.add(resolver);		
 		
-		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
-		recordInConflictDescriptor(elementDefinitions, innerPathes);
+		SRule[][] innerPathes = getInnerPathes(elementDefinitions);
+		for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(elementDefinitions.get(i).getElement(), innerPathes[i]);
+	    }
 		int lastQualifiedIndex = elementDefinitions.size()-1;
 		
-		for(int i = 0; i < lastQualifiedIndex; i++){				
-			AElement element = elementDefinitions.get(i);			
+		for(int i = 0; i < lastQualifiedIndex; i++){
+		    ElementMatchPath elementPath = elementDefinitions.get(i); 
+			SElement element = elementPath.getElement();
 			resolver.addCandidate(element);			
 			
 			for(int j = 0; j < temporary.size(); j++){
 				CandidateStackHandler temp = temporary.get(j);
 				if(temp != null){
 					CandidateStackHandler candidate = temp.getCopy();
-					candidate.shift(element, 
+					candidate.shift(elementPath, 
 									innerPathes[i],
 									resolver, 
 									i,
@@ -365,14 +388,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}			
 		}
 		
-		AElement element = elementDefinitions.get(lastQualifiedIndex);
+		ElementMatchPath elementPath = elementDefinitions.get(lastQualifiedIndex);
+		SElement element = elementPath.getElement();
 		
 		resolver.addCandidate(element);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
-				temp.shift(element,
+				temp.shift(elementPath,
 								innerPathes[lastQualifiedIndex],
 								resolver, 
 								lastQualifiedIndex,
@@ -398,7 +422,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
+	public void shiftAllElements(List<ElementMatchPath> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
 		
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -415,14 +439,18 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		ElementConflictResolver resolver = conflictHandlerPool.getAmbiguousElementConflictResolver(conflictMessageReporter);
 		resolvers.add(resolver);
 		
-		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
-		recordInConflictDescriptor(elementDefinitions, innerPathes);
+		SRule[][] innerPathes = getInnerPathes(elementDefinitions);
+		for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(elementDefinitions.get(i).getElement(), innerPathes[i]);
+	    }
 		int lastQualifiedIndex = conflictHandler.getPreviousQualified(elementDefinitions.size());
 		//int shifts = 0;
 		//int redundant = 0;
 		//int inactivated = 0;
 		for(int i = 0; i < lastQualifiedIndex; i++){
-		    AElement element = elementDefinitions.get(i);				
+		    ElementMatchPath elementPath = elementDefinitions.get(i);
+		    SElement element = elementPath.getElement();
+		    
 		    resolver.addCandidate(element);
 			if(!conflictHandler.isDisqualified(i)){
 				for(int j = 0; j < temporary.size(); j++){
@@ -430,7 +458,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 					CandidateStackHandler temp = temporary.get(j);
 					if(temp != null){
 						CandidateStackHandler candidate = temp.getCopy();
-						candidate.shift(element, 
+						candidate.shift(elementPath, 
 										innerPathes[i],
 										resolver, 
 										i,
@@ -461,7 +489,8 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}
 		
-		AElement element = elementDefinitions.get(lastQualifiedIndex);
+		ElementMatchPath elementPath = elementDefinitions.get(lastQualifiedIndex);
+		SElement element = elementPath.getElement();
 		
 		resolver.addCandidate(element);
 		
@@ -469,7 +498,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			//shifts++;
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
-				temp.shift(element,
+				temp.shift(elementPath,
 								innerPathes[lastQualifiedIndex],
 								resolver,
 								lastQualifiedIndex,
@@ -498,10 +527,10 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 		
 		for(++lastQualifiedIndex; lastQualifiedIndex < elementDefinitions.size(); lastQualifiedIndex++){
-		    resolver.addCandidate(elementDefinitions.get(lastQualifiedIndex));
+		    resolver.addCandidate(elementDefinitions.get(lastQualifiedIndex).getElement());
 		}
 	}
-	public void shiftAllElements(List<AElement> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<AElement, Queue> candidateQueues){
+	public void shiftAllElements(List<ElementMatchPath> elementDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<SElement, Queue> candidateQueues){
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
 		reportCurrentMisplaced = true;
@@ -517,19 +546,22 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		BoundElementConflictResolver resolver = conflictHandlerPool.getBoundAmbiguousElementConflictResolver(conflictMessageReporter, bindingModel, targetQueue, reservationStartEntry, reservationEndEntry, candidateQueues);
 		resolvers.add(resolver);
 		
-		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(elementDefinitions);
-		recordInConflictDescriptor(elementDefinitions, innerPathes);
+		SRule[][] innerPathes = getInnerPathes(elementDefinitions);
+		for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(elementDefinitions.get(i).getElement(), innerPathes[i]);
+	    }
 		int lastQualifiedIndex = conflictHandler.getPreviousQualified(elementDefinitions.size());
 		
 		for(int i = 0; i < lastQualifiedIndex; i++){
-		    AElement element = elementDefinitions.get(i);
+		    ElementMatchPath elementPath = elementDefinitions.get(i);
+		    SElement element = elementPath.getElement();
 			resolver.addCandidate(element);
 			if(!conflictHandler.isDisqualified(i)){
 				for(int j = 0; j < temporary.size(); j++){
 					CandidateStackHandler temp = temporary.get(j);
 					if(temp != null){
 						CandidateStackHandler candidate = temp.getCopy();
-						candidate.shift(element, 
+						candidate.shift(elementPath, 
 										innerPathes[i],
 										resolver, 
 										i,
@@ -557,14 +589,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		}
 		
 		
-		AElement element = elementDefinitions.get(lastQualifiedIndex);
+		ElementMatchPath elementPath = elementDefinitions.get(lastQualifiedIndex);
+		SElement element = elementPath.getElement(); 
 		
 		resolver.addCandidate(element);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
-				temp.shift(element,
+				temp.shift(elementPath,
 								innerPathes[lastQualifiedIndex],
 								resolver,
 								lastQualifiedIndex,
@@ -590,13 +623,13 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 		
 		for(++lastQualifiedIndex; lastQualifiedIndex < elementDefinitions.size(); lastQualifiedIndex++){
-		    resolver.addCandidate(elementDefinitions.get(lastQualifiedIndex));
+		    resolver.addCandidate(elementDefinitions.get(lastQualifiedIndex).getElement());
 		}
 	}
 	
 		
 	
-	public void shift(AAttribute attribute){
+	public void shift(AttributeMatchPath attribute){
 		reportExcessive = true;
 		reportMissing = true;
 		reportIllegal = true;
@@ -627,7 +660,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		}
 	}
 			
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void shiftAllAttributes(List<AttributeMatchPath> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		
 		reportExcessive = true;
 		reportMissing = true;
@@ -642,12 +675,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		AttributeConflictResolver resolver = conflictHandlerPool.getUnresolvedAttributeConflictResolver(temporaryMessageStorage);
 		resolvers.add(resolver);
 		
-		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
-		recordInConflictDescriptor(attributeDefinitions, innerPathes);
+		SRule[][] innerPathes = getInnerPathes(attributeDefinitions);
+		for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(attributeDefinitions.get(i).getAttribute(), innerPathes[i]);
+	    }
 		int lastQualifiedIndex = attributeDefinitions.size()-1;
 		
-		for(int i = 0; i < lastQualifiedIndex; i++){				
-			AAttribute attribute = attributeDefinitions.get(i);
+		for(int i = 0; i < lastQualifiedIndex; i++){
+		    AttributeMatchPath attributePath = attributeDefinitions.get(i);
+			SAttribute attribute = attributePath.getAttribute();
 			
 			resolver.addCandidate(attribute);
 						
@@ -655,7 +691,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 				CandidateStackHandler temp = temporary.get(j);
 				if(temp != null){
 					CandidateStackHandler candidate = temp.getCopy();
-					candidate.shift(attribute, 
+					candidate.shift(attributePath, 
 									innerPathes[i],
 									resolver, 
 									i,
@@ -679,14 +715,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}			
 		}
 		
-		AAttribute attribute = attributeDefinitions.get(lastQualifiedIndex);
+		AttributeMatchPath attributePath = attributeDefinitions.get(lastQualifiedIndex);
+		SAttribute attribute = attributePath.getAttribute(); 
 		
 		resolver.addCandidate(attribute);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
-				temp.shift(attribute,
+				temp.shift(attributePath,
 								innerPathes[lastQualifiedIndex],
 								resolver,
 								lastQualifiedIndex,
@@ -710,7 +747,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, BindingModel bindingModel){
+	public void shiftAllAttributes(List<AttributeMatchPath> attributeDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, BindingModel bindingModel){
 		
 		reportExcessive = true;
 		reportMissing = true;
@@ -732,12 +769,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
                                                                                      bindingModel);
 		resolvers.add(resolver);
 		
-		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
-		recordInConflictDescriptor(attributeDefinitions, innerPathes);
+		SRule[][] innerPathes = getInnerPathes(attributeDefinitions);
+		for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(attributeDefinitions.get(i).getAttribute(), innerPathes[i]);
+	    }
 		int lastQualifiedIndex = attributeDefinitions.size()-1;
 		
-		for(int i = 0; i < lastQualifiedIndex; i++){				
-			AAttribute attribute = attributeDefinitions.get(i);
+		for(int i = 0; i < lastQualifiedIndex; i++){
+		    AttributeMatchPath attributePath = attributeDefinitions.get(i);
+			SAttribute attribute = attributePath.getAttribute();
 			
 			resolver.addCandidate(attribute);
 						
@@ -745,7 +785,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 				CandidateStackHandler temp = temporary.get(j);
 				if(temp != null){
 					CandidateStackHandler candidate = temp.getCopy();
-					candidate.shift(attribute, 
+					candidate.shift(attributePath, 
 									innerPathes[i],
 									resolver, 
 									i,
@@ -769,14 +809,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}			
 		}
 		
-		AAttribute attribute = attributeDefinitions.get(lastQualifiedIndex);
+		AttributeMatchPath attributePath = attributeDefinitions.get(lastQualifiedIndex);
+		SAttribute attribute = attributePath.getAttribute();
 		
 		resolver.addCandidate(attribute);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
-				temp.shift(attribute,
+				temp.shift(attributePath,
 								innerPathes[lastQualifiedIndex],
 								resolver,
 								lastQualifiedIndex,
@@ -800,7 +841,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void shiftAllAttributes(List<AttributeMatchPath> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 		
 		reportExcessive = true;
 		reportMissing = true;
@@ -815,8 +856,10 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		AttributeConflictResolver resolver = conflictHandlerPool.getAmbiguousAttributeConflictResolver(disqualified, temporaryMessageStorage);
 		resolvers.add(resolver);
 		
-		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
-		recordInConflictDescriptor(attributeDefinitions, innerPathes);
+		SRule[][] innerPathes = getInnerPathes(attributeDefinitions);
+		for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(attributeDefinitions.get(i).getAttribute(), innerPathes[i]);
+	    }
 		int lastQualifiedIndex = attributeDefinitions.size()-1;
 		determineIndex:{
             for(; lastQualifiedIndex >=0; lastQualifiedIndex--){
@@ -827,14 +870,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		
 		
 		for(int i = 0; i < lastQualifiedIndex; i++){
-		    AAttribute attribute = attributeDefinitions.get(i);				
+		    AttributeMatchPath attributePath = attributeDefinitions.get(i);
+		    SAttribute attribute = attributePath.getAttribute();
 		    resolver.addCandidate(attribute);
 			if(!disqualified.get(i)){
 				for(int j = 0; j < temporary.size(); j++){
 					CandidateStackHandler temp = temporary.get(j);
 					if(temp != null){
 						CandidateStackHandler candidate = temp.getCopy();
-						candidate.shift(attribute, 
+						candidate.shift(attributePath, 
 										innerPathes[i],
 										resolver, 
 										i,
@@ -859,13 +903,14 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}
 		
-		AAttribute attribute = attributeDefinitions.get(lastQualifiedIndex);		
+		AttributeMatchPath attributePath = attributeDefinitions.get(lastQualifiedIndex);
+		SAttribute attribute = attributePath.getAttribute();
 		resolver.addCandidate(attribute);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
-				temp.shift(attribute,
+				temp.shift(attributePath,
 								innerPathes[lastQualifiedIndex],
 								resolver, 
 								lastQualifiedIndex,
@@ -889,11 +934,11 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 		
 		for(++lastQualifiedIndex; lastQualifiedIndex < attributeDefinitions.size(); lastQualifiedIndex++){
-		    resolver.addCandidate(attributeDefinitions.get(lastQualifiedIndex));
+		    resolver.addCandidate(attributeDefinitions.get(lastQualifiedIndex).getAttribute());
 		}
 	}
 	
-	public void shiftAllAttributes(List<AAttribute> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, BindingModel bindingModel){		
+	public void shiftAllAttributes(List<AttributeMatchPath> attributeDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue targetQueue, int targetEntry, BindingModel bindingModel){		
 		reportExcessive = true;
 		reportMissing = true;
 		reportIllegal = true;
@@ -915,8 +960,10 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
                                                                                             bindingModel);
 		resolvers.add(resolver);
 		
-		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(attributeDefinitions);
-		recordInConflictDescriptor(attributeDefinitions, innerPathes);
+		SRule[][] innerPathes = getInnerPathes(attributeDefinitions);
+		for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(attributeDefinitions.get(i).getAttribute(), innerPathes[i]);
+	    }
 		int lastQualifiedIndex = attributeDefinitions.size()-1;
 		determineIndex:{
             for(; lastQualifiedIndex >=0; lastQualifiedIndex--){
@@ -926,14 +973,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
         }
 		
 		for(int i = 0; i < lastQualifiedIndex; i++){
-		    AAttribute attribute = attributeDefinitions.get(i);
+		    AttributeMatchPath attributePath = attributeDefinitions.get(i);
+		    SAttribute attribute = attributePath.getAttribute(); 
 			resolver.addCandidate(attribute);
 			if(!disqualified.get(i)){
 				for(int j = 0; j < temporary.size(); j++){
 					CandidateStackHandler temp = temporary.get(j);
 					if(temp != null){
 						CandidateStackHandler candidate = temp.getCopy();
-						candidate.shift(attribute, 
+						candidate.shift(attributePath, 
 										innerPathes[i],
 										resolver, 
 										i,
@@ -958,14 +1006,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}
 		}
 		
-		AAttribute attribute = attributeDefinitions.get(lastQualifiedIndex);
+		AttributeMatchPath attributePath = attributeDefinitions.get(lastQualifiedIndex);
+		SAttribute attribute = attributePath.getAttribute();
 		
 		resolver.addCandidate(attribute);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
-				temp.shift(attribute,
+				temp.shift(attributePath,
 								innerPathes[lastQualifiedIndex],
 								resolver, 
 								lastQualifiedIndex,
@@ -989,11 +1038,11 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 		
 		for(++lastQualifiedIndex; lastQualifiedIndex < attributeDefinitions.size(); lastQualifiedIndex++){
-		    resolver.addCandidate(attributeDefinitions.get(lastQualifiedIndex));
+		    resolver.addCandidate(attributeDefinitions.get(lastQualifiedIndex).getAttribute());
 		}
 	} 	
 		 	
-	public void shift(CharsActiveTypeItem chars){
+	public void shift(CharsMatchPath chars){
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
 		reportCurrentMisplaced = true;
@@ -1028,7 +1077,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		}
 	}
 		
-	public void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void shiftAllCharsDefinitions(List<? extends CharsMatchPath> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 	    reportExcessive = true;
 		reportPreviousMisplaced = true;
 		reportCurrentMisplaced = true;
@@ -1044,12 +1093,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		UnresolvedCharsConflictResolver resolver = conflictHandlerPool.getUnresolvedCharsConflictResolver(temporaryMessageStorage);
 		resolvers.add(resolver);
 		
-		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
-		recordInConflictDescriptor(charsDefinitions, innerPathes);
+		SRule[][] innerPathes = getInnerPathes(charsDefinitions);
+		for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(charsDefinitions.get(i).getChars(), innerPathes[i]);
+	    }
 		int lastQualifiedIndex = charsDefinitions.size()-1;
 		
-		for(int i = 0; i < lastQualifiedIndex; i++){				
-			CharsActiveTypeItem chars = charsDefinitions.get(i);
+		for(int i = 0; i < lastQualifiedIndex; i++){
+		    CharsMatchPath charsPath = charsDefinitions.get(i); 
+			SPattern chars = charsPath.getChars();
 		
 			resolver.addCandidate(chars);
 			
@@ -1057,7 +1109,8 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 				CandidateStackHandler temp = temporary.get(j);
 				if(temp != null){
 					CandidateStackHandler candidate = temp.getCopy();
-					candidate.shift(chars, 
+					
+					candidate.shift(charsPath, 
 									innerPathes[i],
 									resolver,
 									i,
@@ -1083,14 +1136,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}			
 		}
 		
-		CharsActiveTypeItem chars = charsDefinitions.get(lastQualifiedIndex);
+		CharsMatchPath charsPath = charsDefinitions.get(lastQualifiedIndex);
+		SPattern chars = charsPath.getChars();
 		
 		resolver.addCandidate(chars);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
-				temp.shift(chars,
+				temp.shift(charsPath,
 								innerPathes[lastQualifiedIndex],
 								resolver,
 								lastQualifiedIndex,
@@ -1113,9 +1167,9 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 				}
 			}
 		}			
-		temporary.clear();
+		temporary.clear();		
 	}
-	public void shiftAllCharsDefinitions(List<? extends CharsActiveTypeItem> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void shiftAllCharsDefinitions(List<? extends CharsMatchPath> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 	    reportExcessive = true;
 		reportPreviousMisplaced = true;
 		reportCurrentMisplaced = true;
@@ -1131,12 +1185,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		AmbiguousCharsConflictResolver resolver = conflictHandlerPool.getAmbiguousCharsConflictResolver(disqualified, temporaryMessageStorage);
 		resolvers.add(resolver);
 		
-		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
-		recordInConflictDescriptor(charsDefinitions, innerPathes);
+		SRule[][] innerPathes = getInnerPathes(charsDefinitions);
+		for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(charsDefinitions.get(i).getChars(), innerPathes[i]);
+	    }
 		int lastQualifiedIndex = charsDefinitions.size()-1;
 		
-		for(int i = 0; i < lastQualifiedIndex; i++){				
-			CharsActiveTypeItem chars = charsDefinitions.get(i);
+		for(int i = 0; i < lastQualifiedIndex; i++){
+		    CharsMatchPath charsPath = charsDefinitions.get(i); 
+			SPattern chars = charsPath.getChars();
 		
 			resolver.addCandidate(chars);
 			
@@ -1144,7 +1201,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 				CandidateStackHandler temp = temporary.get(j);
 				if(temp != null){
 					CandidateStackHandler candidate = temp.getCopy();
-					candidate.shift(chars, 
+					candidate.shift(charsPath, 
 									innerPathes[i],
 									resolver,
 									i,
@@ -1170,14 +1227,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}			
 		}
 		
-		CharsActiveTypeItem chars = charsDefinitions.get(lastQualifiedIndex);
+		CharsMatchPath charsPath = charsDefinitions.get(lastQualifiedIndex);
+		SPattern chars = charsPath.getChars();
 		
 		resolver.addCandidate(chars);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
-				temp.shift(chars,
+				temp.shift(charsPath,
 								innerPathes[lastQualifiedIndex],
 								resolver,
 								lastQualifiedIndex,
@@ -1204,7 +1262,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 	}
     
 	
-	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){		
+	public void shiftAllTokenDefinitions(List<? extends CharsMatchPath> charsDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){		
 				
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -1221,12 +1279,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		UnresolvedListTokenConflictResolver resolver = conflictHandlerPool.getUnresolvedListTokenConflictResolver(temporaryMessageStorage);
 		resolvers.add(resolver);
 		
-		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
-		recordInConflictDescriptor(charsDefinitions, innerPathes);
+		SRule[][] innerPathes = getInnerPathes(charsDefinitions);
+		for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(charsDefinitions.get(i).getChars(), innerPathes[i]);
+	    }
 		int lastQualifiedIndex = charsDefinitions.size()-1;
 		
-		for(int i = 0; i < lastQualifiedIndex; i++){				
-			CharsActiveTypeItem chars = charsDefinitions.get(i);
+		for(int i = 0; i < lastQualifiedIndex; i++){
+		    CharsMatchPath charsPath = charsDefinitions.get(i);
+			SPattern chars = charsPath.getChars();
 		
 			resolver.addCandidate(chars);
 			
@@ -1234,7 +1295,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 				CandidateStackHandler temp = temporary.get(j);
 				if(temp != null){
 					CandidateStackHandler candidate = temp.getCopy();
-					candidate.shift(chars, 
+					candidate.shift(charsPath, 
 									innerPathes[i],
 									resolver,
 									i,
@@ -1260,14 +1321,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 			}			
 		}
 		
-		CharsActiveTypeItem chars = charsDefinitions.get(lastQualifiedIndex);
+		CharsMatchPath charsPath = charsDefinitions.get(lastQualifiedIndex);
+		SPattern chars = charsPath.getChars();
 		
 		resolver.addCandidate(chars);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
-				temp.shift(chars,
+				temp.shift(charsPath,
 								innerPathes[lastQualifiedIndex],
 								resolver,
 								lastQualifiedIndex,
@@ -1293,7 +1355,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		temporary.clear();
 	}
 	
-	public void shiftAllTokenDefinitions(List<? extends DatatypedActiveTypeItem> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
+	public void shiftAllTokenDefinitions(List<? extends CharsMatchPath> charsDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
 				
 		reportExcessive = true;
 		reportPreviousMisplaced = true;
@@ -1310,8 +1372,10 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		AmbiguousListTokenConflictResolver resolver = conflictHandlerPool.getAmbiguousListTokenConflictResolver(disqualified, temporaryMessageStorage);
 		resolvers.add(resolver);
 		
-		Rule[][] innerPathes = conflictPathMaker.getInnerPathes(charsDefinitions);
-		recordInConflictDescriptor(charsDefinitions, innerPathes);
+		SRule[][] innerPathes = getInnerPathes(charsDefinitions);
+		for(int i = 0; i < innerPathes.length; i++){
+	        contextConflictsDescriptor.record(charsDefinitions.get(i).getChars(), innerPathes[i]);
+	    }
 		int lastQualifiedIndex = charsDefinitions.size()-1;
 		determineIndex:{
             for(; lastQualifiedIndex >=0; lastQualifiedIndex--){
@@ -1321,14 +1385,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
         }
 		
 		for(int i = 0; i < lastQualifiedIndex; i++){
-		    CharsActiveTypeItem chars = charsDefinitions.get(i);
+		    CharsMatchPath charsPath = charsDefinitions.get(i);
+		    SPattern chars = charsPath.getChars(); 
             resolver.addCandidate(chars);
 		    if(!disqualified.get(i)){
                 for(int j = 0; j < temporary.size(); j++){
                     CandidateStackHandler temp = temporary.get(j);
                     if(temp != null){
                         CandidateStackHandler candidate = temp.getCopy();
-                        candidate.shift(chars, 
+                        candidate.shift(charsPath, 
                                         innerPathes[i],
                                         resolver,
                                         i,
@@ -1355,13 +1420,15 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
             }
 		}
 				
-		CharsActiveTypeItem chars = charsDefinitions.get(lastQualifiedIndex);		
+		CharsMatchPath charsPath = charsDefinitions.get(lastQualifiedIndex);
+		SPattern chars = charsPath.getChars();
+		
 		resolver.addCandidate(chars);
 		
 		for(int j = 0; j < temporary.size(); j++){
 			CandidateStackHandler temp = temporary.get(j);
 			if(temp != null){
-				temp.shift(chars,
+				temp.shift(charsPath,
 								innerPathes[lastQualifiedIndex],
 								resolver,
 								lastQualifiedIndex,
@@ -1388,19 +1455,19 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		
 		
 		for(++lastQualifiedIndex; lastQualifiedIndex < charsDefinitions.size(); lastQualifiedIndex++){
-		    resolver.addCandidate(charsDefinitions.get(lastQualifiedIndex));
+		    resolver.addCandidate(charsDefinitions.get(lastQualifiedIndex).getChars());
 		}
 	}
 	
-	public void reduce(StructureHandler handler){
+	public void reduce(InnerPatternHandler handler){
 		throw new IllegalStateException();
 	}
 	
-	public void reshift(StructureHandler handler, APattern child){
+	public void reshift(InnerPatternHandler handler, SPattern child){
 		throw new IllegalStateException();
 	}
 	
-	public void validatingReshift(StructureHandler handler, APattern child){
+	public void validatingReshift(InnerPatternHandler handler, SPattern child){
 		throw new IllegalStateException();
 	}
 	
@@ -1412,11 +1479,11 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		throw new IllegalStateException();
 	}
 		
-	public void blockReduce(StructureHandler handler, int count, APattern pattern, int startInputRecordIndex){
+	public void blockReduce(StructureHandler handler, int count, SPattern pattern, int startInputRecordIndex){
 		throw new IllegalStateException();
 	}
 	
-	public void limitReduce(StructureHandler handler, int MIN, int MAX, APattern pattern, int startInputRecordIndex){
+	public void limitReduce(StructureHandler handler, int MIN, int MAX, SPattern pattern, int startInputRecordIndex){
 		throw new IllegalStateException();
 	}
 
@@ -1459,10 +1526,36 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		return fec;
 	}
 	
-	private void recordInConflictDescriptor(List<? extends ActiveTypeItem> conflictItems, Rule[][] innerPathes){
-	    for(int i = 0; i < innerPathes.length; i++){
-	        contextConflictsDescriptor.record(conflictItems.get(i), innerPathes[i]);
-	    }	
+	// Returns a bidimensional array containing all the pathes from every rule 
+	// (exclusively) to the first common ancestor (inclusively).
+	SRule[][] getInnerPathes(List<? extends MatchPath> itemPathes){
+		SRule[][] innerPathes = new SRule[itemPathes.size()][];
+		
+		int commonDistance = 0;
+		// distance between the first common ancestor and the top of the path, 
+		// practicly the count of common ancestors, is the same for all pathes
+		// effectively topIndex - commonAncestorIndex
+		first:{
+		for(int j = 0; true; j++){
+		    for(int i = 0; i < innerPathes.length-1; i++){
+		        MatchPath path1 = itemPathes.get(i);
+		        MatchPath path2 = itemPathes.get(i+1);
+		        // at size() - 1 would be the topIndex and that is always common
+		        if(path1.get(path1.size() -2 -j) != path2.get(path2.size() -2 -j)){
+		            commonDistance = j;
+		            // it should be the last one that was common to all and j here
+		            // indicates the first difference
+		            break first;
+		        }
+			}
+		}
+		}
+		for(int i = 0; i < innerPathes.length; i++){
+		    MatchPath path = itemPathes.get(i);
+            innerPathes[i] = path.getArray(1, path.size()-commonDistance);
+        }
+        
+        return innerPathes;
 	}
 	
 	public String toString(){

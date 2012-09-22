@@ -26,12 +26,12 @@ import serene.validation.schema.active.RuleVisitor;
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
-import serene.validation.handlers.structure.impl.GroupHandler;
-import serene.validation.handlers.structure.impl.GroupMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.GroupMaximalReduceHandler;
-import serene.validation.handlers.structure.impl.GroupMinimalReduceCountHandler;
-import serene.validation.handlers.structure.impl.GroupMaximalReduceCountHandler;
-import serene.validation.handlers.structure.impl.GroupDoubleHandler;
+import serene.validation.handlers.structure.GroupHandler;
+import serene.validation.handlers.structure.GroupMinimalReduceHandler;
+import serene.validation.handlers.structure.GroupMaximalReduceHandler;
+import serene.validation.handlers.structure.GroupMinimalReduceCountHandler;
+import serene.validation.handlers.structure.GroupMaximalReduceCountHandler;
+import serene.validation.handlers.structure.GroupDoubleHandler;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
@@ -42,7 +42,7 @@ import serene.validation.schema.simplified.SGroup;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public class AGroup extends MultipleChildrenAPattern implements ACompositor{	
 	
@@ -60,7 +60,7 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
                 boolean allowsListPatterns,
                 boolean allowsText,
 				/*ValidatorStackHandlerPool stackHandlerPool,*/
-				ActiveModelRuleHandlerPool ruleHandlerPool,
+				ValidatorRuleHandlerPool ruleHandlerPool,
 				SGroup sgroup){	
 		super(children, 
 		        allowsElements,
@@ -166,14 +166,14 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 	boolean requiresDoubleHandler(){		
 		return hasMultipleCardinality() && parent instanceof AbstractAPattern && ((AbstractAPattern)parent).isInterleaved();
 	}
-	public StructureHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
+	/*public StructureHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
 		if(requiresDoubleHandler()){
 			return getDoubleHandler(errorCatcher, parent, stackHandler);
 		}		
-		return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, parent, stackHandler);
-	}
+		return ruleHandlerPool.getStructureHandler(this, errorCatcher, parent, stackHandler);
+	}*/
 	
-	public GroupMinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
+	/*public GroupMinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
 		return ruleHandlerPool.getMinimalReduceHandler(this, errorCatcher, parent, stackHandler);
 	}
 	
@@ -182,17 +182,17 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 	}
 	
 	GroupDoubleHandler getDoubleHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
-		GroupDoubleHandler sih = ruleHandlerPool.getStructureDoubleHandler(this, errorCatcher, parent, stackHandler/*, stackHandlerPool*/);		
+		GroupDoubleHandler sih = ruleHandlerPool.getStructureDoubleHandler(this, errorCatcher, parent, stackHandler*//*, stackHandlerPool*//*);		
 		return sih;
-	}
+	}*/
 	
 	
-	public GroupMinimalReduceCountHandler getStructureHandler(IntList reduceCountList, IntList startedCountList, ErrorCatcher errorCatcher, MinimalReduceStackHandler stackHandler){
+	/*public GroupMinimalReduceCountHandler getStructureHandler(IntList reduceCountList, IntList startedCountList, ErrorCatcher errorCatcher, MinimalReduceStackHandler stackHandler){
 		return ruleHandlerPool.getMinimalReduceCountHandler(reduceCountList, startedCountList, this, errorCatcher, stackHandler);
 	}
 	public GroupMaximalReduceCountHandler getStructureHandler(IntList reduceCountList, IntList startedCountList, ErrorCatcher errorCatcher, MaximalReduceStackHandler stackHandler){
 		return ruleHandlerPool.getMaximalReduceCountHandler(reduceCountList, startedCountList, this, errorCatcher, stackHandler);
-	}
+	}*/
 		
 	public String toString(){
 		//String s = "AGroup "+hashCode()+ " min "+getMinOccurs()+" max "+getMaxOccurs();		

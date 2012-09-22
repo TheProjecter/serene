@@ -23,28 +23,29 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Collections;
 
-import serene.validation.schema.active.components.AExceptPattern;
+import serene.validation.schema.simplified.SExceptPattern;
 
-import serene.validation.schema.active.components.AElement;
-import serene.validation.schema.active.components.AAttribute;
-import serene.validation.schema.active.components.AChoicePattern;
-import serene.validation.schema.active.components.AInterleave;
-import serene.validation.schema.active.components.AGroup;
-import serene.validation.schema.active.components.AListPattern;
-import serene.validation.schema.active.components.AEmpty;
-import serene.validation.schema.active.components.AText;
-import serene.validation.schema.active.components.ANotAllowed;
-import serene.validation.schema.active.components.ARef;
-import serene.validation.schema.active.components.AData;
-import serene.validation.schema.active.components.AValue;
-import serene.validation.schema.active.components.AGrammar;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
+import serene.validation.schema.simplified.SChoicePattern;
+import serene.validation.schema.simplified.SInterleave;
+import serene.validation.schema.simplified.SGroup;
+import serene.validation.schema.simplified.SListPattern;
+import serene.validation.schema.simplified.SEmpty;
+import serene.validation.schema.simplified.SText;
+import serene.validation.schema.simplified.SNotAllowed;
+import serene.validation.schema.simplified.SRef;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SGrammar;
+import serene.validation.schema.simplified.SDummy;
 
-import serene.validation.schema.active.components.APattern;
+import serene.validation.schema.simplified.SPattern;
 
-import serene.validation.schema.active.ActiveComponent;
-import serene.validation.schema.active.ActiveComponentVisitor;
+import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
-import serene.validation.schema.active.util.AbstractActiveComponentVisitor;
+import serene.validation.schema.simplified.util.AbstractSimplifiedComponentVisitor;
 
 import serene.util.IntList;
 
@@ -81,7 +82,7 @@ import serene.util.IntList;
 */
 
 // No check for nulls, but if there were any you wouldn't be here.
-public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
+public class MissingContentAnalyser extends AbstractSimplifiedComponentVisitor{
     final static int GROUP = -1;
     final static int INTERLEAVE = -2;
     final static int CHOICE = -3;
@@ -102,7 +103,7 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         sortingSubtreeAnalyser = new SortingSubtreeAnalyser();
     }
     
-    public BitSet getPartiallyCommon(APattern[] definitions){
+    public BitSet getPartiallyCommon(SPattern[] definitions){
         IntList[] comparableSubtrees = new IntList[definitions.length];
         for(int i = 0; i < definitions.length; i++){
             comparableSubtrees[i] = new IntList();
@@ -159,23 +160,23 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         return true;
     }
     
-	public void visit(AExceptPattern exceptAPattern){
+	public void visit(SExceptPattern exceptSPattern){
 		throw new IllegalStateException();
 	}
 
 	
 	
-	public void visit(AElement element){		
+	public void visit(SElement element){		
 	    if(element.getMinOccurs() == 0) return;
 		comparableSubtree.add(element.functionalEquivalenceCode());
 	}	
-	public void visit(AAttribute attribute){
+	public void visit(SAttribute attribute){
 	    if(attribute.getMinOccurs() == 0) return;
 		comparableSubtree.add(attribute.functionalEquivalenceCode());
 	}
-	public void visit(AChoicePattern choice){
-	    if(! choice.isRequiredContent()) return;
-        APattern[] children = choice.getChildren();
+	public void visit(SChoicePattern choice){
+	    if(!choice.isRequiredContent()) return;
+        SPattern[] children = choice.getChildren();
 		
         choiceContext = true;            
         boolean oldGroupContext = groupContext;
@@ -183,7 +184,7 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         boolean oldInterleaveContext = interleaveContext;
         if(interleaveContext) interleaveContext = false;
         
-        List<APattern> relevant = relevantCache.remove(choice);
+        List<SPattern> relevant = relevantCache.remove(choice);
         if(relevant == null)relevant = sortingSubtreeAnalyser.getRelevant(children);
                 
         if(!relevant.isEmpty()){
@@ -195,9 +196,9 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         if(oldGroupContext) groupContext = oldGroupContext;
         if(oldInterleaveContext) interleaveContext = oldInterleaveContext;
 	}
-	public void visit(AInterleave interleave){
+	public void visit(SInterleave interleave){
 	    if(interleave.getMinOccurs() == 0) return;
-		APattern[] children = interleave.getChildren();
+		SPattern[] children = interleave.getChildren();
 		
         boolean oldChoiceContext = choiceContext;            
         if(choiceContext) choiceContext = false;            
@@ -205,7 +206,7 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         if(groupContext) groupContext = false;
         interleaveContext = true;
         
-        List<APattern> relevant = relevantCache.remove(interleave);
+        List<SPattern> relevant = relevantCache.remove(interleave);
         if(relevant == null)relevant = sortingSubtreeAnalyser.getRelevant(children);
         
         if(!relevant.isEmpty()){
@@ -218,9 +219,9 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         if(oldGroupContext) groupContext = oldGroupContext;
         interleaveContext = false;
 	}
-	public void visit(AGroup group){
+	public void visit(SGroup group){
 	    if(group.getMinOccurs() == 0) return;		
-		APattern[] children = group.getChildren();
+		SPattern[] children = group.getChildren();
 		
         boolean oldChoiceContext = choiceContext;            
         if(choiceContext) choiceContext = false;     
@@ -228,7 +229,7 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         boolean oldInterleaveContext = interleaveContext;
         if(groupContext) interleaveContext = false;
         
-        List<APattern> relevant = relevantCache.remove(group);
+        List<SPattern> relevant = relevantCache.remove(group);
         if(relevant == null)relevant = subtreeAnalyser.getRelevant(children);
         
         if(!relevant.isEmpty()){
@@ -240,20 +241,20 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         groupContext = false;
         if(oldInterleaveContext) interleaveContext = oldInterleaveContext;
 	}
-	public void visit(AListPattern list){
+	public void visit(SListPattern list){
 	    if(list.getMinOccurs() == 0) return;
 		comparableSubtree.add(list.functionalEquivalenceCode());
 	}	
-	public void visit(AEmpty empty){}
-	public void visit(AText text){}
-	public void visit(ANotAllowed notAllowed){
+	public void visit(SEmpty empty){}
+	public void visit(SText text){}
+	public void visit(SNotAllowed notAllowed){
 	    throw new IllegalStateException();
 	}
-	public void visit(ARef ref){	
+	public void visit(SRef ref){	
 	    if(ref.getMinOccurs() == 0) return;
-	    APattern child = ref.getChild();
+	    SPattern child = ref.getChild();
 	    if(child != null){
-	        List<APattern> relevant = relevantCache.get(ref);
+	        List<SPattern> relevant = relevantCache.get(ref);
             if(relevant == null){
                 relevant = subtreeAnalyser.getRelevant(child);
                 relevantCache.put(ref, relevant);
@@ -263,47 +264,49 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
 	        comparableSubtree.add(ref.functionalEquivalenceCode());
 	    }
 	}
-	public void visit(AValue value){
+	public void visit(SValue value){
 	    if(value.getMinOccurs() == 0) return;
 	    comparableSubtree.add(value.functionalEquivalenceCode());
 	}
-	public void visit(AData data){
+	public void visit(SData data){
 	    if(data.getMinOccurs() == 0) return;
 		comparableSubtree.add(data.functionalEquivalenceCode());
 	}	
-	public void visit(AGrammar grammar){
+	public void visit(SGrammar grammar){
 	    if(grammar.getMinOccurs() == 0) return;
-		ActiveComponent child = grammar.getChild();
+		SimplifiedComponent child = grammar.getChild();
 		child.accept(this);
 	}
+	public void visit(SDummy dummy){
+        throw new IllegalStateException();
+    }	
 		
-		
-	protected void next(ActiveComponent[] children){
-		for(ActiveComponent child : children){			
+	protected void next(SimplifiedComponent[] children){
+		for(SimplifiedComponent child : children){			
 			child.accept(this);
 		}
 	}
 	
-	void next(List<APattern> relevantPatterns){
-		for(APattern pattern : relevantPatterns){			
+	void next(List<SPattern> relevantPatterns){
+		for(SPattern pattern : relevantPatterns){			
 			pattern.accept(this);
 		}
 	}
 	
-	class SubtreeAnalyser extends AbstractActiveComponentVisitor{
-        ArrayList<APattern> relevant;
+	class SubtreeAnalyser extends AbstractSimplifiedComponentVisitor{
+        ArrayList<SPattern> relevant;
         SubtreeAnalyser subtreeAnalyser;
         
         SubtreeAnalyser(){}
         
-        List<APattern> getRelevant(APattern pattern){
-            relevant = new ArrayList<APattern>();
+        List<SPattern> getRelevant(SPattern pattern){
+            relevant = new ArrayList<SPattern>();
             pattern.accept(this);
             return relevant;
         }
         
-        List<APattern> getRelevant(APattern[] patterns){
-            relevant = new ArrayList<APattern>();
+        List<SPattern> getRelevant(SPattern[] patterns){
+            relevant = new ArrayList<SPattern>();
             for(int i = 0; i < patterns.length; i++){
                 patterns[i].accept(this);
             }        
@@ -311,21 +314,21 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         }
         
         
-        public void visit(AExceptPattern exceptAPattern){
+        public void visit(SExceptPattern exceptSPattern){
             throw new IllegalStateException();
         }
 
         
         
-        public void visit(AElement element){		
+        public void visit(SElement element){		
             if(element.getMinOccurs() == 0) return;
             relevant.add(element);
         }	
-        public void visit(AAttribute attribute){
+        public void visit(SAttribute attribute){
             if(attribute.getMinOccurs() == 0) return;
             relevant.add(attribute);
         }
-        public void visit(AChoicePattern choice){
+        public void visit(SChoicePattern choice){
             if(! choice.isRequiredContent()) return;
             if(!choiceContext){
                 relevant.add(choice);
@@ -333,7 +336,7 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
                 next(choice.getChildren());
             }            
         }
-        public void visit(AInterleave interleave){
+        public void visit(SInterleave interleave){
             if(interleave.getMinOccurs() == 0) return;
             if(!interleaveContext){
                 relevant.add(interleave);
@@ -341,7 +344,7 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
                 next(interleave.getChildren());
             }
         }
-        public void visit(AGroup group){
+        public void visit(SGroup group){
             if(group.getMinOccurs() == 0) return;
             if(!groupContext){
                 relevant.add(group);
@@ -349,20 +352,23 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
                 next(group.getChildren());
             }        
         }
-        public void visit(AListPattern list){
+        public void visit(SListPattern list){
             if(list.getMinOccurs() == 0) return;
             relevant.add(list);
         }	
-        public void visit(AEmpty empty){}
-        public void visit(AText text){}
-        public void visit(ANotAllowed notAllowed){
+        public void visit(SEmpty empty){}
+        public void visit(SText text){}
+        public void visit(SNotAllowed notAllowed){
             throw new IllegalStateException();
         }
-        public void visit(ARef ref){	
+        public void visit(SDummy dummy){
+            throw new IllegalStateException();
+        }
+        public void visit(SRef ref){	
             if(ref.getMinOccurs() == 0) return;
-            APattern child = ref.getChild();
+            SPattern child = ref.getChild();
             if(child != null){
-                List<APattern> relevant = relevantCache.get(ref);
+                List<SPattern> relevant = relevantCache.get(ref);
                 if(relevant == null){
                     if(subtreeAnalyser == null) subtreeAnalyser = new SubtreeAnalyser();
                     relevant = subtreeAnalyser.getRelevant(child);
@@ -373,35 +379,35 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
                 relevant.add(ref);
             }
         }
-        public void visit(AValue value){
+        public void visit(SValue value){
             if(value.getMinOccurs() == 0) return;
             relevant.add(value);
         }
-        public void visit(AData data){
+        public void visit(SData data){
             if(data.getMinOccurs() == 0) return;
             relevant.add(data);
         }	
-        public void visit(AGrammar grammar){
+        public void visit(SGrammar grammar){
             if(grammar.getMinOccurs() == 0) return;
-            ActiveComponent child = grammar.getChild();
+            SimplifiedComponent child = grammar.getChild();
             child.accept(this);
         }
     }
     
     class SortingSubtreeAnalyser extends SubtreeAnalyser{
-        Comparator<APattern> patternComparator;
+        Comparator<SPattern> patternComparator;
         
         SortingSubtreeAnalyser(){
             super();
             patternComparator = new PatternComparator(); 
         }
         
-        List<APattern> getRelevant(APattern pattern){
+        List<SPattern> getRelevant(SPattern pattern){
             throw new IllegalStateException();
         }
         
-        List<APattern> getRelevant(APattern[] patterns){
-            relevant = new ArrayList<APattern>();
+        List<SPattern> getRelevant(SPattern[] patterns){
+            relevant = new ArrayList<SPattern>();
             for(int i = 0; i < patterns.length; i++){
                 patterns[i].accept(this);
             }
@@ -410,34 +416,34 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
         }        
     }
     
-    class PatternComparator implements Comparator<APattern>{
+    class PatternComparator implements Comparator<SPattern>{
         SortingSubtreeAnalyser sortingSubtreeAnalyser;
-        Comparator<APattern> patternComparator;
+        Comparator<SPattern> patternComparator;
         SubtreeAnalyser subtreeAnalyser;
         
-        public int compare(APattern p1, APattern p2){
+        public int compare(SPattern p1, SPattern p2){
             int id1;        
-            if(p1 instanceof AGroup)id1 = MissingContentAnalyser.GROUP;
-            else if(p1 instanceof AChoicePattern)id1 = MissingContentAnalyser.CHOICE;
-            else if(p1 instanceof AInterleave)id1 = MissingContentAnalyser.INTERLEAVE;
+            if(p1 instanceof SGroup)id1 = MissingContentAnalyser.GROUP;
+            else if(p1 instanceof SChoicePattern)id1 = MissingContentAnalyser.CHOICE;
+            else if(p1 instanceof SInterleave)id1 = MissingContentAnalyser.INTERLEAVE;
             else id1 = p1.functionalEquivalenceCode();
             
             
             int id2;        
-            if(p2 instanceof AGroup){
+            if(p2 instanceof SGroup){
                 id2 = MissingContentAnalyser.GROUP;
                 if(id1 == id2){
-                    return compare((AGroup)p1, (AGroup)p2);
+                    return compare((SGroup)p1, (SGroup)p2);
                 }
-            }else if(p2 instanceof AChoicePattern){
+            }else if(p2 instanceof SChoicePattern){
                 id2 = MissingContentAnalyser.CHOICE;
                 if(id1 == id2){
-                    return compare((AChoicePattern)p1, (AChoicePattern)p2);
+                    return compare((SChoicePattern)p1, (SChoicePattern)p2);
                 }
-            }else if(p2 instanceof AInterleave){
+            }else if(p2 instanceof SInterleave){
                 id2 = MissingContentAnalyser.INTERLEAVE;
                 if(id1 == id2){
-                    return compare((AInterleave)p1, (AInterleave)p2);
+                    return compare((SInterleave)p1, (SInterleave)p2);
                 }
             }else{
                 id2 = p2.functionalEquivalenceCode();
@@ -446,13 +452,13 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
             return (id1 < id2 ? -1 : (id1 == id2 ? 0 : 1));
         }
         
-        private int compare(AGroup g1, AGroup g2){
+        private int compare(SGroup g1, SGroup g2){
             if(subtreeAnalyser == null) subtreeAnalyser = new SubtreeAnalyser();
             if(patternComparator == null) patternComparator= new PatternComparator();
         
-            List<APattern> sg1 = subtreeAnalyser.getRelevant(g1.getChildren());
+            List<SPattern> sg1 = subtreeAnalyser.getRelevant(g1.getChildren());
             relevantCache.put(g1, sg1);
-            List<APattern> sg2 = subtreeAnalyser.getRelevant(g2.getChildren());
+            List<SPattern> sg2 = subtreeAnalyser.getRelevant(g2.getChildren());
             relevantCache.put(g2, sg2);
             if(sg1.size() < sg2.size()){
                 for(int i = 0; i < sg1.size(); i++){
@@ -475,13 +481,13 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
             }
         }
         
-        private int compare(AInterleave i1, AInterleave i2){
+        private int compare(SInterleave i1, SInterleave i2){
             if(sortingSubtreeAnalyser == null) sortingSubtreeAnalyser = new SortingSubtreeAnalyser();
             if(patternComparator == null) patternComparator= new PatternComparator();
         
-            List<APattern> si1 = sortingSubtreeAnalyser.getRelevant(i1.getChildren());
+            List<SPattern> si1 = sortingSubtreeAnalyser.getRelevant(i1.getChildren());
             relevantCache.put(i1, si1);
-            List<APattern> si2 = sortingSubtreeAnalyser.getRelevant(i2.getChildren());
+            List<SPattern> si2 = sortingSubtreeAnalyser.getRelevant(i2.getChildren());
             relevantCache.put(i2, si2);
             if(si1.size() < si2.size()){
                 for(int i = 0; i < si1.size(); i++){
@@ -504,14 +510,14 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
             }
         }
         
-        private int compare(AChoicePattern c1, AChoicePattern c2){
+        private int compare(SChoicePattern c1, SChoicePattern c2){
             if(sortingSubtreeAnalyser == null) sortingSubtreeAnalyser = new SortingSubtreeAnalyser();
             if(patternComparator == null) patternComparator= new PatternComparator();
             
             
-            List<APattern> sc1 = sortingSubtreeAnalyser.getRelevant(c1.getChildren());
+            List<SPattern> sc1 = sortingSubtreeAnalyser.getRelevant(c1.getChildren());
             relevantCache.put(c1, sc1);
-            List<APattern> sc2 = sortingSubtreeAnalyser.getRelevant(c2.getChildren());
+            List<SPattern> sc2 = sortingSubtreeAnalyser.getRelevant(c2.getChildren());
             relevantCache.put(c2, sc2);
             if(sc1.size() < sc2.size()){
                 for(int i = 0; i < sc1.size(); i++){
@@ -536,34 +542,34 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
     }
     
     class CacheMap{
-        HashMap<APattern, List<APattern>> compositorRelevantCache;
+        HashMap<SPattern, List<SPattern>> compositorRelevantCache;
         IntList refDefinitionIndexes;
-        ArrayList<List<APattern>> refRelevantContent;
+        ArrayList<List<SPattern>> refRelevantContent;
         
         CacheMap(){
-            compositorRelevantCache = new HashMap<APattern, List<APattern>>();
+            compositorRelevantCache = new HashMap<SPattern, List<SPattern>>();
             refDefinitionIndexes = new IntList();
-            refRelevantContent = new ArrayList<List<APattern>>();
+            refRelevantContent = new ArrayList<List<SPattern>>();
         }
         
-        void put(ARef ref, List<APattern> list){
+        void put(SRef ref, List<SPattern> list){
             refDefinitionIndexes.add(ref.getDefinitionIndex());
             refRelevantContent.add(list);
         }
         
-        void put(AGroup group, List<APattern> list){
+        void put(SGroup group, List<SPattern> list){
             compositorRelevantCache.put(group, list);
         }
         
-        void put(AInterleave interleave, List<APattern> list){
+        void put(SInterleave interleave, List<SPattern> list){
             compositorRelevantCache.put(interleave, list);
         }
         
-        void put(AChoicePattern choicePattern, List<APattern> list){
+        void put(SChoicePattern choicePattern, List<SPattern> list){
             compositorRelevantCache.put(choicePattern, list);
         }
         
-        List<APattern> get(ARef ref){
+        List<SPattern> get(SRef ref){
             int refIndex = ref.getDefinitionIndex();
             for(int i = 0; i < refDefinitionIndexes.size(); i++){
                 if(refIndex == refDefinitionIndexes.get(i)){
@@ -573,19 +579,19 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
             return null;
         }
         
-        List<APattern> get(AGroup group){
+        List<SPattern> get(SGroup group){
             return compositorRelevantCache.get(group);
         }
         
-        List<APattern> get(AInterleave interleave){
+        List<SPattern> get(SInterleave interleave){
             return compositorRelevantCache.get(interleave);
         }
         
-        List<APattern> get(AChoicePattern choicePattern){
+        List<SPattern> get(SChoicePattern choicePattern){
             return compositorRelevantCache.get(choicePattern);
         }
         
-        List<APattern> remove(ARef ref){
+        List<SPattern> remove(SRef ref){
             int refIndex = ref.getDefinitionIndex();
             for(int i = 0; i < refDefinitionIndexes.size(); i++){
                 if(refIndex == refDefinitionIndexes.get(i)){
@@ -596,15 +602,15 @@ public class MissingContentAnalyser extends AbstractActiveComponentVisitor{
             return null;
         }
         
-        List<APattern> remove(AGroup group){
+        List<SPattern> remove(SGroup group){
             return compositorRelevantCache.remove(group);
         }
         
-        List<APattern> remove(AInterleave interleave){
+        List<SPattern> remove(SInterleave interleave){
             return compositorRelevantCache.remove(interleave);
         }
         
-        List<APattern> remove(AChoicePattern choicePattern){
+        List<SPattern> remove(SChoicePattern choicePattern){
             return compositorRelevantCache.remove(choicePattern);
         }
         

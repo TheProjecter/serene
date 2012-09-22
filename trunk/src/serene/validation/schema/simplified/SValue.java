@@ -16,11 +16,22 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
 import org.xml.sax.SAXException;
 
 import org.relaxng.datatype.Datatype;
 
 import serene.bind.util.DocumentIndexedData;
+
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.ListPatternMatchPath;
+import serene.validation.handlers.match.TextMatchPath;
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
+
 
 public class SValue extends SNoChildrenPattern{
 	String ns;
@@ -45,6 +56,22 @@ public class SValue extends SNoChildrenPattern{
 		parent.setAllowsValues();
 	}
 	
+	void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){
+        ValueMatchPath mp = matchPathPool.getValueMatchPath();
+        mp.addValue(this);
+        valueMatchPathes.add(mp);
+    }
+	void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, MatchPathPool matchPathPool){            
+ 	    ValueMatchPath mp = matchPathPool.getValueMatchPath();
+        mp.addValue(this);
+        valueMatchPathes.add(mp);
+    }
+    void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, MatchPathPool matchPathPool){
+        ValueMatchPath mp = matchPathPool.getValueMatchPath();
+        mp.addValue(this);
+        valueMatchPathes.add(mp);
+    }
+    
 	boolean isElementContent(){
         return false;
     }
@@ -87,6 +114,9 @@ public class SValue extends SNoChildrenPattern{
 		v.visit(this);
 	}	
 	public void accept(RestrictingVisitor v) throws SAXException{
+		v.visit(this);
+	}
+	public void accept(SimplifiedRuleVisitor v){
 		v.visit(this);
 	}
 	public String toString(){

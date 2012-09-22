@@ -21,8 +21,7 @@ import serene.validation.schema.simplified.SAttribute;
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.ActiveGrammarModel;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
-import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 class CompatibilityControlAttribute extends AAttribute{
     
@@ -31,10 +30,8 @@ class CompatibilityControlAttribute extends AAttribute{
     }
     
     void init(ActiveGrammarModel grammarModel,
-				/*ValidatorStackHandlerPool stackHandlerPool,*/
-				ActiveModelRuleHandlerPool ruleHandlerPool){
+				ValidatorRuleHandlerPool ruleHandlerPool){
         this.grammarModel = grammarModel;
-        /*this.stackHandlerPool = stackHandlerPool;*/
         this.ruleHandlerPool = ruleHandlerPool;
     }
     

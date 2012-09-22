@@ -31,8 +31,8 @@ import serene.validation.schema.active.ActiveGrammarModel;
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
-import serene.validation.handlers.structure.impl.AttributeHandler;
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
@@ -51,7 +51,7 @@ public class AAttribute extends MarkupAPattern{
 	        Identifier identifier,
 				ActiveGrammarModel grammarModel,
 				/*ValidatorStackHandlerPool stackHandlerPool,*/
-				ActiveModelRuleHandlerPool ruleHandlerPool,
+				ValidatorRuleHandlerPool ruleHandlerPool,
 				SAttribute sattribute){		
 		super(index,
 		        identifier,
@@ -140,9 +140,9 @@ public class AAttribute extends MarkupAPattern{
 	
 	//Type
 	//--------------------------------------------------------------------------
-	public AttributeHandler getStructureHandler(ErrorCatcher errorCatcher, StackHandler stackHandler){
-		return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);
-	}
+	/*public AttributeHandler getStructureHandler(ErrorCatcher errorCatcher, StackHandler stackHandler){
+		return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);
+	}*/
 	
 	//StackHandler getStackHandler(ErrorCatcher ec) super
 	//StackHandler getStackHandler(StackHandler originalHandler, int candidatesCount, ErrorCatcher errorCatcher) super
@@ -199,21 +199,21 @@ public class AAttribute extends MarkupAPattern{
 	
 		
 	
-	public AttributeHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
+	/*public AttributeHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		/*return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
-	}
+		/*return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*//*
+	}*/
 		
-	public MinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
+	/*public MinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
-	}
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*//*
+	}*/
 	
-	public MaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
+	/*public MaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*//*
 	}
-	
+	*/
 	public String toString(){
 		String s = "AAttribute "+identifier+" "+index+ " min "+getMinOccurs()+" max "+getMaxOccurs();		
 		return s;

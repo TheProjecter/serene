@@ -33,6 +33,10 @@ import serene.validation.handlers.conflict.UnsynchronizedConflictHandlerPool;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
+import serene.validation.handlers.structure.RuleHandlerPool;
+import serene.validation.handlers.structure.SynchronizedRuleHandlerPool;
+import serene.validation.handlers.structure.UnsynchronizedRuleHandlerPool;
+
 import serene.validation.handlers.error.ErrorHandlerPool;
 import serene.validation.handlers.error.SynchronizedErrorHandlerPool;
 import serene.validation.handlers.error.UnsynchronizedErrorHandlerPool;
@@ -50,6 +54,7 @@ public abstract class BaseSchema extends Schema{
 	protected ErrorHandlerPool errorHandlerPool;
 	protected StackHandlerPool stackHandlerPool;
 	protected ConflictHandlerPool conflictHandlerPool;
+	protected RuleHandlerPool ruleHandlerPool;
 	
     public BaseSchema(boolean secureProcessing,
                     boolean optimizedForResourceSharing,
@@ -63,11 +68,13 @@ public abstract class BaseSchema extends Schema{
             errorHandlerPool = SynchronizedErrorHandlerPool.getInstance();
             stackHandlerPool = SynchronizedStackHandlerPool.getInstance();
             conflictHandlerPool = SynchronizedConflictHandlerPool.getInstance();
+            ruleHandlerPool = SynchronizedRuleHandlerPool.getInstance();
         }else{
             contentHandlerPool = UnsynchronizedContentHandlerPool.getInstance();
             errorHandlerPool = UnsynchronizedErrorHandlerPool.getInstance();
             stackHandlerPool = UnsynchronizedStackHandlerPool.getInstance();
             conflictHandlerPool = UnsynchronizedConflictHandlerPool.getInstance();
+            ruleHandlerPool = UnsynchronizedRuleHandlerPool.getInstance();
         }
     }    
 }

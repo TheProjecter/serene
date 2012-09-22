@@ -35,6 +35,12 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 	
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
@@ -94,116 +100,116 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
 	}
 	
 	
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int[] inputRecordIndex, SPattern[] sourceDefinition, SPattern reper){
 		messageHandler.misplacedContent(contextDefinition, startInputRecordIndex, definition, inputRecordIndex, sourceDefinition, reper);
 	}
 	
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int inputRecordIndex, SPattern sourceDefinition, SPattern reper){
 		messageHandler.misplacedContent(contextDefinition, startInputRecordIndex, definition, inputRecordIndex, sourceDefinition, reper);
 	}
 	
-	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){
+	public void excessiveContent(SRule context, int startInputRecordIndex, SPattern excessiveDefinition, int[] inputRecordIndex){
 		messageHandler.excessiveContent(context, startInputRecordIndex, excessiveDefinition, inputRecordIndex);
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
+	public void excessiveContent(SRule context, SPattern excessiveDefinition, int inputRecordIndex){
 		messageHandler.excessiveContent(context, excessiveDefinition, inputRecordIndex);
 	}
 	
-	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
+	public void missingContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found, int[] inputRecordIndex){
 		messageHandler.missingContent(context, startInputRecordIndex, definition, expected, found, inputRecordIndex);
 	}
 	
-	public void illegalContent(Rule context, int startInputRecordIndex){
+	public void illegalContent(SRule context, int startInputRecordIndex){
 		messageHandler.illegalContent(context, startInputRecordIndex);
 	}
 	
-	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 		messageHandler.unresolvedAmbiguousElementContentError(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 		messageHandler.unresolvedUnresolvedElementContentError(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, SAttribute[] possibleDefinitions){
 		messageHandler.unresolvedAttributeContentError(inputRecordIndex, possibleDefinitions);
 	}
 	
 
-	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 		messageHandler.ambiguousUnresolvedElementContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 		messageHandler.ambiguousAmbiguousElementContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, SAttribute[] possibleDefinitions){
 		messageHandler.ambiguousAttributeContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 		messageHandler.ambiguousCharacterContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 		messageHandler.ambiguousAttributeValueWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		messageHandler.characterContentDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}
-	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void attributeValueDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		messageHandler.attributeValueDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}
 	
-	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, SValue charsDefinition){
 		messageHandler.characterContentValueError(inputRecordIndex, charsDefinition);
 	}
-	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
+	public void attributeValueValueError(int inputRecordIndex, SValue charsDefinition){
 		messageHandler.attributeValueValueError(inputRecordIndex, charsDefinition);
 	}
 	
-	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void characterContentExceptedError(int inputRecordIndex, SData charsDefinition){
 		messageHandler.characterContentExceptedError(inputRecordIndex, charsDefinition);
 	}	
-	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, SData charsDefinition){
 		messageHandler.attributeValueExceptedError(inputRecordIndex, charsDefinition);
 	}
 	
-	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
 		messageHandler.unexpectedCharacterContent(inputRecordIndex, elementDefinition);
 	}	
 	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
 		messageHandler.unexpectedAttributeValue(inputRecordIndex, attributeDefinition);
 	}
 	
-	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, SPattern[] possibleDefinitions){
 		messageHandler.unresolvedCharacterContent(inputRecordIndex, possibleDefinitions);
 	}
-	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int inputRecordIndex, SPattern[] possibleDefinitions){
 		messageHandler.unresolvedAttributeValue(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		messageHandler.listTokenDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}
-	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
+	public void listTokenValueError(int inputRecordIndex, SValue charsDefinition){
 		messageHandler.listTokenValueError(inputRecordIndex, charsDefinition);
 	}
-	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void listTokenExceptedError(int inputRecordIndex, SData charsDefinition){
 		messageHandler.listTokenExceptedError(inputRecordIndex, charsDefinition);
 	}
     
-    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int inputRecordIndex, SPattern[] possibleDefinitions){
         messageHandler.unresolvedListTokenInContextError(inputRecordIndex, possibleDefinitions);
     }    
-	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
         messageHandler.ambiguousListTokenInContextWarning(inputRecordIndex, possibleDefinitions);
     }
 	
-	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
+	public void missingCompositorContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found){
 		messageHandler.missingCompositorContent(context, startInputRecordIndex, definition, expected, found);
 	}
     
@@ -216,7 +222,7 @@ public class ValidationErrorHandler extends AbstractContextErrorHandler{
 		messageHandler.conflict(conflictResolutionId, commonMessages, candidatesCount, disqualified, candidateMessages);
     }
     
-	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
+	public void handle(int contextType, String qName, SElement definition, boolean restrictToFileName, Locator locator)
 				throws SAXException{
         messageHandler.report(contextType, qName, definition, restrictToFileName, locator, errorDispatcher);
 		messageHandler.clear(this);

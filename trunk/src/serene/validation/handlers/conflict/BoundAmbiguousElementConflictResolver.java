@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 import org.xml.sax.SAXException;
 
-import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.simplified.SElement;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.MessageReporter;
@@ -53,7 +53,7 @@ public class BoundAmbiguousElementConflictResolver extends BoundElementConflictR
                 errorCatcher.internalConflict(conflictMessageReporter);
             }
             
-            AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
+            SElement[] definitions = candidateDefinitions.toArray(new SElement[candidateDefinitions.size()]);
             errorCatcher.unresolvedAmbiguousElementContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             
             closeReservation();			
@@ -78,7 +78,7 @@ public class BoundAmbiguousElementConflictResolver extends BoundElementConflictR
                     i--;
                 }
             }   
-            AElement[] definitions = candidateDefinitions.toArray(new AElement[candidateDefinitions.size()]);
+            SElement[] definitions = candidateDefinitions.toArray(new SElement[candidateDefinitions.size()]);
             errorCatcher.ambiguousAmbiguousElementContentWarning(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
             
             closeReservation();

@@ -18,16 +18,40 @@ package serene.validation.schema.simplified;
 
 import serene.bind.util.DocumentIndexedData;
 
-abstract class SRule extends SComponent implements SimplifiedComponent{
+public abstract class SRule extends SComponent implements SimplifiedComponent{
     public static final int UNBOUNDED = -1;
 	SRule parent;
-	public SRule(int recordIndex, DocumentIndexedData documentIndexedData){
+	SRule(int recordIndex, DocumentIndexedData documentIndexedData){
 		super(recordIndex, documentIndexedData);
 	}
 	
+	public abstract void accept(SimplifiedRuleVisitor v);
+	
+	public int functionalEquivalenceCode(){
+        return hashCode();
+    } 
 	public SRule getParent(){		 
 		return parent;				
 	}
+	public abstract int getChildrenCount();
+	public abstract SPattern getChild(int childIndex);
+	
+	abstract public boolean isRequired();
+	public abstract boolean isChildRequired(int childIndex);
+	
+	public boolean specifiesOrder(){
+	    return false;
+	}
+	public boolean specifiesInterleaving(){
+	    return false;
+	}
+	public boolean isIntermediary(){
+	    return false;
+	}
+	public boolean hasMultipleCardinality(){
+	    return false;
+	}
+	
 	void setParent(SRule parent, int childIndex){		 
 		this.parent = parent;				
 		this.childIndex = childIndex;

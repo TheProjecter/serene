@@ -16,8 +16,8 @@ limitations under the License.
 
 package serene.validation.handlers.structure;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.APattern;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
 
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.StackConflictsHandler;
@@ -25,7 +25,7 @@ import serene.validation.handlers.conflict.StackConflictsHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 
 
-public interface CardinalityHandler extends RuleHandler{
+public interface CardinalityHandler{
 	final static int NO_OCCURRENCE = 0;
 	final static int OPEN = 1;
 	final static int SATISFIED_NEVER_SATURATED = 2;
@@ -38,10 +38,10 @@ public interface CardinalityHandler extends RuleHandler{
 	void handleOccurrence(int inputRecordIndex);		
 	void handleOccurrence(StackConflictsHandler stackConflictsHandler, InternalConflictResolver resolver);
 	void handleOccurrence(StackConflictsHandler stackConflictsHandler);
-	void reportExcessive(Rule context, int startInputRecordIndex);
-	void reportMissing(Rule context, int startInputRecordIndex);
+	void reportExcessive(SRule context, int startInputRecordIndex);
+	void reportMissing(SRule context, int startInputRecordIndex);
 	
-	CardinalityHandler getCopy(ChildEventHandler childEventHandler, ErrorCatcher errorCatcher);
+	/*CardinalityHandler getCopy(ChildEventHandler childEventHandler, ErrorCatcher errorCatcher);
 	
-	CardinalityHandler getOriginal();
+	CardinalityHandler getOriginal();*/
 }

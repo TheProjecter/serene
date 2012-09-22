@@ -16,6 +16,12 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
+
 public interface AttributesType extends Type{
+    void setAttributeContentMatchPathes(String ns, String name, List<AttributeMatchPath> pathes, MatchPathPool matchPathPool);
 	boolean allowsAttributes();
 }

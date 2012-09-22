@@ -23,8 +23,10 @@ import serene.validation.schema.active.components.AAttribute;
 
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
+import serene.validation.handlers.match.AttributeMatchPath;
+
 interface AttributeContentTypeHandler{
-    void addAttribute(AAttribute attribute);
-	void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
-	void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
+    void addAttribute(AttributeMatchPath attributeMatchPath);
+	void addAttribute(List<AttributeMatchPath> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage);
+	void addAttribute(List<AttributeMatchPath> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage);
 }

@@ -23,9 +23,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 
-import serene.validation.schema.active.Rule;
-import serene.validation.schema.active.components.ActiveTypeItem;
-import serene.validation.schema.active.components.AGroup;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SMultipleChildrenPattern;
 
 import serene.validation.handlers.structure.RuleHandler;
 import serene.validation.handlers.structure.StructureHandler;
@@ -36,12 +36,12 @@ import serene.util.ObjectIntHashMap;
 
 public class StackConflictsHandler implements InternalConflictDescriptor{
 			
-	HashSet<ActiveTypeItem> activeTypeItems;
+	HashSet<SPattern> activeTypeItems;
 	
 	HashSet<RuleHandler> ruleHandlers;
-	HashSet<AGroup> groups;
+	HashSet<SMultipleChildrenPattern> groups;
 		
-	HashMap<Rule, Set<InternalConflictResolver>> handledResolvers;	
+	HashMap<SRule, Set<InternalConflictResolver>> handledResolvers;	
 	HashMap<InternalConflictResolver, IntList> handledIndexes;
 	
 	ArrayList<InternalConflictResolver> removable;
@@ -50,12 +50,12 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 	ObjectIntHashMap ruleDisqualifiersCount; 
 
 	public StackConflictsHandler(){		
-		activeTypeItems = new HashSet<ActiveTypeItem>();
+		activeTypeItems = new HashSet<SPattern>();
 		
 		ruleHandlers = new HashSet<RuleHandler>();
-		groups = new HashSet<AGroup>();
+		groups = new HashSet<SMultipleChildrenPattern>();
 		
-		handledResolvers = new HashMap<Rule, Set<InternalConflictResolver>>();
+		handledResolvers = new HashMap<SRule, Set<InternalConflictResolver>>();
 	
 		handledIndexes = new HashMap<InternalConflictResolver, IntList>();
 
@@ -68,8 +68,8 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 		ruleHandlers.addAll(other.ruleHandlers);
 		groups.addAll(other.groups);
 		
-		Set<Rule> otherRules = other.handledResolvers.keySet();
-		for(Rule rule : otherRules){
+		Set<SRule> otherRules = other.handledResolvers.keySet();
+		for(SRule rule : otherRules){
 			Set<InternalConflictResolver> resolvers = other.handledResolvers.get(rule);
 			if(resolvers != null){
 				handledResolvers.put(rule, new HashSet<InternalConflictResolver>(resolvers));
@@ -106,7 +106,7 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 		ruleDisqualifiersCount.clear();
 	}
 		
-	boolean addRuleResolver(Rule rule, InternalConflictResolver resolver){
+	boolean addRuleResolver(SRule rule, InternalConflictResolver resolver){
 		if(handledResolvers.containsKey(rule)){
 			Set<InternalConflictResolver> resolvers = handledResolvers.get(rule);
 			if(resolvers == null){
@@ -123,7 +123,7 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 		}
 	}
 	
-	void addRuleHandler(Rule rule, RuleHandler rh){
+	void addRuleHandler(SRule rule, RuleHandler rh){
 		if(!ruleHandlers.contains(rh)){
 			ruleHandlers.add(rh);
 			ruleDisqualifiersCount.put(rule, (1+ruleDisqualifiersCount.get(rule)));
@@ -131,7 +131,7 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 	}
 	
 	//once from candidateStackHandler at shift	
-	public void record(ActiveTypeItem item, InternalConflictResolver resolver, int candidateIndex){
+	public void record(SPattern item, InternalConflictResolver resolver, int candidateIndex){
 		//System.out.println(hashCode()+" RECORD ITEM "+" "+item);
 		activeTypeItems.add(item);
 		
@@ -149,14 +149,14 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 	// only the rules from the innerPath of the conflict are added here, no items
 	// the activeTypeItems are always added as particleHandlers
 	// from candidateStackHandler at activatePath()
-	public boolean record(Rule rule, RuleHandler rh, InternalConflictResolver resolver){
+	public boolean record(SRule rule, RuleHandler rh, InternalConflictResolver resolver){
 		//System.out.println(hashCode()+" RECORD STR "+" "+sh);		
 		addRuleHandler(rule, rh);
 		return addRuleResolver(rule, resolver);
 	}
 	
 	
-	public boolean record(Rule rule, AGroup group, InternalConflictResolver resolver){
+	public boolean record(SRule rule, SMultipleChildrenPattern group, InternalConflictResolver resolver){
 		//System.out.println(hashCode()+" RECORD STR "+" "+sh);
 		if(groups.add(group)){
 			ruleDisqualifiersCount.put(rule, (1+ruleDisqualifiersCount.get(rule)));
@@ -164,13 +164,13 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 		return addRuleResolver(rule, resolver);
 	}
 	
-	public void record(Rule rule, RuleHandler rh){		
+	public void record(SRule rule, RuleHandler rh){		
 		addRuleHandler(rule, rh);
 	}	
 	
 	public void close(RuleHandler ruleHandler){
 		if(ruleHandlers.remove(ruleHandler)){
-			Rule rule = ruleHandler.getRule();
+			SRule rule = ruleHandler.getRule();
 			ruleDisqualifiersCount.put(rule, (ruleDisqualifiersCount.get(rule)-1));
 			if(ruleDisqualifiersCount.get(rule) == 0){
 				handledResolvers.put(rule, null);
@@ -178,10 +178,10 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 		}				
 	}
 	
-	public void close(AGroup group){
+	public void close(SMultipleChildrenPattern group){
 		if(groups.remove(group)){
-			Rule[] rules = group.getChildren();
-			for(Rule rule : rules){
+			SRule[] rules = group.getChildren();
+			for(SRule rule : rules){
 				ruleDisqualifiersCount.put(rule, (ruleDisqualifiersCount.get(rule)-1));
 				if(ruleDisqualifiersCount.get(rule) == 0){
 					handledResolvers.put(rule, null);
@@ -190,18 +190,18 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 		}				
 	}
 	
-	public boolean isConflictActiveTypeItem(ActiveTypeItem item){
+	public boolean isConflictTypeItem(SPattern item){
 		return activeTypeItems.contains(item);
 	}
 	
-	public boolean isConflictPathRule(Rule rule){
+	public boolean isConflictPathRule(SRule rule){
 		return !activeTypeItems.contains(rule)
 				&& (handledResolvers.containsKey(rule));		
 		// TODO here the rules that have been disqualified or inactivated might be missing
 		// functionally not important, but might need a look
 	}
 	
-	public boolean isConflictRule(Rule rule){
+	public boolean isConflictRule(SRule rule){
 		//System.out.println(hashCode()+" IS CONFLICT RULE "+rule);
 		//System.out.println("items "+activeTypeItems);
 		//System.out.println("strH "+handledResolvers.keySet());
@@ -223,7 +223,7 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 		return handledIndexes.isEmpty();
 	}
 	
-	public void disqualify(Rule definition){
+	public void disqualify(SRule definition){
 		// remove value from structureHandlers and particleHandlers
 		// for every active conflict resolver:
 		// remove mappings from handledConflicts
@@ -240,8 +240,8 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 	
 	
 	public void transferResolversFrom(StackConflictsHandler other){
-		Set<Rule> rules = handledResolvers.keySet();
-		for(Rule rule : rules){
+		Set<SRule> rules = handledResolvers.keySet();
+		for(SRule rule : rules){
 			Set<InternalConflictResolver> otherResolvers = other.getHandledResolvers(rule);
 			if(otherResolvers != null){
 				Set<InternalConflictResolver> resolvers = handledResolvers.get(rule);
@@ -276,7 +276,7 @@ public class StackConflictsHandler implements InternalConflictDescriptor{
 		}	
 	}
 	
-	private Set<InternalConflictResolver> getHandledResolvers(Rule rule){
+	private Set<InternalConflictResolver> getHandledResolvers(SRule rule){
 		return handledResolvers.get(rule);
 	}
 	

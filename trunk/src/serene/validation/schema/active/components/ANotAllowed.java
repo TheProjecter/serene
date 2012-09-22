@@ -30,11 +30,11 @@ import serene.validation.handlers.structure.MaximalReduceHandler;
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public class ANotAllowed extends NoChildrenAPattern{
 	SNotAllowed snotAllowed;
-	public ANotAllowed(ActiveModelRuleHandlerPool ruleHandlerPool, SNotAllowed snotAllowed){
+	public ANotAllowed(ValidatorRuleHandlerPool ruleHandlerPool, SNotAllowed snotAllowed){
 		super(ruleHandlerPool);
 		this.snotAllowed = snotAllowed;
 	}

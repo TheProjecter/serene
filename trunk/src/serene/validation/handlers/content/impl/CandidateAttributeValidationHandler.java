@@ -35,8 +35,17 @@ import serene.validation.schema.active.components.AValue;
 import serene.validation.schema.active.components.DatatypedActiveTypeItem;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
+
 
 import serene.validation.handlers.match.MatchHandler;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.CharsMatchPath;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
@@ -91,13 +100,14 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	}
 	
 		
-	void init(AAttribute attribute, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex, TemporaryMessageStorage[] temporaryMessageStorage){
+	void init(AttributeMatchPath attributeMatchPath, ElementValidationHandler parent, ExternalConflictHandler conflictHandler, int candidateIndex, TemporaryMessageStorage[] temporaryMessageStorage){
 		this.parent = parent;
-		this.attribute = attribute;
+		this.attributeMatchPath = attributeMatchPath;
+		this.attribute = attributeMatchPath.getAttribute();
         this.conflictHandler = conflictHandler;
         this.candidateIndex = candidateIndex;
         this.temporaryMessageStorage = temporaryMessageStorage;		
-		attribute.assembleDefinition();
+		/*attribute.assembleDefinition();*/
 	}
 	
     public ElementValidationHandler getParentHandler(){
@@ -119,17 +129,17 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	}
 
 	void validateInContext(){
-		parent.addAttribute(attribute);
+		parent.addAttribute(attributeMatchPath);
 	}
 
 	
 	// CharsContentTypeHandler
 	//==========================================================================
-	public void addChars(CharsActiveTypeItem charsDefinition){	
+	public void addChars(CharsMatchPath charsDefinition){	
 		stackHandler.shift(charsDefinition);
 	}
 	
-	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void addChars(List<? extends CharsMatchPath> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
@@ -138,7 +148,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, temporaryMessageStorage);
 	}
 	
-	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void addChars(List<? extends CharsMatchPath> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
@@ -173,55 +183,55 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	}
 	
 		
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int inputRecordIndex, SPattern sourceDefinition, SPattern reper){
 		throw new IllegalStateException();
 	}
 	
-    public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
+    public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int[] inputRecordIndex, SPattern[] sourceDefinition, SPattern reper){
 		throw new IllegalStateException();
 	}
     
-	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){
+	public void excessiveContent(SRule context, int startInputRecordIndex, SPattern excessiveDefinition, int[] inputRecordIndex){
 		throw new IllegalStateException();
 	}
 	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
+	public void excessiveContent(SRule context, SPattern excessiveDefinition, int inputRecordIndex){
 		throw new IllegalStateException();
 	}
 	
-	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
+	public void missingContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found, int[] inputRecordIndex){
 		throw new IllegalStateException();
 	}
     
-    public void illegalContent(Rule context, int startInputRecordIndex){
+    public void illegalContent(SRule context, int startInputRecordIndex){
 		throw new IllegalStateException();
 	}
     
-	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 
-	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, SAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 
-	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 
-	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, SAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 
-	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
 		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
@@ -230,7 +240,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 		temporaryMessageStorage[candidateIndex].ambiguousCharacterContentWarning(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
 		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
@@ -240,10 +250,10 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	}
 	
 
-    public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+    public void characterContentDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		throw new IllegalStateException();
 	}
-	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void attributeValueDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
 		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
@@ -252,10 +262,10 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 		temporaryMessageStorage[candidateIndex].attributeValueDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}
 	
-	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, SValue charsDefinition){
 		throw new IllegalStateException();
 	}
-	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
+	public void attributeValueValueError(int inputRecordIndex, SValue charsDefinition){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
 		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
@@ -264,10 +274,10 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 		temporaryMessageStorage[candidateIndex].attributeValueValueError(inputRecordIndex, charsDefinition);
 	}
 	
-	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void characterContentExceptedError(int inputRecordIndex, SData charsDefinition){
 		throw new IllegalStateException();
 	}	
-	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, SData charsDefinition){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
 		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
@@ -276,17 +286,17 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 		temporaryMessageStorage[candidateIndex].attributeValueExceptedError(inputRecordIndex, charsDefinition);
 	}
 	
-	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
 		throw new IllegalStateException();
 	}	
 	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
 		throw new IllegalStateException();
 	}
 	
-	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, SPattern[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
-	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int inputRecordIndex, SPattern[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
 		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
@@ -295,7 +305,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 		temporaryMessageStorage[candidateIndex].unresolvedAttributeValue(inputRecordIndex, possibleDefinitions);
 	}
 	
-	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
 		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
@@ -303,7 +313,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 		}
 		temporaryMessageStorage[candidateIndex].listTokenDatatypeError(inputRecordIndex, charsDefinition, datatypeErrorMessage);
 	}
-	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
+	public void listTokenValueError(int inputRecordIndex, SValue charsDefinition){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
 		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
@@ -311,7 +321,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 		}
 		temporaryMessageStorage[candidateIndex].listTokenValueError(inputRecordIndex, charsDefinition);
 	}
-	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void listTokenExceptedError(int inputRecordIndex, SData charsDefinition){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
 		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
@@ -321,7 +331,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	}
 	
     
-    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int inputRecordIndex, SPattern[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
 		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
@@ -329,7 +339,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 		}
 		temporaryMessageStorage[candidateIndex].unresolvedListTokenInContextError(inputRecordIndex, possibleDefinitions);
     }    
-	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 		conflictHandler.disqualify(candidateIndex);
 		if(temporaryMessageStorage[candidateIndex] == null){
 		    temporaryMessageStorage[candidateIndex] = new TemporaryMessageStorage();
@@ -339,7 +349,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
     }
     
     
-	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
+	public void missingCompositorContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found){
 		throw new IllegalStateException();
 	}
 

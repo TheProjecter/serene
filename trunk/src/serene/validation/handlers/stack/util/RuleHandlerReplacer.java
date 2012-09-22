@@ -18,34 +18,28 @@ package serene.validation.handlers.stack.util;
 
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 import serene.validation.handlers.structure.StructureHandler;
-import serene.validation.handlers.structure.impl.AttributeHandler;
-import serene.validation.handlers.structure.impl.ChoiceHandler;
-import serene.validation.handlers.structure.impl.ChoiceMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.ChoiceMaximalReduceHandler;
-import serene.validation.handlers.structure.impl.ElementHandler;
-import serene.validation.handlers.structure.impl.ExceptPatternHandler;
-import serene.validation.handlers.structure.impl.GrammarHandler;
-import serene.validation.handlers.structure.impl.GrammarMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.GrammarMaximalReduceHandler;
-import serene.validation.handlers.structure.impl.GroupDoubleHandler;
-import serene.validation.handlers.structure.impl.GroupHandler;
-import serene.validation.handlers.structure.impl.GroupMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.GroupMaximalReduceHandler;
-import serene.validation.handlers.structure.impl.GroupMinimalReduceCountHandler;
-import serene.validation.handlers.structure.impl.GroupMaximalReduceCountHandler;
-import serene.validation.handlers.structure.impl.InterleaveDoubleHandler;
-import serene.validation.handlers.structure.impl.InterleaveMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.InterleaveMaximalReduceHandler;
-import serene.validation.handlers.structure.impl.InterleaveMinimalReduceCountHandler;
-import serene.validation.handlers.structure.impl.InterleaveMaximalReduceCountHandler;
-import serene.validation.handlers.structure.impl.ListPatternHandler;
-import serene.validation.handlers.structure.impl.MInterleaveHandler;
-import serene.validation.handlers.structure.impl.ParticleHandler;
-import serene.validation.handlers.structure.impl.RefHandler;
-import serene.validation.handlers.structure.impl.RefMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.RefMaximalReduceHandler;
-import serene.validation.handlers.structure.impl.UInterleaveHandler;
-import serene.validation.handlers.structure.impl.SInterleaveHandler;
+import serene.validation.handlers.structure.TypeHandler;
+import serene.validation.handlers.structure.ChoiceHandler;
+import serene.validation.handlers.structure.ChoiceMinimalReduceHandler;
+import serene.validation.handlers.structure.ChoiceMaximalReduceHandler;
+import serene.validation.handlers.structure.GroupDoubleHandler;
+import serene.validation.handlers.structure.GroupHandler;
+import serene.validation.handlers.structure.GroupMinimalReduceHandler;
+import serene.validation.handlers.structure.GroupMaximalReduceHandler;
+import serene.validation.handlers.structure.GroupMinimalReduceCountHandler;
+import serene.validation.handlers.structure.GroupMaximalReduceCountHandler;
+import serene.validation.handlers.structure.InterleaveDoubleHandler;
+import serene.validation.handlers.structure.InterleaveMinimalReduceHandler;
+import serene.validation.handlers.structure.InterleaveMaximalReduceHandler;
+import serene.validation.handlers.structure.InterleaveMinimalReduceCountHandler;
+import serene.validation.handlers.structure.InterleaveMaximalReduceCountHandler;
+import serene.validation.handlers.structure.MInterleaveHandler;
+import serene.validation.handlers.structure.ParticleHandler;
+import serene.validation.handlers.structure.IntermediaryPatternHandler;
+import serene.validation.handlers.structure.IntermediaryPatternMinimalReduceHandler;
+import serene.validation.handlers.structure.IntermediaryPatternMaximalReduceHandler;
+import serene.validation.handlers.structure.UInterleaveHandler;
+import serene.validation.handlers.structure.SInterleaveHandler;
 
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
@@ -60,7 +54,7 @@ public class RuleHandlerReplacer implements RuleHandlerVisitor{
 		next(topHandler);
 	}
 	
-	public void visit(AttributeHandler handler){
+	public void visit(TypeHandler handler){
 		StructureHandler sh = handler.getStructureHandler();
 		if(sh != null) next(sh);
 		ParticleHandler ph = handler.getParticleHandler();
@@ -79,36 +73,6 @@ public class RuleHandlerReplacer implements RuleHandlerVisitor{
 		if(ph != null) next(ph);
 	}
 	public void visit(ChoiceMaximalReduceHandler handler){
-		StructureHandler sh = handler.getStructureHandler();
-		if(sh != null) next(sh);
-		ParticleHandler ph = handler.getParticleHandler();
-		if(ph != null) next(ph);
-	}
-	public void visit(ElementHandler handler){
-		StructureHandler sh = handler.getStructureHandler();
-		if(sh != null) next(sh);
-		ParticleHandler ph = handler.getParticleHandler();		
-		if(ph != null) next(ph);
-	}
-	public void visit(ExceptPatternHandler handler){
-		StructureHandler sh = handler.getStructureHandler();
-		if(sh != null) next(sh);
-		ParticleHandler ph = handler.getParticleHandler();
-		if(ph != null) next(ph);
-	}
-	public void visit(GrammarHandler handler){
-		StructureHandler sh = handler.getStructureHandler();
-		if(sh != null) next(sh);
-		ParticleHandler ph = handler.getParticleHandler();
-		if(ph != null) next(ph);
-	}
-	public void visit(GrammarMinimalReduceHandler handler){
-		StructureHandler sh = handler.getStructureHandler();
-		if(sh != null) next(sh);
-		ParticleHandler ph = handler.getParticleHandler();
-		if(ph != null) next(ph);
-	}
-	public void visit(GrammarMaximalReduceHandler handler){
 		StructureHandler sh = handler.getStructureHandler();
 		if(sh != null) next(sh);
 		ParticleHandler ph = handler.getParticleHandler();
@@ -174,12 +138,6 @@ public class RuleHandlerReplacer implements RuleHandlerVisitor{
 		ParticleHandler[] ph = handler.getParticleHandlers();
 		if(ph != null) next(ph);
 	}
-	public void visit(ListPatternHandler handler){
-		StructureHandler sh = handler.getStructureHandler();
-		if(sh != null) next(sh);
-		ParticleHandler ph = handler.getParticleHandler();
-		if(ph != null) next(ph);
-	}
 	public void visit(MInterleaveHandler handler){
 		StructureHandler[] sh = handler.getStructureHandlers();
 		if(sh != null) next(sh);
@@ -189,19 +147,19 @@ public class RuleHandlerReplacer implements RuleHandlerVisitor{
 	public void visit(ParticleHandler handler){
 	
 	}
-	public void visit(RefHandler handler){
+	public void visit(IntermediaryPatternHandler handler){
 		StructureHandler sh = handler.getStructureHandler();
 		if(sh != null) next(sh);
 		ParticleHandler ph = handler.getParticleHandler();
 		if(ph != null) next(ph);
 	}
-	public void visit(RefMinimalReduceHandler handler){
+	public void visit(IntermediaryPatternMinimalReduceHandler handler){
 		StructureHandler sh = handler.getStructureHandler();
 		if(sh != null) next(sh);
 		ParticleHandler ph = handler.getParticleHandler();
 		if(ph != null) next(ph);
 	}
-	public void visit(RefMaximalReduceHandler handler){
+	public void visit(IntermediaryPatternMaximalReduceHandler handler){
 		StructureHandler sh = handler.getStructureHandler();
 		if(sh != null) next(sh);
 		ParticleHandler ph = handler.getParticleHandler();

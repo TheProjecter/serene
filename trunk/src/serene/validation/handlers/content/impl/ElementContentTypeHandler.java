@@ -23,8 +23,10 @@ import serene.validation.schema.active.components.AElement;
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 import serene.validation.handlers.error.ConflictMessageReporter;
 
+import serene.validation.handlers.match.ElementMatchPath;
+
 interface ElementContentTypeHandler{
-    void addChildElement(AElement element);	
-	void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter);	
-	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter);
+    void addChildElement(ElementMatchPath elementMatchPath);	
+	void addChildElement(List<ElementMatchPath> candidateDefinitionPathes, ConflictMessageReporter conflictMessageReporter);	
+	void addChildElement(List<ElementMatchPath> candidateDefinitionPathes, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter);
 }

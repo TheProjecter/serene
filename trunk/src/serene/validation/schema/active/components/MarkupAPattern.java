@@ -32,7 +32,7 @@ import serene.validation.handlers.stack.ConcurrentStackHandler;
 import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 import serene.validation.handlers.structure.StructureHandler;
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
@@ -57,7 +57,7 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 				APattern child,
 				ActiveGrammarModel grammarModel,
 				/*ValidatorStackHandlerPool stackHandlerPool,*/
-				ActiveModelRuleHandlerPool ruleHandlerPool){		
+				ValidatorRuleHandlerPool ruleHandlerPool){		
 		super(child, ruleHandlerPool);
 		this.index = index;
 		this.grammarModel = grammarModel;		

@@ -16,6 +16,16 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.ListPatternMatchPath;
+import serene.validation.handlers.match.TextMatchPath;
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
+
 import serene.bind.util.DocumentIndexedData;
 
 public abstract class SPattern extends SRule{
@@ -34,7 +44,15 @@ public abstract class SPattern extends SRule{
 		hasCardinalityElement = false;
 	}
 		
-	abstract boolean isElementContent();
+	
+	abstract void setElementMatchPathes(String ns, String name, List<ElementMatchPath> pathes, MatchPathPool matchPathPool);
+	abstract void setAttributeMatchPathes(String ns, String name, List<AttributeMatchPath> pathes, MatchPathPool matchPathPool);
+	abstract void setMatchPathes(List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool);
+    abstract void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool);
+    abstract void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, MatchPathPool matchPathPool);
+    abstract void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, MatchPathPool matchPathPool);
+	
+    abstract boolean isElementContent();
 	abstract boolean isAttributeContent();
 	abstract boolean isDataContent();
 	abstract boolean isValueContent();
@@ -45,10 +63,22 @@ public abstract class SPattern extends SRule{
     abstract boolean isStructuredDataContent();
     abstract boolean isUnstructuredDataContent();
     
+    	
+	public boolean hasMultipleCardinality(){
+	    return maxOccurs == UNBOUNDED;
+	}
+	
+    public boolean isRequiredContent(){
+        return minOccurs > 0;
+    }
     void adjust(){
         throw new IllegalStateException();
     }
     
+       
+    public boolean isRequired(){
+        return minOccurs > 0;
+    }
 	public int getMinOccurs(){
 	    return minOccurs;
 	}

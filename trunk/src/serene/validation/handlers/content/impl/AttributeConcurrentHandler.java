@@ -31,11 +31,13 @@ import serene.validation.handlers.error.TemporaryMessageStorage;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
+import serene.validation.handlers.match.AttributeMatchPath;
+
 class AttributeConcurrentHandler extends ValidatingAEH{
     ElementValidationHandler parent;	
     
     
-	List<AAttribute> candidateDefinitions;
+	List<AttributeMatchPath> candidateDefinitionPathes;
 	List<CandidateAttributeValidationHandler> candidates;
 	ExternalConflictHandler localCandidatesConflictHandler;     
 	ValidatorErrorHandlerPool errorHandlerPool;
@@ -62,19 +64,19 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 		this.errorHandlerPool = errorHandlerPool;
 	}
 	
-	void init(List<AAttribute> candidateDefinitions, ElementValidationHandler parent){
+	void init(List<AttributeMatchPath> candidateDefinitionPathes, ElementValidationHandler parent){
 		this.parent = parent;
-		this.candidateDefinitions = candidateDefinitions; 
-		localCandidatesConflictHandler.init(candidateDefinitions.size());
-		temporaryMessageStorage = new TemporaryMessageStorage[candidateDefinitions.size()];
+		this.candidateDefinitionPathes = candidateDefinitionPathes; 
+		localCandidatesConflictHandler.init(candidateDefinitionPathes.size());
+		temporaryMessageStorage = new TemporaryMessageStorage[candidateDefinitionPathes.size()];
 		
-		for(int i = 0; i < candidateDefinitions.size(); i++){						
+		for(int i = 0; i < candidateDefinitionPathes.size(); i++){						
 			// To each candidate set a ConflictErrorHandler that knows the ExternalConflictHandler
 			// and the candidate index. Errors will not be handled and reported.
 			// At the end of attribute handling only the number of qualified 
 			// candidates left is assesed and the appropriate addAttribute() 
 			// is called.
-			CandidateAttributeValidationHandler candidate = pool.getCandidateAttributeValidationHandler(candidateDefinitions.get(i), parent, localCandidatesConflictHandler, i, temporaryMessageStorage);
+			CandidateAttributeValidationHandler candidate = pool.getCandidateAttributeValidationHandler(candidateDefinitionPathes.get(i), parent, localCandidatesConflictHandler, i, temporaryMessageStorage);
 			candidates.add(candidate);
 		}		
 	}
@@ -93,10 +95,10 @@ class AttributeConcurrentHandler extends ValidatingAEH{
 		int candidatesCount = candidates.size();		
 		int qualifiedCount = candidatesCount - localCandidatesConflictHandler.getDisqualifiedCount();		
 		if(qualifiedCount == 0){		
-			parent.addAttribute(candidateDefinitions, temporaryMessageStorage);
+			parent.addAttribute(candidateDefinitionPathes, temporaryMessageStorage);
 		}else if(qualifiedCount == 1){
-			AAttribute qAttribute = candidateDefinitions.get(localCandidatesConflictHandler.getNextQualified(0));
-			parent.addAttribute(qAttribute);
+			AttributeMatchPath qAttributeMatchPath = candidateDefinitionPathes.get(localCandidatesConflictHandler.getNextQualified(0));
+			parent.addAttribute(qAttributeMatchPath);
 			if(temporaryMessageStorage != null){
                 for(int i = 0;  i < temporaryMessageStorage.length; i++){
                     if(temporaryMessageStorage[i] != null){
@@ -106,7 +108,7 @@ class AttributeConcurrentHandler extends ValidatingAEH{
                 }
             }
 		}else if(qualifiedCount > 1){
-			parent.addAttribute(candidateDefinitions, localCandidatesConflictHandler.getDisqualified(), temporaryMessageStorage);
+			parent.addAttribute(candidateDefinitionPathes, localCandidatesConflictHandler.getDisqualified(), temporaryMessageStorage);
 		}
 	}
 

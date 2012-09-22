@@ -26,6 +26,8 @@ import serene.validation.handlers.conflict.ElementConflictResolver;
 
 import serene.validation.schema.active.components.AElement;
 
+import serene.validation.schema.simplified.SElement;
+
 import serene.util.IntList;
 
 public class ConflictMessageReporter extends AbstractMessageReporter{
@@ -40,7 +42,7 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     int conflictInternalResolutionId;
     BitSet qualified;
     int winnerIndex;
-    AElement winnerDefinition;
+    SElement winnerDefinition;
     
     boolean isMessageRetrieved;
     boolean isDiscarded;
@@ -50,7 +52,7 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     public ConflictMessageReporter(MessageReporter parent,
                                     int reportingContextType,
                                     String reportingContextQName,
-                                    AElement reportingContextDefinition,
+                                    SElement reportingContextDefinition,
                                     String reportingContextPublicId,
                                     String reportingContextSystemId,
                                     int reportingContextLineNumber,
@@ -164,7 +166,7 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
         this.qualified = qualified; 
     }
     
-    public void setConflictInternalResolution(int  conflictInternalResolutionId, int winnerIndex, AElement winnerDefinition){
+    public void setConflictInternalResolution(int  conflictInternalResolutionId, int winnerIndex, SElement winnerDefinition){
         this.conflictInternalResolutionId = conflictInternalResolutionId;
         this.winnerIndex = winnerIndex;
         this.winnerDefinition = winnerDefinition;
@@ -215,7 +217,7 @@ public class ConflictMessageReporter extends AbstractMessageReporter{
     }
     
     
-    public void report(int reportingContextType, String reportingContextQName, AElement reportingContextDefinition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
+    public void report(int reportingContextType, String reportingContextQName, SElement reportingContextDefinition, boolean restrictToFileName, Locator locator, ErrorDispatcher errorDispatcher) throws SAXException{
         isMessageRetrieved = true;
         
         this.reportingContextType = reportingContextType;

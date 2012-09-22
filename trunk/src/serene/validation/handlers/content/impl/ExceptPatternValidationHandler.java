@@ -22,6 +22,14 @@ import java.util.BitSet;
 import org.xml.sax.SAXException;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SExceptPattern;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.schema.active.components.StructuredDataActiveTypeItem;
 import serene.validation.schema.active.components.DatatypedActiveTypeItem;
@@ -46,6 +54,8 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
 import serene.validation.handlers.error.TemporaryMessageStorage;
 
+import serene.validation.handlers.match.StructuredDataMatchPath;
+
 class ExceptPatternValidationHandler implements StructuredDataEventHandler,
                                         StructuredDataContentTypeHandler,
                                         ErrorCatcher{
@@ -53,8 +63,8 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
     InputStackDescriptor inputStackDescriptor;
     
     AbstractDVH parent;
-    AData data;
-    AExceptPattern exceptPattern;
+    SData data;
+    SExceptPattern exceptPattern;
     
     ErrorCatcher errorCatcher;
     boolean hasError;    
@@ -73,7 +83,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 		this.stackHandlerPool = stackHandlerPool;
 	}
     
-	void init(AData data, AExceptPattern exceptPattern, AbstractDVH parent, ErrorCatcher errorCatcher){
+	void init(SData data, SExceptPattern exceptPattern, AbstractDVH parent, ErrorCatcher errorCatcher){
 	    this.data = data;
         this.exceptPattern = exceptPattern;
         this.parent = parent;
@@ -97,7 +107,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
         return parent;
     }
     
-    public void handleChars(char[] chars, AExceptPattern context) throws SAXException{
+    public void handleChars(char[] chars, SExceptPattern context) throws SAXException{
         stackHandler = stackHandlerPool.getContextStackHandler(exceptPattern, this);
         
         StructuredDataValidationHandler sdvh = pool.getStructuredDataValidationHandler(this, this, this);
@@ -112,7 +122,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
         
     }
 	
-	public void handleString(String value, AExceptPattern context) throws SAXException{
+	public void handleString(String value, SExceptPattern context) throws SAXException{
 	    stackHandler = stackHandlerPool.getContextStackHandler(exceptPattern, this);
 	    
 	    StructuredDataValidationHandler sdvh = pool.getStructuredDataValidationHandler(this, this, this);
@@ -142,10 +152,10 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	}
 //StructuredDataContentTypeHandler
 //==============================================================================
-    public void addStructuredData(StructuredDataActiveTypeItem data){
+    public void addStructuredData(StructuredDataMatchPath data){
         stackHandler.shift(data);
     }	
-	public void addStructuredData(List<StructuredDataActiveTypeItem> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){	   
+	public void addStructuredData(List<StructuredDataMatchPath> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){	   
 	    if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
@@ -153,7 +163,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 		} 	    
 		stackHandler.shiftAllCharsDefinitions(candidateDefinitions, temporaryMessageStorage);
 	}
-	public void addStructuredData(List<StructuredDataActiveTypeItem> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
+	public void addStructuredData(List<StructuredDataMatchPath> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 	    if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
 		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
@@ -185,115 +195,115 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	}
 	
 			
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int inputRecordIndex, SPattern sourceDefinition, SPattern reper){
 		hasError = true;
 	}
 	
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
-		hasError = true;
-	}
-	
-	
-	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){
-		hasError = true;
-	}
-	
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){
-		hasError = true;
-	}
-	
-	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
-		hasError = true;
-	}
-	
-	public void illegalContent(Rule context, int startInputRecordIndex){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int[] inputRecordIndex, SPattern[] sourceDefinition, SPattern reper){
 		hasError = true;
 	}
 	
 	
-	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void excessiveContent(SRule context, int startInputRecordIndex, SPattern excessiveDefinition, int[] inputRecordIndex){
+		hasError = true;
+	}
+	
+	public void excessiveContent(SRule context, SPattern excessiveDefinition, int inputRecordIndex){
+		hasError = true;
+	}
+	
+	public void missingContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found, int[] inputRecordIndex){
+		hasError = true;
+	}
+	
+	public void illegalContent(SRule context, int startInputRecordIndex){
+		hasError = true;
+	}
+	
+	
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, SAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
 	
-	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, SAttribute[] possibleDefinitions){
 		throw new IllegalStateException();
 	}
 	
-	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 	}
 	
-	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 	}
 		
 	
-	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		hasError = true;
 	}
-	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		hasError = true;
-	}
-	
-	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
-		hasError = true;
-	}
-	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
+	public void attributeValueDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 		hasError = true;
 	}
 	
-	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, SValue charsDefinition){
+		hasError = true;
+	}
+	public void attributeValueValueError(int inputRecordIndex, SValue charsDefinition){
+		hasError = true;
+	}
+	
+	public void characterContentExceptedError(int inputRecordIndex, SData charsDefinition){
 		hasError = true;
 	}	
-	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, SData charsDefinition){
 		hasError = true;
 	}
 	
-	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
 		hasError = true;
 	}	
 	public void unexpectedAttributeValue(int inputRecordIndex, AAttribute attributeDefinition){
 		hasError = true;
 	}
 	
-	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, SPattern[] possibleDefinitions){
 		hasError = true;
 	}
-	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
-		hasError = true;
-	}
-	
-	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
-		hasError = true;
-	}
-	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
-		hasError = true;
-	}
-	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void unresolvedAttributeValue(int inputRecordIndex, SPattern[] possibleDefinitions){
 		hasError = true;
 	}
 	
-    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void listTokenDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
+		hasError = true;
+	}
+	public void listTokenValueError(int inputRecordIndex, SValue charsDefinition){
+		hasError = true;
+	}
+	public void listTokenExceptedError(int inputRecordIndex, SData charsDefinition){
+		hasError = true;
+	}
+	
+    public void unresolvedListTokenInContextError(int inputRecordIndex, SPattern[] possibleDefinitions){
 		hasError = true;
     }    
-	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
     }
-	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
+	public void missingCompositorContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found){
 		hasError = true;
 	}
 	public void internalConflict(ConflictMessageReporter conflictMessageReporter){

@@ -37,12 +37,20 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.error.util.MissingContentAnalyser;
 
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
+
+import serene.validation.handlers.match.ElementMatchPath;
 
 import serene.util.IntList;
 
@@ -60,7 +68,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     int[][] errorCodes;
     BitSet[][]errorCandidates;
         
-    APattern[] missingContentDefinitions;
+    SPattern[] missingContentDefinitions;
     IntList missingContentCandidateIndexes;
     MissingContentAnalyser missingContentAnalyser;
     BitSet cumulatorDummy;
@@ -77,7 +85,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     
     
     ExternalConflictHandler conflictHandler;
-    List<AElement> candidates;
+    List<ElementMatchPath> candidatePathes;
     int candidatesCount;    
     // Message handlers form the candidates 
     ConflictMessageHandler[] candidateMessageHandlers;
@@ -130,9 +138,9 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         candidateMessageHandlers[candidateIndex] = messageHandler;        
     }
 	
-    public void setCandidates(List<AElement> candidates){
-        this.candidates = candidates;
-        this.candidatesCount = candidates.size();
+    public void setCandidates(List<ElementMatchPath> candidatePathes){
+        this.candidatePathes = candidatePathes;
+        this.candidatesCount = candidatePathes.size();
         conflictHandler.init(candidatesCount);
     }
     
@@ -367,14 +375,14 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         if(qualifiedCount == 1){
             int q = conflictHandler.getNextQualified(0);
             localMessageHandler.setConflictResolutionId(MessageReporter.RESOLVED);
-            localMessageHandler.setReportingContextDefinition(candidates.get(q));            
+            localMessageHandler.setReportingContextDefinition(candidatePathes.get(q).getElement());            
             if(candidatesCommonMessages != null){
                 candidatesCommonMessages.setConflictResolutionId(MessageReporter.RESOLVED);
-                candidatesCommonMessages.setReportingContextDefinition(candidates.get(conflictHandler.getNextQualified(0)));
+                candidatesCommonMessages.setReportingContextDefinition(candidatePathes.get(conflictHandler.getNextQualified(0)).getElement());
             }
                           
             contextErrorHandler.conflict(MessageReporter.RESOLVED, commonMessagesStack, candidatesCount, conflictHandler.getDisqualified(), candidateMessagesStack);
-            contextErrorHandler.handle(contextType, qName, candidates.get(conflictHandler.getNextQualified(0)), restrictToFileName, locator);
+            contextErrorHandler.handle(contextType, qName, candidatePathes.get(conflictHandler.getNextQualified(0)).getElement(), restrictToFileName, locator);
         }else if(qualifiedCount == 0){
             if(candidatesCommonMessages != null)candidatesCommonMessages.setConflictResolutionId(MessageReporter.UNRESOLVED);
             localMessageHandler.setConflictResolutionId(MessageReporter.UNRESOLVED);
@@ -439,20 +447,20 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         }
     }
 
-    void recordMissingContentError(int errorFunctionalEquivalenceCode, int candidateIndex, APattern missingDefinition){
+    void recordMissingContentError(int errorFunctionalEquivalenceCode, int candidateIndex, SPattern missingDefinition){
         recordError(MISSING_CONTENT, errorFunctionalEquivalenceCode, candidateIndex);
         
         missingContentCandidateIndexes.add(candidateIndex);
         
         if(missingContentDefinitions == null){
-            missingContentDefinitions = new APattern[1];
+            missingContentDefinitions = new SPattern[1];
             missingContentDefinitions[0] = missingDefinition;
             return;
         }        
         
         int length = missingContentDefinitions.length;
         
-        APattern[] increasedRDI = new APattern[length+1];
+        SPattern[] increasedRDI = new SPattern[length+1];
         System.arraycopy(missingContentDefinitions, 0, increasedRDI, 0, length);
         missingContentDefinitions = increasedRDI;
         missingContentDefinitions[length] = missingDefinition;
@@ -503,7 +511,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     }    
     
     // from direct candidates and subtree through ExternalConflictErrorHandler    
-    public void delayMessageReporter(int contextType, String qName, AElement definition, Locator locator, MessageReporter messageHandler, int candidateIndex){
+    public void delayMessageReporter(int contextType, String qName, SElement definition, Locator locator, MessageReporter messageHandler, int candidateIndex){
         messageHandler.setReportingContextType(contextType);
         messageHandler.setReportingContextQName(qName);
 		messageHandler.setReportingContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
@@ -544,7 +552,7 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     
     
     // from direct candidates and subtree through CommonErrorHandler or localMessageHandler
-    public void delayMessageReporter(int contextType, String qName, AElement definition, Locator locator, MessageReporter messageHandler, boolean isCandidate){
+    public void delayMessageReporter(int contextType, String qName, SElement definition, Locator locator, MessageReporter messageHandler, boolean isCandidate){
         messageHandler.setReportingContextType(contextType);
         messageHandler.setReportingContextQName(qName);
 		messageHandler.setReportingContextLocation(locator.getPublicId(), locator.getSystemId(), locator.getLineNumber(), locator.getColumnNumber());
@@ -615,83 +623,83 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
 	}
 	
 	public void misplacedContent(int candidateIndex, int functionalEquivalenceCode, 
-                                            APattern contextDefinition,
+                                            SPattern contextDefinition,
 											int startInputRecordIndex, 
-											APattern definition, 
+											SPattern definition, 
 											int inputRecordIndex,
-											APattern sourceDefinition, 
-											APattern reper){//not stored, only used for internal conflict handling
+											SPattern sourceDefinition, 
+											SPattern reper){//not stored, only used for internal conflict handling
         recordError(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex);
 	}
     public void misplacedContent(int candidateIndex, int functionalEquivalenceCode, 
-                                            APattern contextDefinition,
+                                            SPattern contextDefinition,
 											int startInputRecordIndex,
-											APattern definition,
+											SPattern definition,
 											int[] inputRecordIndex,
-											APattern[] sourceDefinition, 
-											APattern reper){//not stored, only used for internal conflict handling
+											SPattern[] sourceDefinition, 
+											SPattern reper){//not stored, only used for internal conflict handling
         recordError(MISPLACED_ELEMENT, functionalEquivalenceCode, candidateIndex);
 	}
 			
 	
 	public void excessiveContent(int candidateIndex, int functionalEquivalenceCode, 
-                                    Rule context,
+                                    SRule context,
 									int startInputRecordIndex,
-									APattern definition, 
+									SPattern definition, 
 									int[] inputRecordIndex){
         recordError(EXCESSIVE_CONTENT, functionalEquivalenceCode, candidateIndex);
 	}   
 	public void excessiveContent(int candidateIndex, int functionalEquivalenceCode, 
-                                Rule context, 
-								APattern definition,
+                                SRule context, 
+								SPattern definition,
 								int inputRecordIndex){
 	}
     
     
 	public void unresolvedAmbiguousElementContentError(int candidateIndex, int functionalEquivalenceCode, 
                                     int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
         recordError(UNRESOLVED_AMBIGUOUS_ELEMENT_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);
 	}
 	
 	public void unresolvedUnresolvedElementContentError(int candidateIndex, int functionalEquivalenceCode, 
                                     int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
         recordError(UNRESOLVED_UNRESOLVED_ELEMENT_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);        
 	}
     
     
 	public void unresolvedAttributeContentError(int candidateIndex, int functionalEquivalenceCode, 
                                     int inputRecordIndex, 
-									AAttribute[] possibleDefinitions){
+									SAttribute[] possibleDefinitions){
         recordError(UNRESOLVED_ATTRIBUTE_CONTENT_ERROR, functionalEquivalenceCode, candidateIndex);        
 	}
 
-    public void ambiguousUnresolvedElementContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AElement[] possibleDefinitions){
+    public void ambiguousUnresolvedElementContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SElement[] possibleDefinitions){
         recordWarning(AMBIGUOUS_UNRESOLVED_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
     
-    public void ambiguousAmbiguousElementContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AElement[] possibleDefinitions){
+    public void ambiguousAmbiguousElementContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SElement[] possibleDefinitions){
         recordWarning(AMBIGUOUS_AMBIGUOUS_ELEMENT_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
     
-	public void ambiguousAttributeContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SAttribute[] possibleDefinitions){
         recordWarning(AMBIGUOUS_ATTRIBUTE_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
     
-	public void ambiguousCharacterContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
         recordWarning(AMBIGUOUS_CHARACTER_CONTENT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
 
-    public void ambiguousAttributeValueWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void ambiguousAttributeValueWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
         recordWarning(AMBIGUOUS_ATTRIBUTE_VALUE_WARNING, functionalEquivalenceCode, candidateIndex);        
     }    
 	
 	
 	public void missingContent(int candidateIndex, int functionalEquivalenceCode,
-                                Rule context, 
+                                SRule context, 
 								int startInputRecordIndex,						 
-								APattern definition, 
+								SPattern definition, 
 								int expected, 
 								int found, 
 								int[] inputRecordIndex){
@@ -700,40 +708,40 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     }
     
 	public void illegalContent(int candidateIndex, int functionalEquivalenceCode, 
-                            Rule context, 
+                            SRule context, 
                             int startInputRecordIndex){
         recordError(ILLEGAL_CONTENT, functionalEquivalenceCode, candidateIndex);        
 	}
     
     // {15}
-	public void characterContentDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){	    
+	public void characterContentDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){	    
         recordError(CHARACTER_CONTENT_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
         
     //{16}
-	public void attributeValueDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void attributeValueDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
         recordError(ATTRIBUTE_VALUE_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
         
         
-	public void characterContentValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition){
+	public void characterContentValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SValue charsDefinition){
         recordError(CHARACTER_CONTENT_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
     
-	public void attributeValueValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition){
+	public void attributeValueValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SValue charsDefinition){
         recordError(ATTRIBUTE_VALUE_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
     
     
-	public void characterContentExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition){
+	public void characterContentExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SData charsDefinition){
         recordError(CHARACTER_CONTENT_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
     
-	public void attributeValueExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition){
+	public void attributeValueExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SData charsDefinition){
         recordError(ATTRIBUTE_VALUE_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}
     
-	public void unexpectedCharacterContent(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AElement elementDefinition){
+	public void unexpectedCharacterContent(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SElement elementDefinition){
         recordError(UNEXPECTED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex);	    
 	}
     
@@ -741,35 +749,35 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
         recordError(UNEXPECTED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex);	    
 	}
     
-	public void unresolvedCharacterContent(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
         recordError(UNRESOLVED_CHARACTER_CONTENT, functionalEquivalenceCode, candidateIndex);	    
 	}
     
 	// {24}
-	public void unresolvedAttributeValue(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
         recordError(UNRESOLVED_ATTRIBUTE_VALUE, functionalEquivalenceCode, candidateIndex);	    
 	}        
     
     
     // {25}
-	public void listTokenDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
         recordError(LIST_TOKEN_DATATYPE_ERROR, functionalEquivalenceCode, candidateIndex);        
 	}
     
         
-	public void listTokenValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition){
+	public void listTokenValueError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SValue charsDefinition){
         recordError(LIST_TOKEN_VALUE_ERROR, functionalEquivalenceCode, candidateIndex);	    
 	}        
     
-	public void listTokenExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition){
+	public void listTokenExceptedError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SData charsDefinition){
         recordError(LIST_TOKEN_EXCEPTED_ERROR, functionalEquivalenceCode, candidateIndex);		
 	}
     
     	    
-    public void unresolvedListTokenInContextError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
         recordError(UNRESOLVED_LIST_TOKEN_IN_CONTEXT_ERROR, functionalEquivalenceCode, candidateIndex);        
     }
-    public void ambiguousListTokenInContextWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void ambiguousListTokenInContextWarning(int candidateIndex, int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
         recordWarning(AMBIGUOUS_LIST_TOKEN_IN_CONTEXT_WARNING, functionalEquivalenceCode, candidateIndex);        
     }
     
@@ -778,9 +786,9 @@ public class CandidatesConflictErrorHandler implements CandidatesConflictErrorCa
     }
         
 	public void missingCompositorContent(int candidateIndex, int functionalEquivalenceCode, 
-                                Rule context, 
+                                SRule context, 
 								int startInputRecordIndex,								 
-								APattern definition, 
+								SPattern definition, 
 								int expected, 
 								int found){
         recordError(MISSING_COMPOSITOR_CONTENT, functionalEquivalenceCode, candidateIndex);        

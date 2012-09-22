@@ -23,13 +23,13 @@ import serene.validation.schema.active.components.AbstractAPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public abstract class UniqueChildAPattern extends AbstractAPattern{
 	APattern child;
 	
 	public UniqueChildAPattern(APattern child,
-				ActiveModelRuleHandlerPool ruleHandlerPool){		
+				ValidatorRuleHandlerPool ruleHandlerPool){		
 		super(ruleHandlerPool);
 		asParent(child);
 	}
@@ -110,4 +110,5 @@ public abstract class UniqueChildAPattern extends AbstractAPattern{
 		if(child == null)return false;
 		return child.isRequiredContent();
 	}
+	
 }

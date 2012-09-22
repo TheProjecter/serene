@@ -79,11 +79,11 @@ Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element w
 	Attribute "name" at schema.rng:59:29, corresponding to one of the definitions: 
 	<any attribute> at RELAXNG Specification 3.Full Syntax: any attribute
 	<name attribute> at RELAXNG Specification 3.Full Syntax: param
+	<name attribute> at RELAXNG Specification 3.Full Syntax: define
 	<name attribute> at RELAXNG Specification 3.Full Syntax: element with name attribute
 	<name attribute> at RELAXNG Specification 3.Full Syntax: attribute with name attribute
 	<name attribute> at RELAXNG Specification 3.Full Syntax: ref
 	<name attribute> at RELAXNG Specification 3.Full Syntax: parentRef
-	<name attribute> at RELAXNG Specification 3.Full Syntax: define
 	is not part of the parent's content model.
 	Excessive content.
 	In the document structure starting at schema.rng:60:38, corresponding to definition <group of name class and pattern elements> at RELAXNG Specification 3.Full Syntax: element with name class child,  expected 1 occurrence corresponding to definition <name class> at RELAXNG Specification 3.Full Syntax: element with name class child, found 2 starting at: 

@@ -35,6 +35,12 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 	
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 /**
 * Handles errors that occur in an undetermined context processed parallely by a 
@@ -155,7 +161,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	}
 	
 	
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int[] inputRecordIndex, APattern[] sourceDefinition, APattern reper){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int[] inputRecordIndex, SPattern[] sourceDefinition, SPattern reper){
 	    int functionalEquivalenceCode = contextDefinition.functionalEquivalenceCode()+
                                                 definition.functionalEquivalenceCode();
         for(int i = 0; i < inputRecordIndex.length; i++){            
@@ -172,7 +178,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void misplacedContent(APattern contextDefinition, int startInputRecordIndex, APattern definition, int inputRecordIndex, APattern sourceDefinition, APattern reper){
+	public void misplacedContent(SPattern contextDefinition, int startInputRecordIndex, SPattern definition, int inputRecordIndex, SPattern sourceDefinition, SPattern reper){
 	    int functionalEquivalenceCode = contextDefinition.functionalEquivalenceCode()+
 											definition.functionalEquivalenceCode()+ 
 											/*qName.hashCode()+
@@ -187,7 +193,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void excessiveContent(Rule context, int startInputRecordIndex, APattern excessiveDefinition, int[] inputRecordIndex){
+	public void excessiveContent(SRule context, int startInputRecordIndex, SPattern excessiveDefinition, int[] inputRecordIndex){
 	    int functionalEquivalenceCode = /*context.functionalEquivalenceCode()+*/
                                             excessiveDefinition.functionalEquivalenceCode();
         for(int i = 0; i < inputRecordIndex.length; i++){
@@ -200,12 +206,12 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
             messageHandler.excessiveContent(functionalEquivalenceCode, context, startInputRecordIndex, excessiveDefinition, inputRecordIndex);
         }
 	}
-	public void excessiveContent(Rule context, APattern excessiveDefinition, int inputRecordIndex){        
+	public void excessiveContent(SRule context, SPattern excessiveDefinition, int inputRecordIndex){        
 		messageHandler.excessiveContent(-1, context, excessiveDefinition, inputRecordIndex);
         if(isCandidate)candidatesConflictErrorHandler.excessiveContent(candidateIndex, -1, context, excessiveDefinition, inputRecordIndex);
 	}
 	
-	public void missingContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found, int[] inputRecordIndex){
+	public void missingContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found, int[] inputRecordIndex){
 	    int functionalEquivalenceCode = /*context.functionalEquivalenceCode()+*/
                                             definition.functionalEquivalenceCode()+
                                             expected+ 
@@ -223,7 +229,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 
-	public void illegalContent(Rule context, int startInputRecordIndex){
+	public void illegalContent(SRule context, int startInputRecordIndex){
 	    int functionalEquivalenceCode = context.functionalEquivalenceCode();
         if(isCandidate){            
             messageHandler.illegalContent(functionalEquivalenceCode, context, startInputRecordIndex);
@@ -233,7 +239,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void unresolvedAmbiguousElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 	    int functionalEquivalenceCode = activeInputDescriptor.getItemDescription(inputRecordIndex).hashCode();
         for(int i = 0; i < possibleDefinitions.length; i++){
             functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
@@ -246,7 +252,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void unresolvedUnresolvedElementContentError(int inputRecordIndex, SElement[] possibleDefinitions){
 	    int functionalEquivalenceCode = activeInputDescriptor.getItemDescription(inputRecordIndex).hashCode();
         for(int i = 0; i < possibleDefinitions.length; i++){
             functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
@@ -259,7 +265,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void unresolvedAttributeContentError(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void unresolvedAttributeContentError(int inputRecordIndex, SAttribute[] possibleDefinitions){
 	    int functionalEquivalenceCode = activeInputDescriptor.getItemDescription(inputRecordIndex).hashCode();
         for(int i = 0; i < possibleDefinitions.length; i++){
             functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
@@ -273,7 +279,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	}
 	
 	
-	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousUnresolvedElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 	    int functionalEquivalenceCode = activeInputDescriptor.getItemDescription(inputRecordIndex).hashCode();
         for(int i = 0; i < possibleDefinitions.length; i++){
             functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
@@ -286,7 +292,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, AElement[] possibleDefinitions){
+	public void ambiguousAmbiguousElementContentWarning(int inputRecordIndex, SElement[] possibleDefinitions){
 	    int functionalEquivalenceCode = activeInputDescriptor.getItemDescription(inputRecordIndex).hashCode();
         for(int i = 0; i < possibleDefinitions.length; i++){
             functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
@@ -299,7 +305,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void ambiguousAttributeContentWarning(int inputRecordIndex, AAttribute[] possibleDefinitions){
+	public void ambiguousAttributeContentWarning(int inputRecordIndex, SAttribute[] possibleDefinitions){
 	    int functionalEquivalenceCode = activeInputDescriptor.getItemDescription(inputRecordIndex).hashCode();
         for(int i = 0; i < possibleDefinitions.length; i++){
             functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
@@ -312,7 +318,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void ambiguousCharacterContentWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousCharacterContentWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 	    int functionalEquivalenceCode = 0;
         for(int i = 0; i < possibleDefinitions.length; i++){
             functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
@@ -325,7 +331,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void ambiguousAttributeValueWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousAttributeValueWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 	    int functionalEquivalenceCode = 0;
         for(int i = 0; i < possibleDefinitions.length; i++){
             functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
@@ -338,7 +344,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 		
-	public void characterContentDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 	    int functionalEquivalenceCode = charsDefinition.functionalEquivalenceCode()+
                                                datatypeErrorMessage.hashCode();
         if(isCandidate){
@@ -348,7 +354,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
             messageHandler.characterContentDatatypeError(functionalEquivalenceCode, inputRecordIndex, charsDefinition, datatypeErrorMessage);
         }
 	}
-	public void attributeValueDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void attributeValueDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 	    int functionalEquivalenceCode = charsDefinition.functionalEquivalenceCode()+
                                            datatypeErrorMessage.hashCode();
         if(isCandidate){            
@@ -359,7 +365,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void characterContentValueError(int inputRecordIndex, AValue charsDefinition){
+	public void characterContentValueError(int inputRecordIndex, SValue charsDefinition){
 	    int functionalEquivalenceCode = charsDefinition.functionalEquivalenceCode();
         if(isCandidate){                        
             messageHandler.characterContentValueError(functionalEquivalenceCode, inputRecordIndex, charsDefinition);
@@ -368,7 +374,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
             messageHandler.characterContentValueError(functionalEquivalenceCode, inputRecordIndex, charsDefinition);
         }
 	}
-	public void attributeValueValueError(int inputRecordIndex, AValue charsDefinition){
+	public void attributeValueValueError(int inputRecordIndex, SValue charsDefinition){
 	    int functionalEquivalenceCode = charsDefinition.functionalEquivalenceCode();
         if(isCandidate){            
             messageHandler.attributeValueValueError(functionalEquivalenceCode, inputRecordIndex, charsDefinition);
@@ -378,7 +384,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void characterContentExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void characterContentExceptedError(int inputRecordIndex, SData charsDefinition){
 	    int functionalEquivalenceCode = charsDefinition.functionalEquivalenceCode();
         if(isCandidate){            
             messageHandler.characterContentExceptedError(functionalEquivalenceCode, inputRecordIndex, charsDefinition);
@@ -387,7 +393,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
             messageHandler.characterContentExceptedError(functionalEquivalenceCode, inputRecordIndex, charsDefinition);
         }
 	}	
-	public void attributeValueExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void attributeValueExceptedError(int inputRecordIndex, SData charsDefinition){
 	    int functionalEquivalenceCode = charsDefinition.functionalEquivalenceCode();
         if(isCandidate){            
             messageHandler.attributeValueExceptedError(functionalEquivalenceCode, inputRecordIndex, charsDefinition);
@@ -397,7 +403,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void unexpectedCharacterContent(int inputRecordIndex, AElement elementDefinition){
+	public void unexpectedCharacterContent(int inputRecordIndex, SElement elementDefinition){
 	    //int functionalEquivalenceCode = elementDefinition.functionalEquivalenceCode();
         int functionalEquivalenceCode = inputRecordIndex;//TODO review
         if(isCandidate){            
@@ -418,7 +424,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void unresolvedCharacterContent(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int inputRecordIndex, SPattern[] possibleDefinitions){
 	    int functionalEquivalenceCode = 0;
         for(int i = 0; i < possibleDefinitions.length; i++){
             functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
@@ -430,7 +436,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
             messageHandler.unresolvedCharacterContent(functionalEquivalenceCode, inputRecordIndex, possibleDefinitions);
         }
 	}
-	public void unresolvedAttributeValue(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int inputRecordIndex, SPattern[] possibleDefinitions){
 	    int functionalEquivalenceCode = activeInputDescriptor.getItemDescription(inputRecordIndex).hashCode();
         for(int i = 0; i < possibleDefinitions.length; i++){
             functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
@@ -443,7 +449,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 	
-	public void listTokenDatatypeError(int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 	    int functionalEquivalenceCode = activeInputDescriptor.getItemDescription(inputRecordIndex).hashCode()+
                                         charsDefinition.functionalEquivalenceCode()+
                                         datatypeErrorMessage.hashCode();
@@ -454,7 +460,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
             messageHandler.listTokenDatatypeError(functionalEquivalenceCode, inputRecordIndex, charsDefinition, datatypeErrorMessage);
         }
 	}
-	public void listTokenValueError(int inputRecordIndex, AValue charsDefinition){
+	public void listTokenValueError(int inputRecordIndex, SValue charsDefinition){
 	    int functionalEquivalenceCode = charsDefinition.functionalEquivalenceCode();
         if(isCandidate){            
             messageHandler.listTokenValueError(functionalEquivalenceCode, inputRecordIndex, charsDefinition);
@@ -463,7 +469,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
             messageHandler.listTokenValueError(functionalEquivalenceCode, inputRecordIndex, charsDefinition);
         }
 	}
-	public void listTokenExceptedError(int inputRecordIndex, AData charsDefinition){
+	public void listTokenExceptedError(int inputRecordIndex, SData charsDefinition){
 	    int functionalEquivalenceCode = charsDefinition.functionalEquivalenceCode();
         if(isCandidate){            
             messageHandler.listTokenExceptedError(functionalEquivalenceCode, inputRecordIndex, charsDefinition);
@@ -473,7 +479,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
 	}
 
-    public void unresolvedListTokenInContextError(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int inputRecordIndex, SPattern[] possibleDefinitions){
         int functionalEquivalenceCode = activeInputDescriptor.getItemDescription(inputRecordIndex).hashCode();
         for(int i = 0; i < possibleDefinitions.length; i++){
             functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
@@ -485,7 +491,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
             messageHandler.unresolvedListTokenInContextError(functionalEquivalenceCode, inputRecordIndex, possibleDefinitions);
         }
     }    
-	public void ambiguousListTokenInContextWarning(int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void ambiguousListTokenInContextWarning(int inputRecordIndex, SPattern[] possibleDefinitions){
 	    int functionalEquivalenceCode = activeInputDescriptor.getItemDescription(inputRecordIndex).hashCode();
         for(int i = 0; i < possibleDefinitions.length; i++){
             functionalEquivalenceCode += possibleDefinitions[i].functionalEquivalenceCode();
@@ -498,7 +504,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
         }
     }
     
-	public void missingCompositorContent(Rule context, int startInputRecordIndex, APattern definition, int expected, int found){
+	public void missingCompositorContent(SRule context, int startInputRecordIndex, SPattern definition, int expected, int found){
 	    int functionalEquivalenceCode = context.functionalEquivalenceCode()+
                                         definition.functionalEquivalenceCode()+
                                         expected+
@@ -531,7 +537,7 @@ public class ExternalConflictErrorHandler extends AbstractContextErrorHandler{
 	    candidatesConflictErrorHandler.delayMessageReporter(conflictMessageReporter, candidateIndex);
     }
     
-	public void handle(int contextType, String qName, AElement definition, boolean restrictToFileName, Locator locator)
+	public void handle(int contextType, String qName, SElement definition, boolean restrictToFileName, Locator locator)
 					throws SAXException{
 		candidatesConflictErrorHandler.delayMessageReporter(contextType, qName, definition, locator, messageHandler, candidateIndex);
 		isHandled = true;	

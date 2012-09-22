@@ -214,12 +214,12 @@ class RNGDirector{
 		defineNameClass();
 				
 		defineParam();
-		definePattern();				
 		defineExceptPattern();
 		defineStart();
 		defineDefine();
-		defineGrammarContent();
 		defineIncludeContent();
+		defineGrammarContent();		
+		definePattern();	
 		
 		startGrammar();
 		
@@ -1519,7 +1519,7 @@ class RNGDirector{
 			builder.startLevel();{				
 				
 			    builder.startLevel();{
-                    builder.buildRef(refDefinitionTopPattern[PATTERN], PATTERN,  referenceModel, InternalIndexedData.START_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: pattern"*/);
+                    recursionModel.add(builder.buildRef(PATTERN,  referenceModel, InternalIndexedData.START_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: pattern"*/));
                     
                     builder.startLevel();{
                         builder.buildRef(refDefinitionTopPattern[FOREIGN_ELEMENT], FOREIGN_ELEMENT, referenceModel, InternalIndexedData.START_ELEMENT_CONTENT_FOREIGN_ELEMENT, internalIndexedData   /*"foreignElement","RELAXNG Specification 3.Full Syntax: pattern"*/);
@@ -1576,7 +1576,7 @@ class RNGDirector{
 			builder.startLevel();{
 				builder.startLevel();{
                     builder.startLevel();{
-                        builder.buildRef(refDefinitionTopPattern[PATTERN], PATTERN, referenceModel, InternalIndexedData.DEFINE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: define"*/);
+                        recursionModel.add(builder.buildRef(PATTERN, referenceModel, InternalIndexedData.DEFINE_ELEMENT_CONTENT_PATTERN, internalIndexedData   /*"pattern","RELAXNG Specification 3.Full Syntax: define"*/));
                     }builder.endLevel();
                     builder.oneOrMore(InternalIndexedData.DEFINE_ELEMENT_CONTENT_PATTERN_PLUS, internalIndexedData   /*"oneOrMore","RELAXNG Specification 3.Full Syntax: define"*/);			
                     

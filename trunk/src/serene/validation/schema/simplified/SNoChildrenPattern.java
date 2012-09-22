@@ -16,6 +16,16 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.ListPatternMatchPath;
+import serene.validation.handlers.match.TextMatchPath;
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
+
 import serene.bind.util.DocumentIndexedData;
 
 abstract class SNoChildrenPattern extends SPattern{ 	 
@@ -24,7 +34,19 @@ abstract class SNoChildrenPattern extends SPattern{
 		super(recordIndex, documentIndexedData);
 	}
 		
+	public SPattern getChild(int childIndex){
+	    return null;
+	}
+	public boolean isChildRequired(int childIndex){
+	    throw new IllegalStateException();
+	}
 	
+	void setElementMatchPathes(String ns, String name, List<ElementMatchPath> pathes, MatchPathPool matchPathPool){}
+	void setAttributeMatchPathes(String ns, String name, List<AttributeMatchPath> pathes, MatchPathPool matchPathPool){}
+	void setMatchPathes(List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){}
+    void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){}
+    void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, MatchPathPool matchPathPool){}
+    void setMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, MatchPathPool matchPathPool){}
 	boolean isElementContent(){
         return false;
     }
@@ -53,7 +75,9 @@ abstract class SNoChildrenPattern extends SPattern{
 	    return false;
 	}
 	
-	
+	public int getChildrenCount(){
+	    return 0;
+	}
 	public String toString(){
 		String s = "AbstractNoChildrenPattern";
 		return s;

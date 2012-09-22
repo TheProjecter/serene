@@ -20,7 +20,7 @@ package serene.validation.handlers.content.util;
 import java.util.Arrays;
 import java.util.Map;
 
-import serene.validation.handlers.structure.impl.*;
+import serene.validation.handlers.structure.*;
 import serene.validation.handlers.error.*;
 import serene.bind.util.Queue;
 

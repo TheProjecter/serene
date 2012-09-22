@@ -26,6 +26,10 @@ import serene.bind.util.DocumentIndexedData;
 import serene.util.IntList;
 
 public class SInterleave extends SMultipleChildrenPattern{
+    
+	int satisfactionIndicator;
+	int saturationIndicator;
+	
     IntList allRecordIndexes;	
     ArrayList<DocumentIndexedData> allDocumentIndexedData;
     boolean addedBySimplification;
@@ -50,10 +54,40 @@ public class SInterleave extends SMultipleChildrenPattern{
 		addedBySimplification = false;
 	}
     
+	void asParent(SPattern[] children){
+		this.children = children;
+		satisfactionIndicator = 0;
+		saturationIndicator = 0;
+		
+		if(children != null){		
+			for(int i = 0; i< children.length; i++){				
+				children[i].setParent(this, i);
+				if(children[i].getMinOccurs() > 0) ++satisfactionIndicator;
+				if(children[i].getMaxOccurs() != UNBOUNDED) ++saturationIndicator;
+			}
+		}
+	}	
+	
+	
+	public boolean specifiesInterleaving(){
+	    return true;
+	}
+	
+	public int getSatisfactionIndicator(){
+		return satisfactionIndicator;
+	}
+	
+	public int getSaturationIndicator(){
+		return saturationIndicator;
+	}
+	
 	public void accept(SimplifiedComponentVisitor v){
 		v.visit(this);
 	}
 	public void accept(RestrictingVisitor v) throws SAXException{
+		v.visit(this);
+	}
+	public void accept(SimplifiedRuleVisitor v){
 		v.visit(this);
 	}
     

@@ -25,6 +25,9 @@ import serene.validation.schema.active.components.AAttribute;
 
 import serene.validation.handlers.content.BoundAttributeHandler;
 
+import serene.validation.handlers.match.AttributeMatchPath;
+
+
 import serene.bind.BindingModel;
 import serene.bind.util.Queue;
 
@@ -39,16 +42,16 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 		super();		
 	}
 
-	void init(List<AAttribute> candidateDefinitions, ElementValidationHandler parent, BindingModel bindingModel, Queue queue, int entry){
+	void init(List<AttributeMatchPath> candidateDefinitionPathes, ElementValidationHandler parent, BindingModel bindingModel, Queue queue, int entry){
 		this.parent = parent;
-		this.candidateDefinitions = candidateDefinitions; 
-		for(int i = 0; i < candidateDefinitions.size(); i++){						
+		this.candidateDefinitionPathes = candidateDefinitionPathes; 
+		for(int i = 0; i < candidateDefinitionPathes.size(); i++){						
 			// To each candidate set an ConflictErrorHandler that knows the ExternalConflictHandler
 			// and the candidate index. Errors will not be handled and reported.
 			// At the end of attribute handling only the number of qualified 
 			// candidates left is assesed and the appropriate addAttribute() 
 			// is called.
-			BoundCandidateAttributeValidationHandler candidate = pool.getCandidateAttributeValidationHandler(candidateDefinitions.get(i), parent, localCandidatesConflictHandler, i, bindingModel, queue, entry);
+			BoundCandidateAttributeValidationHandler candidate = pool.getCandidateAttributeValidationHandler(candidateDefinitionPathes.get(i), parent, localCandidatesConflictHandler, i, bindingModel, queue, entry);
 			candidates.add(candidate);
 		}		
 		this.bindingModel = bindingModel;
@@ -91,24 +94,15 @@ class BoundAttributeConcurrentHandler extends AttributeConcurrentHandler impleme
 		int candidatesCount = candidates.size();		
 		int qualifiedCount = candidatesCount - localCandidatesConflictHandler.getDisqualifiedCount();		
 		if(qualifiedCount == 0){		
-			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitions, temporaryMessageStorage, value, queue, entry, bindingModel);
+			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitionPathes, temporaryMessageStorage, value, queue, entry, bindingModel);
 		}else if(qualifiedCount == 1){			
-			AAttribute qAttribute = candidateDefinitions.get(localCandidatesConflictHandler.getNextQualified(0));
-			parent.addAttribute(qAttribute);
+			AttributeMatchPath qAttributeMatchPath = candidateDefinitionPathes.get(localCandidatesConflictHandler.getNextQualified(0));
+			parent.addAttribute(qAttributeMatchPath);
 		}else if(qualifiedCount > 1){			
-			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitions, localCandidatesConflictHandler.getDisqualified(), temporaryMessageStorage, value, queue, entry, bindingModel);
+			((BoundElementValidationHandler)parent).addAttribute(candidateDefinitionPathes, localCandidatesConflictHandler.getDisqualified(), temporaryMessageStorage, value, queue, entry, bindingModel);
 		}
 	}	
 	
-	/*private HashMap<AAttribute, AttributeBinder> mapCandidateToBinder(){
-		HashMap<AAttribute, AttributeBinder> map = new HashMap<AAttribute, AttributeBinder>();
-		for(int i = 0; i < candidates.size(); i++){
-			if(!localCandidatesConflictHandler.isDisqualified(i)){				
-				map.put(candidateDefinitions.get(i), ((BoundCandidateAttributeValidationHandler)candidates.get(i)).getBinder());
-			}
-		}
-		return map;
-	}*/
 	
 	public String toString(){
 		return "BoundAttributeConcurrentHandler candidates "+candidates;

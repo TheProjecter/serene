@@ -53,14 +53,31 @@ public class SChoicePattern extends SMultipleChildrenPattern{
 		this.addedBySimplification = addedBySimplification;
 	}
     
-		
+    public boolean isRequired(){
+        if(minOccurs == 0) return false;
+        for(SPattern child : children){
+            if(!child.isRequiredContent())return false;
+        }
+        return true;
+    }	
+	public boolean isRequiredContent(){
+		if(getMinOccurs() == 0) return false;		
+		for(int i = 0; i < children.length; i++){
+			if(!children[i].isRequiredContent())return false;
+		}
+		return true;
+	}
+	
 	public void accept(SimplifiedComponentVisitor v){
 		v.visit(this);
 	}
 	public void accept(RestrictingVisitor v) throws SAXException{
 		v.visit(this);        
 	}
-    
+    public void accept(SimplifiedRuleVisitor v){
+		v.visit(this);
+	}
+	
     public IntList getAllRecordIndexes(){
         return allRecordIndexes;
     }  

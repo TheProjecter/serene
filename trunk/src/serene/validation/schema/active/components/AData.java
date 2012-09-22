@@ -35,7 +35,7 @@ import serene.validation.handlers.structure.MaximalReduceHandler;
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public class AData extends DatatypedCharsAPattern{	
 	AExceptPattern exceptPattern;    
@@ -44,7 +44,7 @@ public class AData extends DatatypedCharsAPattern{
 	public AData(Datatype datatype,
 				AExceptPattern exceptPattern,
 				ActiveGrammarModel grammarModel,
-				ActiveModelRuleHandlerPool ruleHandlerPool,
+				ValidatorRuleHandlerPool ruleHandlerPool,
 				SData sdata){
 		super(datatype, grammarModel, ruleHandlerPool);
 		this.sdata = sdata;
@@ -127,12 +127,12 @@ public class AData extends DatatypedCharsAPattern{
 		
 	public MinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*/
 	}
 	
 	public MaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
 		throw new UnsupportedOperationException();
-		//return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);*/
+		//return ruleHandlerPool.getStructureHandler(this, errorCatcher, stackHandler);*/
 	}
 	
 	public String toString(){

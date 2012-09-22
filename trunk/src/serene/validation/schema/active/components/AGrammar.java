@@ -27,14 +27,11 @@ import serene.validation.schema.simplified.SGrammar;
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
 import serene.validation.handlers.structure.MaximalReduceHandler;
-import serene.validation.handlers.structure.impl.GrammarHandler;
-import serene.validation.handlers.structure.impl.GrammarMinimalReduceHandler;
-import serene.validation.handlers.structure.impl.GrammarMaximalReduceHandler;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.error.ErrorCatcher;
 
-import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
+import serene.validation.handlers.structure.ValidatorRuleHandlerPool;
 
 public class AGrammar extends UniqueChildAPattern implements AInnerPattern{	
 	SGrammar sgrammar;
@@ -53,7 +50,7 @@ public class AGrammar extends UniqueChildAPattern implements AInnerPattern{
                 boolean allowsValues,	
                 boolean allowsListPatterns,
                 boolean allowsText,
-				ActiveModelRuleHandlerPool ruleHandlerPool,
+				ValidatorRuleHandlerPool ruleHandlerPool,
 				SGrammar sgrammar){
 		super(child, ruleHandlerPool);
 		this.allowsElements = allowsElements;
@@ -132,8 +129,8 @@ public class AGrammar extends UniqueChildAPattern implements AInnerPattern{
 	public void accept(RuleVisitor rv){
 		rv.visit(this);
 	}
-	public GrammarHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
-		return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, parent, stackHandler);
+	/*public GrammarHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
+		return ruleHandlerPool.getStructureHandler(this, errorCatcher, parent, stackHandler);
 	}
 	
 	public GrammarMinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler){
@@ -141,7 +138,7 @@ public class AGrammar extends UniqueChildAPattern implements AInnerPattern{
 	}
 	public GrammarMaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler){
 		return ruleHandlerPool.getMaximalReduceHandler(this, errorCatcher, parent, stackHandler);
-	}
+	}*/
 	
 	boolean isInterleaved(){
 		if(parent instanceof AbstractAPattern)return ((AbstractAPattern)parent).isInterleaved();

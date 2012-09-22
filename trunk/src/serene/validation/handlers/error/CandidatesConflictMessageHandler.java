@@ -36,6 +36,12 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{	
   
@@ -232,12 +238,12 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	
     
 	public void misplacedContent(int functionalEquivalenceCode, 
-                                            APattern contextDefinition, 
+                                            SPattern contextDefinition, 
 											int startInputRecordIndex, 
-											APattern definition,
+											SPattern definition,
 											int inputRecordIndex,
-											APattern sourceDefinition, 
-											APattern reper){//not stored, only used for internal conflict handling
+											SPattern sourceDefinition, 
+											SPattern reper){//not stored, only used for internal conflict handling
 	    for(int i = 0; i <= misplacedIndex; i++){
 	        if(misplacedFEC[i] == functionalEquivalenceCode) return;
 	    }
@@ -251,12 +257,12 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 											reper);
 	}
     public void misplacedContent(int functionalEquivalenceCode, 
-                                            APattern contextDefinition,
+                                            SPattern contextDefinition,
 											int startInputRecordIndex,
-											APattern definition, 
+											SPattern definition, 
 											int[] inputRecordIndex,
-											APattern[] sourceDefinition, 
-											APattern reper){//not stored, only used for internal conflict handling
+											SPattern[] sourceDefinition, 
+											SPattern reper){//not stored, only used for internal conflict handling
 	    for(int i = 0; i <= misplacedIndex; i++){
 	        if(misplacedFEC[i] == functionalEquivalenceCode) return;
 	    }
@@ -272,9 +278,9 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 			
 	
 	public void excessiveContent(int functionalEquivalenceCode, 
-                                    Rule context,
+                                    SRule context,
 									int startInputRecordIndex,
-									APattern definition, 
+									SPattern definition, 
 									int[] inputRecordIndex){
 	    for(int i = 0; i <= excessiveIndex; i++){
 	        if(excessiveFEC[i] == functionalEquivalenceCode){
@@ -289,8 +295,8 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 		
 	}   
 	public void excessiveContent(int functionalEquivalenceCode, 
-                                Rule context, 
-								APattern definition,
+                                SRule context, 
+								SPattern definition,
 								int inputRecordIndex){
         // TODO review the functionalEquivalenceCode handling
         super.excessiveContent(functionalEquivalenceCode, 
@@ -301,9 +307,9 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	}
 
 	public void missingContent(int functionalEquivalenceCode, 
-                                Rule context,
+                                SRule context,
 								int startInputRecordIndex,								 
-								APattern definition, 
+								SPattern definition, 
 								int expected, 
 								int found,
 								int[] inputRecordIndex){
@@ -326,7 +332,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
     
 	public void unresolvedAmbiguousElementContentError(int functionalEquivalenceCode, 
                                     int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
 	    for(int i = 0; i <= unresolvedAmbiguousElementIndexEE; i++){
 	        if(unresolvedAmbiguousElementFECEE[i] == functionalEquivalenceCode) return;
 	    }
@@ -341,7 +347,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
     
     public void unresolvedUnresolvedElementContentError(int functionalEquivalenceCode, 
                                     int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
 	    for(int i = 0; i <= unresolvedUnresolvedElementIndexEE; i++){
 	        if(unresolvedUnresolvedElementFECEE[i] == functionalEquivalenceCode) return;
 	    }
@@ -355,7 +361,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
     
 	public void unresolvedAttributeContentError(int functionalEquivalenceCode, 
                                     int inputRecordIndex, 
-									AAttribute[] possibleDefinitions){
+									SAttribute[] possibleDefinitions){
 	    for(int i = 0; i <= unresolvedAttributeIndexEE; i++){
 	        if(unresolvedAttributeFECEE[i] == functionalEquivalenceCode) return;
 	    }
@@ -368,7 +374,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	
 	public void ambiguousUnresolvedElementContentWarning(int functionalEquivalenceCode,
                                     int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
 	    for(int i = 0; i <= ambiguousUnresolvedElementIndexWW; i++){
 	        if(ambiguousUnresolvedElementFECWW[i] == functionalEquivalenceCode) return;
 	    }
@@ -382,7 +388,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
     
     public void ambiguousAmbiguousElementContentWarning(int functionalEquivalenceCode,
                                     int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
 	    for(int i = 0; i <= ambiguousAmbiguousElementIndexWW; i++){
 	        if(ambiguousAmbiguousElementFECWW[i] == functionalEquivalenceCode) return;
 	    }
@@ -396,7 +402,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
     
 	public void ambiguousAttributeContentWarning(int functionalEquivalenceCode,
                                     int inputRecordIndex, 
-									AAttribute[] possibleDefinitions){
+									SAttribute[] possibleDefinitions){
 	    for(int i = 0; i <= ambiguousAttributeIndexWW; i++){
 	        if(ambiguousAttributeFECWW[i] == functionalEquivalenceCode) return;
 	    }
@@ -409,7 +415,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
     
 	public void ambiguousCharacterContentWarning(int functionalEquivalenceCode,
                                     int inputRecordIndex, 
-									CharsActiveTypeItem[] possibleDefinitions){
+									SPattern[] possibleDefinitions){
 	    for(int i = 0; i <= ambiguousCharsIndexWW; i++){
 	        if(ambiguousCharsFECWW[i] == functionalEquivalenceCode) return;
 	    }
@@ -423,7 +429,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
     
     public void ambiguousAttributeValueWarning(int functionalEquivalenceCode,
                                     int inputRecordIndex, 
-									CharsActiveTypeItem[] possibleDefinitions){
+									SPattern[] possibleDefinitions){
 	    for(int i = 0; i <= ambiguousAVIndexWW; i++){
 	        if(ambiguousAVFECWW[i] == functionalEquivalenceCode) return;
 	    }
@@ -438,7 +444,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	    
     
 	public void illegalContent(int functionalEquivalenceCode, 
-                            Rule context, 
+                            SRule context, 
                             int startInputRecordIndex){
 	    for(int i = 0; i <= illegalIndex; i++){
 	        if(illegalFEC[i] == functionalEquivalenceCode) {
@@ -454,7 +460,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
     
     	
     // {15}
-	public void characterContentDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
         for(int i = 0; i <= datatypeCharsIndex; i++){
 	        if(datatypeCharsFEC[i] == functionalEquivalenceCode) return;
 	    }
@@ -465,7 +471,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
         
     
     //{16}
-	public void attributeValueDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void attributeValueDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 	    for(int i = 0; i <= datatypeAVIndex; i++){
 	        if(datatypeAVFEC[i] == functionalEquivalenceCode) return;
 	    }
@@ -475,7 +481,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	}
         
         
-	public void characterContentValueError(int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition){
+	public void characterContentValueError(int functionalEquivalenceCode, int inputRecordIndex, SValue charsDefinition){
 	    for(int i = 0; i <= valueCharsIndex; i++){
 	        if(valueCharsFEC[i] == functionalEquivalenceCode) return;
 	    }
@@ -485,7 +491,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	}
         
     
-	public void attributeValueValueError(int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition){
+	public void attributeValueValueError(int functionalEquivalenceCode, int inputRecordIndex, SValue charsDefinition){
 	    for(int i = 0; i <= valueAVIndex; i++){
 	        if(valueAVFEC[i] == functionalEquivalenceCode) return;
 	    }
@@ -495,7 +501,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	}
         
     
-	public void characterContentExceptedError(int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition){
+	public void characterContentExceptedError(int functionalEquivalenceCode, int inputRecordIndex, SData charsDefinition){
 	    for(int i = 0; i <= exceptCharsIndex; i++){
 	        if(exceptCharsFEC[i] == functionalEquivalenceCode) return;
 	    }
@@ -505,7 +511,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	}
     
         
-	public void attributeValueExceptedError(int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition){
+	public void attributeValueExceptedError(int functionalEquivalenceCode, int inputRecordIndex, SData charsDefinition){
 	    for(int i = 0; i <= exceptAVIndex; i++){
 	        if(exceptAVFEC[i] == functionalEquivalenceCode) return;
 	    }
@@ -515,7 +521,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	}
         
     
-	public void unexpectedCharacterContent(int functionalEquivalenceCode, int inputRecordIndex, AElement elementDefinition){
+	public void unexpectedCharacterContent(int functionalEquivalenceCode, int inputRecordIndex, SElement elementDefinition){
 	    for(int i = 0; i <= unexpectedCharsIndex; i++){
 	        if(unexpectedCharsFEC[i] == functionalEquivalenceCode) return;
 	    }
@@ -535,7 +541,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	}
         
     
-	public void unresolvedCharacterContent(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
 	    for(int i = 0; i <= unresolvedCharsIndexEE; i++){
 	        if(unresolvedCharsFECEE[i] == functionalEquivalenceCode) return;
 	    }
@@ -546,7 +552,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	
     
 	// {24}
-	public void unresolvedAttributeValue(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
 	    for(int i = 0; i <= unresolvedAVIndexEE; i++){
 	        if(unresolvedAVFECEE[i] == functionalEquivalenceCode) return;
 	    }
@@ -557,7 +563,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
         
     
     // {25}
-	public void listTokenDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
 	    for(int i = 0; i <= datatypeTokenIndex; i++){
 	        if(datatypeTokenFEC[i] == functionalEquivalenceCode) return;
 	    }
@@ -567,7 +573,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	}
         
         
-	public void listTokenValueError(int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition){
+	public void listTokenValueError(int functionalEquivalenceCode, int inputRecordIndex, SValue charsDefinition){
 	    for(int i = 0; i <= valueTokenIndex; i++){
 	        if(valueTokenFEC[i] == functionalEquivalenceCode) return;
 	    }
@@ -577,7 +583,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	}
         
     
-	public void listTokenExceptedError(int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition){
+	public void listTokenExceptedError(int functionalEquivalenceCode, int inputRecordIndex, SData charsDefinition){
 	    for(int i = 0; i <= exceptTokenIndex; i++){
 	        if(exceptTokenFEC[i] == functionalEquivalenceCode) return;
 	    }
@@ -587,7 +593,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
 	}
 	
     
-    public void unresolvedListTokenInContextError(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
         for(int i = 0; i <= unresolvedTokenIndexLPICE; i++){
 	        if(unresolvedTokenFECLPICE[i] == functionalEquivalenceCode) return;
 	    }
@@ -597,7 +603,7 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
     }
     
     
-    public void ambiguousListTokenInContextWarning(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void ambiguousListTokenInContextWarning(int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
         for(int i = 0; i <= ambiguousTokenIndexLPICW; i++){
 	        if(ambiguousTokenFECLPICW[i] == functionalEquivalenceCode) return;
 	    }
@@ -608,9 +614,9 @@ public class CandidatesConflictMessageHandler  extends ConflictMessageHandler{
     
     
 	public void missingCompositorContent(int functionalEquivalenceCode, 
-                                Rule context, 
+                                SRule context, 
 								int startInputRecordIndex,								 
-								APattern definition, 
+								SPattern definition, 
 								int expected, 
 								int found){
 	    for(int i = 0; i <= missingCompositorContentIndex; i++){

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import serene.validation.schema.active.components.AAttribute;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
@@ -44,7 +44,7 @@ public class UnresolvedAttributeConflictResolver extends AttributeConflictResolv
 		
     public void resolve(ErrorCatcher errorCatcher){	
         if(qualified.cardinality()== 0){
-            AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
+            SAttribute[] definitions = candidateDefinitions.toArray(new SAttribute[candidateDefinitions.size()]);
             errorCatcher.unresolvedAttributeContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
         }else if(qualified.cardinality() > 1){
             int j = 0;
@@ -54,7 +54,7 @@ public class UnresolvedAttributeConflictResolver extends AttributeConflictResolv
                     i--;
                 }
             }   
-            AAttribute[] definitions = candidateDefinitions.toArray(new AAttribute[candidateDefinitions.size()]);
+            SAttribute[] definitions = candidateDefinitions.toArray(new SAttribute[candidateDefinitions.size()]);
             errorCatcher.unresolvedAttributeContentError(inputRecordIndex, Arrays.copyOf(definitions, definitions.length));
         }else{
             int q = qualified.nextSetBit(0);

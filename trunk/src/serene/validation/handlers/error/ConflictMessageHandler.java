@@ -38,6 +38,12 @@ import serene.validation.schema.active.components.AData;
 import serene.validation.schema.active.components.AListPattern;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
+import serene.validation.schema.simplified.SRule;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.util.IntList;
 
@@ -613,12 +619,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 	
     
 	public void misplacedContent(int functionalEquivalenceCode, 
-                                            APattern contextDefinition,
+                                            SPattern contextDefinition,
 											int startInputRecordIndex, 
-											APattern definition,
+											SPattern definition,
 											int inputRecordIndex,
-											APattern sourceDefinition, 
-											APattern reper){//not stored, only used for internal conflict handling
+											SPattern sourceDefinition, 
+											SPattern reper){//not stored, only used for internal conflict handling
         
 		if(misplacedIndex < 0){
 		    misplacedIndex = 0;
@@ -626,9 +632,9 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		    //create arrays for everything
 		    //record everything
 		    
-		    misplacedContext = new APattern[initialSize];
+		    misplacedContext = new SPattern[initialSize];
             misplacedStartInputRecordIndex = new int[initialSize];
-            misplacedDefinition = new APattern[initialSize][];
+            misplacedDefinition = new SPattern[initialSize][];
             misplacedInputRecordIndex = new int[initialSize][][];
             
             misplacedFEC = new int[initialSize];            
@@ -639,7 +645,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             misplacedStartInputRecordIndex[misplacedIndex] = startInputRecordIndex;
             activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
             
-            misplacedDefinition[misplacedIndex] = new APattern[1];
+            misplacedDefinition[misplacedIndex] = new SPattern[1];
             misplacedDefinition[misplacedIndex][0] = definition;
             
             misplacedInputRecordIndex[misplacedIndex] = new int[1][];
@@ -673,7 +679,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 					
 					int oldLength = misplacedDefinition[i].length;	
 					
-					APattern[] increasedDef = new APattern[oldLength+1];					
+					SPattern[] increasedDef = new SPattern[oldLength+1];					
 					System.arraycopy(misplacedDefinition[i], 0, increasedDef, 0, oldLength);
 					misplacedDefinition[i] = increasedDef;
 					
@@ -696,7 +702,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			
 			messageTotalCount++;
 			if(++misplacedIndex == misplacedContext.length){			    
-                APattern[] increasedCDef = new APattern[misplacedIndex+increaseSizeAmount];
+                SPattern[] increasedCDef = new SPattern[misplacedIndex+increaseSizeAmount];
                 System.arraycopy(misplacedContext, 0, increasedCDef, 0, misplacedIndex);
                 misplacedContext = increasedCDef;               
                 
@@ -704,7 +710,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
                 System.arraycopy(misplacedStartInputRecordIndex, 0, increasedSIRI, 0, misplacedIndex);
                 misplacedStartInputRecordIndex = increasedSIRI;
                 
-                APattern[][] increasedDef = new APattern[misplacedIndex+increaseSizeAmount][];
+                SPattern[][] increasedDef = new SPattern[misplacedIndex+increaseSizeAmount][];
                 System.arraycopy(misplacedDefinition, 0, increasedDef, 0, misplacedIndex);
                 misplacedDefinition = increasedDef;
                  
@@ -723,7 +729,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             misplacedStartInputRecordIndex[misplacedIndex] = startInputRecordIndex;
             activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
             
-            misplacedDefinition[misplacedIndex] = new APattern[1];
+            misplacedDefinition[misplacedIndex] = new SPattern[1];
             misplacedDefinition[misplacedIndex][0] = definition;
             
             misplacedInputRecordIndex[misplacedIndex] = new int[1][];
@@ -737,12 +743,12 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		
 	}
     public void misplacedContent(int functionalEquivalenceCode, 
-                                            APattern contextDefinition,
+                                            SPattern contextDefinition,
 											int startInputRecordIndex, 
-											APattern definition, 
+											SPattern definition, 
 											int[] inputRecordIndex,
-											APattern[] sourceDefinition, 
-											APattern reper){//not stored, only used for internal conflict handling
+											SPattern[] sourceDefinition, 
+											SPattern reper){//not stored, only used for internal conflict handling
 		
 		if(misplacedIndex < 0){
 		    misplacedIndex = 0;
@@ -750,9 +756,9 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		    //create arrays for everything
 		    //record everything
 		    
-		    misplacedContext = new APattern[initialSize];
+		    misplacedContext = new SPattern[initialSize];
             misplacedStartInputRecordIndex = new int[initialSize];
-            misplacedDefinition = new APattern[initialSize][];
+            misplacedDefinition = new SPattern[initialSize][];
             misplacedInputRecordIndex = new int[initialSize][][];
               
             misplacedFEC = new int[initialSize];    
@@ -763,7 +769,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             misplacedStartInputRecordIndex[misplacedIndex] = startInputRecordIndex;
             activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
             
-            misplacedDefinition[misplacedIndex] = new APattern[1];
+            misplacedDefinition[misplacedIndex] = new SPattern[1];
             misplacedDefinition[misplacedIndex][0] = definition;
             
             misplacedInputRecordIndex[misplacedIndex] = new int[1][];
@@ -796,7 +802,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 					
 					int oldLength = misplacedDefinition[i].length;	
 					
-					APattern[] increasedDef = new APattern[oldLength+1];					
+					SPattern[] increasedDef = new SPattern[oldLength+1];					
 					System.arraycopy(misplacedDefinition[i], 0, increasedDef, 0, oldLength);
 					misplacedDefinition[i] = increasedDef;
 					
@@ -818,7 +824,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			
 			messageTotalCount++;
 			if(++misplacedIndex == misplacedContext.length){			    
-                APattern[] increasedCDef = new APattern[misplacedIndex+increaseSizeAmount];
+                SPattern[] increasedCDef = new SPattern[misplacedIndex+increaseSizeAmount];
                 System.arraycopy(misplacedContext, 0, increasedCDef, 0, misplacedIndex);
                 misplacedContext = increasedCDef;               
                 
@@ -826,7 +832,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
                 System.arraycopy(misplacedStartInputRecordIndex, 0, increasedSIRI, 0, misplacedIndex);
                 misplacedStartInputRecordIndex = increasedSIRI;
                 
-                APattern[][] increasedDef = new APattern[misplacedIndex+increaseSizeAmount][];
+                SPattern[][] increasedDef = new SPattern[misplacedIndex+increaseSizeAmount][];
                 System.arraycopy(misplacedDefinition, 0, increasedDef, 0, misplacedIndex);
                 misplacedDefinition = increasedDef;
                  
@@ -844,7 +850,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
             misplacedStartInputRecordIndex[misplacedIndex] = startInputRecordIndex;
             activeInputDescriptor.registerClientForRecord(startInputRecordIndex, this);
             
-            misplacedDefinition[misplacedIndex] = new APattern[1];
+            misplacedDefinition[misplacedIndex] = new SPattern[1];
             misplacedDefinition[misplacedIndex][0] = definition;
             
             misplacedInputRecordIndex[misplacedIndex] = new int[1][];
@@ -906,8 +912,8 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
         activeInputDescriptor.unregisterClientForRecord(misplacedStartInputRecordIndex[removeIndex], this);        
 	    
-	    APattern[] sourceDefinition = null;
-	    APattern reper = null;
+	    SPattern[] sourceDefinition = null;
+	    SPattern reper = null;
 	    for(int j = 0; j < misplacedDefinition[removeIndex].length; j++){
             other.misplacedContent(misplacedFEC[removeIndex],
                                     misplacedContext[removeIndex],
@@ -932,24 +938,24 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 	}		
 	
 	public void excessiveContent(int functionalEquivalenceCode, 
-                                    Rule context,
+                                    SRule context,
 									int startInputRecordIndex,
-									APattern definition, 
+									SPattern definition, 
 									int[] inputRecordIndex){
 		
         messageTotalCount++;
 		if(excessiveIndex < 0){
 			excessiveIndex = 0;
-			excessiveContext = new APattern[initialSize];		
+			excessiveContext = new SPattern[initialSize];		
 			excessiveStartInputRecordIndex = new int[initialSize];
-			excessiveDefinition = new APattern[initialSize];
+			excessiveDefinition = new SPattern[initialSize];
 			excessiveInputRecordIndex = new int[initialSize][];	
 			
 			excessiveFEC = new int[initialSize];	
 		}else if(++excessiveIndex == excessiveContext.length){
 		    int newSize = excessiveIndex+increaseSizeAmount;
 		    
-		    APattern[] increasedEC = new APattern[newSize];
+		    SPattern[] increasedEC = new SPattern[newSize];
 			System.arraycopy(excessiveContext, 0, increasedEC, 0, excessiveIndex);
 			excessiveContext = increasedEC;
 			
@@ -957,7 +963,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(excessiveStartInputRecordIndex, 0, increasedSLN, 0, excessiveIndex);
 			excessiveStartInputRecordIndex = increasedSLN;
 			
-			APattern[] increasedED = new APattern[newSize];
+			SPattern[] increasedED = new SPattern[newSize];
 			System.arraycopy(excessiveDefinition, 0, increasedED, 0, excessiveIndex);
 			excessiveDefinition = increasedED;
 			
@@ -981,8 +987,8 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		
 	}   
 	public void excessiveContent(int functionalEquivalenceCode, 
-                                Rule context, 
-								APattern definition,
+                                SRule context, 
+								SPattern definition,
 								int inputRecordIndex){
         
         boolean recorded = false;
@@ -1068,9 +1074,9 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         
     
     public void missingContent(int functionalEquivalenceCode, 
-                                Rule context, 
+                                SRule context, 
 								int startInputRecordIndex,						 
-								APattern definition, 
+								SPattern definition, 
 								int expected, 
 								int found,
 								int[] inputRecordIndex){
@@ -1078,9 +1084,9 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         messageTotalCount++;
 		if(missingIndex < 0){
 			missingIndex = 0;
-			missingContext = new APattern[initialSize];			
+			missingContext = new SPattern[initialSize];			
 			missingStartInputRecordIndex = new int[initialSize];
-			missingDefinition = new APattern[initialSize];
+			missingDefinition = new SPattern[initialSize];
 			missingExpected = new int[initialSize];
 			missingFound = new int[initialSize];		
 			missingInputRecordIndex = new int[initialSize][];	
@@ -1089,7 +1095,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		}else if(++missingIndex == missingContext.length){
 		    int newSize = missingIndex+increaseSizeAmount;
 		    
-		    APattern[] increasedEC = new APattern[newSize];
+		    SPattern[] increasedEC = new SPattern[newSize];
 			System.arraycopy(missingContext, 0, increasedEC, 0, missingIndex);
 			missingContext = increasedEC;
 			
@@ -1097,7 +1103,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(missingStartInputRecordIndex, 0, increasedSIRI, 0, missingIndex);
 			missingStartInputRecordIndex = increasedSIRI;
 			
-			APattern[] increasedED = new APattern[newSize];
+			SPattern[] increasedED = new SPattern[newSize];
 			System.arraycopy(missingDefinition, 0, increasedED, 0, missingIndex);
 			missingDefinition = increasedED;
 			
@@ -1204,19 +1210,19 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
 
     public void illegalContent(int functionalEquivalenceCode, 
-                            Rule context, 
+                            SRule context, 
                             int startInputRecordIndex){
         
         messageTotalCount++;
 		if(illegalIndex < 0){
 			illegalIndex = 0;
-			illegalContext = new APattern[initialSize];
+			illegalContext = new SPattern[initialSize];
 			illegalStartInputRecordIndex = new int[initialSize];	
 			
 			illegalFEC = new int[initialSize];
 		}else if(++illegalIndex == illegalContext.length){
 		    int size = illegalIndex + increaseSizeAmount;
-			APattern[] increasedEC = new APattern[size];
+			SPattern[] increasedEC = new SPattern[size];
 			System.arraycopy(illegalContext, 0, increasedEC, 0, illegalIndex);
 			illegalContext = increasedEC;
 			
@@ -1289,13 +1295,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
 	public void unresolvedAmbiguousElementContentError(int functionalEquivalenceCode, 
                                     int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
         
         messageTotalCount++;
 		if(unresolvedAmbiguousElementIndexEE < 0){
 			unresolvedAmbiguousElementIndexEE = 0;	
 			unresolvedAmbiguousElementInputRecordIndexEE =new int[initialSize];
-			unresolvedAmbiguousElementDefinitionEE = new AElement[initialSize][];
+			unresolvedAmbiguousElementDefinitionEE = new SElement[initialSize][];
 			
 			unresolvedAmbiguousElementFECEE = new int[initialSize];
 		}else if(++unresolvedAmbiguousElementIndexEE == unresolvedAmbiguousElementInputRecordIndexEE.length){
@@ -1305,7 +1311,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(unresolvedAmbiguousElementInputRecordIndexEE, 0, increasedCN, 0, unresolvedAmbiguousElementIndexEE);
 			unresolvedAmbiguousElementInputRecordIndexEE = increasedCN;
 		    
-		    AElement[][] increasedDef = new AElement[size][];
+		    SElement[][] increasedDef = new SElement[size][];
 			System.arraycopy(unresolvedAmbiguousElementDefinitionEE, 0, increasedDef, 0, unresolvedAmbiguousElementIndexEE);
 			unresolvedAmbiguousElementDefinitionEE = increasedDef;
 			
@@ -1375,13 +1381,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         
     public void unresolvedUnresolvedElementContentError(int functionalEquivalenceCode, 
                                     int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
         
         messageTotalCount++;
 		if(unresolvedUnresolvedElementIndexEE < 0){
 			unresolvedUnresolvedElementIndexEE = 0;	
 			unresolvedUnresolvedElementInputRecordIndexEE =new int[initialSize];
-			unresolvedUnresolvedElementDefinitionEE = new AElement[initialSize][];
+			unresolvedUnresolvedElementDefinitionEE = new SElement[initialSize][];
 			
 			unresolvedUnresolvedElementFECEE = new int[initialSize];
 		}else if(++unresolvedUnresolvedElementIndexEE == unresolvedUnresolvedElementInputRecordIndexEE.length){
@@ -1391,7 +1397,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(unresolvedUnresolvedElementInputRecordIndexEE, 0, increasedCN, 0, unresolvedUnresolvedElementIndexEE);
 			unresolvedUnresolvedElementInputRecordIndexEE = increasedCN;
 		    
-		    AElement[][] increasedDef = new AElement[size][];
+		    SElement[][] increasedDef = new SElement[size][];
 			System.arraycopy(unresolvedUnresolvedElementDefinitionEE, 0, increasedDef, 0, unresolvedUnresolvedElementIndexEE);
 			unresolvedUnresolvedElementDefinitionEE = increasedDef;
 			
@@ -1462,13 +1468,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
 	public void unresolvedAttributeContentError(int functionalEquivalenceCode, 
                                     int inputRecordIndex, 
-									AAttribute[] possibleDefinitions){
+									SAttribute[] possibleDefinitions){
         
 		messageTotalCount++;
 		if(unresolvedAttributeIndexEE < 0){
 			unresolvedAttributeIndexEE = 0;	
 			unresolvedAttributeInputRecordIndexEE =new int[initialSize];
-			unresolvedAttributeDefinitionEE = new AAttribute[initialSize][];
+			unresolvedAttributeDefinitionEE = new SAttribute[initialSize][];
 			
 			unresolvedAttributeFECEE = new int[initialSize];
 		}else if(++unresolvedAttributeIndexEE == unresolvedAttributeInputRecordIndexEE.length){
@@ -1478,7 +1484,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(unresolvedAttributeInputRecordIndexEE, 0, increasedCN, 0, unresolvedAttributeIndexEE);
 			unresolvedAttributeInputRecordIndexEE = increasedCN;
 		    
-		    AAttribute[][] increasedDef = new AAttribute[size][];
+		    SAttribute[][] increasedDef = new SAttribute[size][];
 			System.arraycopy(unresolvedAttributeDefinitionEE, 0, increasedDef, 0, unresolvedAttributeIndexEE);
 			unresolvedAttributeDefinitionEE = increasedDef;
 			
@@ -1549,13 +1555,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
 	public void ambiguousUnresolvedElementContentWarning(int functionalEquivalenceCode,
                                     int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
         
         messageTotalCount++;
 		if(ambiguousUnresolvedElementIndexWW < 0){
 			ambiguousUnresolvedElementIndexWW = 0;	
 			ambiguousUnresolvedElementInputRecordIndexWW =new int[initialSize];
-			ambiguousUnresolvedElementDefinitionWW = new AElement[initialSize][];
+			ambiguousUnresolvedElementDefinitionWW = new SElement[initialSize][];
 			
 			ambiguousUnresolvedElementFECWW = new int[initialSize];
 		}else if(++ambiguousUnresolvedElementIndexWW == ambiguousUnresolvedElementInputRecordIndexWW.length){
@@ -1565,7 +1571,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(ambiguousUnresolvedElementInputRecordIndexWW, 0, increasedCN, 0, ambiguousUnresolvedElementIndexWW);
 			ambiguousUnresolvedElementInputRecordIndexWW = increasedCN;
 		    
-		    AElement[][] increasedDef = new AElement[size][];
+		    SElement[][] increasedDef = new SElement[size][];
 			System.arraycopy(ambiguousUnresolvedElementDefinitionWW, 0, increasedDef, 0, ambiguousUnresolvedElementIndexWW);
 			ambiguousUnresolvedElementDefinitionWW = increasedDef;
 			
@@ -1636,13 +1642,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
     public void ambiguousAmbiguousElementContentWarning(int functionalEquivalenceCode,
                                     int inputRecordIndex, 
-									AElement[] possibleDefinitions){
+									SElement[] possibleDefinitions){
         
         messageTotalCount++;
 		if(ambiguousAmbiguousElementIndexWW < 0){
 			ambiguousAmbiguousElementIndexWW = 0;	
 			ambiguousAmbiguousElementInputRecordIndexWW =new int[initialSize];
-			ambiguousAmbiguousElementDefinitionWW = new AElement[initialSize][];
+			ambiguousAmbiguousElementDefinitionWW = new SElement[initialSize][];
 			
 			ambiguousAmbiguousElementFECWW = new int[initialSize];
 		}else if(++ambiguousAmbiguousElementIndexWW == ambiguousAmbiguousElementInputRecordIndexWW.length){
@@ -1652,7 +1658,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(ambiguousAmbiguousElementInputRecordIndexWW, 0, increasedCN, 0, ambiguousAmbiguousElementIndexWW);
 			ambiguousAmbiguousElementInputRecordIndexWW = increasedCN;
 		    
-		    AElement[][] increasedDef = new AElement[size][];
+		    SElement[][] increasedDef = new SElement[size][];
 			System.arraycopy(ambiguousAmbiguousElementDefinitionWW, 0, increasedDef, 0, ambiguousAmbiguousElementIndexWW);
 			ambiguousAmbiguousElementDefinitionWW = increasedDef;
 			
@@ -1722,13 +1728,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
 	public void ambiguousAttributeContentWarning(int functionalEquivalenceCode,
                                     int inputRecordIndex, 
-									AAttribute[] possibleDefinitions){
+									SAttribute[] possibleDefinitions){
         
         messageTotalCount++;
 		if(ambiguousAttributeIndexWW < 0){
 			ambiguousAttributeIndexWW = 0;	
 			ambiguousAttributeInputRecordIndexWW =new int[initialSize];
-			ambiguousAttributeDefinitionWW = new AAttribute[initialSize][];
+			ambiguousAttributeDefinitionWW = new SAttribute[initialSize][];
 			
 			ambiguousAttributeFECWW = new int[initialSize];
 		}else if(++ambiguousAttributeIndexWW == ambiguousAttributeInputRecordIndexWW.length){
@@ -1738,7 +1744,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(ambiguousAttributeInputRecordIndexWW, 0, increasedCN, 0, ambiguousAttributeIndexWW);
 			ambiguousAttributeInputRecordIndexWW = increasedCN;
 		    
-		    AAttribute[][] increasedDef = new AAttribute[size][];
+		    SAttribute[][] increasedDef = new SAttribute[size][];
 			System.arraycopy(ambiguousAttributeDefinitionWW, 0, increasedDef, 0, ambiguousAttributeIndexWW);
 			ambiguousAttributeDefinitionWW = increasedDef;
 			
@@ -1809,13 +1815,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
 	public void ambiguousCharacterContentWarning(int functionalEquivalenceCode,
                                     int inputRecordIndex, 
-									CharsActiveTypeItem[] possibleDefinitions){
+									SPattern[] possibleDefinitions){
         
         messageTotalCount++;
 		if(ambiguousCharsIndexWW < 0){
 			ambiguousCharsIndexWW = 0;	
 			ambiguousCharsInputRecordIndexWW =new int[initialSize];
-			ambiguousCharsDefinitionWW = new CharsActiveTypeItem[initialSize][];
+			ambiguousCharsDefinitionWW = new SPattern[initialSize][];
 			
 			ambiguousCharsFECWW = new int[initialSize];
 		}else if(++ambiguousCharsIndexWW == ambiguousCharsInputRecordIndexWW.length){
@@ -1825,7 +1831,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(ambiguousCharsInputRecordIndexWW, 0, increasedCN, 0, ambiguousCharsIndexWW);
 			ambiguousCharsInputRecordIndexWW = increasedCN;
 		    
-		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+		    SPattern[][] increasedDef = new SPattern[size][];
 			System.arraycopy(ambiguousCharsDefinitionWW, 0, increasedDef, 0, ambiguousCharsIndexWW);
 			ambiguousCharsDefinitionWW = increasedDef;
 			
@@ -1896,13 +1902,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
     public void ambiguousAttributeValueWarning(int functionalEquivalenceCode,
                                     int inputRecordIndex, 
-									CharsActiveTypeItem[] possibleDefinitions){
+									SPattern[] possibleDefinitions){
         
         messageTotalCount++;
 		if(ambiguousAVIndexWW < 0){
 			ambiguousAVIndexWW = 0;	
 			ambiguousAVInputRecordIndexWW =new int[initialSize];
-			ambiguousAVDefinitionWW = new CharsActiveTypeItem[initialSize][];
+			ambiguousAVDefinitionWW = new SPattern[initialSize][];
 			
 			ambiguousAVFECWW = new int[initialSize];
 		}else if(++ambiguousAVIndexWW == ambiguousAVInputRecordIndexWW.length){
@@ -1912,7 +1918,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(ambiguousAVInputRecordIndexWW, 0, increasedCN, 0, ambiguousAVIndexWW);
 			ambiguousAVInputRecordIndexWW = increasedCN;
 		    
-		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+		    SPattern[][] increasedDef = new SPattern[size][];
 			System.arraycopy(ambiguousAVDefinitionWW, 0, increasedDef, 0, ambiguousAVIndexWW);
 			ambiguousAVDefinitionWW = increasedDef;
 			
@@ -1982,13 +1988,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		
     
     // {15}
-	public void characterContentDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void characterContentDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
         
         messageTotalCount++;
 		if(datatypeCharsIndex < 0){
 			datatypeCharsIndex = 0;	
 			datatypeCharsInputRecordIndex =new int[initialSize];
-			datatypeCharsDefinition = new DatatypedActiveTypeItem[initialSize];
+			datatypeCharsDefinition = new SPattern[initialSize];
 			datatypeCharsErrorMessage = new String[initialSize];
 			
 			datatypeCharsFEC = new int[initialSize];
@@ -1999,7 +2005,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(datatypeCharsInputRecordIndex, 0, increasedCN, 0, datatypeCharsIndex);
 			datatypeCharsInputRecordIndex = increasedCN;
 		    
-		    DatatypedActiveTypeItem[] increasedDef = new DatatypedActiveTypeItem[size];
+		    SPattern[] increasedDef = new SPattern[size];
 			System.arraycopy(datatypeCharsDefinition, 0, increasedDef, 0, datatypeCharsIndex);
 			datatypeCharsDefinition = increasedDef;
 			
@@ -2077,13 +2083,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }    
     
     //{16}
-	public void attributeValueDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void attributeValueDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
         
         messageTotalCount++;
 		if(datatypeAVIndex < 0){
 			datatypeAVIndex = 0;	
 			datatypeAVInputRecordIndex =new int[initialSize];
-			datatypeAVDefinition = new DatatypedActiveTypeItem[initialSize];
+			datatypeAVDefinition = new SPattern[initialSize];
 			datatypeAVErrorMessage = new String[initialSize];
 			
 			datatypeAVFEC = new int[initialSize];
@@ -2094,7 +2100,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(datatypeAVInputRecordIndex, 0, increasedCN, 0, datatypeAVIndex);
 			datatypeAVInputRecordIndex = increasedCN;
 		    
-		    DatatypedActiveTypeItem[] increasedDef = new DatatypedActiveTypeItem[size];
+		    SPattern[] increasedDef = new SPattern[size];
 			System.arraycopy(datatypeAVDefinition, 0, increasedDef, 0, datatypeAVIndex);
 			datatypeAVDefinition = increasedDef;
 			
@@ -2172,13 +2178,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
         
         
-	public void characterContentValueError(int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition){
+	public void characterContentValueError(int functionalEquivalenceCode, int inputRecordIndex, SValue charsDefinition){
         
         messageTotalCount++;
 		if(valueCharsIndex < 0){
 			valueCharsIndex = 0;	
 			valueCharsInputRecordIndex =new int[initialSize];
-			valueCharsDefinition = new AValue[initialSize];
+			valueCharsDefinition = new SValue[initialSize];
 			
 			valueCharsFEC = new int[initialSize];
 		}else if(++valueCharsIndex == valueCharsInputRecordIndex.length){
@@ -2188,7 +2194,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(valueCharsInputRecordIndex, 0, increasedCN, 0, valueCharsIndex);
 			valueCharsInputRecordIndex = increasedCN;
 		    
-		    AValue[] increasedDef = new AValue[size];
+		    SValue[] increasedDef = new SValue[size];
 			System.arraycopy(valueCharsDefinition, 0, increasedDef, 0, valueCharsIndex);
 			valueCharsDefinition = increasedDef;
 			
@@ -2256,13 +2262,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }   
     
-	public void attributeValueValueError(int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition){
+	public void attributeValueValueError(int functionalEquivalenceCode, int inputRecordIndex, SValue charsDefinition){
         
         messageTotalCount++;
 		if(valueAVIndex < 0){
 			valueAVIndex = 0;	
 			valueAVInputRecordIndex =new int[initialSize];
-			valueAVDefinition = new AValue[initialSize];
+			valueAVDefinition = new SValue[initialSize];
 			
 			valueAVFEC = new int[initialSize];
 		}else if(++valueAVIndex == valueAVInputRecordIndex.length){
@@ -2272,7 +2278,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(valueAVInputRecordIndex, 0, increasedCN, 0, valueAVIndex);
 			valueAVInputRecordIndex = increasedCN;
 		    
-		    AValue[] increasedDef = new AValue[size];
+		    SValue[] increasedDef = new SValue[size];
 			System.arraycopy(valueAVDefinition, 0, increasedDef, 0, valueAVIndex);
 			valueAVDefinition = increasedDef;
 			
@@ -2341,13 +2347,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }    
     
-	public void characterContentExceptedError(int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition){
+	public void characterContentExceptedError(int functionalEquivalenceCode, int inputRecordIndex, SData charsDefinition){
         
         messageTotalCount++;
 		if(exceptCharsIndex < 0){
 			exceptCharsIndex = 0;	
 			exceptCharsInputRecordIndex =new int[initialSize];
-			exceptCharsDefinition = new AData[initialSize];
+			exceptCharsDefinition = new SData[initialSize];
 			
 			exceptCharsFEC = new int[initialSize];
 		}else if(++exceptCharsIndex == exceptCharsInputRecordIndex.length){
@@ -2357,7 +2363,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(exceptCharsInputRecordIndex, 0, increasedCN, 0, exceptCharsIndex);
 			exceptCharsInputRecordIndex = increasedCN;
 		    
-		    AData[] increasedDef = new AData[size];
+		    SData[] increasedDef = new SData[size];
 			System.arraycopy(exceptCharsDefinition, 0, increasedDef, 0, exceptCharsIndex);
 			exceptCharsDefinition = increasedDef;
 			
@@ -2427,13 +2433,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
         
         
-	public void attributeValueExceptedError(int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition){
+	public void attributeValueExceptedError(int functionalEquivalenceCode, int inputRecordIndex, SData charsDefinition){
         
         messageTotalCount++;
 		if(exceptAVIndex < 0){
 			exceptAVIndex = 0;	
 			exceptAVInputRecordIndex =new int[initialSize];
-			exceptAVDefinition = new AData[initialSize];
+			exceptAVDefinition = new SData[initialSize];
 			
 			exceptAVFEC = new int[initialSize];
 		}else if(++exceptAVIndex == exceptAVInputRecordIndex.length){
@@ -2443,7 +2449,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(exceptAVInputRecordIndex, 0, increasedCN, 0, exceptAVIndex);
 			exceptAVInputRecordIndex = increasedCN;
 		    
-		    AData[] increasedDef = new AData[size];
+		    SData[] increasedDef = new SData[size];
 			System.arraycopy(exceptAVDefinition, 0, increasedDef, 0, exceptAVIndex);
 			exceptAVDefinition = increasedDef;
 			
@@ -2513,13 +2519,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }    
     
     
-	public void unexpectedCharacterContent(int functionalEquivalenceCode, int inputRecordIndex, AElement elementDefinition){
+	public void unexpectedCharacterContent(int functionalEquivalenceCode, int inputRecordIndex, SElement elementDefinition){
         
         messageTotalCount++;
 		if(unexpectedCharsIndex < 0){
 			unexpectedCharsIndex = 0;	
 			unexpectedCharsInputRecordIndex =new int[initialSize];
-			unexpectedCharsDefinition = new AElement[initialSize];
+			unexpectedCharsDefinition = new SElement[initialSize];
 			
 			unexpectedCharsFEC = new int[initialSize];
 		}else if(++unexpectedCharsIndex == unexpectedCharsInputRecordIndex.length){
@@ -2529,7 +2535,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(unexpectedCharsInputRecordIndex, 0, increasedCN, 0, unexpectedCharsIndex);
 			unexpectedCharsInputRecordIndex = increasedCN;
 		    
-		    AElement[] increasedDef = new AElement[size];
+		    SElement[] increasedDef = new SElement[size];
 			System.arraycopy(unexpectedCharsDefinition, 0, increasedDef, 0, unexpectedCharsIndex);
 			unexpectedCharsDefinition = increasedDef;
 			
@@ -2683,13 +2689,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }    
     
-	public void unresolvedCharacterContent(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedCharacterContent(int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
         
         messageTotalCount++;
 		if(unresolvedCharsIndexEE < 0){
 			unresolvedCharsIndexEE = 0;	
 			unresolvedCharsInputRecordIndexEE =new int[initialSize];
-			unresolvedCharsDefinitionEE = new CharsActiveTypeItem[initialSize][];
+			unresolvedCharsDefinitionEE = new SPattern[initialSize][];
 			
 			unresolvedCharsFECEE  = new int[initialSize];
 		}else if(++unresolvedCharsIndexEE == unresolvedCharsInputRecordIndexEE.length){
@@ -2699,7 +2705,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(unresolvedCharsInputRecordIndexEE, 0, increasedCN, 0, unresolvedCharsIndexEE);
 			unresolvedCharsInputRecordIndexEE = increasedCN;
 		    
-		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+		    SPattern[][] increasedDef = new SPattern[size][];
 			System.arraycopy(unresolvedCharsDefinitionEE, 0, increasedDef, 0, unresolvedCharsIndexEE);
 			unresolvedCharsDefinitionEE = increasedDef;
 			
@@ -2769,13 +2775,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         
     
 	// {24}
-	public void unresolvedAttributeValue(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+	public void unresolvedAttributeValue(int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
         
         messageTotalCount++;
 		if(unresolvedAVIndexEE < 0){
 			unresolvedAVIndexEE = 0;	
 			unresolvedAVInputRecordIndexEE =new int[initialSize];
-			unresolvedAVDefinitionEE = new CharsActiveTypeItem[initialSize][];
+			unresolvedAVDefinitionEE = new SPattern[initialSize][];
 			
 			unresolvedAVFECEE = new int[initialSize];
 		}else if(++unresolvedAVIndexEE == unresolvedAVInputRecordIndexEE.length){
@@ -2785,7 +2791,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(unresolvedAVInputRecordIndexEE, 0, increasedCN, 0, unresolvedAVIndexEE);
 			unresolvedAVInputRecordIndexEE = increasedCN;
 		    
-		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+		    SPattern[][] increasedDef = new SPattern[size][];
 			System.arraycopy(unresolvedAVDefinitionEE, 0, increasedDef, 0, unresolvedAVIndexEE);
 			unresolvedAVDefinitionEE = increasedDef;
 			
@@ -2855,13 +2861,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
     
     // {25}
-	public void listTokenDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, DatatypedActiveTypeItem charsDefinition, String datatypeErrorMessage){
+	public void listTokenDatatypeError(int functionalEquivalenceCode, int inputRecordIndex, SPattern charsDefinition, String datatypeErrorMessage){
         
         messageTotalCount++;
 		if(datatypeTokenIndex < 0){
 			datatypeTokenIndex = 0;	
 			datatypeTokenInputRecordIndex =new int[initialSize];
-			datatypeTokenDefinition = new DatatypedActiveTypeItem[initialSize];
+			datatypeTokenDefinition = new SPattern[initialSize];
 			datatypeTokenErrorMessage = new String[initialSize];
 			
 			datatypeTokenFEC = new int[initialSize];
@@ -2872,7 +2878,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(datatypeTokenInputRecordIndex, 0, increasedCN, 0, datatypeTokenIndex);
 			datatypeTokenInputRecordIndex = increasedCN;
 		    
-		    DatatypedActiveTypeItem[] increasedDef = new DatatypedActiveTypeItem[size];
+		    SPattern[] increasedDef = new SPattern[size];
 			System.arraycopy(datatypeTokenDefinition, 0, increasedDef, 0, datatypeTokenIndex);
 			datatypeTokenDefinition = increasedDef;
 			
@@ -2951,13 +2957,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         }
     }   
         
-	public void listTokenValueError(int functionalEquivalenceCode, int inputRecordIndex, AValue charsDefinition){
+	public void listTokenValueError(int functionalEquivalenceCode, int inputRecordIndex, SValue charsDefinition){
         
         messageTotalCount++;
 		if(valueTokenIndex < 0){
 			valueTokenIndex = 0;	
 			valueTokenInputRecordIndex =new int[initialSize];
-			valueTokenDefinition = new AValue[initialSize];
+			valueTokenDefinition = new SValue[initialSize];
 			
 			valueTokenFEC = new int[initialSize];
 		}else if(++valueTokenIndex == valueTokenInputRecordIndex.length){
@@ -2967,7 +2973,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(valueTokenInputRecordIndex, 0, increasedCN, 0, valueTokenIndex);
 			valueTokenInputRecordIndex = increasedCN;
 		    
-		    AValue[] increasedDef = new AValue[size];
+		    SValue[] increasedDef = new SValue[size];
 			System.arraycopy(valueTokenDefinition, 0, increasedDef, 0, valueTokenIndex);
 			valueTokenDefinition = increasedDef;
 			
@@ -3038,13 +3044,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     
     
-	public void listTokenExceptedError(int functionalEquivalenceCode, int inputRecordIndex, AData charsDefinition){
+	public void listTokenExceptedError(int functionalEquivalenceCode, int inputRecordIndex, SData charsDefinition){
         
         messageTotalCount++;
 		if(exceptTokenIndex < 0){
 			exceptTokenIndex = 0;	
 			exceptTokenInputRecordIndex =new int[initialSize];
-			exceptTokenDefinition = new AData[initialSize];
+			exceptTokenDefinition = new SData[initialSize];
 			
 			exceptTokenFEC = new int[initialSize];
 		}else if(++exceptTokenIndex == exceptTokenInputRecordIndex.length){
@@ -3054,7 +3060,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(exceptTokenInputRecordIndex, 0, increasedCN, 0, exceptTokenIndex);
 			exceptTokenInputRecordIndex = increasedCN;
 		    
-		    AData[] increasedDef = new AData[size];
+		    SData[] increasedDef = new SData[size];
 			System.arraycopy(exceptTokenDefinition, 0, increasedDef, 0, exceptTokenIndex);
 			exceptTokenDefinition = increasedDef;
 			
@@ -3125,13 +3131,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     }
     
     
-    public void unresolvedListTokenInContextError(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void unresolvedListTokenInContextError(int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
         
         messageTotalCount++;
 		if(unresolvedTokenIndexLPICE < 0){
 			unresolvedTokenIndexLPICE = 0;	
 			unresolvedTokenInputRecordIndexLPICE =new int[initialSize];
-			unresolvedTokenDefinitionLPICE = new CharsActiveTypeItem[initialSize][];
+			unresolvedTokenDefinitionLPICE = new SPattern[initialSize][];
 			
 			unresolvedTokenFECLPICE = new int[initialSize];
 		}else if(++unresolvedTokenIndexLPICE == unresolvedTokenInputRecordIndexLPICE.length){
@@ -3141,7 +3147,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(unresolvedTokenInputRecordIndexLPICE, 0, increasedCN, 0, unresolvedTokenIndexLPICE);
 			unresolvedTokenInputRecordIndexLPICE = increasedCN;
 		    
-		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+		    SPattern[][] increasedDef = new SPattern[size][];
 			System.arraycopy(unresolvedTokenDefinitionLPICE, 0, increasedDef, 0, unresolvedTokenIndexLPICE);
 			unresolvedTokenDefinitionLPICE = increasedDef;
 			
@@ -3211,13 +3217,13 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
     
     
     
-    public void ambiguousListTokenInContextWarning(int functionalEquivalenceCode, int inputRecordIndex, CharsActiveTypeItem[] possibleDefinitions){
+    public void ambiguousListTokenInContextWarning(int functionalEquivalenceCode, int inputRecordIndex, SPattern[] possibleDefinitions){
         
         messageTotalCount++;
 		if(ambiguousTokenIndexLPICW < 0){
 			ambiguousTokenIndexLPICW = 0;	
 			ambiguousTokenInputRecordIndexLPICW =new int[initialSize];
-			ambiguousTokenDefinitionLPICW = new CharsActiveTypeItem[initialSize][];
+			ambiguousTokenDefinitionLPICW = new SPattern[initialSize][];
 			
 			ambiguousTokenFECLPICW = new int[initialSize];
 		}else if(++ambiguousTokenIndexLPICW == ambiguousTokenInputRecordIndexLPICW.length){
@@ -3227,7 +3233,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(ambiguousTokenInputRecordIndexLPICW, 0, increasedCN, 0, ambiguousTokenIndexLPICW);
 			ambiguousTokenInputRecordIndexLPICW = increasedCN;
 		    
-		    CharsActiveTypeItem[][] increasedDef = new CharsActiveTypeItem[size][];
+		    SPattern[][] increasedDef = new SPattern[size][];
 			System.arraycopy(ambiguousTokenDefinitionLPICW, 0, increasedDef, 0, ambiguousTokenIndexLPICW);
 			ambiguousTokenDefinitionLPICW = increasedDef;
 			
@@ -3296,17 +3302,17 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
         
     
 	public void missingCompositorContent(int functionalEquivalenceCode, 
-                                Rule context, 
+                                SRule context, 
 								int startInputRecordIndex,								 
-								APattern definition, 
+								SPattern definition, 
 								int expected, 
 								int found){
         
         if(missingCompositorContentIndex < 0){
 			missingCompositorContentIndex = 0;
-			missingCompositorContentContext = new APattern[initialSize];
+			missingCompositorContentContext = new SPattern[initialSize];
 			missingCompositorContentStartInputRecordIndex = new int[initialSize];
-			missingCompositorContentDefinition = new APattern[initialSize];
+			missingCompositorContentDefinition = new SPattern[initialSize];
 			missingCompositorContentExpected = new int[initialSize];
 			missingCompositorContentFound = new int[initialSize];			
 			
@@ -3314,7 +3320,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 		}else if(++missingCompositorContentIndex == missingCompositorContentContext.length){
 		    int size = missingCompositorContentIndex+ increaseSizeAmount;
 		    
-			APattern[] increasedEC = new APattern[size];
+			SPattern[] increasedEC = new SPattern[size];
 			System.arraycopy(missingCompositorContentContext, 0, increasedEC, 0, missingCompositorContentIndex);
 			missingCompositorContentContext = increasedEC;
 			
@@ -3322,7 +3328,7 @@ public class ConflictMessageHandler  extends AbstractMessageHandler implements C
 			System.arraycopy(missingCompositorContentStartInputRecordIndex, 0, increasedSCN, 0, missingCompositorContentIndex);
 			missingCompositorContentStartInputRecordIndex = increasedSCN;
 			
-			APattern[] increasedED = new APattern[size];
+			SPattern[] increasedED = new SPattern[size];
 			System.arraycopy(missingCompositorContentDefinition, 0, increasedED, 0, missingCompositorContentIndex);
 			missingCompositorContentDefinition = increasedED;
 			

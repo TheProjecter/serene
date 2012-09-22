@@ -37,7 +37,7 @@ public interface Rule extends ActiveComponent{
 	
 	void accept(RuleVisitor rv);
 		
-	StructureHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler);
+	/*StructureHandler getStructureHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler);
 
 	MinimalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MinimalReduceHandler parent, StackHandler stackHandler);
 	MaximalReduceHandler getStructureHandler(ErrorCatcher errorCatcher, MaximalReduceHandler parent, StackHandler stackHandler);
@@ -48,6 +48,6 @@ public interface Rule extends ActiveComponent{
 	MaximalReduceHandler getStructureHandler(IntList maximalReducecount, ErrorCatcher errorCatcher, MaximalReduceStackHandler stackHandler);
 	//Group	
 	MinimalReduceHandler getStructureHandler(IntList reduceCountList, IntList startedCountList, ErrorCatcher errorCatcher, MinimalReduceStackHandler stackHandler);
-	MaximalReduceHandler getStructureHandler(IntList reduceCountList, IntList startedCountList, ErrorCatcher errorCatcher, MaximalReduceStackHandler stackHandler);
+	MaximalReduceHandler getStructureHandler(IntList reduceCountList, IntList startedCountList, ErrorCatcher errorCatcher, MaximalReduceStackHandler stackHandler);*/
 	   
 }

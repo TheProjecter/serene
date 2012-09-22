@@ -21,19 +21,19 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-import serene.validation.schema.active.components.AElement;
+import serene.validation.schema.simplified.SElement;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
 
 public abstract class ElementConflictResolver extends InternalConflictResolver{
 	
-	List<AElement> candidateDefinitions;
+	List<SElement> candidateDefinitions;
 	ConflictMessageReporter conflictMessageReporter;
 	boolean isResolved;	
 	public ElementConflictResolver(){				
 		super();
-		candidateDefinitions = new ArrayList<AElement>();
+		candidateDefinitions = new ArrayList<SElement>();
 		isResolved = false;
 	}
 			
@@ -53,7 +53,7 @@ public abstract class ElementConflictResolver extends InternalConflictResolver{
         }        
     }
     
-    public void addCandidate(AElement candidate){
+    public void addCandidate(SElement candidate){
         candidateDefinitions.add(candidate);
     }
       

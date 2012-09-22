@@ -26,6 +26,7 @@ import serene.validation.handlers.content.BoundAttributeHandler;
 
 import serene.validation.handlers.error.ContextErrorHandlerManager;
 
+import serene.validation.handlers.match.AttributeMatchPath;
 
 import serene.bind.BindingModel;
 import serene.bind.util.Queue;
@@ -41,8 +42,8 @@ class BoundAttributeValidationHandler extends AttributeValidationHandler impleme
 		super();		
 	}
 	
-	void init(AAttribute attribute, ElementValidationHandler parent, ContextErrorHandlerManager contextErrorHandlerManager, BindingModel bindingModel, Queue queue, int entry){
-		super.init(attribute, parent, contextErrorHandlerManager);
+	void init(AttributeMatchPath attributeMatchPath, ElementValidationHandler parent, ContextErrorHandlerManager contextErrorHandlerManager, BindingModel bindingModel, Queue queue, int entry){
+		super.init(attributeMatchPath, parent, contextErrorHandlerManager);
 		this.bindingModel = bindingModel;
 		this.queue = queue;
 		this.entry = entry;
@@ -60,14 +61,14 @@ class BoundAttributeValidationHandler extends AttributeValidationHandler impleme
 		pool.recycle(this);
 	}
 	
-	public void handleAttribute(String value) throws SAXException{
+	public void handleAttribute(String value) throws SAXException{	    
 		validateValue(value);
 		attributeBinding();
 		validateInContext();
 	}	
 	
 	public void attributeBinding(){		
-		AttributeTask task = bindingModel.getAttributeTask(attribute.getCorrespondingSimplifiedComponent());
+		AttributeTask task = bindingModel.getAttributeTask(attributeMatchPath.getAttribute());
 		// TODO 
 		// Implement checks for if record index is needed. For now, it's ok though,
 		// I know it's needed.

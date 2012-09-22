@@ -25,11 +25,15 @@ import org.xml.sax.SAXException;
 
 import serene.validation.schema.active.components.AElement;
 
+import serene.validation.schema.simplified.SElement;
+
 import serene.validation.handlers.error.ContextErrorHandlerManager;
 import serene.validation.handlers.error.MessageReporter;
 import serene.validation.handlers.error.ConflictMessageReporter;
 
 import serene.validation.handlers.content.BoundElementHandler;
+
+import serene.validation.handlers.match.ElementMatchPath;
 
 import serene.bind.BindingModel;
 import serene.bind.util.QueuePool;
@@ -51,9 +55,9 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 	    queueEndEntry = -1;
 	}
 	
-	void init(List<AElement> candidateDefinitions,  BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
+	void init(List<ElementMatchPath> candidateDefinitionPathes,  BoundElementValidationHandler parent, BindingModel bindingModel, Queue queue, QueuePool queuePool){		
 		this.parent = parent;
-		this.candidateDefinitions = candidateDefinitions;
+		this.candidateDefinitionPathes = candidateDefinitionPathes;
         localCandidatesConflictErrorHandler.init(activeInputDescriptor); 
 		init((ContextErrorHandlerManager)parent);
 		this.bindingModel = bindingModel;
@@ -62,16 +66,16 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		
 		startElementBinding();
 				
-		for(int i = 0; i < candidateDefinitions.size(); i++){			    
-			BoundElementValidationHandler candidate = pool.getElementValidationHandler(candidateDefinitions.get(i), parent, bindingModel, queuePool.getQueue(), queuePool);
+		for(int i = 0; i < candidateDefinitionPathes.size(); i++){			    
+			BoundElementValidationHandler candidate = pool.getElementValidationHandler(candidateDefinitionPathes.get(i), parent, bindingModel, queuePool.getQueue(), queuePool);
 			candidate.setCandidateIndex(i);
             candidate.setCandidate(true);
             candidate.setCandidatesConflictErrorHandler(localCandidatesConflictErrorHandler);
 			candidate.setContextErrorHandlerIndex(CONFLICT);
 			candidates.add(candidate);	
 		}
-        localCandidatesConflictErrorHandler.setCandidates(candidateDefinitions);
-        candidatesConflictHandler.init(candidateDefinitions.size());	
+        localCandidatesConflictErrorHandler.setCandidates(candidateDefinitionPathes);
+        candidatesConflictHandler.init(candidateDefinitionPathes.size());	
         
         mayRecycleCandidateQueues = true;
 	}
@@ -83,7 +87,7 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 			candidate.recycle();
 		}
 		candidates.clear();	
-		candidateDefinitions.clear();		
+		candidateDefinitionPathes.clear();		
 		candidatesConflictHandler.clear();
         localCandidatesConflictErrorHandler.clear(false);
 		resetContextErrorHandlerManager();
@@ -112,52 +116,6 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 		// Start record with null task, just to create the entry and get the index.
 	}
 	
-	/*public void qNameBinding(){
-		throw new UnsupportedOperationException();
-	}	
-	public void startLocationBinding(){
-		throw new UnsupportedOperationException();
-	}
-	public void endLocationBinding(){
-		throw new UnsupportedOperationException();
-	}	
-	public void characterContentBinding(char[] chars){
-		// delegated to every qualified candidate by the fact that 
-		// the characterContentBinding is done there and so is the binding  
-		throw new UnsupportedOperationException();
-	}
-	public void elementTasksBinding(){
-		//delegate binding to every qualifed candidate
-		//interpret the conflict resolution:
-		//		resolved - reserve enough places and add the winner queue
-		// 		ambiguu > 0 - reserve enough places in the queue, 
-		//						validate in context will delegate the queue 
-		//						addition to the InternalConflictResolver		
-		int candidatesCount = candidates.size();
-		int qualified = candidatesCount-candidatesConflictHandler.getDisqualifiedCount();
-		if(qualified == 0){
-			for(int i = 0; i < candidatesCount; i++){
-				((BoundElementValidationHandler)candidates.get(i)).elementTasksBinding();
-			}			
-			BoundElementValidationHandler cc = (BoundElementValidationHandler)candidates.get(0);
-			Queue q = cc.getQueue();
-			int size = q.getSize();
-			queue.reserve(queueStartEntry, size);
-		}else{
-			for(int i = 0; i < candidatesCount; i++){
-				 ((BoundElementValidationHandler)candidates.get(i)).elementTasksBinding();
-			}
-			int qual = candidatesConflictHandler.getNextQualified(0);
-			BoundElementValidationHandler cc = (BoundElementValidationHandler)candidates.get(qual);
-			Queue q = cc.getQueue();
-			int size = q.getSize();			
-			queue.reserve(queueStartEntry, size);
-			if(qualified == 1){
-				queue.closeReservation(queueStartEntry, q);
-			}
-		}		
-	}*/
-	
 	
 	public void characterContentBinding(String cc){
 		// delegated to every qualified candidate by the fact that 
@@ -166,43 +124,7 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 	}
 	
 	public void endElementBinding(){
-		//delegate binding to every qualifed candidate
-		//interpret the conflict resolution:
-		//		resolved - reserve enough places and add the winner queue
-		// 		ambiguu > 0 - reserve enough places in the queue, 
-		//						validate in context will delegate the queue 
-		//						addition to the InternalConflictResolver
-		// REVIEWED
-		// every candidate perfomes binding in the candidate queue
-		// if conflict is resolved copy the winner's queue in this queue
-		// the rest of the processing will be done during validateInContext
 		
-		/*int candidatesCount = candidates.size();
-		int qualified = candidatesCount-candidatesConflictHandler.getDisqualifiedCount();
-		if(qualified == 0){
-			for(int i = 0; i < candidatesCount; i++){
-				((BoundElementValidationHandler)candidates.get(i)).endElementBinding();
-			}			
-			BoundElementValidationHandler cc = (BoundElementValidationHandler)candidates.get(0);
-			Queue q = cc.getQueue();
-			int size = q.getSize();
-			queue.registerReservation(queueStartEntry, size);
-			queueEndEntry = queueStartEntry + size -1;
-			
-		}else{
-			for(int i = 0; i < candidatesCount; i++){
-				 ((BoundElementValidationHandler)candidates.get(i)).endElementBinding();
-			}
-			int qual = candidatesConflictHandler.getNextQualified(0);
-			BoundElementValidationHandler cc = (BoundElementValidationHandler)candidates.get(qual);
-			Queue q = cc.getQueue();
-			int size = q.getSize();
-			queue.registerReservation(queueStartEntry, size);
-			queueEndEntry = queueStartEntry + size -1;
-			if(qualified == 1){
-				queue.useReservation(queueStartEntry, q, 0, size-1);
-			}			
-		}*/	
 		
 		for(int i = 0; i < candidates.size(); i++){
             ((BoundElementValidationHandler)candidates.get(i)).endElementBinding();
@@ -270,18 +192,18 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 			// Maybe the parent actually expects one of them and not shifting 
 			// results in a fake error.	
 			prepareQueueForConflictHandling();
-			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter(), bindingModel, queue, queueStartEntry, queueEndEntry, mapCandidateDefinitionToQueue());
+			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitionPathes, contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter(), bindingModel, queue, queueStartEntry, queueEndEntry, mapCandidateDefinitionToQueue());
 			mayRecycleCandidateQueues = false;
 		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
-			AElement qElement = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
-			parent.addChildElement(qElement);
+			ElementMatchPath qElementMatchPath = candidateDefinitionPathes.get(candidatesConflictHandler.getNextQualified(0));
+			parent.addChildElement(qElementMatchPath);
 		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
 			// TODO Maybe a warning
 			// Shift all without errors, hope the parent conflict disqualifies all but one
 			prepareQueueForConflictHandling();
 			ConflictMessageReporter cmr = null;
 			if(contextErrorHandler[contextErrorHandlerIndex] != null) cmr = contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();
-			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, candidatesConflictHandler, cmr, bindingModel, queue, queueStartEntry, queueEndEntry, mapCandidateDefinitionToQueue());
+			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitionPathes, candidatesConflictHandler, cmr, bindingModel, queue, queueStartEntry, queueEndEntry, mapCandidateDefinitionToQueue());
 			mayRecycleCandidateQueues = false;
 		}
 	}
@@ -303,18 +225,18 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
 			// Maybe the parent actually expects one of them and not shifting 
 			// results in a fake error.			
 			prepareQueueForConflictHandling(reperQueueEndEntry);
-			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, reper.getConflictMessageReporter(), bindingModel, queue, queueStartEntry, queueEndEntry, mapCandidateDefinitionToQueue());
+			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitionPathes, reper.getConflictMessageReporter(), bindingModel, queue, queueStartEntry, queueEndEntry, mapCandidateDefinitionToQueue());
 			mayRecycleCandidateQueues = false;
 		}else if(conflictResolutionIndex == MessageReporter.RESOLVED){
-			AElement qElement = candidateDefinitions.get(candidatesConflictHandler.getNextQualified(0));
-			parent.addChildElement(qElement);
+			ElementMatchPath qElementMatchPath = candidateDefinitionPathes.get(candidatesConflictHandler.getNextQualified(0));
+			parent.addChildElement(qElementMatchPath);
 		}else if(conflictResolutionIndex == MessageReporter.AMBIGUOUS){
 			// TODO Maybe a warning
 			// Shift all without errors, hope the parent conflict disqualifies all but one
 			prepareQueueForConflictHandling(reperQueueEndEntry);
 			ConflictMessageReporter cmr = reper.getConflictMessageReporter();
 			/*if(contextErrorHandler[contextErrorHandlerIndex] != null) cmr = contextErrorHandler[contextErrorHandlerIndex].getConflictMessageReporter();*/
-			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitions, candidatesConflictHandler, cmr, bindingModel, queue, queueStartEntry, queueEndEntry, mapCandidateDefinitionToQueue());
+			((BoundElementValidationHandler)parent).addChildElement(candidateDefinitionPathes, candidatesConflictHandler, cmr, bindingModel, queue, queueStartEntry, queueEndEntry, mapCandidateDefinitionToQueue());
 			mayRecycleCandidateQueues = false;
 		}
 	}
@@ -325,11 +247,11 @@ class BoundElementConcurrentHandler extends ElementConcurrentHandler implements 
         queueEndEntry = reperQueueEndEntry;
 	}
 	
-	private HashMap<AElement, Queue> mapCandidateDefinitionToQueue(){
-		HashMap<AElement, Queue> map = new HashMap<AElement, Queue>();
+	private HashMap<SElement, Queue> mapCandidateDefinitionToQueue(){
+		HashMap<SElement, Queue> map = new HashMap<SElement, Queue>();
 		for(int i = 0; i < candidates.size(); i++){
 			//if(!candidatesConflictHandler.isDisqualified(i)){				
-				map.put(candidateDefinitions.get(i), ((BoundElementValidationHandler)candidates.get(i)).getQueue());
+				map.put(candidateDefinitionPathes.get(i).getElement(), ((BoundElementValidationHandler)candidates.get(i)).getQueue());
 			//}
 		}
 		return map;

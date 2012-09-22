@@ -16,9 +16,19 @@ limitations under the License.
 
 package serene.validation.schema.simplified;
 
+import java.util.List;
+
 import org.xml.sax.SAXException;
 
 import serene.validation.schema.DefinitionPointer;
+
+import serene.validation.handlers.match.DataMatchPath;
+import serene.validation.handlers.match.ValueMatchPath;
+import serene.validation.handlers.match.ListPatternMatchPath;
+import serene.validation.handlers.match.TextMatchPath;
+import serene.validation.handlers.match.AttributeMatchPath;
+import serene.validation.handlers.match.ElementMatchPath;
+import serene.validation.handlers.match.MatchPathPool;
 
 import serene.bind.util.DocumentIndexedData;
 
@@ -51,7 +61,77 @@ public class SElement extends SUniqueChildPattern implements DefinitionPointer,
 		parent.setAllowsElements();
 	}
 	
-	
+	public boolean isRequiredContent(){
+		return minOccurs != 0;
+    }
+    
+	public void setElementContentMatchPathes(String ns, String name, List<ElementMatchPath> pathes, MatchPathPool matchPathPool){
+	    
+	    if(child.isElementContent()){
+	        child.setElementMatchPathes(ns, name, pathes, matchPathPool);
+	        for(int i = 0; i < pathes.size(); i++){
+	            pathes.get(i).add(this);
+	        }
+	    }
+	}
+	public void setAttributeContentMatchPathes(String ns, String name, List<AttributeMatchPath> pathes, MatchPathPool matchPathPool){
+	    if(child.isAttributeContent()){
+	        child.setAttributeMatchPathes(ns, name, pathes, matchPathPool);
+	        for(int i = 0; i < pathes.size(); i++){
+	            pathes.get(i).add(this);
+	        }
+	    }
+	}
+	public void setCharsMatchPathes(List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){
+	    if(child.isTextContent()){
+	        child.setMatchPathes(textMatchPathes, matchPathPool);
+	        for(int i = 0; i < textMatchPathes.size(); i++){
+	            textMatchPathes.get(i).add(this);
+	        }
+	    }
+	}    
+    public void setCharsMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, List<TextMatchPath> textMatchPathes, MatchPathPool matchPathPool){
+        if(child.isCharsContent()){
+            child.setMatchPathes(dataMatchPathes, valueMatchPathes, listPatternMatchPathes, textMatchPathes, matchPathPool);
+            for(int i = 0; i < dataMatchPathes.size(); i++){
+	            dataMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < valueMatchPathes.size(); i++){
+	            valueMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < listPatternMatchPathes.size(); i++){
+	            listPatternMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < textMatchPathes.size(); i++){
+	            textMatchPathes.get(i).add(this);
+	        }
+	    }
+    }
+    public void setCharsMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, List<ListPatternMatchPath> listPatternMatchPathes, MatchPathPool matchPathPool){
+        if(child.isStructuredDataContent()){
+            child.setMatchPathes(dataMatchPathes, valueMatchPathes, listPatternMatchPathes, matchPathPool);
+            for(int i = 0; i < dataMatchPathes.size(); i++){
+	            dataMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < valueMatchPathes.size(); i++){
+	            valueMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < listPatternMatchPathes.size(); i++){
+	            listPatternMatchPathes.get(i).add(this);
+	        }
+        }
+    }
+    public void setCharsMatchPathes(List<DataMatchPath> dataMatchPathes, List<ValueMatchPath> valueMatchPathes, MatchPathPool matchPathPool){
+        if(child.isUnstructuredDataContent()){
+            child.setMatchPathes(dataMatchPathes, valueMatchPathes, matchPathPool);
+            for(int i = 0; i < dataMatchPathes.size(); i++){
+	            dataMatchPathes.get(i).add(this);
+	        }
+	        for(int i = 0; i < valueMatchPathes.size(); i++){
+	            valueMatchPathes.get(i).add(this);
+	        }
+	    }
+    }
 	public boolean allowsElements(){
 	    return allowsElements;
 	}
@@ -81,6 +161,17 @@ public class SElement extends SUniqueChildPattern implements DefinitionPointer,
 	}
 	
 	
+	void setElementMatchPathes(String ns, String name, List<ElementMatchPath> pathes, MatchPathPool matchPathPool){
+	    
+ 	    if(nameClass.matches(ns, name)) {
+ 	        ElementMatchPath mp = matchPathPool.getElementMatchPath();
+ 	        mp.addElement(this);
+ 	        pathes.add(mp);
+ 	    }
+ 	}
+ 	void setAttributeMatchPathes(String ns, String name, List<AttributeMatchPath> pathes, MatchPathPool matchPathPool){
+ 	    throw new IllegalStateException();
+ 	}
 	boolean isElementContent(){
         return true;
     }
@@ -122,6 +213,9 @@ public class SElement extends SUniqueChildPattern implements DefinitionPointer,
 		v.visit(this);
 	}
 	public void accept(RestrictingVisitor v) throws SAXException{
+		v.visit(this);
+	}
+	public void accept(SimplifiedRuleVisitor v){
 		v.visit(this);
 	}
 	public String toString(){

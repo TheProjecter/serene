@@ -47,7 +47,16 @@ public class SRef extends SUniqueChildPattern implements DefinitionPointer{
 		this.referenceModel = referenceModel;
 	}
 		
-		
+	
+	public boolean isIntermediary(){
+	    return true;
+	}
+	
+	public boolean isRequiredContent(){
+        if(minOccurs == 0) return false;	
+		return child.isRequiredContent();
+    }
+    
 	void setChild(){
 	    child = referenceModel.getRefDefinitionTopPattern(definitionIndex);
 	    asParent(child);
@@ -63,6 +72,10 @@ public class SRef extends SUniqueChildPattern implements DefinitionPointer{
         if(allowsListPatterns) parent.setAllowsListPatterns();
         if(allowsText) parent.setAllowsText();
 	}
+	
+	public int functionalEquivalenceCode(){
+        return child.hashCode();
+    }   
 	public SPattern getChild(){
 	    if(child == null) setChild();
 		return child;
@@ -76,6 +89,9 @@ public class SRef extends SUniqueChildPattern implements DefinitionPointer{
 		v.visit(this);
 	}
 	public void accept(RestrictingVisitor v) throws SAXException{
+		v.visit(this);
+	}
+	public void accept(SimplifiedRuleVisitor v){
 		v.visit(this);
 	}
 	public String toString(){
