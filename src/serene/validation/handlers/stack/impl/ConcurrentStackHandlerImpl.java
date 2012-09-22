@@ -43,7 +43,7 @@ import serene.validation.handlers.stack.util.ConflictPathMaker;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
-import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
+import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.ElementConflictResolver;
 import serene.validation.handlers.conflict.AttributeConflictResolver;
@@ -68,10 +68,10 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 	ArrayList<CandidateStackHandler> candidates;
 	
 	ArrayList<InternalConflictResolver> resolvers;
-	ActiveModelStackHandlerPool pool;
+	ValidatorStackHandlerPool pool;
 	
 	ContextConflictsDescriptor contextConflictsDescriptor; 	
-	ActiveModelConflictHandlerPool conflictHandlerPool;
+	ValidatorConflictHandlerPool conflictHandlerPool;
 		 	
 	ConflictPathMaker conflictPathMaker;
 	StackRedundanceHandler stackRedundanceHandler;	
@@ -116,7 +116,7 @@ public class ConcurrentStackHandlerImpl implements ConcurrentStackHandler{
 		pool.recycle(this);		
 	}
 	
-	void init(InputStackDescriptor inputStackDescriptor, ActiveModelConflictHandlerPool conflictHandlerPool, ActiveModelStackHandlerPool pool){
+	void init(InputStackDescriptor inputStackDescriptor, ValidatorConflictHandlerPool conflictHandlerPool, ValidatorStackHandlerPool pool){
 		this.pool = pool;
 		this.inputStackDescriptor = inputStackDescriptor;
 		this.conflictHandlerPool = conflictHandlerPool;

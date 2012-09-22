@@ -30,6 +30,8 @@ import serene.dtdcompatibility.DTDCompatibilityModel;
 import serene.dtdcompatibility.AttributeDefaultValueModel;
 import serene.dtdcompatibility.AttributeIdTypeModel;
 
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
+
 import serene.validation.schema.ValidationModel;
 
 public class SchemaModel implements ValidationModel, DTDCompatibilityModel{
@@ -52,9 +54,9 @@ public class SchemaModel implements ValidationModel, DTDCompatibilityModel{
         return validationModel.getSimplifiedModel();
     }
     
-    public ActiveModel getActiveModel(ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
+    public ActiveModel getActiveModel(ValidatorStackHandlerPool stackHandlerPool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
         if(validationModel == null) return null;
-        return validationModel.getActiveModel(activeInputDescriptor, inputStackDescriptor, errorDispatcher);
+        return validationModel.getActiveModel(stackHandlerPool, activeInputDescriptor, inputStackDescriptor, errorDispatcher);
     }    
     
     public AttributeDefaultValueModel getAttributeDefaultValueModel(){

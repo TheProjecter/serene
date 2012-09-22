@@ -28,14 +28,16 @@ import serene.validation.schema.simplified.SExceptPattern;
 
 import serene.validation.schema.active.components.AElement;
 
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+/*import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;*/
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
-import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
+/*import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;*/
 
 import serene.validation.handlers.match.MatchHandler;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
+
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -48,43 +50,43 @@ public class ActiveModel  implements Reusable{
 	ActiveGrammarModel grammarModel;
 		
 	ActiveModelRuleHandlerPool ruleHandlerPool;
-	ActiveModelStackHandlerPool stackHandlerPool;	
-	ActiveModelConflictHandlerPool conflictHandlerPool;
+	/*ValidatorStackHandlerPool stackHandlerPool;	
+	ValidatorConflictHandlerPool conflictHandlerPool;*/
 	
 	ActiveModelPool pool;	
 	
 	public ActiveModel(ActiveGrammarModel grammarModel,
 					ActiveModelRuleHandlerPool ruleHandlerPool,
-					ActiveModelStackHandlerPool stackHandlerPool,
-					ActiveModelConflictHandlerPool conflictHandlerPool,
+					/*ValidatorStackHandlerPool stackHandlerPool,
+					ValidatorConflictHandlerPool conflictHandlerPool,*/
 					ActiveModelPool pool){
 		this.grammarModel = grammarModel;
 		
 		this.ruleHandlerPool = ruleHandlerPool;
-		this.stackHandlerPool = stackHandlerPool;
-		this.conflictHandlerPool = conflictHandlerPool;
+		/*this.stackHandlerPool = stackHandlerPool;
+		this.conflictHandlerPool = conflictHandlerPool;*/
 				
 		this.pool = pool;		
 	}
 	
 	protected void finalize(){
 		ruleHandlerPool.recycle();
-		stackHandlerPool.recycle();		
-		conflictHandlerPool.recycle();
+		/*stackHandlerPool.recycle();		
+		conflictHandlerPool.recycle();*/
 	}	
 	
 	public void recycle(){
 		ruleHandlerPool.releaseHandlers();
-		stackHandlerPool.releaseHandlers();		
-		conflictHandlerPool.releaseHandlers();
+		/*stackHandlerPool.releaseHandlers();		
+		conflictHandlerPool.releaseHandlers();*/
 		pool.recycle(this);
 		
 	}
 	
-	public void init(ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
-		ruleHandlerPool.fill(activeInputDescriptor, inputStackDescriptor);
-		stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool);		
-		conflictHandlerPool.fill(activeInputDescriptor, inputStackDescriptor);
+	public void init(ValidatorStackHandlerPool stackHandlerPool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
+		ruleHandlerPool.fill(stackHandlerPool, activeInputDescriptor, inputStackDescriptor);
+		/*stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool);		
+		conflictHandlerPool.fill(activeInputDescriptor, inputStackDescriptor);*/
 	}
 	
 	public AElement getStartElement(){		
@@ -115,9 +117,9 @@ public class ActiveModel  implements Reusable{
 		return grammarModel.getSAttributeIndexMap();
 	}*/
     
-    public ActiveModelStackHandlerPool getStackHandlerPool(){
+    /*public ValidatorStackHandlerPool getStackHandlerPool(){
         return stackHandlerPool;
-    }
+    }*/
     
     public ActiveModelRuleHandlerPool getRuleHandlerPool(){
         return ruleHandlerPool;

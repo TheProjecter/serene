@@ -16,7 +16,7 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.schema.simplified.SInterleave;
@@ -32,7 +32,7 @@ public class AInterleaveM extends AInterleave{
                 boolean allowsValues,	
                 boolean allowsListPatterns,
                 boolean allowsText,
-				ActiveModelStackHandlerPool stackHandlerPool,
+				/*ValidatorStackHandlerPool stackHandlerPool,*/
 				ActiveModelRuleHandlerPool ruleHandlerPool, 
 				SInterleave sinterleave){		
 		super(children, 
@@ -42,7 +42,7 @@ public class AInterleaveM extends AInterleave{
                 allowsValues,	
                 allowsListPatterns,
                 allowsText,
-                stackHandlerPool, 
+                /*stackHandlerPool,*/ 
                 ruleHandlerPool);
 		this.sinterleave = sinterleave;
 	}	

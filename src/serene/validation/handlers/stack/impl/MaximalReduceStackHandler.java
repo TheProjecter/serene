@@ -26,7 +26,7 @@ import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.structure.StructureHandler;
 
 public class MaximalReduceStackHandler extends ContextStackHandler{
-	ActiveModelStackHandlerPool pool;
+	ValidatorStackHandlerPool pool;
 	
 	MaximalReduceStackHandler(){
 		super();
@@ -41,7 +41,7 @@ public class MaximalReduceStackHandler extends ContextStackHandler{
 		recycler.recycle(this);		
 	}
 	
-	void init(InputStackDescriptor inputStackDescriptor, ActiveModelStackHandlerPool pool){
+	void init(InputStackDescriptor inputStackDescriptor, ValidatorStackHandlerPool pool){
 		this.recycler = pool;
 		this.pool = pool;
 		this.inputStackDescriptor = inputStackDescriptor;

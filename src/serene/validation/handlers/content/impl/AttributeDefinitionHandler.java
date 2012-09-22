@@ -25,6 +25,7 @@ import serene.validation.schema.active.components.CharsActiveTypeItem;
 import serene.validation.handlers.match.MatchHandler;
 
 import serene.validation.handlers.stack.StackHandler;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 abstract class AttributeDefinitionHandler extends ValidatingAEH 
                                             implements CharsContentTypeHandler{
@@ -33,6 +34,7 @@ abstract class AttributeDefinitionHandler extends ValidatingAEH
     MatchHandler matchHandler;
 	
 	StackHandler stackHandler;
+	ValidatorStackHandlerPool stackHandlerPool;
 	
     AttributeDefinitionHandler(){
         super();

@@ -32,8 +32,8 @@ import serene.validation.handlers.structure.impl.RuleHandlerPool;
 import serene.validation.handlers.structure.impl.SynchronizedRuleHandlerPool;
 import serene.validation.handlers.structure.impl.UnsynchronizedRuleHandlerPool;
 
-import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 
@@ -44,8 +44,8 @@ import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
 public class ActiveModelPool{
 
-	ConflictHandlerPool conflictHandlerPool;
-	StackHandlerPool stackHandlerPool;
+	/*ConflictHandlerPool conflictHandlerPool;
+	StackHandlerPool stackHandlerPool;*/
 	RuleHandlerPool ruleHandlerPool;
 	
 	SimplifiedModel simplifiedModel;
@@ -69,34 +69,34 @@ public class ActiveModelPool{
 		models = new ActiveModel[5];
 
 		if(optimizedForResourceSharing){
-            conflictHandlerPool = SynchronizedConflictHandlerPool.getInstance();
-            stackHandlerPool = SynchronizedStackHandlerPool.getInstance();
+            /*conflictHandlerPool = SynchronizedConflictHandlerPool.getInstance();
+            stackHandlerPool = SynchronizedStackHandlerPool.getInstance();*/
             ruleHandlerPool = SynchronizedRuleHandlerPool.getInstance();
         }else{
-            conflictHandlerPool = UnsynchronizedConflictHandlerPool.getInstance();
-            stackHandlerPool = UnsynchronizedStackHandlerPool.getInstance();
+            /*conflictHandlerPool = UnsynchronizedConflictHandlerPool.getInstance();
+            stackHandlerPool = UnsynchronizedStackHandlerPool.getInstance();*/
             ruleHandlerPool = UnsynchronizedRuleHandlerPool.getInstance();
         }
 	}
 	
-	public ActiveModel getActiveModel(ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
+	public ActiveModel getActiveModel(ValidatorStackHandlerPool stackHandlerPool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher){
         
         if(simplifiedModel == null) return null;
         
 		if(modelFree == 0){			
-			ActiveModelConflictHandlerPool conflict = conflictHandlerPool.getActiveModelConflictHandlerPool();
-			ActiveModelStackHandlerPool stack = stackHandlerPool.getActiveModelStackHandlerPool();
+			/*ValidatorConflictHandlerPool conflict = conflictHandlerPool.getValidatorConflictHandlerPool();
+			ValidatorStackHandlerPool stack = stackHandlerPool.getValidatorStackHandlerPool();*/
 			ActiveModelRuleHandlerPool rule = ruleHandlerPool.getActiveModelRuleHandlerPool();
 			ActiveModel model = modelFactory.createActiveModel(simplifiedModel, 
 															rule,
-															stack,
-															conflict,
+															/*stack,
+															conflict,*/
 															this);			
-			model.init(activeInputDescriptor, inputStackDescriptor, errorDispatcher);
+			model.init(stackHandlerPool, activeInputDescriptor, inputStackDescriptor, errorDispatcher);
 			return model;
 		}else{
 			ActiveModel model = models[--modelFree];
-			model.init(activeInputDescriptor, inputStackDescriptor, errorDispatcher);
+			model.init(stackHandlerPool, activeInputDescriptor, inputStackDescriptor, errorDispatcher);
 			return model;
 		}
 	}

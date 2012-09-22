@@ -21,7 +21,7 @@ public class SynchronizedConflictHandlerPool extends ConflictHandlerPool{
 	
 	int amchPoolFree; 
 	int amchPoolMaxSize;
-	ActiveModelConflictHandlerPool[] amchPools;
+	ValidatorConflictHandlerPool[] amchPools;
 	
 	int ambiguousElementConflictResolverAverageUse;
 	int ambiguousElementConflictResolverMaxSize;
@@ -93,7 +93,7 @@ public class SynchronizedConflictHandlerPool extends ConflictHandlerPool{
 		
 		amchPoolFree = 0;
 		amchPoolMaxSize = 10;
-		amchPools = new ActiveModelConflictHandlerPool[5];
+		amchPools = new ValidatorConflictHandlerPool[5];
 		
 		ambiguousElementConflictResolverAverageUse = 0;
 		ambiguousElementConflictResolverFree = 0;
@@ -172,7 +172,7 @@ public class SynchronizedConflictHandlerPool extends ConflictHandlerPool{
 		return instance;
 	}
 	
-	synchronized void fill(ActiveModelConflictHandlerPool pool,
+	synchronized void fill(ValidatorConflictHandlerPool pool,
 					AmbiguousElementConflictResolver[] ambiguousElementConflictResolverToFill,
 					UnresolvedElementConflictResolver[] unresolvedElementConflictResolverToFill,
 					AmbiguousAttributeConflictResolver[] ambiguousAttributeConflictResolverToFill,
@@ -766,20 +766,20 @@ public class SynchronizedConflictHandlerPool extends ConflictHandlerPool{
         }		
 	}
 	
-	public synchronized ActiveModelConflictHandlerPool getActiveModelConflictHandlerPool(){
+	public synchronized ValidatorConflictHandlerPool getValidatorConflictHandlerPool(){
 		if(amchPoolFree == 0){
-			ActiveModelConflictHandlerPool amchp = new ActiveModelConflictHandlerPool(instance);			
+			ValidatorConflictHandlerPool amchp = new ValidatorConflictHandlerPool(instance);			
 			return amchp;
 		}else{
-			ActiveModelConflictHandlerPool amchp = amchPools[--amchPoolFree];
+			ValidatorConflictHandlerPool amchp = amchPools[--amchPoolFree];
 			return amchp;
 		}
 	}
 		
-	public synchronized void recycle(ActiveModelConflictHandlerPool amchp){
+	public synchronized void recycle(ValidatorConflictHandlerPool amchp){
 	    if(amchPoolFree == amchPoolMaxSize) return;
 		if(amchPoolFree == amchPools.length){
-			ActiveModelConflictHandlerPool[] increased = new ActiveModelConflictHandlerPool[5+amchPools.length];
+			ValidatorConflictHandlerPool[] increased = new ValidatorConflictHandlerPool[5+amchPools.length];
 			System.arraycopy(amchPools, 0, increased, 0, amchPoolFree);
 			amchPools = increased;
 		}

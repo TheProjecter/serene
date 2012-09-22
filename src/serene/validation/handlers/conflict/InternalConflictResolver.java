@@ -44,13 +44,13 @@ public abstract class InternalConflictResolver implements ConflictResolver{
 	InputStackDescriptor inputStackDescriptor;
 	ActiveInputDescriptor activeInputDescriptor;
 	
-	ActiveModelConflictHandlerPool pool;
+	ValidatorConflictHandlerPool pool;
 	
 	public InternalConflictResolver(){
 		qualified = new BitSet();
 	}
 		
-	void init(ActiveModelConflictHandlerPool pool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){
+	void init(ValidatorConflictHandlerPool pool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){
 	    this.activeInputDescriptor = activeInputDescriptor;
 		this.inputStackDescriptor = inputStackDescriptor;
 		this.pool = pool;

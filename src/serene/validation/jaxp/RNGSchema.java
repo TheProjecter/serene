@@ -128,6 +128,8 @@ public class RNGSchema extends BaseSchema{
                                         restrictToFileName,
                                         optimizedForResourceSharing,
                                         contentHandlerPool.getValidatorEventHandlerPool(),
+                                        conflictHandlerPool.getValidatorConflictHandlerPool(),
+                                        stackHandlerPool.getValidatorStackHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										schemaModel);
 		}
@@ -160,6 +162,8 @@ public class RNGSchema extends BaseSchema{
                                         restrictToFileName,
                                         optimizedForResourceSharing,
                                         contentHandlerPool.getValidatorEventHandlerPool(),
+                                        conflictHandlerPool.getValidatorConflictHandlerPool(),
+                                        stackHandlerPool.getValidatorStackHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										schemaModel,
 										validatingTransformerHandlers);

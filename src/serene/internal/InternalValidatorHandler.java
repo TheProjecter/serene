@@ -74,6 +74,10 @@ import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 
+import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
+
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
+
 import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.DocumentContext;
@@ -129,6 +133,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	
 	ValidatorEventHandlerPool eventHandlerPool;	
 	ValidatorErrorHandlerPool errorHandlerPool;
+	ValidatorStackHandlerPool stackHandlerPool;
 	
 	SchemaModel schemaModel;
 							
@@ -167,6 +172,8 @@ class InternalValidatorHandler extends BoundValidatorHandler{
     
     
 	InternalValidatorHandler(ValidatorEventHandlerPool eventHandlerPool,
+	                        ValidatorConflictHandlerPool conflictHandlerPool,
+	                        ValidatorStackHandlerPool stackHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
 							SchemaModel schemaModel,
                             RNGParseBindingPool bindingPool,
@@ -187,6 +194,8 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         this.bindingPool = bindingPool;
         this.processEmbededSchematron = processEmbededSchematron;
         
+        this.stackHandlerPool = stackHandlerPool;        
+        
         matchHandler  = new MatchHandler();
 		spaceHandler = new SpaceCharsHandler();					
         documentContext = new DocumentContext();
@@ -203,8 +212,12 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         queue = queuePool.getQueue();
         // TODO move
         
+        conflictHandlerPool.fill(activeInputDescriptor, inputStackDescriptor);
+        stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool);
+        
+        
         errorHandlerPool.init(errorDispatcher, activeInputDescriptor);        
-        eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, errorHandlerPool);
+        eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, stackHandlerPool, errorHandlerPool);
         		
 		if(!optimizedForResourceSharing)initResources();
 	}
@@ -215,7 +228,8 @@ class InternalValidatorHandler extends BoundValidatorHandler{
                 	
         bindingModel = bindingPool.getBindingModel();
         
-        activeModel = schemaModel.getActiveModel(activeInputDescriptor,
+        activeModel = schemaModel.getActiveModel(stackHandlerPool,
+                                                    activeInputDescriptor,
 		                                            inputStackDescriptor, 
 													errorDispatcher);
 		if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
@@ -575,6 +589,9 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
             // recognized but not set, only for retrieval
             throw new SAXNotSupportedException();
+        }else if(name.equals(Constants.STACK_HANDLER_POOL_PROPERTY)){
+            // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY)){
             // recognized but not set, only for retrieval
             throw new SAXNotSupportedException();
@@ -633,6 +650,8 @@ class InternalValidatorHandler extends BoundValidatorHandler{
             return errorHandlerPool;
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
             return eventHandlerPool;
+        }else if(name.equals(Constants.STACK_HANDLER_POOL_PROPERTY)){
+            return stackHandlerPool;
         }else if(name.equals(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY)){
             return activeInputDescriptor;
         }else if(name.equals(Constants.INPUT_STACK_DESCRIPTOR_PROPERTY)){

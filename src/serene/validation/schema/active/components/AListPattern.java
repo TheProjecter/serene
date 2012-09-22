@@ -41,7 +41,7 @@ import serene.validation.handlers.structure.impl.StructureDoubleHandler;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.ConcurrentStackHandler;
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
@@ -52,7 +52,7 @@ import org.relaxng.datatype.ValidationContext;
 public class AListPattern extends UniqueChildAPattern 
                                         implements DataActiveType, 
                                         StructuredDataActiveTypeItem{
-	ActiveModelStackHandlerPool stackHandlerPool;
+	/*ValidatorStackHandlerPool stackHandlerPool;*/
 		
 	
 	AData[] contextDatas;
@@ -77,7 +77,7 @@ public class AListPattern extends UniqueChildAPattern
                     boolean allowsValues,	
                     boolean allowsListPatterns,
                     boolean allowsText,
-					ActiveModelStackHandlerPool stackHandlerPool,
+					/*ValidatorStackHandlerPool stackHandlerPool,*/
 					ActiveModelRuleHandlerPool ruleHandlerPool,
 					SListPattern slist){
 		super(child, ruleHandlerPool);
@@ -87,7 +87,7 @@ public class AListPattern extends UniqueChildAPattern
 	    this.allowsValues = allowsValues;	
 	    this.allowsListPatterns = allowsListPatterns;
 	    this.allowsText = allowsText;
-		this.stackHandlerPool = stackHandlerPool;
+		/*this.stackHandlerPool = stackHandlerPool;*/
 		this.slist = slist;
 	}	
 
@@ -164,12 +164,12 @@ public class AListPattern extends UniqueChildAPattern
 		return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);
 	}
 	
-	public StackHandler getStackHandler(ErrorCatcher ec){	
+	/*public StackHandler getStackHandler(ErrorCatcher ec){	
 		return stackHandlerPool.getContextStackHandler(this, ec);
 	}	
 	public ConcurrentStackHandler getStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher){		
 		return stackHandlerPool.getConcurrentStackHandler(originalHandler, errorCatcher);
-	}
+	}*/
 	//--------------------------------------------------------------------------
 	
 	

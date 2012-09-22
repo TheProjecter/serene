@@ -34,7 +34,7 @@ import serene.validation.handlers.structure.impl.InterleaveMaximalReduceCountHan
 import serene.validation.handlers.structure.impl.InterleaveDoubleHandler;
 
 import serene.validation.handlers.stack.StackHandler;
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 import serene.validation.handlers.stack.impl.MinimalReduceStackHandler;
 import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
@@ -47,7 +47,7 @@ public abstract class AInterleave extends MultipleChildrenAPattern implements AC
 	int satisfactionIndicator;
 	int saturationIndicator;
 	
-	ActiveModelStackHandlerPool stackHandlerPool;
+	/*ValidatorStackHandlerPool stackHandlerPool;*/
 	
 	public AInterleave(APattern[] children,
 	            boolean allowsElements,
@@ -56,7 +56,7 @@ public abstract class AInterleave extends MultipleChildrenAPattern implements AC
                 boolean allowsValues,	
                 boolean allowsListPatterns,
                 boolean allowsText,
-				ActiveModelStackHandlerPool stackHandlerPool,
+				/*ValidatorStackHandlerPool stackHandlerPool,*/
 				ActiveModelRuleHandlerPool ruleHandlerPool){		
 		super(children, 
 		        allowsElements,
@@ -66,7 +66,7 @@ public abstract class AInterleave extends MultipleChildrenAPattern implements AC
                 allowsListPatterns,
                 allowsText,
 		    ruleHandlerPool);
-		this.stackHandlerPool = stackHandlerPool;
+		/*this.stackHandlerPool = stackHandlerPool;*/
 	}		
 	
 	protected void asParent(APattern[] children){		
@@ -131,7 +131,7 @@ public abstract class AInterleave extends MultipleChildrenAPattern implements AC
 	}
 	
 	InterleaveDoubleHandler getDoubleHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
-		InterleaveDoubleHandler sih = ruleHandlerPool.getStructureDoubleHandler(this, errorCatcher, parent, stackHandler, stackHandlerPool);		
+		InterleaveDoubleHandler sih = ruleHandlerPool.getStructureDoubleHandler(this, errorCatcher, parent, stackHandler/*, stackHandlerPool*/);		
 		return sih;
 	}
 	

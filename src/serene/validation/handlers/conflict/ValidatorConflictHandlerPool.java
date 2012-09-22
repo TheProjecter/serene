@@ -40,7 +40,7 @@ import serene.bind.BindingModel;
 
 import serene.Reusable;
 
-public class ActiveModelConflictHandlerPool implements Reusable{
+public class ValidatorConflictHandlerPool implements Reusable{
 	ConflictHandlerPool pool;
 	InputStackDescriptor inputStackDescriptor;
 	ActiveInputDescriptor activeInputDescriptor;
@@ -127,7 +127,7 @@ public class ActiveModelConflictHandlerPool implements Reusable{
 	boolean full;
 	
 	
-	public ActiveModelConflictHandlerPool(ConflictHandlerPool pool){
+	public ValidatorConflictHandlerPool(ConflictHandlerPool pool){
 		this.pool = pool;		
 		
 		ambiguousElementConflictResolverMaxSize = 10;

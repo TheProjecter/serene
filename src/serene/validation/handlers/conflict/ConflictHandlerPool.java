@@ -21,11 +21,11 @@ public abstract class ConflictHandlerPool{
 	ConflictHandlerPool(){		
 	}
 	
-	public abstract ActiveModelConflictHandlerPool getActiveModelConflictHandlerPool();
-    public abstract void recycle(ActiveModelConflictHandlerPool amchp);
+	public abstract ValidatorConflictHandlerPool getValidatorConflictHandlerPool();
+    public abstract void recycle(ValidatorConflictHandlerPool amchp);
 
 	
-	abstract void fill(ActiveModelConflictHandlerPool pool,
+	abstract void fill(ValidatorConflictHandlerPool pool,
 					AmbiguousElementConflictResolver[] ambiguousElementConflictResolverToFill,
 					UnresolvedElementConflictResolver[] unresolvedElementConflictResolverToFill,
 					AmbiguousAttributeConflictResolver[] ambiguousAttributeConflictResolverToFill,

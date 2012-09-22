@@ -21,7 +21,7 @@ public class SynchronizedStackHandlerPool extends StackHandlerPool{
 	
 	int amshPoolFree; 
 	int amshPoolMaxSize;
-	ActiveModelStackHandlerPool[] amshPools;
+	ValidatorStackHandlerPool[] amshPools;
 		
 	int contextStackHAverageUse;	
 	int contextStackHMaxSize;
@@ -55,7 +55,7 @@ public class SynchronizedStackHandlerPool extends StackHandlerPool{
 		
 		amshPoolFree = 0;
 		amshPoolMaxSize = 10;
-		amshPools = new ActiveModelStackHandlerPool[10];
+		amshPools = new ValidatorStackHandlerPool[10];
 		
 		
 		contextStackHAverageUse = 0;
@@ -99,20 +99,20 @@ public class SynchronizedStackHandlerPool extends StackHandlerPool{
 		return instance;
 	}
 	
-	public synchronized ActiveModelStackHandlerPool getActiveModelStackHandlerPool(){
+	public synchronized ValidatorStackHandlerPool getValidatorStackHandlerPool(){
 		if(amshPoolFree == 0){
-			ActiveModelStackHandlerPool amshp = new ActiveModelStackHandlerPool(this);
+			ValidatorStackHandlerPool amshp = new ValidatorStackHandlerPool(this);
 			return amshp;
 		}else{
-			ActiveModelStackHandlerPool amshp = amshPools[--amshPoolFree];
+			ValidatorStackHandlerPool amshp = amshPools[--amshPoolFree];
 			return amshp;
 		}
 	}
 		
-	public synchronized void recycle(ActiveModelStackHandlerPool amshp){
+	public synchronized void recycle(ValidatorStackHandlerPool amshp){
 	    if(amshPools.length == amshPoolMaxSize) return;
 		if(amshPoolFree == amshPools.length){
-			ActiveModelStackHandlerPool[] increased = new ActiveModelStackHandlerPool[10+amshPools.length];
+			ValidatorStackHandlerPool[] increased = new ValidatorStackHandlerPool[10+amshPools.length];
 			System.arraycopy(amshPools, 0, increased, 0, amshPoolFree);
 			amshPools = increased;
 		}
@@ -120,7 +120,7 @@ public class SynchronizedStackHandlerPool extends StackHandlerPool{
 	}	
 	
 	
-	synchronized void fill(ActiveModelStackHandlerPool stackHandlerPool,
+	synchronized void fill(ValidatorStackHandlerPool stackHandlerPool,
 							ContextStackHandler[] contextStackHToFill,
 							MinimalReduceStackHandler[] minimalReduceStackHToFill,
 							MaximalReduceStackHandler[] maximalReduceStackHToFill,

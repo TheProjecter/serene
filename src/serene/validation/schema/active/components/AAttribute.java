@@ -35,7 +35,7 @@ import serene.validation.handlers.structure.impl.AttributeHandler;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.handlers.stack.StackHandler;
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
@@ -50,14 +50,14 @@ public class AAttribute extends MarkupAPattern{
 	public AAttribute(int index,
 	        Identifier identifier,
 				ActiveGrammarModel grammarModel,
-				ActiveModelStackHandlerPool stackHandlerPool,
+				/*ValidatorStackHandlerPool stackHandlerPool,*/
 				ActiveModelRuleHandlerPool ruleHandlerPool,
 				SAttribute sattribute){		
 		super(index,
 		        identifier,
 				null, 
 				grammarModel,  
-				stackHandlerPool, 
+				/*stackHandlerPool,*/ 
 				ruleHandlerPool);		
 		this.sattribute = sattribute;
 	}	
