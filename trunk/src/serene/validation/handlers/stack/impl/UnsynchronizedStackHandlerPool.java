@@ -25,16 +25,16 @@ public class UnsynchronizedStackHandlerPool extends StackHandlerPool{
 		return new UnsynchronizedStackHandlerPool();
 	}
 	
-	public ActiveModelStackHandlerPool getActiveModelStackHandlerPool(){
-		return new ActiveModelStackHandlerPool(null);
+	public ValidatorStackHandlerPool getValidatorStackHandlerPool(){
+		return new ValidatorStackHandlerPool(null);
 	}
 		
-	public void recycle(ActiveModelStackHandlerPool amshp){
+	public void recycle(ValidatorStackHandlerPool amshp){
 	    throw new IllegalStateException();
 	}	
 	
 	
-	void fill(ActiveModelStackHandlerPool stackHandlerPool,
+	void fill(ValidatorStackHandlerPool stackHandlerPool,
 							ContextStackHandler[] contextStackHToFill,
 							MinimalReduceStackHandler[] minimalReduceStackHToFill,
 							MaximalReduceStackHandler[] maximalReduceStackHToFill,

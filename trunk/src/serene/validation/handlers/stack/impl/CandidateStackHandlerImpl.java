@@ -44,7 +44,7 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.handlers.conflict.InternalConflictResolver;
 import serene.validation.handlers.conflict.ContextConflictsDescriptor;
 import serene.validation.handlers.conflict.StackConflictsHandler;
-import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
+import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
@@ -65,7 +65,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	
 	ConcurrentStackHandler parent;	
 	
-	ActiveModelStackHandlerPool pool;
+	ValidatorStackHandlerPool pool;
 		
 	ErrorCatcher errorCatcher;
 	
@@ -142,7 +142,7 @@ public class CandidateStackHandlerImpl extends ContextStackHandler
 	
 	// super
 	// void init(InputStackDescriptor inputStackDescriptor, StackHandlerRecycler recycler)
-	void init(InputStackDescriptor inputStackDescriptor, ActiveModelStackHandlerPool pool){
+	void init(InputStackDescriptor inputStackDescriptor, ValidatorStackHandlerPool pool){
 		this.recycler = pool;
 		this.pool = pool;
 		this.inputStackDescriptor = inputStackDescriptor;

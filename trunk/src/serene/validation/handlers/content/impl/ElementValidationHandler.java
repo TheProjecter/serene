@@ -60,6 +60,7 @@ import serene.validation.handlers.error.TemporaryMessageStorage;
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
 import serene.validation.handlers.stack.StackHandler;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 import serene.validation.handlers.content.AttributeEventHandler;
 
@@ -91,6 +92,7 @@ class ElementValidationHandler extends ValidatingEEH
 	AElement element;
 
 	StackHandler stackHandler;
+	ValidatorStackHandlerPool stackHandlerPool;
 		
 	ElementValidationHandler parent;
 	
@@ -119,10 +121,11 @@ class ElementValidationHandler extends ValidatingEEH
 		pool.recycle(this);
 	}
 	
-	void init(ValidatorEventHandlerPool pool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, SpaceCharsHandler spaceHandler, MatchHandler matchHandler, ValidatorErrorHandlerPool errorHandlerPool){
+	void init(ValidatorEventHandlerPool pool, ValidatorStackHandlerPool stackHandlerPool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, SpaceCharsHandler spaceHandler, MatchHandler matchHandler, ValidatorErrorHandlerPool errorHandlerPool){
 		super.init(pool, activeInputDescriptor, inputStackDescriptor, errorHandlerPool);
 		this.matchHandler = matchHandler;
 		this.spaceHandler = spaceHandler;		
+		this.stackHandlerPool = stackHandlerPool;
 	}
     
 	void init(AElement element, ElementValidationHandler parent){
@@ -130,7 +133,7 @@ class ElementValidationHandler extends ValidatingEEH
 		element.assembleDefinition();
 		this.parent = parent;
 		init((ContextErrorHandlerManager)parent);
-		stackHandler = element.getStackHandler(this);
+		stackHandler = stackHandlerPool.getContextStackHandler(element, this);
 	}	
 	
 	/*AElement getElement(){
@@ -365,7 +368,7 @@ class ElementValidationHandler extends ValidatingEEH
 	public void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
 		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter);
@@ -374,7 +377,7 @@ class ElementValidationHandler extends ValidatingEEH
 	public void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
 		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter);
@@ -391,7 +394,7 @@ class ElementValidationHandler extends ValidatingEEH
 	public void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){		
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
 		stackHandler.shiftAllAttributes(candidateDefinitions, temporaryMessageStorage);
@@ -400,7 +403,7 @@ class ElementValidationHandler extends ValidatingEEH
 	public void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){		
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
 		stackHandler.shiftAllAttributes(candidateDefinitions, disqualified, temporaryMessageStorage);
@@ -417,7 +420,7 @@ class ElementValidationHandler extends ValidatingEEH
 	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}		
 		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, temporaryMessageStorage);
@@ -426,7 +429,7 @@ class ElementValidationHandler extends ValidatingEEH
 	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}		
 		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, disqualified, temporaryMessageStorage);

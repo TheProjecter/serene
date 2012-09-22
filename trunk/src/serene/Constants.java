@@ -26,6 +26,7 @@ public interface Constants{
     String DTD_MAPPING_PROPERTY = "http://serenerng.com/validatorHandler/property/dtdMapping";
     String ERROR_HANDLER_POOL_PROPERTY = "http://serenerng.com/validatorHandler/property/errorHandlerPool";
     String EVENT_HANDLER_POOL_PROPERTY = "http://serenerng.com/validatorHandler/property/eventHandlerPool";
+    String STACK_HANDLER_POOL_PROPERTY = "http://serenerng.com/validatorHandler/property/stackHandlerPool";
     String ACTIVE_INPUT_DESCRIPTOR_PROPERTY = "http://serenerng.com/validatorHandler/property/activeInputDescriptor";
     String INPUT_STACK_DESCRIPTOR_PROPERTY = "http://serenerng.com/validatorHandler/property/inputStackDescriptor";
     String DOCUMENT_CONTEXT_PROPERTY = "http://serenerng.com/validatorHandler/property/documentContextProperty";

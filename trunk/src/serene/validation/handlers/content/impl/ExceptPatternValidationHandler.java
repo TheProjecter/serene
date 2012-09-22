@@ -40,6 +40,7 @@ import serene.validation.handlers.content.StructuredDataEventHandler;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.stack.StackHandler;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
@@ -57,16 +58,19 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
     
     ErrorCatcher errorCatcher;
     boolean hasError;    
+    
     StackHandler stackHandler;
+    ValidatorStackHandlerPool stackHandlerPool;
     
     ExceptPatternValidationHandler(){
         hasError = false;
     }
          
     
-    void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor){		
+    void init(ValidatorEventHandlerPool pool, ValidatorStackHandlerPool stackHandlerPool, InputStackDescriptor inputStackDescriptor){		
 		this.inputStackDescriptor = inputStackDescriptor;		
 		this.pool = pool;
+		this.stackHandlerPool = stackHandlerPool;
 	}
     
 	void init(AData data, AExceptPattern exceptPattern, AbstractDVH parent, ErrorCatcher errorCatcher){
@@ -94,7 +98,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
     }
     
     public void handleChars(char[] chars, AExceptPattern context) throws SAXException{
-        stackHandler = exceptPattern.getStackHandler(this);
+        stackHandler = stackHandlerPool.getContextStackHandler(exceptPattern, this);
         
         StructuredDataValidationHandler sdvh = pool.getStructuredDataValidationHandler(this, this, this);
         sdvh.handleChars(chars, context);
@@ -109,7 +113,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
     }
 	
 	public void handleString(String value, AExceptPattern context) throws SAXException{
-	    stackHandler = exceptPattern.getStackHandler(this);
+	    stackHandler = stackHandlerPool.getContextStackHandler(exceptPattern, this);
 	    
 	    StructuredDataValidationHandler sdvh = pool.getStructuredDataValidationHandler(this, this, this);
         sdvh.handleString(value, context);
@@ -144,7 +148,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	public void addStructuredData(List<StructuredDataActiveTypeItem> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){	   
 	    if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = exceptPattern.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		} 	    
 		stackHandler.shiftAllCharsDefinitions(candidateDefinitions, temporaryMessageStorage);
@@ -152,7 +156,7 @@ class ExceptPatternValidationHandler implements StructuredDataEventHandler,
 	public void addStructuredData(List<StructuredDataActiveTypeItem> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 	    if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = exceptPattern.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}	    
 		stackHandler.shiftAllCharsDefinitions(candidateDefinitions, disqualified, temporaryMessageStorage);

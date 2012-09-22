@@ -39,6 +39,7 @@ import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.handlers.match.MatchHandler;
 
 import serene.validation.handlers.stack.StackHandler;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 import serene.validation.handlers.error.ErrorCatcher;
 import serene.validation.handlers.error.ConflictMessageReporter;
@@ -82,10 +83,11 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 		pool.recycle(this);
 	}
 	
-	void init(ValidatorEventHandlerPool pool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, MatchHandler matchHandler){
+	void init(ValidatorEventHandlerPool pool, ValidatorStackHandlerPool stackHandlerPool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, MatchHandler matchHandler){
 		super.init(pool, inputStackDescriptor);
 		this.matchHandler = matchHandler;
 		this.activeInputDescriptor = activeInputDescriptor;
+		this.stackHandlerPool = stackHandlerPool;
 	}
 	
 		
@@ -103,7 +105,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
     }
     
 	void validateValue(String value) throws SAXException{
-	    stackHandler = attribute.getStackHandler(this);
+	    stackHandler = stackHandlerPool.getContextStackHandler(attribute, this);
 		/*if(!attribute.allowsCharsContent()){
 			unexpectedAttributeValue(inputStackDescriptor.getCurrentItemInputRecordIndex(), attribute);
 			return;
@@ -130,7 +132,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = attribute.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
 		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, temporaryMessageStorage);
@@ -139,7 +141,7 @@ class CandidateAttributeValidationHandler extends AttributeDefinitionHandler
 	public void addChars(List<CharsActiveTypeItem> charsCandidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = attribute.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
 		stackHandler.shiftAllCharsDefinitions(charsCandidateDefinitions, disqualified, temporaryMessageStorage);

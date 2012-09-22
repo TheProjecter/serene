@@ -46,7 +46,7 @@ import serene.validation.schema.simplified.SExceptPattern;
 
 import serene.validation.schema.active.ActiveGrammarModel;
 
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.schema.active.util.Level;
@@ -68,25 +68,25 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 
 
 	
-	ActiveModelStackHandlerPool stackHandlerPool;
+	/*ValidatorStackHandlerPool stackHandlerPool;*/
 	ActiveModelRuleHandlerPool ruleHandlerPool;
 
 	ActiveComponentBuilder parent;
 	ActiveComponentBuilder child;
 	
-	public ActiveComponentBuilder(ActiveModelStackHandlerPool stackHandlerPool,
+	public ActiveComponentBuilder(/*ValidatorStackHandlerPool stackHandlerPool,*/
 										ActiveModelRuleHandlerPool ruleHandlerPool){
-		this.stackHandlerPool = stackHandlerPool;
+		/*this.stackHandlerPool = stackHandlerPool;*/
 		this.ruleHandlerPool = ruleHandlerPool;
 		
 		level = Level.getTopInstance();
 		topLevel = level;
 	}
 	
-	public ActiveComponentBuilder(ActiveModelStackHandlerPool stackHandlerPool,
+	public ActiveComponentBuilder(/*ValidatorStackHandlerPool stackHandlerPool,*/
 										ActiveModelRuleHandlerPool ruleHandlerPool,
 										ActiveComponentBuilder parent){
-		this.stackHandlerPool = stackHandlerPool;
+		/*this.stackHandlerPool = stackHandlerPool;*/
 		this.ruleHandlerPool = ruleHandlerPool;
 	    this.parent = parent;
 	    
@@ -96,7 +96,7 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 
 	public ActiveComponentBuilder getChild(){
 	    if(child != null)return child;
-	    child = new ActiveComponentBuilder(stackHandlerPool,
+	    child = new ActiveComponentBuilder(/*stackHandlerPool,*/
 	                                    ruleHandlerPool, 
 	                                    this);
 	    return child;
@@ -171,12 +171,12 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 	//START PATTERN BUILDING ***************************************************
 	//**************************************************************************
 	public AElement buildElement(int index, Identifier identifier, ActiveGrammarModel model, SElement simplifiedComponent){
-		AElement e = new AElement(index, identifier, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent);
+		AElement e = new AElement(index, identifier, model, /*stackHandlerPool, */ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(e);
 		return e;
 	}
 	public AAttribute buildAttribute(int index, Identifier identifier, ActiveGrammarModel model, SAttribute simplifiedComponent){
-		AAttribute a = new AAttribute(index, identifier, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent);
+		AAttribute a = new AAttribute(index, identifier, model, /*stackHandlerPool, */ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(a);
 		return a;
 	}
@@ -194,7 +194,7 @@ public class ActiveComponentBuilder implements ComponentBuilder{
                                 allowsValues,	
                                 allowsListPatterns,
                                 allowsText,
-                                stackHandlerPool, 
+                                /*stackHandlerPool, */
                                 ruleHandlerPool, 
                                 simplifiedComponent);
 		clearContent();
@@ -215,7 +215,7 @@ public class ActiveComponentBuilder implements ComponentBuilder{
                                     allowsValues,	
                                     allowsListPatterns,
                                     allowsText,
-                                    stackHandlerPool, 
+                                    /*stackHandlerPool,*/ 
                                     ruleHandlerPool, 
                                     simplifiedComponent);
 		clearContent();
@@ -277,7 +277,7 @@ public class ActiveComponentBuilder implements ComponentBuilder{
                                     allowsValues,	
                                     allowsListPatterns,
                                     allowsText,
-                                    stackHandlerPool, 
+                                    /*stackHandlerPool, */
                                     ruleHandlerPool, 
                                     simplifiedComponent);
 		clearContent();
@@ -352,7 +352,7 @@ public class ActiveComponentBuilder implements ComponentBuilder{
 	
 	
 	public AExceptPattern buildExceptPattern(int index, ActiveGrammarModel model, SExceptPattern simplifiedComponent){
-		AExceptPattern ep = new AExceptPattern(index, model, stackHandlerPool, ruleHandlerPool, simplifiedComponent);
+		AExceptPattern ep = new AExceptPattern(index, model, /*stackHandlerPool,*/ ruleHandlerPool, simplifiedComponent);
 		addToCurrentLevel(ep);
 		return ep;
 	}

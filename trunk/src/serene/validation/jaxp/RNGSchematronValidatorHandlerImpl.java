@@ -63,6 +63,10 @@ import serene.validation.handlers.content.util.CharacterContentDescriptorPool;
 
 import serene.validation.handlers.error.ValidatorErrorHandlerPool;
 
+import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
+
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
+
 import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.dtdcompatibility.AttributeDefaultValueHandler;
@@ -84,6 +88,7 @@ public class RNGSchematronValidatorHandlerImpl extends ValidatorHandler{
 		
 	
 	ValidatorEventHandlerPool eventHandlerPool;	
+	ValidatorStackHandlerPool stackHandlerPool;
 	ValidatorErrorHandlerPool errorHandlerPool;
 	
 	SchemaModel schemaModel;
@@ -130,6 +135,8 @@ public class RNGSchematronValidatorHandlerImpl extends ValidatorHandler{
                             boolean restrictToFileName,
                             boolean optimizedForResourceSharing,
                             ValidatorEventHandlerPool eventHandlerPool,
+                            ValidatorConflictHandlerPool conflictHandlerPool,
+                            ValidatorStackHandlerPool stackHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
 							SchemaModel schemaModel,
 							List<TransformerHandler> validatingTransformerHandlers){		
@@ -148,6 +155,9 @@ public class RNGSchematronValidatorHandlerImpl extends ValidatorHandler{
 		
 		this.schemaModel = schemaModel;
 		
+		this.stackHandlerPool = stackHandlerPool;
+		
+		
 		matchHandler  = new MatchHandler();
 		spaceHandler = new SpaceCharsHandler();					
         documentContext = new DocumentContext();
@@ -158,9 +168,12 @@ public class RNGSchematronValidatorHandlerImpl extends ValidatorHandler{
 		inputStackDescriptor = new InputStackDescriptor(activeInputDescriptor);
 		characterContentDescriptorPool = new CharacterContentDescriptorPool(activeInputDescriptor, spaceHandler); 
 		characterContentDescriptor = characterContentDescriptorPool.getCharacterContentDescriptor();
-		        
+		   
+		conflictHandlerPool.fill(activeInputDescriptor, inputStackDescriptor);
+        stackHandlerPool.fill(inputStackDescriptor, conflictHandlerPool);
+        
         errorHandlerPool.init(errorDispatcher, activeInputDescriptor);        
-        eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, errorHandlerPool);
+        eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, stackHandlerPool, errorHandlerPool);
         
 
         if(!optimizedForResourceSharing)initResources();    
@@ -183,7 +196,8 @@ public class RNGSchematronValidatorHandlerImpl extends ValidatorHandler{
 	    errorHandlerPool.fill();
         eventHandlerPool.fill();
         
-        activeModel = schemaModel.getActiveModel(activeInputDescriptor,
+        activeModel = schemaModel.getActiveModel(stackHandlerPool,
+                                                    activeInputDescriptor,
 		                                            inputStackDescriptor, 
 													errorDispatcher);
 		if(activeModel == null) throw new IllegalStateException("Attempting to use an erroneous schema.");
@@ -549,6 +563,9 @@ public class RNGSchematronValidatorHandlerImpl extends ValidatorHandler{
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
             // recognized but not set, only for retrieval
             throw new SAXNotSupportedException();
+        }else if(name.equals(Constants.STACK_HANDLER_POOL_PROPERTY)){
+            // recognized but not set, only for retrieval
+            throw new SAXNotSupportedException();
         }else if(name.equals(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY)){
             // recognized but not set, only for retrieval
             throw new SAXNotSupportedException();
@@ -585,6 +602,8 @@ public class RNGSchematronValidatorHandlerImpl extends ValidatorHandler{
             return errorHandlerPool;
         }else if(name.equals(Constants.EVENT_HANDLER_POOL_PROPERTY)){
             return eventHandlerPool;
+        }else if(name.equals(Constants.STACK_HANDLER_POOL_PROPERTY)){
+            return stackHandlerPool;
         }else if(name.equals(Constants.INPUT_STACK_DESCRIPTOR_PROPERTY)){
             return inputStackDescriptor;
         }else if(name.equals(Constants.ACTIVE_INPUT_DESCRIPTOR_PROPERTY)){

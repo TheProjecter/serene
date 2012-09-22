@@ -9,8 +9,10 @@ import serene.validation.handlers.error.ErrorDispatcher;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
+
 public interface ValidationModel{
     ParsedModel getParsedModel();
     SimplifiedModel getSimplifiedModel();
-    ActiveModel getActiveModel(ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher);
+    ActiveModel getActiveModel(ValidatorStackHandlerPool stackHandlerPool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor, ErrorDispatcher errorDispatcher);
 }

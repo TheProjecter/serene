@@ -37,7 +37,7 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.ConcurrentStackHandler;
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
@@ -51,7 +51,7 @@ public class AExceptPattern extends AbstractRule
 
 	ActiveGrammarModel grammarModel;
 	
-	ActiveModelStackHandlerPool stackHandlerPool;
+	/*ValidatorStackHandlerPool stackHandlerPool;*/
 		
 	AData[] contextDatas;
 	
@@ -66,13 +66,13 @@ public class AExceptPattern extends AbstractRule
 	
 	public AExceptPattern(int index,
 			ActiveGrammarModel grammarModel,
-			ActiveModelStackHandlerPool stackHandlerPool,
+			/*ValidatorStackHandlerPool stackHandlerPool,*/
 			ActiveModelRuleHandlerPool ruleHandlerPool,
 			SExceptPattern sexceptPattern){
 		super(ruleHandlerPool);
 		this.index = index;
 		this.grammarModel = grammarModel;
-		this.stackHandlerPool = stackHandlerPool;
+		/*this.stackHandlerPool = stackHandlerPool;*/
 		this.sexceptPattern = sexceptPattern;		
 	}	
 	
@@ -163,12 +163,12 @@ public class AExceptPattern extends AbstractRule
 		return ruleHandlerPool.getStructureValidationHandler(this, errorCatcher, stackHandler);
 	}
 	
-	public StackHandler getStackHandler(ErrorCatcher ec){	
+	/*public StackHandler getStackHandler(ErrorCatcher ec){	
 		return stackHandlerPool.getContextStackHandler(this, ec);
 	}	
 	public ConcurrentStackHandler getStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher){		
 		return stackHandlerPool.getConcurrentStackHandler(originalHandler, errorCatcher);
-	}
+	}*/
 	//--------------------------------------------------------------------------
 	
 	

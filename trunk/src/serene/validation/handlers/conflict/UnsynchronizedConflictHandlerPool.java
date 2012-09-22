@@ -25,14 +25,14 @@ public class UnsynchronizedConflictHandlerPool extends ConflictHandlerPool{
 		return new UnsynchronizedConflictHandlerPool();
 	}
 	
-	public ActiveModelConflictHandlerPool getActiveModelConflictHandlerPool(){
-        return new ActiveModelConflictHandlerPool(null);
+	public ValidatorConflictHandlerPool getValidatorConflictHandlerPool(){
+        return new ValidatorConflictHandlerPool(null);
 	}
 		
-	public void recycle(ActiveModelConflictHandlerPool amchp){
+	public void recycle(ValidatorConflictHandlerPool amchp){
 	    throw new IllegalStateException();
 	}	
-	void fill(ActiveModelConflictHandlerPool pool,
+	void fill(ValidatorConflictHandlerPool pool,
 					AmbiguousElementConflictResolver[] ambiguousElementConflictResolverToFill,
 					UnresolvedElementConflictResolver[] unresolvedElementConflictResolverToFill,
 					AmbiguousAttributeConflictResolver[] ambiguousAttributeConflictResolverToFill,

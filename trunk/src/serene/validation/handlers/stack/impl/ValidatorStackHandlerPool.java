@@ -41,13 +41,13 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.structure.StructureHandler;
 
-import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
+import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
 import serene.validation.handlers.conflict.ContextConflictsDescriptor;
 import serene.validation.handlers.conflict.StackConflictsHandler;
 
 import serene.Reusable;
 
-public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycler{
+public class ValidatorStackHandlerPool implements Reusable, StackHandlerRecycler{
 	
 	// int contextStackHCreated;
 	int contextStackHMaxSize;
@@ -87,9 +87,9 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 	boolean full;
 	
 	InputStackDescriptor inputStackDescriptor;
-	ActiveModelConflictHandlerPool conflictHandlerPool;
+	ValidatorConflictHandlerPool conflictHandlerPool;
 	
-	public ActiveModelStackHandlerPool(StackHandlerPool pool){
+	public ValidatorStackHandlerPool(StackHandlerPool pool){
 		this.pool = pool;
 		
 		contextStackHMaxSize = 20;
@@ -106,7 +106,7 @@ public class ActiveModelStackHandlerPool implements Reusable, StackHandlerRecycl
 		pool.recycle(this);
 	}
 	
-	public void fill(InputStackDescriptor inputStackDescriptor, ActiveModelConflictHandlerPool conflictHandlerPool){
+	public void fill(InputStackDescriptor inputStackDescriptor, ValidatorConflictHandlerPool conflictHandlerPool){
 		this.inputStackDescriptor = inputStackDescriptor;
 		this.conflictHandlerPool = conflictHandlerPool;
 		

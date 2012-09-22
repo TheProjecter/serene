@@ -29,7 +29,7 @@ import serene.validation.schema.active.components.APattern;
 
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.ConcurrentStackHandler;
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
@@ -48,7 +48,7 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 	protected int index;
 	    
 	protected ActiveGrammarModel grammarModel;	
-	protected ActiveModelStackHandlerPool stackHandlerPool;
+	/*protected ValidatorStackHandlerPool stackHandlerPool;*/
 	
     Identifier identifier;
 	
@@ -56,12 +56,12 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 	            Identifier identifier,
 				APattern child,
 				ActiveGrammarModel grammarModel,
-				ActiveModelStackHandlerPool stackHandlerPool,
+				/*ValidatorStackHandlerPool stackHandlerPool,*/
 				ActiveModelRuleHandlerPool ruleHandlerPool){		
 		super(child, ruleHandlerPool);
 		this.index = index;
 		this.grammarModel = grammarModel;		
-		this.stackHandlerPool = stackHandlerPool;
+		/*this.stackHandlerPool = stackHandlerPool;*/
 		this.identifier = identifier;
         
 	}
@@ -117,14 +117,14 @@ public abstract class MarkupAPattern extends UniqueChildAPattern
 	//--------------------------------------------------------------------------
 	//StructureHandler getStructureHandler(ErrorCatcher errorCatcher, StackHandler stackHandler) subclasses
 	
-	public StackHandler getStackHandler(ErrorCatcher ec){	
+	/*public StackHandler getStackHandler(ErrorCatcher ec){	
 		return stackHandlerPool.getContextStackHandler(this, ec);		
-	}
+	}*/
 	//do also except list 
 	// return type concurrent
-	public ConcurrentStackHandler getStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher){		
+	/*public ConcurrentStackHandler getStackHandler(StackHandler originalHandler, ErrorCatcher errorCatcher){		
 		return stackHandlerPool.getConcurrentStackHandler(originalHandler, errorCatcher);
-	}
+	}*/
 	//--------------------------------------------------------------------------
 	
 	

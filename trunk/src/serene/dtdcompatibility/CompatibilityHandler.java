@@ -102,6 +102,8 @@ import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 import serene.validation.handlers.content.util.ActiveInputDescriptor;
 
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
+
 import serene.SchemaModel;
 
 
@@ -128,6 +130,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
     
     ValidatorErrorHandlerPool errorHandlerPool;
     ValidatorEventHandlerPool eventHandlerPool;
+    ValidatorStackHandlerPool stackHandlerPool;
     ActiveInputDescriptor activeInputDescriptor;
     InputStackDescriptor inputStackDescriptor;
         
@@ -190,12 +193,15 @@ public class CompatibilityHandler implements RestrictingVisitor{
     public CompatibilityHandler(ControllerPool controllerPool,
                                 ValidatorErrorHandlerPool errorHandlerPool,
                                 ValidatorEventHandlerPool eventHandlerPool,
+                                ValidatorStackHandlerPool stackHandlerPool,
                                 ActiveInputDescriptor activeInputDescriptor,
                                 InputStackDescriptor inputStackDescriptor,
                                 ErrorDispatcher errorDispatcher){
         this.controllerPool = controllerPool;
         this.errorHandlerPool = errorHandlerPool;
         this.eventHandlerPool = eventHandlerPool;
+        this.stackHandlerPool = stackHandlerPool;
+        
         this.activeInputDescriptor = activeInputDescriptor;
         this.inputStackDescriptor = inputStackDescriptor;     
         this.errorDispatcher = errorDispatcher; 
@@ -243,7 +249,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
     public SchemaModel handle(ValidationModel validationModel) throws SAXException{     
         SimplifiedModel simplifiedModel = validationModel.getSimplifiedModel();
         if(simplifiedModel == null)return new SchemaModel(validationModel, new DTDCompatibilityModelImpl(null, null));
-        activeModel = validationModel.getActiveModel(activeInputDescriptor, inputStackDescriptor, errorDispatcher);
+        activeModel = validationModel.getActiveModel(stackHandlerPool, activeInputDescriptor, inputStackDescriptor, errorDispatcher);
         grammarModel = activeModel.getGrammarModel();       
                 
         startTopPattern = simplifiedModel.getStartTopPatterns();
@@ -258,7 +264,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             attributeDefaultValueModel = new AttributeDefaultValueModel();
             
             ccAttribute.init(grammarModel,
-                        activeModel.getStackHandlerPool(),
+                        /*activeModel.getStackHandlerPool(),*/
                         activeModel.getRuleHandlerPool());
             
             attributeListsStack.clear();

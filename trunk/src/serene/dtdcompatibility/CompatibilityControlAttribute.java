@@ -22,19 +22,19 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.ActiveGrammarModel;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 class CompatibilityControlAttribute extends AAttribute{
     
     CompatibilityControlAttribute(){
-            super(-1, null, null, null, null, null);                
+            super(-1, null, null, null, null);                
     }
     
     void init(ActiveGrammarModel grammarModel,
-				ActiveModelStackHandlerPool stackHandlerPool,
+				/*ValidatorStackHandlerPool stackHandlerPool,*/
 				ActiveModelRuleHandlerPool ruleHandlerPool){
         this.grammarModel = grammarModel;
-        this.stackHandlerPool = stackHandlerPool;
+        /*this.stackHandlerPool = stackHandlerPool;*/
         this.ruleHandlerPool = ruleHandlerPool;
     }
     

@@ -38,6 +38,7 @@ import serene.validation.handlers.content.DataEventHandler;
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.stack.StackHandler;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 import serene.util.SpaceCharsHandler;
 
@@ -55,14 +56,16 @@ class ListPatternValidationHandler implements DataEventHandler,
         
     ErrorCatcher errorCatcher;    
     StackHandler stackHandler;
+    ValidatorStackHandlerPool stackHandlerPool;
     
     ListPatternValidationHandler(){
     }
         
     
-    void init(ValidatorEventHandlerPool pool, InputStackDescriptor inputStackDescriptor, SpaceCharsHandler spaceHandler){		
+    void init(ValidatorEventHandlerPool pool, ValidatorStackHandlerPool stackHandlerPool, InputStackDescriptor inputStackDescriptor, SpaceCharsHandler spaceHandler){		
 		this.inputStackDescriptor = inputStackDescriptor;		
 		this.pool = pool;
+		this.stackHandlerPool = stackHandlerPool;
 		this.spaceHandler = spaceHandler; 
 	}
     
@@ -90,7 +93,7 @@ class ListPatternValidationHandler implements DataEventHandler,
     
     public void handleChars(char[] chars, AListPattern context) throws SAXException{
         // System.out.println("LIST PATTERN VALIDATION HANDLER chars="+new String(chars)+"  context="+context);
-        stackHandler = listPattern.getStackHandler(errorCatcher);
+        stackHandler = stackHandlerPool.getContextStackHandler(listPattern, errorCatcher);
         
         DataValidationHandler dvh = pool.getDataValidationHandler(this, this, errorCatcher);        
         
@@ -110,7 +113,7 @@ class ListPatternValidationHandler implements DataEventHandler,
     }
 	
 	public void handleString(String value, AListPattern context) throws SAXException{
-	    stackHandler = listPattern.getStackHandler(errorCatcher);
+	    stackHandler = stackHandlerPool.getContextStackHandler(listPattern, errorCatcher);
 	    
 	    DataValidationHandler dvh = pool.getDataValidationHandler(this, this, errorCatcher);
 	    
@@ -138,7 +141,7 @@ class ListPatternValidationHandler implements DataEventHandler,
 	public void addData(List<DatatypedActiveTypeItem> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage){	    
 	    if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = listPattern.getStackHandler(oldStackHandler, errorCatcher);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, errorCatcher);
 		    oldStackHandler.recycle();
 		} 
 		stackHandler.shiftAllTokenDefinitions(candidateDefinitions, temporaryMessageStorage);
@@ -147,7 +150,7 @@ class ListPatternValidationHandler implements DataEventHandler,
 	public void addData(List<DatatypedActiveTypeItem> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage){	    
 	    if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = listPattern.getStackHandler(oldStackHandler, errorCatcher);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, errorCatcher);
 		    oldStackHandler.recycle();
 		}
 		stackHandler.shiftAllTokenDefinitions(candidateDefinitions, disqualified, temporaryMessageStorage);

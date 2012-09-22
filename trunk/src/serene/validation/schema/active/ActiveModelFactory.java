@@ -22,8 +22,8 @@ import serene.validation.handlers.content.impl.ContentHandlerPool;
 import serene.validation.handlers.content.impl.ValidatorEventHandlerPool;
 
 
-import serene.validation.handlers.conflict.ActiveModelConflictHandlerPool;
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.conflict.ValidatorConflictHandlerPool;
+/*import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;*/
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.schema.active.components.ActiveComponentBuilder;
@@ -32,8 +32,8 @@ public class ActiveModelFactory{
 	
 	public ActiveModel createActiveModel(SimplifiedModel simplifiedModel,		
 										ActiveModelRuleHandlerPool ruleHandlerPool,
-										ActiveModelStackHandlerPool stackHandlerPool,
-										ActiveModelConflictHandlerPool conflictHandlerPool,
+										/*ValidatorStackHandlerPool stackHandlerPool,
+										ValidatorConflictHandlerPool conflictHandlerPool,*/
 										ActiveModelPool pool){
 				
 		ActiveGrammarModel activeGrammarModel = new ActiveGrammarModel(simplifiedModel.getStartElementIndex(),
@@ -41,12 +41,12 @@ public class ActiveModelFactory{
                                                             simplifiedModel.getElementDefinitions(),
                                                             simplifiedModel.getAttributeDefinitions(),
                                                             simplifiedModel.getExceptPatternDefinitions(),
-                                                            new ActiveComponentBuilder(stackHandlerPool,
+                                                            new ActiveComponentBuilder(/*stackHandlerPool,*/
                                                                                         ruleHandlerPool));
 		return new ActiveModel(activeGrammarModel,
 							ruleHandlerPool,
-							stackHandlerPool,
-							conflictHandlerPool,
+							/*stackHandlerPool,
+							conflictHandlerPool,*/
 							pool);																							
 	}
 }

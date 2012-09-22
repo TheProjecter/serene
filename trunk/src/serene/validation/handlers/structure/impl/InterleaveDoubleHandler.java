@@ -28,7 +28,7 @@ import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.RuleHandlerVisitor;
 
 import serene.validation.handlers.stack.StackHandler;
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 import serene.validation.handlers.stack.impl.MinimalReduceStackHandler;
 import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
@@ -57,7 +57,7 @@ public class InterleaveDoubleHandler extends StructureDoubleHandler{
 		recycler.recycle(this);
 	}
 	
-	void init(AInterleave pattern, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler, ActiveModelStackHandlerPool stackHandlerPool){
+	void init(AInterleave pattern, ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler, ValidatorStackHandlerPool stackHandlerPool){
 		this.rule = pattern;		
 		this.errorCatcher = errorCatcher;		
 		this.parent = parent;

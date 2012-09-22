@@ -371,7 +371,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	void addChildElement(List<AElement> candidateDefinitions, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry, Map<AElement, Queue> candidateQueues){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
 		stackHandler.shiftAllElements(candidateDefinitions, conflictMessageReporter, bindingModel, targetQueue, reservationStartEntry, reservationEndEntry, candidateQueues);
@@ -379,7 +379,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	void addAttribute(List<AAttribute> candidateDefinitions, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, BindingModel bindingModel){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
 		stackHandler.shiftAllAttributes(candidateDefinitions, temporaryMessageStorage, value, queue, entry, bindingModel);
@@ -387,7 +387,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	void addChildElement(List<AElement> candidateDefinitions, ExternalConflictHandler conflictHandler, ConflictMessageReporter conflictMessageReporter, BindingModel bindingModel, Queue targetQueue, int reservationStartEntry, int reservationEndEntry,  Map<AElement, Queue> candidateQueues){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
 		stackHandler.shiftAllElements(candidateDefinitions, conflictHandler, conflictMessageReporter, bindingModel, targetQueue, reservationStartEntry, reservationEndEntry, candidateQueues);
@@ -395,7 +395,7 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
 	void addAttribute(List<AAttribute> candidateDefinitions, BitSet disqualified, TemporaryMessageStorage[] temporaryMessageStorage, String value, Queue queue, int entry, BindingModel bindingModel){
 		if(!stackHandler.handlesConflict()){
 		    StackHandler oldStackHandler = stackHandler;
-		    stackHandler = element.getStackHandler(oldStackHandler, this);
+		    stackHandler = stackHandlerPool.getConcurrentStackHandler(oldStackHandler, this);
 		    oldStackHandler.recycle();
 		}
 		stackHandler.shiftAllAttributes(candidateDefinitions, disqualified, temporaryMessageStorage, value, queue, entry, bindingModel);

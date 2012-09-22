@@ -34,7 +34,7 @@ import serene.validation.handlers.structure.impl.GroupMaximalReduceCountHandler;
 import serene.validation.handlers.structure.impl.GroupDoubleHandler;
 
 import serene.validation.handlers.stack.StackHandler;
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 import serene.validation.handlers.stack.impl.MinimalReduceStackHandler;
 import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
@@ -49,7 +49,7 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 	int satisfactionIndicator;
 	int saturationIndicator;
 	
-	ActiveModelStackHandlerPool stackHandlerPool;
+	/*ValidatorStackHandlerPool stackHandlerPool;*/
 	
 	SGroup sgroup;
 	public AGroup(APattern[] children,
@@ -59,7 +59,7 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
                 boolean allowsValues,	
                 boolean allowsListPatterns,
                 boolean allowsText,
-				ActiveModelStackHandlerPool stackHandlerPool,
+				/*ValidatorStackHandlerPool stackHandlerPool,*/
 				ActiveModelRuleHandlerPool ruleHandlerPool,
 				SGroup sgroup){	
 		super(children, 
@@ -70,7 +70,7 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
                 allowsListPatterns,
                 allowsText,
                 ruleHandlerPool);
-		this.stackHandlerPool = stackHandlerPool;
+		/*this.stackHandlerPool = stackHandlerPool;*/
 		this.sgroup = sgroup;
 	}
 		
@@ -182,7 +182,7 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 	}
 	
 	GroupDoubleHandler getDoubleHandler(ErrorCatcher errorCatcher, StructureHandler parent, StackHandler stackHandler){
-		GroupDoubleHandler sih = ruleHandlerPool.getStructureDoubleHandler(this, errorCatcher, parent, stackHandler, stackHandlerPool);		
+		GroupDoubleHandler sih = ruleHandlerPool.getStructureDoubleHandler(this, errorCatcher, parent, stackHandler/*, stackHandlerPool*/);		
 		return sih;
 	}
 	

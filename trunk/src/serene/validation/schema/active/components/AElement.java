@@ -38,7 +38,7 @@ import serene.validation.handlers.structure.impl.StructureDoubleHandler;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
 import serene.validation.handlers.stack.StackHandler;
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 
 import serene.validation.schema.simplified.Identifier;
 
@@ -56,14 +56,14 @@ public class AElement extends MarkupAPattern
 	public AElement(int index,
 	            Identifier identifier,
 				ActiveGrammarModel grammarModel,
-				ActiveModelStackHandlerPool stackHandlerPool,
+				/*ValidatorStackHandlerPool stackHandlerPool,*/
 				ActiveModelRuleHandlerPool ruleHandlerPool,
 				SElement selement){		
 		super(index,
 		        identifier,
 				null, 
 				grammarModel, 
-				stackHandlerPool, 
+				/*stackHandlerPool, */
 				ruleHandlerPool);		
 		this.index = index;
 		this.selement = selement;

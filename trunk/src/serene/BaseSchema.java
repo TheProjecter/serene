@@ -23,6 +23,14 @@ import serene.validation.handlers.content.impl.ContentHandlerPool;
 import serene.validation.handlers.content.impl.SynchronizedContentHandlerPool;
 import serene.validation.handlers.content.impl.UnsynchronizedContentHandlerPool;
 
+import serene.validation.handlers.stack.impl.StackHandlerPool;
+import serene.validation.handlers.stack.impl.SynchronizedStackHandlerPool;
+import serene.validation.handlers.stack.impl.UnsynchronizedStackHandlerPool;
+
+import serene.validation.handlers.conflict.ConflictHandlerPool;
+import serene.validation.handlers.conflict.SynchronizedConflictHandlerPool;
+import serene.validation.handlers.conflict.UnsynchronizedConflictHandlerPool;
+
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import serene.validation.handlers.error.ErrorHandlerPool;
@@ -30,6 +38,7 @@ import serene.validation.handlers.error.SynchronizedErrorHandlerPool;
 import serene.validation.handlers.error.UnsynchronizedErrorHandlerPool;
 import serene.validation.handlers.error.ErrorDispatcher;
 
+import serene.validation.handlers.stack.impl.StackHandlerPool;
 
 public abstract class BaseSchema extends Schema{
     protected boolean secureProcessing;
@@ -39,6 +48,8 @@ public abstract class BaseSchema extends Schema{
     		
 	protected ContentHandlerPool contentHandlerPool;	
 	protected ErrorHandlerPool errorHandlerPool;
+	protected StackHandlerPool stackHandlerPool;
+	protected ConflictHandlerPool conflictHandlerPool;
 	
     public BaseSchema(boolean secureProcessing,
                     boolean optimizedForResourceSharing,
@@ -50,9 +61,13 @@ public abstract class BaseSchema extends Schema{
         if(optimizedForResourceSharing){
             contentHandlerPool = SynchronizedContentHandlerPool.getInstance();
             errorHandlerPool = SynchronizedErrorHandlerPool.getInstance();
+            stackHandlerPool = SynchronizedStackHandlerPool.getInstance();
+            conflictHandlerPool = SynchronizedConflictHandlerPool.getInstance();
         }else{
             contentHandlerPool = UnsynchronizedContentHandlerPool.getInstance();
             errorHandlerPool = UnsynchronizedErrorHandlerPool.getInstance();
+            stackHandlerPool = UnsynchronizedStackHandlerPool.getInstance();
+            conflictHandlerPool = UnsynchronizedConflictHandlerPool.getInstance();
         }
     }    
 }

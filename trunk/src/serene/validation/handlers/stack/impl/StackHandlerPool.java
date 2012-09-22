@@ -20,11 +20,11 @@ public abstract class StackHandlerPool{
 	StackHandlerPool(){	
 	}
 		
-	public abstract ActiveModelStackHandlerPool getActiveModelStackHandlerPool();		
-	public abstract void recycle(ActiveModelStackHandlerPool amshp);
+	public abstract ValidatorStackHandlerPool getValidatorStackHandlerPool();		
+	public abstract void recycle(ValidatorStackHandlerPool amshp);
 	
 	
-	abstract void fill(ActiveModelStackHandlerPool stackHandlerPool,
+	abstract void fill(ValidatorStackHandlerPool stackHandlerPool,
 							ContextStackHandler[] contextStackHToFill,
 							MinimalReduceStackHandler[] minimalReduceStackHToFill,
 							MaximalReduceStackHandler[] maximalReduceStackHToFill,

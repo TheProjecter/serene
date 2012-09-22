@@ -35,7 +35,7 @@ import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.ChildEventHandler;
 
 import serene.validation.handlers.stack.StackHandler;
-import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
+import serene.validation.handlers.stack.impl.ValidatorStackHandlerPool;
 import serene.validation.handlers.stack.impl.MinimalReduceStackHandler;
 import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
@@ -237,7 +237,8 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 	
 	ActiveInputDescriptor activeInputDescriptor;
 	InputStackDescriptor inputStackDescriptor;
-		
+	ValidatorStackHandlerPool stackHandlerPool;	
+	
 	boolean full;
 	
 	public ActiveModelRuleHandlerPool(RuleHandlerPool pool){
@@ -285,9 +286,10 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		pool.recycle(this);
 	}
 	
-	public void fill(ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){
+	public void fill(ValidatorStackHandlerPool stackHandlerPool, ActiveInputDescriptor activeInputDescriptor, InputStackDescriptor inputStackDescriptor){
 	    this.activeInputDescriptor = activeInputDescriptor;
 		this.inputStackDescriptor = inputStackDescriptor;
+		this.stackHandlerPool = stackHandlerPool;
 		if(pool != null){
 		    pool.fill(this,
 			 		particleHandler,
@@ -986,7 +988,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		listPatternHandler[listPatternHandlerFree++] = ah;
 	}
 	
-	public GroupDoubleHandler getStructureDoubleHandler(AGroup pattern, ErrorCatcher errorCatcher,  StructureHandler parent, StackHandler stackHandler, ActiveModelStackHandlerPool stackHandlerPool){				
+	public GroupDoubleHandler getStructureDoubleHandler(AGroup pattern, ErrorCatcher errorCatcher,  StructureHandler parent, StackHandler stackHandler/*, ValidatorStackHandlerPool stackHandlerPool*/){				
 		if(groupDoubleHandlerFree == 0){
 			// groupDoubleHandlerCreated++;
 			GroupDoubleHandler sih = new GroupDoubleHandler();
@@ -1011,7 +1013,7 @@ public class ActiveModelRuleHandlerPool implements Reusable, RuleHandlerRecycler
 		groupDoubleHandler[groupDoubleHandlerFree++] = sih;
 	}
 	
-	public InterleaveDoubleHandler getStructureDoubleHandler(AInterleave pattern, ErrorCatcher errorCatcher,  StructureHandler parent, StackHandler stackHandler, ActiveModelStackHandlerPool stackHandlerPool){				
+	public InterleaveDoubleHandler getStructureDoubleHandler(AInterleave pattern, ErrorCatcher errorCatcher,  StructureHandler parent, StackHandler stackHandler/*, ValidatorStackHandlerPool stackHandlerPool*/){				
 		if(interleaveDoubleHandlerFree == 0){
 			// interleaveDoubleHandlerCreated++;
 			InterleaveDoubleHandler sih = new InterleaveDoubleHandler();
