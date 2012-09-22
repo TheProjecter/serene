@@ -178,9 +178,9 @@ class BoundElementValidationHandler extends ElementValidationHandler implements 
     }
 	
 	public ComparableEEH handleStartElement(String qName, String namespace, String name, boolean restrictToFileName) throws SAXException{
-		
-		if(!element.allowsElements()) 
+		if(!element.allowsElements()) {
 			return getUnexpectedElementHandler(namespace, name);
+		}
 				
 		List<AElement> elementMatches = matchHandler.matchElement(namespace, name, element);
 		int matchCount = elementMatches.size();

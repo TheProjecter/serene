@@ -21,9 +21,9 @@ import java.util.List;
 import org.relaxng.datatype.ValidationContext;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
-import serene.validation.schema.simplified.components.SExceptPattern;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
+import serene.validation.schema.simplified.SExceptPattern;
 
 
 import serene.validation.schema.active.components.AElement;

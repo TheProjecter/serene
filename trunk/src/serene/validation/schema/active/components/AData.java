@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.relaxng.datatype.Datatype;
 
-import serene.validation.schema.simplified.components.SData;
+import serene.validation.schema.simplified.SData;
 
 import serene.validation.schema.active.ActiveGrammarModel;
 

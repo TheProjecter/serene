@@ -102,6 +102,7 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 	}
 	
 	public void handleChars(char[] chars, AListPattern type) throws SAXException{
+	   //System.out.println("DATA VALIDATION HANDLER chars="+new String(chars)+"  type="+type);
 	   int dataOffset = -1;  
        int valueOffset = -1;
        matchHandler.handleCharsMatches(type);
@@ -117,6 +118,8 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 			matches.addAll(valueMatches);				
 		}	
 		
+		//System.out.println("DATA VALIDATION HANDLER dataMatches="+dataMatches+"  valueMatches="+valueMatches);
+		
 		if(dataMatches != null && dataMatches.size() > 0){		    
 		    for(int i = 0; i < dataMatches.size(); i++){
 			    currentIndex = i + dataOffset;
@@ -129,6 +132,7 @@ class DataValidationHandler extends AbstractDVH implements DataEventHandler{
 			    validateValue(chars, type, valueMatches.get(i));
 			}
 		}
+			
 		
 		handleAddToParent();
 	}

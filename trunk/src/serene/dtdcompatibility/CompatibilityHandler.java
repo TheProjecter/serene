@@ -37,31 +37,31 @@ import serene.restrictor.ControllerPool;
 import serene.validation.schema.simplified.SimplifiedModel;
 import serene.validation.schema.simplified.RestrictingVisitor;
 
-import serene.validation.schema.simplified.SimplifiedPattern;
-import serene.validation.schema.simplified.components.SNameClass;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SNameClass;
 
-import serene.validation.schema.simplified.components.SExceptPattern;
-import serene.validation.schema.simplified.components.SExceptNameClass;
+import serene.validation.schema.simplified.SExceptPattern;
+import serene.validation.schema.simplified.SExceptNameClass;
 
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
-import serene.validation.schema.simplified.components.SChoicePattern;
-import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SListPattern;
-import serene.validation.schema.simplified.components.SEmpty;
-import serene.validation.schema.simplified.components.SText;
-import serene.validation.schema.simplified.components.SNotAllowed;
-import serene.validation.schema.simplified.components.SRef;
-import serene.validation.schema.simplified.components.SData;
-import serene.validation.schema.simplified.components.SValue;
-import serene.validation.schema.simplified.components.SGrammar;
-import serene.validation.schema.simplified.components.SDummy;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
+import serene.validation.schema.simplified.SChoicePattern;
+import serene.validation.schema.simplified.SInterleave;
+import serene.validation.schema.simplified.SGroup;
+import serene.validation.schema.simplified.SListPattern;
+import serene.validation.schema.simplified.SEmpty;
+import serene.validation.schema.simplified.SText;
+import serene.validation.schema.simplified.SNotAllowed;
+import serene.validation.schema.simplified.SRef;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SGrammar;
+import serene.validation.schema.simplified.SDummy;
 
-import serene.validation.schema.simplified.components.SName;
-import serene.validation.schema.simplified.components.SAnyName;
-import serene.validation.schema.simplified.components.SNsName;
-import serene.validation.schema.simplified.components.SChoiceNameClass;
+import serene.validation.schema.simplified.SName;
+import serene.validation.schema.simplified.SAnyName;
+import serene.validation.schema.simplified.SNsName;
+import serene.validation.schema.simplified.SChoiceNameClass;
 
 
 import serene.validation.schema.simplified.SimplifiedModel;
@@ -73,7 +73,7 @@ import serene.validation.schema.active.ActiveModelPool;
 import serene.validation.schema.active.ActiveModel;
 import serene.validation.schema.active.ActiveGrammarModel;
 
-import serene.validation.schema.Identifier;
+import serene.validation.schema.simplified.Identifier;
 
 import serene.validation.schema.active.Rule;
 import serene.validation.schema.active.components.AAttribute;
@@ -112,8 +112,8 @@ import serene.util.NameInfo;
 import serene.bind.util.DocumentIndexedData;
 
 public class CompatibilityHandler implements RestrictingVisitor{
-    SimplifiedPattern[] startTopPattern;
-	SimplifiedPattern[] refDefinitionTopPattern;
+    SPattern[] startTopPattern;
+	SPattern[] refDefinitionTopPattern;
     RecursionModel recursionModel;
         
     boolean level1AttributeDefaultValue;
@@ -246,8 +246,8 @@ public class CompatibilityHandler implements RestrictingVisitor{
         activeModel = validationModel.getActiveModel(activeInputDescriptor, inputStackDescriptor, errorDispatcher);
         grammarModel = activeModel.getGrammarModel();       
                 
-        startTopPattern = simplifiedModel.getStartTopPattern();
-        refDefinitionTopPattern = simplifiedModel.getRefDefinitionTopPattern();
+        startTopPattern = simplifiedModel.getStartTopPatterns();
+        refDefinitionTopPattern = simplifiedModel.getRefDefinitionTopPatterns();
         recursionModel = simplifiedModel.getRecursionModel();
         
         attributeDefaultValueModel = null;
@@ -291,7 +291,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             currentAttributeIdTypesList = new IntList();
         }
         
-        for(SimplifiedPattern start : startTopPattern){
+        for(SPattern start : startTopPattern){
             start.accept(this);
         }
         if(optimizedForResourceSharing)activeModel.recycle();
@@ -904,7 +904,7 @@ public class CompatibilityHandler implements RestrictingVisitor{
             }
 		}
 				
-        SimplifiedPattern defTopPattern = refDefinitionTopPattern[index];
+        SPattern defTopPattern = refDefinitionTopPattern[index];
         if(defTopPattern != null)defTopPattern.accept(this);
         
         if(ref.hasCardinalityElement()){		    

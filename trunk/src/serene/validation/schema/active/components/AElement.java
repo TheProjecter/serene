@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Arrays;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
-import serene.validation.schema.simplified.components.SElement;
+import serene.validation.schema.simplified.SElement;
 
 import serene.validation.schema.active.Rule;
 
@@ -40,7 +40,7 @@ import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 import serene.validation.handlers.stack.StackHandler;
 import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 
-import serene.validation.schema.Identifier;
+import serene.validation.schema.simplified.Identifier;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
@@ -70,6 +70,36 @@ public class AElement extends MarkupAPattern
 		//acw = new ActiveComponentWriter();
 		
 	}
+	
+	
+	public boolean allowsElements(){
+        return selement.allowsElements();
+    }
+	public boolean allowsAttributes(){
+	    return selement.allowsAttributes();
+	}
+	public boolean allowsDatas(){
+	    return selement.allowsDatas();
+	}
+	public boolean allowsValues(){
+	    return selement.allowsValues();
+	}
+	public boolean allowsListPatterns(){
+	    return selement.allowsListPatterns();
+	}
+	public boolean allowsText(){
+	    return selement.allowsText();
+	}
+	public boolean allowsCharsContent(){
+	    return selement.allowsCharsContent();
+	}	
+	public boolean allowsStructuredDataContent(){
+	    return selement.allowsStructuredDataContent();
+	}	
+	public boolean allowsUnstructuredDataContent(){
+	    return selement.allowsUnstructuredDataContent();
+	}
+	
 	
 	public int getMinOccurs(){
 	    return selement.getMinOccurs();

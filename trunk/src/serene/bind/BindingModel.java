@@ -22,8 +22,8 @@ import java.util.Set;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.util.ObjectIntHashMap;
 

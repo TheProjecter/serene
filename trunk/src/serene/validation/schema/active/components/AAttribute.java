@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.List;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
-import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.schema.active.ActiveComponent;
 import serene.validation.schema.active.RuleVisitor;
@@ -41,7 +41,7 @@ import serene.validation.handlers.error.ErrorCatcher;
 
 import serene.validation.handlers.conflict.ExternalConflictHandler;
 
-import serene.validation.schema.Identifier;
+import serene.validation.schema.simplified.Identifier;
 
 import serene.bind.util.Queue;
 
@@ -62,6 +62,30 @@ public class AAttribute extends MarkupAPattern{
 		this.sattribute = sattribute;
 	}	
 
+	
+	public boolean allowsDatas(){
+	    return sattribute.allowsDatas();
+	}
+	public boolean allowsValues(){
+	    return sattribute.allowsValues();
+	}
+	public boolean allowsListPatterns(){
+	    return sattribute.allowsListPatterns();
+	}
+	public boolean allowsText(){
+	    return sattribute.allowsText();
+	}
+	public boolean allowsCharsContent(){
+	    return sattribute.allowsCharsContent();
+	}	
+	public boolean allowsStructuredDataContent(){
+	    return sattribute.allowsStructuredDataContent();
+	}	
+	public boolean allowsUnstructuredDataContent(){
+	    return sattribute.allowsUnstructuredDataContent();
+	}
+	
+	
     public int getMinOccurs(){
 	    return sattribute.getMinOccurs();
 	}

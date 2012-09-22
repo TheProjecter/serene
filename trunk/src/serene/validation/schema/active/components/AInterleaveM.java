@@ -19,7 +19,7 @@ package serene.validation.schema.active.components;
 import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
-import serene.validation.schema.simplified.components.SInterleave;
+import serene.validation.schema.simplified.SInterleave;
 
 public class AInterleaveM extends AInterleave{
     
@@ -46,6 +46,34 @@ public class AInterleaveM extends AInterleave{
                 ruleHandlerPool);
 		this.sinterleave = sinterleave;
 	}	
+	
+	/*public boolean isElementContent(){
+        return sinterleave.isElementContent();
+    }
+	public boolean isAttributeContent(){
+	    return sinterleave.isAttributeContent();
+	}
+	public boolean isDataContent(){
+	    return sinterleave.isDataContent();
+	}
+	public boolean isValueContent(){
+	    return sinterleave.isValueContent();
+	}
+	public boolean isListPatternContent(){
+	    return sinterleave.isListPatternContent();
+	}
+	public boolean isTextContent(){
+	    return sinterleave.isTextContent();
+	}
+	public boolean isCharsContent(){
+	    return sinterleave.isCharsContent();
+	}	
+	public boolean isStructuredDataContent(){
+	    return sinterleave.isStructuredDataContent();
+	}	
+	public boolean isUnstructuredDataContent(){
+	    return sinterleave.isUnstructuredDataContent();
+	}*/
 	
 	public int getMinOccurs(){
 	    return sinterleave.getMinOccurs();

@@ -21,24 +21,26 @@ import java.util.HashSet;
 
 import serene.util.IntList;
 
-import serene.validation.schema.simplified.SimplifiedPattern;
-import serene.validation.schema.simplified.components.SRef;
-
 public class RecursionModel{
-	Set<SimplifiedPattern> recursiveReferences;
+	Set<SRef> recursiveReferences;
 	IntList recursiveDefinitionIndexes;
-	
+	Set<SElement> recursionContainingElements;
 	public RecursionModel(){
-		recursiveReferences = new HashSet<SimplifiedPattern>();
+		recursiveReferences = new HashSet<SRef>();
 		recursiveDefinitionIndexes = new IntList();
+		
+		recursionContainingElements = new HashSet<SElement>();
 	}
 	
-	public void add(int definitionIndex){
-		recursiveDefinitionIndexes.add(definitionIndex);
-	}	
-	public void add(SimplifiedPattern pattern){
-		recursiveReferences.add(pattern);
-	} 
+	public void add(SRef ref){
+		recursiveReferences.add(ref);
+		int definitionIndex = ref.getDefinitionIndex(); 
+		if(!recursiveDefinitionIndexes.contains(definitionIndex))recursiveDefinitionIndexes.add(definitionIndex);
+	}
+	
+	public void add(SElement element){
+	    recursionContainingElements.add(element);
+	}
 	
 	public boolean isRecursiveReference(SRef ref){
 		return recursiveReferences.contains(ref);
@@ -50,6 +52,14 @@ public class RecursionModel{
 	public boolean hasRecursions(){
 		return !recursiveDefinitionIndexes.isEmpty();
 	}	
+	
+	void adjustCach(){
+	    if(recursionContainingElements != null) {
+	        for(SElement element: recursionContainingElements){
+	            element.adjustForRecursions();
+	        }
+	    }
+	}
 	
 	public String toString(){
 		String rd = "";

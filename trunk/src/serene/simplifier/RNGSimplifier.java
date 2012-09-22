@@ -49,13 +49,15 @@ import serene.validation.schema.parsed.ExternalRef;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.RecursionModel;
+import serene.validation.schema.simplified.ReferenceModel;
 import serene.validation.schema.simplified.SimplifiedModel;
-import serene.validation.schema.simplified.SimplifiedPattern;
+import serene.validation.schema.simplified.SPattern;
 
-import serene.validation.schema.simplified.components.SRef;
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
-import serene.validation.schema.simplified.components.SExceptPattern;
+import serene.validation.schema.simplified.SRef;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
+import serene.validation.schema.simplified.SExceptPattern;
+import serene.validation.schema.simplified.SPattern;
 
 import serene.internal.InternalRNGFactory;
 
@@ -88,7 +90,7 @@ public class RNGSimplifier extends Simplifier{
 				
 		previousGrammars = new Stack<Grammar>();
 		
-		definitionTopPatterns = new ArrayList<SimplifiedPattern>();
+		definitionTopPatterns = new ArrayList<SPattern>();
 		referencePath = new IntStack();		
 		definitionEmptyChild = new BooleanList();
 		definitionNotAllowedChild = new BooleanList();
@@ -135,28 +137,21 @@ public class RNGSimplifier extends Simplifier{
 	public SimplifiedModel simplify(URI base, ParsedModel parsedModel)  throws SAXException{
         if(parsedModel == null) return null;
         
-        Pattern topPattern = parsedModel.getTopPattern();        
+        topPattern = parsedModel.getTopPattern();        
 		if(topPattern == null) return null;
-					
+		
+		inclusionPath.push(base);
+		docParsedModels.put(base, parsedModel);
+				
 		grammarDefinitions.clear();
 		externalRefs.clear();
 		docParsedModels.clear();
 		inclusionPath.clear();
 		
-		componentAsciiDL.clear();
+        componentAsciiDL.clear();
 		asciiDlDatatypeLibrary.clear();
-        
+					
         simplificationContext.reset();
-		
-        paramStack.clear();
-        
-	    selements.clear();	
-	    sattributes.clear();	
-	    sexceptPatterns.clear();
-        
-		this.topPattern = topPattern;
-		inclusionPath.push(base);
-		docParsedModels.put(base, parsedModel);
 		
 		mapper.map(base,
 					topPattern,
@@ -172,12 +167,9 @@ public class RNGSimplifier extends Simplifier{
 		//System.out.println("externalRefs "+externalRefs);
 		//System.out.println("docParsedModels "+docParsedModels);
 		//System.out.println("**************************************");
-		
-		recursionModel = new RecursionModel();
-		
-        
+		        
 		simplify();
-		SimplifiedPattern[] simplifiedTopPattern = builder.getAllCurrentPatterns();
+		SPattern[] simplifiedTopPattern = builder.getAllCurrentPatterns();
 		if(simplifiedTopPattern == null){
             if(emptyChild){
                 // for the 7.1.5 restrictions on start
@@ -192,17 +184,18 @@ public class RNGSimplifier extends Simplifier{
 		}
         SElement startElement;        
         if(simplifiedTopPattern != null && simplifiedTopPattern.length > 0){
-            startElement = new SElement(selements.size(), null, simplifiedTopPattern[0], -1, null);
+            startElement = new SElement(selements.size(), null, simplifiedTopPattern[0], -1, null, recursionModel);
         }else{
-            startElement = new SElement(selements.size(), null, null, -1, null);
+            startElement = new SElement(selements.size(), null, null, -1, null, recursionModel);
         }
         selements.add(startElement); 
-		SimplifiedModel simplifiedModel = new SimplifiedModel(simplifiedTopPattern, 
-											definitionTopPatterns.toArray(new SimplifiedPattern[definitionTopPatterns.size()]),
-											selements.size()-1,
+        referenceModel.init(definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]));
+		SimplifiedModel simplifiedModel = new SimplifiedModel( selements.size()-1,
 											selements.toArray(new SElement[selements.size()]),
 											sattributes.toArray(new SAttribute[sattributes.size()]),
 											sexceptPatterns.toArray(new SExceptPattern[sexceptPatterns.size()]),
+											simplifiedTopPattern,
+											referenceModel,
 											recursionModel);
 		return simplifiedModel;
 	}
@@ -211,28 +204,21 @@ public class RNGSimplifier extends Simplifier{
 	public SimplifiedModel simplify(URI base, ParsedModel parsedModel, List<Templates> schematronTemplates)  throws SAXException{
         if(parsedModel == null) return null;
         
-        Pattern topPattern = parsedModel.getTopPattern();        
+        topPattern = parsedModel.getTopPattern();        
 		if(topPattern == null) return null;
-					
+			
+		inclusionPath.push(base);
+		docParsedModels.put(base, parsedModel);
+				
 		grammarDefinitions.clear();
 		externalRefs.clear();
 		docParsedModels.clear();
 		inclusionPath.clear();
-		
+        
 		componentAsciiDL.clear();
 		asciiDlDatatypeLibrary.clear();
-        
+						
         simplificationContext.reset();
-		
-        paramStack.clear();
-       
-	    selements.clear();	
-	    sattributes.clear();	
-	    sexceptPatterns.clear();	    
-	    
-		this.topPattern = topPattern;
-		inclusionPath.push(base);
-		docParsedModels.put(base, parsedModel);
 		
 		mapper.map(base,
 					topPattern,
@@ -250,11 +236,9 @@ public class RNGSimplifier extends Simplifier{
 		//System.out.println("docParsedModels "+docParsedModels);
 		//System.out.println("**************************************");
 		
-		recursionModel = new RecursionModel();
-		
         
 		simplify();
-		SimplifiedPattern[] simplifiedTopPattern = builder.getAllCurrentPatterns();
+		SPattern[] simplifiedTopPattern = builder.getAllCurrentPatterns();
 		if(simplifiedTopPattern == null){
             if(emptyChild){
                 // for the 7.1.5 restrictions on start
@@ -270,23 +254,30 @@ public class RNGSimplifier extends Simplifier{
         
 		SElement startElement;        
         if(simplifiedTopPattern != null && simplifiedTopPattern.length > 0){
-            startElement = new SElement(selements.size(), null, simplifiedTopPattern[0], -1, null);
+            startElement = new SElement(selements.size(), null, simplifiedTopPattern[0], -1, null, recursionModel);
         }else{
-            startElement = new SElement(selements.size(), null, null, -1, null);
+            startElement = new SElement(selements.size(), null, null, -1, null, recursionModel);
         }
         selements.add(startElement);   
-		SimplifiedModel simplifiedModel = new SimplifiedModel(simplifiedTopPattern, 
-											definitionTopPatterns.toArray(new SimplifiedPattern[definitionTopPatterns.size()]),
-											selements.size()-1,
+        referenceModel.init(definitionTopPatterns.toArray(new SPattern[definitionTopPatterns.size()]));
+		SimplifiedModel simplifiedModel = new SimplifiedModel(selements.size()-1,
 											selements.toArray(new SElement[selements.size()]),
 											sattributes.toArray(new SAttribute[sattributes.size()]),
 											sexceptPatterns.toArray(new SExceptPattern[sexceptPatterns.size()]),
+											simplifiedTopPattern,
+											referenceModel,
 											recursionModel);
 		return simplifiedModel;
 	}
 	
 		
-	private void simplify()  throws SAXException{
+	private void simplify()  throws SAXException{   	
+        paramStack.clear();
+        
+	    selements.clear();	
+	    sattributes.clear();	
+	    sexceptPatterns.clear();
+	    	    
 		emptyChild = false;
         emptyComponent = null;
 		notAllowedChild = false;
@@ -301,6 +292,9 @@ public class RNGSimplifier extends Simplifier{
 		
 		currentGrammar = null;
 		if(previousGrammars != null)previousGrammars.clear();		
+				
+		recursionModel = new RecursionModel();
+		referenceModel = new ReferenceModel();
 		
 		definitionTopPatterns.clear();
 		builder.startBuild();

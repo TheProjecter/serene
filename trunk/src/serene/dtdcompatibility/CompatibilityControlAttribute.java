@@ -16,7 +16,7 @@ limitations under the License.
 
 package serene.dtdcompatibility;
 
-import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.ActiveGrammarModel;

@@ -22,7 +22,7 @@ import serene.validation.schema.active.ActiveComponentVisitor;
 import serene.validation.schema.active.RuleVisitor;
 
 import serene.validation.schema.simplified.SimplifiedComponent;
-import serene.validation.schema.simplified.components.SGrammar;
+import serene.validation.schema.simplified.SGrammar;
 
 import serene.validation.handlers.structure.StructureHandler;
 import serene.validation.handlers.structure.MinimalReduceHandler;
@@ -74,33 +74,33 @@ public class AGrammar extends UniqueChildAPattern implements AInnerPattern{
 	}
 	
 		
-	public boolean isElementContent(){
-        return allowsElements;
+	/*public boolean isElementContent(){
+        return sgrammar.isElementContent();
     }
 	public boolean isAttributeContent(){
-	    return allowsAttributes;
+	    return sgrammar.isAttributeContent();
 	}
 	public boolean isDataContent(){
-	    return allowsDatas;
+	    return sgrammar.isDataContent();
 	}
 	public boolean isValueContent(){
-	    return allowsValues;
+	    return sgrammar.isValueContent();
 	}
 	public boolean isListPatternContent(){
-	    return allowsListPatterns;
+	    return sgrammar.isListPatternContent();
 	}
 	public boolean isTextContent(){
-	    return allowsText;
+	    return sgrammar.isTextContent();
 	}
 	public boolean isCharsContent(){
-	    return allowsDatas || allowsValues || allowsListPatterns || allowsText;
+	    return sgrammar.isCharsContent();
 	}	
 	public boolean isStructuredDataContent(){
-	    return allowsDatas || allowsValues || allowsListPatterns;
+	    return sgrammar.isStructuredDataContent();
 	}	
 	public boolean isUnstructuredDataContent(){
-	    return allowsDatas || allowsValues;
-	}
+	    return sgrammar.isUnstructuredDataContent();
+	}*/
 	
 	
 	public boolean isRequiredContent(){

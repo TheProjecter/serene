@@ -26,18 +26,18 @@ Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element w
 	Syntax error. Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
 	Unexpected element.
 	Element <rng:name> at schema.rng:33:38, corresponding to one of the schema definitions: 
-	<element> at RELAXNG Specification 3.Full Syntax: name
 	<any element> at RELAXNG Specification 3.Full Syntax: any element
+	<element> at RELAXNG Specification 3.Full Syntax: name
 	is not part of the parent's content model.
 	Unexpected element.
 	Element <rng:name> at schema.rng:34:38, corresponding to one of the schema definitions: 
-	<element> at RELAXNG Specification 3.Full Syntax: name
 	<any element> at RELAXNG Specification 3.Full Syntax: any element
+	<element> at RELAXNG Specification 3.Full Syntax: name
 	is not part of the parent's content model.
 	Unexpected element.
 	Element <rng:name> at schema.rng:35:38, corresponding to one of the schema definitions: 
-	<element> at RELAXNG Specification 3.Full Syntax: name
 	<any element> at RELAXNG Specification 3.Full Syntax: any element
+	<element> at RELAXNG Specification 3.Full Syntax: name
 	is not part of the parent's content model.
 	Missing content.
 	In the document structure starting at schema.rng:25:20, corresponding to definition <attributes and elements group> at RELAXNG Specification 3.Full Syntax: element with name attribute, expected 1 occurrence corresponding to definition <name attribute> at RELAXNG Specification 3.Full Syntax: element with name attribute, found 0.
@@ -77,13 +77,13 @@ Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element w
 	Syntax error. Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name class child contains errors: 
 	Unexpected attribute.
 	Attribute "name" at schema.rng:59:29, corresponding to one of the definitions: 
+	<any attribute> at RELAXNG Specification 3.Full Syntax: any attribute
+	<name attribute> at RELAXNG Specification 3.Full Syntax: param
 	<name attribute> at RELAXNG Specification 3.Full Syntax: element with name attribute
 	<name attribute> at RELAXNG Specification 3.Full Syntax: attribute with name attribute
 	<name attribute> at RELAXNG Specification 3.Full Syntax: ref
 	<name attribute> at RELAXNG Specification 3.Full Syntax: parentRef
-	<name attribute> at RELAXNG Specification 3.Full Syntax: param
 	<name attribute> at RELAXNG Specification 3.Full Syntax: define
-	<any attribute> at RELAXNG Specification 3.Full Syntax: any attribute
 	is not part of the parent's content model.
 	Excessive content.
 	In the document structure starting at schema.rng:60:38, corresponding to definition <group of name class and pattern elements> at RELAXNG Specification 3.Full Syntax: element with name class child,  expected 1 occurrence corresponding to definition <name class> at RELAXNG Specification 3.Full Syntax: element with name class child, found 2 starting at: 
@@ -93,13 +93,13 @@ Candidate definition <element> at RELAXNG Specification 3.Full Syntax: element w
 	Syntax error. Element <rng:element> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: element with name attribute contains errors: 
 	Unexpected element.
 	Element <rng:name> at schema.rng:60:38, corresponding to one of the schema definitions: 
-	<element> at RELAXNG Specification 3.Full Syntax: name
 	<any element> at RELAXNG Specification 3.Full Syntax: any element
+	<element> at RELAXNG Specification 3.Full Syntax: name
 	is not part of the parent's content model.
 	Unexpected element.
 	Element <rng:name> at schema.rng:61:38, corresponding to one of the schema definitions: 
-	<element> at RELAXNG Specification 3.Full Syntax: name
 	<any element> at RELAXNG Specification 3.Full Syntax: any element
+	<element> at RELAXNG Specification 3.Full Syntax: name
 	is not part of the parent's content model.
 
 file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/syntax/general/schema.rng:68:15 Syntax warning. Element <rng:define> corresponding to definition <element> at RELAXNG Specification 3.Full Syntax: define generates warning: 

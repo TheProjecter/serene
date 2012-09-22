@@ -16,9 +16,9 @@ limitations under the License.
 
 package serene.restrictor;
 
-import serene.validation.schema.simplified.components.SExceptNameClass;
-import serene.validation.schema.simplified.components.SName;
-import serene.validation.schema.simplified.components.SNsName;
+import serene.validation.schema.simplified.SExceptNameClass;
+import serene.validation.schema.simplified.SName;
+import serene.validation.schema.simplified.SNsName;
 
 class NsNameInclusionController extends NameClassInclusionController{
 	

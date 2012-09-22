@@ -16,7 +16,7 @@ limitations under the License.
 
 package serene.internal;
 
-import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.SAttribute;
 
 class AnyNameTask extends RNGParseEndElementTask{
 

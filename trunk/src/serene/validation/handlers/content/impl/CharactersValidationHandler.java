@@ -96,6 +96,7 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	}
 	
     public void handleChars(char[] chars, AElement type, boolean isComplexContent) throws SAXException{
+        //System.out.println("CHARACTERS VALIDATION HANDLER chars="+new String(chars)+"|  type="+type);
         if(isComplexContent){// when true, it means element siblings are certainly present, all data would result in errors anyway
             if(type.allowsText()){		
                 matchHandler.handleTextMatches(type);
@@ -224,7 +225,7 @@ class CharactersValidationHandler extends AbstractSDVH implements CharactersEven
 	    }else{
 	        int matchesCount = matches.size();		
 	        int qualifiedCount = matchesCount - externalConflictHandler.getDisqualifiedCount();	        
-	        if(qualifiedCount == 0){		
+	        if(qualifiedCount == 0){
 	            charsContentTypeHandler.addChars(matches, temporaryMessageStorage);
 	        }else{
 	            charsContentTypeHandler.addChars(matches, externalConflictHandler.getDisqualified(), temporaryMessageStorage);

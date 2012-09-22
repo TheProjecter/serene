@@ -21,7 +21,7 @@ import java.util.List;
 import org.relaxng.datatype.Datatype;
 import org.relaxng.datatype.ValidationContext;
 
-import serene.validation.schema.simplified.components.SValue;
+import serene.validation.schema.simplified.SValue;
 
 import serene.validation.schema.active.ActiveGrammarModel;
 

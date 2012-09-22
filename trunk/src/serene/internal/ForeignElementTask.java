@@ -23,7 +23,7 @@ import org.xml.sax.SAXNotSupportedException;
 import serene.bind.ElementTask;
 import serene.bind.ElementTaskContext;
 
-import serene.validation.schema.simplified.components.SAttribute;
+import serene.validation.schema.simplified.SAttribute;
 
 import serene.validation.schema.parsed.ParsedComponentBuilder;
 

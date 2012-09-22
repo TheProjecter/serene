@@ -48,12 +48,13 @@ public abstract class AText extends CharsAPattern{
 	    return UNBOUNDED;
 	}
 	
-	public boolean isTextContent(){
+	
+	/*public boolean isTextContent(){
 	    return true;
 	}
 	public boolean isCharsContent(){
 	    return true;
-	}	
+	}	*/
 	
     
 	

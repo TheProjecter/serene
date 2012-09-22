@@ -16,7 +16,7 @@ limitations under the License.
 
 package serene.validation.schema.active.components;
 
-import serene.validation.schema.simplified.components.SText;
+import serene.validation.schema.simplified.SText;
 
 import serene.validation.handlers.structure.impl.ActiveModelRuleHandlerPool;
 
@@ -38,6 +38,14 @@ public class ATextT extends AText{
 	public int getMaxOccurs(){
 	    return stext.getMaxOccurs();
 	}*/
+	
+	
+	public boolean isTextContent(){
+	    return stext.isTextContent();
+	}
+	public boolean isCharsContent(){
+	    return stext.isCharsContent();
+	}	
 	
 	
 	public String getQName(){

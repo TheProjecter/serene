@@ -25,11 +25,11 @@ import org.xml.sax.SAXException;
 import serene.util.IntList;
 import serene.util.IntStack;
 
-import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.SimplifiedPattern;
-import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SChoicePattern;
+import serene.validation.schema.simplified.SNameClass;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SInterleave;
+import serene.validation.schema.simplified.SGroup;
+import serene.validation.schema.simplified.SChoicePattern;
 
 
 import serene.validation.handlers.error.ErrorDispatcher;
@@ -53,7 +53,7 @@ abstract class NamingController extends CompositionController{
 	* in order to detect overlap. They are added to the list in parallel to the  
 	* name classes.
 	*/
-	ArrayList<SimplifiedPattern> namedPatterns;
+	ArrayList<SPattern> namedPatterns;
 		
 	OverlapController overlapController; 
 	
@@ -63,7 +63,7 @@ abstract class NamingController extends CompositionController{
 		super(pool, errorDispatcher);
 		
 		nameClasses = new ArrayList<SNameClass>();
-		namedPatterns = new ArrayList<SimplifiedPattern>();
+		namedPatterns = new ArrayList<SPattern>();
 	}
 	
     public void setRestrictToFileName(boolean value){
@@ -95,7 +95,7 @@ abstract class NamingController extends CompositionController{
 		compositorPatterns.add(null);
 	}
 		
-	void add(SimplifiedPattern np, SNameClass nc){
+	void add(SPattern np, SNameClass nc){
 		namedPatterns.add(np);
 		nameClasses.add(nc);
 		compositors.add(NO_COMPOSITOR);
@@ -148,7 +148,7 @@ abstract class NamingController extends CompositionController{
 		compositorPath.clear();
 		for(int i = 0; i < index; i++){
 			int compositor = compositors.get(i);
-			SimplifiedPattern compositorPattern = compositorPatterns.get(i);
+			SPattern compositorPattern = compositorPatterns.get(i);
 			if( compositor == ALLOW_OVERLAP_COMPOSITOR
 				|| compositor == FORBID_OVERLAP_COMPOSITOR){
 				compositorPath.push(compositor);
@@ -160,5 +160,5 @@ abstract class NamingController extends CompositionController{
 		}
 	}	
 	
-	abstract void reportError(SimplifiedPattern context, int i, int j) throws SAXException; 
+	abstract void reportError(SPattern context, int i, int j) throws SAXException; 
 }

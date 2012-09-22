@@ -38,7 +38,7 @@ import serene.validation.handlers.stack.impl.ActiveModelStackHandlerPool;
 import serene.validation.handlers.stack.impl.MinimalReduceStackHandler;
 import serene.validation.handlers.stack.impl.MaximalReduceStackHandler;
 
-import serene.validation.schema.simplified.components.SGroup;
+import serene.validation.schema.simplified.SGroup;
 
 import serene.validation.handlers.error.ErrorCatcher;
 
@@ -74,6 +74,35 @@ public class AGroup extends MultipleChildrenAPattern implements ACompositor{
 		this.sgroup = sgroup;
 	}
 		
+	/*public boolean isElementContent(){
+        return sgroup.isElementContent();
+    }
+	public boolean isAttributeContent(){
+	    return sgroup.isAttributeContent();
+	}
+	public boolean isDataContent(){
+	    return sgroup.isDataContent();
+	}
+	public boolean isValueContent(){
+	    return sgroup.isValueContent();
+	}
+	public boolean isListPatternContent(){
+	    return sgroup.isListPatternContent();
+	}
+	public boolean isTextContent(){
+	    return sgroup.isTextContent();
+	}
+	public boolean isCharsContent(){
+	    return sgroup.isCharsContent();
+	}	
+	public boolean isStructuredDataContent(){
+	    return sgroup.isStructuredDataContent();
+	}	
+	public boolean isUnstructuredDataContent(){
+	    return sgroup.isUnstructuredDataContent();
+	}*/
+	
+	
 	protected void asParent(APattern[] children){
 		this.children = children;
 		satisfactionIndicator = 0;

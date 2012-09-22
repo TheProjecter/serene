@@ -29,9 +29,6 @@ import org.relaxng.datatype.DatatypeException;
 
 import serene.SchemaModel;
 
-import serene.validation.schema.ValidationModel;
-import serene.validation.schema.ValidationModelImpl;
-
 import serene.validation.schema.simplified.SimplifiedModel;
 
 

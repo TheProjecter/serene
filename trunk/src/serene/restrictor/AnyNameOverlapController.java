@@ -16,12 +16,12 @@ limitations under the License.
 
 package serene.restrictor;
 
-import serene.validation.schema.simplified.components.SNameClass;
-import serene.validation.schema.simplified.components.SExceptNameClass;
+import serene.validation.schema.simplified.SNameClass;
+import serene.validation.schema.simplified.SExceptNameClass;
 
-import serene.validation.schema.simplified.components.SName;
-import serene.validation.schema.simplified.components.SNsName;
-import serene.validation.schema.simplified.components.SAnyName;
+import serene.validation.schema.simplified.SName;
+import serene.validation.schema.simplified.SNsName;
+import serene.validation.schema.simplified.SAnyName;
 
 class AnyNameOverlapController extends NameClassOverlapController{
 	SNameClass excepted;

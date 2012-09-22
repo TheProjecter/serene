@@ -27,29 +27,29 @@ import org.relaxng.datatype.DatatypeException;
 import serene.validation.schema.simplified.SimplifiedComponent;
 import serene.validation.schema.simplified.SimplifiedComponentVisitor;
 
-import serene.validation.schema.simplified.SimplifiedPattern;
-import serene.validation.schema.simplified.components.SExceptPattern;
-import serene.validation.schema.simplified.components.SExceptNameClass;
+import serene.validation.schema.simplified.SPattern;
+import serene.validation.schema.simplified.SExceptPattern;
+import serene.validation.schema.simplified.SExceptNameClass;
 
-import serene.validation.schema.simplified.components.SElement;
-import serene.validation.schema.simplified.components.SAttribute;
-import serene.validation.schema.simplified.components.SChoicePattern;
-import serene.validation.schema.simplified.components.SInterleave;
-import serene.validation.schema.simplified.components.SGroup;
-import serene.validation.schema.simplified.components.SListPattern;
-import serene.validation.schema.simplified.components.SEmpty;
-import serene.validation.schema.simplified.components.SText;
-import serene.validation.schema.simplified.components.SNotAllowed;
-import serene.validation.schema.simplified.components.SRef;
-import serene.validation.schema.simplified.components.SData;
-import serene.validation.schema.simplified.components.SValue;
-import serene.validation.schema.simplified.components.SGrammar;
-import serene.validation.schema.simplified.components.SDummy;
+import serene.validation.schema.simplified.SElement;
+import serene.validation.schema.simplified.SAttribute;
+import serene.validation.schema.simplified.SChoicePattern;
+import serene.validation.schema.simplified.SInterleave;
+import serene.validation.schema.simplified.SGroup;
+import serene.validation.schema.simplified.SListPattern;
+import serene.validation.schema.simplified.SEmpty;
+import serene.validation.schema.simplified.SText;
+import serene.validation.schema.simplified.SNotAllowed;
+import serene.validation.schema.simplified.SRef;
+import serene.validation.schema.simplified.SData;
+import serene.validation.schema.simplified.SValue;
+import serene.validation.schema.simplified.SGrammar;
+import serene.validation.schema.simplified.SDummy;
 
-import serene.validation.schema.simplified.components.SName;
-import serene.validation.schema.simplified.components.SAnyName;
-import serene.validation.schema.simplified.components.SNsName;
-import serene.validation.schema.simplified.components.SChoiceNameClass;
+import serene.validation.schema.simplified.SName;
+import serene.validation.schema.simplified.SAnyName;
+import serene.validation.schema.simplified.SNsName;
+import serene.validation.schema.simplified.SChoiceNameClass;
 
 import serene.validation.schema.active.components.APattern;
 import serene.validation.schema.active.components.ARef;
@@ -58,7 +58,7 @@ import serene.validation.schema.active.components.AAttribute;
 import serene.validation.schema.active.components.AExceptPattern;
 import serene.validation.schema.active.components.ActiveComponentBuilder;
 
-import serene.validation.schema.Identifier;
+import serene.validation.schema.simplified.Identifier;
 
 import serene.util.ObjectIntHashMap;
 
@@ -67,7 +67,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
 	int startElementIndex;
 	AElement startElement;
 	
-	SimplifiedPattern[] refOriginalTopPatterns;
+	SPattern[] refOriginalTopPatterns;
 	APattern[][] refDefinitionTopPattern;
 	int[] refDefinitionTopPatternFree;
 	
@@ -99,7 +99,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
     boolean isBuilding;
 	
 	ActiveGrammarModel(int startElementIndex,
-	                SimplifiedPattern[] refOriginalTopPatterns,
+	                SPattern[] refOriginalTopPatterns,
 	                SElement[] originalElementDefinitions,
 	                SAttribute[] originalAttributeDefinitions,
 	                SExceptPattern[] originalExceptPatternDefinitions,
@@ -195,7 +195,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
     
     public APattern getElementDefinitionTopPattern(int definitionIndex){
         if(elementDefinitionTopPatternFree[definitionIndex] == 0){
-            SimplifiedPattern top = originalElementDefinitions[definitionIndex].getChild(); 
+            SPattern top = originalElementDefinitions[definitionIndex].getChild(); 
             if(top == null)return null;
             return createDefinitionTopPattern(top);
         }else{
@@ -214,7 +214,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
     
     public APattern getAttributeDefinitionTopPattern(int definitionIndex){
         if(attributeDefinitionTopPatternFree[definitionIndex] == 0){
-            SimplifiedPattern top = originalAttributeDefinitions[definitionIndex].getChild(0);// TODO review this 
+            SPattern top = originalAttributeDefinitions[definitionIndex].getChild(0);// TODO review this 
             if(top == null)return null;
             return createDefinitionTopPattern(top);
         }else{
@@ -234,7 +234,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
     
     public APattern getExceptPatternDefinitionTopPattern(int definitionIndex){
         if(exceptPatternDefinitionTopPatternFree[definitionIndex] == 0){
-            SimplifiedPattern top = originalExceptPatternDefinitions[definitionIndex].getChild(); 
+            SPattern top = originalExceptPatternDefinitions[definitionIndex].getChild(); 
             if(top == null)return null;
             return createDefinitionTopPattern(top);
         }else{
@@ -252,7 +252,7 @@ public class ActiveGrammarModel implements SimplifiedComponentVisitor{
     }
     
     
-    APattern createDefinitionTopPattern(SimplifiedPattern originalTopPattern){
+    APattern createDefinitionTopPattern(SPattern originalTopPattern){
         
         boolean telescope = false; 
         boolean oldIsBuilding = isBuilding;
