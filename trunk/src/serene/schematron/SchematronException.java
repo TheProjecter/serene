@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package serene.validation.jaxp;
+package serene.schematron;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -24,26 +24,26 @@ import org.xml.sax.Locator;
 
 
 abstract class SchematronException extends SAXParseException{
-    String activePatternName;
-    String activePatternId;
-    String activePatternRole;
+    protected String activePatternName;
+    protected String activePatternId;
+    protected String activePatternRole;
         
-    String firedRuleId;
-    String firedRuleContext;
-    String firedRuleRole;
-    String firedRuleFlag;
+    protected String firedRuleId;
+    protected String firedRuleContext;
+    protected String firedRuleRole;
+    protected String firedRuleFlag;
     
     
-    String id;
-    String location;
-    String test;
-    String role;
-    String flag;
+    protected String id;
+    protected String location;
+    protected String test;
+    protected String role;
+    protected String flag;
     
-    String text;
+    protected String text;
        
-    List<String> diagnostics;
-    List<String> diagnosticTexts;
+    protected List<String> diagnostics;
+    protected List<String> diagnosticTexts;
     
     SchematronException(String activePatternName,
                     String activePatternId,

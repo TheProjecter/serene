@@ -55,14 +55,17 @@ import javax.xml.transform.sax.TemplatesHandler;
 
 import javax.xml.validation.ValidatorHandler;
 
+import net.sf.saxon.Controller;
+import net.sf.saxon.serialize.MessageWarner;
+
 import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.Constants;
 import serene.DocumentContext;
 
 public class SchematronParser implements ContentHandler{
-    String SCHEMA_QLB_XSLT1 = "xslt";
-    String SCHEMA_QLB_XSLT2 = "xslt2";
+    static final String SCHEMA_QLB_XSLT1 = "xslt";
+    static final String SCHEMA_QLB_XSLT2 = "xslt2";
     
     static final int TRANSFORMER_ONE = 1;
     static final int TRANSFORMER_TWO = 2;
@@ -75,7 +78,7 @@ public class SchematronParser implements ContentHandler{
     int openSchemaQLB;
     //int schemaElementQLB;
     
-	static final String QUERY_LANGUAGE = "queryLanguage";
+	static final String QUERY_BINDING = "queryBinding";
     static final String SCHEMA_LOCAL_NAME = "schema";
     static final String PATTERN_LOCAL_NAME = "pattern";
     static final String RULE_LOCAL_NAME = "rule";
@@ -160,12 +163,16 @@ public class SchematronParser implements ContentHandler{
     
     public List<Templates> getSchematronTemplates() throws SAXException{
         if(openedSchematronPattern){
-            if(openSchemaTransformer != activeTransformer)changeActiveTransformer();
+            if(openSchemaTransformer != activeTransformer){
+                changeActiveTransformer();
+            }
             closeSchematronPattern();
             closeSchematronSchema();
             endSchematronSchema();
         }else if(openedSchematronSchema){
-            if(openSchemaTransformer != activeTransformer)changeActiveTransformer();            
+            if(openSchemaTransformer != activeTransformer){
+                changeActiveTransformer();
+            }
             closeSchematronSchema();
             endSchematronSchema();
         }
@@ -188,6 +195,20 @@ public class SchematronParser implements ContentHandler{
         schematronTemplatesHandler = null;
         
         openSchemaQLB = QLB_NOT_SET;
+        
+        
+        /*schematronStartTransformerHandler2 = null;	
+        expandedSchematronResult2 = null; 
+        schematronCompilerXSLT12 = null;
+        schematronCompilerXSLT22 = null;
+        schematronTemplatesHandler2 = null;
+    
+    
+        schematronStartTransformerHandler = null;	
+        expandedSchematronResult = null; 
+        schematronCompilerXSLT1 = null;
+        schematronCompilerXSLT2 = null;
+        schematronTemplatesHandler = null;*/
     }
     
 	    
@@ -225,10 +246,12 @@ public class SchematronParser implements ContentHandler{
                     changeActiveTransformer();    
                 }                              
                 
-                startSchematronSchema(attributes.getValue(XMLConstants.NULL_NS_URI, QUERY_LANGUAGE));
+                startSchematronSchema(attributes.getValue(XMLConstants.NULL_NS_URI, QUERY_BINDING));
                 schematronStartTransformerHandler.startElement(namespaceURI, localName, qName, attributes);
             }else if(localName.equals(PATTERN_LOCAL_NAME)){
-                if(openedSchematronSchema && openSchemaTransformer != activeTransformer)changeActiveTransformer();
+                if(openedSchematronSchema && openSchemaTransformer != activeTransformer){
+                    changeActiveTransformer();
+                }
                 
                 if(openedSchematronPattern){
                     closeSchematronPattern();
@@ -238,7 +261,6 @@ public class SchematronParser implements ContentHandler{
                 }                                
                 schematronStartTransformerHandler.startElement(namespaceURI, localName, qName, attributes);                
             }else if(localName.equals(NS_LOCAL_NAME) || localName.equals(LET_LOCAL_NAME)){
-                System.out.println("SCHEMATRON PARSER   START ELEMENT localName="+localName);
                 if(openedSchematronSchema && openSchemaTransformer != activeTransformer)changeActiveTransformer();
                 
                 if(!openedSchematronSchema){
@@ -292,7 +314,7 @@ public class SchematronParser implements ContentHandler{
 	
 	
 	void startSchematronSchema(String qlb) throws SAXException{
-	    // called for the schema element	    
+	    // called for the schema element	  	    
 	    if(qlb == null || qlb.equals(SCHEMA_QLB_XSLT1)){
 	        //schemaElementQLB = QLB_XSLT1;
             expandedSchematronResult.setHandler(schematronCompilerXSLT1);
@@ -314,7 +336,6 @@ public class SchematronParser implements ContentHandler{
 	    documentContext.transferStartPrefixMappings(schematronStartTransformerHandler);
 	}
 	void startSchematronSchema() throws SAXException{
-	    System.out.println("SCHEMATRON PARSER   START SCHEMA");
 	    // called for the open schema
 	    openSchemaTransformer = activeTransformer;
 	    
@@ -363,11 +384,77 @@ public class SchematronParser implements ContentHandler{
 	    return localName;
 	}
 	
-	void endSchematronSchema() throws SAXException{	    
+	void endSchematronSchema() throws SAXException{	  
+	    try{
 	    schematronStartTransformerHandler.endDocument();
+	    }catch(IllegalStateException ise){
+	        if(openSchemaQLB != QLB_UNSUPPORTED)throw ise;
+	    }
 	    
 	    Templates currentTemplates = schematronTemplatesHandler.getTemplates();
 	    if(currentTemplates != null) schematronTemplates.add(currentTemplates);
+	    
+	    clearCurrentTransformer();
+	}
+	
+	void clearCurrentTransformer(){
+	    switch (activeTransformer){
+            case NO_TRANSFORMER:
+                throw new IllegalStateException();
+            case TRANSFORMER_ONE:
+                schematronStartTransformerHandler1 = null;	
+                expandedSchematronResult1 = null; 
+                schematronCompilerXSLT11 = null;
+                schematronCompilerXSLT21 = null;
+                schematronTemplatesHandler1 = null;
+    
+                if(schematronStartTransformerHandler2 != null){
+                    schematronStartTransformerHandler = schematronStartTransformerHandler2;	
+                    expandedSchematronResult = expandedSchematronResult2; // after includes and abstract patterns were handled
+                    schematronCompilerXSLT1 = schematronCompilerXSLT12;
+                    schematronCompilerXSLT2 = schematronCompilerXSLT22;
+                    schematronTemplatesHandler = schematronTemplatesHandler2;
+                    
+                    activeTransformer = TRANSFORMER_TWO;
+                }else{
+                    schematronStartTransformerHandler = null;	
+                    expandedSchematronResult = null; 
+                    schematronCompilerXSLT1 = null;
+                    schematronCompilerXSLT2 = null;
+                    schematronTemplatesHandler = null;
+                    
+                    activeTransformer = NO_TRANSFORMER;
+                }
+                break;
+            case TRANSFORMER_TWO:
+                schematronStartTransformerHandler2 = null;	
+                expandedSchematronResult2 = null; 
+                schematronCompilerXSLT12 = null;
+                schematronCompilerXSLT22 = null;
+                schematronTemplatesHandler2 = null;
+            
+            
+                if(schematronStartTransformerHandler1 != null){
+                    schematronStartTransformerHandler = schematronStartTransformerHandler1;	
+                    expandedSchematronResult = expandedSchematronResult1; // after includes and abstract patterns were handled
+                    schematronCompilerXSLT1 = schematronCompilerXSLT11;
+                    schematronCompilerXSLT2 = schematronCompilerXSLT21;
+                    schematronTemplatesHandler = schematronTemplatesHandler1;
+                    
+                    activeTransformer = TRANSFORMER_ONE;
+                }else{
+                    schematronStartTransformerHandler = null;	
+                    expandedSchematronResult = null; 
+                    schematronCompilerXSLT1 = null;
+                    schematronCompilerXSLT2 = null;
+                    schematronTemplatesHandler = null;
+                    
+                    activeTransformer = NO_TRANSFORMER;
+                }
+                break;
+            default:
+                throw new IllegalStateException();
+        }
 	}
 
     void setActiveTransformer() throws SAXException{
@@ -444,7 +531,7 @@ public class SchematronParser implements ContentHandler{
     
     void createFirstTransformer() throws SAXException{        
         SAXTransformerFactory stf = null;
-	    TransformerFactory tf = TransformerFactory.newInstance();
+	    TransformerFactory tf = TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null);
         if(tf.getFeature(SAXTransformerFactory.FEATURE)){
             stf = (SAXTransformerFactory)tf;
         }else{
@@ -455,22 +542,30 @@ public class SchematronParser implements ContentHandler{
             schematronTemplatesHandler1 = stf.newTemplatesHandler(); // here the Templates object representing the compiled schema can be obtained
             
             schematronCompilerXSLT21 = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_svrl_for_xslt2.xsl")));
-            schematronCompilerXSLT21.setResult(new SAXResult(schematronTemplatesHandler1));
-            schematronCompilerXSLT21.getTransformer().setErrorListener(errorDispatcher);
+            schematronCompilerXSLT21.setResult(new SAXResult(schematronTemplatesHandler1));            
+            Transformer t1 = schematronCompilerXSLT21.getTransformer();            
+            ((Controller)t1).setMessageEmitter(new MessageWarner());
+            t1.setErrorListener(errorDispatcher);
             
             schematronCompilerXSLT11 = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_svrl_for_xslt1.xsl")));
             schematronCompilerXSLT11.setResult(new SAXResult(schematronTemplatesHandler1));
-            schematronCompilerXSLT11.getTransformer().setErrorListener(errorDispatcher);
+            Transformer t2 = schematronCompilerXSLT11.getTransformer();            
+            ((Controller)t2).setMessageEmitter(new MessageWarner());
+            t2.setErrorListener(errorDispatcher);
             
             TransformerHandler abstarctPatternsHandler1 = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_abstract_expand.xsl")));
             expandedSchematronResult1 = new SAXResult(); // content handler will be set according to qlbProperty and maybe adjusted
             abstarctPatternsHandler1.setResult(expandedSchematronResult1);
-            abstarctPatternsHandler1.getTransformer().setErrorListener(errorDispatcher);
+            Transformer t3 = abstarctPatternsHandler1.getTransformer();            
+            ((Controller)t3).setMessageEmitter(new MessageWarner());
+            t3.setErrorListener(errorDispatcher);
             
             schematronStartTransformerHandler1 = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_dsdl_include.xsl")));
             SAXResult resolvedIncludesResult1 = new SAXResult(abstarctPatternsHandler1); // result for the above transformation
             schematronStartTransformerHandler1.setResult(resolvedIncludesResult1);
-            schematronStartTransformerHandler1.getTransformer().setErrorListener(errorDispatcher);
+            Transformer t4 = schematronStartTransformerHandler1.getTransformer();            
+            ((Controller)t4).setMessageEmitter(new MessageWarner());
+            t4.setErrorListener(errorDispatcher);
         }catch(TransformerConfigurationException tce){
             throw new SAXException(tce);
         }       
@@ -479,7 +574,7 @@ public class SchematronParser implements ContentHandler{
     
     void createSecondTransformer() throws SAXException{
         SAXTransformerFactory stf = null;
-	    TransformerFactory tf = TransformerFactory.newInstance();
+	    TransformerFactory tf = TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null);
         if(tf.getFeature(SAXTransformerFactory.FEATURE)){
             stf = (SAXTransformerFactory)tf;
         }else{
@@ -491,21 +586,29 @@ public class SchematronParser implements ContentHandler{
             
             schematronCompilerXSLT22 = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_svrl_for_xslt2.xsl")));
             schematronCompilerXSLT22.setResult(new SAXResult(schematronTemplatesHandler2));
-            schematronCompilerXSLT22.getTransformer().setErrorListener(errorDispatcher);
+            Transformer t1 = schematronCompilerXSLT22.getTransformer();            
+            ((Controller)t1).setMessageEmitter(new MessageWarner());
+            t1.setErrorListener(errorDispatcher);
             
             schematronCompilerXSLT12 = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_svrl_for_xslt1.xsl")));
             schematronCompilerXSLT12.setResult(new SAXResult(schematronTemplatesHandler2));
-            schematronCompilerXSLT12.getTransformer().setErrorListener(errorDispatcher);
+            Transformer t2 = schematronCompilerXSLT12.getTransformer();            
+            ((Controller)t2).setMessageEmitter(new MessageWarner());
+            t2.setErrorListener(errorDispatcher);
             
             TransformerHandler abstarctPatternsHandler2 = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_abstract_expand.xsl")));
             expandedSchematronResult2 = new SAXResult(); // content handler will be set according to qlbProperty and maybe adjusted
             abstarctPatternsHandler2.setResult(expandedSchematronResult2);
-            abstarctPatternsHandler2.getTransformer().setErrorListener(errorDispatcher);
+            Transformer t3 = abstarctPatternsHandler2.getTransformer();            
+            ((Controller)t3).setMessageEmitter(new MessageWarner());
+            t3.setErrorListener(errorDispatcher);
             
             schematronStartTransformerHandler2 = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_dsdl_include.xsl")));
             SAXResult resolvedIncludesResult2 = new SAXResult(abstarctPatternsHandler2); // result for the above transformation
             schematronStartTransformerHandler2.setResult(resolvedIncludesResult2);
-            schematronStartTransformerHandler2.getTransformer().setErrorListener(errorDispatcher);
+            Transformer t4 = schematronStartTransformerHandler2.getTransformer();            
+            ((Controller)t4).setMessageEmitter(new MessageWarner());
+            t4.setErrorListener(errorDispatcher);
         }catch(TransformerConfigurationException tce){
             throw new SAXException(tce);
         }           

@@ -38,7 +38,7 @@ public class SchematronSchema extends BaseSchema{
     Templates schemaTemplates;
     
     SAXTransformerFactory saxTransformerFactory;
-    TransformerHandler validatingTransformerHandler;
+    /*TransformerHandler validatingTransformerHandler;*/
     
 	public SchematronSchema(boolean secureProcessing,
                     boolean namespacePrefixes,
@@ -50,18 +50,18 @@ public class SchematronSchema extends BaseSchema{
         this.namespacePrefixes = namespacePrefixes;
         this.restrictToFileName = restrictToFileName;
         
-        TransformerFactory tf = TransformerFactory.newInstance();
+        TransformerFactory tf = TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null);
         if(tf.getFeature(SAXTransformerFactory.FEATURE)){
             saxTransformerFactory = (SAXTransformerFactory)tf;
         }else{
             throw new SAXException("Could not load validating transformer.");
         }
         
-        try{
+        /*try{
             validatingTransformerHandler = saxTransformerFactory.newTransformerHandler(schemaTemplates);
         }catch(TransformerConfigurationException tce){
             throw new SAXException(tce);
-        }
+        }*/
 	}
 	
 	
@@ -83,18 +83,19 @@ public class SchematronSchema extends BaseSchema{
 	    // can be caught, wrapped in a SAXException and thrown, as a test, here 
 	    // the errors will just be discarded.
 	    
-	    if(validatingTransformerHandler == null){
+	    /*if(validatingTransformerHandler == null){
             try{
                 validatingTransformerHandler = saxTransformerFactory.newTransformerHandler(schemaTemplates);
             }catch(TransformerConfigurationException tce){ }
-        }
+        }*/
 		ValidatorHandler vh = new SchematronValidatorHandlerImpl(secureProcessing,
                                         namespacePrefixes,
                                         restrictToFileName,
                                         optimizedForResourceSharing,
-                                        validatingTransformerHandler,
+                                        schemaTemplates,    
+                                        saxTransformerFactory,
                                         new SVRLParser());
-        validatingTransformerHandler = null;
+        //validatingTransformerHandler = null;
         return vh;        
 	}
 }

@@ -27,7 +27,7 @@ limitations under the License.
     <property name="extLib.dir" value="./lib/ext"/>
     <property name="xercesJar.file" value="./lib/ext/xercesImpl.jar"/>
     <property name="rngDatatypeJar.file" value="./lib/ext/relaxngDatatype.jar"/>
-
+    <property name="saxonJar.file" value="./lib/ext/saxon9he.jar"/>
 
     <!--
     ****************************************************************************
@@ -51,7 +51,7 @@ limitations under the License.
         <echo>Compiling all...</echo>
         <javac srcdir="${source.dir}" excludes="${datatype.dir}/**"
                 destdir="${buildClasses.dir}" 
-                classpath="${xercesJar.file};${rngDatatypeJar.file}" 
+                classpath="${xercesJar.file};${saxonJar.file};${rngDatatypeJar.file}" 
                 includeAntRuntime="false"
                 debug="true"
                 debuglevel="lines,source">
@@ -125,7 +125,7 @@ limitations under the License.
         <echo>Packing serene...</echo>
         <jar destfile="${intLib.dir}/serene.jar" basedir="${buildPack.dir}">
             <manifest>
-                <attribute name="Class-Path" value="../../${xercesJar.file} ../../${rngDatatypeJar.file} sereneWrite.jar"/>
+                <attribute name="Class-Path" value="../../${xercesJar.file}  ../../${saxonJar.file} ../../${rngDatatypeJar.file} sereneWrite.jar"/>
                 <attribute name="Main-Class" value="serene.Driver"/>
             </manifest>
         </jar>
@@ -155,7 +155,7 @@ limitations under the License.
         <echo>Packing sereneTest...</echo>
         <jar destfile="${intLib.dir}/sereneTest.jar" basedir="${buildPack.dir}">
             <manifest>
-                <attribute name="Class-Path" value="../../${xercesJar.file} ../../${rngDatatypeJar.file} sereneWrite.jar serene.jar"/>
+                <attribute name="Class-Path" value="../../${xercesJar.file} ../../${saxonJar.file} ../../${rngDatatypeJar.file} sereneWrite.jar serene.jar"/>
                 <attribute name="Main-Class" value="sereneTest.Driver"/>
             </manifest>
         </jar>
@@ -186,7 +186,7 @@ limitations under the License.
         <echo>Packing sereneTestRNGSchematron...</echo>
         <jar destfile="${intLib.dir}/sereneTestRNGSchematron.jar" basedir="${buildPack.dir}">
             <manifest>
-                <attribute name="Class-Path" value="../../${xercesJar.file} ../../${rngDatatypeJar.file} sereneWrite.jar serene.jar"/>
+                <attribute name="Class-Path" value="../../${xercesJar.file} ../../${saxonJar.file} ../../${rngDatatypeJar.file} sereneWrite.jar serene.jar"/>
                 <attribute name="Main-Class" value="sereneTestRNGSchematron.Driver"/>
             </manifest>
         </jar>

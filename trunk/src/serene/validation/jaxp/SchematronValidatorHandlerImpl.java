@@ -23,6 +23,11 @@ import javax.xml.XMLConstants;
 import javax.xml.validation.ValidatorHandler;
 import javax.xml.validation.TypeInfoProvider;
 
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+
+import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.sax.SAXResult;
 
@@ -35,6 +40,10 @@ import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.Attributes;
 
 import org.w3c.dom.ls.LSResourceResolver;
+
+
+import net.sf.saxon.Controller;
+import net.sf.saxon.serialize.MessageWarner;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
@@ -56,15 +65,20 @@ public class SchematronValidatorHandlerImpl extends ValidatorHandler{
     TransformerHandler validatingTransformerHandler;
     SVRLParser svrlParser;
     
+    Templates schemaTemplates;
+    SAXTransformerFactory saxTransformerFactory;
+                            
 	public SchematronValidatorHandlerImpl(boolean secureProcessing,                            
                             boolean namespacePrefixes,
                             boolean restrictToFileName,
                             boolean optimizedForResourceSharing,
-                            TransformerHandler validatingTransformerHandler,
+                            Templates schemaTemplates,                            
+                            SAXTransformerFactory saxTransformerFactory,
                             SVRLParser svrlParser){        
         this.secureProcessing = secureProcessing;
-        this.namespacePrefixes = namespacePrefixes; 
-        this.validatingTransformerHandler = validatingTransformerHandler;
+        this.namespacePrefixes = namespacePrefixes;
+        this.schemaTemplates = schemaTemplates;
+        this.saxTransformerFactory = saxTransformerFactory;
         this.restrictToFileName = restrictToFileName;
         this.optimizedForResourceSharing = optimizedForResourceSharing;
         this.svrlParser = svrlParser;
@@ -77,10 +91,22 @@ public class SchematronValidatorHandlerImpl extends ValidatorHandler{
 		
 	
 		svrlParser.setErrorHandler(errorDispatcher);
-		validatingTransformerHandler.setResult(new SAXResult(svrlParser));
-		validatingTransformerHandler.getTransformer().setErrorListener(errorDispatcher);
+		
 	}
 	
+	void createValidatingTransformerHandler() throws SAXException{
+	    try{
+            validatingTransformerHandler = saxTransformerFactory.newTransformerHandler(schemaTemplates);
+        }catch(TransformerConfigurationException tce){
+            throw new SAXException(tce);
+        }
+        
+        validatingTransformerHandler.setResult(new SAXResult(svrlParser));
+		//validatingTransformerHandler.getTransformer().setErrorListener(errorDispatcher);
+		Transformer t = validatingTransformerHandler.getTransformer();            
+        ((Controller)t).setMessageEmitter(new MessageWarner());
+        t.setErrorListener(errorDispatcher);
+	}
 	
 	public ContentHandler getContentHandler(){
 		return contentHandler;		
@@ -130,7 +156,11 @@ public class SchematronValidatorHandlerImpl extends ValidatorHandler{
         if(contentHandler != null) contentHandler.ignorableWhitespace(ch, start, len);
     }
     
-	public void startDocument()  throws SAXException{		
+	public void startDocument()  throws SAXException{	
+	    createValidatingTransformerHandler();
+	    validatingTransformerHandler.setDocumentLocator(locator);
+	    svrlParser.setDocumentLocator(locator);
+	    
 	    validatingTransformerHandler.startDocument();
 		errorDispatcher.init();	 		
 	}			
@@ -143,7 +173,7 @@ public class SchematronValidatorHandlerImpl extends ValidatorHandler{
         if(contentHandler != null) contentHandler.endPrefixMapping(prefix);
 	}	
 	public void setDocumentLocator(Locator locator){
-	    validatingTransformerHandler.setDocumentLocator(locator);
+	    if(validatingTransformerHandler != null)validatingTransformerHandler.setDocumentLocator(locator);
 		this.locator = locator;
 		svrlParser.setDocumentLocator(locator);
         if(contentHandler != null) contentHandler.setDocumentLocator(locator);
@@ -171,8 +201,10 @@ public class SchematronValidatorHandlerImpl extends ValidatorHandler{
         if(contentHandler != null) contentHandler.endElement(namespaceURI, localName, qName);
 	}
 	
-	public void endDocument()  throws SAXException {		
+	public void endDocument()  throws SAXException {
+	    svrlParser.setAcceptLocator(false);		// workaround for the extra locator from saxon
 	    validatingTransformerHandler.endDocument();
+	    svrlParser.setAcceptLocator(true);		// workaround for the extra locator from saxon
         if(contentHandler != null) contentHandler.endDocument();        
 	}
 		

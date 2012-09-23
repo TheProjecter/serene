@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" 
+datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes" 
+xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+xmlns:ser="http://serenerng.com/schematron"
+ser:schematronQueryBinding="xslt2">    
+    <start>
+        <ref name="rootElement"/>
+    </start>
+    <define name="rootElement">
+        <element name="root">      
+            <ref name="fooElement"/>
+        </element>
+    </define>
+    <define name="fooElement">
+        <element name="foo">
+            <element name="foo1"><data type="int"/></element>
+            <element name="foo2"><data type="int"/></element>            
+            <element name="sum"><data type="int"/></element>             
+            <sch:let name="referenceSum" value="2"/>
+            <sch:pattern>
+                <sch:title>Numbers</sch:title> 
+                <sch:rule context="/root/foo">
+                    <sch:assert  test="number(foo1) + number(foo2) = number(sum)" diagnostics="Error_in_sum_foo">
+                    Content of &lt;sum&gt; represents the sum of the contents of &lt;foo1&gt; and &lt;foo2&gt;.
+                    </sch:assert>                                
+                    <sch:assert  test="number(sum) = $referenceSum" diagnostics="Error_reference_sum">
+                    Content of &lt;sum&gt; must be equal to reference value <sch:value-of select="$referenceSum"/>.
+                    </sch:assert>
+                </sch:rule>
+            </sch:pattern>
+        </element>        
+    </define>
+    
+    
+    <sch:diagnostics>
+        <sch:diagnostic id="Error_in_sum_foo">
+            expected <sch:value-of select="/root/foo/foo1+/root/foo/foo2"/>,
+            found <sch:value-of select="/root/foo/sum"/>
+        </sch:diagnostic>
+        <sch:diagnostic id="Error_reference_sum">
+            expected <sch:value-of select="$referenceSum"/>,
+            found <sch:value-of select="/root/foo/sum"/>
+        </sch:diagnostic>
+    </sch:diagnostics>
+</grammar>

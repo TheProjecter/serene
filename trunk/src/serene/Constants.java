@@ -19,7 +19,8 @@ package serene;
 public interface Constants{
     String SCHEMATRON_NS_URI = "http://purl.oclc.org/dsdl/schematron";
     String SVRL_NS_URI = "http://purl.oclc.org/dsdl/svrl";
-    String SCHEMATRON_QLB_ATTRIBUTE = "schematronQueryLanguage";
+    String SCHEMATRON_QLB_ATTRIBUTE = "schematronQueryBinding";
+    String SERENE_SCHEMATRON_NS_URI = "http://serenerng.com/schematron";
     
     String ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY = "http://serenerng.com/validatorHandler/property/attributeDefaultValueHandler";
     String ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY = "http://serenerng.com/validatorHandler/property/attributeIdTypeHandler";
@@ -36,7 +37,7 @@ public interface Constants{
     String PARSED_COMPONENT_BUILDER_PROPERTY = "http://serenerng.com/controller/property/parsedComponentBuilder";
     String PARSED_MODEL_PROPERTY = "http://serenerng.com/controller/property/parsedModel";
     String INCLUDED_PARSED_MODEL_PROPERTY = "http://serenerng.com/controller/property/includedParsedModel";
-    /*String SCHEMATRON_QUERY_LANGUAGE_BINDING_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronQueryLanguageBinding";
+    /*String SCHEMATRON_QUERY_BINDING_BINDING_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronQueryLanguageBinding";
     String SCHEMATRON_COMPILER_FOR_XSLT1_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronCompilerForXSLT1";
     String SCHEMATRON_COMPILER_FOR_XSLT2_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronCompilerForXSLT2";
     String SCHEMATRON_EXPANDED_SCHEMA_RESULT_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronExpandedSchemaResult";

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <foo>
+        <foo1>0</foo1>
+        <foo2>1</foo2>
+        <sum>2</sum>
+    </foo>
+    <bar>
+        <bar1>0</bar1>
+        <bar2>1</bar2>
+        <sum>1</sum>
+    </bar>
+</root>	

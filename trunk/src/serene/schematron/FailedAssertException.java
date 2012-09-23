@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package serene.validation.jaxp;
+package serene.schematron;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -23,9 +23,9 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.Locator;
 
 
-public class RNGSchematronSuccessfulReport extends SchematronSuccessfulReport{
+public class FailedAssertException extends SchematronException{
     
-    RNGSchematronSuccessfulReport(String activePatternName,
+    public FailedAssertException(String activePatternName,
                     String activePatternId,
                     String activePatternRole,                        
                     String firedRuleId,
@@ -57,9 +57,10 @@ public class RNGSchematronSuccessfulReport extends SchematronSuccessfulReport{
                     diagnostics,
                     diagnosticTexts,
                     locator);
+        
     }
     
-    RNGSchematronSuccessfulReport(String activePatternName,
+    public FailedAssertException(String activePatternName,
                     String activePatternId,
                     String activePatternRole,                        
                     String firedRuleId,
@@ -95,7 +96,7 @@ public class RNGSchematronSuccessfulReport extends SchematronSuccessfulReport{
                     e);
     }
     
-    RNGSchematronSuccessfulReport(String activePatternName,
+    public FailedAssertException(String activePatternName,
                     String activePatternId,
                     String activePatternRole,                        
                     String firedRuleId,
@@ -135,7 +136,7 @@ public class RNGSchematronSuccessfulReport extends SchematronSuccessfulReport{
                     columnNumber);
     }
     
-    RNGSchematronSuccessfulReport(String activePatternName,
+    public FailedAssertException(String activePatternName,
                     String activePatternId,
                     String activePatternRole,                        
                     String firedRuleId,
@@ -175,24 +176,22 @@ public class RNGSchematronSuccessfulReport extends SchematronSuccessfulReport{
                     lineNumber, 
                     columnNumber, 
                     e);
-    } 
+    }   
     
     public String getMessage(){
         String message = null;
 	    if(activePatternName != null){
-	        message = "Error in Schematron pattern \""+activePatternName+"\", "+getRule()+".";
+	        message = "Error in pattern \""+activePatternName+"\", "+getRule()+".";
 	    }else if(activePatternId != null){
-	        message = "Error in Schematron pattern \""+activePatternId+"\", "+getRule()+".";
+	        message = "Error in pattern \""+activePatternId+"\", "+getRule()+".";
 	    }else{
-	        message = "Error in unidentified Schematron pattern, "+getRule()+".";
+	        message = "Error in unidentified pattern, "+getRule()+".";
 	    }
 	    
-	    
-	    
 	    if(id != null){
-	        message += "\nSuccessful report: "+id+"=\""+text+"\".";
+	        message += "\nFailed assertion: "+id+"=\""+text+"\".";
 	    }else{
-	        message += "\nSuccessful report: \""+text+"\".";
+	        message += "\nFailed assertion: \""+text+"\".";
 	    }
 	    
 	    
@@ -213,5 +212,18 @@ public class RNGSchematronSuccessfulReport extends SchematronSuccessfulReport{
 	    }else{
 	        return message+getDiagnosticsMessage();
 	    }
-    }       
+    }
+    
+    protected String getRule(){
+	    if(firedRuleId == null) return " rule context \""+firedRuleContext+"\"";
+	    return " rule \""+firedRuleId+"\" for context \""+firedRuleContext+"\"";
+	}
+	
+	protected String getDiagnosticsMessage(){
+	    String d = null;
+	    for(int i = 0; i < diagnostics.size(); i++){
+	        d = diagnostics.get(i) + ": " + diagnosticTexts.get(i); 
+	    }
+	    return d == null? d : "\nDiagnostics: " + d + ".";
+	}
 }

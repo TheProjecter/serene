@@ -102,7 +102,7 @@ import serene.Constants;
 import serene.DTDMapping;
 
 class InternalValidatorHandler extends BoundValidatorHandler{
-    /*static final String QUERY_LANGUAGE = "queryLanguage";
+    /*static final String QUERY_BINDING = "queryBinding";
     static final String SCHEMA_LOCAL_NAME = "schema";
     static final String PATTERN_LOCAL_NAME = "pattern";
     static final String RULE_LOCAL_NAME = "rule";
@@ -402,7 +402,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         
         if(isTopElement && processEmbededSchematron){
             isTopElement = false;
-            schematronParser.setQLB(attributes.getValue(XMLConstants.NULL_NS_URI, Constants.SCHEMATRON_QLB_ATTRIBUTE));
+            schematronParser.setQLB(attributes.getValue(Constants.SERENE_SCHEMATRON_NS_URI, Constants.SCHEMATRON_QLB_ATTRIBUTE));
         }
         
         if(processEmbededSchematron && isQLBSupported && (schematronDepth > 0 | namespaceURI.equals(Constants.SCHEMATRON_NS_URI))){
