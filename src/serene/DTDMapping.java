@@ -43,6 +43,7 @@ public class DTDMapping implements DTDHandler{
     public void notationDecl(String notationName, String publicId, String systemId){
 		notationDeclarations.put(notationName, new NotationDeclaration(notationName, publicId, systemId));
 	}
+	
     
     public boolean isUnparsedEntity(String entityName){
 		return entityDeclarations.containsKey(entityName);

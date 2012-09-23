@@ -95,12 +95,14 @@ import serene.simplifier.IncludedParsedModel;
 
 import serene.dtdcompatibility.DocumentationElementHandler;
 
+import serene.validation.jaxp.SchematronParser;
+
 
 import serene.Constants;
 import serene.DTDMapping;
 
 class InternalValidatorHandler extends BoundValidatorHandler{
-    static final String QUERY_LANGUAGE = "queryLanguage";
+    /*static final String QUERY_LANGUAGE = "queryLanguage";
     static final String SCHEMA_LOCAL_NAME = "schema";
     static final String PATTERN_LOCAL_NAME = "pattern";
     static final String RULE_LOCAL_NAME = "rule";
@@ -108,20 +110,20 @@ class InternalValidatorHandler extends BoundValidatorHandler{
     static final String TITLE_LOCAL_NAME = "title";    
     static final String CDATA_ATTRIBUTE_TYPE = "CDATA";
     static final char[] CONTAINER_PATTERN_ADDED_BY_SERENE = {'C', 'o', 'n', 't', 'a', 'i', 'n', 'e', 'r', ' ', 'p', 'a', 't', 't', 'e', 'r', 'n', ' ', 'a', 'd', 'd', 'e', 'd', ' ', 'b', 'y', ' ', 'S', 'e', 'r', 'e', 'n', 'e', '.'};
-    static final Attributes EMPTY_ATTRIBUTES = new AttributesImpl();
+    static final Attributes EMPTY_ATTRIBUTES = new AttributesImpl();*/
    
     boolean isQLBSupported;
     int schematronDepth;
-    boolean openedSchematronSchema;
-    boolean openedSchematronPattern;
+    /*boolean openedSchematronSchema;
+    boolean openedSchematronPattern;*/
     
-    TransformerHandler schematronStartTransformerHandler;    
+    /*TransformerHandler schematronStartTransformerHandler;    
     SAXResult expandedSchematronResult;
     TransformerHandler schematronCompilerXSLT1;
     TransformerHandler schematronCompilerXSLT2;
     
     TemplatesHandler schematronTemplatesHandler; 
-    List<Templates> schematronTemplates;
+    List<Templates> schematronTemplates;*/
 	
     
     
@@ -169,6 +171,8 @@ class InternalValidatorHandler extends BoundValidatorHandler{
     
     Map<String, String> declaredXmlns;	
     
+    SchematronParser schematronParser;
+    boolean isTopElement;
     
 	InternalValidatorHandler(ValidatorEventHandlerPool eventHandlerPool,
 	                        ValidatorConflictHandlerPool conflictHandlerPool,
@@ -220,6 +224,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         eventHandlerPool.init(spaceHandler, matchHandler, activeInputDescriptor, inputStackDescriptor, documentContext, stackHandlerPool, errorHandlerPool);
         		
 		if(!optimizedForResourceSharing)initResources();
+		isTopElement = false;
 	}
 	
 	void initResources(){
@@ -287,13 +292,13 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	
 	
 	public void processingInstruction(String target, String data) throws SAXException{
-	    if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronStartTransformerHandler.processingInstruction(target, data);
+	    if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronParser.processingInstruction(target, data);
 	} 
 	public void skippedEntity(String name) throws SAXException{
-	    if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronStartTransformerHandler.skippedEntity(name);
+	    if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronParser.skippedEntity(name);
 	}	
 	public void ignorableWhitespace(char[] ch, int start, int len) throws SAXException{
-	    if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronStartTransformerHandler.ignorableWhitespace(ch, start, len);
+	    if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronParser.ignorableWhitespace(ch, start, len);
 	}
 	
 	public void startBinding(){}
@@ -324,10 +329,15 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 		//startDocument. The base URI of the document is also passed independently 
 		//to the Simplifier. This needs reviewing.
 		
-        if(processEmbededSchematron){            
+        if(processEmbededSchematron){
+            isTopElement = true;            
             schematronDepth = 0;
             isQLBSupported = true;
-            openedSchematronSchema = false;
+            /*openedSchematronSchema = false;*/            
+            schematronParser.setDocumentContext(documentContext);
+            schematronParser.setValidatorHandler(this);
+            
+            schematronParser.startDocument();
         }
 	}	
 	
@@ -335,23 +345,23 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	public void setDocumentLocator(Locator locator){
 		this.locator = locator;
         if(!documentContext.isBaseURISet())documentContext.setBaseURI(locator.getSystemId());
+        if(processEmbededSchematron)schematronParser.setDocumentLocator(locator);
     }
 	public void characters(char[] chars, int start, int length)throws SAXException{
 		characterContentDescriptor.add(chars, start, length, locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
-        if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronStartTransformerHandler.characters(chars, start, length);		
+        if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronParser.characters(chars, start, length);		
 	}
 	public void startPrefixMapping(String prefix, String uri) throws SAXException{
 		if(declaredXmlns == null)declaredXmlns = new HashMap<String, String>();
 		declaredXmlns.put(prefix, uri);
 		
-		documentContext.startPrefixMapping(prefix, uri);
-		
-		if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronStartTransformerHandler.startPrefixMapping(prefix, uri);
+		documentContext.startPrefixMapping(prefix, uri);		
+		// TODO review schematronDepth > 0
+		/*if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)*/schematronParser.startPrefixMapping(prefix, uri);
 	}
 	public void endPrefixMapping(String prefix) throws SAXException{
-		documentContext.endPrefixMapping(prefix);
-		
-		if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronStartTransformerHandler.endPrefixMapping(prefix);
+		documentContext.endPrefixMapping(prefix);		
+		/*if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)*/schematronParser.endPrefixMapping(prefix);
 	}	
 	public void startElement(String namespaceURI, 
 							String localName, 
@@ -390,115 +400,19 @@ class InternalValidatorHandler extends BoundValidatorHandler{
             documentationElementHandler.startElement(namespaceURI, localName, qName, attributes, locator);
         }
         
-        if(processEmbededSchematron && isQLBSupported && (schematronDepth > 0 | namespaceURI.equals(Constants.SCHEMATRON_NS_URI)))
-            startSchematronElement(namespaceURI, localName, qName, attributes);
+        if(isTopElement && processEmbededSchematron){
+            isTopElement = false;
+            schematronParser.setQLB(attributes.getValue(XMLConstants.NULL_NS_URI, Constants.SCHEMATRON_QLB_ATTRIBUTE));
+        }
+        
+        if(processEmbededSchematron && isQLBSupported && (schematronDepth > 0 | namespaceURI.equals(Constants.SCHEMATRON_NS_URI))){
+            schematronDepth++;
+            schematronParser.startElement(namespaceURI, localName, qName, attributes);
+        }
 		
 	}		
-	void startSchematronElement(String namespaceURI, 
-							String localName, 
-							String qName, 
-							Attributes attributes) throws SAXException{
-        if(schematronDepth == 0){
-            if(localName.equals(SCHEMA_LOCAL_NAME)){
-                if(openedSchematronPattern){
-                    closeSchematronPattern();
-                    closeSchematronSchema();
-                    endSchematronSchema();                    
-                }else if(openedSchematronSchema){
-                    closeSchematronSchema();
-                    endSchematronSchema();
-                }
-                
-                
-                startSchematronSchema(attributes.getValue(XMLConstants.NULL_NS_URI, QUERY_LANGUAGE));
-                if(isQLBSupported) schematronStartTransformerHandler.startElement(namespaceURI, localName, qName, attributes);
-            }else if(localName.equals(PATTERN_LOCAL_NAME)){
-                if(openedSchematronPattern){
-                    closeSchematronPattern();
-                }else if(!openedSchematronSchema){
-                    startSchematronSchema();
-                    openSchematronSchema();
-                }
-                schematronStartTransformerHandler.startElement(namespaceURI, localName, qName, attributes);                
-            }else if(localName.equals(RULE_LOCAL_NAME)){
-                if(!openedSchematronSchema){
-                    startSchematronSchema();
-                    openSchematronSchema();
-                    openSchematronPattern();
-                }else if(!openedSchematronPattern){
-                    openSchematronPattern();
-                }
-                schematronStartTransformerHandler.startElement(namespaceURI, localName, qName, attributes);
-            }else if(localName.equals(DIAGNOSTICS_LOCAL_NAME)){  
-                if(openedSchematronPattern)closeSchematronPattern();
-                schematronStartTransformerHandler.startElement(namespaceURI, localName, qName, attributes);
-            }else{
-                errorDispatcher.error(new SAXParseException("Unsupported Schematron element. Embeding of Schematron element <"+localName+"> here is not suported by Serene. Use <schema>, <pattern>, <rule>, or <diagnostics>.", locator));
-            }
-        }else{
-            schematronStartTransformerHandler.startElement(namespaceURI, localName, qName, attributes);
-        }	
-        schematronDepth++;
-	}
-	void startSchematronSchema(String qlb) throws SAXException{
-	    if(qlb == null || qlb.equals(Constants.SCHEMATRON_QLB_XSLT1)){
-            expandedSchematronResult.setHandler(schematronCompilerXSLT1);
-        }else if(qlb.equals(Constants.SCHEMATRON_QLB_XSLT2)){
-            expandedSchematronResult.setHandler(schematronCompilerXSLT2);
-        }else{
-            isQLBSupported = false;
-            errorDispatcher.error(new SAXParseException("Unsupported Schematron query language. Serene supports \"xslt\" and \"xslt2\".", locator));
-        }
-	    
-	    schematronStartTransformerHandler.setDocumentLocator(locator);
-	    schematronStartTransformerHandler.startDocument();
-	    documentContext.transferDTDMappings((DTDHandler)schematronStartTransformerHandler);
-	    documentContext.transferPrefixMappings(schematronStartTransformerHandler);
-	}
-	void startSchematronSchema() throws SAXException{
-        expandedSchematronResult.setHandler(schematronCompilerXSLT1);
-	    
-	    schematronStartTransformerHandler.setDocumentLocator(locator);
-	    schematronStartTransformerHandler.startDocument();
-	    documentContext.transferDTDMappings((DTDHandler)schematronStartTransformerHandler);
-	    documentContext.transferPrefixMappings(schematronStartTransformerHandler);
-	}
-	void openSchematronSchema() throws SAXException{        
-        openedSchematronSchema = true;  
-        
-        schematronStartTransformerHandler.startElement(Constants.SCHEMATRON_NS_URI, SCHEMA_LOCAL_NAME, getQName(Constants.SCHEMATRON_NS_URI, SCHEMA_LOCAL_NAME), EMPTY_ATTRIBUTES);
-	}
-	void closeSchematronSchema() throws SAXException{
-	    openedSchematronSchema = false;   
-	    schematronStartTransformerHandler.endElement(Constants.SCHEMATRON_NS_URI, SCHEMA_LOCAL_NAME, getQName(Constants.SCHEMATRON_NS_URI, SCHEMA_LOCAL_NAME));
-	}
-	void openSchematronPattern()  throws SAXException{
-        openedSchematronPattern = true;   
-        
-        schematronStartTransformerHandler.startElement(Constants.SCHEMATRON_NS_URI, PATTERN_LOCAL_NAME, getQName(Constants.SCHEMATRON_NS_URI, PATTERN_LOCAL_NAME), EMPTY_ATTRIBUTES);
-        
-        schematronStartTransformerHandler.startElement(Constants.SCHEMATRON_NS_URI, TITLE_LOCAL_NAME, getQName(Constants.SCHEMATRON_NS_URI, TITLE_LOCAL_NAME), EMPTY_ATTRIBUTES);        
-        schematronStartTransformerHandler.characters(CONTAINER_PATTERN_ADDED_BY_SERENE, 0, CONTAINER_PATTERN_ADDED_BY_SERENE.length);
-        schematronStartTransformerHandler.endElement(Constants.SCHEMATRON_NS_URI, TITLE_LOCAL_NAME, getQName(Constants.SCHEMATRON_NS_URI, TITLE_LOCAL_NAME));
-        
-	}	
-	void closeSchematronPattern() throws SAXException{
-	    openedSchematronPattern = false;
-	    schematronStartTransformerHandler.endElement(Constants.SCHEMATRON_NS_URI, PATTERN_LOCAL_NAME, getQName(Constants.SCHEMATRON_NS_URI, PATTERN_LOCAL_NAME));
-	}
-	String getQName(String nsURI, String localName){
-	    String prefix = documentContext.getPrefix(nsURI);
-	    if(prefix != null && !prefix.equals(XMLConstants.DEFAULT_NS_PREFIX))
-	        return prefix+":"+localName;
-	    return localName;
-	}
 	
-	void endSchematronSchema() throws SAXException{
-	    schematronStartTransformerHandler.endDocument();
-	    
-	    Templates currentTemplates = schematronTemplatesHandler.getTemplates();
-	    if(currentTemplates != null) schematronTemplates.add(currentTemplates);
-	}
+	
 	
 	public void endElement(String namespaceURI, 
 							String localName, 
@@ -516,19 +430,11 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         }		
         inputStackDescriptor.popElement();
         
-        if(processEmbededSchematron && isQLBSupported && (schematronDepth > 0 | namespaceURI.equals(Constants.SCHEMATRON_NS_URI)))
-            endSchematronElement(namespaceURI, localName, qName);
-        
+        if(processEmbededSchematron && isQLBSupported && (schematronDepth > 0 | namespaceURI.equals(Constants.SCHEMATRON_NS_URI))){
+            schematronDepth--;
+            schematronParser.endElement(namespaceURI, localName, qName);
+        }
 	}
-	
-	void endSchematronElement(String namespaceURI, 
-							String localName, 
-							String qName) throws SAXException{
-	    schematronDepth--;	    
-        schematronStartTransformerHandler.endElement(namespaceURI, localName, qName);
-        if(!openedSchematronSchema && schematronDepth == 0)endSchematronSchema();
-	}
-	
 	
 	public void endDocument() throws SAXException{
 		elementHandler.handleEndElement(restrictToFileName, locator);
@@ -551,11 +457,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 		activeInputDescriptor.clear();// shouldn't be necessary, but just in case
 		
 		if(processEmbededSchematron){
-		    if(openedSchematronPattern) closeSchematronPattern();
-		    if(openedSchematronSchema){
-		        closeSchematronSchema();
-		        endSchematronSchema();
-		    }
+		    schematronParser.endDocument();
 		}
 	}
 
@@ -601,30 +503,10 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         }else if(name.equals(Constants.INCLUDED_PARSED_MODEL_PROPERTY)){
             // recognized but not set, only for retrieval
             throw new SAXNotSupportedException();
-        }else if(name.equals(Constants.SCHEMATRON_COMPILER_FOR_XSLT1_PROPERTY)){
+        }else if(name.equals(Constants.SCHEMATRON_PARSER_PROPERTY)){
             if(object == null)throw new NullPointerException();
-            else if(!(object instanceof TransformerHandler)) throw new SAXNotSupportedException();
-            schematronCompilerXSLT1 = (TransformerHandler)object;
-        }else if(name.equals(Constants.SCHEMATRON_COMPILER_FOR_XSLT2_PROPERTY)){
-            if(object == null)throw new NullPointerException();
-            else if(!(object instanceof TransformerHandler)) throw new SAXNotSupportedException();
-            schematronCompilerXSLT2 = (TransformerHandler)object;
-        }else if(name.equals(Constants.SCHEMATRON_EXPANDED_SCHEMA_RESULT_PROPERTY)){
-            if(object == null)throw new NullPointerException();
-            else if(!(object instanceof SAXResult)) throw new SAXNotSupportedException();
-            expandedSchematronResult = (SAXResult)object;
-        }else if(name.equals(Constants.SCHEMATRON_TEMPLATES_HANDLER_PROPERTY)){
-            if(object == null)throw new NullPointerException();
-            else if(!(object instanceof TemplatesHandler)) throw new SAXNotSupportedException();            
-            schematronTemplatesHandler = (TemplatesHandler)object;
-        }else if(name.equals(Constants.SCHEMATRON_TEMPLATES_PROPERTY)){
-            if(object == null)throw new NullPointerException();
-            else if(!(object instanceof List)) throw new SAXNotSupportedException();            
-            schematronTemplates = (List<Templates>)object;
-        }else if(name.equals(Constants.SCHEMATRON_START_TRANSFORMER_HANDLER_PROPERTY)){
-            if(object == null)throw new NullPointerException();
-            else if(!(object instanceof TransformerHandler)) throw new SAXNotSupportedException();            
-            schematronStartTransformerHandler = (TransformerHandler)object;
+            else if(!(object instanceof SchematronParser)) throw new SAXNotSupportedException();            
+            schematronParser = (SchematronParser)object;
         }else{
             throw new SAXNotRecognizedException(name);
         }
@@ -669,18 +551,8 @@ class InternalValidatorHandler extends BoundValidatorHandler{
                 return null;
             }
             return new IncludedParsedModel(dtdMapping, g);
-        }else if(name.equals(Constants.SCHEMATRON_COMPILER_FOR_XSLT1_PROPERTY)){
-            return schematronCompilerXSLT1;
-        }else if(name.equals(Constants.SCHEMATRON_COMPILER_FOR_XSLT2_PROPERTY)){
-            return schematronCompilerXSLT2;
-        }else if(name.equals(Constants.SCHEMATRON_EXPANDED_SCHEMA_RESULT_PROPERTY)){
-            return expandedSchematronResult;
-        }else if(name.equals(Constants.SCHEMATRON_TEMPLATES_PROPERTY)){         
-            return schematronTemplates;
-        }else if(name.equals(Constants.SCHEMATRON_TEMPLATES_HANDLER_PROPERTY)){            
-            return schematronTemplatesHandler;
-        }else if(name.equals(Constants.SCHEMATRON_START_TRANSFORMER_HANDLER_PROPERTY)){
-            return schematronStartTransformerHandler;
+        }else if(name.equals(Constants.SCHEMATRON_PARSER_PROPERTY)){
+            return schematronParser;
         }
 
         throw new SAXNotRecognizedException(name);
@@ -696,6 +568,8 @@ class InternalValidatorHandler extends BoundValidatorHandler{
             restrictToFileName = value;                        
         }else if(name.equals(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE)){
             processEmbededSchematron = value;                        
+        }else if(name.equals(Constants.IS_QLB_SUPPORTED)){
+            isQLBSupported = value;                        
         }else{
             throw new SAXNotRecognizedException(name);
         }
@@ -711,8 +585,10 @@ class InternalValidatorHandler extends BoundValidatorHandler{
             return restrictToFileName;                        
         }else if(name.equals(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE)){
             return processEmbededSchematron;                        
+        }else if(name.equals(Constants.IS_QLB_SUPPORTED)){
+            return isQLBSupported;                        
         }else{
             throw new SAXNotRecognizedException(name);
-        }
+        }        
     }	
 }

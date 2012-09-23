@@ -34,10 +34,12 @@ import serene.validation.schema.parsed.Grammar;
 
 import serene.util.IntList;
 
+import serene.validation.jaxp.SchematronParser;
+
 class UnreachableDefinitionSimplifier extends DefinitionSimplifier{
 
-    UnreachableDefinitionSimplifier(DefinitionSimplifierPool pool, ErrorDispatcher errorDispatcher){
-		super(pool, errorDispatcher);
+    UnreachableDefinitionSimplifier(DefinitionSimplifierPool pool, ErrorDispatcher errorDispatcher, SchematronParser schematronParser){
+		super(pool, errorDispatcher, schematronParser);
 	}       
 	
 	public void recycle(){

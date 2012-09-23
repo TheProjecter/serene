@@ -16,6 +16,9 @@ limitations under the License.
 
 package serene.validation.jaxp;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import javax.xml.XMLConstants;
 
 import org.xml.sax.ContentHandler;
@@ -45,20 +48,31 @@ class SVRLParser implements ContentHandler{
     final static String CONTEXT = "context";
     final static String LOCATION = "location";
     final static String TEST = "test";
+    final static String ROLE = "role";
+    final static String FLAG = "flag";
     final static String DIAGNOSTIC = "diagnostic";
+    
     
     String activePatternName;
     String activePatternId;
+    String activePatternRole;
         
     String firedRuleId;
     String firedRuleContext;
-    String failedAssertId;
-    String failedAssertLocation;
-    String failedAssertTest;
-    String successfulReportId;
-    String successfulReportLocation;
-    String successfulReportTest;
-    String diagnostics;
+    String firedRuleRole;
+    String firedRuleFlag;
+        
+    String id;
+    String location;
+    String test;
+    String role;
+    String flag;
+    
+    String text;
+       
+    List<String> diagnostics;
+    List<String> diagnosticTexts;
+    
     
     boolean failedAssertContext;
     CharsBuffer failedAssertCharsBuffer;
@@ -73,7 +87,7 @@ class SVRLParser implements ContentHandler{
        
     Locator locator;
     ErrorHandler errorHandler;
-
+    
     SVRLParser(){
         
         failedAssertContext = false;
@@ -86,6 +100,9 @@ class SVRLParser implements ContentHandler{
         diagnosticReferenceCharsBuffer = new CharsBuffer();
         
         spaceCharsHandler = new SpaceCharsHandler();
+        
+        diagnostics = new ArrayList<String>();
+        diagnosticTexts = new ArrayList<String>();
     }
     
     public ErrorHandler getErrorHandler(){
@@ -117,50 +134,65 @@ class SVRLParser implements ContentHandler{
 	    if(namespaceURI.equals(Constants.SVRL_NS_URI)){
 	        if(localName.equals(ACTIVE_PATTERN)){
 	            activePatternName = attributes.getValue(XMLConstants.NULL_NS_URI, NAME);
-	            if(activePatternName == null)activePatternId = attributes.getValue(XMLConstants.NULL_NS_URI, ID);
+	            activePatternId = attributes.getValue(XMLConstants.NULL_NS_URI, ID);
+	            activePatternId = attributes.getValue(XMLConstants.NULL_NS_URI, ROLE);
+	            // System.out.println("ACTIVE_PATTERN  activePatternName="+activePatternName+"  activePatternId="+activePatternId);
 	        }else if(localName.equals(FIRED_RULE)){
 	            firedRuleId = attributes.getValue(XMLConstants.NULL_NS_URI, ID);
 	            firedRuleContext = attributes.getValue(XMLConstants.NULL_NS_URI, CONTEXT);
+	            firedRuleRole = attributes.getValue(XMLConstants.NULL_NS_URI, ROLE);
+	            firedRuleFlag = attributes.getValue(XMLConstants.NULL_NS_URI, FLAG);
+	            // System.out.println("FIRED_RULE  firedRuleId="+firedRuleId+"  firedRuleContext="+firedRuleContext);
 	        }else if(localName.equals(FAILED_ASSERT)){
 	            // set message by calling failed assert
 	            failedAssertContext = true;
-	            failedAssertId = attributes.getValue(XMLConstants.NULL_NS_URI, ID);
-	            failedAssertLocation = attributes.getValue(XMLConstants.NULL_NS_URI, LOCATION);
-	            failedAssertTest = attributes.getValue(XMLConstants.NULL_NS_URI, TEST);
+	            id = attributes.getValue(XMLConstants.NULL_NS_URI, ID);
+	            location = attributes.getValue(XMLConstants.NULL_NS_URI, LOCATION);
+	            test = attributes.getValue(XMLConstants.NULL_NS_URI, TEST);
+	            role = attributes.getValue(XMLConstants.NULL_NS_URI, ROLE);
+	            flag = attributes.getValue(XMLConstants.NULL_NS_URI, FLAG);
+	            // System.out.println("FAILED_ASSERT  id="+id+"  location="+location+"  test="+test);
 	        }else if(localName.equals(SUCCESSFUL_REPORT)){
 	            // set message by calling failed assert
 	            successfulReportContext = true;
-	            successfulReportId = attributes.getValue(XMLConstants.NULL_NS_URI, ID);
-	            successfulReportLocation = attributes.getValue(XMLConstants.NULL_NS_URI, LOCATION);
-	            successfulReportTest = attributes.getValue(XMLConstants.NULL_NS_URI, TEST);
+	            id = attributes.getValue(XMLConstants.NULL_NS_URI, ID);
+	            location = attributes.getValue(XMLConstants.NULL_NS_URI, LOCATION);
+	            test = attributes.getValue(XMLConstants.NULL_NS_URI, TEST);
+	            role = attributes.getValue(XMLConstants.NULL_NS_URI, ROLE);
+	            flag = attributes.getValue(XMLConstants.NULL_NS_URI, FLAG);
 	        }else if(localName.equals(DIAGNOSTIC_REFERENCE)){
 	            diagnosticReferenceContext = true;
-	            setDiagnostics(attributes.getValue(XMLConstants.NULL_NS_URI, DIAGNOSTIC));
+	            //setDiagnostics(attributes.getValue(XMLConstants.NULL_NS_URI, DIAGNOSTIC));
+	            diagnostics.add(attributes.getValue(XMLConstants.NULL_NS_URI, DIAGNOSTIC));
 	        }   
 	           
 	    }
 	}		
 		
-	void setDiagnostics(String diagnostic){
+	/*void setDiagnostics(String diagnostic){
 	    if(diagnostics == null){
 	        diagnostics = "Diagnostics: "+diagnostic;
 	    }else{
 	        diagnostics += ("; "+diagnostic);
 	    }
-	}
+	}*/
 	
 	public void endElement(String namespaceURI, 
 							String localName, 
 							String qName) throws SAXException{
 	    if(namespaceURI.equals(Constants.SVRL_NS_URI)){
 	        if(localName.equals(DIAGNOSTIC_REFERENCE)){
-	            diagnostics += ": "+new String(spaceCharsHandler.collapseSpace(spaceCharsHandler.trimSpace(diagnosticReferenceCharsBuffer.getCharsArray())));
+	            diagnosticTexts.add(new String(spaceCharsHandler.collapseSpace(spaceCharsHandler.trimSpace(diagnosticReferenceCharsBuffer.getCharsArray()))));
 	            diagnosticReferenceCharsBuffer.clear();
 	            diagnosticReferenceContext = false;
 	        }else if(localName.equals(FAILED_ASSERT)){
+	            text = new String(spaceCharsHandler.collapseSpace(spaceCharsHandler.trimSpace(failedAssertCharsBuffer.getCharsArray())));
+	            failedAssertCharsBuffer.clear();
 	            reportAssertError();
 	            failedAssertContext = false;
 	        }else if(localName.equals(SUCCESSFUL_REPORT)){
+	            text = new String(spaceCharsHandler.collapseSpace(spaceCharsHandler.trimSpace(successfulReportCharsBuffer.getCharsArray())));
+	            successfulReportCharsBuffer.clear();
 	            reportReportError();
 	            successfulReportContext = false;
 	        }  
@@ -168,92 +200,62 @@ class SVRLParser implements ContentHandler{
 	}
 	
 	void reportAssertError() throws SAXException{
-	    String message = null;
-	    if(activePatternName != null){
-	        message = "Error in pattern \""+activePatternName+"\", "+getRule()+".";
-	    }else if(activePatternId != null){
-	        message = "Error in pattern \""+activePatternId+"\", "+getRule()+".";
-	    }else{
-	        message = "Error in unidentified pattern, "+getRule()+".";
-	    }
 	    
-	    if(failedAssertId != null){
-	        message += "\nFailed assertion: "+failedAssertId+"=\""+new String(spaceCharsHandler.collapseSpace(spaceCharsHandler.trimSpace(failedAssertCharsBuffer.getCharsArray())))+"\".";
-	    }else{
-	        message += "\nFailed assertion: \""+new String(spaceCharsHandler.collapseSpace(spaceCharsHandler.trimSpace(failedAssertCharsBuffer.getCharsArray())))+"\".";
-	    }
-	    failedAssertCharsBuffer.clear();
+	    errorHandler.error(new SchematronFailedAssert(activePatternName,
+                    activePatternId,
+                    activePatternRole,                        
+                    firedRuleId,
+                    firedRuleContext,
+                    firedRuleRole,
+                    firedRuleFlag,
+                    id,
+                    location,
+                    test,
+                    role,
+                    flag,                    
+                    text,
+                    diagnostics,
+                    diagnosticTexts,
+                    locator));
 	    
-	    
-	    if(failedAssertLocation != null){
-	        message += "\nLocation: "+failedAssertLocation+".";
-	    }else{
-	        message += "\nLocation: not available.";
-	    }
-	    
-	    if(failedAssertTest != null){
-	        message += "\nTest: "+failedAssertTest+".";
-	    }else{
-	        message += "\nTest: not available.";
-	    }
-	    
-	    if(diagnostics == null){
-	        errorHandler.error(new SAXParseException(message+"\nNo diagnostics present.", locator));
-	    }else{
-	        errorHandler.error(new SAXParseException(message+"\n"+diagnostics+".", locator));
-	    }
-	    failedAssertId = null;
-	    failedAssertLocation = null;
-	    failedAssertTest = null;
-	    diagnostics = null;
+	    id = null;
+	    location = null;
+	    test = null;
+	    role = null;
+	    flag = null;
+	    text = null;
+	    diagnostics.clear();
+	    diagnosticTexts.clear();
 	}
 	
-	void reportReportError() throws SAXException{
-	    String message = null;
-	    if(activePatternName != null){
-	        message = "Error in pattern \""+activePatternName+"\", "+getRule()+".";
-	    }else if(activePatternId != null){
-	        message = "Error in pattern \""+activePatternId+"\", "+getRule()+".";
-	    }else{
-	        message = "Error in unidentified pattern, "+getRule()+".";
-	    }
+	void reportReportError() throws SAXException{	    
+	    errorHandler.error(new SchematronSuccessfulReport(activePatternName,
+                    activePatternId,
+                    activePatternRole,                        
+                    firedRuleId,
+                    firedRuleContext,
+                    firedRuleRole,
+                    firedRuleFlag,
+                    id,
+                    location,
+                    test,
+                    role,
+                    flag,                    
+                    text,
+                    diagnostics,
+                    diagnosticTexts,
+                    locator));
 	    
-	    if(successfulReportId != null){
-	        message += "\nSuccessful report: "+successfulReportId+"=\""+new String(spaceCharsHandler.collapseSpace(spaceCharsHandler.trimSpace(successfulReportCharsBuffer.getCharsArray())))+"\".";
-	    }else{
-	        message += "\nSuccessful report: \""+new String(spaceCharsHandler.collapseSpace(spaceCharsHandler.trimSpace(successfulReportCharsBuffer.getCharsArray())))+"\".";
-	    }
-	    successfulReportCharsBuffer.clear();
-	    
-	    
-	    if(successfulReportLocation != null){
-	        message += "\nLocation: "+successfulReportLocation+".";
-	    }else{
-	        message += "\nLocation: not available.";
-	    }
-	    
-	    if(successfulReportTest != null){
-	        message += "\nTest: "+successfulReportTest+".";
-	    }else{
-	        message += "\nTest: not available.";
-	    }
-	    
-	    if(diagnostics == null){
-	        errorHandler.error(new SAXParseException(message+"\nNo diagnostics present.", locator));
-	    }else{
-	        errorHandler.error(new SAXParseException(message+"\n"+diagnostics+".", locator));
-	    }
-	    successfulReportId = null;
-	    successfulReportLocation = null;
-	    successfulReportTest = null;
-	    diagnostics = null;
+	    id = null;
+	    location = null;
+	    test = null;
+	    role = null;
+	    flag = null;
+	    text = null;
+	    diagnostics.clear();
+	    diagnosticTexts.clear();
 	}
-		
-	String getRule(){
-	    if(firedRuleId == null) return " rule context \""+firedRuleContext+"\"";
-	    return " rule \""+firedRuleId+"\" for context \""+firedRuleContext+"\"";
-	}
-		
+				
 	public void endDocument()  throws SAXException {}
 }
 

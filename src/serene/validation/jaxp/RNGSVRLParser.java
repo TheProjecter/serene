@@ -34,85 +34,59 @@ import serene.Constants;
 
 class RNGSVRLParser extends SVRLParser{
     void reportAssertError() throws SAXException{
-	    String message = null;
-	    if(activePatternName != null){
-	        message = "Error in Schematron pattern \""+activePatternName+"\", "+getRule()+".";
-	    }else if(activePatternId != null){
-	        message = "Error in Schematron pattern \""+activePatternId+"\", "+getRule()+".";
-	    }else{
-	        message = "Error in unidentified Schematron pattern, "+getRule()+".";
-	    }
 	    
-	    if(failedAssertId != null){
-	        message += "\nFailed assertion: "+failedAssertId+"=\""+new String(spaceCharsHandler.collapseSpace(spaceCharsHandler.trimSpace(failedAssertCharsBuffer.getCharsArray())))+"\".";
-	    }else{
-	        message += "\nFailed assertion: \""+new String(spaceCharsHandler.collapseSpace(spaceCharsHandler.trimSpace(failedAssertCharsBuffer.getCharsArray())))+"\".";
-	    }
-	    failedAssertCharsBuffer.clear();
+	    errorHandler.error(new RNGSchematronFailedAssert(activePatternName,
+                    activePatternId,
+                    activePatternRole,                        
+                    firedRuleId,
+                    firedRuleContext,
+                    firedRuleRole,
+                    firedRuleFlag,
+                    id,
+                    location,
+                    test,
+                    role,
+                    flag,                    
+                    text,
+                    diagnostics,
+                    diagnosticTexts,
+                    locator));
 	    
-	    
-	    if(failedAssertLocation != null){
-	        message += "\nLocation: "+failedAssertLocation+".";
-	    }else{
-	        message += "\nLocation: not available.";
-	    }
-	    
-	    if(failedAssertTest != null){
-	        message += "\nTest: "+failedAssertTest+".";
-	    }else{
-	        message += "\nTest: not available.";
-	    }
-	    
-	    if(diagnostics == null){
-	        errorHandler.error(new SAXParseException(message+"\nNo diagnostics present.", locator));
-	    }else{
-	        errorHandler.error(new SAXParseException(message+"\n"+diagnostics+".", locator));
-	    }
-	    failedAssertId = null;
-	    failedAssertLocation = null;
-	    failedAssertTest = null;
-	    diagnostics = null;
+	    id = null;
+	    location = null;
+	    test = null;
+	    role = null;
+	    flag = null;
+	    text = null;
+	    diagnostics.clear();
+	    diagnosticTexts.clear();
 	}
 	
-	void reportReportError() throws SAXException{
-	    String message = null;
-	    if(activePatternName != null){
-	        message = "Error in Schematron pattern \""+activePatternName+"\", "+getRule()+".";
-	    }else if(activePatternId != null){
-	        message = "Error in Schematron pattern \""+activePatternId+"\", "+getRule()+".";
-	    }else{
-	        message = "Error in unidentified Schematron pattern, "+getRule()+".";
-	    }
+	void reportReportError() throws SAXException{	    
+	    errorHandler.error(new RNGSchematronSuccessfulReport(activePatternName,
+                    activePatternId,
+                    activePatternRole,                        
+                    firedRuleId,
+                    firedRuleContext,
+                    firedRuleRole,
+                    firedRuleFlag,
+                    id,
+                    location,
+                    test,
+                    role,
+                    flag,                    
+                    text,
+                    diagnostics,
+                    diagnosticTexts,
+                    locator));
 	    
-	    if(successfulReportId != null){
-	        message += "\nSuccessful report: "+successfulReportId+"=\""+new String(spaceCharsHandler.collapseSpace(spaceCharsHandler.trimSpace(successfulReportCharsBuffer.getCharsArray())))+"\".";
-	    }else{
-	        message += "\nSuccessful report: \""+new String(spaceCharsHandler.collapseSpace(spaceCharsHandler.trimSpace(successfulReportCharsBuffer.getCharsArray())))+"\".";
-	    }
-	    successfulReportCharsBuffer.clear();
-	    
-	    
-	    if(successfulReportLocation != null){
-	        message += "\nLocation: "+successfulReportLocation+".";
-	    }else{
-	        message += "\nLocation: not available.";
-	    }
-	    
-	    if(successfulReportTest != null){
-	        message += "\nTest: "+successfulReportTest+".";
-	    }else{
-	        message += "\nTest: not available.";
-	    }
-	    
-	    if(diagnostics == null){
-	        errorHandler.error(new SAXParseException(message+"\nNo diagnostics present.", locator));
-	    }else{
-	        errorHandler.error(new SAXParseException(message+"\n"+diagnostics+".", locator));
-	    }
-	    successfulReportId = null;
-	    successfulReportLocation = null;
-	    successfulReportTest = null;
-	    diagnostics = null;
+	    id = null;
+	    location = null;
+	    test = null;
+	    role = null;
+	    flag = null;
+	    text = null;
+	    diagnostics.clear();
+	    diagnosticTexts.clear();
 	}
-
 }

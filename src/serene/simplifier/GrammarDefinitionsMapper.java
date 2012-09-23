@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Set;
 
-import javax.xml.transform.Templates;
+/*import javax.xml.transform.Templates;
 
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.TemplatesHandler;
+import javax.xml.transform.sax.TemplatesHandler;*/
 
 
 import org.xml.sax.XMLReader;
@@ -96,6 +96,8 @@ import serene.validation.schema.parsed.DefinitionCopier;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
+import serene.validation.jaxp.SchematronParser;
+
 class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	
 	Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions;	
@@ -126,23 +128,27 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
     boolean processEmbededSchematron;
 	boolean restrictToFileName;
 	
-	TransformerHandler schematronStartTransformerHandler;
+	/*TransformerHandler schematronStartTransformerHandler;
     SAXResult expandedSchematronResult;
     TransformerHandler schematronCompilerXSLT1;
     TransformerHandler schematronCompilerXSLT2;
     TemplatesHandler schematronTemplatesHandler;
-    List<Templates> schematronTemplates;
+    List<Templates> schematronTemplates;*/
     
     DocumentSimplificationContext simplificationContext;
 	
+    SchematronParser schematronParser;
+    
 	ErrorDispatcher errorDispatcher;
 	
 	GrammarDefinitionsMapper(ErrorDispatcher errorDispatcher,
 							NamespaceInheritanceHandler namespaceInheritanceHandler,
-							DatatypeLibraryFactory datatypeLibraryFactory){		
+							DatatypeLibraryFactory datatypeLibraryFactory,
+							SchematronParser schematronParser){		
 		this.namespaceInheritanceHandler = namespaceInheritanceHandler;
 		this.errorDispatcher = errorDispatcher;
 		this.datatypeLibraryFactory = datatypeLibraryFactory;
+		this.schematronParser = schematronParser;
 		
 		replaceMissingDatatypeLibrary = true;
 	}
@@ -163,7 +169,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
         this.xmlReader = xmlReader;
 		this.internalRNGFactory = internalRNGFactory;
     }
-    void setSchematronParserComponents(TransformerHandler schematronStartTransformerHandler,
+    /*void setSchematronParserComponents(TransformerHandler schematronStartTransformerHandler,
 	                                            SAXResult expandedSchematronResult,
 	                                            TransformerHandler schematronCompilerXSLT1,
 	                                            TransformerHandler schematronCompilerXSLT2,
@@ -173,7 +179,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	    this.schematronCompilerXSLT1 = schematronCompilerXSLT1;
 	    this.schematronCompilerXSLT2 = schematronCompilerXSLT2;
 	    this.schematronTemplatesHandler = schematronTemplatesHandler;
-    }
+    }*/
 	void map(URI xmlBaseUri,
 			Pattern topPattern,
 			Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,
@@ -210,7 +216,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 			topPattern.accept(this);
 	}
 	
-	void map(URI xmlBaseUri,
+	/*void map(URI xmlBaseUri,
 			Pattern topPattern,
 			Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,
 			Map<Definition, Map<ExternalRef, URI>> definitionExternalRefs,
@@ -246,7 +252,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		
 		if(topPattern !=null)//to catch situations when href uris were faultive
 			topPattern.accept(this);
-	}
+	}*/
 	
 	public void visit(Include include) throws SAXException{
 		String dla = include.getDatatypeLibraryAttribute();
@@ -397,13 +403,13 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	
 	private IncludedParsedModel parse(URI hrefURI){
 		if(includeParser == null){
-		    includeParser = new IncludeParser(errorDispatcher);
-		    includeParser.setParserComponents(xmlReader, internalRNGFactory);
-		    if(processEmbededSchematron)includeParser.setSchematronParserComponents(schematronStartTransformerHandler,
+		    includeParser = new IncludeParser(processEmbededSchematron, errorDispatcher);
+		    includeParser.setParserComponents(xmlReader, internalRNGFactory, schematronParser);
+		    /*if(processEmbededSchematron)includeParser.setSchematronParserComponents(schematronStartTransformerHandler,
 	                                                            expandedSchematronResult,
 	                                                            schematronCompilerXSLT1,
 	                                                            schematronCompilerXSLT2,
-	                                                            schematronTemplatesHandler);
+	                                                            schematronTemplatesHandler);*/
 		    includeParser.setRestrictToFileName(restrictToFileName);
 		    includeParser.setProcessEmbededSchematron(processEmbededSchematron);		    
 		}
@@ -411,17 +417,17 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	}
 	private IncludedParsedModel parse(URI hrefURI, Map<String, ArrayList<Definition>> overrideDefinitions){
 		if(includeParser == null){
-		    includeParser = new IncludeParser(errorDispatcher);
-		    includeParser.setParserComponents(xmlReader, internalRNGFactory);
-		    if(processEmbededSchematron)includeParser.setSchematronParserComponents(schematronStartTransformerHandler,
+		    includeParser = new IncludeParser(processEmbededSchematron, errorDispatcher);
+		    includeParser.setParserComponents(xmlReader, internalRNGFactory, schematronParser);
+		    /*if(processEmbededSchematron)includeParser.setSchematronParserComponents(schematronStartTransformerHandler,
 	                                                            expandedSchematronResult,
 	                                                            schematronCompilerXSLT1,
 	                                                            schematronCompilerXSLT2,
-	                                                            schematronTemplatesHandler);
+	                                                            schematronTemplatesHandler);*/
 		    includeParser.setRestrictToFileName(restrictToFileName);
 		    includeParser.setProcessEmbededSchematron(processEmbededSchematron);		    
 		}
-		return includeParser.parse(hrefURI, overrideDefinitions, schematronTemplates);		
+		return includeParser.parse(hrefURI, overrideDefinitions/*, schematronTemplates*/);		
 	}
 	
 	private void map(URI base,
@@ -429,7 +435,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 					Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions, 
 					Map<Definition, ArrayList<Grammar>> definitionGrammars) throws SAXException{				
 	    if(includedGrammarDefinitionsMapper == null){
-	        includedGrammarDefinitionsMapper = new IncludedGrammarDefinitionsMapper(errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory);
+	        includedGrammarDefinitionsMapper = new IncludedGrammarDefinitionsMapper(errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory, schematronParser);
 	        includedGrammarDefinitionsMapper.setParserComponents(xmlReader, internalRNGFactory);
 	    }
 		includedGrammarDefinitionsMapper.map(base, includedGrammar, grammarDefinitions, definitionExternalRefs, definitionGrammars, inclusionPath, componentAsciiDL, asciiDlDatatypeLibrary, simplificationContext);		

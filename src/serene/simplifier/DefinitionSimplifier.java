@@ -61,6 +61,8 @@ import serene.validation.handlers.error.ErrorDispatcher;
 
 import sereneWrite.ParsedComponentWriter;
 
+import serene.validation.jaxp.SchematronParser;
+
 import serene.Reusable;
 
 class DefinitionSimplifier extends Simplifier implements Reusable{	
@@ -69,8 +71,8 @@ class DefinitionSimplifier extends Simplifier implements Reusable{
 	IntList nullCombine;
 	IntList otherCombine;
 	
-	DefinitionSimplifier(DefinitionSimplifierPool pool, ErrorDispatcher errorDispatcher){
-		super(errorDispatcher);
+	DefinitionSimplifier(DefinitionSimplifierPool pool, ErrorDispatcher errorDispatcher, SchematronParser schematronParser){
+		super(errorDispatcher, schematronParser);
 		this.pool = pool;
 		
 		nullCombine = new IntList();		

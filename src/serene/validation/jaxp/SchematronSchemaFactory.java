@@ -199,20 +199,6 @@ public class SchematronSchemaFactory extends SchemaFactory{
             throw new NullPointerException();
         }
         
-        if(name.equals(Constants.SCHEMATRON_QUERY_LANGUAGE_BINDING_PROPERTY)){
-            if(object instanceof String){
-                String s = (String)object;
-                if(s.equals(Constants.SCHEMATRON_QLB_XSLT1)){
-                    qlbProperty = QLB_XSLT1;
-                }else if(s.equals(Constants.SCHEMATRON_QLB_XSLT2)){
-                    qlbProperty = QLB_XSLT2;
-                }else{
-                    throw new SAXNotSupportedException("Allowed values are strings \"xslt\", and \"xslt2\".");
-                }
-            }else{
-                throw new SAXNotSupportedException("Allowed values are strings \"xslt\", and \"xslt2\".");
-            }
-        }
 		throw new SAXNotRecognizedException("Unknown property.");
 	}    
     

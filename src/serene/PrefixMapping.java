@@ -92,10 +92,16 @@ public class PrefixMapping{
 		return null;
 	}
     
-	void transferMappings(ContentHandler ch) throws SAXException{
+	void transferStartMappings(ContentHandler ch) throws SAXException{
 	    Set<String> prefixes = prefixMapping.keySet();
 	    for(String prefix : prefixes){
 	        ch.startPrefixMapping(prefix, prefixMapping.get(prefix));
+	    }
+	}
+	void transferEndMappings(ContentHandler ch) throws SAXException{
+	    Set<String> prefixes = prefixMapping.keySet();
+	    for(String prefix : prefixes){
+	        ch.endPrefixMapping(prefix);
 	    }
 	}
     public String toString(){

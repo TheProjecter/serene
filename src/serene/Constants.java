@@ -19,6 +19,7 @@ package serene;
 public interface Constants{
     String SCHEMATRON_NS_URI = "http://purl.oclc.org/dsdl/schematron";
     String SVRL_NS_URI = "http://purl.oclc.org/dsdl/svrl";
+    String SCHEMATRON_QLB_ATTRIBUTE = "schematronQueryLanguage";
     
     String ATTRIBUTE_DEFAULT_VALUE_HANDLER_PROPERTY = "http://serenerng.com/validatorHandler/property/attributeDefaultValueHandler";
     String ATTRIBUTE_ID_TYPE_HANDLER_PROPERTY = "http://serenerng.com/validatorHandler/property/attributeIdTypeHandler";
@@ -35,13 +36,13 @@ public interface Constants{
     String PARSED_COMPONENT_BUILDER_PROPERTY = "http://serenerng.com/controller/property/parsedComponentBuilder";
     String PARSED_MODEL_PROPERTY = "http://serenerng.com/controller/property/parsedModel";
     String INCLUDED_PARSED_MODEL_PROPERTY = "http://serenerng.com/controller/property/includedParsedModel";
-    String SCHEMATRON_QUERY_LANGUAGE_BINDING_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronQueryLanguageBinding";
+    /*String SCHEMATRON_QUERY_LANGUAGE_BINDING_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronQueryLanguageBinding";
     String SCHEMATRON_COMPILER_FOR_XSLT1_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronCompilerForXSLT1";
     String SCHEMATRON_COMPILER_FOR_XSLT2_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronCompilerForXSLT2";
     String SCHEMATRON_EXPANDED_SCHEMA_RESULT_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronExpandedSchemaResult";
     String SCHEMATRON_TEMPLATES_HANDLER_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronTemplatesHandler";
-    String SCHEMATRON_TEMPLATES_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronTemplates";
-    String SCHEMATRON_START_TRANSFORMER_HANDLER_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronStartTransformerHandler";
+    String SCHEMATRON_TEMPLATES_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronTemplates";*/
+    String SCHEMATRON_PARSER_PROPERTY = "http://serenerng.com/schemaFactory/property/schematronParserHandler";
     String OVERRIDE_DEFINITIONS_PROPERTY = "http://serenerng.com/schemaFactory/property/overrideDefinitions";
     
     String TARGET_NAMESPACE_NAME = "http://serenerng.com/param/targetNamespace";
@@ -75,7 +76,6 @@ public interface Constants{
     
     String PROCESS_EMBEDED_SCHEMATRON_FEATURE = "http://serenerng.com/features/processEmbededSchematron";
     
+    String IS_QLB_SUPPORTED = "http://serenerng.com/features/isQLBSupported";      
     
-    String SCHEMATRON_QLB_XSLT1 = "xslt";
-    String SCHEMATRON_QLB_XSLT2 = "xslt2";
 }

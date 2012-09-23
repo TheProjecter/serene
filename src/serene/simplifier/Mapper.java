@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.Stack;
 import java.util.Set;
 
-import javax.xml.transform.Templates;
+/*import javax.xml.transform.Templates;
 
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.TemplatesHandler;
+import javax.xml.transform.sax.TemplatesHandler;*/
 
 
 import org.xml.sax.XMLReader;
@@ -51,6 +51,8 @@ import serene.validation.schema.parsed.ExternalRef;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
+import serene.validation.jaxp.SchematronParser;
+
 class Mapper{	
 	Map<Definition, Map<ExternalRef, URI>> definitionExternalRefs;
 	
@@ -60,11 +62,11 @@ class Mapper{
 	boolean processEmbededSchematron;
 	boolean restrictToFileName;
 	
-	TransformerHandler schematronStartTransformerHandler;
+	/*TransformerHandler schematronStartTransformerHandler;
     SAXResult expandedSchematronResult;
     TransformerHandler schematronCompilerXSLT1;
     TransformerHandler schematronCompilerXSLT2;
-    TemplatesHandler schematronTemplatesHandler;
+    TemplatesHandler schematronTemplatesHandler;*/
 	
 	NamespaceInheritanceHandler namespaceInheritanceHandler;
 	GrammarDefinitionsMapper grammarDefinitionsMapper; 
@@ -72,12 +74,17 @@ class Mapper{
 	ExternalRefParser externalRefParser;
 	Mapper mapper;
 	
+	SchematronParser schematronParser;
+	
 	ErrorDispatcher errorDispatcher;
 	
-	Mapper(ErrorDispatcher errorDispatcher, NamespaceInheritanceHandler namespaceInheritanceHandler){
+	Mapper(ErrorDispatcher errorDispatcher, 
+	    NamespaceInheritanceHandler namespaceInheritanceHandler,
+	    SchematronParser schematronParser){
 				
 		this.errorDispatcher = errorDispatcher;
 		this.namespaceInheritanceHandler = namespaceInheritanceHandler;
+		this.schematronParser = schematronParser;
 		
 		definitionExternalRefs = new HashMap<Definition, Map<ExternalRef, URI>>();
 		
@@ -91,7 +98,7 @@ class Mapper{
             cl = Simplifier.class.getClassLoader();
         } 
 
-		grammarDefinitionsMapper = new GrammarDefinitionsMapper(errorDispatcher, namespaceInheritanceHandler, new DatatypeLibraryFinder(cl));
+		grammarDefinitionsMapper = new GrammarDefinitionsMapper(errorDispatcher, namespaceInheritanceHandler, new DatatypeLibraryFinder(cl), schematronParser);
 	}
 	
 	void setReplaceMissingDatatypeLibrary(boolean value){
@@ -110,7 +117,7 @@ class Mapper{
 	    this.xmlReader = xmlReader;
 		this.internalRNGFactory = internalRNGFactory;
 		grammarDefinitionsMapper.setParserComponents(xmlReader, internalRNGFactory);
-		if(externalRefParser != null) externalRefParser.setParserComponents(xmlReader, internalRNGFactory);
+		if(externalRefParser != null) externalRefParser.setParserComponents(xmlReader, internalRNGFactory, schematronParser);
 	}
 	
 	void setProcessEmbededSchematron(boolean processEmbededSchematron){
@@ -122,7 +129,7 @@ class Mapper{
 	        // TODO what about enabling Schematron?	        
 	    }
 	}	
-    void setSchematronParserComponents(TransformerHandler schematronStartTransformerHandler,
+    /*void setSchematronParserComponents(TransformerHandler schematronStartTransformerHandler,
 	                                            SAXResult expandedSchematronResult,
 	                                            TransformerHandler schematronCompilerXSLT1,
 	                                            TransformerHandler schematronCompilerXSLT2,
@@ -147,7 +154,7 @@ class Mapper{
 	                                                            schematronCompilerXSLT1,
 	                                                            schematronCompilerXSLT2,
 	                                                            schematronTemplatesHandler);
-	}
+	}*/
 	
 	void map(URI base,
 			Pattern topPattern,
@@ -167,25 +174,25 @@ class Mapper{
 		if(definitionExternalRefs.isEmpty())return;
 			
 		if(externalRefParser == null){
-		    externalRefParser = new ExternalRefParser(errorDispatcher);		    
-		    externalRefParser.setParserComponents(xmlReader, internalRNGFactory);		    
-		    if(processEmbededSchematron) externalRefParser.setSchematronParserComponents(schematronStartTransformerHandler,
+		    externalRefParser = new ExternalRefParser(processEmbededSchematron, errorDispatcher);		    
+		    externalRefParser.setParserComponents(xmlReader, internalRNGFactory, schematronParser); 
+		    /*if(processEmbededSchematron) externalRefParser.setSchematronParserComponents(schematronStartTransformerHandler,
 	                                                            expandedSchematronResult,
 	                                                            schematronCompilerXSLT1,
 	                                                            schematronCompilerXSLT2,
-	                                                            schematronTemplatesHandler);
+	                                                            schematronTemplatesHandler);*/
 	        externalRefParser.setRestrictToFileName(restrictToFileName);
 		    externalRefParser.setProcessEmbededSchematron(processEmbededSchematron);
 		}
 		if(mapper == null){
-		    mapper = new Mapper(errorDispatcher, namespaceInheritanceHandler);
+		    mapper = new Mapper(errorDispatcher, namespaceInheritanceHandler, schematronParser);
 		    mapper.setParserComponents(xmlReader, internalRNGFactory);
-		    if(processEmbededSchematron)
+		    /*if(processEmbededSchematron)
 		        mapper.setSchematronParserComponents(schematronStartTransformerHandler,
 	                expandedSchematronResult,
 	                schematronCompilerXSLT1,
 	                schematronCompilerXSLT2,
-	                schematronTemplatesHandler);
+	                schematronTemplatesHandler);*/
 	        mapper.setProcessEmbededSchematron(processEmbededSchematron);
 	        mapper.setRestrictToFileName(restrictToFileName);
 		}
@@ -219,7 +226,7 @@ class Mapper{
 	}	
 	
 	
-	void map(URI base,
+	/*void map(URI base,
 			Pattern topPattern,
 			Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions,	
 			Map<ExternalRef, URI> externalRefs,
@@ -288,5 +295,5 @@ class Mapper{
 				}
 			}
 		} 	
-	}	
+	}*/	
 }
