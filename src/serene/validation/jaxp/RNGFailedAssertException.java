@@ -22,10 +22,11 @@ import java.util.ArrayList;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.Locator;
 
+import serene.schematron.FailedAssertException;
 
-public class SchematronFailedAssert extends SchematronException{
-    
-    SchematronFailedAssert(String activePatternName,
+public class RNGFailedAssertException extends FailedAssertException{
+       
+    public RNGFailedAssertException(String activePatternName,
                     String activePatternId,
                     String activePatternRole,                        
                     String firedRuleId,
@@ -57,10 +58,9 @@ public class SchematronFailedAssert extends SchematronException{
                     diagnostics,
                     diagnosticTexts,
                     locator);
-        
     }
     
-    SchematronFailedAssert(String activePatternName,
+    RNGFailedAssertException(String activePatternName,
                     String activePatternId,
                     String activePatternRole,                        
                     String firedRuleId,
@@ -96,7 +96,7 @@ public class SchematronFailedAssert extends SchematronException{
                     e);
     }
     
-    SchematronFailedAssert(String activePatternName,
+    RNGFailedAssertException(String activePatternName,
                     String activePatternId,
                     String activePatternRole,                        
                     String firedRuleId,
@@ -136,7 +136,7 @@ public class SchematronFailedAssert extends SchematronException{
                     columnNumber);
     }
     
-    SchematronFailedAssert(String activePatternName,
+    RNGFailedAssertException(String activePatternName,
                     String activePatternId,
                     String activePatternRole,                        
                     String firedRuleId,
@@ -176,17 +176,20 @@ public class SchematronFailedAssert extends SchematronException{
                     lineNumber, 
                     columnNumber, 
                     e);
-    }   
+    }    
+    
     
     public String getMessage(){
         String message = null;
 	    if(activePatternName != null){
-	        message = "Error in pattern \""+activePatternName+"\", "+getRule()+".";
+	        message = "Error in Schematron pattern \""+activePatternName+"\", "+getRule()+".";
 	    }else if(activePatternId != null){
-	        message = "Error in pattern \""+activePatternId+"\", "+getRule()+".";
+	        message = "Error in Schematron pattern \""+activePatternId+"\", "+getRule()+".";
 	    }else{
-	        message = "Error in unidentified pattern, "+getRule()+".";
+	        message = "Error in unidentified Schematron pattern, "+getRule()+".";
 	    }
+	    
+	    
 	    
 	    if(id != null){
 	        message += "\nFailed assertion: "+id+"=\""+text+"\".";
@@ -212,18 +215,5 @@ public class SchematronFailedAssert extends SchematronException{
 	    }else{
 	        return message+getDiagnosticsMessage();
 	    }
-    }
-    
-    String getRule(){
-	    if(firedRuleId == null) return " rule context \""+firedRuleContext+"\"";
-	    return " rule \""+firedRuleId+"\" for context \""+firedRuleContext+"\"";
-	}
-	
-	String getDiagnosticsMessage(){
-	    String d = null;
-	    for(int i = 0; i < diagnostics.size(); i++){
-	        d = diagnostics.get(i) + ": " + diagnosticTexts.get(i); 
-	    }
-	    return d == null? d : "\nDiagnostics: " + d + ".";
-	}
+    }       
 }

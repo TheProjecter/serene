@@ -35,6 +35,9 @@ import serene.util.SpaceCharsHandler;
 
 import serene.Constants;
 
+import serene.schematron.FailedAssertException;
+import serene.schematron.SuccessfulReportException;
+
 class SVRLParser implements ContentHandler{
     final static String ACTIVE_PATTERN = "active-pattern";
     final static String FIRED_RULE = "fired-rule";
@@ -88,6 +91,8 @@ class SVRLParser implements ContentHandler{
     Locator locator;
     ErrorHandler errorHandler;
     
+    boolean acceptLocator;
+    
     SVRLParser(){
         
         failedAssertContext = false;
@@ -103,6 +108,12 @@ class SVRLParser implements ContentHandler{
         
         diagnostics = new ArrayList<String>();
         diagnosticTexts = new ArrayList<String>();
+        
+        acceptLocator = true;
+    }
+    
+    void setAcceptLocator(boolean acceptLocator){
+        this.acceptLocator = acceptLocator;
     }
     
     public ErrorHandler getErrorHandler(){
@@ -120,6 +131,7 @@ class SVRLParser implements ContentHandler{
 	public void startPrefixMapping(String prefix, String uri)  throws SAXException{}	
 	public void endPrefixMapping(String prefix)  throws SAXException{}	
 	public void setDocumentLocator(Locator locator){
+	    if(!acceptLocator) return; // workaround for the extra locator introduced by saxon	    
 	    this.locator = locator;
 	}
 	public void characters(char[] chars, int start, int length)throws SAXException{		
@@ -200,8 +212,7 @@ class SVRLParser implements ContentHandler{
 	}
 	
 	void reportAssertError() throws SAXException{
-	    
-	    errorHandler.error(new SchematronFailedAssert(activePatternName,
+	    errorHandler.error(new FailedAssertException(activePatternName,
                     activePatternId,
                     activePatternRole,                        
                     firedRuleId,
@@ -228,8 +239,8 @@ class SVRLParser implements ContentHandler{
 	    diagnosticTexts.clear();
 	}
 	
-	void reportReportError() throws SAXException{	    
-	    errorHandler.error(new SchematronSuccessfulReport(activePatternName,
+	void reportReportError() throws SAXException{
+	    errorHandler.error(new SuccessfulReportException(activePatternName,
                     activePatternId,
                     activePatternRole,                        
                     firedRuleId,

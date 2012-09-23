@@ -31,6 +31,10 @@ import javax.xml.validation.ValidatorHandler;
 import javax.xml.validation.TypeInfoProvider;
 
 
+import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerConfigurationException;
+
+import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
 import org.xml.sax.ContentHandler;
@@ -125,6 +129,8 @@ public class RNGSchematronValidatorHandlerImpl extends ValidatorHandler{
     
     final boolean noModification = true;
     
+    List<Templates> schemaTemplates;    
+    SAXTransformerFactory saxTransformerFactory;
     List<ValidatorHandler> schematronValidatorHandlers; 
     
 	public RNGSchematronValidatorHandlerImpl(boolean secureProcessing,                            
@@ -141,7 +147,8 @@ public class RNGSchematronValidatorHandlerImpl extends ValidatorHandler{
                             ValidatorRuleHandlerPool structureHandlerPool,
 							ValidatorErrorHandlerPool errorHandlerPool,
 							SchemaModel schemaModel,
-							List<TransformerHandler> validatingTransformerHandlers){		
+							List<Templates> schemaTemplates,
+							SAXTransformerFactory saxTransformerFactory){		
         this.secureProcessing = secureProcessing;
         this.namespacePrefixes = namespacePrefixes; 
         this.level1AttributeDefaultValue = level1AttributeDefaultValue;
@@ -160,6 +167,8 @@ public class RNGSchematronValidatorHandlerImpl extends ValidatorHandler{
 		
 		this.stackHandlerPool = stackHandlerPool;
 		
+		this.schemaTemplates = schemaTemplates;
+        this.saxTransformerFactory = saxTransformerFactory;
 		
 		matchHandler  = new MatchHandler(simplifiedModel);
 		spaceHandler = new SpaceCharsHandler();					
@@ -182,14 +191,15 @@ public class RNGSchematronValidatorHandlerImpl extends ValidatorHandler{
 
         if(!optimizedForResourceSharing)initResources();    
         
-        schematronValidatorHandlers = new ArrayList<ValidatorHandler>(validatingTransformerHandlers.size());
+        schematronValidatorHandlers = new ArrayList<ValidatorHandler>(schemaTemplates.size());
         RNGSVRLParser rngSVRLParser = new RNGSVRLParser();
-        for(int i = 0; i < validatingTransformerHandlers.size(); i++){
+        for(int i = 0; i < schemaTemplates.size(); i++){
             ValidatorHandler schematronValidatorHandler = new SchematronValidatorHandlerImpl(secureProcessing,
                                             namespacePrefixes,
                                             restrictToFileName,
                                             optimizedForResourceSharing,
-                                            validatingTransformerHandlers.get(i),
+                                            schemaTemplates.get(i),
+                                            saxTransformerFactory,
                                             rngSVRLParser);        
             schematronValidatorHandler.setErrorHandler(errorDispatcher);
             schematronValidatorHandlers.add(schematronValidatorHandler);

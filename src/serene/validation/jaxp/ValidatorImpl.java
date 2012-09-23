@@ -545,7 +545,7 @@ class ValidatorImpl extends Validator{
 	
 	private void createTransformerHandler(){
 		try {
-			SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
+			SAXTransformerFactory tf = (SAXTransformerFactory)SAXTransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null);
 			identityTransformerHandler = tf.newTransformerHandler();
 		} catch (TransformerConfigurationException e) {
 			throw new TransformerFactoryConfigurationError(e);

@@ -94,7 +94,7 @@ public class ErrorDispatcher implements ErrorHandler, ErrorListener{
         hasUnrecoverableError = true;
 	}
 	
-	public void error(SAXParseException exception) throws SAXException{        
+	public void error(SAXParseException exception) throws SAXException{ 
         if(errorHandler != null) errorHandler.error(exception);
         else if(errorDispatcher != null) errorDispatcher.error(exception);        
         hasError = true;

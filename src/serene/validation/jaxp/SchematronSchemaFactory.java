@@ -46,6 +46,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
+import org.xml.sax.Locator;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -58,9 +59,11 @@ import serene.Constants;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
+import serene.schematron.TransformerFactoryImpl;
+
 public class SchematronSchemaFactory extends SchemaFactory{    
-    static final int QLB_XSLT1 = 1;
-    static final int QLB_XSLT2 = 2;
+    static final String SCHEMA_QLB_XSLT1 = "xslt";
+    static final String SCHEMA_QLB_XSLT2 = "xslt2";
     
     int qlbProperty;
     
@@ -76,19 +79,20 @@ public class SchematronSchemaFactory extends SchemaFactory{
 	Transformer schemaDocumentTransformer;
 	SAXResult resolvedIncludesResult;
     SAXResult resolvedAbstractPatternsResult;
-    TransformerHandler schemaCompilerForXSLT1;
-    TransformerHandler schemaCompilerForXSLT2;
+    TransformerHandler schematronCompilerXSLT1;
+    TransformerHandler schematronCompilerXSLT2;
     TemplatesHandler schemaTemplatesHandler;
     
+    TransformerFactoryImpl schematronTransformerFactory;
+    
+    boolean qlbSupported;
     
 	public SchematronSchemaFactory() throws SAXException{		
 		errorDispatcher = new ErrorDispatcher();
 		
 		initDefaultFeatures();
-		initDefaultProperties();	
 				
-		
-		createParser();
+		createTransformerFactory();
 	}
 	
 	
@@ -99,35 +103,30 @@ public class SchematronSchemaFactory extends SchemaFactory{
         optimizedForResourceSharing = false;
 	}
 	
-	private void initDefaultProperties(){
-        qlbProperty = QLB_XSLT1;		
-	}
-	
 		
-	private void createParser() throws SAXException{
-	    SAXTransformerFactory stf = null;
-	    TransformerFactory tf = TransformerFactory.newInstance();
-        if(tf.getFeature(SAXTransformerFactory.FEATURE)){
-            stf = (SAXTransformerFactory)tf;
+	private void createTransformerFactory() throws SAXException{
+	    schematronTransformerFactory = new TransformerFactoryImpl();
+        /*if(tf.getFeature(SAXTransformerFactory.FEATURE)){
+            saxTransformerFactory = (SAXTransformerFactory)tf;
         }else{
             throw new SAXException("Could not create schema transformers.");
-        }
-        
-        
+        }*/
+	}
+	private void createParser() throws SAXException{
         try{          
-            schemaTemplatesHandler = stf.newTemplatesHandler(); // here the Templates object representing the compiled schema can be obtained
+            schemaTemplatesHandler = schematronTransformerFactory.newTemplatesHandler(); // here the Templates object representing the compiled schema can be obtained
             
-            schemaCompilerForXSLT2 = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_svrl_for_xslt2.xsl")));
-            schemaCompilerForXSLT2.setResult(new SAXResult(schemaTemplatesHandler));
+            schematronCompilerXSLT2 = schematronTransformerFactory.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_svrl_for_xslt2.xsl")));
+            schematronCompilerXSLT2.setResult(new SAXResult(schemaTemplatesHandler));
             
-            schemaCompilerForXSLT1 = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_svrl_for_xslt1.xsl")));
-            schemaCompilerForXSLT1.setResult(new SAXResult(schemaTemplatesHandler));
+            schematronCompilerXSLT1 = schematronTransformerFactory.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_svrl_for_xslt1.xsl")));
+            schematronCompilerXSLT1.setResult(new SAXResult(schemaTemplatesHandler));
             
-            TransformerHandler abstarctPatternsHandler = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_abstract_expand.xsl")));
+            TransformerHandler abstarctPatternsHandler = schematronTransformerFactory.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_abstract_expand.xsl")), this);
             resolvedAbstractPatternsResult = new SAXResult(); // content handler will be set according to qlbProperty and maybe adjusted
             abstarctPatternsHandler.setResult(resolvedAbstractPatternsResult);
             
-            TransformerHandler includeHandler = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_dsdl_include.xsl")));                        
+            TransformerHandler includeHandler = schematronTransformerFactory.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_dsdl_include.xsl")));                        
             schemaDocumentTransformer = includeHandler.getTransformer(); // used to transform the schema Source 
             resolvedIncludesResult = new SAXResult(abstarctPatternsHandler); // result for the above transformation
         }catch(TransformerConfigurationException tce){
@@ -240,16 +239,26 @@ public class SchematronSchemaFactory extends SchemaFactory{
 	public Schema newSchema(Source source) throws SAXException{
 		if(source == null)throw new NullPointerException();
 		
-		errorDispatcher.init();
+		errorDispatcher.init();		
+		createParser();
+		qlbSupported = true;
 		
-		TransformerException firstException;
+		try{
+            schemaDocumentTransformer.transform(source, resolvedIncludesResult);
+        }catch(TransformerException te){
+            if(qlbSupported)throw new SAXException(te);
+        }catch(IllegalStateException ise){
+            if(qlbSupported)throw ise;
+        }
+		
+		/*TransformerException firstException;
 		
         switch(qlbProperty){
             case QLB_XSLT1:
-                resolvedAbstractPatternsResult.setHandler(schemaCompilerForXSLT1);
+                resolvedAbstractPatternsResult.setHandler(schematronCompilerXSLT1);
                 break;
             case QLB_XSLT2:
-                resolvedAbstractPatternsResult.setHandler(schemaCompilerForXSLT2);
+                resolvedAbstractPatternsResult.setHandler(schematronCompilerXSLT2);
                 break;
             default: throw new SAXException("Uknown query language binding");
         }
@@ -259,27 +268,39 @@ public class SchematronSchemaFactory extends SchemaFactory{
         }catch(TransformerException te){
             firstException = te;
             
+            createParser();
             switch(qlbProperty){
                 case QLB_XSLT2:
-                    resolvedAbstractPatternsResult.setHandler(schemaCompilerForXSLT1);
+                    resolvedAbstractPatternsResult.setHandler(schematronCompilerXSLT1);
                     break;
                 case QLB_XSLT1:
-                    resolvedAbstractPatternsResult.setHandler(schemaCompilerForXSLT2);
+                    resolvedAbstractPatternsResult.setHandler(schematronCompilerXSLT2);
                     break;
                 default: throw new SAXException("Uknown query language binding");
             }
             
-            try{
+            try{                
                 schemaDocumentTransformer.transform(source, resolvedIncludesResult);
             }catch(TransformerException t){
                 throw new SAXException(firstException);
             }
-        }
+        }*/
 		return new SchematronSchema(secureProcessing,
                     namespacePrefixes,
                     restrictToFileName,
                     optimizedForResourceSharing,
                     schemaTemplatesHandler.getTemplates());
+	}
+	
+	public void setQLB(String qlb, Locator locator) throws SAXException{
+	    if(qlb == null || qlb.equals(SCHEMA_QLB_XSLT1)){
+            resolvedAbstractPatternsResult.setHandler(schematronCompilerXSLT1);
+        }else if(qlb.equals(SCHEMA_QLB_XSLT2)){
+            resolvedAbstractPatternsResult.setHandler(schematronCompilerXSLT2);
+        }else{
+            errorDispatcher.error(new SAXParseException("Unsupported Schematron query language. Serene supports \"xslt\" and \"xslt2\".", locator));
+            qlbSupported  = false;           
+        }
 	}
     //------------------------------------------------------------------------------------------
 	//END methods of the javax.xml.validation.SchemaFactory

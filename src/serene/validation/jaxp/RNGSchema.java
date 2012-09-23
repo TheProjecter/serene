@@ -47,7 +47,7 @@ public class RNGSchema extends BaseSchema{
     List<Templates> schemaTemplates;
     
     SAXTransformerFactory saxTransformerFactory;
-    List<TransformerHandler> validatingTransformerHandlers;
+    /*List<TransformerHandler> validatingTransformerHandlers;*/
     
 	public RNGSchema(boolean secureProcessing,
                     boolean namespacePrefixes,
@@ -87,14 +87,14 @@ public class RNGSchema extends BaseSchema{
         
         this.schemaTemplates = schemaTemplates;
         
-        TransformerFactory tf = TransformerFactory.newInstance();
+        TransformerFactory tf = TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null);
         if(tf.getFeature(SAXTransformerFactory.FEATURE)){
             saxTransformerFactory = (SAXTransformerFactory)tf;
         }else{
             throw new SAXException("Could not load validating transformer.");
         }
         
-        validatingTransformerHandlers = new ArrayList<TransformerHandler>(schemaTemplates.size());
+        /*validatingTransformerHandlers = new ArrayList<TransformerHandler>(schemaTemplates.size());
         
         for(int i = 0; i < schemaTemplates.size(); i++){
             try{
@@ -102,7 +102,7 @@ public class RNGSchema extends BaseSchema{
             }catch(TransformerConfigurationException tce){
                 throw new SAXException(tce);
             }
-        }        
+        } */       
 	}
 	
 	
@@ -143,7 +143,7 @@ public class RNGSchema extends BaseSchema{
 	    
 	    
 	    
-	    if(validatingTransformerHandlers == null){
+	    /*if(validatingTransformerHandlers == null){
             validatingTransformerHandlers = new ArrayList<TransformerHandler>(schemaTemplates.size());
             for(int i = 0; i < validatingTransformerHandlers.size(); i++){
                 try{
@@ -152,7 +152,7 @@ public class RNGSchema extends BaseSchema{
                     // never happens
                 }
             }
-        }
+        }*/
         
 		ValidatorHandler vh = new RNGSchematronValidatorHandlerImpl(secureProcessing,
                                         namespacePrefixes,
@@ -168,8 +168,8 @@ public class RNGSchema extends BaseSchema{
                                         ruleHandlerPool.getValidatorRuleHandlerPool(),
 										errorHandlerPool.getValidatorErrorHandlerPool(),
 										schemaModel,
-										validatingTransformerHandlers);
-        validatingTransformerHandlers = null;
+										schemaTemplates,                                        
+                                        saxTransformerFactory);
         
 		return vh;
 		

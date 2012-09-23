@@ -32,10 +32,11 @@ import serene.util.SpaceCharsHandler;
 
 import serene.Constants;
 
+
 class RNGSVRLParser extends SVRLParser{
     void reportAssertError() throws SAXException{
 	    
-	    errorHandler.error(new RNGSchematronFailedAssert(activePatternName,
+	    errorHandler.error(new RNGFailedAssertException(activePatternName,
                     activePatternId,
                     activePatternRole,                        
                     firedRuleId,
@@ -63,7 +64,7 @@ class RNGSVRLParser extends SVRLParser{
 	}
 	
 	void reportReportError() throws SAXException{	    
-	    errorHandler.error(new RNGSchematronSuccessfulReport(activePatternName,
+	    errorHandler.error(new RNGSuccessfulReportException(activePatternName,
                     activePatternId,
                     activePatternRole,                        
                     firedRuleId,

@@ -22,10 +22,11 @@ import java.util.ArrayList;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.Locator;
 
+import serene.schematron.SuccessfulReportException;
 
-public class SchematronSuccessfulReport extends SchematronException{
+public class RNGSuccessfulReportException extends SuccessfulReportException{
     
-    SchematronSuccessfulReport(String activePatternName,
+    public RNGSuccessfulReportException(String activePatternName,
                     String activePatternId,
                     String activePatternRole,                        
                     String firedRuleId,
@@ -59,7 +60,7 @@ public class SchematronSuccessfulReport extends SchematronException{
                     locator);
     }
     
-    SchematronSuccessfulReport(String activePatternName,
+    RNGSuccessfulReportException(String activePatternName,
                     String activePatternId,
                     String activePatternRole,                        
                     String firedRuleId,
@@ -95,7 +96,7 @@ public class SchematronSuccessfulReport extends SchematronException{
                     e);
     }
     
-    SchematronSuccessfulReport(String activePatternName,
+    RNGSuccessfulReportException(String activePatternName,
                     String activePatternId,
                     String activePatternRole,                        
                     String firedRuleId,
@@ -135,7 +136,7 @@ public class SchematronSuccessfulReport extends SchematronException{
                     columnNumber);
     }
     
-    SchematronSuccessfulReport(String activePatternName,
+    RNGSuccessfulReportException(String activePatternName,
                     String activePatternId,
                     String activePatternRole,                        
                     String firedRuleId,
@@ -173,19 +174,21 @@ public class SchematronSuccessfulReport extends SchematronException{
                     publicId, 
                     systemId, 
                     lineNumber, 
-                    columnNumber,
+                    columnNumber, 
                     e);
     } 
     
     public String getMessage(){
         String message = null;
 	    if(activePatternName != null){
-	        message = "Error in pattern \""+activePatternName+"\", "+getRule()+".";
+	        message = "Error in Schematron pattern \""+activePatternName+"\", "+getRule()+".";
 	    }else if(activePatternId != null){
-	        message = "Error in pattern \""+activePatternId+"\", "+getRule()+".";
+	        message = "Error in Schematron pattern \""+activePatternId+"\", "+getRule()+".";
 	    }else{
-	        message = "Error in unidentified pattern, "+getRule()+".";
+	        message = "Error in unidentified Schematron pattern, "+getRule()+".";
 	    }
+	    
+	    
 	    
 	    if(id != null){
 	        message += "\nSuccessful report: "+id+"=\""+text+"\".";
@@ -211,18 +214,5 @@ public class SchematronSuccessfulReport extends SchematronException{
 	    }else{
 	        return message+getDiagnosticsMessage();
 	    }
-    }
-    
-    String getRule(){
-	    if(firedRuleId == null) return " rule context \""+firedRuleContext+"\"";
-	    return " rule \""+firedRuleId+"\" for context \""+firedRuleContext+"\"";
-	}
-	
-	String getDiagnosticsMessage(){
-	    String d = null;
-	    for(int i = 0; i < diagnostics.size(); i++){
-	        d = '\n' + diagnostics.get(i) + ": " + diagnosticTexts.get(i); 
-	    }
-	    return d == null? d : "Diagnostics: " + d + ".";
-	}
+    }       
 }
