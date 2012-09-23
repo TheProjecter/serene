@@ -16,6 +16,8 @@ limitations under the License.
 
 package serene.simplifier;
 
+import serene.validation.jaxp.SchematronParser;
+
 import serene.validation.handlers.error.ErrorDispatcher;
 
 class DefinitionSimplifierPool{
@@ -27,10 +29,13 @@ class DefinitionSimplifierPool{
 	int udsFree;
 	int udsSize;
 	
-	ErrorDispatcher errorDispatcher;
+	ErrorDispatcher errorDispatcher;	
 	
-	DefinitionSimplifierPool(ErrorDispatcher errorDispatcher){
+	SchematronParser schematronParser;
+	
+	DefinitionSimplifierPool(ErrorDispatcher errorDispatcher, SchematronParser schematronParser){
 		this.errorDispatcher = errorDispatcher;
+		this.schematronParser = schematronParser;
 		
 		dsFree = 0;
 		dsSize = 5;
@@ -43,7 +48,7 @@ class DefinitionSimplifierPool{
 	
 	DefinitionSimplifier getDefinitionSimplifier(){
 		if(dsFree == 0){
-			return new DefinitionSimplifier(this, errorDispatcher);
+			return new DefinitionSimplifier(this, errorDispatcher, schematronParser);
 		}else{			
 			return ds[--dsFree];
 		}		
@@ -61,7 +66,7 @@ class DefinitionSimplifierPool{
     
     UnreachableDefinitionSimplifier getUnreachableDefinitionSimplifier(){
 		if(udsFree == 0){
-			return new UnreachableDefinitionSimplifier(this, errorDispatcher);
+			return new UnreachableDefinitionSimplifier(this, errorDispatcher, schematronParser);
 		}else{			
 			return uds[--udsFree];
 		}		

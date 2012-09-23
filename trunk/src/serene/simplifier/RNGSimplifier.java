@@ -63,6 +63,8 @@ import serene.internal.InternalRNGFactory;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
+import serene.validation.jaxp.SchematronParser;
+
 import sereneWrite.ParsedComponentWriter;
 
 public class RNGSimplifier extends Simplifier{	
@@ -72,14 +74,14 @@ public class RNGSimplifier extends Simplifier{
 	Stack<URI> inclusionPath;
 	
     
-	public RNGSimplifier(ErrorDispatcher errorDispatcher){
-		super(errorDispatcher);
+	public RNGSimplifier(ErrorDispatcher errorDispatcher, SchematronParser schematronParser){
+		super(errorDispatcher, schematronParser);
 				
 		grammarDefinitions = new HashMap<Grammar, Map<String, ArrayList<Definition>>>();		
 		externalRefs = new HashMap<ExternalRef, URI>();			
 		docParsedModels = new HashMap<URI, ParsedModel>();
 		namespaceInheritanceHandler = new NamespaceInheritanceHandler();
-		pool = new DefinitionSimplifierPool(errorDispatcher);
+		pool = new DefinitionSimplifierPool(errorDispatcher, schematronParser);
 		
 		componentAsciiDL = new HashMap<ParsedComponent, String>();
 		asciiDlDatatypeLibrary = new HashMap<String, DatatypeLibrary>();
@@ -101,7 +103,7 @@ public class RNGSimplifier extends Simplifier{
         
         simplificationContext = new DocumentSimplificationContext();
         
-        mapper = new Mapper(errorDispatcher, namespaceInheritanceHandler);
+        mapper = new Mapper(errorDispatcher, namespaceInheritanceHandler, schematronParser);
 	}
 	
 	public void setRestrictToFileName(boolean restrictToFileName){
@@ -117,7 +119,7 @@ public class RNGSimplifier extends Simplifier{
 	    mapper.setParserComponents(xmlReader, internalRNGFactory);
 	}
 	
-	public void setSchematronParserComponents(TransformerHandler schematronStartTransformerHandler,
+	/*public void setSchematronParserComponents(TransformerHandler schematronStartTransformerHandler,
 	                                            SAXResult expandedSchematronResult,
 	                                            TransformerHandler schematronCompilerXSLT1,
 	                                            TransformerHandler schematronCompilerXSLT2,
@@ -127,7 +129,7 @@ public class RNGSimplifier extends Simplifier{
 	                schematronCompilerXSLT1,
 	                schematronCompilerXSLT2,
 	                schematronTemplatesHandler);
-	}
+	}*/
 	public void setReplaceMissingDatatypeLibrary(boolean value){
 		replaceMissingDatatypeLibrary =  value;
 		mapper.setReplaceMissingDatatypeLibrary(value);
@@ -201,7 +203,7 @@ public class RNGSimplifier extends Simplifier{
 	}
 		
 	
-	public SimplifiedModel simplify(URI base, ParsedModel parsedModel, List<Templates> schematronTemplates)  throws SAXException{
+	/*public SimplifiedModel simplify(URI base, ParsedModel parsedModel, List<Templates> schematronTemplates)  throws SAXException{
         if(parsedModel == null) return null;
         
         topPattern = parsedModel.getTopPattern();        
@@ -268,7 +270,7 @@ public class RNGSimplifier extends Simplifier{
 											referenceModel,
 											recursionModel);
 		return simplifiedModel;
-	}
+	}*/
 	
 		
 	private void simplify()  throws SAXException{   	

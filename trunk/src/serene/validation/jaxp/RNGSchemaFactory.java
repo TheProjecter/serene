@@ -142,26 +142,13 @@ public class RNGSchemaFactory extends SchemaFactory{
 	
 	ErrorDispatcher errorDispatcher;
 
-	    
-    static final int QLB_XSLT1 = 1;
-    static final int QLB_XSLT2 = 2;
-    
-    int qlbProperty;
-    	
-	
-	TransformerHandler schematronStartTransformerHandler;//handles includes	
-    SAXResult expandedSchematronResult; // after includes and abstract patterns were handled
-    TransformerHandler schematronCompilerXSLT1;
-    TransformerHandler schematronCompilerXSLT2;
-    TemplatesHandler schematronTemplatesHandler;
-    
-    List<Templates> schematronTemplates;
-    
+	SchematronParser schematronParser;
+	   
 	public RNGSchemaFactory(){		
 		errorDispatcher = new ErrorDispatcher();
 		
 		initDefaultFeatures();
-		initDefaultProperties();	
+		/*initDefaultProperties();*/	
 				
 		try{
 		    createParser();
@@ -172,7 +159,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 		createRestrictionController();
 	}
 	
-	
+	/*private void initDefaultProperties(){}*/
 	
 	private void initDefaultFeatures(){
         namespacePrefixes = false;            
@@ -188,10 +175,6 @@ public class RNGSchemaFactory extends SchemaFactory{
         processEmbededSchematron = false;
 	}
 	
-	private void initDefaultProperties(){	
-	    qlbProperty = QLB_XSLT1;
-	}
-	
 		
 	private void createParser()  throws DatatypeException{
 	    // create builder
@@ -203,10 +186,17 @@ public class RNGSchemaFactory extends SchemaFactory{
 	    // create reader
 	    //     set error handler 
 	    	   
+	    createSchematronParser();
 	    createSchemaFactory();	    
-	    createXMLReader();	
+	    createXMLReader();    
 	    createBoundValidatorHandler(); 
 	}
+	
+	
+	private void createSchematronParser(){
+	    schematronParser = new SchematronParser(errorDispatcher);
+	}
+	
 	private void createSchemaFactory()  throws DatatypeException{
 	    if(optimizedForResourceSharing){	    
 		    internalRNGFactory = SynchronizedInternalRNGFactory.getInstance(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbededSchematron);    
@@ -241,18 +231,22 @@ public class RNGSchemaFactory extends SchemaFactory{
             e.printStackTrace();
         }catch (SAXNotSupportedException e) {
             e.printStackTrace();
-        }
-        if(processEmbededSchematron) enableSchematronInValidatorHandler();
+        }        
+        enableSchematronInValidatorHandler();
 	}
 	
     private void createSimplifier(){
-		simplifier = new RNGSimplifier(errorDispatcher);
+		simplifier = new RNGSimplifier(errorDispatcher, schematronParser);
 		simplifier.setParserComponents(xmlReader, internalRNGFactory);
 		simplifier.setReplaceMissingDatatypeLibrary(replaceMissingDatatypeLibrary);
         simplifier.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
         simplifier.setLevel1AttributeIdType(level1AttributeIdType);
         simplifier.setRestrictToFileName(restrictToFileName);
         simplifier.setProcessEmbededSchematron(processEmbededSchematron);
+        /*if(processEmbededSchematron){
+            if(schematronParser == null) createSchematronParser();
+            enableSchematronInSimplifier();
+        }*/
 	}
 	
 	private void createRestrictionController(){
@@ -276,50 +270,15 @@ public class RNGSchemaFactory extends SchemaFactory{
             e.printStackTrace();
         }  
     }
-    private void createSchematronParser() throws SAXException{        
-	    SAXTransformerFactory stf = null;
-	    TransformerFactory tf = TransformerFactory.newInstance();
-        if(tf.getFeature(SAXTransformerFactory.FEATURE)){
-            stf = (SAXTransformerFactory)tf;
-        }else{
-            throw new SAXException("Could not create schema transformers.");
-        }
-        
-        try{          
-            schematronTemplatesHandler = stf.newTemplatesHandler(); // here the Templates object representing the compiled schema can be obtained
-            
-            schematronCompilerXSLT2 = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_svrl_for_xslt2.xsl")));
-            schematronCompilerXSLT2.setResult(new SAXResult(schematronTemplatesHandler));
-            schematronCompilerXSLT2.getTransformer().setErrorListener(errorDispatcher);
-            
-            schematronCompilerXSLT1 = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_svrl_for_xslt1.xsl")));
-            schematronCompilerXSLT1.setResult(new SAXResult(schematronTemplatesHandler));
-            schematronCompilerXSLT1.getTransformer().setErrorListener(errorDispatcher);
-            
-            TransformerHandler abstarctPatternsHandler = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_abstract_expand.xsl")));
-            expandedSchematronResult = new SAXResult(); // content handler will be set according to qlbProperty and maybe adjusted
-            abstarctPatternsHandler.setResult(expandedSchematronResult);
-            abstarctPatternsHandler.getTransformer().setErrorListener(errorDispatcher);
-            
-            schematronStartTransformerHandler = stf.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_dsdl_include.xsl")));
-            SAXResult resolvedIncludesResult = new SAXResult(abstarctPatternsHandler); // result for the above transformation
-            schematronStartTransformerHandler.setResult(resolvedIncludesResult);
-            schematronStartTransformerHandler.getTransformer().setErrorListener(errorDispatcher);
-        }catch(TransformerConfigurationException tce){
-            throw new SAXException(tce);
-        }   
-          
-        enableSchematronInValidatorHandler();
-        enableSchematronInSimplifier();
-    }
     
     void enableSchematronInValidatorHandler(){
         try{
-            validatorHandler.setProperty(Constants.SCHEMATRON_COMPILER_FOR_XSLT1_PROPERTY, schematronCompilerXSLT1);
+            validatorHandler.setProperty(Constants.SCHEMATRON_PARSER_PROPERTY, schematronParser);
+            /*validatorHandler.setProperty(Constants.SCHEMATRON_COMPILER_FOR_XSLT1_PROPERTY, schematronCompilerXSLT1);
             validatorHandler.setProperty(Constants.SCHEMATRON_COMPILER_FOR_XSLT2_PROPERTY, schematronCompilerXSLT2);
             validatorHandler.setProperty(Constants.SCHEMATRON_EXPANDED_SCHEMA_RESULT_PROPERTY, expandedSchematronResult);
             validatorHandler.setProperty(Constants.SCHEMATRON_TEMPLATES_HANDLER_PROPERTY, schematronTemplatesHandler);
-            validatorHandler.setProperty(Constants.SCHEMATRON_START_TRANSFORMER_HANDLER_PROPERTY, schematronStartTransformerHandler);
+            validatorHandler.setProperty(Constants.SCHEMATRON_START_TRANSFORMER_HANDLER_PROPERTY, schematronStartTransformerHandler);*/
         }catch (SAXNotRecognizedException e) {
             e.printStackTrace();
         }catch (SAXNotSupportedException e) {
@@ -327,13 +286,13 @@ public class RNGSchemaFactory extends SchemaFactory{
         }
     }
     
-    void enableSchematronInSimplifier(){
+    /*void enableSchematronInSimplifier(){
         simplifier.setSchematronParserComponents(schematronStartTransformerHandler,
 	                expandedSchematronResult,
 	                schematronCompilerXSLT1,
 	                schematronCompilerXSLT2,
 	                schematronTemplatesHandler);
-    }
+    }*/
 	//------------------------------------------------------------------------------------------
 	//START methods of the javax.xml.validation.SchemaFactory  
 	//------------------------------------------------------------------------------------------	
@@ -418,7 +377,9 @@ public class RNGSchemaFactory extends SchemaFactory{
                 processEmbededSchematron = value;
                 validatorHandler.setFeature(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE, value);
                 simplifier.setProcessEmbededSchematron(value);
-                if(value)enableSchematronInSimplifier();                
+                if(value){
+                    // TODO see if you need to set this to the schematronParser itself                                   
+                }
             }
         }else{
             throw new SAXNotRecognizedException("Unknown feature.");
@@ -697,14 +658,14 @@ public class RNGSchemaFactory extends SchemaFactory{
 		// to task: parsedComponentBuilder.startBuild();
 		
 		if(processEmbededSchematron){
-            if(schematronStartTransformerHandler == null){
+            /*if(schematronStartTransformerHandler == null){
                 createSchematronParser();                
-            }            
+            } */           
             
         }   
         
-        schematronTemplates = new ArrayList<Templates>();
-        validatorHandler.setProperty(Constants.SCHEMATRON_TEMPLATES_PROPERTY, schematronTemplates);
+        /*schematronTemplates = new ArrayList<Templates>();
+        validatorHandler.setProperty(Constants.SCHEMATRON_TEMPLATES_PROPERTY, schematronTemplates);*/
         
 	}
     
@@ -741,7 +702,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 		if(baseURI != null){
 			try{
 			    if(processEmbededSchematron){
-			        simplifiedModel = simplifier.simplify(new URI(baseURI), parsedModel, schematronTemplates);
+			        simplifiedModel = simplifier.simplify(new URI(baseURI), parsedModel/*, schematronTemplates*/);
 			    }else{
 			        simplifiedModel = simplifier.simplify(new URI(baseURI), parsedModel);
 			    }
@@ -750,7 +711,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 			}
 		}else{
 		    if(processEmbededSchematron){
-		        simplifiedModel = simplifier.simplify(null, parsedModel, schematronTemplates);
+		        simplifiedModel = simplifier.simplify(null, parsedModel/*, schematronTemplates*/);
 		    }else{
 		        simplifiedModel = simplifier.simplify(null, parsedModel);
 		    }
@@ -785,7 +746,7 @@ public class RNGSchemaFactory extends SchemaFactory{
         }
         
         if(processEmbededSchematron){            
-            return new RNGSchema(false,
+            RNGSchema s = new RNGSchema(false,
                                         namespacePrefixes,
                                         level1AttributeDefaultValue,
                                         level2AttributeDefaultValue,
@@ -794,7 +755,9 @@ public class RNGSchemaFactory extends SchemaFactory{
                                         restrictToFileName,
                                         optimizedForResourceSharing,
                                         schemaModel,
-                                        schematronTemplates);
+                                        schematronParser.getSchematronTemplates());
+            schematronParser.clear();
+            return s;
         }else{
             return new RNGSchema(false,
                                         namespacePrefixes,

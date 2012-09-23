@@ -21,6 +21,17 @@ public class SpaceCharsHandler{
 	public SpaceCharsHandler(){		
 	}
 	
+	public boolean containsSpace(char[] chars){
+	    if(chars.length == 0)throw new IllegalArgumentException();
+        for(int i = 0; i < chars.length; i++){
+            char c = chars[i];
+            if((c== '\r' 
+			|| c == '\n'
+      		|| c == '\t'
+			|| c == ' '))return true;
+        }
+        return false;
+	} 
     public boolean isSpace(char[] chars){
         if(chars.length == 0)throw new IllegalArgumentException();
         for(int i = 0; i < chars.length; i++){

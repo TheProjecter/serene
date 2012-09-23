@@ -83,14 +83,19 @@ public class DocumentContext implements  ValidationContext, InfosetModificationC
         return isBaseURISet;
     }
     
-    public void transferPrefixMappings(ContentHandler ch) throws SAXException{
-        prefixMapping.transferMappings(ch);
+    public void transferStartPrefixMappings(ContentHandler ch) throws SAXException{
+        prefixMapping.transferStartMappings(ch);
+    }
+    
+    public void transferEndPrefixMappings(ContentHandler ch) throws SAXException{
+        prefixMapping.transferEndMappings(ch);
     }
     
     public void transferDTDMappings(DTDHandler dh) throws SAXException{
         if(dtdMapping != null)
             dtdMapping.transferMappings(dh);
     }
+    
     
     // start ValidationContext
     public String getBaseUri(){

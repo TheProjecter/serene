@@ -43,13 +43,16 @@ import serene.validation.schema.parsed.ExternalRef;
 
 import serene.validation.handlers.error.ErrorDispatcher;
 
+import serene.validation.jaxp.SchematronParser;
+
 class IncludedGrammarDefinitionsMapper extends GrammarDefinitionsMapper{
 	Map<Definition, ArrayList<Grammar>> definitionGrammars;
 	
 	IncludedGrammarDefinitionsMapper(ErrorDispatcher errorDispatcher, 
 								NamespaceInheritanceHandler namespaceInheritanceHandler,
-								DatatypeLibraryFactory datatypeLibraryFactory){
-		super(errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory);
+								DatatypeLibraryFactory datatypeLibraryFactory,
+								SchematronParser schematronParser){
+		super(errorDispatcher, namespaceInheritanceHandler, datatypeLibraryFactory, schematronParser);
 	}
 	
 	void map(URI base,

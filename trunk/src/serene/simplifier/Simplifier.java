@@ -114,6 +114,8 @@ import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.bind.util.DocumentIndexedData;
 
+import serene.validation.jaxp.SchematronParser;
+
 import sereneWrite.ParsedComponentWriter;
 
 import serene.Constants;
@@ -183,8 +185,11 @@ abstract class Simplifier implements SimplifyingVisitor{
 	
 	ReferenceModel referenceModel;
 		
-	Simplifier(ErrorDispatcher errorDispatcher){	
+	SchematronParser schematronParser;
+	
+	Simplifier(ErrorDispatcher errorDispatcher, SchematronParser schematronParser){	
 		this.errorDispatcher = errorDispatcher;
+		this.schematronParser = schematronParser;
 
 		builder = new SimplifiedComponentBuilder();		
 		//pcw = new ParsedComponentWriter();
@@ -198,7 +203,7 @@ abstract class Simplifier implements SimplifyingVisitor{
         
         selements = new ArrayList<SElement>();
         sattributes = new ArrayList<SAttribute>();
-        sexceptPatterns = new ArrayList<SExceptPattern>();
+        sexceptPatterns = new ArrayList<SExceptPattern>();        
 	}
 	
 	public abstract void setReplaceMissingDatatypeLibrary(boolean value);
