@@ -9,59 +9,89 @@
         <BR>
     </P>
     <P>
-        Starting with release <B>0.6.2</B>, <B>Serene</B> introduces support for 
+        Starting with release <B>0.6.2</B>, <B>Serene</B> introduced support for 
         ISO Schematron. This includes support for pure Schematron schemas, as 
         well as support for Schematron markup embedded in the RELAX NG schemas 
         and is based on the official ISO Schematron implementation for XSLT 1.0 
         and XSLT 2.0 from <A HREF="http://www.Schematron.com">http://www.Schematron.com</A>
         written by Rick Jelliffe, using the skeleton based on Oliver Becker's work.
     </P>
-    
+    <P><BR>
+    </P>
+    <H2><A NAME="schematronSchemas"/>Schematron Schemas</H2>
+    <P>
+        <BR>
+    </P>
     <P>
         Validation using pure Schematron schemas can be done through the 
         <CODE>JAXP</CODE> interface by obtaining a <CODE>Schema</CODE> object 
         from the <CODE>SchemaFactory</CODE> using the Schematron namespace URI, 
-        <CODE>http://purl.oclc.org/dsdl/schematron</CODE>. For Schematron markup 
-        embedded in the RELAX NG, the feature 
-        <CODE>http://serenerng.com/features/processEmbededSchematron</CODE> must 
+        <CODE>http://purl.oclc.org/dsdl/schematron</CODE>. 
+    </P>   
+    <P><BR>
+    </P>
+    <H2><A NAME="schematronEmbeddedInRelaxNGSchemas"/>Schematron Embedded in RELAX NG 
+    Schemas</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        In order to use Schematron markup embedded in the RELAX NG, the feature 
+        <CODE>http://serenerng.com/features/processEmbeddedSchematron</CODE> must 
         be set to <CODE>true</CODE> in the <CODE>SchemaFactory</CODE> before 
-        obtaining a <CODE>Schema</CODE> object for RELAX NG using its namespace 
+        obtaining a <CODE>Schema</CODE> object for RELAX NG, using its namespace 
         URI, <CODE>http://relaxng.org/ns/structure/1.0</CODE>. 
-    </P>   
+    </P>
     <P>
-        For embeding in RELAX NG, <B>Serene</B> supports the following Schematron 
-        elements: <CODE>schema</CODE>, <CODE>pattern</CODE>, <CODE>rule</CODE> 
-        and <CODE>diagnostics</CODE>. During parsing all the <CODE>rule</CODE> 
-        elements embedded directly in one RELAX NG document are grouped in one, 
-        internally generated, <CODE>pattern</CODE>. In a similar way, all the 
-        <CODE>pattern</CODE> elements are grouped in one <CODE>schema</CODE>. 
-        This will also contain the <CODE>diagnostics</CODE> element, if present, 
-        and will have the default query language binding, as per ISO Schematron 
-        specification. When several <CODE>schema</CODE> elements are used, they 
-        may have different query language bindings within the same RELAX NG
-        document.
-    </P>   
-    <P>
-        The extraction of the embedded elements is done during parsing by 
-        recognizing input from the Schematron namespace and dispatching SAX 
-        events to a chain of transformations usign the following stylesheets: 
-        <CODE>iso_dsdl_include.xsl</CODE>, <CODE>iso_abstract_expand.xsl</CODE> 
-        and <CODE>iso_svrl_for_xslt1.xsl</CODE>, or <CODE>iso_svrl_for_xslt2.xsl</CODE>, 
-        depending on the query binding language. One compiled Schematron schema
-        is created for every RELAX NG document. When using the RELAX NG 
-        <CODE>include</CODE> element, the Schematron markup found in any 
-        overriden definitions will not be represented in the compiled Schematron 
-        schema.
+        <B>Serene</B> supports the following Schematron elements: 
+        <CODE>schema</CODE>, <CODE>pattern</CODE>, <CODE>rule</CODE>, 
+        <CODE>diagnostics</CODE>, <CODE>ns</CODE> and <CODE>let</CODE>. During 
+        parsing all the <CODE>rule</CODE> elements embedded directly in one 
+        RELAX NG schema are grouped in one, internally generated, 
+        <CODE>pattern</CODE>. In a similar way, all the <CODE>pattern</CODE> 
+        elements are grouped in one <CODE>schema</CODE>. This will also contain 
+        the <CODE>ns</CODE>, <CODE>let</CODE> and <CODE>diagnostics</CODE> 
+        elements, if present. When a definition in a schema document is overriden 
+        using <CODE>include</CODE>, any Schematron markup present in that 
+        definition will not be part of the compiled schema. 
     </P>  
+    <P>  
+        In order to specify a query binding language for the schematron embedded
+        in RELAX NG schemas, the attribute <CODE>schematronQueryBinding</CODE>
+        from the namespace <CODE>http://serenerng.com/schematron</CODE> can be 
+        used. This must be specified on the top element of the RELAX NG schema
+        and is used for all the documents the schema comprises. The presence of 
+        this attribute on any other element, including top elements of schema 
+        documents referenced using <CODE>include</CODE> or <CODE>externalRef</CODE>
+        will have no effect. When this attribute is absent, the default query
+        binding language as per Schematron specification in used. The Schematron 
+        specification applies to the embedded Schematron <CODE>schema</CODE> 
+        elements and the query binding specified by them will be used for their 
+        content. This can be different from the one specified on the top RELAX NG
+        element.
+    </P>
+    <P><BR>
+    </P>
+    <H2><A NAME="errorHandling"/>Error Handling</H2>
     <P>
-        The validation is done by dispatching SAX events to each of the 
-        Schematron validating transformers. Error processing can be done using 
-        the JAXP <CODE>ErrorHandler</CODE>, Error messages are parsed from the 
-        SVRL documents resulted from the validating transformation for every 
-        failed assert and successful report. The information consists of pattern 
-        name, or id if any present, rule context, assert or report text, 
-        location, test and diagnostics, if any present, as seen in the following 
-        example:
+        <BR>
+    </P>
+    <P>
+        In order to be able to access all the SVRL information available for 
+        errors, the classes <CODE>serene.schematron.FailedAssertException</CODE>
+        and <CODE>serene.schematron.SuccessfulReportException</CODE> have been 
+        created. They have specific accessor methods for the SVRL information. 
+        You can either cast the exceptions caught by the 
+        <CODE>org.xml.sax.ErrorHandler</CODE>, or implement the 
+        <CODE>serene.schematron.SchematronErrorHandler</CODE> which extends it
+        for the aforementioned exception classes. 
+        See <A HREF="samples.html">Samples</A> for an example.
+    </P>        
+    <P>
+        Alternativelly, error messages parsed from the SVRL information can be 
+        obtained. The information consists of pattern name, or id if any 
+        present, rule context, assert or report text, location, test and 
+        diagnostics, if any present, as seen in the following example:
     </P>
     <P>
         <CODE>
@@ -71,6 +101,12 @@
         <BR>Test: number(bar1) + number(bar2) = number(sum).
         <BR>Diagnostics: Error_in_sum: expected 1 found 2.
         </CODE>
+    </P>       
+    <P><BR>
+    </P>
+    <H2><A NAME="schematronTesting"/>Testing</H2>
+    <P>
+        <BR>
     </P>
     <P>
         The testing has been, for the moment, limited. For running the tests 
