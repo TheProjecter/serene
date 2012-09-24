@@ -6,6 +6,10 @@
 
 This page contains general release information. See additional wiki pages for details.
 
+==Serene 0.6.3==
+
+This release adds, for the ISO Schematron implementation, support for XSLT 2.0 based on Saxon HE and improves the access to SVRL information. Also support for embedding Schematron elements ns and let in the RELAX NG schemas has been added. Some work has been done on making the RELAX NG implementation lighter and faster. 
+
 ==Serene 0.6.2==
 
 This release introduces support for ISO Schematron. Pure Schematron schemas are supported as well as Schematron markup embedded in RELAX NG schemas. 
