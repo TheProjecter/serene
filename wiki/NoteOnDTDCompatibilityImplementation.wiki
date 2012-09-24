@@ -9,7 +9,7 @@ The implementation of the DTD compatibility features is independent from the val
  * {{{serene.dtdcompatibility.AttributeIdTypeException}}} for attributes of ID-type ID, IDREF, IDREFS
  * {{{serene.dtdcompatibility.DocumentationElementException}}} for documentation elements
 
-Even when the compatibility property does not hold for one of the features, this allows the schema to still be safely used for validation and the other compatibility features.
+In order to provide direct access, without the need to cast, to those classes the interface {{{serene.dtdcompatibility.DTDCompatibilityErrorHandler}}}, extending {{{org.xml.sax.ErrorHandler}}}, has been created. Even when the compatibility property does not hold for one of the features, this allows the schema to still be safely used for validation and the other compatibility features.
 
 It is the client's responsibility to ensure that the errors are caught in an appropriate manner and the right features are set. When attempting to use an instance of {{{javax.xml.validation.ValidatorHandler}}} or {{{javax.xml.validation.Validator}}} an {{{IllegalStateException}}} is thrown if schema document contained errors that made it impossible to support a certain feature and that feature is set to true. When attempting to set to true a feature in the {{{javax.xml.validation.ValidatorHandler}}} or {{{javax.xml.validation.Validator}}} an {{{org.xml.sax.SAXNotSupportedException}}} is thrown if schema document contained errors that made it impossible to support that feature or if corresponding level 1 features were not set in the {{{javax.xml.validation.SchemaFactory}}}.
 
