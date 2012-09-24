@@ -4,7 +4,7 @@
 = Limitations =
 <br>
 
-==Serene 0.6.2==
+==Serene 0.6.3==
 
 In this stage of the development there are still some limitations:
 
@@ -96,6 +96,10 @@ The XML Schema datatypes are implemented by wrapping Apache Xerces2 Java. It com
  * Leap seconds are not supported in the values of date/time datatypes.
 
 Also in the original XML Schema recommendation, the lexical space of the simple type gMonth is --MM--. An erratum E2-12 changed that to --MM. For compatibility reasons, Xerces currently supports both forms. To align with the recommendation, the old form is deprecated, and support for that form is planed to be discontinued in a future release. 
+
+==Serene 0.6.2==
+
+All of the above.
 
 ==Serene 0.6.1==
 
