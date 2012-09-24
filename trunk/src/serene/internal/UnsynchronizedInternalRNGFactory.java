@@ -40,8 +40,8 @@ public class UnsynchronizedInternalRNGFactory extends InternalRNGFactory{
 	private UnsynchronizedInternalRNGFactory(boolean level1DocumentationElement, 
 	                                            boolean restrictToFileName, 
 	                                            boolean optimizedForResourceSharing,
-	                                            boolean processEmbededSchematron) throws DatatypeException{		
-		super(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbededSchematron);	
+	                                            boolean processEmbeddedSchematron) throws DatatypeException{		
+		super(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbeddedSchematron);	
 		
 		
 	}
@@ -49,8 +49,8 @@ public class UnsynchronizedInternalRNGFactory extends InternalRNGFactory{
 	public static InternalRNGFactory getInstance(boolean level1DocumentationElement, 
 	                                                boolean restrictToFileName, 
 	                                                boolean optimizedForResourceSharing,
-	                                                boolean processEmbededSchematron)  throws DatatypeException{
+	                                                boolean processEmbeddedSchematron)  throws DatatypeException{
 	    if(optimizedForResourceSharing) throw new IllegalStateException();
-		return new UnsynchronizedInternalRNGFactory(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbededSchematron);
+		return new UnsynchronizedInternalRNGFactory(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbeddedSchematron);
 	}	
 }

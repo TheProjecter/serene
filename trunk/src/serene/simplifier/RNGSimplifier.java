@@ -110,9 +110,9 @@ public class RNGSimplifier extends Simplifier{
         this.restrictToFileName = restrictToFileName;
         mapper.setRestrictToFileName(restrictToFileName);
     }    
-    public void setProcessEmbededSchematron(boolean processEmbededSchematron){
-        this.processEmbededSchematron = processEmbededSchematron;
-        mapper.setProcessEmbededSchematron(processEmbededSchematron);
+    public void setProcessEmbeddedSchematron(boolean processEmbeddedSchematron){
+        this.processEmbeddedSchematron = processEmbeddedSchematron;
+        mapper.setProcessEmbeddedSchematron(processEmbeddedSchematron);
     }
     
 	public void setParserComponents(XMLReader xmlReader, InternalRNGFactory internalRNGFactory){

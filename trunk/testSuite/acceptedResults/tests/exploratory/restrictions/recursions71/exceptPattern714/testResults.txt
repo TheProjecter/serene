@@ -1,0 +1,8 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\recursions71\exceptPattern714\schema.rng
+
+null:-1:-1 Restrictions 7.1.4 error. Forbiden path: 
+<rng:data> at schema.rng:30:40
+<rng:except> at schema.rng:31:33
+<rng:ref> at schema.rng:32:48

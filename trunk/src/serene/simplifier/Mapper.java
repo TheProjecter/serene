@@ -59,7 +59,7 @@ class Mapper{
 	XMLReader xmlReader;
 	InternalRNGFactory internalRNGFactory;
 	
-	boolean processEmbededSchematron;
+	boolean processEmbeddedSchematron;
 	boolean restrictToFileName;
 	
 	/*TransformerHandler schematronStartTransformerHandler;
@@ -120,12 +120,12 @@ class Mapper{
 		if(externalRefParser != null) externalRefParser.setParserComponents(xmlReader, internalRNGFactory, schematronParser);
 	}
 	
-	void setProcessEmbededSchematron(boolean processEmbededSchematron){
-	    this.processEmbededSchematron = processEmbededSchematron;
-	    grammarDefinitionsMapper.setProcessEmbededSchematron(processEmbededSchematron);
-	    if(mapper != null)mapper.setProcessEmbededSchematron(processEmbededSchematron);
+	void setProcessEmbeddedSchematron(boolean processEmbeddedSchematron){
+	    this.processEmbeddedSchematron = processEmbeddedSchematron;
+	    grammarDefinitionsMapper.setProcessEmbeddedSchematron(processEmbeddedSchematron);
+	    if(mapper != null)mapper.setProcessEmbeddedSchematron(processEmbeddedSchematron);
 	    if(externalRefParser != null){
-	        externalRefParser.setProcessEmbededSchematron(processEmbededSchematron);
+	        externalRefParser.setProcessEmbeddedSchematron(processEmbeddedSchematron);
 	        // TODO what about enabling Schematron?	        
 	    }
 	}	
@@ -174,26 +174,26 @@ class Mapper{
 		if(definitionExternalRefs.isEmpty())return;
 			
 		if(externalRefParser == null){
-		    externalRefParser = new ExternalRefParser(processEmbededSchematron, errorDispatcher);		    
+		    externalRefParser = new ExternalRefParser(processEmbeddedSchematron, errorDispatcher);		    
 		    externalRefParser.setParserComponents(xmlReader, internalRNGFactory, schematronParser); 
-		    /*if(processEmbededSchematron) externalRefParser.setSchematronParserComponents(schematronStartTransformerHandler,
+		    /*if(processEmbeddedSchematron) externalRefParser.setSchematronParserComponents(schematronStartTransformerHandler,
 	                                                            expandedSchematronResult,
 	                                                            schematronCompilerXSLT1,
 	                                                            schematronCompilerXSLT2,
 	                                                            schematronTemplatesHandler);*/
 	        externalRefParser.setRestrictToFileName(restrictToFileName);
-		    externalRefParser.setProcessEmbededSchematron(processEmbededSchematron);
+		    externalRefParser.setProcessEmbeddedSchematron(processEmbeddedSchematron);
 		}
 		if(mapper == null){
 		    mapper = new Mapper(errorDispatcher, namespaceInheritanceHandler, schematronParser);
 		    mapper.setParserComponents(xmlReader, internalRNGFactory);
-		    /*if(processEmbededSchematron)
+		    /*if(processEmbeddedSchematron)
 		        mapper.setSchematronParserComponents(schematronStartTransformerHandler,
 	                expandedSchematronResult,
 	                schematronCompilerXSLT1,
 	                schematronCompilerXSLT2,
 	                schematronTemplatesHandler);*/
-	        mapper.setProcessEmbededSchematron(processEmbededSchematron);
+	        mapper.setProcessEmbeddedSchematron(processEmbeddedSchematron);
 	        mapper.setRestrictToFileName(restrictToFileName);
 		}
 		
@@ -247,24 +247,24 @@ class Mapper{
 		if(externalRefParser == null){
 		    externalRefParser = new ExternalRefParser(errorDispatcher);
 		    externalRefParser.setParserComponents(xmlReader, internalRNGFactory);		    		    
-		    if(processEmbededSchematron) externalRefParser.setSchematronParserComponents(schematronStartTransformerHandler,
+		    if(processEmbeddedSchematron) externalRefParser.setSchematronParserComponents(schematronStartTransformerHandler,
 	                                                            expandedSchematronResult,
 	                                                            schematronCompilerXSLT1,
 	                                                            schematronCompilerXSLT2,
 	                                                            schematronTemplatesHandler);
 	        externalRefParser.setRestrictToFileName(restrictToFileName);
-		    externalRefParser.setProcessEmbededSchematron(processEmbededSchematron);
+		    externalRefParser.setProcessEmbeddedSchematron(processEmbeddedSchematron);
 		}
 		if(mapper == null){
 		    mapper = new Mapper(errorDispatcher, namespaceInheritanceHandler);
 		    mapper.setParserComponents(xmlReader, internalRNGFactory);
-		    if(processEmbededSchematron)
+		    if(processEmbeddedSchematron)
 		        mapper.setSchematronParserComponents(schematronStartTransformerHandler,
 	                expandedSchematronResult,
 	                schematronCompilerXSLT1,
 	                schematronCompilerXSLT2,
 	                schematronTemplatesHandler);
-	        mapper.setProcessEmbededSchematron(processEmbededSchematron);
+	        mapper.setProcessEmbeddedSchematron(processEmbeddedSchematron);
 	        mapper.setRestrictToFileName(restrictToFileName);
 		}
 		

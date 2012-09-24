@@ -46,16 +46,16 @@ public abstract class InternalRNGFactory{
     boolean level1DocumentationElement;
     boolean restrictToFileName;
     boolean optimizedForResourceSharing;
-    boolean processEmbededSchematron;
+    boolean processEmbeddedSchematron;
 	
 	protected InternalRNGFactory(boolean level1DocumentationElement, 
 	                                boolean restrictToFileName, 
 	                                boolean optimizedForResourceSharing,
-	                                boolean processEmbededSchematron) throws DatatypeException{
+	                                boolean processEmbeddedSchematron) throws DatatypeException{
         this.level1DocumentationElement = level1DocumentationElement;
         this.restrictToFileName = restrictToFileName;
         this.optimizedForResourceSharing = optimizedForResourceSharing;
-        this.processEmbededSchematron = processEmbededSchematron;
+        this.processEmbeddedSchematron = processEmbeddedSchematron;
 		
 		builder = new SimplifiedComponentBuilder();			
 		rngDirector = new RNGDirector(false);
@@ -74,8 +74,8 @@ public abstract class InternalRNGFactory{
         this.restrictToFileName = restrictToFileName;    
     }
     
-    public void setProcessEmbededSchematron(boolean processEmbededSchematron){
-        this.processEmbededSchematron = processEmbededSchematron;
+    public void setProcessEmbeddedSchematron(boolean processEmbeddedSchematron){
+        this.processEmbeddedSchematron = processEmbeddedSchematron;
     }
   
 	public InternalRNGSchema getInternalRNGSchema(){
@@ -89,7 +89,7 @@ public abstract class InternalRNGFactory{
                                         level1DocumentationElement,                                        
                                         restrictToFileName,
                                         optimizedForResourceSharing,
-                                        processEmbededSchematron,
+                                        processEmbeddedSchematron,
                                         sm, 
                                         pool);					
 		return schema;
@@ -102,7 +102,7 @@ public abstract class InternalRNGFactory{
                                         level1DocumentationElement,
                                         restrictToFileName,
                                         optimizedForResourceSharing,
-                                        processEmbededSchematron,
+                                        processEmbeddedSchematron,
                                         sm,
                                         pool);		
 		return schema;
@@ -115,7 +115,7 @@ public abstract class InternalRNGFactory{
                                         level1DocumentationElement,
                                         restrictToFileName,
                                         optimizedForResourceSharing,
-                                        processEmbededSchematron,
+                                        processEmbeddedSchematron,
                                         sm,
                                         pool);		
 		return schema;

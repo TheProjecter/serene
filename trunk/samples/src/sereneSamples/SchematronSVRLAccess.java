@@ -77,7 +77,7 @@ class SchematronSVRLAccess{
                 schemaFactory.setFeature(Constants.LEVEL1_ATTRIBUTE_ID_TYPE_FEATURE, true);
                 schemaFactory.setFeature(Constants.LEVEL2_ATTRIBUTE_ID_TYPE_FEATURE, true);
                 schemaFactory.setFeature(Constants.LEVEL1_DOCUMENTATION_ELEMENT_FEATURE, true);
-                schemaFactory.setFeature(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE, true);
+                schemaFactory.setFeature(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE, true);
             }catch (SAXNotRecognizedException e) {
 				e.printStackTrace();
 			}catch (SAXNotSupportedException e) {

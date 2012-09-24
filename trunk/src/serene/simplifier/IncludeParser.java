@@ -58,7 +58,7 @@ import serene.Constants;
 
 class IncludeParser{
 	boolean restrictToFileName;
-    boolean processEmbededSchematron;
+    boolean processEmbeddedSchematron;
     
     /*TransformerHandler schematronStartTransformerHandler;
     SAXResult expandedSchematronResult;
@@ -74,9 +74,9 @@ class IncludeParser{
 	
 	ErrorDispatcher errorDispatcher;
 	
-	IncludeParser(boolean processEmbededSchematron, ErrorDispatcher errorDispatcher){
+	IncludeParser(boolean processEmbeddedSchematron, ErrorDispatcher errorDispatcher){
 	    this.errorDispatcher = errorDispatcher;		
-	    this.processEmbededSchematron = processEmbededSchematron;
+	    this.processEmbeddedSchematron = processEmbeddedSchematron;
 	}
 	
 	void setRestrictToFileName(boolean restrictToFileName){
@@ -104,8 +104,8 @@ class IncludeParser{
 		
 		try{		    
             validatorHandler.setFeature(Constants.RESTRICT_TO_FILE_NAME_FEATURE, restrictToFileName);
-            validatorHandler.setFeature(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE, processEmbededSchematron);
-            if(processEmbededSchematron){
+            validatorHandler.setFeature(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE, processEmbeddedSchematron);
+            if(processEmbeddedSchematron){
                 validatorHandler.setProperty(Constants.SCHEMATRON_PARSER_PROPERTY, schematronParser);
                 /*validatorHandler.setProperty(Constants.SCHEMATRON_COMPILER_FOR_XSLT1_PROPERTY, schematronCompilerXSLT1);
                 validatorHandler.setProperty(Constants.SCHEMATRON_COMPILER_FOR_XSLT2_PROPERTY, schematronCompilerXSLT2);
@@ -120,12 +120,12 @@ class IncludeParser{
         }
 	}
 	
-	void setProcessEmbededSchematron(boolean processEmbededSchematron){
-	    if(this.processEmbededSchematron != processEmbededSchematron){
-	        this.processEmbededSchematron = processEmbededSchematron;
+	void setProcessEmbeddedSchematron(boolean processEmbeddedSchematron){
+	    if(this.processEmbeddedSchematron != processEmbeddedSchematron){
+	        this.processEmbeddedSchematron = processEmbeddedSchematron;
 	        if(validatorHandler != null){
                 try{
-                    validatorHandler.setFeature(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE, processEmbededSchematron);
+                    validatorHandler.setFeature(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE, processEmbeddedSchematron);
                 }catch (SAXNotRecognizedException e) {
                     e.printStackTrace();
                 }catch (SAXNotSupportedException e) {

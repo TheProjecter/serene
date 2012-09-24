@@ -58,7 +58,7 @@ import serene.Constants;
 
 class ExternalRefParser{
     boolean restrictToFileName;
-    boolean processEmbededSchematron;
+    boolean processEmbeddedSchematron;
     
     /*TransformerHandler schematronStartTransformerHandler;
     SAXResult expandedSchematronResult;
@@ -73,9 +73,9 @@ class ExternalRefParser{
 	
 	ErrorDispatcher errorDispatcher;
 	
-	ExternalRefParser(boolean processEmbededSchematron, ErrorDispatcher errorDispatcher){
+	ExternalRefParser(boolean processEmbeddedSchematron, ErrorDispatcher errorDispatcher){
 	    this.errorDispatcher = errorDispatcher;		
-	    this.processEmbededSchematron = processEmbededSchematron;
+	    this.processEmbeddedSchematron = processEmbeddedSchematron;
 	}
 	
 	void setRestrictToFileName(boolean restrictToFileName){
@@ -102,8 +102,8 @@ class ExternalRefParser{
 		validatorHandler.setErrorHandler(errorDispatcher);
 		try{		    
             validatorHandler.setFeature(Constants.RESTRICT_TO_FILE_NAME_FEATURE, restrictToFileName);
-            validatorHandler.setFeature(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE, processEmbededSchematron);
-            if(processEmbededSchematron){
+            validatorHandler.setFeature(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE, processEmbeddedSchematron);
+            if(processEmbeddedSchematron){
                 validatorHandler.setProperty(Constants.SCHEMATRON_PARSER_PROPERTY, schematronParser);
                 /*validatorHandler.setProperty(Constants.SCHEMATRON_COMPILER_FOR_XSLT1_PROPERTY, schematronCompilerXSLT1);
                 validatorHandler.setProperty(Constants.SCHEMATRON_COMPILER_FOR_XSLT2_PROPERTY, schematronCompilerXSLT2);
@@ -118,12 +118,12 @@ class ExternalRefParser{
         }
 	}
 	
-	void setProcessEmbededSchematron(boolean processEmbededSchematron){
-	    if(this.processEmbededSchematron != processEmbededSchematron){
-	        this.processEmbededSchematron = processEmbededSchematron;
+	void setProcessEmbeddedSchematron(boolean processEmbeddedSchematron){
+	    if(this.processEmbeddedSchematron != processEmbeddedSchematron){
+	        this.processEmbeddedSchematron = processEmbeddedSchematron;
 	        if(validatorHandler != null){
                 try{
-                    validatorHandler.setFeature(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE, processEmbededSchematron);
+                    validatorHandler.setFeature(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE, processEmbeddedSchematron);
                 }catch (SAXNotRecognizedException e) {
                     e.printStackTrace();
                 }catch (SAXNotSupportedException e) {
@@ -195,7 +195,7 @@ class ExternalRefParser{
 	
 	
 	ParsedModel parse(URI uri, List<Templates> schematronTemplates){
-	    if(!processEmbededSchematron) throw new IllegalStateException();
+	    if(!processEmbeddedSchematron) throw new IllegalStateException();
 		xmlReader.setContentHandler(validatorHandler);
         try{
             /*validatorHandler.setProperty(Constants.SCHEMATRON_TEMPLATES_PROPERTY, schematronTemplates);*/

@@ -125,7 +125,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	String currentDatatypeLibrary;
 	
 	boolean replaceMissingDatatypeLibrary;
-    boolean processEmbededSchematron;
+    boolean processEmbeddedSchematron;
 	boolean restrictToFileName;
 	
 	/*TransformerHandler schematronStartTransformerHandler;
@@ -161,8 +161,8 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
         this.restrictToFileName = restrictToFileName;
     }
     
-    void setProcessEmbededSchematron(boolean processEmbededSchematron){
-        this.processEmbededSchematron = processEmbededSchematron;
+    void setProcessEmbeddedSchematron(boolean processEmbeddedSchematron){
+        this.processEmbeddedSchematron = processEmbeddedSchematron;
     }
     
     void setParserComponents(XMLReader xmlReader, InternalRNGFactory internalRNGFactory){
@@ -331,7 +331,7 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 		
         IncludedParsedModel includedModel = null;
         
-        if(processEmbededSchematron){
+        if(processEmbeddedSchematron){
             includedModel = parse(hrefURI, currentContextDefinitions);
         }else{
             includedModel = parse(hrefURI);
@@ -363,8 +363,8 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
         if(dtdMapping != null) simplificationContext.merge(dtdMapping);	
 		
 		Map<Grammar, Map<String, ArrayList<Definition>>> grammarDefinitions = new HashMap<Grammar, Map<String, ArrayList<Definition>>>();
-		// Maps Definitions to the Grammars embeded in them.
-		// Used to stop the grammars embeded in definitions that have been 
+		// Maps Definitions to the Grammars embedded in them.
+		// Used to stop the grammars embedded in definitions that have been 
 		// overriden to be taken over in this.grammarDefinitions.
 		// The top grammar(includedGrammar) is not recorded here.(no null key)		
 		Map<Definition, ArrayList<Grammar>> definitionGrammars = new HashMap<Definition, ArrayList<Grammar>>();
@@ -403,29 +403,29 @@ class GrammarDefinitionsMapper implements SimplifyingVisitor{
 	
 	private IncludedParsedModel parse(URI hrefURI){
 		if(includeParser == null){
-		    includeParser = new IncludeParser(processEmbededSchematron, errorDispatcher);
+		    includeParser = new IncludeParser(processEmbeddedSchematron, errorDispatcher);
 		    includeParser.setParserComponents(xmlReader, internalRNGFactory, schematronParser);
-		    /*if(processEmbededSchematron)includeParser.setSchematronParserComponents(schematronStartTransformerHandler,
+		    /*if(processEmbeddedSchematron)includeParser.setSchematronParserComponents(schematronStartTransformerHandler,
 	                                                            expandedSchematronResult,
 	                                                            schematronCompilerXSLT1,
 	                                                            schematronCompilerXSLT2,
 	                                                            schematronTemplatesHandler);*/
 		    includeParser.setRestrictToFileName(restrictToFileName);
-		    includeParser.setProcessEmbededSchematron(processEmbededSchematron);		    
+		    includeParser.setProcessEmbeddedSchematron(processEmbeddedSchematron);		    
 		}
 		return includeParser.parse(hrefURI);		
 	}
 	private IncludedParsedModel parse(URI hrefURI, Map<String, ArrayList<Definition>> overrideDefinitions){
 		if(includeParser == null){
-		    includeParser = new IncludeParser(processEmbededSchematron, errorDispatcher);
+		    includeParser = new IncludeParser(processEmbeddedSchematron, errorDispatcher);
 		    includeParser.setParserComponents(xmlReader, internalRNGFactory, schematronParser);
-		    /*if(processEmbededSchematron)includeParser.setSchematronParserComponents(schematronStartTransformerHandler,
+		    /*if(processEmbeddedSchematron)includeParser.setSchematronParserComponents(schematronStartTransformerHandler,
 	                                                            expandedSchematronResult,
 	                                                            schematronCompilerXSLT1,
 	                                                            schematronCompilerXSLT2,
 	                                                            schematronTemplatesHandler);*/
 		    includeParser.setRestrictToFileName(restrictToFileName);
-		    includeParser.setProcessEmbededSchematron(processEmbededSchematron);		    
+		    includeParser.setProcessEmbeddedSchematron(processEmbeddedSchematron);		    
 		}
 		return includeParser.parse(hrefURI, overrideDefinitions/*, schematronTemplates*/);		
 	}
