@@ -371,7 +371,7 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
 	public void setDocumentLocator(Locator locator){
 		this.locator = locator;
         if(!documentContext.isBaseURISet())documentContext.setBaseURI(locator.getSystemId());
-        schematronParser.setDocumentLocator(locator);
+        if(processEmbededSchematron)schematronParser.setDocumentLocator(locator);
     }
 	public void characters(char[] chars, int start, int length)throws SAXException{
 		characterContentDescriptor.add(chars, start, length, locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
@@ -383,12 +383,12 @@ class InternalIncludeValidatorHandler extends BoundValidatorHandler{
 		
 		documentContext.startPrefixMapping(prefix, uri);
 		
-		/*if(processEmbededSchematron && isQLBSupported  && !isOverridden && schematronDepth > 0)*/schematronParser.startPrefixMapping(prefix, uri);
+		if(processEmbededSchematron /*&& isQLBSupported  && !isOverridden && schematronDepth > 0*/)schematronParser.startPrefixMapping(prefix, uri);
 	}
 	public void endPrefixMapping(String prefix) throws SAXException{
 		documentContext.endPrefixMapping(prefix);
 		
-		/*if(processEmbededSchematron && isQLBSupported  && !isOverridden && schematronDepth > 0)*/schematronParser.endPrefixMapping(prefix);
+		if(processEmbededSchematron /*&& isQLBSupported  && !isOverridden && schematronDepth > 0*/)schematronParser.endPrefixMapping(prefix);
 	}	
 	public void startElement(String namespaceURI, 
 							String localName, 

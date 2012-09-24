@@ -119,6 +119,23 @@ limitations under the License.
            <filelist dir="${source.dir}/serene/dtdcompatibility/datatype"
                     files="org.relaxng.datatype.DatatypeLibraryFactory"/>
         </concat>
+        
+        <copy file="./isoSchematronImpl/iso_abstract_expand.xsl"
+            tofile="${buildPack.dir}/iso_abstract_expand.xsl"/>
+        <copy file="./isoSchematronImpl/iso_dsdl_include.xsl"
+            tofile="${buildPack.dir}/iso_dsdl_include.xsl"/>
+        <copy file="./isoSchematronImpl/iso_schematron_message.xsl"
+            tofile="${buildPack.dir}/iso_schematron_message.xsl"/>
+        <copy file="./isoSchematronImpl/iso_schematron_message_xslt2.xsl"
+            tofile="${buildPack.dir}/iso_schematron_message_xslt2.xsl"/>
+        <copy file="./isoSchematronImpl/iso_schematron_skeleton_for_saxon.xsl"
+            tofile="${buildPack.dir}/iso_schematron_skeleton_for_saxon.xsl"/>
+        <copy file="./isoSchematronImpl/iso_schematron_skeleton_for_xslt1.xsl"
+            tofile="${buildPack.dir}/iso_schematron_skeleton_for_xslt1.xsl"/>
+        <copy file="./isoSchematronImpl/iso_svrl_for_xslt1.xsl"
+            tofile="${buildPack.dir}/iso_svrl_for_xslt1.xsl"/>
+        <copy file="./isoSchematronImpl/iso_svrl_for_xslt2.xsl"
+            tofile="${buildPack.dir}/iso_svrl_for_xslt2.xsl"/>
     </target>
     
     <target name="packSerene" depends="prepareForSerene" description="Create jar file ${intLib.dir}/serene.jar">

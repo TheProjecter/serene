@@ -6,12 +6,14 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.SAXNotRecognizedException;
 
 import serene.datatype.MissingLibraryException;
+import serene.datatype.DatatypeErrorHandler;
 
 import serene.dtdcompatibility.AttributeDefaultValueException;
 import serene.dtdcompatibility.AttributeIdTypeException;
 import serene.dtdcompatibility.DocumentationElementException;
+import serene.dtdcompatibility.DTDCompatibilityErrorHandler;
 
-class DifferentiatedErrorHandler implements ErrorHandler{
+class DifferentiatedErrorHandler implements DTDCompatibilityErrorHandler, DatatypeErrorHandler{
     boolean hasError;
     boolean hasUnrecoverableError;
     boolean hasMissingDatatypeLibraryError;
@@ -37,7 +39,7 @@ class DifferentiatedErrorHandler implements ErrorHandler{
 	
 	public void error(SAXParseException exception) throws SAXException{
         System.out.println("ERROR");
-        if(exception instanceof MissingLibraryException){
+        /*if(exception instanceof MissingLibraryException){
             error((MissingLibraryException)exception);
         }else if(exception instanceof AttributeDefaultValueException){
             error((AttributeDefaultValueException)exception);
@@ -45,11 +47,11 @@ class DifferentiatedErrorHandler implements ErrorHandler{
             error((AttributeIdTypeException)exception);
         }else if(exception instanceof DocumentationElementException){
             error((DocumentationElementException)exception);
-        }else{
+        }else{*/
             System.out.println(exception.getMessage());
             hasError = true;
             hasUnrecoverableError = true;
-        }
+        /*}*/
     }
 	public void error(MissingLibraryException exception) throws SAXException{
         System.out.println("MISSING DATATYPE LIBRARY ERROR");

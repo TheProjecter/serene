@@ -77,7 +77,12 @@ public class XmlnsAugmentingValidation{
 		debugErrorHandler.print("*SCHEMA "+args[0]);
 				
 		//schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		schemaFactory = new RNGSchemaFactory();
+		try{
+		    schemaFactory = new RNGSchemaFactory();
+		}catch(SAXException e){
+		    e.printStackTrace();
+			return;
+		}
 		
 		try{	
 			schema = schemaFactory.newSchema(new File(args[0]));

@@ -24,28 +24,38 @@ import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.SourceLocator;
 
-import serene.SereneRecoverableException;
+import serene.RecoverableException;
 
+import serene.datatype.DatatypeErrorHandler;
 import serene.datatype.MissingLibraryException;
 
-import serene.dtdcompatibility.DTDCompatibilityException;
+import serene.dtdcompatibility.DTDCompatibilityErrorHandler;
 import serene.dtdcompatibility.AttributeDefaultValueException;
 import serene.dtdcompatibility.AttributeIdTypeException;
 import serene.dtdcompatibility.DocumentationElementException;
+
+import serene.schematron.SchematronErrorHandler;
+import serene.schematron.FailedAssertException;
+import serene.schematron.SuccessfulReportException;
 
 import serene.validation.handlers.content.util.InputStackDescriptor;
 
 import sereneWrite.FileHandler;
 
-public class ErrorDispatcher implements ErrorHandler, ErrorListener{
+public class ErrorDispatcher implements ErrorHandler,                                
+                                ErrorListener, 
+                                DatatypeErrorHandler,
+                                DTDCompatibilityErrorHandler,
+                                SchematronErrorHandler{
 	
 	ErrorHandler errorHandler;
-    ErrorDispatcher errorDispatcher;
+    DatatypeErrorHandler datatypeErrorHandler;
+    DTDCompatibilityErrorHandler dtdCompatibilityErrorHandler;
+    SchematronErrorHandler schematronErrorHandler;
     
     boolean hasError = false;
 	boolean hasUnrecoverableError = false;
     boolean hasMissingDatatypeLibraryError = false;
-    boolean hasDTDCompatibilityError = false;
     boolean hasAttributeDefaultValueError = false;
     boolean hasAttributeIdTypeError = false;
     boolean hasDocumentationElementError = false;
@@ -57,7 +67,6 @@ public class ErrorDispatcher implements ErrorHandler, ErrorListener{
 		hasError = false;
         hasUnrecoverableError = false;
         hasMissingDatatypeLibraryError = false;
-        hasDTDCompatibilityError = false;
         hasAttributeDefaultValueError = false;
         hasAttributeIdTypeError = false;
         hasDocumentationElementError = false;
@@ -65,84 +74,79 @@ public class ErrorDispatcher implements ErrorHandler, ErrorListener{
 	
 	
 	public ErrorHandler getErrorHandler(){
-        if(errorDispatcher != null) return errorDispatcher;
 		return errorHandler;
 	}
 	
 	public void setErrorHandler(ErrorHandler errorHandler){
-        if(errorHandler instanceof ErrorDispatcher){
-            setErrorDispatcher((ErrorDispatcher)errorHandler);
-        }else{
-            this.errorHandler = errorHandler;
-            errorDispatcher = null;
+	    this.errorHandler = errorHandler;
+        if(errorHandler instanceof DatatypeErrorHandler){
+            datatypeErrorHandler = (DatatypeErrorHandler)errorHandler;
+        }
+        if(errorHandler instanceof DTDCompatibilityErrorHandler){
+            dtdCompatibilityErrorHandler = (DTDCompatibilityErrorHandler)errorHandler;
+        }
+        if(errorHandler instanceof SchematronErrorHandler){
+            schematronErrorHandler = (SchematronErrorHandler)errorHandler;
         }
 	}
-
-    public ErrorDispatcher getErrorDispatcher(){
-		return errorDispatcher;
-	}
 	
-	public void setErrorDispatcher(ErrorDispatcher errorDispatcher){
-		this.errorDispatcher = errorDispatcher;
-        errorHandler = null;
-	}
+    
     
 	public void fatalError(SAXParseException exception) throws SAXException{
 		if(errorHandler != null) errorHandler.fatalError(exception);
-        else if(errorDispatcher != null) errorDispatcher.fatalError(exception);
 		hasError = true;
         hasUnrecoverableError = true;
 	}
 	
 	public void error(SAXParseException exception) throws SAXException{ 
-        if(errorHandler != null) errorHandler.error(exception);
-        else if(errorDispatcher != null) errorDispatcher.error(exception);        
+        if(errorHandler != null) errorHandler.error(exception);   
         hasError = true;
         hasUnrecoverableError = true;        
 	}
 	
-	public void error(SereneRecoverableException exception) throws SAXException{
-		if(errorHandler != null) errorHandler.error(exception);
-        else if(errorDispatcher != null) errorDispatcher.error(exception);
-        hasError = true;
-	}
-    
     public void error(MissingLibraryException exception) throws SAXException{
-        if(errorHandler != null) errorHandler.error(exception);
-        else if(errorDispatcher != null) errorDispatcher.error(exception);
+        if(datatypeErrorHandler != null) datatypeErrorHandler.error(exception);
+        else if(errorHandler != null) errorHandler.error(exception);
         hasError = true;
         hasMissingDatatypeLibraryError = true;
     }
-    
-    public void error(DTDCompatibilityException exception) throws SAXException{
-		if(errorHandler != null) errorHandler.error(exception);
-        else if(errorDispatcher != null) errorDispatcher.error(exception);
-        hasError = true;
-        hasDTDCompatibilityError = true;
-	}
-    
+        
     public void error(AttributeDefaultValueException exception) throws SAXException{
-		if(errorHandler != null) errorHandler.error((AttributeDefaultValueException)exception);
-        else if(errorDispatcher != null) errorDispatcher.error(exception);
+		if(dtdCompatibilityErrorHandler != null) dtdCompatibilityErrorHandler.error(exception);
+        else if(errorHandler != null) errorHandler.error(exception);
         hasError = true;
         hasAttributeDefaultValueError = true;        
 	}
     public void error(AttributeIdTypeException exception) throws SAXException{
-		if(errorHandler != null) errorHandler.error(exception);
-        else if(errorDispatcher != null) errorDispatcher.error(exception);
+		if(dtdCompatibilityErrorHandler != null) dtdCompatibilityErrorHandler.error(exception);
+        else if(errorHandler != null) errorHandler.error(exception);
         hasError = true;
         hasAttributeIdTypeError = true;        
 	}
     public void error(DocumentationElementException exception) throws SAXException{
-		if(errorHandler != null) errorHandler.error(exception);
-        else if(errorDispatcher != null) errorDispatcher.error(exception);
+		if(dtdCompatibilityErrorHandler != null) dtdCompatibilityErrorHandler.error(exception);
+        else if(errorHandler != null) errorHandler.error(exception);
         hasError = true;
         hasDocumentationElementError = true;        
+	}
+	
+	
+	public void error(FailedAssertException exception) throws SAXException{
+		if(schematronErrorHandler != null) schematronErrorHandler.error(exception);
+        else if(errorHandler != null) errorHandler.error(exception);
+        hasError = true;
+        hasUnrecoverableError = true;
+	}
+	
+	public void error(SuccessfulReportException exception) throws SAXException{
+		if(schematronErrorHandler != null) schematronErrorHandler.error(exception);
+        else if(errorHandler != null) errorHandler.error(exception);
+        hasError = true;  
+        hasUnrecoverableError = true;
 	}
     
 	public void warning(SAXParseException exception) throws SAXException{
 		if(errorHandler != null) errorHandler.warning(exception);
-        else if(errorDispatcher != null) errorDispatcher.warning(exception);
 	}
 	
     
@@ -157,7 +161,6 @@ public class ErrorDispatcher implements ErrorHandler, ErrorListener{
 		        throw new TransformerException(e);
 		    }
 		}
-        else if(errorDispatcher != null) errorDispatcher.fatalError(exception);
 		hasError = true;
         hasUnrecoverableError = true;
 	}
@@ -171,8 +174,7 @@ public class ErrorDispatcher implements ErrorHandler, ErrorListener{
 		    }catch(SAXException e){
 		        throw new TransformerException(e);
 		    }
-		}
-        else if(errorDispatcher != null) errorDispatcher.error(exception);        
+		}   
         hasError = true;
         hasUnrecoverableError = true;        
 	}
@@ -187,7 +189,6 @@ public class ErrorDispatcher implements ErrorHandler, ErrorListener{
 		        throw new TransformerException(e);
 		    }
 		}
-        else if(errorDispatcher != null) errorDispatcher.warning(exception);
 	}
 	
     public boolean hasError(){
@@ -203,7 +204,7 @@ public class ErrorDispatcher implements ErrorHandler, ErrorListener{
     }
     
     public boolean hasDTDCompatibilityError(){
-        return hasDTDCompatibilityError;
+        return hasAttributeDefaultValueError || hasAttributeIdTypeError || hasDocumentationElementError;
     }
     
     public boolean hasAttributeDefaultValueError(){

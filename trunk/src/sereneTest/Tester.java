@@ -108,7 +108,7 @@ class Tester{
 	* - zero or more documents called document[n].xml where [n] stands for a natural
 	* number greater than 0.
 	*/
-	public void test(String sourceDirName, String xmlFileName, String destinationDirName, String resultsDestinationFileName){				
+	public void test(String sourceDirName, String xmlFileName, String destinationDirName, String resultsDestinationFileName) throws SAXException{				
 		File sourceDir = new File(sourceDirName);		
 		if(!sourceDir.isDirectory()){
 			System.out.println("NO DIRECTORY "+sourceDirName);
@@ -178,7 +178,7 @@ class Tester{
 	* - zero or more documents called document[n].xml where [n] stands for a natural
 	* number greater than 0.
 	*/
-	public void test(String sourceDirName, String destinationDirName, String resultsDestinationFileName){				
+	public void test(String sourceDirName, String destinationDirName, String resultsDestinationFileName) throws SAXException{				
 		File sourceDir = new File(sourceDirName);		
 		if(!sourceDir.isDirectory()){
 			System.out.println("NO DIRECTORY "+sourceDirName);

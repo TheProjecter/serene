@@ -90,7 +90,7 @@ public class SchematronValidatorHandlerImpl extends ValidatorHandler{
 		// errorDispatcher.
 		
 	
-		svrlParser.setErrorHandler(errorDispatcher);
+		svrlParser.setErrorDispatcher(errorDispatcher);
 		
 	}
 	

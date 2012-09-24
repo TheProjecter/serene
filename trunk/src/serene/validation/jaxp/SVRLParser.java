@@ -89,7 +89,7 @@ class SVRLParser implements ContentHandler{
     SpaceCharsHandler spaceCharsHandler;
        
     Locator locator;
-    ErrorHandler errorHandler;
+    ErrorDispatcher errorDispatcher;
     
     boolean acceptLocator;
     
@@ -116,14 +116,19 @@ class SVRLParser implements ContentHandler{
         this.acceptLocator = acceptLocator;
     }
     
+    void setErrorDispatcher(ErrorDispatcher errorDispatcher){
+        this.errorDispatcher = errorDispatcher;
+    }
+        
     public ErrorHandler getErrorHandler(){
-		return errorHandler;
+		return errorDispatcher.getErrorHandler();
 	}
 	
 	public void setErrorHandler(ErrorHandler errorHandler){		
-		this.errorHandler = errorHandler;		
+		if(errorDispatcher == null) errorDispatcher = new ErrorDispatcher();
+		errorDispatcher.setErrorHandler(errorHandler);		
 	}
-	
+		
 	public void processingInstruction(String target, String data) throws SAXException{}
 	public void skippedEntity(String name) throws SAXException{}
 	public void ignorableWhitespace(char[] ch, int start, int len) throws SAXException{}
@@ -212,7 +217,7 @@ class SVRLParser implements ContentHandler{
 	}
 	
 	void reportAssertError() throws SAXException{
-	    errorHandler.error(new FailedAssertException(activePatternName,
+	    errorDispatcher.error(new FailedAssertException(activePatternName,
                     activePatternId,
                     activePatternRole,                        
                     firedRuleId,
@@ -240,7 +245,7 @@ class SVRLParser implements ContentHandler{
 	}
 	
 	void reportReportError() throws SAXException{
-	    errorHandler.error(new SuccessfulReportException(activePatternName,
+	    errorDispatcher.error(new SuccessfulReportException(activePatternName,
                     activePatternId,
                     activePatternRole,                        
                     firedRuleId,

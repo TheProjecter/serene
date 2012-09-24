@@ -18,7 +18,9 @@ package serene.dtdcompatibility;
 
 import org.xml.sax.Locator;
 
-public class DocumentationElementException extends DTDCompatibilityException{
+import serene.RecoverableException;
+
+public class DocumentationElementException extends RecoverableException{
 
 	public DocumentationElementException(String message, Locator locator){
 		super(message, locator);
