@@ -1,0 +1,35 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuiteRNGSchematron\tests\queryBinding\xslt2\twoSchemaDocs\same\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuiteRNGSchematron/tests/queryBinding/xslt2/twoSchemaDocs/same/document1.xml:14:1 Error in Schematron pattern "Numbers",  rule context "/root/foo".
+Failed assertion: "Content of <sum> must be equal to reference value 2.".
+Location: /root/foo.
+Test: number(sum) = $referenceSum.
+Diagnostics: Error_reference_sum_foo: expected 2, found 1.
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuiteRNGSchematron/tests/queryBinding/xslt2/twoSchemaDocs/same/document1.xml:14:1 Error in Schematron pattern "Numbers",  rule context "//bar".
+Failed assertion: "Content of <sum> represents the sum of the contents of <bar1> and <bar2>.".
+Location: /root/bar.
+Test: number(bar1) + number(bar2) = number(sum).
+Diagnostics: Error_in_sum_bar: expected 1 found 2.
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuiteRNGSchematron/tests/queryBinding/xslt2/twoSchemaDocs/same/document2.xml:14:1 Error in Schematron pattern "Numbers",  rule context "/root/foo".
+Failed assertion: "Content of <sum> represents the sum of the contents of <foo1> and <foo2>.".
+Location: /root/foo.
+Test: number(foo1) + number(foo2) = number(sum).
+Diagnostics: Error_in_sum_foo: expected 1, found 2.
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuiteRNGSchematron/tests/queryBinding/xslt2/twoSchemaDocs/same/document2.xml:14:1 Error in Schematron pattern "Numbers",  rule context "//bar".
+Failed assertion: "Content of <sum> must be equal to reference value 2.".
+Location: /root/bar.
+Test: number(sum) = $referenceSum.
+Diagnostics: Error_reference_sum_bar: expected 2, found 1.

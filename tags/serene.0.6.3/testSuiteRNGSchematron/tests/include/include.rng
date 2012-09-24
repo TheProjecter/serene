@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" 
+datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes" 
+xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+    <start>
+        <ref name="rootElement"/>
+    </start>
+    <define name="rootElement">
+        <element name="root">      
+            <ref name="fooElement"/>
+            <ref name="barElement"/>
+        </element>
+    </define>
+    <define name="fooElement">
+        <element name="foo">
+            <element name="foo1"><data type="int"/></element>
+            <element name="foo2"><data type="int"/></element>
+            <element name="sum"><data type="int"/></element>
+            <sch:schema queryLanguage="xslt">
+                <sch:pattern >
+                    <sch:title>Numbers</sch:title>
+                    <sch:rule context="/root/foo">
+                        <sch:assert  test="number(foo1) + number(foo2) = number(sum)" diagnostics="Error_in_sum">
+                        Content of &lt;sum&gt; represents the sum of the contents of &lt;foo1&gt; and &lt;foo2&gt;.
+                        </sch:assert>
+                    </sch:rule>
+                </sch:pattern>
+                <sch:diagnostics>
+                    <sch:diagnostic id="Error_in_sum">
+                        expected <sch:value-of select="/root/foo/foo1+/root/foo/foo2"/>
+                        found <sch:value-of select="/root/foo/sum"/>
+                    </sch:diagnostic>
+                </sch:diagnostics>
+            </sch:schema>
+        </element>
+    </define>
+    <define name="barElement">
+        <element name="bar">
+            <element name="bar1"><data type="int"/></element>
+            <element name="bar2"><data type="int"/></element>
+            <element name="sum"><data type="int"/></element>            
+            <sch:pattern>
+                <sch:title>Numbers</sch:title>
+                <sch:rule context="/root/bar">
+                    <sch:assert  test="number(bar1) + number(bar2) = number(sum)" diagnostics="Error_in_sum">
+                    Content of &lt;sum&gt; represents the sum of the contents of &lt;bar1&gt; and &lt;bar2&gt;.
+                    </sch:assert>
+                </sch:rule>
+            </sch:pattern>
+        </element>        
+    </define>
+    
+    <sch:diagnostics>
+        <sch:diagnostic id="Error_in_sum">
+            expected <sch:value-of select="/root/bar/bar1+/root/bar/bar2"/>,
+            found <sch:value-of select="/root/bar/sum"/>
+        </sch:diagnostic>
+    </sch:diagnostics>
+</grammar>

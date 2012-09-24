@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2011 Radu Cernuta 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<rng:grammar xmlns:rng="http://relaxng.org/ns/structure/1.0">	
+	<rng:start>
+		<rng:element datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+			<rng:name> root </rng:name>	
+                      
+            <!--START STRING DATATYPES-->
+            <rng:oneOrMore>
+                <rng:element name="string">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="string"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="normalizedString">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="normalizedString"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="token">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="token"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="language">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="language"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="NMTOKEN">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="NMTOKEN"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="NMTOKENS">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="NMTOKENS"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="Name">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="Name"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="NCName">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="NCName"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="ID">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="ID"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="IDREF">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="IDREF"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="IDREFS">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="IDREFS"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="ENTITY">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="ENTITY"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="ENTITIES">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="ENTITIES"/>
+                </rng:element>
+            </rng:oneOrMore>
+            <!--END STRING DATATYPES-->
+            
+            <rng:oneOrMore>
+                <rng:element name="anyURI">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="anyURI"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <!--START NUMERIC DATATYPES-->
+            <rng:oneOrMore>
+                <rng:element name="decimal">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="decimal"/>
+                </rng:element>
+            </rng:oneOrMore>
+                        
+            <rng:oneOrMore>
+                <rng:element name="integer">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="integer"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="nonPositiveInteger">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="nonPositiveInteger"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="negativeInteger">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="negativeInteger"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="nonNegativeInteger">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="nonNegativeInteger"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="positiveInteger">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="positiveInteger"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="long">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="long"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="int">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="int"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="short">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="short"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="byte">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="byte"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="unsignedLong">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="unsignedLong"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="unsignedInt">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="unsignedInt"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="unsignedShort">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="unsignedShort"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="unsignedByte">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="unsignedByte"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="float">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="float"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="double">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="double"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="boolean">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="boolean"/>
+                </rng:element>
+            </rng:oneOrMore>
+            <!--END NUMERIC DATATYPES-->
+            
+            <!--START DATE AND TIME DATATYPES-->
+            <rng:oneOrMore>
+                <rng:element name="dateTime">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="dateTime"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="date">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="date"/>
+                </rng:element>
+            </rng:oneOrMore>            
+            
+            <rng:oneOrMore>
+                <rng:element name="gYearMonth">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="gYearMonth"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="gYear">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="gYear"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="time">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="time"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="gDay">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="gDay"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="gMonthDay">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="gMonthDay"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="gMonth">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="gMonth"/>
+                </rng:element>
+            </rng:oneOrMore>
+            
+            <rng:oneOrMore>
+                <rng:element name="duration">
+                    <rng:ref name="commonAttribute"/>
+                    <rng:data type="duration"/>
+                </rng:element>
+            </rng:oneOrMore>
+            <!--END DATE AND TIME DATATYPES-->
+		</rng:element>
+	</rng:start>	
+    
+    <rng:define name="commonAttribute">
+        <rng:attribute name="type">
+            <rng:choice>
+                <rng:value type="token">correct</rng:value>
+                <rng:value type="token">incorrect</rng:value>
+            </rng:choice>
+        </rng:attribute>
+    </rng:define>    
+</rng:grammar>

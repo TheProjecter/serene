@@ -1,0 +1,1278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<TITLE>Serene 0.6.3 Documentation</TITLE>
+</HEAD>
+<BODY>
+    <H1 CLASS="western">Serene 0.6.3</H1>
+    <P>
+        <BR>
+    </P>
+    <P>
+        The <B>Serene</B> validation engine for RELAX NG is a work in progress,
+        so it contains several limitations, but in the same time it 
+        attempts to offer a validator that is functional enough to illustrate 
+        the approach to validation messages and ambiguity handling. It is primarily 
+        intended to be used as a library through the JAXP 1.3 Validation Framework 
+        API, but it can also work as a command line tool.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2>Contents</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <A HREF="#systemRequirements">System Requirements</A>
+        <BR>
+        <A HREF="#installationInstructions">Installation Instructions</A>
+    </P>
+    <P>
+        <A HREF="#releaseInformation">Release Information</A>
+        <BR>
+        <A HREF="#noteOnXmlSchemaDatatypesImplementation">Note on XML Schema Datatypes Implementation</A> 
+        <BR>
+        <A HREF="#noteOnDTDCompatibilityImplementation">Note on DTD Compatibility Implementation</A>
+        <BR>
+        <A HREF="#isoSchematronSupport">ISO Schematron Support</A>
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#schematronSchemas">Schematron Schemas</A> 
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#schematronEmbeddedInRelaxNGSchemas">Schematron Embedded in RELAX NG Schemas</A>
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#errorHandling">Error Handling</A> 
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#schematronTesting">Testing</A>
+        <BR>
+        <A HREF="#limitations">Limitations</A> 
+        <BR>
+        <A HREF="#features">Features</A>
+        <BR>       
+        <A HREF="#customDatatypeLibraries">Custom Datatype Libraries</A>
+        <BR>
+        <A HREF="#specialCharacteristics">Special Characteristics</A>
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#ambiguityAndConflictsHandling">Ambiguity and Conflicts Handling</A> 
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#messages">Messages</A>
+    </P>
+    <P>
+        <A HREF="#commandLineUsage">Command Line Usage</A> 
+        <BR>
+        <A HREF="#testing">Testing</A>
+        <BR>
+        <A HREF="#buildingTheSourceCode">Building the Source Code</A>
+        <BR>
+        <A HREF="#participating">Participating</A> 
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#mailingLists">Mailing Lists</A> 
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#issueReporting">Issue Reporting</A> 
+        <BR>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="#sourceCode">Source Code</A>
+    </P>
+    <P>
+        <A HREF="#samples">Samples</A> 
+    </P>
+    <P>
+        <A HREF="#licenseInformation">License Information</A> 
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="systemRequirements"/>System Requirements</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene 0.6.3</B> was developed and tested using Java 5.0, and this 
+        is the recommended JRE (Java Runtime Environment). Previous versions would 
+        not work, later should be fine.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="installationInstructions"/>Installation Instructions</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene 0.6.3</B> is packaged as a ZIP
+        file, you can extract the ZIP files using the Java jar tool to unpack
+        the distribution. 
+    </P>
+    <P>
+        Contents of the package:
+    </P>
+    <P>
+    <TABLE WIDTH="100%" BORDER="2" BORDERCOLOR="#000000" CELLPADDING="5" CELLSPACING="0">
+        <COL WIDTH="128">
+        <COL WIDTH="128">
+        
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>LICENSE</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>License for Serene</P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>LICENSE-SAX.html</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>SAX License</P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>LICENSE.DOM-software.html</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>W3C Software License</P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>LICENSE.jaxp.txt</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>License for the JAXP 1.3 class used 
+                </P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>NOTICE.relaxng.datatype.txt</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>Copyright notice for the org.relaxng.datatype and
+                org.relaxng.datatype.helpers packages</P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>LICENSE.xercesImpl.txt</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>License the xercesImpl.jar file used 
+                </P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>NOTICE.xercesImpl.txt</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>Notice for the xercesImpl.jar file used</P>
+            </TD>
+        </TR>    
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>saxonNotices</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>Folder containing the licenses and other notices for the 
+                Saxon HE implementation</P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>readme.html</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>HTML file containing a short description of the Serene project
+                and links to further documentation</P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>lib/</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>Directory containing the jar files.</P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>doc/</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>Directory containing the documentation files.</P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>src/</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>Directory containing the source files for Serene 0.6.3 validation
+                engine, testing tool and the org.relaxng.datatype API.</P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>testSuite/</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>Directory containing the test cases used for testing the
+                validation engine and the currently accepted error messages.</P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>samples/</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>Directory containing some samples.</P>
+            </TD>
+        </TR>
+        <TR VALIGN="TOP">
+            <TD WIDTH="50%">
+                <P>build.xml</P>
+            </TD>
+            <TD WIDTH="50%">
+                <P>Apache Ant build file.</P>
+            </TD>
+        </TR>
+    </TABLE>
+    </P>
+    <P>
+        In order to use <B>Serene 0.6.3</B> through the JAXP 1.3 Validation
+        Framework API you must place the serene.jar file in your class path
+        and preserve the original tree structure of the lib directory. If any 
+        of the jar files has been moved, you must also explicitly add it to the 
+        class path.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="releaseInformation"/>Release Information</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+         <B>Serene 0.6.3</B> adds, for the ISO Schematron implementation, 
+         support for XSLT 2.0 based on Saxon HE and improves the access to 
+         SVRL information. Also support for embedding Schematron elements ns 
+         and let in the RELAX NG schemas has been added. Some work has been done 
+         on making the RELAX NG implementation lighter and faster.
+    </P>
+    <P>
+         <B>Serene 0.6.2</B> introduces support for ISO Schematron. Pure Schematron
+         schemas are supported as well as Schematron markup embedded in RELAX NG 
+         schemas.
+    </P>
+    <P>
+         <B>Serene 0.6.1</B> has been extensively reviewed and refactored in order 
+         to improve performance. Some bugs were fixed, messages were slightly 
+         twicked, one feature was added.
+    </P> 
+    <P>
+         <B>Serene 0.6</B> concentrates on further improving message quality.
+         The accent is on error interpretation and reporting. Several bugs were 
+         fixed and a new feature added.
+    </P> 
+    <P>
+         <B>Serene 0.5.3</B> has been tested using the RELAX NG test suite. 
+         As a result, several bugs have been fixed and the handling of conflict
+         and the reporting of errors have been significantly improved.
+    </P>    
+    <P>
+         <B>Serene 0.5.2</B> introduces support for DTD compatibility adding several 
+        new features and some bug fixes. The implementation of all 
+        <CODE>javax.xml.validation.SchemaFactory</CODE> and <CODE>javax.xml.validation.Validator</CODE>
+        methods involving <CODE>javax.xml.transform.Source</CODE> and 
+        <CODE>javax.xml.transform.Result</CODE> has been reviewd.
+    </P>    
+    <P>
+        <B>Serene 0.5.1</B> sports several bug fixes and introduces support 
+        for XML Schema datatypes.
+    </P>   
+    <P>
+        <B>Serene 0.5.</B> is the initial release.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="noteOnXmlSchemaDatatypesImplementation"/>Note on XML Schema Datatypes Implementation</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        This release implements the XML Schema datatypes by wrapping Apache Xerces2 
+        Java. It comes with version 2.10.0 which has the following limitations:
+    </P>
+    <P>       
+        <UL>
+            <LI> 
+                length, minLength, and maxLength facets are limited to the value 
+                2147483647. Items larger than this limit will not be validated 
+                correctly.
+            </LI>
+
+            <LI> 
+                The values of minimum and maximum quantifiers in the pattern
+                regular expressions are limited to the value 2147483647.
+                Items larger than this limit will not be validated correctly.
+            </LI>
+            <LI>
+                The absolute values of the fraction portion of the second values
+                in date/time datatypes are limited to the value 2147483647.
+                Items larger than this limit will not be validated correctly.
+                i.e. 11.2147483648 is not supported as a second value. 
+            </LI>
+            <LI> 
+                Leap seconds are not supported in the values of date/time datatypes.
+            </LI>
+        </UL>
+    </P>
+    <P>
+        Also in the original XML Schema recommendation, the lexical space of the 
+        simple type gMonth is --MM--. An erratum E2-12 changed that to --MM. For 
+        compatibility reasons, Xerces currently supports both forms. To align with 
+        the recommendation, the old form is deprecated, and support for that form 
+        is planed to be discontinued in a future release. 
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="noteOnDTDCompatibilityImplementation"/>Note on DTD Compatibility Implementation</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        This release introduces the implementation of the DTD compatibility
+        features. The implementation is independent from the validation implementation
+        and it is possible to control which features and levels are to be processed 
+        from the command line or through the <CODE>setFeature(String name, 
+        boolean value)</CODE> methods of the JAXP validation API.    
+        Furthermore, when a schema document contains errors with impact on the 
+        DTD compatibility handling, implementations of the abstract class
+        <CODE>serene.SereneRecoverableException</CODE> extending 
+        <CODE>org.xml.sax.SAXParseException</CODE> are used, so that they can be 
+        caught separately and the features set in the 
+        <CODE>javax.xml.validation.ValidatorHandler</CODE> and
+        <CODE>javax.xml.validation.Validator</CODE> can be adjusted. Concrete 
+        implementations are:        
+    </P>
+    <P>       
+        <UL>
+            <LI> 
+                <CODE>serene.dtdcompatibility.AttributeDefaultValueException</CODE>
+                for attribute default values
+            </LI>
+            <LI> 
+                <CODE>serene.dtdcompatibility.AttributeIdTypeException</CODE>
+                for attributes of type ID, IDREF, IDREFS 
+            </LI>
+            <LI>
+                <CODE>serene.dtdcompatibility.DocumentationElementException</CODE>
+                for documentation elements 
+            </LI>
+        </UL>
+    </P>
+    <P>
+        Even when the compatibility property does not hold for one of the features, 
+        this allows the schema to still be safely used for validation and the 
+        other compatibility features.
+    </P>
+    <P>
+        It is the client's responsibility to ensure that the errors are caught in 
+        an appropriate manner and the right features are set. When attempting to 
+        create an instance of <CODE>javax.xml.validation.ValidatorHandler</CODE> or
+        <CODE>javax.xml.validation.Validator</CODE> an <CODE>IllegalStateException</CODE>
+        is thrown if schema document contained errors that made it impossible to
+        support a certain feature and that feature is set to <CODE>true</CODE>.
+        When attempting to set to <CODE>true</CODE> a feature in the 
+        <CODE>javax.xml.validation.ValidatorHandler</CODE> or
+        <CODE>javax.xml.validation.Validator</CODE> an 
+        <CODE>org.xml.sax.SAXNotSupportedException</CODE> is thrown if schema 
+        document contained errors that made it impossible to
+        support that feature or if corresponding level 1 features were not
+        set in the <CODE>javax.xml.validation.SchemaFactory</CODE>.
+    </P>
+    <P>
+        For attribute default values, the specification requires that "the value 
+        of the a:defaultValue attribute matches the pattern contained in 
+        the attribute element", but it is not clear if the soundness relation for 
+        the ID, IDREF, IDREFS should be regarded as part of the pattern. I chose 
+        to check during the compatibility property control, provided apropriate
+        features were set, if this relashionship holds, but only issue warnings.
+        The reason for this is that there are many situations where the document
+        can be correct even if the default values used in the schema would result 
+        in errors, but if error messages were to be issued, than, according to the 
+        general strategy described above, the client should have to unset the 
+        features and not continue the compatibility processing of the document for 
+        them. On the other hand it seems natural that the user gets some kind of 
+        message, especially where the ID-type is ID.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="isoSchematronSupport"/>ISO Schematron Support</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        Starting with release <B>0.6.2</B>, <B>Serene</B> introduced support for 
+        ISO Schematron. This includes support for pure Schematron schemas, as 
+        well as support for Schematron markup embedded in the RELAX NG schemas 
+        and is based on the official ISO Schematron implementation for XSLT 1.0 
+        and XSLT 2.0 from <A HREF="http://www.Schematron.com">http://www.Schematron.com</A>
+        written by Rick Jelliffe, using the skeleton based on Oliver Becker's work.
+    </P>
+    <P><BR>
+    </P>
+    <H2><A NAME="schematronSchemas"/>Schematron Schemas</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        Validation using pure Schematron schemas can be done through the 
+        <CODE>JAXP</CODE> interface by obtaining a <CODE>Schema</CODE> object 
+        from the <CODE>SchemaFactory</CODE> using the Schematron namespace URI, 
+        <CODE>http://purl.oclc.org/dsdl/schematron</CODE>. 
+    </P>   
+    <P><BR>
+    </P>
+    <H3><A NAME="schematronEmbeddedInRelaxNGSchemas"/>Schematron Embedded in RELAX NG 
+    Schemas</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        In order to use Schematron markup embedded in the RELAX NG, the feature 
+        <CODE>http://serenerng.com/features/processEmbeddedSchematron</CODE> must 
+        be set to <CODE>true</CODE> in the <CODE>SchemaFactory</CODE> before 
+        obtaining a <CODE>Schema</CODE> object for RELAX NG, using its namespace 
+        URI, <CODE>http://relaxng.org/ns/structure/1.0</CODE>. 
+    </P>
+    <P>
+        <B>Serene</B> supports the following Schematron elements: 
+        <CODE>schema</CODE>, <CODE>pattern</CODE>, <CODE>rule</CODE>, 
+        <CODE>diagnostics</CODE>, <CODE>ns</CODE> and <CODE>let</CODE>. During 
+        parsing all the <CODE>rule</CODE> elements embedded directly in one 
+        RELAX NG schema are grouped in one, internally generated, 
+        <CODE>pattern</CODE>. In a similar way, all the <CODE>pattern</CODE> 
+        elements are grouped in one <CODE>schema</CODE>. This will also contain 
+        the <CODE>ns</CODE>, <CODE>let</CODE> and <CODE>diagnostics</CODE> 
+        elements, if present. When a definition in a schema document is overriden 
+        using <CODE>include</CODE>, any Schematron markup present in that 
+        definition will not be part of the compiled schema. 
+    </P>  
+    <P>  
+        In order to specify a query binding language for the schematron embedded
+        in RELAX NG schemas, the attribute <CODE>schematronQueryBinding</CODE>
+        from the namespace <CODE>http://serenerng.com/schematron</CODE> can be 
+        used. This must be specified on the top element of the RELAX NG schema
+        and is used for all the documents the schema comprises. The presence of 
+        this attribute on any other element, including top elements of schema 
+        documents referenced using <CODE>include</CODE> or <CODE>externalRef</CODE>
+        will have no effect. When this attribute is absent, the default query
+        binding language as per Schematron specification in used. The Schematron 
+        specification applies to the embedded Schematron <CODE>schema</CODE> 
+        elements and the query binding specified by them will be used for their 
+        content. This can be different from the one specified on the top RELAX NG
+        element.
+    </P>
+    <P><BR>
+    </P>
+    <H3><A NAME="errorHandling"/>Error Handling</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        In order to be able to access all the SVRL information available for 
+        errors, the classes <CODE>serene.schematron.FailedAssertException</CODE>
+        and <CODE>serene.schematron.SuccessfulReportException</CODE> have been 
+        created. They have specific accessor methods for the SVRL information. 
+        You can either cast the exceptions caught by the 
+        <CODE>org.xml.sax.ErrorHandler</CODE>, or implement the 
+        <CODE>serene.schematron.SchematronErrorHandler</CODE> which extends it
+        for the aforementioned exception classes. 
+        See <A HREF="samples.html">Samples</A> for an example.
+    </P>        
+    <P>
+        Alternativelly, error messages parsed from the SVRL information can be 
+        obtained. The information consists of pattern name, or id if any 
+        present, rule context, assert or report text, location, test and 
+        diagnostics, if any present, as seen in the following example:
+    </P>
+    <P>
+        <CODE>
+        file:///D:/sereneProject/dev/testSuiteRNGSchematron/tests/externalRef/document1.xml:14:1 Error in Schematron pattern "Numbers",  rule context "//bar".
+        <BR>Failed assertion: "Content of &lt;sum&gt; represents the sum of the contents of &lt;bar1&gt; and &lt;bar2&gt;.".
+        <BR>Location: /root/bar.
+        <BR>Test: number(bar1) + number(bar2) = number(sum).
+        <BR>Diagnostics: Error_in_sum: expected 1 found 2.
+        </CODE>
+    </P>       
+    <P><BR>
+    </P>
+    <H3><A NAME="schematronTesting"/>Testing</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        The testing has been, for the moment, limited. For running the tests 
+        yourself, see <A HREF="testing.html">Testing</A>. 
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="limitations"/>Limitations</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        In this stage of the development there are still several important limitations:
+    </P>
+    <P>
+        <BR>
+    </P>
+    <UL>        
+        <LI>
+            <P>
+                overlapping name classes in attributes or elements in the
+                context of a <CODE>group</CODE> that has multiple cardinality and is
+                in the context of an <CODE>interleave</CODE> are not supported.
+                Example:
+            </P>
+    <PRE> 
+    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;grammar xmlns=&quot;http://relaxng.org/ns/structure/1.0&quot;&gt;
+     &lt;start&gt;
+       &lt;element name = &quot;root&quot;&gt;
+         &lt;interleave&gt;
+           &lt;oneOrMore&gt;
+               &lt;element name = &quot;aa&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+               &lt;element name = &quot;bb&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+               &lt;element name = &quot;aa&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+           &lt;/oneOrMore&gt;
+           &lt;element name = &quot;cc&quot;&gt;
+             &lt;empty/&gt;
+           &lt;/element&gt;
+         &lt;/interleave&gt;
+       &lt;/element&gt;
+     &lt;/start&gt;
+   &lt;/grammar&gt;
+   </PRE>
+           <P>
+                Attempting to use such a schema configuration would result in an
+                error message similar to those issued when a restriction rule is
+                violated.
+            </P>
+        <LI>
+            <P>
+                <CODE>group</CODE> or <CODE>interleave</CODE> with multiple
+                cardinality in the context of an <CODE>interleave</CODE> with
+                multiple cardinality are not supported. Example:
+            </P>
+    <PRE> 
+    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;grammar xmlns=&quot;http://relaxng.org/ns/structure/1.0&quot;&gt;
+     &lt;start&gt;
+       &lt;element name = &quot;root&quot;&gt;
+         &lt;oneOrMore&gt;
+           &lt;interleave&gt;
+             &lt;oneOrMore&gt;
+               &lt;element name = &quot;aa&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+               &lt;element name = &quot;bb&quot;&gt;
+                 &lt;empty/&gt;
+               &lt;/element&gt;
+             &lt;/oneOrMore&gt;
+             &lt;element name = &quot;cc&quot;&gt;
+               &lt;empty/&gt;
+             &lt;/element&gt;
+           &lt;/interleave&gt;
+         &lt;/oneOrMore&gt;
+       &lt;/element&gt;
+     &lt;/start&gt;
+   &lt;/grammar&gt;
+   </PRE>
+           <P>
+                Attempting to use such a schema configuration would result in an
+                error message similar to those issued when a restriction rule is
+                violated.
+            </P>
+        <LI>
+            <P>
+                <CODE>empty</CODE> in the context of <CODE>attribute</CODE>
+                is not supported. Example:
+            </P>
+    <PRE> 
+    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+    &lt;grammar xmlns=&quot;http://relaxng.org/ns/structure/1.0&quot;&gt;
+     &lt;start&gt;
+       &lt;element name = &quot;root&quot;&gt;         
+         &lt;attribute name = &quot;attribute&quot;&gt;
+           &lt;empty/&gt;
+         &lt;/attribute&gt;
+       &lt;/element&gt;
+     &lt;/start&gt;
+   &lt;/grammar&gt;
+   </PRE>
+           <P>
+            Attempting to use such a schema configuration would result in an
+            error message similar to those issued when a restriction rule is
+            violated.
+            </P>
+        <LI>
+            <P>
+                compact syntax is not supported.
+            </P>        
+    </UL>
+    <P>
+        <BR>
+    </P>        
+    <H2><A NAME="features"/>Features</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        The features implemented by <B>Serene 0.6.3</B> are:
+    </P>
+    <P>
+        <CODE><B>http://xml.org/sax/features/namespace-prefixes</B></CODE>
+    </P>
+    <P>
+        As per <CODE>javax.xml.validation.ValidatorHandler</CODE>
+        contract, this feature controls how a ValidatorHandler introduces
+        namespace bindings that were not present in the original SAX event
+        stream. When this feature is set to <CODE>true</CODE>, it must make
+        sure that the user's <CODE>ContentHandler</CODE> will see the
+        corresponding <CODE>xmlns*</CODE> attribute in the <CODE>Attributes</CODE>
+        object of the <CODE>ContentHandler.startElement(String,String,String,Attributes)</CODE>
+        callback. Otherwise, <CODE>xmlns*</CODE> attributes must not be added
+        to <CODE>Attributes</CODE> that's passed to the user-specified
+        <CODE>ContentHandler</CODE>. By default it is set to <CODE>false</CODE>.
+        See <A HREF="#samples">samples</A> for an example.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
+        which, when set to <CODE>true</CODE>, makes sure that any unrecognized or 
+        unsupported datatype library is replaced with the RELAX NG native datatype 
+        library and any datatype from that library is replaced with the <CODE>
+        token</CODE> datatype. By default it is set to <CODE>false</CODE>.    
+    </P>
+    <P>
+        Since <CODE>javax.xml.validation.SchemaFactory</CODE> specification requires 
+        that a non-null <CODE>javax.xml.validation.Schema</CODE> object must be 
+        returned every time regardless whether errors occurred or not during parsing, 
+        and it is the client's responsibility to make sure the returned schema object
+        is usable, <B>Serene</B> uses the abstract class 
+        <CODE>serene.SereneRecoverableException</CODE> which extends
+        <CODE>org.xml.sax.SAXParseException</CODE> and allows to report detected 
+        errors, but in the same time also signal the client when an error
+        was recovered from and the schema object returned is meaningful. In
+        this case the implementing class is <CODE>serene.datatype.MissingLibraryException</CODE>.
+        See <A HREF="#samples">samples</A> for an example.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features//schemaFactory/features/parsedModelSchema</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
+        which, when set to <CODE>true</CODE>, ensures that a reference to the initial 
+        unsimplified parsed schema model is kept in the <CODE>javax.xml.validation.Schema</CODE>. 
+        When set to <CODE>false</CODE>, the parsed model instance is discarded and the
+        memory freed. By default it is set to <CODE>false</CODE>.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/attributeDefaultValue</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
+        which, when set to <CODE>true</CODE>, ensures that the attribute default values
+        present in the schema document are parsed, simplified and it is checked if
+        the <I>compatibility</I> property holds for them. By default it is set to 
+        <CODE>false</CODE>.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/attributeIdType</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>,
+        <CODE>javax.xml.validation.ValidatorHandler</CODE> and <CODE>javax.xml.validation.Validator</CODE>        
+        which, when set to <CODE>true</CODE>, ensures that the ID, IDREF, IDREFS 
+        datatypes from the DTD compatibility datatype library present in the 
+        schema document are parsed, simplified and it is checked if the 
+        <I>compatibility</I> property and the <I>soundness</I> relation hold for them. 
+        By default it is set to <CODE>false</CODE>.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/documentationElement</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>
+        which, when set to <CODE>true</CODE>, ensures that, for the documentation
+        elements present in the schema document, it is checked if the <I>compatibility</I> 
+        property holds. By default it is set to <CODE>false</CODE>.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level2/attributeDefaultValue</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.ValidatorHandler</CODE>
+        and <CODE>javax.xml.validation.Validator</CODE>. It is also recognized by the 
+        <CODE>javax.xml.validation.SchemaFactory</CODE> and transmited further throught 
+        the <CODE>javax.xml.validation.Schema</CODE> objects created. When set to 
+        <CODE>true</CODE>, it ensures that the infoset is modified according to the 
+        document input and the attribute default values present in the schema. By 
+        default it is set to <CODE>false</CODE>.
+    </P>
+    <P> 
+        When this feature is set to <CODE>true</CODE> in the 
+        <CODE>javax.xml.validation.SchemaFactory</CODE>, internally also the  
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/attributeDefaultValue</B></CODE>
+        feature is set to <CODE>true</CODE>, so that the necessary internal model is 
+        built from the schema document. When this feature is set to <CODE>true</CODE> 
+        in the <CODE>javax.xml.validation.ValidatorHandler</CODE>, or 
+        <CODE>javax.xml.validation.Validator</CODE>, controls are performed to 
+        ensure that the necessary internal model is present and correct.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level2/attributeIdType</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.ValidatorHandler</CODE>
+        and <CODE>javax.xml.validation.Validator</CODE>. It is also recognized by the 
+        <CODE>javax.xml.validation.SchemaFactory</CODE> and transmited further throught 
+        the <CODE>javax.xml.validation.Schema</CODE> objects created. When set to 
+        <CODE>true</CODE>, it ensures that the infoset is modified according to the 
+        document input and the ID, IDREF, IDREFS attributes present in the schema. 
+        By default it is set to <CODE>false</CODE>.
+    </P>
+    <P> 
+        When this feature is set to <CODE>true</CODE> in the 
+        <CODE>javax.xml.validation.SchemaFactory</CODE>, internally also the  
+        <CODE><B>http://serenerng.org/features/DTDCompatibility/level1/attributeIdType</B></CODE>
+        feature is set to <CODE>true</CODE>, so that the necessary internal model is 
+        built from the schema document. When this feature is set to <CODE>true</CODE> 
+        in the <CODE>javax.xml.validation.ValidatorHandler</CODE>, or 
+        <CODE>javax.xml.validation.Validator</CODE>, controls are performed to 
+        ensure that the necessary internal model is present and correct.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.org/features/restrictToFileName</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>,
+        <CODE>javax.xml.validation.ValidatorHandler</CODE> and <CODE>javax.xml.validation.Validator</CODE>        
+        which, when set to <CODE>true</CODE>, ensures that the location information in the error
+        messages contains only the file name and not the full path URI for better readability. 
+        It only has effect on the error message text and does not influence the location information 
+        passed to the <CODE>SAXParseException</CODE>. By default it is set to <CODE>true</CODE>.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.com/features/optimizeForResourceSharing</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>               
+        which, when set to <CODE>true</CODE>, ensures that common internal resources are
+        created for and shared by all the threads. It should improve performance in an environement 
+        with several threads validating alternativelly. Due to synchronization envolved it 
+        should be used carefully. By default it is set to <CODE>false</CODE>.
+    </P>
+    <P>
+        <CODE><B>http://serenerng.com/features/processEmbeddedSchematron</B></CODE>
+    </P>
+    <P>
+        This is a <B>Serene</B> feature for the <CODE>javax.xml.validation.SchemaFactory</CODE>               
+        which, when set to <CODE>true</CODE>, ensures that ISO Schematron markup embedded in 
+        RELAX NG schemas is processed and the resulting <CODE>javax.xml.validation.Schema</CODE> 
+        instances will produce <CODE>javax.xml.validation.ValidatorHandler</CODE> and
+        <CODE>javax.xml.validation.Validator</CODE> objects which will apply the Schematron 
+        rules. By default it is set to <CODE>false</CODE>.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="customDatatypeLibraries"/>Custom Datatype Libraries</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene 0.6.3 </B>supports the vendor independent API for RELAX NG datatype 
+        libraries developed by James Clark and Kohsuke Kawaguchi, 
+        <CODE>org.relaxng.datatypes</CODE>, so you can create your own libraries, 
+        pack them as jar files adding the necessary 
+        <CODE>META-INF/services/org.relaxng.datatype.DatatypeLibraryFactory</CODE>
+        file containing the names of your service providers for the 
+        <CODE>org.relaxng.datatype.DatatypeLibraryFactory</CODE> service, add them 
+        in the classpath, and they will be found dynamically at runtime.        
+        See <A HREF="#samples">samples</A> for an example.
+    </P>
+    <P>
+        External datatypes may use <CODE>param</CODE> elements, but it is their 
+        responsibility to implement the 
+        <A HREF="http://relaxng.org/spec-20011203.html#constraints">
+        Relax NG Simplification 4.16.Constraints</A> rule. 
+        See <A HREF="#samples">samples</A> source code for an example.   
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="specialCharacteristics"/>Special Characteristics</H2>
+    <P>
+        <BR>
+    </P>
+    <P>There are two areas <B>Serene</B>
+    is mainly concentrating on: the ambiguity and conflicts handling, and
+    the validation messages.</P>
+    <P><BR>
+    </P>
+    <H3><A NAME="ambiguityAndConflictsHandling"/>Ambiguity and Conflicts Handling</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        The type conflict of most interest is that where two or more schema 
+        definitions could apply to one document input occurrence in a certain 
+        context. The different candidate definitions are processed parallely and
+        are disqualified according to the errors they present. The terms used in 
+        <B>Serene</B> to describe the conflict resolution state are:
+        <UL>
+            <LI>
+                <P>
+                    <B>resolved</B> when all the candidate definitions but one 
+                    have been disqualified
+                </P>
+            <LI>
+                <P>
+                    <B>ambiguous</B> when there are several qualified candidates              
+                </P>
+            <LI>
+                <P>
+                    <B>unresolved</B> when all the candidates are disqualified
+                </P>
+        </UL>
+    </P>
+    <P>
+        The stages in the resolving of the an xml document occurrence with 
+        respect to the corresponding RELAX NG schema patterns are:
+        <BR>
+        <UL>
+            <LI>
+                <P>
+                    <B>initial matching</B> consists of the matching of an input element
+                    or attribute's name to the name class corresponding to one of the 
+                    definitions allowed by the schema in the respective context. Since 
+                    characters definition patterns (text, data, value, list) do not 
+                    have a name, in this stage, all the characters patterns defined 
+                    within a context are considered a match. For all types of input, 
+                    when no matches have been found, the input is interpreted as 
+                    unexpected or unknown in the context. In <B>ambiguous</B> states
+                    all candidates go to the next stage.
+                </P>
+            <LI>
+                <P>
+                    <B>pattern matching</B> consists of matching of a schema pattern 
+                    to the corresponding occurrence in the document based on the 
+                    content, this is done at the level of element definition pattern, 
+                    attribute definition pattern, characters definition pattern 
+                    (in <B>Serene</B> characters strings are considered to have a 
+                    structure since some patterns may contain <CODE>group</CODE>,
+                    <CODE>oneOrMore</CODE> etc). For improved message quality, it
+                    takes place in two steps: first only errors of the immediate 
+                    children are taken in account for disqualifying, if at the end 
+                    of content validation ambiguity is still present, errors of 
+                    the entire subtree are considered, this step favours 
+                    <B>ambiguous</B> over <B>unresolved</B> states. When, at the 
+                    end, the resolution state is <B>unresolved</B>, all candidates 
+                    go to the next stage. In <B>ambiguous</B> and <B>resolved</B> 
+                    states, depending on the resolution strategy, either all 
+                    candidates go to the next stage, or only the qualified ones.                    
+                </P>
+            <LI>
+                <P>
+                    <B>in context handling</B> consists of handling of an
+                    occurrence as part of the parent's context.
+                </P>
+        </UL>
+    </P>
+    <P>
+        With the <B>Serene 0.6</B> release, the integration of the conflict 
+        resolution stages is introduced. This delays the error reporting until 
+        the end of conflict handling and ensures that the different stages do not
+        generate separate messages any more. The main improvement is for the 
+        cases where after <B>pattern matching</B> the conflict is <B>unresolved</B>, 
+        but the <B>in context handling</B> eventually resolves it to one 
+        definition. In those cases the only error messages that get reported now 
+        are those of the winner definition and the corresponding subtree, as 
+        opposed to an unresolved content error message previously.
+    </P>
+    <P>
+        When integrating the handling of element, attribute and list token 
+        conflicts the strategy used is one that gives priority to the content 
+        over context. For element character content and attribute value other 
+        than list tokens the context has priority over content. When reporting 
+        element conflict errors the richness of information is favoured, for 
+        attribute, element character content and attribute value, which have a 
+        much simpler structure, readability is favoured over richness of 
+        information, so the details of the <B>pattern matching</B> errors are not 
+        reported. Moreover, in the later cases, warnings are only issued for 
+        trully <B>ambiguous</B> occurrences.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H3><A NAME="messages"/>Messages</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene</B> attempts to deliver good, meaningful messages. In
+        the same time it attempts to handle all messages, including error and
+        warning messages resulted from the ambiguity and conflict handling,
+        in a uniform and transparent way. Also the syntax validation for the
+        schema documents and the validation of document syntax are handled
+        transparently using exactly the same algorithm. 
+    </P>
+    <P>
+        In order to achieve all this transparency, an approach was chosen
+        where a distinction is made between the detection, interpretation and
+        reporting of errors. This approach allows to group the messages
+        produced by the disqualifying errors of different candidates during
+        conflict handling and report them in the unresolved content error 
+        messages. Another consequence of this approach is
+        the fact that while error detection happens where the error is, 
+        interpretation and reporting are delayed. The location information 
+        passed to the <CODE>SAXParseException</CODE> is that of the place where 
+        the error reporting is done. This is the end tag of the element in whose 
+        context the error took place. For conflicts, the errors of the entire 
+        subtree are reported at the end of the element in whose context the 
+        conflict is. Location information regarding the exact place where the 
+        error occurred is provided in the content of the message in a meaningful 
+        way.
+    </P>    
+    <P>
+        Using exactly the same algorithm for the syntax validation of both
+        schemas and documents and, in the same time, trying to be meaningful
+        means that the messages are always pointing to the rule that has been
+        broken; that is a rule from the RELAX NG syntax specification in the
+        case of schemas, and a pattern from the concerned schema in the case
+        of documents.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="commandLineUsage"/>Command Line Usage</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene 0.6.3</B> can be used as a command line tool either directly 
+        by using serene.jar and the -jar option
+    </P>
+    <P>
+        <CODE>$ java -jar <I>path</I>/serene.jar
+        -s <I>path</I>/schema.rng -d <I>path</I>/document1.xml
+        <I>path</I>/document2.xml ...</CODE>
+    </P>
+    <P>
+        or by using the <CODE>serene.Driver</CODE> class which contains the main 
+        method
+    </P>
+    <P>
+        <CODE>$ java -cp <I>path</I>/serene.jar
+        serene.Driver -s <I>path</I>/schema.rng
+        -d <I>path</I>/document1.xml
+        <I>path</I>/document2.xml ...</CODE>
+    </P>
+    <P>
+        You can see the usage instructions and
+        the list of available options by invoking the tool without any
+        arguments. 
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="testing"/>Testing</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        The test cases used can
+        be found in the testSuite/ directory which contains the actual
+        schemas and documents used for testing as well as plain text files
+        containing the error messages that have been accepted as correct,
+        which can be used for regression testing. 
+    </P>
+    <P>
+        <B>Serene 0.6.3 </B>includes a command line tool that allows you to
+        run the tests yourself either directly by using sereneTest.jar and
+        the -jar option
+    </P>
+    <P>
+        <CODE>$ java -jar <I>path</I>/sereneTest.jar <I>path</I>/testSuite/tests</CODE>
+    </P>
+    <P>
+        or
+    </P>
+    <P>
+        <CODE>$ java -jar <I>path</I>/sereneTestRNGSchematron.jar <I>path</I>/testSuiteRNGSchematron/tests</CODE>
+    </P>
+    <P>
+        for the tests of RELAX NG embedding Schematron.
+    </P>
+    <P>
+        or by using the <CODE>sereneTest.Driver</CODE> class which contains the 
+        main method
+    </P>
+    <P>
+        <CODE>$ java -cp <I>path</I>/sereneTest.jar sereneTest.Driver 
+        <I>path</I>/testSuite/tests</CODE>
+    </P>
+    <P>
+        or
+    </P>
+    <P>
+        <CODE>$ java -cp <I>path</I>/sereneTestRNGSchematron.jar sereneTestRNGSchematron.Driver 
+        <I>path</I>/testSuiteRNGSchematron/tests</CODE>
+    </P>
+    <P>
+        for the tests of RELAX NG embedding Schematron.
+    </P>
+    <P>
+        You can see the usage instructions and
+        the list of available options by invoking the tool without any
+        arguments. 
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="buildingTheSourceCode"/>Building the Source Code</H2>
+    <P>
+    <BR>
+    </P>
+    <P>
+        To build the source code you need the JDK (Java Development Kit) 
+        1.5 installed on your machine. You can use the <CODE>build.xml</CODE> 
+        file and the Apache Ant tool from the command line:
+    </P>
+    <P><CODE>$ ant restricted</CODE></P>
+    <P>
+        creates only the jar files needed for the validation engine to
+        run, without the test tool;
+    </P>
+    <P><CODE>$ ant default</CODE></P>
+    <P>or</P>
+    <P><CODE>$ ant</CODE></P>
+    <P>creates all the jar files, including the test tool;</P>
+    <P><CODE>$ ant test</CODE></P>
+    <P>
+        creates all the jar files, including the test tool and runs a test
+        of the entire test suite with the regression analysis option on.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="participating"/>Participating</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        There are many ways you can get involved: joining the mailing
+        lists and taking part in the discussions, reporting issues,
+        submitting new tests, reviewing or contributing source code. 
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H3><A NAME="mailingLists"/>Mailing lists</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        There are two mailing lists for the project and everyone is
+        welcome:
+    </P>
+    <UL>
+        <LI>
+            <P>
+                <A HREF="http://groups.google.com/group/serene-users">user list</A>
+            </P>
+        <LI>
+            <P>
+                <A HREF="http://groups.google.com/group/serene-developers">developer list</A>
+            </P>
+    </UL>
+    <P>
+        <BR>
+    </P>
+    <H3><A NAME="issueReporting"/>Issue reporting</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        Please feel welcome to report any issue that might arise, it is
+        one of the most valuable contributions to the development. Before
+        reporting please try to make sure that the issue is really a new
+        issue by checking the Issue Tracker, if you are still not sure start
+        a discussion on the user mailing list. 
+    </P>
+    <P>
+        For effective reporting please make sure the <B>Summary</B> 
+        is short but precise and descriptive, and the <B>Description</B>
+        provides a detailed image of the problem. If the issue is a bug, the 
+        description should contain enough information to allow the reproduction 
+        of the bug. If the issue is recorded after a mailing list discussion,
+        please include a pointer to the discussion in the description. If you 
+        are interested in seeing a particular issue resolved please star it. 
+        Use comments only for providing additional information.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H3><A NAME="sourceCode"/>Source Code</H3>
+    <P>
+        <BR>
+    </P>
+    <P>
+        There are two ways you can help with the source code: reviewing
+        existing code and sending new patches. The Google Code Review Tool is
+        set to allow anybody to add review comments to the code. Sending
+        patches can by done by email using the developer list. If there are
+        any questions, please ask them on the developer list. No effort will
+        be spared to answer them and all contributions will be appreciated.
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="samples"/>Samples</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        All the source code for the samples can be found in the
+        samples/src directory grouped in the somehow eclectic package
+        sereneSamples. All sample class files are archived in the samples.jar
+        file from the samples/lib directory. The xml example files
+        are in the samples/data directory in directories with suggestive
+        names. A build.xml file for building the samples with Apache Ant tool
+        is included.
+    </P>
+    <P>
+        To run a sample you must place the jar file in the classpath and
+        invoke the class containing the main method. These classes are:
+    </P>
+    <UL>
+        <LI>
+            <P>
+                <CODE>sereneSamples.SourceValidation</CODE> demonstrating the
+                use of a <CODE>javax.xml.validation.Validator</CODE> for RELAX NG
+                through <B>Serene 0.6.3</B> with various implementations of 
+                <CODE>javax.xml.transform.Source</CODE>
+            </P> 
+        <LI>
+            <P>
+                <CODE>sereneSamples.XmlnsAugmentingValidation</CODE>
+                demonstrating the <CODE>http://xml.org/sax/features/namespace-prefixes</CODE>
+                feature
+            </P>
+        <LI>
+            <P>
+                <CODE>sereneSamples.MissingDatatypeLibraryValidation</CODE>
+                demonstrating the 
+                <CODE>http://serenerng.org/features/schemaFactory/replaceMissingDatatypeLibrary</CODE>
+                feature
+           </P>
+        <LI>
+            <P>
+                <CODE>sereneSamples.InfosetModificationValidation</CODE>
+                demonstrating the validation infoset modification with
+                various implementations of <CODE>javax.xml.transform.Source</CODE>
+                and <CODE>javax.xml.transform.Result</CODE>
+           </P>
+       <LI>
+            <P>
+                <CODE>sereneSamples.ModularValidation</CODE>
+                demonstrating how the validators' configuration can be adjusted
+                according to the state of the schema document.
+           </P>
+    </UL>
+    <P>
+        Examples:
+    </P>
+    <P>
+        <CODE>$ java -cp lib/samples.jar sereneSamples.MissingDatatypeLibraryValidation
+        data/missingDatatype/schema.rng data/missingDatatype/document1.xml</CODE>
+    </P>
+    <P>
+        <CODE>$ java -cp lib/samples.jar sereneSamples.ModularValidation</CODE>
+    </P>
+    <P>
+        If the relative path to serene.jar is changed, this must also be
+        added explicitly to the class path.
+    </P>
+    <P>
+        The sample implementation of a custom datatype library does not
+        have a class containing a main method. In order to run this sample
+        you can use the <CODE>serene.Driver</CODE>. Example:
+    </P>
+    <P>
+        <CODE>$ java -cp lib/samples.jar;../lib/int/serene.jar serene.Driver
+        -s data/customDatatype/schema.rng -d data/customDatatype/document1.xml
+        data/customDatatype/document2.xml</CODE>
+    </P>
+    <P>
+        <BR>
+    </P>
+    <H2><A NAME="licenseInformation"/>License Information</H2>
+    <P>
+        <BR>
+    </P>
+    <P>
+        <B>Serene</B> is distributed under the Apache Software License version 2.0. 
+        A copy of the license can be found at 
+        <A HREF="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</A>.
+    </P>
+    <P>
+        This release uses the <CODE>org.relaxng.datatype</CODE> package created by 
+        James Clark and Kohsuke Kawaguchi, copyright notice included.
+    </P>
+    <P>
+        This release contains the <CODE>SecuritySupport</CODE> class created by 
+        Jeff Suttor, copyright 2006 Sun Microsystems, Inc. All Rights Reserved, 
+        published under the Common Development and Distribution License (CDDL) 
+        version 1.0. A copy of the license can be found at
+        <A HREF="https://jaxp.dev.java.net/CDDLv1.0.html">https://jaxp.dev.java.net/CDDLv1.0.html</A>.
+    </P>
+    <P>
+        This release uses Apache Xerces2 Java version 2.10.0 distributed under 
+        the Apache Software License version 2.0, license and notice are included 
+        in the <B>Serene</B> distribution. A copy of the license can be found at 
+        <A HREF="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</A>.
+    </P>
+    <P>
+        <BR><BR>
+    </P>
+    <HR>
+    <P>Copyright &copy; 2010, 2011 Radu Cernuta</P>
+    <HR>
+</BODY>
+</HTML>

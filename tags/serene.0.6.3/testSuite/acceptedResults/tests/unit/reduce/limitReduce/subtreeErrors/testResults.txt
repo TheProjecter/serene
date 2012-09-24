@@ -1,0 +1,55 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\reduce\limitReduce\subtreeErrors\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document1.xml:25:7 Syntax error. Element <cc> corresponding to definition <element> at schema.rng:33:28 contains errors: 
+Missing content.
+In the document structure starting at document1.xml:25:7, corresponding to definition <element> at schema.rng:33:28, expected 1 occurrence corresponding to definition <ref> at schema.rng:34:31, found 0.
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document1.xml:26:7 Syntax error. Element <dd> corresponding to definition <element> at schema.rng:38:26 contains errors: 
+Missing content.
+In the document structure starting at document1.xml:26:7, corresponding to definition <element> at schema.rng:38:26, expected 1 occurrence corresponding to definition <ref> at schema.rng:39:29, found 0.
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document1.xml:28:7 Syntax error. Element <cc> corresponding to definition <element> at schema.rng:33:28 contains errors: 
+Missing content.
+In the document structure starting at document1.xml:28:7, corresponding to definition <element> at schema.rng:33:28, expected 1 occurrence corresponding to definition <ref> at schema.rng:34:31, found 0.
+
+
+
+TESTED DOCUMENT document2.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document2.xml:26:7 Syntax error. Element <dd> corresponding to definition <element> at schema.rng:38:26 contains errors: 
+Missing content.
+In the document structure starting at document2.xml:26:7, corresponding to definition <element> at schema.rng:38:26, expected 1 occurrence corresponding to definition <ref> at schema.rng:39:29, found 0.
+
+
+
+TESTED DOCUMENT document3.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document3.xml:25:25 Syntax error. Element <cc> corresponding to definition <element> at schema.rng:33:28 contains errors: 
+Illegal value.
+Value of attribute "ccAttribute" at document3.xml:25:25 does not match the value required by schema definition <value> at schema.rng:47:11.
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document3.xml:26:7 Syntax error. Element <dd> corresponding to definition <element> at schema.rng:38:26 contains errors: 
+Missing content.
+In the document structure starting at document3.xml:26:7, corresponding to definition <element> at schema.rng:38:26, expected 1 occurrence corresponding to definition <ref> at schema.rng:39:29, found 0.
+
+
+
+TESTED DOCUMENT document4.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document4.xml:28:7 Syntax error. Element <cc> corresponding to definition <element> at schema.rng:33:28 contains errors: 
+Missing content.
+In the document structure starting at document4.xml:28:7, corresponding to definition <element> at schema.rng:33:28, expected 1 occurrence corresponding to definition <ref> at schema.rng:34:31, found 0.
+
+
+
+TESTED DOCUMENT document5.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/reduce/limitReduce/subtreeErrors/document5.xml:26:25 Syntax error. Element <dd> corresponding to definition <element> at schema.rng:38:26 contains errors: 
+Illegal value.
+Value of attribute "ddAttribute" at document5.xml:26:25 does not match the value required by schema definition <value> at schema.rng:53:11.

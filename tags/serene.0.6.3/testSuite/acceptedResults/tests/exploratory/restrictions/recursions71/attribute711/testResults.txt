@@ -1,0 +1,7 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\recursions71\attribute711\schema.rng
+
+null:-1:-1 Restrictions 7.1.1 error. Forbiden path:
+<rng:attribute> at schema.rng:29:30
+<rng:ref> at schema.rng:31:32.

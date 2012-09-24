@@ -1,0 +1,55 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\unit\charsConflictIntegration\coOccurrence\ambiguous\elementCharsContent\attributeId\schema.rng
+
+
+
+TESTED DOCUMENT document1.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/coOccurrence/ambiguous/elementCharsContent/attributeId/document1.xml:19:18 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Illegal datatype.
+Character content at document1.xml:19:18 does not match the datatype required by schema definition <data> at schema.rng:29:31. cvc-datatype-valid.1.2.1: '' is not a valid value for 'boolean'.
+
+
+
+TESTED DOCUMENT document2.xml
+
+
+
+TESTED DOCUMENT document3.xml
+
+
+
+TESTED DOCUMENT document4.xml
+
+
+
+TESTED DOCUMENT document5.xml
+
+
+
+TESTED DOCUMENT document6.xml
+
+
+
+TESTED DOCUMENT document7.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/coOccurrence/ambiguous/elementCharsContent/attributeId/document7.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Illegal datatype.
+Character content at document7.xml:20:5 does not match the datatype required by schema definition <data> at schema.rng:33:31. cvc-datatype-valid.1.2.1: 'true' is not a valid value for 'integer'.
+
+
+
+TESTED DOCUMENT document8.xml
+
+
+
+TESTED DOCUMENT document9.xml
+
+file:///D:/sereneProject/svn/workingCopies/serene/testSuite/tests/unit/charsConflictIntegration/coOccurrence/ambiguous/elementCharsContent/attributeId/document9.xml:21:7 Syntax error. Element <foo> corresponding to definition <element> at schema.rng:21:66 contains errors: 
+Illegal datatype.
+Character content at document9.xml:20:2 does not match the datatype required by schema definition <data> at schema.rng:29:31. cvc-datatype-valid.1.2.1: '7' is not a valid value for 'boolean'.
+
+
+
+TESTED DOCUMENT document10.xml

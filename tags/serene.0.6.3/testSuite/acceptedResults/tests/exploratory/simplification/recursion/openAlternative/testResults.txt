@@ -1,0 +1,3 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\simplification\recursion\openAlternative\schema.rng

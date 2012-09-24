@@ -1,0 +1,9 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\restrictions\stringSequences72\mixed\schema.rng
+
+null:-1:-1 Restrictions 7.2 error. In the context of <rng:mixed> at schema.rng:25:15 both simple and complex content types were found: 
+simple content 
+<group added by mixed simplification> at schema.rng:25:15
+complex content 
+<text added by mixed simplification> at schema.rng:25:15.

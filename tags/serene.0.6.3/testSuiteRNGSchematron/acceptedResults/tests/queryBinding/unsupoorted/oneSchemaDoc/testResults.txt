@@ -1,0 +1,5 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuiteRNGSchematron\tests\queryBinding\unsupoorted\oneSchemaDoc\schema.rng
+
+file:/D:/sereneProject/svn/workingCopies/serene/testSuiteRNGSchematron/tests/queryBinding/unsupoorted/oneSchemaDoc/schema.rng:6:34 Unsupported Schematron query language. Serene supports "xslt" and "xslt2".

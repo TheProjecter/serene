@@ -1,0 +1,5 @@
+
+
+TESTED SCHEMA D:\sereneProject\svn\workingCopies\serene\testSuite\tests\exploratory\compatibility\attributeDefaultValue\contextDependentDatatype\schema.rng
+
+null:-1:-1 DTD compatibility error. Attribute definition <attribute> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/contextDependentDatatype/schema.rng:25:54 cannot have a default value. Context dependent datatype at <data> at file:/D:/sereneProject/svn/workingCopies/serene/testSuite/tests/exploratory/compatibility/attributeDefaultValue/contextDependentDatatype/schema.rng:26:37.

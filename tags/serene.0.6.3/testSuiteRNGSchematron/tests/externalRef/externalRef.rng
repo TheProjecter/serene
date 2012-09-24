@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<element name="bar" xmlns="http://relaxng.org/ns/structure/1.0" 
+datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes" 
+xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+    <element name="bar1"><data type="int"/></element>
+    <element name="bar2"><data type="int"/></element>
+    <element name="sum"><data type="int"/></element>
+    <sch:pattern>
+        <sch:title>Numbers</sch:title>
+        <sch:rule context="//bar">
+            <sch:assert  test="number(bar1) + number(bar2) = number(sum)" diagnostics="Error_in_sum_bar">
+            Content of &lt;sum&gt; represents the sum of the contents of &lt;bar1&gt; and &lt;bar2&gt;.
+            </sch:assert>
+        </sch:rule>
+    </sch:pattern>
+    
+    <sch:diagnostics>
+        <sch:diagnostic id="Error_in_sum_bar">
+            expected <sch:value-of select="//bar/bar1+//bar/bar2"/>
+            found <sch:value-of select="//bar/sum"/>
+        </sch:diagnostic>
+    </sch:diagnostics>
+</element>
