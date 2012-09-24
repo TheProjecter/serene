@@ -60,6 +60,7 @@ import serene.Constants;
 import serene.validation.handlers.error.ErrorDispatcher;
 
 import serene.schematron.TransformerFactoryImpl;
+import serene.schematron.URIResolver;
 
 public class SchematronSchemaFactory extends SchemaFactory{    
     static final String SCHEMA_QLB_XSLT1 = "xslt";
@@ -106,27 +107,24 @@ public class SchematronSchemaFactory extends SchemaFactory{
 		
 	private void createTransformerFactory() throws SAXException{
 	    schematronTransformerFactory = new TransformerFactoryImpl();
-        /*if(tf.getFeature(SAXTransformerFactory.FEATURE)){
-            saxTransformerFactory = (SAXTransformerFactory)tf;
-        }else{
-            throw new SAXException("Could not create schema transformers.");
-        }*/
+	    schematronTransformerFactory.setURIResolver(new URIResolver());
 	}
+	
 	private void createParser() throws SAXException{
         try{          
             schemaTemplatesHandler = schematronTransformerFactory.newTemplatesHandler(); // here the Templates object representing the compiled schema can be obtained
             
-            schematronCompilerXSLT2 = schematronTransformerFactory.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_svrl_for_xslt2.xsl")));
+            schematronCompilerXSLT2 = schematronTransformerFactory.newTransformerHandler(new StreamSource(SchematronSchemaFactory.class.getResourceAsStream(Constants.ISO_SVRL_FOR_XSLT2_LOCATION)));
             schematronCompilerXSLT2.setResult(new SAXResult(schemaTemplatesHandler));
             
-            schematronCompilerXSLT1 = schematronTransformerFactory.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_svrl_for_xslt1.xsl")));
+            schematronCompilerXSLT1 = schematronTransformerFactory.newTransformerHandler(new StreamSource(SchematronSchemaFactory.class.getResourceAsStream(Constants.ISO_SVRL_FOR_XSLT1_LOCATION)));
             schematronCompilerXSLT1.setResult(new SAXResult(schemaTemplatesHandler));
             
-            TransformerHandler abstarctPatternsHandler = schematronTransformerFactory.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_abstract_expand.xsl")), this);
+            TransformerHandler abstarctPatternsHandler = schematronTransformerFactory.newTransformerHandler(new StreamSource(SchematronSchemaFactory.class.getResourceAsStream(Constants.ISO_ABSTRACT_EXPAND_LOCATION)), this);
             resolvedAbstractPatternsResult = new SAXResult(); // content handler will be set according to qlbProperty and maybe adjusted
             abstarctPatternsHandler.setResult(resolvedAbstractPatternsResult);
             
-            TransformerHandler includeHandler = schematronTransformerFactory.newTransformerHandler(new StreamSource(new File("isoSchematronImpl/iso_dsdl_include.xsl")));                        
+            TransformerHandler includeHandler = schematronTransformerFactory.newTransformerHandler(new StreamSource(SchematronSchemaFactory.class.getResourceAsStream(Constants.ISO_DSDL_INCLUDE_LOCATION)));                        
             schemaDocumentTransformer = includeHandler.getTransformer(); // used to transform the schema Source 
             resolvedIncludesResult = new SAXResult(abstarctPatternsHandler); // result for the above transformation
         }catch(TransformerConfigurationException tce){

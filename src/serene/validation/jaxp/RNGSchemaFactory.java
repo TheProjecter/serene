@@ -37,14 +37,9 @@ import javax.xml.validation.ValidatorHandler;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.Templates;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.sax.TemplatesHandler;
 
@@ -144,7 +139,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 
 	SchematronParser schematronParser;
 	   
-	public RNGSchemaFactory(){		
+	public RNGSchemaFactory() throws SAXException{		
 		errorDispatcher = new ErrorDispatcher();
 		
 		initDefaultFeatures();
@@ -176,7 +171,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 	}
 	
 		
-	private void createParser()  throws DatatypeException{
+	private void createParser()  throws DatatypeException, SAXException{
 	    // create builder
 	    // create factory
 	    //     get dummies	    
@@ -193,7 +188,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 	}
 	
 	
-	private void createSchematronParser(){
+	private void createSchematronParser() throws SAXException{
 	    schematronParser = new SchematronParser(errorDispatcher);
 	}
 	

@@ -357,11 +357,11 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 		
 		documentContext.startPrefixMapping(prefix, uri);		
 		// TODO review schematronDepth > 0
-		/*if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)*/schematronParser.startPrefixMapping(prefix, uri);
+		if(processEmbededSchematron /*&& isQLBSupported && schematronDepth > 0*/)schematronParser.startPrefixMapping(prefix, uri);
 	}
 	public void endPrefixMapping(String prefix) throws SAXException{
 		documentContext.endPrefixMapping(prefix);		
-		/*if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)*/schematronParser.endPrefixMapping(prefix);
+		if(processEmbededSchematron /*&& isQLBSupported && schematronDepth > 0*/)schematronParser.endPrefixMapping(prefix);
 	}	
 	public void startElement(String namespaceURI, 
 							String localName, 

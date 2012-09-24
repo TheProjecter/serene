@@ -36,7 +36,7 @@ import serene.Constants;
 class RNGSVRLParser extends SVRLParser{
     void reportAssertError() throws SAXException{
 	    
-	    errorHandler.error(new RNGFailedAssertException(activePatternName,
+	    errorDispatcher.error(new RNGFailedAssertException(activePatternName,
                     activePatternId,
                     activePatternRole,                        
                     firedRuleId,
@@ -64,7 +64,7 @@ class RNGSVRLParser extends SVRLParser{
 	}
 	
 	void reportReportError() throws SAXException{	    
-	    errorHandler.error(new RNGSuccessfulReportException(activePatternName,
+	    errorDispatcher.error(new RNGSuccessfulReportException(activePatternName,
                     activePatternId,
                     activePatternRole,                        
                     firedRuleId,

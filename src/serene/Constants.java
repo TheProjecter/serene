@@ -77,6 +77,12 @@ public interface Constants{
     
     String PROCESS_EMBEDED_SCHEMATRON_FEATURE = "http://serenerng.com/features/processEmbededSchematron";
     
-    String IS_QLB_SUPPORTED = "http://serenerng.com/features/isQLBSupported";      
+    String IS_QLB_SUPPORTED = "http://serenerng.com/features/isQLBSupported";     
+    
+    
+    String ISO_SVRL_FOR_XSLT2_LOCATION  = "/iso_svrl_for_xslt2.xsl";
+    String ISO_SVRL_FOR_XSLT1_LOCATION = "/iso_svrl_for_xslt1.xsl";
+    String ISO_ABSTRACT_EXPAND_LOCATION = "/iso_abstract_expand.xsl";
+    String ISO_DSDL_INCLUDE_LOCATION = "/iso_dsdl_include.xsl";
     
 }

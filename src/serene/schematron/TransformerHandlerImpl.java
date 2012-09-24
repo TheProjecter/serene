@@ -33,7 +33,7 @@ public class TransformerHandlerImpl extends net.sf.saxon.TransformerHandlerImpl{
     protected TransformerHandlerImpl(net.sf.saxon.Controller controller, SchematronSchemaFactory schematronSchemaFactory){
         super(controller);
         
-        this.schematronSchemaFactory = schematronSchemaFactory;
+        this.schematronSchemaFactory = schematronSchemaFactory;        
     }
     
     public void startDocument()  throws SAXException{

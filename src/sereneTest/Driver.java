@@ -23,6 +23,8 @@ import java.util.Locale;
 
 import java.text.SimpleDateFormat;
 
+import org.xml.sax.SAXException;
+
 import sereneWrite.WriteErrorHandler;
 
 public class Driver{
@@ -188,9 +190,13 @@ public class Driver{
 					
 		Tester tester = new Tester();			
 		
-		if(xmlFileName != null) tester.test(sourcePath, xmlFileName, destinationDirName, resultsDestinationFileName);
-		else tester.test(sourcePath, destinationDirName, resultsDestinationFileName);
-
+		try{
+		    if(xmlFileName != null) tester.test(sourcePath, xmlFileName, destinationDirName, resultsDestinationFileName);
+			else tester.test(sourcePath, destinationDirName, resultsDestinationFileName);
+		}catch(SAXException e){
+		    e.printStackTrace();
+		}
+		
 		System.out.println("Tests: " + tester.getTestCount());
 		System.out.println("Elapsed time: " + (System.currentTimeMillis() - startTime));
 		

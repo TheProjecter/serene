@@ -14,24 +14,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package serene.datatype;
+package serene;
 
+import org.xml.sax.SAXParseException;
 import org.xml.sax.Locator;
 
-import serene.RecoverableException;
+public abstract class RecoverableException extends SAXParseException{
 
-public class MissingLibraryException extends RecoverableException{
-
-	public MissingLibraryException(String message, Locator locator){
+	public RecoverableException(String message, Locator locator){
 		super(message, locator);
 	}
-	public MissingLibraryException(String message, Locator locator, Exception e){
+	public RecoverableException(String message, Locator locator, Exception e){
 		super(message, locator, e);
 	}
-	public MissingLibraryException(String message, String publicId, String systemId, int lineNumber, int columnNumber){
+	public RecoverableException(String message, String publicId, String systemId, int lineNumber, int columnNumber){
 		super(message, publicId, systemId, lineNumber, columnNumber);
 	}
-	public MissingLibraryException(String message, String publicId, String systemId, int lineNumber, int columnNumber, Exception e){
+	public RecoverableException(String message, String publicId, String systemId, int lineNumber, int columnNumber, Exception e){
 		super(message, publicId, systemId, lineNumber, columnNumber, e);
 	} 
 }
