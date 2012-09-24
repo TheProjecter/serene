@@ -175,7 +175,7 @@ abstract class Simplifier implements SimplifyingVisitor{
     boolean level1AttributeIdType;
 	boolean replaceMissingDatatypeLibrary;
     boolean restrictToFileName;
-    boolean processEmbededSchematron;
+    boolean processEmbeddedSchematron;
 
 	//ParsedComponentWriter pcw;
 	
@@ -217,8 +217,8 @@ abstract class Simplifier implements SimplifyingVisitor{
     public void setRestrictToFileName(boolean restrictToFileName){
         this.restrictToFileName = restrictToFileName;
     }    
-    public void setProcessEmbededSchematron(boolean processEmbededSchematron){
-        this.processEmbededSchematron = processEmbededSchematron;
+    public void setProcessEmbeddedSchematron(boolean processEmbeddedSchematron){
+        this.processEmbeddedSchematron = processEmbeddedSchematron;
     }
     
 	public void visit(Include include){

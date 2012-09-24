@@ -133,7 +133,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 	private boolean parsedModelSchema;
     private boolean restrictToFileName;	
     private boolean optimizedForResourceSharing;
-	private boolean processEmbededSchematron;
+	private boolean processEmbeddedSchematron;
 	
 	ErrorDispatcher errorDispatcher;
 
@@ -167,7 +167,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 		parsedModelSchema = false;
         restrictToFileName = true;
         optimizedForResourceSharing = false;
-        processEmbededSchematron = false;
+        processEmbeddedSchematron = false;
 	}
 	
 		
@@ -194,9 +194,9 @@ public class RNGSchemaFactory extends SchemaFactory{
 	
 	private void createSchemaFactory()  throws DatatypeException{
 	    if(optimizedForResourceSharing){	    
-		    internalRNGFactory = SynchronizedInternalRNGFactory.getInstance(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbededSchematron);    
+		    internalRNGFactory = SynchronizedInternalRNGFactory.getInstance(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbeddedSchematron);    
 		}else{
-		    internalRNGFactory = UnsynchronizedInternalRNGFactory.getInstance(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbededSchematron);
+		    internalRNGFactory = UnsynchronizedInternalRNGFactory.getInstance(level1DocumentationElement, restrictToFileName, optimizedForResourceSharing, processEmbeddedSchematron);
 		}	    
 	}	
 	private void createXMLReader(){
@@ -221,7 +221,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 		validatorHandler.setErrorHandler(errorDispatcher);		
         try{
             validatorHandler.setFeature(Constants.RESTRICT_TO_FILE_NAME_FEATURE, restrictToFileName);
-            validatorHandler.setFeature(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE, processEmbededSchematron);
+            validatorHandler.setFeature(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE, processEmbeddedSchematron);
 		}catch (SAXNotRecognizedException e) {
             e.printStackTrace();
         }catch (SAXNotSupportedException e) {
@@ -237,8 +237,8 @@ public class RNGSchemaFactory extends SchemaFactory{
         simplifier.setLevel1AttributeDefaultValue(level1AttributeDefaultValue);
         simplifier.setLevel1AttributeIdType(level1AttributeIdType);
         simplifier.setRestrictToFileName(restrictToFileName);
-        simplifier.setProcessEmbededSchematron(processEmbededSchematron);
-        /*if(processEmbededSchematron){
+        simplifier.setProcessEmbeddedSchematron(processEmbeddedSchematron);
+        /*if(processEmbeddedSchematron){
             if(schematronParser == null) createSchematronParser();
             enableSchematronInSimplifier();
         }*/
@@ -367,11 +367,11 @@ public class RNGSchemaFactory extends SchemaFactory{
                 simplifier.setParserComponents(xmlReader, internalRNGFactory);
                 compatibilityHandler.setOptimizeForResourceSharing(value);
             }
-        }else if(name.equals(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE)){
-            if(processEmbededSchematron != value){
-                processEmbededSchematron = value;
-                validatorHandler.setFeature(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE, value);
-                simplifier.setProcessEmbededSchematron(value);
+        }else if(name.equals(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE)){
+            if(processEmbeddedSchematron != value){
+                processEmbeddedSchematron = value;
+                validatorHandler.setFeature(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE, value);
+                simplifier.setProcessEmbeddedSchematron(value);
                 if(value){
                     // TODO see if you need to set this to the schematronParser itself                                   
                 }
@@ -409,8 +409,8 @@ public class RNGSchemaFactory extends SchemaFactory{
             return restrictToFileName;
         }else if(name.equals(Constants.OPTIMIZE_FOR_RESOURCE_SHARING_FEATURE)){
             return optimizedForResourceSharing;
-        }else if(name.equals(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE)){
-            return processEmbededSchematron;
+        }else if(name.equals(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE)){
+            return processEmbeddedSchematron;
         }else{
         	throw new SAXNotRecognizedException("Unknown feature.");
         }
@@ -652,7 +652,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 	    errorDispatcher.init();
 		// to task: parsedComponentBuilder.startBuild();
 		
-		if(processEmbededSchematron){
+		if(processEmbeddedSchematron){
             /*if(schematronStartTransformerHandler == null){
                 createSchematronParser();                
             } */           
@@ -696,7 +696,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 		SimplifiedModel simplifiedModel = null;		
 		if(baseURI != null){
 			try{
-			    if(processEmbededSchematron){
+			    if(processEmbeddedSchematron){
 			        simplifiedModel = simplifier.simplify(new URI(baseURI), parsedModel/*, schematronTemplates*/);
 			    }else{
 			        simplifiedModel = simplifier.simplify(new URI(baseURI), parsedModel);
@@ -705,7 +705,7 @@ public class RNGSchemaFactory extends SchemaFactory{
 				throw new SAXException(use.getMessage());
 			}
 		}else{
-		    if(processEmbededSchematron){
+		    if(processEmbeddedSchematron){
 		        simplifiedModel = simplifier.simplify(null, parsedModel/*, schematronTemplates*/);
 		    }else{
 		        simplifiedModel = simplifier.simplify(null, parsedModel);
@@ -740,7 +740,7 @@ public class RNGSchemaFactory extends SchemaFactory{
             schemaModel = new SchemaModel(null, null,new DTDCompatibilityModelImpl(null, null));
         }
         
-        if(processEmbededSchematron){            
+        if(processEmbeddedSchematron){            
             RNGSchema s = new RNGSchema(false,
                                         namespacePrefixes,
                                         level1AttributeDefaultValue,

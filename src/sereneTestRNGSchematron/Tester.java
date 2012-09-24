@@ -126,7 +126,7 @@ class Tester{
 		sourceDirNames.clear();
 		
 		try{
-		    schemaFactory.setFeature(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE, true);
+		    schemaFactory.setFeature(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE, true);
 		}catch(Exception e){
 		    e.printStackTrace();
 		}
@@ -191,7 +191,7 @@ class Tester{
 		sourceDirNames.clear();
 		
 		try{
-		    schemaFactory.setFeature(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE, true);
+		    schemaFactory.setFeature(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE, true);
 		}catch(Exception e){
 		    e.printStackTrace();
 		}

@@ -225,7 +225,7 @@ limitations under the License.
         <echo>This was the default build.</echo>
     </target>
     
-    <target name="test" depends="packSereneWrite, packSerene, packSereneTest" description="Builds the entire project and runs the sereneTest.Driver on the testSuite/ with the regression analysis option on.">        
+    <target name="test" depends="packSereneWrite, packSerene, packSereneTest, packSereneTestRNGSchematron" description="Builds the entire project and runs the sereneTest.Driver on the testSuite/ with the regression analysis option on.">        
         <delete dir="${build.dir}"/>
         <echo>This was the test build.</echo>
         <echo>Running the test.</echo>

@@ -165,7 +165,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
     boolean level1DocumentationElement;
     boolean restrictToFileName;
     boolean optimizedForResourceSharing;
-    boolean processEmbededSchematron;
+    boolean processEmbeddedSchematron;
     
     DocumentationElementHandler documentationElementHandler;
     
@@ -184,7 +184,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
                             boolean level1DocumentationElement,
                             boolean restrictToFileName,
                             boolean optimizedForResourceSharing,
-                            boolean processEmbededSchematron){		
+                            boolean processEmbeddedSchematron){		
 		this.eventHandlerPool = eventHandlerPool;	
 		this.errorHandlerPool = errorHandlerPool;
 		
@@ -196,7 +196,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         this.optimizedForResourceSharing = optimizedForResourceSharing;
                 
         this.bindingPool = bindingPool;
-        this.processEmbededSchematron = processEmbededSchematron;
+        this.processEmbeddedSchematron = processEmbeddedSchematron;
         
         this.stackHandlerPool = stackHandlerPool;        
         
@@ -292,13 +292,13 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	
 	
 	public void processingInstruction(String target, String data) throws SAXException{
-	    if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronParser.processingInstruction(target, data);
+	    if(processEmbeddedSchematron && isQLBSupported && schematronDepth > 0)schematronParser.processingInstruction(target, data);
 	} 
 	public void skippedEntity(String name) throws SAXException{
-	    if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronParser.skippedEntity(name);
+	    if(processEmbeddedSchematron && isQLBSupported && schematronDepth > 0)schematronParser.skippedEntity(name);
 	}	
 	public void ignorableWhitespace(char[] ch, int start, int len) throws SAXException{
-	    if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronParser.ignorableWhitespace(ch, start, len);
+	    if(processEmbeddedSchematron && isQLBSupported && schematronDepth > 0)schematronParser.ignorableWhitespace(ch, start, len);
 	}
 	
 	public void startBinding(){}
@@ -329,7 +329,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 		//startDocument. The base URI of the document is also passed independently 
 		//to the Simplifier. This needs reviewing.
 		
-        if(processEmbededSchematron){
+        if(processEmbeddedSchematron){
             isTopElement = true;            
             schematronDepth = 0;
             isQLBSupported = true;
@@ -345,11 +345,11 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 	public void setDocumentLocator(Locator locator){
 		this.locator = locator;
         if(!documentContext.isBaseURISet())documentContext.setBaseURI(locator.getSystemId());
-        if(processEmbededSchematron)schematronParser.setDocumentLocator(locator);
+        if(processEmbeddedSchematron)schematronParser.setDocumentLocator(locator);
     }
 	public void characters(char[] chars, int start, int length)throws SAXException{
 		characterContentDescriptor.add(chars, start, length, locator.getSystemId(), locator.getPublicId(), locator.getLineNumber(), locator.getColumnNumber());
-        if(processEmbededSchematron && isQLBSupported && schematronDepth > 0)schematronParser.characters(chars, start, length);		
+        if(processEmbeddedSchematron && isQLBSupported && schematronDepth > 0)schematronParser.characters(chars, start, length);		
 	}
 	public void startPrefixMapping(String prefix, String uri) throws SAXException{
 		if(declaredXmlns == null)declaredXmlns = new HashMap<String, String>();
@@ -357,11 +357,11 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 		
 		documentContext.startPrefixMapping(prefix, uri);		
 		// TODO review schematronDepth > 0
-		if(processEmbededSchematron /*&& isQLBSupported && schematronDepth > 0*/)schematronParser.startPrefixMapping(prefix, uri);
+		if(processEmbeddedSchematron /*&& isQLBSupported && schematronDepth > 0*/)schematronParser.startPrefixMapping(prefix, uri);
 	}
 	public void endPrefixMapping(String prefix) throws SAXException{
 		documentContext.endPrefixMapping(prefix);		
-		if(processEmbededSchematron /*&& isQLBSupported && schematronDepth > 0*/)schematronParser.endPrefixMapping(prefix);
+		if(processEmbeddedSchematron /*&& isQLBSupported && schematronDepth > 0*/)schematronParser.endPrefixMapping(prefix);
 	}	
 	public void startElement(String namespaceURI, 
 							String localName, 
@@ -400,12 +400,12 @@ class InternalValidatorHandler extends BoundValidatorHandler{
             documentationElementHandler.startElement(namespaceURI, localName, qName, attributes, locator);
         }
         
-        if(isTopElement && processEmbededSchematron){
+        if(isTopElement && processEmbeddedSchematron){
             isTopElement = false;
             schematronParser.setQLB(attributes.getValue(Constants.SERENE_SCHEMATRON_NS_URI, Constants.SCHEMATRON_QLB_ATTRIBUTE));
         }
         
-        if(processEmbededSchematron && isQLBSupported && (schematronDepth > 0 | namespaceURI.equals(Constants.SCHEMATRON_NS_URI))){
+        if(processEmbeddedSchematron && isQLBSupported && (schematronDepth > 0 | namespaceURI.equals(Constants.SCHEMATRON_NS_URI))){
             schematronDepth++;
             schematronParser.startElement(namespaceURI, localName, qName, attributes);
         }
@@ -430,7 +430,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
         }		
         inputStackDescriptor.popElement();
         
-        if(processEmbededSchematron && isQLBSupported && (schematronDepth > 0 | namespaceURI.equals(Constants.SCHEMATRON_NS_URI))){
+        if(processEmbeddedSchematron && isQLBSupported && (schematronDepth > 0 | namespaceURI.equals(Constants.SCHEMATRON_NS_URI))){
             schematronDepth--;
             schematronParser.endElement(namespaceURI, localName, qName);
         }
@@ -456,7 +456,7 @@ class InternalValidatorHandler extends BoundValidatorHandler{
 		//activeInputDescriptor.printLeftOvers();
 		activeInputDescriptor.clear();// shouldn't be necessary, but just in case
 		
-		if(processEmbededSchematron){
+		if(processEmbeddedSchematron){
 		    schematronParser.endDocument();
 		}
 	}
@@ -566,8 +566,8 @@ class InternalValidatorHandler extends BoundValidatorHandler{
             level1DocumentationElement = value;
         }else if(name.equals(Constants.RESTRICT_TO_FILE_NAME_FEATURE)){
             restrictToFileName = value;                        
-        }else if(name.equals(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE)){
-            processEmbededSchematron = value;                        
+        }else if(name.equals(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE)){
+            processEmbeddedSchematron = value;                        
         }else if(name.equals(Constants.IS_QLB_SUPPORTED)){
             isQLBSupported = value;                        
         }else{
@@ -583,8 +583,8 @@ class InternalValidatorHandler extends BoundValidatorHandler{
             return level1DocumentationElement;
         }else if(name.equals(Constants.RESTRICT_TO_FILE_NAME_FEATURE)){
             return restrictToFileName;                        
-        }else if(name.equals(Constants.PROCESS_EMBEDED_SCHEMATRON_FEATURE)){
-            return processEmbededSchematron;                        
+        }else if(name.equals(Constants.PROCESS_EMBEDDED_SCHEMATRON_FEATURE)){
+            return processEmbeddedSchematron;                        
         }else if(name.equals(Constants.IS_QLB_SUPPORTED)){
             return isQLBSupported;                        
         }else{

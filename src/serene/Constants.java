@@ -75,7 +75,7 @@ public interface Constants{
     
     String OPTIMIZE_FOR_RESOURCE_SHARING_FEATURE = "http://serenerng.com/features/optimizeForResourceSharing";
     
-    String PROCESS_EMBEDED_SCHEMATRON_FEATURE = "http://serenerng.com/features/processEmbededSchematron";
+    String PROCESS_EMBEDDED_SCHEMATRON_FEATURE = "http://serenerng.com/features/processEmbeddedSchematron";
     
     String IS_QLB_SUPPORTED = "http://serenerng.com/features/isQLBSupported";     
     
