@@ -3,6 +3,10 @@
 = Custom Datatype Libraries =
 <br>
 
+==Serene 0.6.3==
+
+Interface {{{serene.datatype.DatatypeErrorHandler}}} has been created to provide direct access to {{{serene.datatype.MissingLibraryException}}}.
+
 ==Serene 0.6.2==
 
 No changes with this release.
