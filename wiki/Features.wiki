@@ -4,11 +4,17 @@
 = Features =
 <br>
 
+==Serene 0.6.3==
+
+No new features are added by this release.
+
+No old features are removed by this release.
+
 ==Serene 0.6.2==
 
 Features added by this release:
 
-*{{{http://serenerng.com/features/processEmbededSchematron}}}*
+*{{{http://serenerng.com/features/processEmbeddedSchematron}}}*
 
 This is a *Serene* feature for the {{{javax.xml.validation.SchemaFactory}}} which, when set to {{{true}}}, ensures that ISO Schematron markup embedded in RELAX NG schemas is processed and the resulting {{{javax.xml.validation.Schema}}} instances will produce {{{javax.xml.validation.ValidatorHandler}}} and {{{javax.xml.validation.Validator}}} objects which will apply the Schematron rules. By default it is set to {{{false}}}.
 
