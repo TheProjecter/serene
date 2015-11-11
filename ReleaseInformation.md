@@ -1,0 +1,37 @@
+# Release Information #
+<br>
+
+This page contains general release information. See additional wiki pages for details.<br>
+<br>
+<h2>Serene 0.6.3</h2>
+
+This release adds, for the ISO Schematron implementation, support for XSLT 2.0 based on Saxon HE and improves the access to SVRL information. Also support for embedding Schematron elements ns and let in the RELAX NG schemas has been added. Some work has been done on making the RELAX NG implementation lighter and faster.<br>
+<br>
+<h2>Serene 0.6.2</h2>
+
+This release introduces support for ISO Schematron. Pure Schematron schemas are supported as well as Schematron markup embedded in RELAX NG schemas.<br>
+<br>
+<h2>Serene 0.6.1</h2>
+
+This release has been extensively reviewed and refactored in order to improve performance. Some bugs were fixed, messages were slightly tweaked, one feature was added.<br>
+<br>
+<h2>Serene 0.6</h2>
+
+This release concentrates on further improving message quality. The accent is on error interpretation and reporting. Several bugs were fixed and a new feature added.<br>
+<br>
+<h2>Serene 0.5.3</h2>
+
+This release has been tested using the RELAX NG test suite. As a result, several bugs have been fixed and the handling of conflicts and the reporting of errors have been significantly improved.<br>
+<br>
+<h2>Serene 0.5.2</h2>
+
+This release introduces support for DTD compatibility adding several new features and some bug fixes. The implementation of all <code>javax.xml.validation.SchemaFactory</code> and <code>javax.xml.validation.Validator</code>  methods involving <code>javax.xml.transform.Source</code> and <code>javax.xml.transform.Result</code> has been reviewd.<br>
+<br>
+<h2>Serene 0.5.1</h2>
+
+This release sports several bug fixes and introduces support for XML Schema datatypes. The XML Schema datatypes are implemented by wrapping Apache Xerces2 Java, version 2.10.0 is used in the distribution.<br>
+<br>
+<br>
+<h2>Serene 0.5</h2>
+
+Initial release.
